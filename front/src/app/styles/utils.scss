@@ -1,0 +1,25 @@
+$colors: (
+	primary: #fbb217,
+	cblack: #121212,
+	cblacklight: #414141,
+	cblackmid: #2f2f2f,
+	cblackdark: #262626,
+	cnectarine: #e69248,
+	cmediumgray: #bcbcbc,
+	cgraylight: #f4f4f4,
+	cmenthe: #7dd6d1,
+	criviere: #81b7d4,
+	cviolette: #bab3df,
+	ckale: #014833,
+	cred: #e86666,
+	cloveapple: #ff764c,
+	cfarine: #fff4e2,
+	cchataigne: #90471c,
+	cmango: #fbb217,
+	cjambon: #eacdcd,
+	cbrown: #ee9222,
+	cneige: #FFFF
+);
+@function fColor($key: "cprimary") {
+	@return map-get($colors, $key);
+}
