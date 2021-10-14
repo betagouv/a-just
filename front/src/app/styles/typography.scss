@@ -1,0 +1,60 @@
+html,
+body,
+button,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+input {
+	font-family: "Roboto";
+	margin: 0;
+}
+
+h1 {
+	font-size: 40px;
+	line-height: 46px;
+	color: fColor(ckale);
+}
+
+h2 {
+	font-size: 32px;
+	line-height: 34px;
+	color: fColor(ckale);
+}
+
+h3 {
+	font-size: 28px;
+	color: fColor(ckale);
+}
+
+h4 {
+	font-size: 24px;
+	color: fColor(ckale);
+}
+
+h5 {
+	font-size: 20px;
+	color: fColor(ckale);
+}
+
+h6 {
+	font-size: 18px;
+	color: fColor(ckale);
+}
+
+p,
+li {
+	font-size: 16px;
+	color: fColor(ckale);
+
+	&.s {
+		font-size: 14px;
+	}
+
+	&.xs {
+		font-size: 11px;
+	}
+}

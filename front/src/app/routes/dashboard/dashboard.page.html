@@ -1,0 +1,26 @@
+<div class="graph">
+  <div class="content-wrapper">
+    <dashboard-bubble-component [speed]="+speed.value"></dashboard-bubble-component>
+    <dashboard-line-component [speed]="+speed.value" [amplitude]="+amplitude.value"></dashboard-line-component>
+  </div>
+</div>
+
+<form [formGroup]="form" class="actions">
+  <div class="panel">
+    <h3>Vitesse</h3>
+    <input placeholder="vitesse" type="number" formControlName="speed" #speed />
+    <div class="actions-button">
+      <button (click)="changeInputValue(speed, -1)">-</button>
+      <button (click)="changeInputValue(speed, 1)">+</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Amplitude</h3>
+    <input placeholder="amplitude" type="number" formControlName="amplitude" #amplitude />
+    <div class="actions-button">
+      <button (click)="changeInputValue(amplitude, -1)">-</button>
+      <button (click)="changeInputValue(amplitude, 1)">+</button>
+    </div>
+  </div>
+</form>

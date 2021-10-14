@@ -1,0 +1,14 @@
+@import "./utils.scss";
+@import "./typography.scss";
+
+html,
+body {
+	height: 100vh;
+	padding: 0;
+	margin: 0;
+	background-color: fColor(cfarine);
+}
+
+* {
+	box-sizing: border-box;
+}
