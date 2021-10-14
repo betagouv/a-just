@@ -5,8 +5,8 @@
     "db:build": "docker-compose -f docker-compose.yml build",
     "db:start": "docker-compose -f docker-compose.yml up -d",
     "build": "npm run build:api && npm run build:front",
-    "build:api": "cd api && npm run build && cd ..",
-    "build:front": "cd front && npm run build && mv dist ../api/dist/front && cd ..",
+    "build:api": "cd api && npm i && npm run build && cd ..",
+    "build:front": "cd front && npm i && npm run build && mv dist ../api/dist/front && cd ..",
     "start:production": "cd api && npm run start:production"
   },
   "dependencies": {
