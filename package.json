@@ -1,6 +1,9 @@
 {
   "name": "a-just",
   "version": "0.0.1",
+  "engines": {
+    "node": "12.18.4"
+  },
   "scripts": {
     "db:build": "docker-compose -f docker-compose.yml build",
     "db:start": "docker-compose -f docker-compose.yml up -d",
