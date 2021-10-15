@@ -1,0 +1,13 @@
+<div class="menu">
+  Ministère de la justifce
+
+  <a routerLink="/dashboard">Logo</a>
+
+  <a *ngFor="let item of menu" [routerLink]="['/'+item.path]">
+    {{ item.label }}
+  </a>
+</div>
+
+<div class="contener">
+  <ng-content></ng-content>
+</div>
