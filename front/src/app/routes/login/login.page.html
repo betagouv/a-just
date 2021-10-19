@@ -1,0 +1,6 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Connexion</h2>
+  <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
+  <input class="ethics-ui" placeholder="Mot de passe" formControlName="password" type="password" />
+  <input type="submit" class="big" value="Connexion" />
+</form>
