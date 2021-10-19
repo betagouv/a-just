@@ -4,7 +4,7 @@ import { crypt } from '../../utils'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
-    'users',
+    'Users',
     {
       id: {
         type: Sequelize.INTEGER,

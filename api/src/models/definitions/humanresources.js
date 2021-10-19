@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
-    'humanresources',
+    'HumanResources',
     {
       id: {
         type: Sequelize.INTEGER,
