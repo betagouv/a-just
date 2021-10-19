@@ -1,3 +1,42 @@
-<aj-wrapper>
-  <h1>Effectifs</h1>
+<aj-wrapper title="Effectifs">
+  <div class="header-list">
+    <div class="profil"></div>
+    <div class="work-time">Temps de travail</div>
+    <div class="total-affected">Affectation</div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of referentiel">
+        {{ ref.id }}
+      </div>
+    </div>
+  </div>
+  <div class="item-list" *ngFor="let hr of humanResources">
+    <div class="profil">
+      Logo
+      {{ hr.firstName}}
+      {{ hr.lastName}}
+      {{ hr.position && hr.position.label}}
+    </div>
+    <div class="work-time">
+      <progression-bar [percent]="hr.etp"></progression-bar>
+    </div>
+    <div class="total-affected">
+      <progression-bar></progression-bar>
+    </div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+        <progression-bar [enable]="index % 2 === 1"></progression-bar>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-list">
+    <div class="profil">Effectif {{ humanResources.length }}</div>
+    <div class="work-time">ETP Dispo</div>
+    <div class="total-affected">ETP affectés </div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of referentiel">
+        xx
+      </div>
+    </div>
+  </div>
 </aj-wrapper>

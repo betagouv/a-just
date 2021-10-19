@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HRVentilations'
+const tableName = 'HRRoles'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(

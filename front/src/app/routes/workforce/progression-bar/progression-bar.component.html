@@ -1,0 +1,9 @@
+<ng-template [ngIf]="enable">
+  <div class="background-bar" [style.backgroundColor]="color"></div>
+  <div class="progress-bar" [style.height.%]="(percent || 0) * 100" [style.backgroundColor]="color">
+    <p>{{(percent || 0) * 100}}%</p>
+  </div>
+</ng-template>
+<ng-template [ngIf]="!enable">
+  <div class="hidden-bar"></div>
+</ng-template>
