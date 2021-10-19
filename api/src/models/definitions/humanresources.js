@@ -1,8 +1,10 @@
 import Sequelize from 'sequelize'
 
+const tableName = 'HumanResources'
+
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
-    'HumanResources',
+    tableName,
     {
       id: {
         type: Sequelize.INTEGER,
@@ -61,6 +63,7 @@ export default sequelizeInstance => {
       timestamps: true,
       paranoid: true,
       underscored: true,
+      tableName,
     }
   )
 

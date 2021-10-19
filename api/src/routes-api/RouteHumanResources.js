@@ -2,7 +2,7 @@ import Route/*, { Access }*/ from './Route'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
-    super({ ...params, model: 'humanresources' })
+    super({ ...params, model: 'HumanResources' })
   }
 
   @Route.Get({

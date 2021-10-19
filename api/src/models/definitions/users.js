@@ -2,9 +2,11 @@ import Sequelize from 'sequelize'
 import { controlPassword, validateEmail } from '../../utils/utils'
 import { crypt } from '../../utils'
 
+const tableName = 'Users'
+
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
-    'Users',
+    tableName,
     {
       id: {
         type: Sequelize.INTEGER,
@@ -62,6 +64,7 @@ export default (sequelizeInstance) => {
       timestamps: true,
       paranoid: true,
       underscored: true,
+      tableName,
     }
   )
 

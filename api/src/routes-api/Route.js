@@ -32,7 +32,7 @@ export default class Route extends RouteBase {
     }
     this.assertUnauthorized(id)
 
-    let user = await this.models.users.findOne({ attributes: ['id', 'email', 'role', 'first_name', 'last_name'], where: {
+    let user = await this.models.Users.findOne({ attributes: ['id', 'email', 'role', 'first_name', 'last_name'], where: {
       id,
       status: 1,
     }, raw: true })

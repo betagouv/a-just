@@ -1,8 +1,10 @@
 import Sequelize from 'sequelize'
 
+const tableName = 'ContentieuxReferentiels'
+
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
-    'ContentieuxReferentiels',
+    tableName,
     {
       id: {
         type: Sequelize.INTEGER,
@@ -45,6 +47,7 @@ export default sequelizeInstance => {
       timestamps: true,
       paranoid: true,
       underscored: true,
+      tableName,
     }
   )
 
