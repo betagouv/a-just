@@ -1,4 +1,6 @@
 import Sequelize from 'sequelize'
+import { controlPassword, validateEmail } from '../../utils/utils'
+import { crypt } from '../../utils'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -66,6 +68,34 @@ export default (sequelizeInstance) => {
   Model.associate = function (models) {
     return models
   }
+
+
+
+  Model.addHook('beforeCreate', (user) => {
+    if (!user.first_name || user.first_name.length < 2) {
+      throw 'Prénom non valide!'
+    }
+
+    if (!user.last_name || user.last_name.length < 2) {
+      throw 'Nom non valide!'
+    }
+
+    if (validateEmail(user.email) === false) {
+      throw 'Email non valide!'
+    }
+
+    if (controlPassword(user.password) === false) {
+      throw 'Mot de passe trop faible!'
+    }
+
+    user.password = crypt.encryptPassword(user.password)
+  })
+
+  Model.addHook('beforeUpdate', async (user) => {
+    if (user.email !== undefined && validateEmail(user.email) === false) {
+      throw 'Email non valide!'
+    }
+  })
 
   return Model
 }

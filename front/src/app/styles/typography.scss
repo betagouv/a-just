@@ -1,3 +1,5 @@
+@import "./fonts/marianne/Marianne.scss";
+
 html,
 body,
 button,
@@ -9,52 +11,56 @@ h5,
 h6,
 p,
 input {
-	font-family: "Roboto";
-	margin: 0;
+  font-family: "Marianne";
+  margin: 0;
 }
 
 h1 {
-	font-size: 40px;
-	line-height: 46px;
-	color: fColor(ckale);
+  font-size: 40px;
+  line-height: 48px;
+  color: fColor(cblack);
 }
 
 h2 {
-	font-size: 32px;
-	line-height: 34px;
-	color: fColor(ckale);
+  font-size: 32px;
+  line-height: 40px;
+  color: fColor(cblack);
 }
 
 h3 {
-	font-size: 28px;
-	color: fColor(ckale);
+  font-size: 28px;
+  line-height: 36px;
+  color: fColor(cblack);
 }
 
 h4 {
-	font-size: 24px;
-	color: fColor(ckale);
+  font-size: 24px;
+  line-height: 32px;
+  color: fColor(cblack);
 }
 
 h5 {
-	font-size: 20px;
-	color: fColor(ckale);
+  font-size: 22px;
+  line-height: 28px;
+  color: fColor(cblack);
 }
 
 h6 {
-	font-size: 18px;
-	color: fColor(ckale);
+  font-size: 20px;
+  line-height: 28px;
+  color: fColor(cblack);
 }
 
 p,
 li {
-	font-size: 16px;
-	color: fColor(ckale);
+  font-size: 16px;
+  color: fColor(cblack);
 
-	&.s {
-		font-size: 14px;
-	}
+  &.s {
+    font-size: 14px;
+  }
 
-	&.xs {
-		font-size: 11px;
-	}
+  &.xs {
+    font-size: 11px;
+  }
 }

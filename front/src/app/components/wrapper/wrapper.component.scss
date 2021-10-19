@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  height: 100%;
+}
+
+.menu {
+  .logo {
+    width: 200px;
+  }
+
+  a {
+    display: block;
+    padding: 16px 16px;
+  }
+}
+
+.contener {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
