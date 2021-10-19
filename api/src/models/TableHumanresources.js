@@ -1,7 +1,7 @@
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name'],
+      attributes: ['id', 'first_name', 'last_name', 'etp'],
       where: {
         enable: true,
       },
@@ -19,6 +19,7 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
+        etp: list[i].etp,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         role: {

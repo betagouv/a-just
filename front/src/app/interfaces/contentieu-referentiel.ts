@@ -1,6 +1,6 @@
 export interface ContentieuReferentielInterface {
 	id?: number;
-	codeNac?: string;
+	codeNac: string;
 	label?: string;
 	parentId?: number;	
 }

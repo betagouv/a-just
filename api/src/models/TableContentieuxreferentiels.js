@@ -1,3 +1,5 @@
+import { snakeToCamelArray } from '../utils/utils'
+
 export default (sequelizeInstance, Model) => {
   Model.getMainTitles = async () => {
     const list = await Model.findAll({
@@ -5,9 +7,10 @@ export default (sequelizeInstance, Model) => {
       where: {
         parent_id: null,
       },
+      raw: true,
     })
 
-    return list
+    return snakeToCamelArray(list)
   }
 
   return Model

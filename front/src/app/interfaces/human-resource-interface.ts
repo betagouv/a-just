@@ -1,3 +1,4 @@
+import { ActivityInterface } from "./activity";
 import { HRPositionInterface } from "./hr-position";
 import { HRRoleInterface } from "./hr-role";
 import { JuridictionInterface } from "./juridiction";
@@ -12,4 +13,5 @@ export interface HumanResourceInterface {
 	role?: HRRoleInterface;
 	position?: HRPositionInterface;
 	juridiction?: JuridictionInterface;
+	activities?: ActivityInterface[];
 }

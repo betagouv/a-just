@@ -20,22 +20,22 @@
       <progression-bar [percent]="hr.etp"></progression-bar>
     </div>
     <div class="total-affected">
-      <progression-bar></progression-bar>
+      <progression-bar [percent]="totalActity(hr)"></progression-bar>
     </div>
     <div class="activities">
-      <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
-        <progression-bar [enable]="index % 2 === 1"></progression-bar>
+      <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
+        <progression-bar [enable]="index % 2 === 1" [(percent)]="ref.percent"></progression-bar>
       </div>
     </div>
   </div>
 
   <div class="footer-list">
     <div class="profil">Effectif {{ humanResources.length }}</div>
-    <div class="work-time">ETP Dispo</div>
-    <div class="total-affected">ETP affectés </div>
+    <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
+    <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of referentiel">
-        xx
+        {{ totalByActivity(ref.codeNac) }}
       </div>
     </div>
   </div>

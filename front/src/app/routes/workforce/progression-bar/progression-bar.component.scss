@@ -17,12 +17,14 @@
 
     &.background-bar {
       opacity: 0.2;
+      cursor: pointer;
     }
 
     &.progress-bar {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
 
       p {
         color: white;
