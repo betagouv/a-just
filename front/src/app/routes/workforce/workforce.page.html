@@ -5,7 +5,7 @@
     <div class="total-affected">Affectation</div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ ref.id }}
+        {{ ref.label }}
       </div>
     </div>
   </div>
@@ -14,7 +14,7 @@
       Logo
       {{ hr.firstName}}
       {{ hr.lastName}}
-      {{ hr.position && hr.position.label}}
+      {{ hr.fonction && hr.fonction.label}}
     </div>
     <div class="work-time">
       <progression-bar [percent]="hr.etp"></progression-bar>
@@ -35,7 +35,7 @@
     <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ totalByActivity(ref.codeNac) }}
+        {{ totalByActivity(ref.label) }}
       </div>
     </div>
   </div>

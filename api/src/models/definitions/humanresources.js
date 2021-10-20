@@ -25,11 +25,11 @@ export default sequelizeInstance => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      hr_position_id: {
+      hr_categorie_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      hr_role_id: {
+      hr_fonction_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
@@ -76,8 +76,8 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {  
-    Model.hasOne(models.HRPositions, { foreignKey: 'id', sourceKey: 'hr_position_id' })  
-    Model.hasOne(models.HRRoles, { foreignKey: 'id', sourceKey: 'hr_role_id' })    
+    Model.hasOne(models.HRCategories, { foreignKey: 'id', sourceKey: 'hr_categorie_id' })  
+    Model.hasOne(models.HRFonctions, { foreignKey: 'id', sourceKey: 'hr_fonction_id' })    
     Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' })     
     
     return models

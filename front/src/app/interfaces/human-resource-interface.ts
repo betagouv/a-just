@@ -1,6 +1,6 @@
 import { ActivityInterface } from "./activity";
-import { HRPositionInterface } from "./hr-position";
-import { HRRoleInterface } from "./hr-role";
+import { HRCategoryInterface } from "./hr-category";
+import { HRFonctionInterface } from "./hr-fonction";
 import { JuridictionInterface } from "./juridiction";
 
 export interface HumanResourceInterface {
@@ -10,8 +10,8 @@ export interface HumanResourceInterface {
 	coverUrl?: string;
 	etp?: number;
 	enable?: boolean;
-	role?: HRRoleInterface;
-	position?: HRPositionInterface;
+	category?: HRCategoryInterface;
+	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;
 	activities?: ActivityInterface[];
 }

@@ -7,10 +7,10 @@ export default (sequelizeInstance, Model) => {
       },
       include: [{
         attributes: ['label'],
-        model: Model.models.HRRoles,
+        model: Model.models.HRCategories,
       }, {
         attributes: ['label'],
-        model: Model.models.HRPositions,
+        model: Model.models.HRFonctions,
       }],
       raw: true,
     })
@@ -22,11 +22,11 @@ export default (sequelizeInstance, Model) => {
         etp: list[i].etp,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
-        role: {
-          label: list[i]['HRRole.label'],
+        category: {
+          label: list[i]['HRCategories.label'],
         },
-        position: {
-          label: list[i]['HRPosition.label'],
+        fonction: {
+          label: list[i]['HRFonctions.label'],
         },
       }
     }

@@ -1,10 +1,10 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('humanresources', 'date_entree', {
+    await queryInterface.addColumn('HumanResources', 'date_entree', {
       type: Sequelize.DATE,
       allowNull: true,
     })
-    await queryInterface.addColumn('humanresources', 'date_sortie', {
+    await queryInterface.addColumn('HumanResources', 'date_sortie', {
       type: Sequelize.DATE,
       allowNull: true,
     })

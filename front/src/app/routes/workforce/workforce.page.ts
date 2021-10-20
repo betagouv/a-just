@@ -15,26 +15,10 @@ export class WorkforcePage implements OnInit {
   constructor(private humanResourceService: HumanResourceService) {}
 
   ngOnInit() {
-    this.humanResourceService.getCurrentHR().then((result) => {
-      this.referentiel = result.contentieuxReferentiel;
-
-      this.humanResources = result.hr.map((hr: HumanResourceInterface) => {
-        const activities = hr.activities || [];
-
-        // control and create empty activity
-        this.referentiel.map((r: ContentieuReferentielInterface) => {
-          if (activities.findIndex((a) => r.codeNac === a.codeNac) === -1) {
-            activities.push({
-              codeNac: r.codeNac,
-              percent: 0,
-            });
-          }
-        });
-
-        hr.activities = activities;
-        return hr;
-      });
-    });
+    this.humanResourceService.hr.subscribe((hr) => (this.humanResources = hr));
+    this.humanResourceService.contentieuxReferentiel.subscribe(
+      (ref) => (this.referentiel = ref)
+    );
   }
 
   totalActity(hr: HumanResourceInterface) {
@@ -59,9 +43,9 @@ export class WorkforcePage implements OnInit {
     let total = 0;
 
     this.humanResources.map((hr) => {
-      const activities = hr.activities || []
-      const find = activities.find(a => a.codeNac === codeNac)
-      if(find) {
+      const activities = hr.activities || [];
+      const find = activities.find((a) => a.codeNac === codeNac);
+      if (find) {
         total += (find.percent || 0) * (hr.etp || 0);
       }
     });
