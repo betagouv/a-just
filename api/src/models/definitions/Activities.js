@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HRPositions'
+const tableName = 'Activities'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,8 +13,28 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
+      juridiction_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      periode: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      contentieux: {
         type: Sequelize.STRING(255),
+        allowNull: false,
+      },
+      entrees: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      sorties: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      stock: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {

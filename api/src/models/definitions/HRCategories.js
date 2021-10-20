@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'ContentieuxReferentiels'
+const tableName = 'HRCategories'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,33 +13,9 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      niveau_1: {
+      label: {
         type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_2: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_3: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_4: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_5: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_6: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      average_processing_time: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,

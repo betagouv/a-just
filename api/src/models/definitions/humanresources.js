@@ -37,6 +37,14 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      date_entree: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      date_sortie: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       etp: {
         type: Sequelize.FLOAT,
         allowNull: true,
