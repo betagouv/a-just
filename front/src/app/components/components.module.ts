@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { WrapperComponent } from './wrapper/wrapper.component';
 import { SpeedometerComponent } from './speedometer/speedometer.component';
+import { PopupComponent } from './popup/popup.component';
 
-const list = [WrapperComponent, SpeedometerComponent];
+const list = [WrapperComponent, SpeedometerComponent, PopupComponent];
 
 @NgModule({
   declarations: [...list],
