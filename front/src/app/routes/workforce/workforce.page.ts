@@ -52,4 +52,8 @@ export class WorkforcePage implements OnInit {
 
     return total.toFixed(2);
   }
+
+  addHR() {
+    this.humanResourceService.createHumanResource()
+  }
 }

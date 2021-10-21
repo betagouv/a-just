@@ -1,6 +1,8 @@
 <ng-template [ngIf]="enable">
-  <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()"></div>
-  <div class="progress-bar" [style.height.%]="percent || 0" [style.backgroundColor]="color" (click)="changePercent()">
+  <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">
+  </div>
+  <div class="progress-bar" [style.height.%]="percent || 0" [style.backgroundColor]="color" (click)="changePercent()"
+    [class.seleted]="selected">
     <p>{{percent || 0}}%</p>
   </div>
 </ng-template>

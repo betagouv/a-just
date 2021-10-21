@@ -1,6 +1,8 @@
 <aj-wrapper title="Effectifs">
   <div class="header-list">
-    <div class="profil"></div>
+    <div class="profil">
+      <button (click)="addHR()">Ajouter un profil</button>
+    </div>
     <div class="work-time">Temps de travail</div>
     <div class="total-affected">Affectation</div>
     <div class="activities">
@@ -17,10 +19,10 @@
       {{ hr.fonction && hr.fonction.label}}
     </div>
     <div class="work-time">
-      <progression-bar [percent]="(hr.etp || 0) * 100"></progression-bar>
+      <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
     </div>
     <div class="total-affected">
-      <progression-bar [percent]="totalActity(hr)"></progression-bar>
+      <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
     </div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
