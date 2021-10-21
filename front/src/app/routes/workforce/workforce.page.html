@@ -1,3 +1,55 @@
-<aj-wrapper>
-  <h1>Effectifs</h1>
+<aj-wrapper title="Effectifs">
+  <div class="header-list">
+    <div class="profil">
+      <button (click)="addHR()">Ajouter un profil</button>
+    </div>
+    <div class="work-time">Temps de travail</div>
+    <div class="total-affected">Affectation</div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of referentiel">
+        {{ ref.label }}
+      </div>
+    </div>
+  </div>
+  <div class="item-list" *ngFor="let hr of humanResources">
+    <div class="profil">
+      Logo
+      {{ hr.firstName}}
+      {{ hr.lastName}}
+      {{ hr.fonction && hr.fonction.label}}
+      <button (click)="editHR(hr)">Modifier</button>
+    </div>
+    <div class="work-time">
+      <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
+    </div>
+    <div class="total-affected">
+      <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
+    </div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
+        <progression-bar [(percent)]="ref.percent"></progression-bar>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-list">
+    <div class="profil">Effectif {{ humanResources.length }}</div>
+    <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
+    <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
+    <div class="activities">
+      <div class="sub-item" *ngFor="let ref of referentiel">
+        {{ totalByActivity(ref.label) }}
+      </div>
+    </div>
+  </div>
 </aj-wrapper>
+
+<aj-popup *ngIf="onEditHR" [title]="onEditHR.firstName + ' ' + onEditHR.lastName"
+  [actions]="[ { id: 'save', content: 'Modifier', fill: true }, { id: 'delete', content: 'Supprimer le profil', red: true }, { id: 'close', content: 'Fermer' } ]"
+  [closeIcon]="true" (onClose)="onEditHRAction({id:'close', content: 'Fermer'})"
+  (selectedAction)="onEditHRAction($event)" class="width-500">
+  <form [formGroup]="formEditHR">
+    <div class="label-aj">Temps de travail en %</div>
+    <input formControlName="etp" type="number" />
+  </form>
+</aj-popup>

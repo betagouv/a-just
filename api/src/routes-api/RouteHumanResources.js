@@ -1,14 +1,17 @@
-import Route/*, { Access }*/ from './Route'
+import Route, { Access } from './Route'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
-    super({ ...params, model: 'humanresources' })
+    super({ ...params, model: 'HumanResources' })
   }
 
   @Route.Get({
-    //accesses: [Access.isAdmin],
+    accesses: [Access.isLogin],
   })
-  async getAll (ctx) {
-    this.sendOk(ctx, [])
+  async getCurrentHr (ctx) {
+    this.sendOk(ctx, {
+      hr: await this.model.getCurrentHr(),
+      contentieuxReferentiel: await this.model.models.ContentieuxReferentiels.getMainTitles(),
+    })
   }
 }

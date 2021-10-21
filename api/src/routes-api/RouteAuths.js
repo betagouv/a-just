@@ -4,7 +4,7 @@ import { Types } from '../utils/types'
 
 export default class RouteAuths extends Route {
   constructor (params) {
-    super({ ...params, model: 'users' })
+    super({ ...params, model: 'Users' })
   }
 
   @Route.Post({

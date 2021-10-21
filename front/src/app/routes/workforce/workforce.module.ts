@@ -3,9 +3,12 @@ import { RouterModule } from '@angular/router';
 import { WorkforcePage } from './workforce.page';
 import { WorkforcePageModule } from './workforce.routing';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { CommonModule } from '@angular/common';
+import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-	declarations: [ WorkforcePage ],
-	imports: [ WorkforcePageModule, RouterModule, ComponentsModule ]
+	declarations: [ WorkforcePage, ProgressionBarComponent ],
+	imports: [ WorkforcePageModule, RouterModule, ComponentsModule, CommonModule, FormsModule, ReactiveFormsModule ]
 })
 export class WorkforceModule {}

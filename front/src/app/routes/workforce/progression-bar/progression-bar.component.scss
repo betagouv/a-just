@@ -1,0 +1,41 @@
+@import "../../../styles/utils.scss";
+
+:host {
+  display: block;
+  position: relative;
+  height: 120px;
+  width: 50px;
+
+  > div {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    border-width: 2px;
+
+    &.seleted {
+      cursor: pointer;
+    }
+
+    &.background-bar {
+      opacity: 0.2;
+    }
+
+    &.progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      p {
+        color: white;
+      }
+    }
+
+    &.hidden-bar {
+      opacity: 0.5;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
+    }
+  }
+}

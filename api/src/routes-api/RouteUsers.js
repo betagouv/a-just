@@ -2,7 +2,7 @@ import Route from './Route'
 
 export default class RouteUsers extends Route {
   constructor (params) {
-    super({ ...params, model: 'users' })
+    super({ ...params, model: 'Users' })
   }
 
   @Route.Get()
