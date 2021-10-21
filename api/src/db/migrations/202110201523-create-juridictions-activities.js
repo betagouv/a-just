@@ -22,11 +22,11 @@ module.exports = {
       },
       entrees: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       sorties: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       stock: {
         type: Sequelize.INTEGER,
