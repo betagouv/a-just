@@ -67,9 +67,20 @@ export class HumanResourceService {
       });
 
     hr.push({
+      id: hr.length * -1,
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
     });
+  }
+
+  deleteHRById(HRId: number) {
+    const hr = this.hr.getValue();
+    const index = hr.findIndex((h) => h.id === HRId);
+
+    if (index !== -1) {
+      hr.splice(index, 1);
+      this.hr.next(hr);
+    }
   }
 }

@@ -4,7 +4,7 @@ import { HRFonctionInterface } from "./hr-fonction";
 import { JuridictionInterface } from "./juridiction";
 
 export interface HumanResourceInterface {
-	id?: number;
+	id: number;
 	firstName?: string;
 	lastName?: string;
 	coverUrl?: string;
