@@ -9,5 +9,15 @@
 </div>
 
 <div class="contener">
-  <ng-content></ng-content>
+  <div class="header">
+    <h3>{{title}}</h3>
+    <div class="actions">
+      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+    </div>
+  </div>
+  <div class="content">
+    <ng-content></ng-content>
+  </div>
 </div>
+
+<ng-template #defaultActionTemplate></ng-template>

@@ -1,0 +1,5 @@
+export interface HRFonctionInterface {
+	id?: number;
+	label?: string;
+	
+}

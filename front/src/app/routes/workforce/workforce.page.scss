@@ -1,6 +1,37 @@
 @import "../../styles/utils.scss";
 
-h1 {
-  color: fColor(primary);
-  margin: 32px 0;
+.header-list, .item-list, .footer-list {
+  display: flex;
+  width: 100%;
+}
+
+.item-list {
+  padding: 16px 0;
+  border-top: 1px solid rgba(fColor(cblack), 0.2);
+}
+
+.profil {
+  width: 200px;
+  margin-right: 16px;
+}
+
+.work-time {
+  width: 50px;
+  margin-right: 16px;
+}
+
+.total-affected {
+  width: 50px;
+  margin-right: 16px;
+}
+
+.activities {
+  display: flex;
+  flex: 1;
+
+  > .sub-item {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
 }

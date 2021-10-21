@@ -7,6 +7,11 @@ Dépôt de code du projet A-JUST du Ministère de la Justice
 
 2. Initialisation de la BDD
 ```
+// copie des fichiers d'environement
+cp .env.exemple .env
+cp api/.env.example api/.env
+
+// démarrage du docker postgress
 npm run db:build
 npm run db:start
 ```

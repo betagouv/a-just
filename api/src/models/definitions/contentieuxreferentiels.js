@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HumanResources'
+const tableName = 'ContentieuxReferentiels'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,44 +13,32 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      first_name: {
+      niveau_1: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      last_name: {
+      niveau_2: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      cover_url: {
-        type: Sequelize.TEXT,
+      niveau_3: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
-      hr_categorie_id: {
-        type: Sequelize.INTEGER,
+      niveau_4: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
-      hr_fonction_id: {
-        type: Sequelize.INTEGER,
+      niveau_5: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
-      juridiction_id: {
-        type: Sequelize.INTEGER,
+      niveau_6: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
-      date_entree: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      date_sortie: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      etp: {
+      average_processing_time: {
         type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      enable: {
-        type: Sequelize.BOOLEAN,
         allowNull: true,
       },
       created_at: {
@@ -75,11 +63,7 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {  
-    Model.hasOne(models.HRCategories, { foreignKey: 'id', sourceKey: 'hr_categorie_id' })  
-    Model.hasOne(models.HRFonctions, { foreignKey: 'id', sourceKey: 'hr_fonction_id' })    
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' })     
-    
+  Model.associate = function (models) {    
     return models
   }
 
