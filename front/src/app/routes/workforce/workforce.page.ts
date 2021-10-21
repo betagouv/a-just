@@ -22,7 +22,7 @@ export class WorkforcePage implements OnInit {
   }
 
   totalActity(hr: HumanResourceInterface) {
-    return Math.floor(sumBy(hr.activities || [], 'percent') * 100) / 100;
+    return sumBy(hr.activities || [], 'percent');
   }
 
   totalAvailable() {
@@ -33,7 +33,7 @@ export class WorkforcePage implements OnInit {
     let total = 0;
 
     this.humanResources.map((hr) => {
-      total += this.totalActity(hr) * (hr.etp || 0);
+      total += this.totalActity(hr) / 100 * (hr.etp || 0);
     });
 
     return total.toFixed(2);
@@ -44,9 +44,9 @@ export class WorkforcePage implements OnInit {
 
     this.humanResources.map((hr) => {
       const activities = hr.activities || [];
-      const find = activities.find((a) => a.codeNac === codeNac);
+      const find = activities.find((a) => a.label === codeNac);
       if (find) {
-        total += (find.percent || 0) * (hr.etp || 0);
+        total += (find.percent || 0) / 100 * (hr.etp || 0);
       }
     });
 

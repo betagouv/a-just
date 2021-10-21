@@ -17,14 +17,14 @@
       {{ hr.fonction && hr.fonction.label}}
     </div>
     <div class="work-time">
-      <progression-bar [percent]="hr.etp"></progression-bar>
+      <progression-bar [percent]="(hr.etp || 0) * 100"></progression-bar>
     </div>
     <div class="total-affected">
       <progression-bar [percent]="totalActity(hr)"></progression-bar>
     </div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
-        <progression-bar [enable]="index % 2 === 1" [(percent)]="ref.percent"></progression-bar>
+        <progression-bar [(percent)]="ref.percent"></progression-bar>
       </div>
     </div>
   </div>

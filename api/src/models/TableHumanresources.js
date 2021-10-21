@@ -28,6 +28,7 @@ export default (sequelizeInstance, Model) => {
         fonction: {
           label: list[i]['HRFonctions.label'],
         },
+        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id),
       }
     }
 

@@ -14,11 +14,11 @@ export class ProgressionBarComponent {
   constructor() {}
 
   changePercent() {
-    const newPercent = prompt('Nouveau pourcentage ?', ''+((this.percent || 0) * 100))
+    const newPercent = prompt('Nouveau pourcentage ?', ''+(this.percent || 0))
     
     const valueFormated = parseInt(newPercent || '')
     if(valueFormated && valueFormated !== NaN) {
-      this.percent = valueFormated / 100
+      this.percent = valueFormated
       this.percentChange.emit(this.percent)
     }
   }
