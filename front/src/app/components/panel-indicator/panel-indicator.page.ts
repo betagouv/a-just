@@ -21,13 +21,20 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
       in: 0,
       out: 0,
       stock: 0,
+      coverageRate: 0,      
     },
     before: {
       in: 0,
       out: 0,
       stock: 0,
+      coverageRate: 0,
     },
     etpAffected: 0,
+    averageDelay: {
+      day: 0,
+      month: 0,
+      coverageRateEstimate: 0,
+    },
     evolution: {
       in: 0,
       out: 0,
@@ -80,7 +87,7 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
       })
     );
 
-    this.datasFormated.etpAffected = this.calculateETP();
+    this.calculateETP();
 
     this.datasFormated.evolution = {
       in: this.calculateEvolution(
@@ -99,10 +106,13 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
   }
 
   quantifyDatas(list: any[]) {
+    const inTotal = sumBy(list, 'entrees');
+    const out = sumBy(list, 'sorties');
     return {
-      in: sumBy(list, 'entrees'),
-      out: sumBy(list, 'sorties'),
+      in: inTotal,
+      out,
       stock: sumBy(list, 'stock'),
+      coverageRate: out / inTotal,
     };
   }
 
@@ -119,6 +129,10 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
   }
 
   calculateETP() {
+    if(!this.datasFormated.now.in) {
+      return;
+    }
+
     const hr = this.humanResourceService.hr.getValue();
     let totalEtp = 0;
 
@@ -134,6 +148,31 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
         100;
     });
 
-    return totalEtp;
+    this.datasFormated.etpAffected = totalEtp;
+
+    const timeRequired = 0.5 // TODO faire venir de la base - ici 0.5 = 4h
+    const workTimePerYear = 210
+    const outgoingFlowForEach = workTimePerYear / timeRequired
+
+    // calculate estimate delay for resolution contentieux's
+    const diffTime = Math.abs(
+      this.rangeStart.getTime() - this.rangeEnd.getTime()
+    );
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // in "diffDays" we have this.datasFormated.now.in folders
+    // in 365 days we have this.datasFormated.now.in * 365 / diffDays
+    const totalNewFolderForAYear = this.datasFormated.now.in * 365 / diffDays
+
+    // outgoing flow
+    const outgoingFlow = this.datasFormated.now.stock + totalNewFolderForAYear - (outgoingFlowForEach * totalEtp)
+    
+    // estimate delay
+    const delayInDay = outgoingFlow * timeRequired / totalEtp
+
+    this.datasFormated.averageDelay = {
+      day: Math.floor(delayInDay),
+      month: Math.floor(delayInDay * 12 / workTimePerYear),
+      coverageRateEstimate: Math.floor((outgoingFlowForEach * totalEtp / totalNewFolderForAYear) * 100) / 100
+    }
   }
 }
