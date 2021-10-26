@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HumanResourceService } from './services/human-resource/human-resource.service';
+import { IndicatorService } from './services/indicator/indicator.service';
 import { UserService } from './services/user/user.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class AppComponent {
   constructor(
     router: Router,
     private humanResourceService: HumanResourceService,
+    private indicatorService: IndicatorService,
     private userService: UserService
   ) {
     router.events.subscribe((val) => {
@@ -21,6 +23,7 @@ export class AppComponent {
         this.dbReady = true;
         
         this.humanResourceService.initDatas();
+        this.indicatorService.initDatas();
       }
     });
   }

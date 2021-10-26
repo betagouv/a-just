@@ -9,5 +9,25 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  Model.getMainLabel = async (contentieux) => {
+    const ref = await Model.findOne({
+      attributes: ['niveau_1', 'niveau_3'],
+      where: {
+        niveau_4: contentieux,
+      },
+      raw: true,
+    })
+
+    if(ref) {
+      return {
+        mainTitle: ref.niveau_1,
+        title: ref.niveau_3,
+      }
+    }
+
+    return null
+  }
+
+
   return Model
 }

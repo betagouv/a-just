@@ -1,3 +1,12 @@
 <aj-wrapper title="Indicateurs">
-  <aj-speedometer></aj-speedometer>
+  <div class="board">
+    <div class="actions">
+      <aj-list-selection title="Période"></aj-list-selection>
+      <aj-list-selection title="Périmètre" [list]="mainCategories" [item]="perimeterSelected"
+        (itemChanged)="changePerimeter($event)"></aj-list-selection>
+    </div>
+    <div class="content">
+      <aj-panel-indicator *ngFor="let g of groups; trackBy: trackBy" [groupName]="g"></aj-panel-indicator>
+    </div>
+  </div>
 </aj-wrapper>
