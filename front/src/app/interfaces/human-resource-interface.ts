@@ -1,7 +1,7 @@
-import { ActivityInterface } from "./activity";
 import { HRCategoryInterface } from "./hr-category";
 import { HRFonctionInterface } from "./hr-fonction";
 import { JuridictionInterface } from "./juridiction";
+import { RHActivityInterface } from "./rh-activity";
 
 export interface HumanResourceInterface {
 	id: number;
@@ -13,5 +13,5 @@ export interface HumanResourceInterface {
 	category?: HRCategoryInterface;
 	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;
-	activities?: ActivityInterface[];
+	activities?: RHActivityInterface[];
 }
