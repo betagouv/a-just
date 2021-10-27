@@ -20,8 +20,6 @@ export class IndicatorService {
       this.mainCategories.next(Object.keys(groupBy(result, function(n) {
         return n.mainCategory
       })));
-
-      console.log(result)
     });
   }
 

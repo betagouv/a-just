@@ -3,6 +3,7 @@ import { sumBy } from 'lodash';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { IndicatorService } from 'src/app/services/indicator/indicator.service';
+import { monthDiff } from 'src/app/utils/dates';
 
 const now = new Date();
 
@@ -56,13 +57,13 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    const diffTime = Math.abs(
-      this.rangeStart.getTime() - this.rangeEnd.getTime()
-    );
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const date = new Date(this.rangeStart);
-    date.setDate(date.getDate() - diffDays);
-    this.rangeBeforeStart = new Date(date);
+    date.setMonth(date.getMonth() - monthDiff(this.rangeStart, this.rangeEnd));
+    this.rangeBeforeStart = new Date(date.getFullYear(), date.getMonth(), 1);
+
+    console.log('rangeBeforeStart', this.rangeBeforeStart)
+    console.log('rangeStart', this.rangeStart)
+    console.log('rangeEnd', this.rangeEnd)
   }
 
   calculDatas() {
