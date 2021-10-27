@@ -17,6 +17,10 @@ export default sequelizeInstance => {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
+      rank: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

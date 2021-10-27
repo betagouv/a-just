@@ -15,8 +15,9 @@
     <div class="profil">
       Logo
       {{ hr.firstName}}
-      {{ hr.lastName}}
-      {{ hr.fonction && hr.fonction.label}}
+      {{ hr.lastName}}<br />
+      {{ hr.fonction && hr.fonction.label}}<br />
+      {{ hr.category && hr.category.code}}<br />
       <button (click)="editHR(hr)">Modifier</button>
     </div>
     <div class="work-time">
