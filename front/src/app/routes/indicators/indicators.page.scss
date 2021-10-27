@@ -1,6 +1,17 @@
 @import "../../styles/utils.scss";
 
-h1 {
-  color: fColor(primary);
-  margin: 32px 0;
+.board {
+  display: flex;
+
+  > .actions {
+    width: 200px;
+    margin-right: 32px;
+  }
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+	grid-gap: 16px;
+  flex: 1;
 }

@@ -33,3 +33,14 @@ npm run start
 
 accéssible http://localhost:4200
 ```
+
+## Accès à la BDD
+Scalingo CLI
+```curl -O https://cli-dl.scalingo.com/install && bash install```
+
+Ajouter la clée SSH via le dashboard
+
+Passer en mode tunnel
+```
+scalingo --app a-just-staging db-tunnel "DATABASE_URL"
+```

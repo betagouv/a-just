@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ActivityInterface } from 'src/app/interfaces/activity';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
+import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ServerService } from '../http-server/server.service';
 
 @Injectable({
@@ -52,7 +52,7 @@ export class HumanResourceService {
 
   createHumanResource() {
     const hr = this.hr.getValue();
-    const activities: ActivityInterface[] = [];
+    const activities: RHActivityInterface[] = [];
 
     // control and create empty activity
     this.contentieuxReferentiel

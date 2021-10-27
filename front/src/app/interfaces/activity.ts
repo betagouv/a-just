@@ -1,6 +1,9 @@
 export interface ActivityInterface {
-	id?: number;
-	codeNac?: string;
-	label?: string;
-	percent?: number;
+	contentieux: string;
+	periode: Date;
+	entrees: number;
+	sorties: number;
+	stock: number;
+	group?: string;
+	mainCategory?: string;
 }

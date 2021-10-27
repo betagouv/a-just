@@ -1,0 +1,4 @@
+<p class="header-selection">{{title}}</p>
+<div class="list">
+    <p *ngFor="let i of list" (click)="onSelect(i.id)" [class.selected]="i.id === item">{{i.label}}</p>
+</div>
