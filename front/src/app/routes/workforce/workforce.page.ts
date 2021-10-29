@@ -1,27 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { sumBy } from 'lodash';
+import { MainClass } from 'src/app/libs/main-class';
 
 @Component({
   templateUrl: './workforce.page.html',
   styleUrls: ['./workforce.page.scss'],
 })
-export class WorkforcePage implements OnInit {
+export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   humanResources: HumanResourceInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
 
-  constructor(private humanResourceService: HumanResourceService) {}
+  constructor(private humanResourceService: HumanResourceService) {
+    super();
+  }
 
   ngOnInit() {
-    this.humanResourceService.hr.subscribe((hr) => {
+    this.watch(this.humanResourceService.hr.subscribe((hr) => {
       this.humanResources = hr;
       console.log('hr', hr);
-    });
-    this.humanResourceService.contentieuxReferentiel.subscribe(
+    }));
+    this.watch(this.humanResourceService.contentieuxReferentiel.subscribe(
       (ref) => (this.referentiel = ref)
-    );
+    ));
+  }
+
+  ngOnDestroy() {
+    this.watcherDestroy();
   }
 
   totalActity(hr: HumanResourceInterface) {

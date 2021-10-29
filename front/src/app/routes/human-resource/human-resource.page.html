@@ -1,6 +1,6 @@
 <aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)">
   <ng-template [ngIf]="currentHR">
-    <form [formGroup]="formEditHR">
+    <form [formGroup]="formEditHR" (submit)="onEdit()">
       <div class="label-aj">Nom</div>
       <input formControlName="firstName" />
       <div class="label-aj">Prénom</div>
@@ -8,14 +8,20 @@
       <div class="label-aj">Temps de travail en %</div>
       <input formControlName="etp" type="number" />
       <div class="label-aj">Date d'entrée</div>
-      <input formControlName="dateStart" />
+      <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateStart></mat-datepicker>
+
       <div class="label-aj">Date de sortie</div>
-      <input formControlName="dateEnd" />
+      <input formControlName="dateEnd" [matDatepicker]="pickerDateEnd" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateEnd></mat-datepicker>
+
       <div class="label-aj">Note</div>
       <textarea formControlName="note"></textarea>
 
       <div class="actions">
-        <button (click)="onEdit()">Modifier</button>
+        <button type="submit">Modifier</button>
         <button (click)="onReset()">Remise à zeros</button>
       </div>
     </form>

@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
+import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 
 @Component({
   templateUrl: './human-resource.page.html',
   styleUrls: ['./human-resource.page.scss'],
 })
-export class HumanResourcePage implements OnInit {
+export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   currentHR: HumanResourceInterface | null = null;
   formEditHR = new FormGroup({
     etp: new FormControl(null, [Validators.required]),
@@ -21,17 +22,24 @@ export class HumanResourcePage implements OnInit {
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    super();
+  }
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
+    this.watch(this.route.params.subscribe((params) => {
       if (params.id) {
         this.onLoad();
       }
-    });
+    }));
 
-    this.humanResourceService.hr.subscribe(() => this.onLoad());
+    this.watch(this.humanResourceService.hr.subscribe(() => this.onLoad()));
+  }
+
+  ngOnDestroy() {
+    this.watcherDestroy();
   }
 
   onLoad() {
@@ -73,6 +81,8 @@ export class HumanResourcePage implements OnInit {
       if (findIndex !== -1) {
         allHuman[findIndex] = { ...this.currentHR };
         this.humanResourceService.hr.next(allHuman);
+
+        this.router.navigate(['/effectifs'])
       }
     }
   }
