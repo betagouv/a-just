@@ -59,6 +59,14 @@ const routes: Routes = [
       import('./helps/helps.module').then((mod) => mod.HelpsModule),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'resource-humaine',
+    loadChildren: () =>
+      import('./human-resource/human-resource.module').then(
+        (mod) => mod.HumanResourceModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({

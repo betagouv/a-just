@@ -18,7 +18,7 @@
       {{ hr.lastName}}<br />
       {{ hr.fonction && hr.fonction.label}}<br />
       {{ hr.category && hr.category.code}}<br />
-      <button (click)="editHR(hr)">Modifier</button>
+      <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
     </div>
     <div class="work-time">
       <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
@@ -44,13 +44,3 @@
     </div>
   </div>
 </aj-wrapper>
-
-<aj-popup *ngIf="onEditHR" [title]="onEditHR.firstName + ' ' + onEditHR.lastName"
-  [actions]="[ { id: 'save', content: 'Modifier', fill: true }, { id: 'delete', content: 'Supprimer le profil', red: true }, { id: 'close', content: 'Fermer' } ]"
-  [closeIcon]="true" (onClose)="onEditHRAction({id:'close', content: 'Fermer'})"
-  (selectedAction)="onEditHRAction($event)" class="width-500">
-  <form [formGroup]="formEditHR">
-    <div class="label-aj">Temps de travail en %</div>
-    <input formControlName="etp" type="number" />
-  </form>
-</aj-popup>

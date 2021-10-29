@@ -3,7 +3,6 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { sumBy } from 'lodash';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -12,10 +11,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class WorkforcePage implements OnInit {
   humanResources: HumanResourceInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
-  onEditHR: HumanResourceInterface | undefined;
-  formEditHR = new FormGroup({
-    etp: new FormControl(null, [Validators.required]),
-  });
 
   constructor(private humanResourceService: HumanResourceService) {}
 
@@ -63,48 +58,5 @@ export class WorkforcePage implements OnInit {
 
   addHR() {
     this.humanResourceService.createHumanResource();
-  }
-
-  editHR(hr: HumanResourceInterface) {
-    this.onEditHR = hr;
-    this.formEditHR.get('etp')?.setValue((hr.etp || 0) * 100);
-  }
-
-  onEditHRAction(action: any) {
-    switch (action.id) {
-      case 'save':
-        if (this.formEditHR.invalid) {
-          alert('Attention à bien saisir toutes les informations!');
-        } else {
-          const hrIndex = this.humanResources.findIndex(
-            (h) => h.id === (this.onEditHR && this.onEditHR.id)
-          );
-
-          if (hrIndex !== -1) {
-            const { etp } = this.formEditHR.value;
-            this.humanResources[hrIndex].etp = etp / 100;
-            this.humanResourceService.hr.next(this.humanResources);
-          }
-
-          // on close popup
-          this.onEditHR = undefined;
-        }
-        break;
-      case 'delete':
-        if (
-          confirm('Supprimer la suppression de ce profil ?') &&
-          this.onEditHR
-        ) {
-          this.humanResourceService.deleteHRById(this.onEditHR.id);
-
-          // on close popup
-          this.onEditHR = undefined;
-        }
-        break;
-      case 'close':
-        // on close popup
-        this.onEditHR = undefined;
-        break;
-    }
   }
 }

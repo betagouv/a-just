@@ -3,7 +3,7 @@ import { sortBy } from 'lodash'
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note'],
       where: {
         enable: true,
       },
@@ -23,6 +23,9 @@ export default (sequelizeInstance, Model) => {
         etp: list[i].etp,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
+        dateStart: list[i].date_entree,
+        dateEnd: list[i].date_sortie,
+        note: list[i].note,
         category: {
           rank: list[i]['HRCategory.rank'],
           code: list[i]['HRCategory.code'],

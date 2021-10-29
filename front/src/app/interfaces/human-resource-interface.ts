@@ -14,4 +14,7 @@ export interface HumanResourceInterface {
 	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;
 	activities?: RHActivityInterface[];
+	dateStart?: Date;
+	dateEnd?: Date;
+	note?: string;
 }
