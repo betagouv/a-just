@@ -8,10 +8,10 @@ export default (sequelizeInstance, Model) => {
         enable: true,
       },
       include: [{
-        attributes: ['rank', 'code', 'label'],
+        attributes: ['id', 'rank', 'code', 'label'],
         model: Model.models.HRCategories,
       }, {
-        attributes: ['rank', 'label'],
+        attributes: ['id', 'rank', 'label'],
         model: Model.models.HRFonctions,
       }],
       raw: true,
@@ -27,11 +27,13 @@ export default (sequelizeInstance, Model) => {
         dateEnd: list[i].date_sortie,
         note: list[i].note,
         category: {
+          id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],
           code: list[i]['HRCategory.code'],
           label: list[i]['HRCategory.label'],
         },
         fonction: {
+          id: list[i]['HRFonction.id'],
           rank: list[i]['HRFonction.rank'],
           label: list[i]['HRFonction.label'],
         },

@@ -20,6 +20,16 @@
       <div class="label-aj">Note</div>
       <textarea formControlName="note"></textarea>
 
+      <div class="label-aj">Fonction</div>
+      <select formControlName="fonction">
+        <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
+      </select>
+
+      <div class="label-aj">Catégorie</div>
+      <select formControlName="category">
+        <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
+      </select>
+
       <div class="actions">
         <button type="submit">Modifier</button>
         <button (click)="onReset()">Remise à zeros</button>
