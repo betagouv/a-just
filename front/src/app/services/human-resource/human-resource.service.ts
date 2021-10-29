@@ -23,7 +23,7 @@ export class HumanResourceService {
 
       this.hr.next(
         result.hr.map((hr: HumanResourceInterface) => {
-          const activities = hr.activities || [];
+          /*const activities = hr.activities || [];
 
           // control and create empty activity
           result.contentieuxReferentiel.map(
@@ -37,7 +37,7 @@ export class HumanResourceService {
             }
           );
 
-          hr.activities = activities;
+          hr.activities = activities;*/
           return hr;
         })
       );

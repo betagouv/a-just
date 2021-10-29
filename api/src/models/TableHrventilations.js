@@ -1,7 +1,7 @@
 export default (sequelizeInstance, Model) => {
   Model.getActivitiesByHR = async (hrId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'rh_id', 'nac_id', 'percent'],
+      attributes: ['id', 'rh_id', 'nac_id', 'percent', 'date_start', 'date_stop'],
       where: {
         rh_id: hrId,
       },
@@ -16,7 +16,9 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         percent: list[i].percent,
-        label: list[i]['ContentieuxReferentiel.label'],
+        referentielId: list[i]['ContentieuxReferentiel.id'],
+        dateStart: list[i].date_start,
+        dateStop: list[i].date_stop,
       }
     }
 
