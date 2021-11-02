@@ -25,6 +25,14 @@ export default sequelizeInstance => {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
+      date_start: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      date_stop: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
