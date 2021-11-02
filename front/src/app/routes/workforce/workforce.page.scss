@@ -7,7 +7,11 @@
 
 .item-list {
   padding: 16px 0;
-  border-top: 1px solid rgba(fColor(cblack), 0.2);
+  border-top: 1px solid rgba(fColor(cblack), 0.2); 
+
+  &.disable {
+    opacity: 0.5;
+  }
 }
 
 .profil {

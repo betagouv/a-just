@@ -57,6 +57,10 @@ export default sequelizeInstance => {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       },
+      registration_number: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
