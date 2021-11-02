@@ -3,8 +3,8 @@ import { groupBy } from 'lodash'
 export default (sequelizeInstance, Model) => {
   Model.getMainTitles = async () => {
     const list = await Model.findAll({
-      attributes: ['id', ['niveau_3', 'label']],
-      group: ['niveau_3', 'id'],
+      attributes: [['niveau_3', 'label']],
+      group: ['niveau_3'],
       raw: true,
     })
 

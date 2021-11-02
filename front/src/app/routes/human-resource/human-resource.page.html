@@ -41,20 +41,39 @@
     <div class="right-panel">
       <h3>Activités</h3>
 
-      <div *ngFor="let acti of activities; let index = index">
-        {{acti | json}}
-        <input [(ngModel)]="acti.percent" type="number" />
-        <select [(ngModel)]="acti.referentielId">
-          <option *ngFor="let ref of contentieuxReferentiel" [value]="ref.id">{{ref.label}}</option>
-        </select>
-        <input [(ngModel)]="acti.dateStart" [matDatepicker]="pickerActiDateStart" />
-        <mat-datepicker-toggle matSuffix [for]="pickerActiDateStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerActiDateStart></mat-datepicker>
-        <input [(ngModel)]="acti.dateStop" [matDatepicker]="pickerActiDateStop" />
-        <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
-        <mat-datepicker #pickerActiDateStop></mat-datepicker>
-        <button (click)="activities.splice(index, 1)">Supprimer</button>
-      </div>
+      <ng-template ngFor let-acti [ngForOf]="activities" let-index="index">
+        <div class="activities">
+          <div>
+            <div class="label-aj">Temps de travail en %</div>
+            <input [(ngModel)]="acti.percent" type="number" />
+          </div>
+          <div>
+            <div class="label-aj">Contentieux</div>
+            <select [(ngModel)]="acti.label">
+              <option *ngFor="let ref of contentieuxReferentiel" [value]="ref.label">{{ref.label}}</option>
+            </select>
+          </div>
+          <div>
+            <div class="label-aj">Date de début</div>
+            <input [(ngModel)]="acti.dateStart" [matDatepicker]="pickerActiDateStart" />
+            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerActiDateStart></mat-datepicker>
+          </div>
+          <div>
+            <div class="label-aj">Date de fin</div>
+            <input [(ngModel)]="acti.dateStop" [matDatepicker]="pickerActiDateStop" />
+            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
+            <mat-datepicker #pickerActiDateStop></mat-datepicker>
+          </div>
+          <div>
+          </div>
+          <div>
+            <button (click)="activities.splice(index, 1)">Supprimer</button>
+          </div>
+        </div>
+
+        <hr />
+      </ng-template>
 
       <button (click)="activities.push({})">Ajouter une date d'activitée</button>
     </div>

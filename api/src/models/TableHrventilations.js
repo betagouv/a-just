@@ -17,6 +17,7 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         percent: list[i].percent,
         referentielId: list[i]['ContentieuxReferentiel.id'],
+        label: list[i]['ContentieuxReferentiel.label'],
         dateStart: list[i].date_start,
         dateStop: list[i].date_stop,
       }

@@ -2,8 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { sumBy } from 'lodash';
+import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
+import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -18,13 +19,40 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watch(this.humanResourceService.hr.subscribe((hr) => {
-      this.humanResources = hr;
-      console.log('hr', hr);
-    }));
-    this.watch(this.humanResourceService.contentieuxReferentiel.subscribe(
-      (ref) => (this.referentiel = ref)
-    ));
+    this.watch(
+      this.humanResourceService.hr.subscribe((hr) => {
+        this.humanResources = [];
+
+        const now = new Date();
+        hr.map((h) => {
+          const activities = (h.activities || []).filter(
+            this.humanResourceService.filterActivityNow
+          );
+
+          this.humanResourceService.contentieuxReferentiel
+            .getValue()
+            .map((r: ContentieuReferentielInterface) => {
+              if (activities.findIndex((a) => r.label === a.label) === -1) {
+                activities.push({
+                  label: r.label,
+                  percent: 0,
+                  dateStart: new Date(),
+                });
+              }
+            });
+
+          this.humanResources.push({
+            ...h,
+            activities: sortBy(activities, 'label'),
+          });
+        });
+      })
+    );
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe(
+        (ref) => (this.referentiel = sortBy(ref, 'label'))
+      )
+    );
   }
 
   ngOnDestroy() {
@@ -65,5 +93,29 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   addHR() {
     this.humanResourceService.createHumanResource();
+  }
+
+  onUpdateActivity(
+    activity: RHActivityInterface,
+    percent: number,
+    hr: HumanResourceInterface
+  ) {
+    const now = new Date();
+    const activitiesIndex = (hr.activities || []).findIndex((a: any) => {
+      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
+      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+
+      return (
+        a.label === activity.label &&
+        (dateStop === null ||
+          (dateStop.getTime() >= now.getTime() &&
+            (dateStart === null || dateStart.getTime() <= now.getTime())))
+      );
+    });
+
+    if(activitiesIndex !== -1 && hr.activities) {
+      hr.activities[activitiesIndex].percent = percent;
+      this.humanResourceService.updateHR(this.humanResources);
+    }
   }
 }
