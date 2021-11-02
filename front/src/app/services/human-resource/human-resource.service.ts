@@ -20,27 +20,7 @@ export class HumanResourceService {
   initDatas() {
     this.getCurrentHR().then((result) => {
       this.contentieuxReferentiel.next(result.contentieuxReferentiel);
-
-      this.hr.next(
-        result.hr.map((hr: HumanResourceInterface) => {
-          const activities = hr.activities || [];
-
-          // control and create empty activity
-          result.contentieuxReferentiel.map(
-            (r: ContentieuReferentielInterface) => {
-              if (activities.findIndex((a) => r.label === a.label) === -1) {
-                activities.push({
-                  label: r.label,
-                  percent: 0,
-                });
-              }
-            }
-          );
-
-          hr.activities = activities;
-          return hr;
-        })
-      );
+      this.hr.next(result.hr);
     });
   }
 
@@ -82,5 +62,32 @@ export class HumanResourceService {
       hr.splice(index, 1);
       this.hr.next(hr);
     }
+  }
+
+  filterActivityNow() {
+    const now = new Date();
+    return (a: any) => {
+      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
+      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+
+      return (
+        dateStop === null ||
+        (dateStop.getTime() >= now.getTime() &&
+          (dateStart === null || dateStart.getTime() <= now.getTime()))
+      );
+    }
+  }
+
+  updateHR (list: HumanResourceInterface[]) {
+    const newList: HumanResourceInterface[] = [];
+
+    list.map(l => {
+      newList.push({
+        ...l,
+        activities: (l.activities || []).filter(a => a.percent),
+      })
+    })
+
+    this.hr.next(newList);
   }
 }

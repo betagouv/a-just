@@ -1,0 +1,83 @@
+<aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)">
+  <div *ngIf="currentHR" class="profil">
+    <div class="left-panel">
+      <h3>Profil</h3>
+      <form [formGroup]="formEditHR" (submit)="onEdit()">
+        <div class="label-aj">Nom</div>
+        <input formControlName="firstName" />
+        <div class="label-aj">Prénom</div>
+        <input formControlName="lastName" />
+        <div class="label-aj">Temps de travail en %</div>
+        <input formControlName="etp" type="number" />
+        <div class="label-aj">Date d'entrée</div>
+        <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
+        <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDateStart></mat-datepicker>
+
+        <div class="label-aj">Date de sortie</div>
+        <input formControlName="dateEnd" [matDatepicker]="pickerDateEnd" />
+        <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDateEnd></mat-datepicker>
+
+        <div class="label-aj">Note</div>
+        <textarea formControlName="note"></textarea>
+
+        <div class="label-aj">Fonction</div>
+        <select formControlName="fonction">
+          <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
+        </select>
+
+        <div class="label-aj">Catégorie</div>
+        <select formControlName="category">
+          <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
+        </select>
+
+        <div class="actions">
+          <button type="submit">Modifier</button>
+          <button type="button" (click)="onReset()">Remise à zeros</button>
+        </div>
+      </form>
+    </div>
+    <div class="right-panel">
+      <h3>Activités</h3>
+
+      <ng-template ngFor let-acti [ngForOf]="activities" let-index="index">
+        <div class="activities">
+          <div>
+            <div class="label-aj">Temps de travail en %</div>
+            <input [(ngModel)]="acti.percent" type="number" />
+          </div>
+          <div>
+            <div class="label-aj">Contentieux</div>
+            <select [(ngModel)]="acti.label">
+              <option *ngFor="let ref of contentieuxReferentiel" [value]="ref.label">{{ref.label}}</option>
+            </select>
+          </div>
+          <div>
+            <div class="label-aj">Date de début</div>
+            <input [(ngModel)]="acti.dateStart" [matDatepicker]="pickerActiDateStart" />
+            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerActiDateStart></mat-datepicker>
+          </div>
+          <div>
+            <div class="label-aj">Date de fin</div>
+            <input [(ngModel)]="acti.dateStop" [matDatepicker]="pickerActiDateStop" />
+            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
+            <mat-datepicker #pickerActiDateStop></mat-datepicker>
+          </div>
+          <div>
+          </div>
+          <div>
+            <button (click)="activities.splice(index, 1)">Supprimer</button>
+          </div>
+        </div>
+
+        <hr />
+      </ng-template>
+
+      <button (click)="activities.push({})">Ajouter une date d'activitée</button>
+    </div>
+  </div>
+
+  <a routerLink="/effectifs">Retour</a>
+</aj-wrapper>

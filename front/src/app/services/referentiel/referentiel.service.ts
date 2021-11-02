@@ -12,17 +12,8 @@ export class ReferentielService {
 
   initDatas() {
     this.loadReferentiels().then(result => {
-      console.log(result);
+      // console.log(result);
     })
-    /*this.getActivitiesGrouped().then((result) => {
-      this.allActivities = result;
-
-      this.mainCategories.next(Object.keys(groupBy(result, function(n) {
-        return n.mainCategory
-      })));
-
-      console.log(result)
-    });*/
   }
 
   loadReferentiels() {

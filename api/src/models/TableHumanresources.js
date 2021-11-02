@@ -3,15 +3,15 @@ import { sortBy } from 'lodash'
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note'],
       where: {
         enable: true,
       },
       include: [{
-        attributes: ['rank', 'code', 'label'],
+        attributes: ['id', 'rank', 'code', 'label'],
         model: Model.models.HRCategories,
       }, {
-        attributes: ['rank', 'label'],
+        attributes: ['id', 'rank', 'label'],
         model: Model.models.HRFonctions,
       }],
       raw: true,
@@ -23,12 +23,17 @@ export default (sequelizeInstance, Model) => {
         etp: list[i].etp,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
+        dateStart: list[i].date_entree,
+        dateEnd: list[i].date_sortie,
+        note: list[i].note,
         category: {
+          id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],
           code: list[i]['HRCategory.code'],
           label: list[i]['HRCategory.label'],
         },
         fonction: {
+          id: list[i]['HRFonction.id'],
           rank: list[i]['HRFonction.rank'],
           label: list[i]['HRFonction.label'],
         },
