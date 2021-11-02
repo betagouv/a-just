@@ -30,6 +30,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     note: new FormControl(null),
     fonction: new FormControl(null, [Validators.required]),
     category: new FormControl(null, [Validators.required]),
+    enable: new FormControl(null, [Validators.required]),
   });
 
   constructor(
@@ -71,6 +72,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
       this.formEditHR.get('dateEnd')?.setValue(findUser.dateEnd || null);
       this.formEditHR.get('note')?.setValue(findUser.note || '');
+      this.formEditHR.get('enable')?.setValue(findUser.enable);
       this.formEditHR.get('category')?.setValue(findUser.category && findUser.category.id || null);
       this.formEditHR.get('fonction')?.setValue(findUser.fonction && findUser.fonction.id || null);
       this.activities = JSON.parse(JSON.stringify(findUser.activities || []))
@@ -84,13 +86,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (this.formEditHR.invalid) {
       alert("Vous devez saisir l'ensemble des champs !");
     } else if (this.currentHR) {
-      const { etp, firstName, lastName, dateStart, dateEnd, note, category, fonction } = this.formEditHR.value;
+      const { etp, firstName, lastName, dateStart, dateEnd, note, category, fonction, enable } = this.formEditHR.value;
       this.currentHR.etp = (etp || 0) / 100;
       this.currentHR.firstName = firstName;
       this.currentHR.lastName = lastName;
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
+      this.currentHR.enable = enable === "true" ? true : false;
       this.currentHR.category = this.categories.find(c => c.id === +category);
       this.currentHR.fonction = this.fonctions.find(f => f.id === +fonction);
       this.currentHR.activities = this.activities;

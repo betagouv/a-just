@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <div class="item-list" *ngFor="let hr of humanResources">
+  <div class="item-list" *ngFor="let hr of humanResources" [class.disable]="!hr.enable">
     <div class="profil">
       Logo
       {{ hr.firstName}}
@@ -28,7 +28,8 @@
     </div>
     <div class="activities">
       <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
-        <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)"></progression-bar>
+        <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)"
+          [selected]="hr.enable ? true : false"></progression-bar>
       </div>
     </div>
   </div>
