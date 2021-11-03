@@ -1,9 +1,13 @@
 import { groupBy } from 'lodash'
+import { Op } from 'sequelize'
 
 export default (sequelizeInstance, Model) => {
   Model.getMainTitles = async () => {
     const list = await Model.findAll({
       attributes: [['niveau_3', 'label']],
+      where: {
+        niveau_3: { [Op.not]: '' },
+      },
       group: ['niveau_3'],
       raw: true,
     })
@@ -65,6 +69,24 @@ export default (sequelizeInstance, Model) => {
 
     return formatToGraph()
   }
+
+  Model.importList = async (list) => {
+    // The service work by label name and not by id. Find "niveau_3" or "niveau_4" and not "id"
+    await Model.destroy({
+      where: {},
+      force: true,
+    })
+
+    for(let i = 0; i < list.length; i++) {
+      const ref = list[i]
+      await Model.create({ 
+        niveau_1: ref.niveau_1,
+        niveau_2: ref.niveau_2,
+        niveau_3: ref.niveau_3,
+        niveau_4: ref.niveau_4,
+      })
+    }
+  } 
 
   return Model
 }
