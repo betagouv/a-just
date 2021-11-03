@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
-    await models.users.create(
+    await models.Users.create(
       {
         email: 'fx@a-just.fr',
         first_name: 'François-Xavier',

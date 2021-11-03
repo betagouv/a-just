@@ -10,7 +10,6 @@ export default class RouteImports extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      // file: Types.file(),
     }),
     // accesses: [Access.isLogin],
   })
@@ -19,6 +18,19 @@ export default class RouteImports extends Route {
       delimiter: ',',
     })
     await this.model.importList(arrayOfHR)
+    this.sendOk(ctx, 'OK')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+    }),
+    // accesses: [Access.isLogin],
+  })
+  async importReferentiel (ctx) {
+    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+      delimiter: ',',
+    })
+    await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
     this.sendOk(ctx, 'OK')
   }
 }
