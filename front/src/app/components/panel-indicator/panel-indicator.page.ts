@@ -149,6 +149,9 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
         100;
     });
 
+    console.log('this.datasFormated.now.stock = STOCK', this.datasFormated.now.stock)
+    console.log('this.datasFormated.now.in = ', this.datasFormated.now.in)
+
     this.datasFormated.etpAffected = totalEtp;
 
     const timeRequired = 0.5 // TODO faire venir de la base - ici 0.5 = 4h
@@ -165,7 +168,8 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
     const totalNewFolderForAYear = this.datasFormated.now.in * 365 / diffDays
 
     // outgoing flow
-    const outgoingFlow = this.datasFormated.now.stock + totalNewFolderForAYear - (outgoingFlowForEach * totalEtp)
+    //const outgoingFlow = this.datasFormated.now.stock + totalNewFolderForAYear - (outgoingFlowForEach * totalEtp)
+    const outgoingFlow = this.datasFormated.now.stock / (outgoingFlowForEach * totalEtp)
     
     // estimate delay
     const delayInDay = outgoingFlow * timeRequired / totalEtp

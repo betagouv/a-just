@@ -31,6 +31,7 @@
 
 .header {
   height: 77px;
+  min-height: 77px;
   padding: 0 24px;
   border-bottom: 1px solid rgba(fColor(cblack), 0.2);
   display: flex;

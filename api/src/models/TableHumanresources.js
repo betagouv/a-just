@@ -1,5 +1,10 @@
 import { sortBy } from 'lodash'
 import { Op } from 'sequelize'
+import slugify from 'slugify'
+
+const now = new Date()
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
 
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async () => {
@@ -45,18 +50,14 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (list) => {
     const idList = []
-    const referentielMapping = {
-      'civil_non-specialise': 'Civil Non Spécialisé',
-      'contentieux_jaf': 'Contentieux JAF',
-      'contentieux_social': 'Contentieux Social',
-      'jld_civil': 'JLC civil',
-      'juges_des_enfants': 'JDE',
-      'penal': 'Pénal',
-      'soutien': 'Soutien',
-    }
+    const referentielMapping = {}
+
+    const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
+    referentielMappingList.map(ref => {
+      referentielMapping[slugify(ref.label.toLowerCase().replace(/'/, '-'))] = ref.label
+    })
 
     const getContentieuxId = async (label) => {
-      label = label.replace(/_/, ' ')
       const listCont = await Model.models.ContentieuxReferentiels.findAll({
         attributes: ['id', 'niveau_3', 'niveau_4'],
         where: {
@@ -66,7 +67,6 @@ export default (sequelizeInstance, Model) => {
         raw: true,
       })
 
-      console.log(label, listCont)
       return listCont.length ? listCont[0].id : null
     }
 
@@ -86,6 +86,7 @@ export default (sequelizeInstance, Model) => {
         etp: 1,
         first_name: '',
         last_name: '',
+        date_entree: today,
       }
       if(HRFromList.num_statut && HRFromList.num_statut === '1.0') {
         options.enable = true
@@ -129,9 +130,15 @@ export default (sequelizeInstance, Model) => {
         options.last_name = splitName[1]
       }
 
-      // date_affectation: '#20/07/2012',
-      // date_posad: '#15/09/2017',
-      // retire_du_temps_de_travail: '0.0',
+      if(HRFromList.date_affectation) {
+        HRFromList.date_affectation = HRFromList.date_affectation.replace(/#/, '')
+        const dateSplited = HRFromList.date_affectation.split('/')
+        if(dateSplited.length === 3) {
+          options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0]) 
+        }
+      }
+
+      // retire_du_temps_de_travail: '0.0', TODO a voir apres appel de lyon
 
       if(!findHRToDB) {
         // create
@@ -142,7 +149,7 @@ export default (sequelizeInstance, Model) => {
 
         // stop all ventilations
         await Model.models.HRVentilations.update({
-          date_stop: new Date(),
+          date_stop: today,
         }, {
           where: {
             rh_id: findHRToDB.dataValues.id,
@@ -155,9 +162,12 @@ export default (sequelizeInstance, Model) => {
       // memorize id list
       idList.push(findHRToDB.dataValues.id)
 
+      // add ventilations
       const objectList = Object.entries(HRFromList)
       for(let x = 0; x < objectList.length; x++) {
-        const [key, value] = objectList[x]
+        let [key, value] = objectList[x]
+        key = key.replace(/_/, '-').replace(/'/, '-')
+
         if(referentielMapping[key]) {
           const contentieuxId = await getContentieuxId(referentielMapping[key])
           const percent = parseFloat(value)
@@ -166,7 +176,7 @@ export default (sequelizeInstance, Model) => {
               rh_id: findHRToDB.dataValues.id,
               nac_id: contentieuxId,
               percent,
-              date_start: new Date(),
+              date_start: today,
             })        
           }
         }
