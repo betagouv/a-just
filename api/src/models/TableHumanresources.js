@@ -1,5 +1,4 @@
 import { sortBy } from 'lodash'
-import { Op } from 'sequelize'
 import slugify from 'slugify'
 
 const now = new Date()
@@ -48,9 +47,9 @@ export default (sequelizeInstance, Model) => {
     return sortBy(list, ['fonction.rank', 'category.rank', 'firstName', 'lastName'])
   }
 
-  Model.importList = async (list) => {
-    const idList = []
+  Model.importList = async (list, title) => {
     const referentielMapping = {}
+    const backupId = await Model.models.HRBackups.createWithLabel(title)
 
     const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
     referentielMappingList.map(ref => {
@@ -73,11 +72,6 @@ export default (sequelizeInstance, Model) => {
 
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
-      let findHRToDB = await Model.findOne({
-        where: {
-          registration_number: HRFromList.num_fonc,
-        },
-      })
       const options = {
         enable: false,
         juridiction_id: 1,
@@ -87,6 +81,7 @@ export default (sequelizeInstance, Model) => {
         first_name: '',
         last_name: '',
         date_entree: today,
+        backup_id: backupId,
       }
       if(HRFromList.num_statut && HRFromList.num_statut === '1.0') {
         options.enable = true
@@ -140,27 +135,11 @@ export default (sequelizeInstance, Model) => {
 
       // retire_du_temps_de_travail: '0.0', TODO a voir apres appel de lyon
 
-      if(!findHRToDB) {
-        // create
-        findHRToDB = await Model.create({
-          registration_number: HRFromList.num_fonc,
-          ...options,
-        })
-
-        // stop all ventilations
-        await Model.models.HRVentilations.update({
-          date_stop: today,
-        }, {
-          where: {
-            rh_id: findHRToDB.dataValues.id,
-          },
-        })
-      } else {
-        // update
-        findHRToDB = await findHRToDB.update(options)
-      }
-      // memorize id list
-      idList.push(findHRToDB.dataValues.id)
+      // create
+      const findHRToDB = await Model.create({
+        registration_number: HRFromList.num_fonc,
+        ...options,
+      })
 
       // add ventilations
       const objectList = Object.entries(HRFromList)
@@ -177,21 +156,12 @@ export default (sequelizeInstance, Model) => {
               nac_id: contentieuxId,
               percent,
               date_start: today,
+              backup_id: backupId,
             })        
           }
         }
       }
     }
-
-    
-    // all other HR move to "enable" = false
-    await Model.update({
-      enable: false,
-    }, {
-      where: {
-        id: { [Op.notIn]: idList },
-      },
-    })
   } 
 
   return Model
