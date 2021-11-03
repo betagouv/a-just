@@ -29,8 +29,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             this.humanResourceService.filterActivityNow
           );
 
-          console.log(JSON.parse(JSON.stringify(activities)));
-
           this.humanResourceService.contentieuxReferentiel
             .getValue()
             .map((r: ContentieuReferentielInterface) => {
