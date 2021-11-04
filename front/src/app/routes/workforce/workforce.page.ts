@@ -5,6 +5,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
+import { BackupInterface } from 'src/app/interfaces/backup';
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -13,6 +14,8 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   humanResources: HumanResourceInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
+  backups: BackupInterface[] = [];
+  backupId: number | null = null;
 
   constructor(private humanResourceService: HumanResourceService) {
     super();
@@ -53,6 +56,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         (ref) => (this.referentiel = sortBy(ref, 'label'))
       )
     );
+    this.watch(
+      this.humanResourceService.backups.subscribe((b) => (this.backups = b))
+    );
+    this.watch(
+      this.humanResourceService.backupId.subscribe((b) => (this.backupId = b))
+    );
   }
 
   ngOnDestroy() {
@@ -64,7 +73,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   totalAvailable() {
-    return sumBy(this.humanResources, 'etp');
+    return sumBy(this.humanResources, 'etp').toFixed(2);
   }
 
   totalRealyAffected() {
@@ -113,9 +122,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       );
     });
 
-    if(activitiesIndex !== -1 && hr.activities) {
+    if (activitiesIndex !== -1 && hr.activities) {
       hr.activities[activitiesIndex].percent = percent;
       this.humanResourceService.updateHR(this.humanResources);
     }
+  }
+
+  onChangeBackup(id: any) {
+    this.humanResourceService.backupId.next(id);
   }
 }

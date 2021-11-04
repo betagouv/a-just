@@ -1,4 +1,4 @@
-<aj-wrapper title="Effectifs">
+<aj-wrapper title="Effectifs" [actionTemplate]="actions">
   <div class="header-list">
     <div class="profil">
       <button (click)="addHR()">Ajouter un profil</button>
@@ -16,8 +16,8 @@
       Logo
       {{ hr.firstName}}
       {{ hr.lastName}}<br />
-      {{ hr.fonction && hr.fonction.label}}<br />
-      {{ hr.category && hr.category.code}}<br />
+      {{ hr.fonction && hr.fonction.code}}<br />
+      {{ hr.category && hr.category.label}}<br />
       <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
     </div>
     <div class="work-time">
@@ -45,3 +45,9 @@
     </div>
   </div>
 </aj-wrapper>
+
+<ng-template #actions>
+  Sauvegardes <select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
+    <option *ngFor="let back of backups" [value]="back.id">{{back.label}} {{back.date | date:"dd/mm/yyyy"}}</option>
+  </select>
+</ng-template>

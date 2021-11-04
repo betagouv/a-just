@@ -93,7 +93,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
-      this.currentHR.enable = enable === "true" ? true : false;
+      this.currentHR.enable = enable === "true" || enable ? true : false;
       this.currentHR.category = this.categories.find(c => c.id === +category);
       this.currentHR.fonction = this.fonctions.find(f => f.id === +fonction);
       this.currentHR.activities = this.activities;

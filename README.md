@@ -1,6 +1,9 @@
 # a-just
 Dépôt de code du projet A-JUST du Ministère de la Justice
 
+# Documentation
+Il faut avoir un mail beta.gouv pour accéder à la documentation.
+https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/home
 
 # Mode dev
 1. Initialisation des variables d'environnements
