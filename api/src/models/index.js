@@ -25,7 +25,7 @@ function initModelsByPath (sequelizeInstance, folderPath, globalName) {
     const model = createModel(sequelizeInstance)
     models[model.name] = model
     // add Controler
-    const pathControler = path.join(folderPath, `Table${ucFirst(file)}`)
+    const pathControler = path.join(folderPath, `Table${ucFirst(file.toLowerCase())}`)
     if (existsSync(pathControler)) {
       const controlerModel = require(pathControler).default
       controlerModel(sequelizeInstance, model)
