@@ -6,14 +6,21 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
 
 export default (sequelizeInstance, Model) => {
-  Model.getCurrentHr = async () => {
+  Model.getCurrentHr = async (backupId) => {
+    if(!backupId) {
+      backupId = await Model.models.HRBackups.lastId()
+    }
+
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'enable'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'enable', 'backup_id'],
+      where: {
+        backup_id: backupId,
+      }, 
       include: [{
-        attributes: ['id', 'rank', 'code', 'label'],
+        attributes: ['id', 'rank', 'label'],
         model: Model.models.HRCategories,
       }, {
-        attributes: ['id', 'rank', 'label'],
+        attributes: ['id', 'rank', 'code', 'label'],
         model: Model.models.HRFonctions,
       }],
       raw: true,
@@ -38,9 +45,10 @@ export default (sequelizeInstance, Model) => {
         fonction: {
           id: list[i]['HRFonction.id'],
           rank: list[i]['HRFonction.rank'],
+          code: list[i]['HRFonction.code'],
           label: list[i]['HRFonction.label'],
         },
-        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id),
+        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId),
       }
     }
 
@@ -53,7 +61,7 @@ export default (sequelizeInstance, Model) => {
 
     const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
     referentielMappingList.map(ref => {
-      referentielMapping[slugify(ref.label.toLowerCase().replace(/'/, '-'))] = ref.label
+      referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })
 
     const getContentieuxId = async (label) => {
@@ -66,12 +74,14 @@ export default (sequelizeInstance, Model) => {
         raw: true,
       })
 
+      console.log(label, listCont.length ? listCont[0].id : null)
       return listCont.length ? listCont[0].id : null
     }
 
 
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
+      console.log(HRFromList)
       const options = {
         enable: false,
         juridiction_id: 1,
@@ -97,22 +107,22 @@ export default (sequelizeInstance, Model) => {
       }
 
       // corps: 'MAG',
-      const findFonction = await Model.models.HRFonctions.findOne({
+      const findCategory = await Model.models.HRCategories.findOne({
         where: {
           label: 'Magistrat',
         },
       })
-      if(findFonction) {
-        options.hr_fonction_id = findFonction.id
+      if(findCategory) {
+        options.hr_category_id = findCategory.id
       }
 
-      const findCategory = await Model.models.HRCategories.findOne({
+      const findFonction = await Model.models.HRFonctions.findOne({
         where: {
           code: HRFromList.fonction,
         },
       })
-      if(findCategory) {
-        options.hr_categorie_id = findCategory.id
+      if(findFonction) {
+        options.hr_fonction_id = findCategory.id
       }
 
       if(HRFromList.etp_t) {
@@ -145,8 +155,6 @@ export default (sequelizeInstance, Model) => {
       const objectList = Object.entries(HRFromList)
       for(let x = 0; x < objectList.length; x++) {
         let [key, value] = objectList[x]
-        key = key.replace(/_/, '-').replace(/'/, '-')
-
         if(referentielMapping[key]) {
           const contentieuxId = await getContentieuxId(referentielMapping[key])
           const percent = parseFloat(value)

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
@@ -14,19 +15,37 @@ export class HumanResourceService {
   >([]);
   contentieuxReferentiel: BehaviorSubject<ContentieuReferentielInterface[]> =
     new BehaviorSubject<ContentieuReferentielInterface[]>([]);
+  backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
+    BackupInterface[]
+  >([]);
+  backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
+    null
+  );
+  autoReloadData: boolean = true;
 
   constructor(private serverService: ServerService) {}
 
   initDatas() {
-    this.getCurrentHR().then((result) => {
-      this.contentieuxReferentiel.next(result.contentieuxReferentiel);
-      this.hr.next(result.hr);
+    this.backupId.subscribe((id) => {
+      if (this.autoReloadData) {
+        this.getCurrentHR(id).then((result) => {
+          this.contentieuxReferentiel.next(result.contentieuxReferentiel);
+          this.hr.next(result.hr);
+          this.backups.next(result.backups);
+          this.autoReloadData = false;
+          this.backupId.next(result.backupId);
+        });
+      } else {
+        this.autoReloadData = true;
+      }
     });
   }
 
-  getCurrentHR() {
+  getCurrentHR(id: number | null) {
     return this.serverService
-      .get('human-resources/get-current-hr')
+      .post('human-resources/get-current-hr', {
+        backupId: id,
+      })
       .then((r) => r.data);
   }
 
@@ -75,18 +94,18 @@ export class HumanResourceService {
         (dateStop.getTime() >= now.getTime() &&
           (dateStart === null || dateStart.getTime() <= now.getTime()))
       );
-    }
+    };
   }
 
-  updateHR (list: HumanResourceInterface[]) {
+  updateHR(list: HumanResourceInterface[]) {
     const newList: HumanResourceInterface[] = [];
 
-    list.map(l => {
+    list.map((l) => {
       newList.push({
         ...l,
-        activities: (l.activities || []).filter(a => a.percent),
-      })
-    })
+        activities: (l.activities || []).filter((a) => a.percent),
+      });
+    });
 
     this.hr.next(newList);
   }

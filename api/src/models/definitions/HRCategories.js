@@ -13,10 +13,6 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      code: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
       label: {
         type: Sequelize.STRING(255),
         allowNull: false,

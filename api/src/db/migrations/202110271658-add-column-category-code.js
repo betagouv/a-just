@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('HRCategories', 'code', {
+    await queryInterface.addColumn('HRFonctions', 'code', {
       type: Sequelize.STRING(255),
       allowNull: true,
     })
