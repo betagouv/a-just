@@ -109,4 +109,16 @@ export class HumanResourceService {
 
     this.hr.next(newList);
   }
+
+  removeBackup() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
+      return this.serverService.delete(
+        `human-resources/remove-backup/${this.backupId.getValue()}`
+      ).then(() => {
+        this.backupId.next(null);
+      });
+    }
+
+    return Promise.resolve();
+  }
 }
