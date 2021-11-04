@@ -33,6 +33,10 @@ export default sequelizeInstance => {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      backup_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -1,11 +1,6 @@
-import Sequelize from 'sequelize'
-
-const tableName = 'HRCategories'
-
-export default sequelizeInstance => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('HRBackups', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -16,10 +11,6 @@ export default sequelizeInstance => {
       label: {
         type: Sequelize.STRING(255),
         allowNull: false,
-      },
-      rank: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -34,18 +25,9 @@ export default sequelizeInstance => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-    }
-  )
-
-  Model.associate = function (models) {    
-    return models
-  }
-
-  return Model
+    })
+  },
+  down: async (queryInterface /*, Sequelize*/) => {
+    return queryInterface.dropTable('HRBackups')
+  },
 }

@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HRCategories'
+const tableName = 'HRBackups'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -16,10 +16,6 @@ export default sequelizeInstance => {
       label: {
         type: Sequelize.STRING(255),
         allowNull: false,
-      },
-      rank: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
