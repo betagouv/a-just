@@ -135,4 +135,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onRemoveBackup() {
     this.humanResourceService.removeBackup();
   }
+
+  onDuplicateBackup() {
+    this.humanResourceService.duplicateBackup();
+  }
 }

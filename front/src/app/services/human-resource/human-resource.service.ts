@@ -112,11 +112,25 @@ export class HumanResourceService {
 
   removeBackup() {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
-      return this.serverService.delete(
-        `human-resources/remove-backup/${this.backupId.getValue()}`
-      ).then(() => {
-        this.backupId.next(null);
-      });
+      return this.serverService
+        .delete(`human-resources/remove-backup/${this.backupId.getValue()}`)
+        .then(() => {
+          this.backupId.next(null);
+        });
+    }
+
+    return Promise.resolve();
+  }
+
+  duplicateBackup() {
+    if (confirm('Êtes-vous sûr de vouloir dupliquer cette sauvegarde?')) {
+      return this.serverService
+        .post(`human-resources/duplicate-backup`, {
+          backupId: this.backupId.getValue(),
+        })
+        .then(r => {
+          this.backupId.next(r.data);
+        });
     }
 
     return Promise.resolve();

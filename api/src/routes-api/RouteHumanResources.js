@@ -34,4 +34,16 @@ export default class RouteHumanResources extends Route {
 
     this.sendOk(ctx, 'OK')
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async duplicateBackup (ctx) {
+    const { backupId } = this.body(ctx)
+
+    this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId))
+  }
 }

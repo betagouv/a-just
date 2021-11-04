@@ -51,5 +51,6 @@
     <option *ngFor="let back of backups" [value]="back.id">{{back.label}} {{back.date | date:"dd/mm/yyyy"}}</option>
   </select>
   <button (click)="onRemoveBackup()">Supprimer</button>
+  <button (click)="onDuplicateBackup()">Dupliquer</button>
   <button>Sauvegarder cet état</button>
 </ng-template>
