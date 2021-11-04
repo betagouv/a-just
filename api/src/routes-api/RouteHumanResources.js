@@ -22,4 +22,16 @@ export default class RouteHumanResources extends Route {
       backupId: backupId || await this.model.models.HRBackups.lastId(),
     })
   }
+
+  @Route.Delete({
+    path: 'remove-backup/:backupId',
+    accesses: [Access.isLogin],
+  })
+  async removeBackup (ctx) {
+    const { backupId } = ctx.params   
+
+    await this.model.models.HRBackups.removeBackup(backupId)
+
+    this.sendOk(ctx, 'OK')
+  }
 }
