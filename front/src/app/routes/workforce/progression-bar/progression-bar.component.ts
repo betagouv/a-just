@@ -22,7 +22,7 @@ export class ProgressionBarComponent {
       );
 
       const valueFormated = parseInt(newPercent || '');
-      if (valueFormated && valueFormated !== NaN) {
+      if (valueFormated !== NaN) {
         this.percent = valueFormated;
         this.percentChange.emit(this.percent);
       }

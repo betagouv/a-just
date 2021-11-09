@@ -64,24 +64,8 @@ export default (sequelizeInstance, Model) => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })
 
-    const getContentieuxId = async (label) => {
-      const listCont = await Model.models.ContentieuxReferentiels.findAll({
-        attributes: ['id', 'niveau_3', 'niveau_4'],
-        where: {
-          niveau_3: label,
-        },
-        order: ['niveau_3', 'niveau_4'],
-        raw: true,
-      })
-
-      console.log(label, listCont.length ? listCont[0].id : null)
-      return listCont.length ? listCont[0].id : null
-    }
-
-
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
-      console.log(HRFromList)
       const options = {
         enable: false,
         juridiction_id: 1,
@@ -156,7 +140,7 @@ export default (sequelizeInstance, Model) => {
       for(let x = 0; x < objectList.length; x++) {
         let [key, value] = objectList[x]
         if(referentielMapping[key]) {
-          const contentieuxId = await getContentieuxId(referentielMapping[key])
+          const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
           const percent = parseFloat(value)
           if(key && percent && contentieuxId) {
             await Model.models.HRVentilations.create({

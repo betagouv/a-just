@@ -47,7 +47,5 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  Sauvegardes <select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
-    <option *ngFor="let back of backups" [value]="back.id">{{back.label}} {{back.date | date:"dd/mm/yyyy"}}</option>
-  </select>
+  <aj-backup-panel></aj-backup-panel>
 </ng-template>
