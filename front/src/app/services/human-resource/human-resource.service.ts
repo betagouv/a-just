@@ -21,6 +21,7 @@ export class HumanResourceService {
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
     null
   );
+  hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   autoReloadData: boolean = true;
 
   constructor(private serverService: ServerService) {}
@@ -34,6 +35,7 @@ export class HumanResourceService {
           this.backups.next(result.backups);
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
+          this.hrIsModify.next(false);
         });
       } else {
         this.autoReloadData = true;
@@ -65,12 +67,15 @@ export class HumanResourceService {
         }
       });
 
-    hr.push({
+    hr.splice(0, 0, {
       id: hr.length * -1,
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
     });
+
+    this.hr.next(hr);
+    this.hrIsModify.next(true);
   }
 
   deleteHRById(HRId: number) {
@@ -134,5 +139,21 @@ export class HumanResourceService {
     }
 
     return Promise.resolve();
+  }
+
+  onSaveHRDatas() {
+    let backupName = null;
+    if(confirm('Sauvegarder en temps que copie ?')) {
+      backupName = prompt('Sous quel nom ?')
+    }
+    return this.serverService
+        .post(`human-resources/save-backup`, {
+          hrList: this.hr.getValue(),
+          backupId: this.backupId.getValue(),
+          backupName: backupName ? backupName : null,
+        })
+        .then(r => {
+          this.backupId.next(r.data);
+        });
   }
 }

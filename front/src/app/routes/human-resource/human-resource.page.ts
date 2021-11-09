@@ -106,6 +106,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       if (findIndex !== -1) {
         allHuman[findIndex] = { ...this.currentHR };
         this.humanResourceService.hr.next(allHuman);
+        this.humanResourceService.hrIsModify.next(true);
 
         this.router.navigate(['/effectifs'])
       }
