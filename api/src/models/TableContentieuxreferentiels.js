@@ -88,5 +88,18 @@ export default (sequelizeInstance, Model) => {
     }
   } 
 
+  Model.getContentieuxId = async (label) => {
+    const listCont = await Model.models.ContentieuxReferentiels.findAll({
+      attributes: ['id', 'niveau_3', 'niveau_4'],
+      where: {
+        niveau_3: label,
+      },
+      order: ['niveau_3', 'niveau_4'],
+      raw: true,
+    })
+
+    return listCont.length ? listCont[0].id : null
+  }
+
   return Model
 }
