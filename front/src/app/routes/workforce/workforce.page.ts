@@ -136,7 +136,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       );
     });
 
-    console.log(activitiesIndex, hr.activities);
     if (activitiesIndex !== -1 && hr.activities) {
       hr.activities[activitiesIndex].percent = percent;
       this.humanResourceService.updateHR(this.humanResources);
