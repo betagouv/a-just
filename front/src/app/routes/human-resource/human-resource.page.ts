@@ -75,7 +75,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.formEditHR.get('enable')?.setValue(findUser.enable);
       this.formEditHR.get('category')?.setValue(findUser.category && findUser.category.id || null);
       this.formEditHR.get('fonction')?.setValue(findUser.fonction && findUser.fonction.id || null);
-      this.activities = JSON.parse(JSON.stringify(findUser.activities || []))
+      this.activities = JSON.parse(JSON.stringify((findUser.activities || []).filter(a => a.percent)))
     } else {
       this.currentHR = null;
       this.formEditHR.reset();
@@ -106,6 +106,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       if (findIndex !== -1) {
         allHuman[findIndex] = { ...this.currentHR };
         this.humanResourceService.hr.next(allHuman);
+        this.humanResourceService.hrIsModify.next(true);
 
         this.router.navigate(['/effectifs'])
       }
