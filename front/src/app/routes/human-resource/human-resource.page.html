@@ -1,4 +1,5 @@
-<aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)">
+<aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)"
+  [actionTemplate]="actions">
   <div *ngIf="currentHR" class="profil">
     <div class="left-panel">
       <h3>Profil</h3>
@@ -87,3 +88,7 @@
 
   <a routerLink="/effectifs">Retour</a>
 </aj-wrapper>
+
+<ng-template #actions>
+  <aj-backup-panel></aj-backup-panel>
+</ng-template>

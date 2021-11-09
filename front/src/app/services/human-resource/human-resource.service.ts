@@ -21,6 +21,7 @@ export class HumanResourceService {
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
     null
   );
+  hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   autoReloadData: boolean = true;
 
   constructor(private serverService: ServerService) {}
@@ -34,6 +35,7 @@ export class HumanResourceService {
           this.backups.next(result.backups);
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
+          this.hrIsModify.next(false);
         });
       } else {
         this.autoReloadData = true;
@@ -65,12 +67,15 @@ export class HumanResourceService {
         }
       });
 
-    hr.push({
+    hr.splice(0, 0, {
       id: hr.length * -1,
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
     });
+
+    this.hr.next(hr);
+    this.hrIsModify.next(true);
   }
 
   deleteHRById(HRId: number) {
@@ -81,20 +86,6 @@ export class HumanResourceService {
       hr.splice(index, 1);
       this.hr.next(hr);
     }
-  }
-
-  filterActivityNow() {
-    const now = new Date();
-    return (a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
-
-      return (
-        dateStop === null ||
-        (dateStop.getTime() >= now.getTime() &&
-          (dateStart === null || dateStart.getTime() <= now.getTime()))
-      );
-    };
   }
 
   updateHR(list: HumanResourceInterface[]) {
@@ -112,13 +103,43 @@ export class HumanResourceService {
 
   removeBackup() {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
-      return this.serverService.delete(
-        `human-resources/remove-backup/${this.backupId.getValue()}`
-      ).then(() => {
-        this.backupId.next(null);
-      });
+      return this.serverService
+        .delete(`human-resources/remove-backup/${this.backupId.getValue()}`)
+        .then(() => {
+          this.backupId.next(null);
+        });
     }
 
     return Promise.resolve();
+  }
+
+  duplicateBackup() {
+    if (confirm('Êtes-vous sûr de vouloir dupliquer cette sauvegarde?')) {
+      return this.serverService
+        .post(`human-resources/duplicate-backup`, {
+          backupId: this.backupId.getValue(),
+        })
+        .then((r) => {
+          this.backupId.next(r.data);
+        });
+    }
+
+    return Promise.resolve();
+  }
+
+  onSaveHRDatas() {
+    let backupName = null;
+    if (confirm('Sauvegarder en temps que copie ?')) {
+      backupName = prompt('Sous quel nom ?');
+    }
+    return this.serverService
+      .post(`human-resources/save-backup`, {
+        hrList: this.hr.getValue(),
+        backupId: this.backupId.getValue(),
+        backupName: backupName ? backupName : null,
+      })
+      .then((r) => {
+        this.backupId.next(r.data);
+      });
   }
 }
