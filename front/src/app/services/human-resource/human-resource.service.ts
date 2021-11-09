@@ -88,20 +88,6 @@ export class HumanResourceService {
     }
   }
 
-  filterActivityNow() {
-    const now = new Date();
-    return (a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
-
-      return (
-        dateStop === null ||
-        (dateStop.getTime() >= now.getTime() &&
-          (dateStart === null || dateStart.getTime() <= now.getTime()))
-      );
-    };
-  }
-
   updateHR(list: HumanResourceInterface[]) {
     const newList: HumanResourceInterface[] = [];
 
@@ -133,7 +119,7 @@ export class HumanResourceService {
         .post(`human-resources/duplicate-backup`, {
           backupId: this.backupId.getValue(),
         })
-        .then(r => {
+        .then((r) => {
           this.backupId.next(r.data);
         });
     }
@@ -143,17 +129,17 @@ export class HumanResourceService {
 
   onSaveHRDatas() {
     let backupName = null;
-    if(confirm('Sauvegarder en temps que copie ?')) {
-      backupName = prompt('Sous quel nom ?')
+    if (confirm('Sauvegarder en temps que copie ?')) {
+      backupName = prompt('Sous quel nom ?');
     }
     return this.serverService
-        .post(`human-resources/save-backup`, {
-          hrList: this.hr.getValue(),
-          backupId: this.backupId.getValue(),
-          backupName: backupName ? backupName : null,
-        })
-        .then(r => {
-          this.backupId.next(r.data);
-        });
+      .post(`human-resources/save-backup`, {
+        hrList: this.hr.getValue(),
+        backupId: this.backupId.getValue(),
+        backupName: backupName ? backupName : null,
+      })
+      .then((r) => {
+        this.backupId.next(r.data);
+      });
   }
 }

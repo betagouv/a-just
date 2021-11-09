@@ -25,9 +25,24 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
         const now = new Date();
         hr.map((h) => {
-          const activities = (h.activities || []).filter(
-            this.humanResourceService.filterActivityNow
-          );
+          const activities = (h.activities || []).filter((a: any) => {
+            const dateStop = a.dateStop ? new Date(a.dateStop) : null;
+            const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+
+            return (
+              (dateStart === null && dateStop === null) ||
+              (dateStart &&
+                dateStart.getTime() <= now.getTime() &&
+                dateStop === null) ||
+              (dateStart === null &&
+                dateStop &&
+                dateStop.getTime() >= now.getTime()) ||
+              (dateStart &&
+                dateStart.getTime() <= now.getTime() &&
+                dateStop &&
+                dateStop.getTime() >= now.getTime())
+            );
+          });
 
           this.humanResourceService.contentieuxReferentiel
             .getValue()
@@ -107,13 +122,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       return (
         a.label === activity.label &&
-        (dateStop === null ||
-          (dateStop.getTime() >= now.getTime() &&
-            (dateStart === null || dateStart.getTime() <= now.getTime())))
+        ((dateStart === null && dateStop === null) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop === null) ||
+          (dateStart === null &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()))
       );
     });
 
-    console.log(activitiesIndex, hr.activities)
+    console.log(activitiesIndex, hr.activities);
     if (activitiesIndex !== -1 && hr.activities) {
       hr.activities[activitiesIndex].percent = percent;
       this.humanResourceService.updateHR(this.humanResources);
