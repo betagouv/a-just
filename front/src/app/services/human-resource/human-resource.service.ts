@@ -156,5 +156,22 @@ export class HumanResourceService {
     }
 
     return false;
-  }  
+  }
+
+  createEmpyHR() {
+    let backupName = prompt('Sous quel nom ?');
+
+    if (backupName) {
+      return this.serverService
+        .post(`human-resources/save-backup`, {
+          hrList: [],
+          backupName: backupName,
+        })
+        .then((r) => {
+          this.backupId.next(r.data);
+        });
+    }
+
+    return Promise.resolve();
+  }
 }

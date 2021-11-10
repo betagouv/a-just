@@ -81,7 +81,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   totalAvailable() {
-    return sumBy(this.humanResources, 'etp').toFixed(2);
+    return (sumBy(this.humanResources || [], 'etp') || 0).toFixed(2);
   }
 
   totalRealyAffected() {
