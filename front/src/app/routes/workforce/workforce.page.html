@@ -12,14 +12,18 @@
     </div>
   </div>
   <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
-    <div class=" profil">
-      Logo
-      {{ hr.firstName}}
-      {{ hr.lastName}}<br />
-      {{ hr.fonction && hr.fonction.code}}<br />
-      {{ hr.category && hr.category.label}}<br />
-      <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
-      <button (click)="onRemoveRH(hr.id)">Supprimer</button>
+    <div class="profil item">
+      <div class="image">
+        <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+      </div>
+      <div class="text">
+        {{ hr.firstName}}
+        {{ hr.lastName}}<br />
+        {{ hr.fonction && hr.fonction.code}}<br />
+        {{ hr.category && hr.category.label}}<br />
+        <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
+        <button (click)="onRemoveRH(hr.id)">Supprimer</button>
+      </div>
     </div>
     <div class="work-time">
       <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>

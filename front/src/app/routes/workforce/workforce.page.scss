@@ -1,18 +1,37 @@
 @import "../../styles/utils.scss";
 
-.header-list, .item-list, .footer-list {
+.header-list,
+.item-list,
+.footer-list {
   display: flex;
   width: 100%;
 }
 
 .item-list {
   padding: 16px 0;
-  border-top: 1px solid rgba(fColor(cblack), 0.2); 
+  border-top: 1px solid rgba(fColor(cblack), 0.2);
 }
 
 .profil {
   width: 150px;
   margin-right: 16px;
+
+  &.item {
+    display: flex;
+
+    .image {
+      margin-right: 8px;
+
+      img {
+        width: 40px;
+        border-radius: 40px;
+      }
+    }
+  }
+}
+
+.text {
+  flex: 1;
 }
 
 .work-time {

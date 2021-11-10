@@ -11,10 +11,10 @@ month6Past.setMonth(month6Past.getMonth() - 6);
 const month1Past = new Date(now.getFullYear(), now.getMonth(), 1); 
 
 @Component({
-  templateUrl: './indicators.page.html',
-  styleUrls: ['./indicators.page.scss'],
+  templateUrl: './average-etp.page.html',
+  styleUrls: ['./average-etp.page.scss'],
 })
-export class IndicatorsPage {
+export class AverageEtpPage {
   mainCategories: ItemInterface[] = [];
   perimeterSelected: string | null = null;
   groups: string[] = [];

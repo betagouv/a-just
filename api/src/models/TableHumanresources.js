@@ -13,7 +13,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
       where: {
         backup_id: backupId,
       }, 
@@ -36,6 +36,7 @@ export default (sequelizeInstance, Model) => {
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
         note: list[i].note,
+        coverUrl: list[i].cover_url, 
         category: {
           id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],
