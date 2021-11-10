@@ -1,50 +1,56 @@
 <aj-wrapper title="Effectifs" [actionTemplate]="actions">
-  <div class="header-list">
-    <div class="profil">
-      <button (click)="addHR()">Ajouter un profil</button>
-    </div>
-    <div class="work-time">Temps de travail</div>
-    <div class="total-affected">Affectation</div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ ref.label }}
+  <div class="container">
+    <div class="header-list">
+      <div class="profil">
+        <button (click)="addHR()">Ajouter un profil</button>
+      </div>
+      <div class="work-time">Temps de travail</div>
+      <div class="total-affected">Affectation</div>
+      <div class="activities">
+        <div class="sub-item" *ngFor="let ref of referentiel">
+          {{ ref.label }}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
-    <div class="profil item">
-      <div class="image">
-        <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
-      </div>
-      <div class="text">
-        {{ hr.firstName}}
-        {{ hr.lastName}}<br />
-        {{ hr.fonction && hr.fonction.code}}<br />
-        {{ hr.category && hr.category.label}}<br />
-        <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
-        <button (click)="onRemoveRH(hr.id)">Supprimer</button>
-      </div>
-    </div>
-    <div class="work-time">
-      <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
-    </div>
-    <div class="total-affected">
-      <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
-    </div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
-        <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)"></progression-bar>
-      </div>
-    </div>
-  </div>
 
-  <div class="footer-list">
-    <div class="profil">Effectif {{ humanResources.length }}</div>
-    <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
-    <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ totalByActivity(ref.label) }}
+    <div class="content-list">
+      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
+        <div class="profil item">
+          <div class="image">
+            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+          </div>
+          <div class="text">
+            {{ hr.firstName}}
+            {{ hr.lastName}}<br />
+            {{ hr.fonction && hr.fonction.code}}<br />
+            {{ hr.category && hr.category.label}}<br />
+            <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
+            <button (click)="onRemoveRH(hr.id)">Supprimer</button>
+          </div>
+        </div>
+        <div class="work-time">
+          <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
+        </div>
+        <div class="total-affected">
+          <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
+        </div>
+        <div class="activities">
+          <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
+            <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)">
+            </progression-bar>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-list">
+      <div class="profil">Effectif {{ humanResources.length }}</div>
+      <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
+      <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
+      <div class="activities">
+        <div class="sub-item" *ngFor="let ref of referentiel">
+          {{ totalByActivity(ref.label) }}
+        </div>
       </div>
     </div>
   </div>

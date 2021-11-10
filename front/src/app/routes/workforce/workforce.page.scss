@@ -7,6 +7,17 @@
   width: 100%;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .content-list {
+    flex: 1;
+    overflow: auto;
+  }
+}
+
 .item-list {
   padding: 16px 0;
   border-top: 1px solid rgba(fColor(cblack), 0.2);
