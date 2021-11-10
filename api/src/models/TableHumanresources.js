@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash'
 import slugify from 'slugify'
+import { posad } from '../constants/hr'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -104,8 +105,8 @@ export default (sequelizeInstance, Model) => {
         options.hr_fonction_id = findFonction.id
       }
 
-      if(HRFromList.etp_t) {
-        options.etp = parseFloat(HRFromList.etp_t) 
+      if(HRFromList.posad) {
+        options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
       if(HRFromList.nom_affichage) {
