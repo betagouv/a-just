@@ -9,7 +9,6 @@ export interface HumanResourceInterface {
 	lastName?: string;
 	coverUrl?: string;
 	etp?: number;
-	enable?: boolean;
 	category?: HRCategoryInterface;
 	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;

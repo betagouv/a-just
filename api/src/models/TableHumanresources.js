@@ -12,7 +12,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'enable', 'backup_id'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id'],
       where: {
         backup_id: backupId,
       }, 
@@ -35,7 +35,6 @@ export default (sequelizeInstance, Model) => {
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
         note: list[i].note,
-        enable: list[i].enable,
         category: {
           id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],
@@ -67,7 +66,6 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
       const options = {
-        enable: false,
         juridiction_id: 1,
         hr_fonction_id: 1,
         hr_categorie_id: 1,
@@ -76,9 +74,6 @@ export default (sequelizeInstance, Model) => {
         last_name: '',
         date_entree: today,
         backup_id: backupId,
-      }
-      if(HRFromList.num_statut && HRFromList.num_statut === '1.0') {
-        options.enable = true
       }
 
       const findJuridiction = await Model.models.Juridictions.findOne({

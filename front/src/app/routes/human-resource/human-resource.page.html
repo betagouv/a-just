@@ -33,12 +33,6 @@
           <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
         </select>
 
-        <div class="label-aj">Actif</div>
-        <select formControlName="enable">
-          <option *ngFor="let status of [{id: true, label: 'Actif'},{id: false, label: 'Inactif'}]" [value]="status.id">
-            {{status.label}}</option>
-        </select>
-
         <div class="actions">
           <button type="submit">Modifier</button>
           <button type="button" (click)="onRemoveRH()">Supprimer</button>

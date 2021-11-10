@@ -30,7 +30,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     note: new FormControl(null),
     fonction: new FormControl(null, [Validators.required]),
     category: new FormControl(null, [Validators.required]),
-    enable: new FormControl(null, [Validators.required]),
   });
 
   constructor(
@@ -72,7 +71,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
       this.formEditHR.get('dateEnd')?.setValue(findUser.dateEnd || null);
       this.formEditHR.get('note')?.setValue(findUser.note || '');
-      this.formEditHR.get('enable')?.setValue(findUser.enable);
       this.formEditHR.get('category')?.setValue(findUser.category && findUser.category.id || null);
       this.formEditHR.get('fonction')?.setValue(findUser.fonction && findUser.fonction.id || null);
       this.activities = JSON.parse(JSON.stringify((findUser.activities || []).filter(a => a.percent)))
@@ -93,7 +91,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
-      this.currentHR.enable = enable === "true" || enable ? true : false;
       this.currentHR.category = this.categories.find(c => c.id === +category);
       this.currentHR.fonction = this.fonctions.find(f => f.id === +fonction);
       this.currentHR.activities = this.activities;

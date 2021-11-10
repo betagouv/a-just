@@ -112,7 +112,6 @@ export default (sequelizeInstance, Model) => {
         date_entree: hr.dateStart || null,
         date_sortie: hr.dateEnd || null,
         note: hr.note,
-        enable: hr.enable ? true : false,
         backup_id: newBackupId,
         hr_categorie_id: hr.category && hr.category.id ? hr.category.id : null,
         hr_fonction_id: hr.fonction && hr.fonction.id ? hr.fonction.id : null,
