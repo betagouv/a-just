@@ -142,4 +142,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.humanResourceService.hrIsModify.next(true);
     }
   }
+
+  trackById(index: number, item: any) {
+    return item.id;
+  }
+
+  onRemoveRH(id: number) {
+    this.humanResourceService.removeHrById(id);
+  }
 }

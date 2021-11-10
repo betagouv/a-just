@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <div class="item-list" *ngFor="let hr of humanResources" [class.disable]="!hr.enable">
+  <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById" [class.disable]="!hr.enable">
     <div class="profil">
       Logo
       {{ hr.firstName}}
@@ -19,6 +19,7 @@
       {{ hr.fonction && hr.fonction.code}}<br />
       {{ hr.category && hr.category.label}}<br />
       <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
+      <button (click)="onRemoveRH(hr.id)">Supprimer</button>
     </div>
     <div class="work-time">
       <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>

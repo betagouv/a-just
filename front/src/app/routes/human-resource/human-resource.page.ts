@@ -108,12 +108,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.hr.next(allHuman);
         this.humanResourceService.hrIsModify.next(true);
 
-        this.router.navigate(['/effectifs'])
+        this.router.navigate(['/effectifs']);
       }
     }
   }
 
   onReset() {
     this.onLoad();
+  }
+
+  onRemoveRH() {
+    if(this.currentHR && this.humanResourceService.removeHrById(this.currentHR.id)) {
+      this.router.navigate(['/effectifs']);
+    }
   }
 }
