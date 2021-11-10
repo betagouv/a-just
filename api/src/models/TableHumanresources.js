@@ -101,7 +101,7 @@ export default (sequelizeInstance, Model) => {
         },
       })
       if(findFonction) {
-        options.hr_fonction_id = findCategory.id
+        options.hr_fonction_id = findFonction.id
       }
 
       if(HRFromList.etp_t) {

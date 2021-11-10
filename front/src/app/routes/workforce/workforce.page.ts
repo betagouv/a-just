@@ -61,6 +61,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             activities: sortBy(activities, 'label'),
           });
         });
+
+        this.humanResources = sortBy(this.humanResources, ['fonction.rank', 'category.rank'])
       })
     );
     this.watch(
