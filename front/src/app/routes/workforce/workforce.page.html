@@ -32,11 +32,12 @@
           <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
         </div>
         <div class="total-affected">
-          <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
+          <progression-bar [percent]="hr.totalAffected" [selected]="false"></progression-bar>
         </div>
         <div class="activities">
-          <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
-            <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)">
+          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+            <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
+              (click)="onUpdateActivity(ref, hr)">
             </progression-bar>
           </div>
         </div>
@@ -49,12 +50,23 @@
       <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
       <div class="activities">
         <div class="sub-item" *ngFor="let ref of referentiel">
-          {{ totalByActivity(ref.label) }}
+          {{ ref.totalAffected }}
         </div>
       </div>
     </div>
   </div>
 </aj-wrapper>
+
+<aj-popup *ngIf="updateActivity" [title]="updateActivity.referentiel.label" [actions]="[
+{ id: 'close', content: 'Fermer' },
+{ id: 'modify', content: 'Modifier', fill: true }
+]" [closeIcon]="true" (onClose)="updateActivity = null" (selectedAction)="onEditActivities($event)">
+  <div *ngFor="let ref of updateActivity.hrActivities">
+    <div class="label-aj">{{ref.label}} - ETP en %</div>
+    <input [(ngModel)]="ref.percent" type="number" />
+  </div>
+
+</aj-popup>
 
 <ng-template #actions>
   <aj-backup-panel></aj-backup-panel>

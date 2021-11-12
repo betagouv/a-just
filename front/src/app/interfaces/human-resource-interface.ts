@@ -16,4 +16,5 @@ export interface HumanResourceInterface {
 	dateStart?: Date;
 	dateEnd?: Date;
 	note?: string;
+	totalAffected?: number;
 }

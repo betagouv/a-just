@@ -1,4 +1,3 @@
-import { groupBy } from 'lodash'
 import { Op } from 'sequelize'
 
 export default (sequelizeInstance, Model) => {
@@ -35,52 +34,29 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.getReferentiels = async () => {
-    const list = await Model.findAll({
-      attributes: [
-        'niveau_1',
-        'niveau_2',
-        'niveau_3',
-        'niveau_4',
-        'average_processing_time',
-      ],
-      group: ['niveau_4', 'id'],
-      raw: true,
-    })
-
-    const formatToGraph = (precision = 1, listToFilter = list) => {
-      const listOfLevel = groupBy(listToFilter, function (n) {
-        return n['niveau_' + precision]
+    const formatToGraph = async (parentId = null) => {
+      const list = await Model.findAll({
+        attributes: [
+          'id',
+          'label',
+          ['average_processing_time', 'averageProcessingTime'],
+        ],
+        where: {
+          parent_id: parentId,
+        },
+        raw: true,
       })
 
-      const keys = Object.keys(listOfLevel)
-      if (keys && keys.length && keys[0] === 'undefined') {
-        return []
-      }
-
-      const formatedList = []
-      Object.entries(listOfLevel).map(([key, value]) => {
-        if (key && key !== 'null') {
-          const filterIsLast = listToFilter.find(
-            (l) =>
-              l['niveau_' + precision] === key &&
-              !l['niveau_' + (precision + 1)]
-          )
-
-          formatedList.push({
-            label: key,
-            childrens: formatToGraph(precision + 1, value),
-            averageTreatment:
-              filterIsLast && filterIsLast.average_processing_time
-                ? filterIsLast.average_processing_time
-                : null,
-          })
+      if(list && list.length) {
+        for(let i = 0; i < list.length; i++) {
+          list[i].childrens = await formatToGraph(list[i].id)
         }
-      })
-
-      return formatedList
+      }
+      
+      return list
     }
 
-    return formatToGraph()
+    return await formatToGraph()
   }
 
   Model.importList = async (list) => {
@@ -89,24 +65,28 @@ export default (sequelizeInstance, Model) => {
       where: {},
       force: true,
     })
+    const nbLevel = 6
 
     for (let i = 0; i < list.length; i++) {
       const ref = list[i]
-      const findInDb = await Model.findOne({
-        where: {
-          niveau_1: ref.niveau_1,
-          niveau_2: ref.niveau_2,
-          niveau_3: ref.niveau_3,
-          niveau_4: ref.niveau_4,
-        },
-      })
-      if (!findInDb) {
-        await Model.create({
-          niveau_1: ref.niveau_1,
-          niveau_2: ref.niveau_2,
-          niveau_3: ref.niveau_3,
-          niveau_4: ref.niveau_4,
-        })
+      let parentId = null
+      for(let i = 1; i <= nbLevel; i++) {
+        if(ref['niveau_' + i]) {
+          const findInDb = await Model.findOne({
+            where: {
+              label: ref['niveau_' + i],
+            },
+          })
+          if(!findInDb) {
+            const newToDb = await Model.create({
+              label: ref['niveau_' + i],
+              parent_id: parentId,
+            })
+            parentId = newToDb.dataValues.id
+          } else {
+            parentId = findInDb.dataValues.id
+          }
+        }
       }
     }
   }
@@ -115,11 +95,20 @@ export default (sequelizeInstance, Model) => {
     const listCont = await Model.models.ContentieuxReferentiels.findAll({
       attributes: ['id', 'niveau_3', 'niveau_4'],
       where: {
-        niveau_3: label,
+        [Op.or]: [
+          {
+            niveau_3: label,
+          },
+          {
+            niveau_4: label,
+          },
+        ],
       },
       order: ['niveau_3', 'niveau_4'],
       raw: true,
     })
+
+    console.log(listCont)
 
     return listCont.length ? listCont[0].id : null
   }

@@ -30,7 +30,6 @@ export class HumanResourceService {
     this.backupId.subscribe((id) => {
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
-          this.contentieuxReferentiel.next(result.contentieuxReferentiel);
           this.hr.next(result.hr);
           this.backups.next(result.backups);
           this.autoReloadData = false;
@@ -89,16 +88,8 @@ export class HumanResourceService {
   }
 
   updateHR(list: HumanResourceInterface[]) {
-    const newList: HumanResourceInterface[] = [];
-
-    list.map((l) => {
-      newList.push({
-        ...l,
-        activities: (l.activities || []).filter((a) => a.percent),
-      });
-    });
-
-    this.hr.next(newList);
+    this.hr.next(list);
+    this.hrIsModify.next(true);
   }
 
   removeBackup() {

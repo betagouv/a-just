@@ -43,15 +43,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watch(this.route.params.subscribe((params) => {
-      if (params.id) {
-        this.onLoad();
-      }
-    }));
-    this.watch(this.humanResourceService.contentieuxReferentiel.subscribe(list => this.contentieuxReferentiel = list));
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params.id) {
+          this.onLoad();
+        }
+      })
+    );
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe(
+        (list) => (this.contentieuxReferentiel = list)
+      )
+    );
     this.watch(this.humanResourceService.hr.subscribe(() => this.onLoad()));
-    this.hrFonctionService.getAll().then(list => this.fonctions = list);
-    this.hrCategoryService.getAll().then(list => this.categories = list);
+    this.hrFonctionService.getAll().then((list) => (this.fonctions = list));
+    this.hrCategoryService.getAll().then((list) => (this.categories = list));
   }
 
   ngOnDestroy() {
@@ -64,6 +70,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
+      console.log(findUser.activities);
       this.currentHR = findUser;
       this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
       this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
@@ -71,9 +78,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
       this.formEditHR.get('dateEnd')?.setValue(findUser.dateEnd || null);
       this.formEditHR.get('note')?.setValue(findUser.note || '');
-      this.formEditHR.get('category')?.setValue(findUser.category && findUser.category.id || null);
-      this.formEditHR.get('fonction')?.setValue(findUser.fonction && findUser.fonction.id || null);
-      this.activities = JSON.parse(JSON.stringify((findUser.activities || []).filter(a => a.percent)))
+      this.formEditHR
+        .get('category')
+        ?.setValue((findUser.category && findUser.category.id) || null);
+      this.formEditHR
+        .get('fonction')
+        ?.setValue((findUser.fonction && findUser.fonction.id) || null);
+      this.activities = JSON.parse(
+        JSON.stringify((findUser.activities || []).filter((a) => a.percent))
+      );
     } else {
       this.currentHR = null;
       this.formEditHR.reset();
@@ -84,16 +97,29 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (this.formEditHR.invalid) {
       alert("Vous devez saisir l'ensemble des champs !");
     } else if (this.currentHR) {
-      const { etp, firstName, lastName, dateStart, dateEnd, note, category, fonction, enable } = this.formEditHR.value;
-      this.currentHR.etp = (etp || 0) / 100;
+      const {
+        etp,
+        firstName,
+        lastName,
+        dateStart,
+        dateEnd,
+        note,
+        category,
+        fonction,
+        enable,
+      } = this.formEditHR.value;
+      this.currentHR.etp = (etp || 0) / 100;
       this.currentHR.firstName = firstName;
       this.currentHR.lastName = lastName;
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
-      this.currentHR.category = this.categories.find(c => c.id === +category);
-      this.currentHR.fonction = this.fonctions.find(f => f.id === +fonction);
-      this.currentHR.activities = this.activities;
+      this.currentHR.category = this.categories.find((c) => c.id === +category);
+      this.currentHR.fonction = this.fonctions.find((f) => f.id === +fonction);
+      this.currentHR.activities = (this.activities || []).map((a) => ({
+        ...a,
+        referentielId: +(a.referentielId || 0),
+      }));
 
       const allHuman = this.humanResourceService.hr.getValue();
       const findIndex = allHuman.findIndex(
@@ -115,7 +141,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onRemoveRH() {
-    if(this.currentHR && this.humanResourceService.removeHrById(this.currentHR.id)) {
+    if (
+      this.currentHR &&
+      this.humanResourceService.removeHrById(this.currentHR.id)
+    ) {
       this.router.navigate(['/ventilations']);
     }
   }

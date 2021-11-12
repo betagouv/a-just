@@ -13,28 +13,12 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      niveau_1: {
+      label: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      niveau_2: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_3: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_4: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_5: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      niveau_6: {
-        type: Sequelize.STRING(255),
+      parent_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       average_processing_time: {

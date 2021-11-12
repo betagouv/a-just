@@ -143,6 +143,8 @@ export default (sequelizeInstance, Model) => {
             activity.referentielId = await Model.models.ContentieuxReferentiels.getContentieuxId(activity.label) 
           }
 
+          console.log(activity)
+
           await Model.models.HRVentilations.create({
             backup_id: newBackupId,
             rh_id: hr.id,
