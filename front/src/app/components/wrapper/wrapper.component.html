@@ -1,6 +1,8 @@
 <div class="menu">
-  <img src="/assets/images/Logo-Ministere_de_la_justice_2020.png" class="logo" />
-  <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
+  <div class="images">
+    <img src="/assets/images/Logo-Ministere_de_la_justice_2020.png" class="logo" />
+    <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
+  </div>
 
   <a *ngFor="let item of menu" [routerLink]="['/'+item.path]">
     {{ item.label }}

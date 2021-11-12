@@ -24,7 +24,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if(ref) {
+    if (ref) {
       return {
         mainTitle: ref.niveau_1,
         title: ref.niveau_3,
@@ -36,7 +36,13 @@ export default (sequelizeInstance, Model) => {
 
   Model.getReferentiels = async () => {
     const list = await Model.findAll({
-      attributes: ['niveau_1', 'niveau_2', 'niveau_3', 'niveau_4', 'average_processing_time'],
+      attributes: [
+        'niveau_1',
+        'niveau_2',
+        'niveau_3',
+        'niveau_4',
+        'average_processing_time',
+      ],
       group: ['niveau_4', 'id'],
       raw: true,
     })
@@ -47,19 +53,26 @@ export default (sequelizeInstance, Model) => {
       })
 
       const keys = Object.keys(listOfLevel)
-      if(keys && keys.length && keys[0] === 'undefined') {
+      if (keys && keys.length && keys[0] === 'undefined') {
         return []
       }
 
       const formatedList = []
       Object.entries(listOfLevel).map(([key, value]) => {
-        if(key && key !== 'null') {
-          const filterIsLast = listToFilter.find(l => l['niveau_' + precision] === key && !l['niveau_' + (precision + 1)])
+        if (key && key !== 'null') {
+          const filterIsLast = listToFilter.find(
+            (l) =>
+              l['niveau_' + precision] === key &&
+              !l['niveau_' + (precision + 1)]
+          )
 
           formatedList.push({
             label: key,
             childrens: formatToGraph(precision + 1, value),
-            averageTreatment: filterIsLast && filterIsLast.average_processing_time ? filterIsLast.average_processing_time : null,
+            averageTreatment:
+              filterIsLast && filterIsLast.average_processing_time
+                ? filterIsLast.average_processing_time
+                : null,
           })
         }
       })
@@ -77,16 +90,26 @@ export default (sequelizeInstance, Model) => {
       force: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       const ref = list[i]
-      await Model.create({ 
-        niveau_1: ref.niveau_1,
-        niveau_2: ref.niveau_2,
-        niveau_3: ref.niveau_3,
-        niveau_4: ref.niveau_4,
+      const findInDb = await Model.findOne({
+        where: {
+          niveau_1: ref.niveau_1,
+          niveau_2: ref.niveau_2,
+          niveau_3: ref.niveau_3,
+          niveau_4: ref.niveau_4,
+        },
       })
+      if (!findInDb) {
+        await Model.create({
+          niveau_1: ref.niveau_1,
+          niveau_2: ref.niveau_2,
+          niveau_3: ref.niveau_3,
+          niveau_4: ref.niveau_4,
+        })
+      }
     }
-  } 
+  }
 
   Model.getContentieuxId = async (label) => {
     const listCont = await Model.models.ContentieuxReferentiels.findAll({

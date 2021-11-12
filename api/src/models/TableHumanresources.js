@@ -65,8 +65,11 @@ export default (sequelizeInstance, Model) => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })
 
+    console.log(referentielMapping)
+
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
+      console.log(HRFromList)
       const options = {
         juridiction_id: 1,
         hr_fonction_id: 1,
@@ -124,8 +127,6 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      // retire_du_temps_de_travail: '0.0', TODO a voir apres appel de lyon
-
       // create
       const findHRToDB = await Model.create({
         registration_number: HRFromList.num_fonc,
@@ -136,6 +137,7 @@ export default (sequelizeInstance, Model) => {
       const objectList = Object.entries(HRFromList)
       for(let x = 0; x < objectList.length; x++) {
         let [key, value] = objectList[x]
+        key = key.replace(/'/g, '_')
         if(referentielMapping[key]) {
           const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
           const percent = parseFloat(value)
