@@ -41,6 +41,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref.map(r => ({...r, selected: true}));
+        this.onFilterList();
         this.calculateTotalOccupation();
       })
     );
