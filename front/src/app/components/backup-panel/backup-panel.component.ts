@@ -46,8 +46,8 @@ export class BackupPanelComponent extends MainClass implements OnInit, OnDestroy
     this.humanResourceService.duplicateBackup();
   }
 
-  onSaveHR() {
-    this.humanResourceService.onSaveHRDatas();
+  onSaveHR(isCopy: boolean = false) {
+    this.humanResourceService.onSaveHRDatas(isCopy);
   }
 
   trackBy(index: number, item: any) {
