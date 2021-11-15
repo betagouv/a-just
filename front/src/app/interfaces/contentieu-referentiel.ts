@@ -4,4 +4,5 @@ export interface ContentieuReferentielInterface {
 	childrens?: ContentieuReferentielInterface[];
 	totalAffected?: number;
 	percent?: number;
+	selected?: boolean;
 }

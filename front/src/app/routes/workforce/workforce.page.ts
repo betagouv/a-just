@@ -4,15 +4,19 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 
 @Component({
   templateUrl: './workforce.page.html',
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  allHumanResources: HumanResourceInterface[] = [];
   humanResources: HumanResourceInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
+  referentielFiltred: ContentieuReferentielInterface[] = [];
   updateActivity: any = null;
+  categoriesFilterList: HRCategoryInterface[] = [];
 
   constructor(private humanResourceService: HumanResourceService) {
     super();
@@ -21,13 +25,22 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.humanResourceService.hr.subscribe((hr) => {
-        this.humanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
+        this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
+        for(let i = 0; i < this.allHumanResources.length; i++) {
+          const hr = this.allHumanResources[i];
+          if(hr.category && !this.categoriesFilterList.find(c => c.id === (hr.category && hr.category.id))) {
+            this.categoriesFilterList.push({...hr.category, selected: true});
+          }
+        }
+
+        this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank'])
+        this.onFilterList();
         this.calculateTotalOccupation();
       })
     );
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
-        this.referentiel = ref;
+        this.referentiel = ref.map(r => ({...r, selected: true}));
         this.calculateTotalOccupation();
       })
     );
@@ -197,5 +210,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.updateActivity = null;
         break;
     }
+  }
+
+  onFilterList() {
+    this.referentielFiltred = this.referentiel.filter(r => r.selected);
+
+    const list: HumanResourceInterface[] = [];
+
+    this.allHumanResources.map(hr => {
+      const catFromList = this.categoriesFilterList.find(c => c.id === (hr.category && hr.category.id));
+      if(catFromList && catFromList.selected) {
+        list.push(hr);
+      }
+    })
+
+    this.humanResources = list;
   }
 }

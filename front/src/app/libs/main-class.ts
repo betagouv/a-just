@@ -14,4 +14,18 @@ export class MainClass {
       } catch (err) {}
     })
   }
+
+  public referentielMappingName (name: string): string {
+    switch(name) {
+      case 'Soutien': return 'Sout.';
+      case 'Indisponibilité': return 'Indisp.';
+      case 'Siège Pénal': return 'Pénal';
+      case 'Contentieux JAF': return 'JAF';
+      case 'Contentieux Social': return 'SOC.';
+      case 'Contentieux de la Protection': return 'JCP';
+      case 'Juges des Enfants': return 'JE';
+    }
+
+    return name
+  }
 }
