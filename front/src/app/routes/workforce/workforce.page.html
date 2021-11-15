@@ -3,16 +3,20 @@
     <div class="filters">
       <div>
         <p>Afficher</p>
-        <div *ngFor="let category of categoriesFilterList" class="item-filter">
-          <input type="checkbox" [(ngModel)]="category.selected" (ngModelChange)="onFilterList()" #inputCategory />
-          <p (click)="inputCategory.click()">{{ category.label }}</p>
+        <div class="items">
+          <div *ngFor="let category of categoriesFilterList" class="item-filter">
+            <input type="checkbox" [(ngModel)]="category.selected" (ngModelChange)="onFilterList()" #inputCategory />
+            <p (click)="inputCategory.click()">{{ category.label }}</p>
+          </div>
         </div>
       </div>
       <div>
         <p>Afficher</p>
-        <div *ngFor="let ref of referentiel" class="item-filter">
-          <input type="checkbox" [(ngModel)]="ref.selected" (ngModelChange)="onFilterList()" #inputReferentiel />
-          <p (click)="inputReferentiel.click()">{{ ref.label }}</p>
+        <div class="items">
+          <div *ngFor="let ref of referentiel" class="item-filter">
+            <input type="checkbox" [(ngModel)]="ref.selected" (ngModelChange)="onFilterList()" #inputReferentiel />
+            <p (click)="inputReferentiel.click()">{{ referentielMappingName(ref.label) }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -24,7 +28,7 @@
       <div class="total-affected">Affectation</div>
       <div class="activities">
         <div class="sub-item" *ngFor="let ref of referentielFiltred">
-          {{ ref.label }}
+          {{ referentielMappingName(ref.label) }}
         </div>
       </div>
     </div>
