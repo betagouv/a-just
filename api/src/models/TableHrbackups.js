@@ -94,6 +94,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.saveBackup = async (list, backupId, backupName) => {
     let newBackupId = backupId
+    let reelHRIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
@@ -134,6 +135,8 @@ export default (sequelizeInstance, Model) => {
         hr.id = newHr.dataValues.id
       }
 
+      reelHRIds.push(hr.id)
+
       for(let i = 0; i < hr.activities.length; i++) {
         // add activities
         const activity = hr.activities[i]
@@ -142,8 +145,6 @@ export default (sequelizeInstance, Model) => {
             // find referentiel id
             activity.referentielId = await Model.models.ContentieuxReferentiels.getContentieuxId(activity.label) 
           }
-
-          console.log(activity)
 
           await Model.models.HRVentilations.create({
             backup_id: newBackupId,
@@ -154,6 +155,20 @@ export default (sequelizeInstance, Model) => {
             date_stop: activity.dateStop,
           })
         }
+      }
+    }
+
+    // remove old HR
+    const oldNewHRList = (await Model.models.HumanResources.findAll({
+      attributes: ['id'],
+      where: {
+        backup_id: newBackupId,
+      },
+      raw: true,
+    })).map(h => (h.id))
+    for(let i = 0; i < oldNewHRList.length; i++) {
+      if(reelHRIds.indexOf(oldNewHRList[i]) === -1) {
+        await Model.models.HumanResources.destroyById(oldNewHRList[i])
       }
     }
 
