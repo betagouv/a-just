@@ -53,4 +53,8 @@ export class BackupPanelComponent extends MainClass implements OnInit, OnDestroy
   trackBy(index: number, item: any) {
     return item.id;
   }
+
+  onCreateEmptyBackup() {
+    this.humanResourceService.createEmpyHR();
+  }
 }

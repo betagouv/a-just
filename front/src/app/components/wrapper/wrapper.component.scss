@@ -6,11 +6,17 @@
 }
 
 .menu {
-  width: 238px;
+  width: 200px;
   border-right: 1px solid rgba(fColor(cblack), 0.2);
 
-  .logo {
-    width: 180px;
+  .images {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+
+    > img {
+      width: 50%;
+    }
   }
 
   a {
@@ -26,6 +32,8 @@
 
   .content {
     padding: 24px;
+    height: 100%;
+    overflow: auto;
   }
 }
 

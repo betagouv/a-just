@@ -9,7 +9,6 @@ export interface HumanResourceInterface {
 	lastName?: string;
 	coverUrl?: string;
 	etp?: number;
-	enable?: boolean;
 	category?: HRCategoryInterface;
 	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;
@@ -17,4 +16,5 @@ export interface HumanResourceInterface {
 	dateStart?: Date;
 	dateEnd?: Date;
 	note?: string;
+	totalAffected?: number;
 }

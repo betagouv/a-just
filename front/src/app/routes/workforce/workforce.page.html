@@ -1,50 +1,72 @@
 <aj-wrapper title="Effectifs" [actionTemplate]="actions">
-  <div class="header-list">
-    <div class="profil">
-      <button (click)="addHR()">Ajouter un profil</button>
-    </div>
-    <div class="work-time">Temps de travail</div>
-    <div class="total-affected">Affectation</div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ ref.label }}
+  <div class="container">
+    <div class="header-list">
+      <div class="profil">
+        <button (click)="addHR()">Ajouter un profil</button>
+      </div>
+      <div class="work-time">Temps de travail</div>
+      <div class="total-affected">Affectation</div>
+      <div class="activities">
+        <div class="sub-item" *ngFor="let ref of referentiel">
+          {{ ref.label }}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="item-list" *ngFor="let hr of humanResources" [class.disable]="!hr.enable">
-    <div class="profil">
-      Logo
-      {{ hr.firstName}}
-      {{ hr.lastName}}<br />
-      {{ hr.fonction && hr.fonction.code}}<br />
-      {{ hr.category && hr.category.label}}<br />
-      <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
-    </div>
-    <div class="work-time">
-      <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
-    </div>
-    <div class="total-affected">
-      <progression-bar [percent]="totalActity(hr)" [selected]="false"></progression-bar>
-    </div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of hr.activities; let index = index">
-        <progression-bar [percent]="ref.percent" (percentChange)="onUpdateActivity(ref, $event, hr)"
-          [selected]="hr.enable ? true : false"></progression-bar>
-      </div>
-    </div>
-  </div>
 
-  <div class="footer-list">
-    <div class="profil">Effectif {{ humanResources.length }}</div>
-    <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
-    <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
-    <div class="activities">
-      <div class="sub-item" *ngFor="let ref of referentiel">
-        {{ totalByActivity(ref.label) }}
+    <div class="content-list">
+      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
+        <div class="profil item">
+          <div class="image">
+            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+          </div>
+          <div class="text">
+            {{ hr.firstName}}
+            {{ hr.lastName}}<br />
+            {{ hr.fonction && hr.fonction.code}}<br />
+            {{ hr.category && hr.category.label}}<br />
+            <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
+            <button (click)="onRemoveRH(hr.id)">Supprimer</button>
+          </div>
+        </div>
+        <div class="work-time">
+          <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
+        </div>
+        <div class="total-affected">
+          <progression-bar [percent]="hr.totalAffected" [selected]="false"></progression-bar>
+        </div>
+        <div class="activities">
+          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+            <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
+              (click)="onUpdateActivity(ref, hr)">
+            </progression-bar>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-list">
+      <div class="profil">Effectif {{ humanResources.length }}</div>
+      <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
+      <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
+      <div class="activities">
+        <div class="sub-item" *ngFor="let ref of referentiel">
+          {{ ref.totalAffected | number:'0.2-2' }}
+        </div>
       </div>
     </div>
   </div>
 </aj-wrapper>
+
+<aj-popup *ngIf="updateActivity" [title]="updateActivity.referentiel.label" [actions]="[
+{ id: 'close', content: 'Fermer' },
+{ id: 'modify', content: 'Modifier', fill: true }
+]" [closeIcon]="true" (onClose)="updateActivity = null" (selectedAction)="onEditActivities($event)">
+  <div *ngFor="let ref of updateActivity.hrActivities">
+    <div class="label-aj">{{ref.label}} - ETP en %</div>
+    <input [(ngModel)]="ref.percent" type="number" />
+  </div>
+
+</aj-popup>
 
 <ng-template #actions>
   <aj-backup-panel></aj-backup-panel>

@@ -7,6 +7,7 @@ export function csvToArrayJson (data, options = {}) {
       skip_empty_lines: true,
       delimiter: ';',
       trim: true,
+      bom: true,
       ...options,
     }, (err, output) => {
       if(err) reject(err)

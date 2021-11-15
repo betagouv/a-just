@@ -7,7 +7,7 @@ export default (sequelizeInstance, Model) => {
         backup_id: backupId,
       },
       include: [{
-        attributes: ['id', ['niveau_3', 'label']],
+        attributes: ['id', 'label'],
         model: Model.models.ContentieuxReferentiels,
       }],
       raw: true,
