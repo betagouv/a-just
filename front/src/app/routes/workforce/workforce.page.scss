@@ -65,3 +65,26 @@
     justify-content: center;
   }
 }
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  > div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 8px;
+
+    .item-filter {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+
+      input {
+        margin-right: 8px;
+      }
+    }
+  }
+}
