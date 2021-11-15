@@ -53,10 +53,6 @@ export default sequelizeInstance => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      enable: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-      },
       registration_number: {
         type: Sequelize.STRING(255),
         allowNull: true,

@@ -4,4 +4,5 @@ Sauvegardes <select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)
 </select>
 <button (click)="onRemoveBackup()">Supprimer</button>
 <button (click)="onDuplicateBackup()">Dupliquer</button>
+<button (click)="onCreateEmptyBackup()">Créer une sauvegarde vierge</button>
 <button *ngIf="hrIsModify" (click)="onSaveHR()">Sauvegarder cet état</button>

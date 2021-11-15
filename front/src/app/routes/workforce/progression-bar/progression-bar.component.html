@@ -3,7 +3,7 @@
   </div>
   <div class="progress-bar" [style.height.%]="percent || 0" [style.backgroundColor]="color" (click)="changePercent()"
     [class.seleted]="selected">
-    <p>{{percent || 0}}%</p>
+    <p>{{percent | number:'0.2-2' || 0}}%</p>
   </div>
 </ng-template>
 <ng-template [ngIf]="!enable">

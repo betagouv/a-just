@@ -94,6 +94,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.saveBackup = async (list, backupId, backupName) => {
     let newBackupId = backupId
+    let reelHRIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
@@ -112,7 +113,6 @@ export default (sequelizeInstance, Model) => {
         date_entree: hr.dateStart || null,
         date_sortie: hr.dateEnd || null,
         note: hr.note,
-        enable: hr.enable ? true : false,
         backup_id: newBackupId,
         hr_categorie_id: hr.category && hr.category.id ? hr.category.id : null,
         hr_fonction_id: hr.fonction && hr.fonction.id ? hr.fonction.id : null,
@@ -135,6 +135,8 @@ export default (sequelizeInstance, Model) => {
         hr.id = newHr.dataValues.id
       }
 
+      reelHRIds.push(hr.id)
+
       for(let i = 0; i < hr.activities.length; i++) {
         // add activities
         const activity = hr.activities[i]
@@ -153,6 +155,20 @@ export default (sequelizeInstance, Model) => {
             date_stop: activity.dateStop,
           })
         }
+      }
+    }
+
+    // remove old HR
+    const oldNewHRList = (await Model.models.HumanResources.findAll({
+      attributes: ['id'],
+      where: {
+        backup_id: newBackupId,
+      },
+      raw: true,
+    })).map(h => (h.id))
+    for(let i = 0; i < oldNewHRList.length; i++) {
+      if(reelHRIds.indexOf(oldNewHRList[i]) === -1) {
+        await Model.models.HumanResources.destroyById(oldNewHRList[i])
       }
     }
 

@@ -17,7 +17,6 @@ export default class RouteHumanResources extends Route {
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
-      contentieuxReferentiel: await this.model.models.ContentieuxReferentiels.getMainTitles(),
       backups: await this.model.models.HRBackups.list(),
       backupId: backupId || await this.model.models.HRBackups.lastId(),
     })

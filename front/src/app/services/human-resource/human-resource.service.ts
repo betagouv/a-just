@@ -30,7 +30,6 @@ export class HumanResourceService {
     this.backupId.subscribe((id) => {
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
-          this.contentieuxReferentiel.next(result.contentieuxReferentiel);
           this.hr.next(result.hr);
           this.backups.next(result.backups);
           this.autoReloadData = false;
@@ -89,16 +88,8 @@ export class HumanResourceService {
   }
 
   updateHR(list: HumanResourceInterface[]) {
-    const newList: HumanResourceInterface[] = [];
-
-    list.map((l) => {
-      newList.push({
-        ...l,
-        activities: (l.activities || []).filter((a) => a.percent),
-      });
-    });
-
-    this.hr.next(newList);
+    this.hr.next(list);
+    this.hrIsModify.next(true);
   }
 
   removeBackup() {
@@ -141,5 +132,37 @@ export class HumanResourceService {
       .then((r) => {
         this.backupId.next(r.data);
       });
+  }
+
+  removeHrById(id: number) {
+    if (confirm('Supprimer cette personne ?')) {
+      const list = this.hr.getValue();
+      const findIndex = list.findIndex((r) => r.id === id);
+      if (findIndex !== -1) {
+        list.splice(findIndex, 1);
+        this.hr.next(list);
+        this.hrIsModify.next(true);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  createEmpyHR() {
+    let backupName = prompt('Sous quel nom ?');
+
+    if (backupName) {
+      return this.serverService
+        .post(`human-resources/save-backup`, {
+          hrList: [],
+          backupName: backupName,
+        })
+        .then((r) => {
+          this.backupId.next(r.data);
+        });
+    }
+
+    return Promise.resolve();
   }
 }

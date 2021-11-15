@@ -5,9 +5,9 @@
       <h3>Profil</h3>
       <form [formGroup]="formEditHR" (submit)="onEdit()">
         <div class="label-aj">Nom</div>
-        <input formControlName="firstName" />
-        <div class="label-aj">Prénom</div>
         <input formControlName="lastName" />
+        <div class="label-aj">Prénom</div>
+        <input formControlName="firstName" />
         <div class="label-aj">Temps de travail en %</div>
         <input formControlName="etp" type="number" />
         <div class="label-aj">Date d'entrée</div>
@@ -20,28 +20,23 @@
         <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
         <mat-datepicker #pickerDateEnd></mat-datepicker>
 
-        <div class="label-aj">Note</div>
+        <div class="label-aj">Commentaire libre</div>
         <textarea formControlName="note"></textarea>
-
-        <div class="label-aj">Fonction</div>
-        <select formControlName="fonction">
-          <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
-        </select>
 
         <div class="label-aj">Catégorie</div>
         <select formControlName="category">
           <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
         </select>
 
-        <div class="label-aj">Actif</div>
-        <select formControlName="enable">
-          <option *ngFor="let status of [{id: true, label: 'Actif'},{id: false, label: 'Inactif'}]" [value]="status.id">
-            {{status.label}}</option>
+        <div class="label-aj">Fonction</div>
+        <select formControlName="fonction">
+          <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
         </select>
 
         <div class="actions">
-          <button type="submit">Modifier</button>
-          <button type="button" (click)="onReset()">Remise à zeros</button>
+          <button type="submit">Appliquer</button>
+          <button type="button" (click)="onRemoveRH()">Supprimer</button>
+          <button type="button" (click)="onReset()">Réinitialiser</button>
         </div>
       </form>
     </div>
@@ -55,9 +50,15 @@
             <input [(ngModel)]="acti.percent" type="number" />
           </div>
           <div>
-            <div class="label-aj">Contentieux</div>
-            <select [(ngModel)]="acti.label">
-              <option *ngFor="let ref of contentieuxReferentiel" [value]="ref.label">{{ref.label}}</option>
+            <div class="label-aj">Activité</div>
+            <select [(ngModel)]="acti.referentielId">
+              <ng-template ngFor let-ref [ngForOf]="contentieuxReferentiel">
+                <option [value]="ref.id">{{ref.label}}</option>
+                <ng-template [ngIf]="ref.childrens">
+                  <option *ngFor="let subChild of ref.childrens" [value]="subChild.id">{{ref.label}} -
+                    {{subChild.label}}</option>
+                </ng-template>
+              </ng-template>
             </select>
           </div>
           <div>
@@ -82,11 +83,11 @@
         <hr />
       </ng-template>
 
-      <button (click)="activities.push({})">Ajouter une date d'activitée</button>
+      <button (click)="activities.push({})">Ajouter une date d'activité</button>
     </div>
   </div>
 
-  <a routerLink="/effectifs">Retour</a>
+  <a routerLink="/ventilations">Retour</a>
 </aj-wrapper>
 
 <ng-template #actions>

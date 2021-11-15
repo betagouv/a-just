@@ -20,43 +20,31 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'effectifs',
+    path: 'ventilations',
     loadChildren: () =>
       import('./workforce/workforce.module').then((mod) => mod.WorkforceModule),
     canActivate: [AuthGuard],
   },
   {
-    path: 'simulateurs',
+    path: 'donnees-d-activite',
     loadChildren: () =>
-      import('./simulators/simulators.module').then((mod) => mod.SimulatorsModule),
+      import('./activities/activities.module').then((mod) => mod.ActivitiesModule),
     canActivate: [AuthGuard],
   },
   {
-    path: 'indicateurs',
+    path: 'temps-moyens',
     loadChildren: () =>
-      import('./indicators/indicators.module').then(
-        (mod) => mod.IndicatorsModule
+      import('./average-etp/average-etp.module').then(
+        (mod) => mod.AverageEtpModule
       ),
     canActivate: [AuthGuard],
   },
   {
-    path: 'rapports',
+    path: 'calculateur',
     loadChildren: () =>
-      import('./reports/reports.module').then((mod) => mod.ReportsModule),
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'parametres',
-    loadChildren: () =>
-      import('./parameters/parameters.module').then(
-        (mod) => mod.ParametersModule
+      import('./calculator/calculator.module').then(
+        (mod) => mod.CalculatorModule
       ),
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'aides',
-    loadChildren: () =>
-      import('./helps/helps.module').then((mod) => mod.HelpsModule),
     canActivate: [AuthGuard],
   },
   {

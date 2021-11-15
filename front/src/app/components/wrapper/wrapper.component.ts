@@ -10,28 +10,24 @@ export class WrapperComponent implements OnInit {
   @Input() title: string = "";
   menu = [
     {
-      label: 'Effectifs',
-      path: 'effectifs',
+      label: 'Tribunal judiciaire',
+      path: 'dashboard',
     },
     {
-      label: 'Indicateurs',
-      path: 'indicateurs',
+      label: 'Ventilations',
+      path: 'ventilations',
     },
     {
-      label: 'Simulateurs',
-      path: 'simulateurs',
+      label: 'Données d\'activité',
+      path: 'donnees-d-activite',
     },
     {
-      label: 'Rapports',
-      path: 'rapports',
+      label: 'Temps moyens',
+      path: 'temps-moyens',
     },
     {
-      label: 'Paramètres',
-      path: 'parametres',
-    },
-    {
-      label: 'Aides',
-      path: 'aides',
+      label: 'Calculateur',
+      path: 'calculateur',
     },
   ];
   constructor() {}

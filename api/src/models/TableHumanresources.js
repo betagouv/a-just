@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash'
 import slugify from 'slugify'
+import { posad } from '../constants/hr'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -12,7 +13,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'enable', 'backup_id'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
       where: {
         backup_id: backupId,
       }, 
@@ -35,7 +36,7 @@ export default (sequelizeInstance, Model) => {
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
         note: list[i].note,
-        enable: list[i].enable,
+        coverUrl: list[i].cover_url, 
         category: {
           id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],
@@ -64,10 +65,12 @@ export default (sequelizeInstance, Model) => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })
 
+    console.log(referentielMapping)
+
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
+      console.log(HRFromList)
       const options = {
-        enable: false,
         juridiction_id: 1,
         hr_fonction_id: 1,
         hr_categorie_id: 1,
@@ -76,9 +79,6 @@ export default (sequelizeInstance, Model) => {
         last_name: '',
         date_entree: today,
         backup_id: backupId,
-      }
-      if(HRFromList.num_statut && HRFromList.num_statut === '1.0') {
-        options.enable = true
       }
 
       const findJuridiction = await Model.models.Juridictions.findOne({
@@ -106,11 +106,11 @@ export default (sequelizeInstance, Model) => {
         },
       })
       if(findFonction) {
-        options.hr_fonction_id = findCategory.id
+        options.hr_fonction_id = findFonction.id
       }
 
-      if(HRFromList.etp_t) {
-        options.etp = parseFloat(HRFromList.etp_t) 
+      if(HRFromList.posad) {
+        options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
       if(HRFromList.nom_affichage) {
@@ -127,8 +127,6 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      // retire_du_temps_de_travail: '0.0', TODO a voir apres appel de lyon
-
       // create
       const findHRToDB = await Model.create({
         registration_number: HRFromList.num_fonc,
@@ -139,6 +137,7 @@ export default (sequelizeInstance, Model) => {
       const objectList = Object.entries(HRFromList)
       for(let x = 0; x < objectList.length; x++) {
         let [key, value] = objectList[x]
+        key = key.replace(/'/g, '_')
         if(referentielMapping[key]) {
           const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
           const percent = parseFloat(value)

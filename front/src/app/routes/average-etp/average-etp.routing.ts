@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HelpsPage } from './helps.page';
+import { AverageEtpPage } from './average-etp.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: HelpsPage,
+    component: AverageEtpPage,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HelpsPageModule {}
+export class AverageEtpPageModule {}
