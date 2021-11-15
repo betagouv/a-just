@@ -118,9 +118,9 @@ export class HumanResourceService {
     return Promise.resolve();
   }
 
-  onSaveHRDatas() {
+  onSaveHRDatas(isCopy: boolean) {
     let backupName = null;
-    if (confirm('Sauvegarder en temps que copie ?')) {
+    if (isCopy) {
       backupName = prompt('Sous quel nom ?');
     }
     return this.serverService
