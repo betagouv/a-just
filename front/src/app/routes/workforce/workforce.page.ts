@@ -4,7 +4,6 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
-import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 
 @Component({
   templateUrl: './workforce.page.html',

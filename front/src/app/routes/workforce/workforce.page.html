@@ -50,7 +50,7 @@
       <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
       <div class="activities">
         <div class="sub-item" *ngFor="let ref of referentiel">
-          {{ ref.totalAffected }}
+          {{ ref.totalAffected | number:'0.2-2' }}
         </div>
       </div>
     </div>
