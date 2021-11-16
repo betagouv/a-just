@@ -3,7 +3,7 @@
     <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
         <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
             {{back.label}} du {{back.date
-            | date:"dd/mm/yyyy"}}
+            | date:"dd/MM/yyyy"}}
         </mat-option>
     </mat-select>
 </mat-form-field>
