@@ -5,6 +5,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
+import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -71,7 +72,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       });
 
-      hr.totalAffected = totalAffected;
+      hr.totalAffected = Math.floor(totalAffected * 100) / 100;
     });
   }
 
@@ -115,8 +116,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return activity;
     })
 
-    console.log('listActivities', listActivities)
-
     this.updateActivity = {
       referentiel: ref,
       hrActivities: listActivities,
@@ -146,7 +145,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   getCurrentActivity(
-    ref: ContentieuReferentielInterface,
+    ref: ContentieuReferentielInterface | null,
     human: HumanResourceInterface
   ) {
     const collectIds = (list: ContentieuReferentielInterface[]): number[] => {
@@ -158,7 +157,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       return elements;
     };
-    const ids = collectIds([ref]);
+    const ids = ref ? collectIds([ref]) : [];
 
     const now = new Date();
     return (human.activities || []).filter((a: any) => {
@@ -166,7 +165,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const dateStart = a.dateStart ? new Date(a.dateStart) : null;
 
       return (
-        ids.indexOf(a.referentielId) !== -1 &&
+        ids.length ? ids.indexOf(a.referentielId) !== -1 : true &&
         ((dateStart === null && dateStop === null) ||
           (dateStart &&
             dateStart.getTime() <= now.getTime() &&
@@ -182,9 +181,35 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
+  calculTotalTmpActivity(currentActivities: RHActivityInterface[], formActivities: RHActivityInterface[]) {
+    // calcul total set activities
+    const totalForm = sumBy(formActivities, 'percent');
+
+    // calcul total current activities whitout form
+    let totalCurrentActivities = 0;
+    currentActivities.map(ca => {
+      const isInForm = formActivities.find(f => f.id === ca.referentielId);
+      if(!isInForm) {
+        totalCurrentActivities += ca.percent || 0;
+      }
+    })
+
+    return totalForm + totalCurrentActivities;
+  }
+
   onEditActivities(action: any) {
     switch (action.id) {
       case 'modify':
+        const allCurrentActivities = this.getCurrentActivity(
+          null,
+          this.updateActivity.hr
+        );
+        const totalAffected = this.calculTotalTmpActivity(allCurrentActivities, this.updateActivity.hrActivities);
+        if(totalAffected > 100) {
+          alert(`Attention, avec les autres affectations, vous avez atteind un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
+          return;
+        }
+
         const currentActivities = this.getCurrentActivity(
           this.updateActivity.referentiel,
           this.updateActivity.hr
