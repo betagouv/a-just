@@ -5,4 +5,5 @@ export interface ContentieuReferentielInterface {
 	totalAffected?: number;
 	percent?: number;
 	selected?: boolean;
+	rank?: number;
 }

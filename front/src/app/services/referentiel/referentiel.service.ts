@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { orderBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { referentielMappingIndex } from 'src/app/utils/referentiel';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
@@ -27,6 +29,13 @@ export class ReferentielService {
           });
         }
       });
+
+      // force to order list
+      list = orderBy(list.map(r => {
+        r.rank = referentielMappingIndex(r.label)
+        return r
+      }), ['rank'])
+
       this.humanResourceService.contentieuxReferentiel.next(list);
     });
   }

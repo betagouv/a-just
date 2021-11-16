@@ -1,4 +1,5 @@
 import { Subscription } from "rxjs";
+import { referentielMappingColor, referentielMappingName } from "../utils/referentiel";
 
 export class MainClass {
   watcherList: Subscription[] = [];
@@ -16,16 +17,10 @@ export class MainClass {
   }
 
   public referentielMappingName (name: string): string {
-    switch(name) {
-      case 'Soutien': return 'Sout.';
-      case 'Indisponibilité': return 'Indisp.';
-      case 'Siège Pénal': return 'Pénal';
-      case 'Contentieux JAF': return 'JAF';
-      case 'Contentieux Social': return 'SOC.';
-      case 'Contentieux de la Protection': return 'JCP';
-      case 'Juges des Enfants': return 'JE';
-    }
+    return referentielMappingName(name);
+  }
 
-    return name
+  public referentielMappingColor (name: string): string {
+    return referentielMappingColor(name);
   }
 }

@@ -8,6 +8,7 @@ import { ListSelectionComponent } from './list-selection/list-selection.componen
 import { PanelIndicatorComponent } from './panel-indicator/panel-indicator.page';
 import { BackupPanelComponent } from './backup-panel/backup-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../libs/material.module';
 
 const list = [
   WrapperComponent,
@@ -20,7 +21,7 @@ const list = [
 
 @NgModule({
   declarations: [...list],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MaterialModule],
   exports: list,
 })
 export class ComponentsModule {}
