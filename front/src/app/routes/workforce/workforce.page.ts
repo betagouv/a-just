@@ -92,25 +92,30 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     hr: HumanResourceInterface
   ) {
     // show popup with referentiel and formated values
-    const listActivities: any[] = [
+    let listActivities: any[] = [
       {
         id: ref.id,
         label: ref.label,
-        percent: ref.percent || 0,
       },
     ];
-    const currentActivities = this.getCurrentActivity(ref, hr);
-
     (ref.childrens || []).map((r) => {
-      const percentAffected = currentActivities.find(
-        (a) => a.referentielId === r.id
-      );
       listActivities.push({
         id: r.id,
         label: r.label,
-        percent: (percentAffected && percentAffected.percent) || 0,
       });
-    });    
+    });
+    
+    const currentActivities = this.getCurrentActivity(ref, hr);
+    listActivities = listActivities.map(activity => {
+      const percentAffected = currentActivities.find(
+        (a) => a.referentielId === activity.id
+      );
+
+      activity.percent = (percentAffected && percentAffected.percent) || 0;
+      return activity;
+    })
+
+    console.log('listActivities', listActivities)
 
     this.updateActivity = {
       referentiel: ref,

@@ -3,7 +3,7 @@
 :host {
   display: block;
   position: relative;
-  height: 90px;
+  height: 80px;
   width: 50px;
 
   > div {
@@ -30,6 +30,12 @@
 
       p {
         color: white;
+
+        &.top {
+          position: relative;
+          color: black;
+          top: -20px;
+        }
       }
     }
 

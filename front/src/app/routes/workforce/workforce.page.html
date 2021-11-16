@@ -30,8 +30,8 @@
       <div class="profil">
 
       </div>
-      <div class="work-time">ETP</div>
-      <div class="total-affected">Affectés</div>
+      <div class="work-time">Temps de<br />Travail</div>
+      <div class="total-affected">Affecté</div>
       <div class="activities">
         <div class="sub-item" *ngFor="let ref of referentielFiltred">
           {{ referentielMappingName(ref.label) }}
@@ -48,22 +48,27 @@
           <div class="text">
             {{ hr.firstName}}
             {{ hr.lastName}}<br />
-            {{ hr.fonction && hr.fonction.code}}<br />
-            {{ hr.category && hr.category.label}}<br />
-            <a [routerLink]="['/resource-humaine', hr.id]"><button>Modifier</button></a>
-            <button (click)="onRemoveRH(hr.id)">Supprimer</button>
+            {{ hr.category && hr.category.label}} {{ hr.fonction && hr.fonction.code}}<br />
+            <a [routerLink]="['/resource-humaine', hr.id]">
+              <button mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+            </a>
+            <button mat-icon-button (click)="onRemoveRH(hr.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         </div>
         <div class="work-time">
-          <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false"></progression-bar>
+          <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false" color="#2e7d32"></progression-bar>
         </div>
         <div class="total-affected">
-          <progression-bar [percent]="hr.totalAffected" [selected]="false"></progression-bar>
+          <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>
         </div>
         <div class="activities">
           <div class="sub-item" *ngFor="let ref of referentielFiltred; let index = index">
             <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
-              (click)="onUpdateActivity(ref, hr)">
+              (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
             </progression-bar>
           </div>
         </div>
@@ -87,9 +92,19 @@
 { id: 'close', content: 'Fermer' },
 { id: 'modify', content: 'Modifier', fill: true }
 ]" [closeIcon]="true" (onClose)="updateActivity = null" (selectedAction)="onEditActivities($event)">
-  <div *ngFor="let ref of updateActivity.hrActivities">
-    <div class="label-aj">{{ref.label}} - ETP en %</div>
-    <input [(ngModel)]="ref.percent" type="number" />
+  <div class="popup-referentiel">
+    <div class="title">
+      <div class="label-aj">{{updateActivity.hrActivities[0].label}}</div>
+      <progression-bar [(percent)]="updateActivity.hrActivities[0].percent"
+        [color]="referentielMappingColor(updateActivity.referentiel.label)"></progression-bar>
+    </div>
+    <div class="content">
+      <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
+        <div class="label-aj">{{ref.label}}</div>
+        <progression-bar [(percent)]="ref.percent" [color]="referentielMappingColor(updateActivity.referentiel.label)">
+        </progression-bar>
+      </div>
+    </div>
   </div>
 </aj-popup>
 
