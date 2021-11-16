@@ -1,31 +1,37 @@
 <aj-wrapper title="Effectifs" [actionTemplate]="actions">
   <div class="container">
-    <div class="filters">
-      <div>
-        <p>Afficher</p>
-        <div class="items">
-          <div *ngFor="let category of categoriesFilterList" class="item-filter">
-            <input type="checkbox" [(ngModel)]="category.selected" (ngModelChange)="onFilterList()" #inputCategory />
-            <p (click)="inputCategory.click()">{{ category.label }}</p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <p>Afficher</p>
-        <div class="items">
-          <div *ngFor="let ref of referentiel" class="item-filter">
-            <input type="checkbox" [(ngModel)]="ref.selected" (ngModelChange)="onFilterList()" #inputReferentiel />
-            <p (click)="inputReferentiel.click()">{{ referentielMappingName(ref.label) }}</p>
-          </div>
-        </div>
-      </div>
+    <div class="title">
+      <h3>Vos effectifs</h3>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
+        <mat-label>Catégories</mat-label>
+        <mat-select multiple [ngModel]="selectedCategoryIds" (ngModelChange)="onSelectedCategoryIdsChanged($event)">
+          <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
+            {{ category.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
+        <mat-label>Contentieux</mat-label>
+        <mat-select multiple [ngModel]="selectedReferentielIds"
+          (ngModelChange)="onSelectedReferentielIdsChanged($event)">
+          <mat-option *ngFor="let ref of referentiel" [value]="ref.id">
+            {{ referentielMappingName(ref.label) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="flex-1"></div>
+      <button mat-stroked-button (click)="addHR()">
+        <mat-icon>add</mat-icon> Ajouter un profil
+      </button>
     </div>
     <div class="header-list">
       <div class="profil">
-        <button (click)="addHR()">Ajouter un profil</button>
+
       </div>
-      <div class="work-time">Temps de travail</div>
-      <div class="total-affected">Affectation</div>
+      <div class="work-time">ETP</div>
+      <div class="total-affected">Affectés</div>
       <div class="activities">
         <div class="sub-item" *ngFor="let ref of referentielFiltred">
           {{ referentielMappingName(ref.label) }}
@@ -85,7 +91,6 @@
     <div class="label-aj">{{ref.label}} - ETP en %</div>
     <input [(ngModel)]="ref.percent" type="number" />
   </div>
-
 </aj-popup>
 
 <ng-template #actions>

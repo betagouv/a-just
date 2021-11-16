@@ -1,9 +1,31 @@
-Sauvegardes <select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
-    <option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">{{back.label}} {{back.date
-        | date:"dd/mm/yyyy"}}</option>
-</select>
-<button (click)="onRemoveBackup()">Supprimer</button>
-<button (click)="onDuplicateBackup()">Dupliquer</button>
-<button (click)="onCreateEmptyBackup()">Créer une sauvegarde vierge</button>
-<button *ngIf="hrIsModify" (click)="onSaveHR(true)">Enregistrer sous</button>
-<button *ngIf="hrIsModify" (click)="onSaveHR(false)">Enregister</button>
+<mat-form-field appearance="standard">
+    <mat-label>La ventilation affichée est</mat-label>
+    <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
+        <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
+            {{back.label}} du {{back.date
+            | date:"dd/mm/yyyy"}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<button [disabled]="!hrIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
+    sous</button>
+<button [disabled]="!hrIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(false)">Enregister</button>
+
+<button mat-icon-button class="left-margin" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="onRemoveBackup()">
+        <mat-icon>delete_outline</mat-icon>
+        <span>Supprimer</span>
+    </button>
+    <button mat-menu-item (click)="onDuplicateBackup()">
+        <mat-icon>content_copy</mat-icon>
+        <span>Dupliquer</span>
+    </button>
+    <button mat-menu-item (click)="onCreateEmptyBackup()">
+        <mat-icon>add</mat-icon>
+        <span>Créer une sauvegarde vierge</span>
+    </button>
+</mat-menu>

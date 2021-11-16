@@ -1,5 +1,5 @@
 export interface HRCategoryInterface {
-	id?: number;
+	id: number;
 	label?: string;
 	rank?: number;
 	selected?: boolean;

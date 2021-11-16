@@ -1,8 +1,8 @@
 @import "../../styles/utils.scss";
 
 :host {
-  display: block;
-  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
 
   .header-selection {
     font-weight: bold;
@@ -17,4 +17,8 @@
       }
     }
   }
+}
+
+.left-margin {
+  margin-left: 8px;
 }

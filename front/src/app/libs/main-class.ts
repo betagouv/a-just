@@ -21,9 +21,11 @@ export class MainClass {
       case 'Indisponibilité': return 'Indisp.';
       case 'Siège Pénal': return 'Pénal';
       case 'Contentieux JAF': return 'JAF';
-      case 'Contentieux Social': return 'SOC.';
+      case 'Contentieux Social': return 'Social';
       case 'Contentieux de la Protection': return 'JCP';
       case 'Juges des Enfants': return 'JE';
+      case 'Civil Non Spécialisé': return 'JNS';
+      case 'Juges d\'Instruction': return 'JI';
     }
 
     return name

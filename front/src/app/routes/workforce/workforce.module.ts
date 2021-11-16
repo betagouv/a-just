@@ -6,9 +6,10 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { CommonModule } from '@angular/common';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/libs/material.module';
 
 @NgModule({
 	declarations: [ WorkforcePage, ProgressionBarComponent ],
-	imports: [ WorkforcePageModule, RouterModule, ComponentsModule, CommonModule, FormsModule, ReactiveFormsModule ]
+	imports: [ WorkforcePageModule, RouterModule, ComponentsModule, CommonModule, FormsModule, ReactiveFormsModule, MaterialModule ]
 })
 export class WorkforceModule {}

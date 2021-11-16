@@ -17,6 +17,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   referentielFiltred: ContentieuReferentielInterface[] = [];
   updateActivity: any = null;
   categoriesFilterList: HRCategoryInterface[] = [];
+  selectedCategoryIds: any[] = [];
+  selectedReferentielIds: any[] = [];
 
   constructor(private humanResourceService: HumanResourceService) {
     super();
@@ -30,6 +32,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           const hr = this.allHumanResources[i];
           if(hr.category && !this.categoriesFilterList.find(c => c.id === (hr.category && hr.category.id))) {
             this.categoriesFilterList.push({...hr.category, selected: true});
+            this.selectedCategoryIds.push(hr.category.id);
           }
         }
 
@@ -41,6 +44,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref.map(r => ({...r, selected: true}));
+        this.selectedReferentielIds = ref.map(r => (r.id));
         this.onFilterList();
         this.calculateTotalOccupation();
       })
@@ -226,5 +230,25 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     })
 
     this.humanResources = list;
+  }
+
+  onSelectedCategoryIdsChanged(list: number[]) {
+    this.categoriesFilterList = this.categoriesFilterList.map(cat => {
+      cat.selected = list.indexOf(cat.id) !== -1;
+
+      return cat;
+    });
+
+    this.onFilterList();
+  }
+
+  onSelectedReferentielIdsChanged(list: number[]) {
+    this.referentiel = this.referentiel.map(cat => {
+      cat.selected = list.indexOf(cat.id) !== -1;
+
+      return cat;
+    });
+
+    this.onFilterList();
   }
 }
