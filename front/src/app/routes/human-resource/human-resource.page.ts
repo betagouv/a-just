@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
@@ -93,6 +94,29 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  calculTotalTmpActivity(activities: RHActivityInterface[]) {
+    const now = new Date();
+    activities = (activities || []).filter((a: any) => {
+      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
+      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+
+      return (
+        (dateStart === null && dateStop === null) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop === null) ||
+          (dateStart === null &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()))
+    });
+
+    return sumBy(activities, 'percent');
+  }
+
   onEdit() {
     if (this.formEditHR.invalid) {
       alert("Vous devez saisir l'ensemble des champs !");
@@ -120,6 +144,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ...a,
         referentielId: +(a.referentielId || 0),
       }));
+
+      const totalAffected = this.calculTotalTmpActivity(this.currentHR.activities);
+      if(totalAffected > 100) {
+        alert(`Attention, avec les autres affectations, vous avez atteind un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
+        return;
+      }
 
       const allHuman = this.humanResourceService.hr.getValue();
       const findIndex = allHuman.findIndex(
