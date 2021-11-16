@@ -115,8 +115,8 @@ export default (sequelizeInstance, Model) => {
 
       if(HRFromList.nom_affichage) {
         const splitName = HRFromList.nom_affichage.split(' ')
-        options.first_name = splitName[0]
-        options.last_name = splitName[1]
+        options.first_name = splitName[1].replace(/,/g, '')
+        options.last_name = splitName[0].replace(/,/g, '')
       }
 
       if(HRFromList.date_affectation) {
@@ -140,7 +140,7 @@ export default (sequelizeInstance, Model) => {
         key = key.replace(/'/g, '_')
         if(referentielMapping[key]) {
           const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
-          const percent = parseFloat(value)
+          const percent = Math.floor(parseFloat(value) * 100) / 100
           if(key && percent && contentieuxId) {
             await Model.models.HRVentilations.create({
               rh_id: findHRToDB.dataValues.id,

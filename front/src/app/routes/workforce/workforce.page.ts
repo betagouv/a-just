@@ -206,7 +206,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         );
         const totalAffected = this.calculTotalTmpActivity(allCurrentActivities, this.updateActivity.hrActivities);
         if(totalAffected > 100) {
-          alert(`Attention, avec les autres affectations, vous avez atteind un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
+          alert(`Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
           return;
         }
 
