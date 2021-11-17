@@ -10,8 +10,8 @@ import { UserService } from "src/app/services/user/user.service";
 })
 export class LoginPage {
   form = new FormGroup({
-    email: new FormControl("fx@a-just.fr"),
-    password: new FormControl("123456"),
+    email: new FormControl(),
+    password: new FormControl(),
   });
 
   constructor(private authService: AuthService, private userService: UserService, private router: Router) {}

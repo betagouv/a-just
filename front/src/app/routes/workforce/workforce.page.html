@@ -5,7 +5,7 @@
       <div class="flex-1"></div>
       <mat-form-field appearance="standard">
         <mat-label>Catégories</mat-label>
-        <mat-select multiple [ngModel]="selectedCategoryIds" (ngModelChange)="onSelectedCategoryIdsChanged($event)">
+        <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
           <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
             {{ category.label }}
           </mat-option>
@@ -28,7 +28,7 @@
     </div>
     <div class="header-list">
       <div class="profil">
-
+        <p *ngIf="selectedCategoryIds.indexOf(1) !== -1">Magistrat</p> <!-- petit lol à faire évoluer -->
       </div>
       <div class="work-time">Temps de<br />Travail</div>
       <div class="total-affected">Affecté</div>
@@ -48,7 +48,7 @@
           <div class="text">
             {{ hr.firstName}}
             {{ hr.lastName}}<br />
-            {{ hr.category && hr.category.label}} {{ hr.fonction && hr.fonction.code}}<br />
+            {{ hr.fonction && hr.fonction.code}}<br />
             <a [routerLink]="['/resource-humaine', hr.id]">
               <button mat-icon-button>
                 <mat-icon>edit</mat-icon>

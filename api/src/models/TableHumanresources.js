@@ -1,6 +1,7 @@
 import { sortBy } from 'lodash'
 import slugify from 'slugify'
 import { posad } from '../constants/hr'
+import { ucFirst } from '../utils/utils'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -113,10 +114,15 @@ export default (sequelizeInstance, Model) => {
         options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
-      if(HRFromList.nom_affichage) {
-        const splitName = HRFromList.nom_affichage.split(' ')
-        options.first_name = splitName[0]
-        options.last_name = splitName[1]
+      if(HRFromList.prenom) {
+        options.first_name = ucFirst(HRFromList.prenom)
+      }
+
+      if(HRFromList.nom) {
+        options.last_name = ucFirst(HRFromList.nom)
+        if(HRFromList.nom_marital) {
+          options.last_name += ' ep. ' + ucFirst(HRFromList.nom_marital)
+        }
       }
 
       if(HRFromList.date_affectation) {
@@ -140,7 +146,7 @@ export default (sequelizeInstance, Model) => {
         key = key.replace(/'/g, '_')
         if(referentielMapping[key]) {
           const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
-          const percent = parseFloat(value)
+          const percent = Math.floor(parseFloat(value) * 100) / 100
           if(key && percent && contentieuxId) {
             await Model.models.HRVentilations.create({
               rh_id: findHRToDB.dataValues.id,
