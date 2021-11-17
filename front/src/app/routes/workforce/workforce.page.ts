@@ -31,7 +31,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
         this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank']);
         this.onFilterList();
-        this.calculateTotalOccupation();
       })
     );
     this.watch(
@@ -39,7 +38,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.referentiel = ref.map(r => ({...r, selected: true}));
         this.selectedReferentielIds = ref.map(r => (r.id));
         this.onFilterList();
-        this.calculateTotalOccupation();
       })
     );
     this.watch(this.humanResourceService.categories.subscribe(ref => {
@@ -249,6 +247,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     const list: HumanResourceInterface[] = this.allHumanResources.filter(hr => hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1);
     this.humanResources = list;
+    this.calculateTotalOccupation();
   }
 
   onSelectedReferentielIdsChanged(list: number[]) {
