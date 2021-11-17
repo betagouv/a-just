@@ -37,7 +37,7 @@ export function arrayToObjectByKeys (data, keys, separator = '-', keepRef = true
 }
 
 export function ucFirst (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 export function cleanUrl (url) {

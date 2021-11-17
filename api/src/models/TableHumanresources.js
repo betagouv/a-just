@@ -1,6 +1,7 @@
 import { sortBy } from 'lodash'
 import slugify from 'slugify'
 import { posad } from '../constants/hr'
+import { ucFirst } from '../utils/utils'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -113,11 +114,18 @@ export default (sequelizeInstance, Model) => {
         options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
-      if(HRFromList.nom_affichage) {
-        const splitName = HRFromList.nom_affichage.split(' ')
-        options.first_name = splitName[1].replace(/,/g, '')
-        options.last_name = splitName[0].replace(/,/g, '')
+      if(HRFromList.prenom) {
+        options.first_name = ucFirst(HRFromList.prenom)
       }
+
+      if(HRFromList.nom) {
+        options.last_name = ucFirst(HRFromList.nom)
+        if(HRFromList.nom_marital) {
+          options.last_name += ' ep. ' + ucFirst(HRFromList.nom_marital)
+        }
+      }
+
+      console.log(options)
 
       if(HRFromList.date_affectation) {
         HRFromList.date_affectation = HRFromList.date_affectation.replace(/#/, '')

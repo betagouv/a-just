@@ -29,15 +29,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hr.subscribe((hr) => {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
-        for(let i = 0; i < this.allHumanResources.length; i++) {
-          const hr = this.allHumanResources[i];
-          if(hr.category && !this.categoriesFilterList.find(c => c.id === (hr.category && hr.category.id))) {
-            this.categoriesFilterList.push({...hr.category, selected: true});
-            this.selectedCategoryIds.push(hr.category.id);
-          }
-        }
-
-        this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank'])
+        this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank']);
         this.onFilterList();
         this.calculateTotalOccupation();
       })
@@ -50,6 +42,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.calculateTotalOccupation();
       })
     );
+    this.watch(this.humanResourceService.categories.subscribe(ref => {
+      this.categoriesFilterList = ref;
+      this.selectedCategoryIds = ref.map(c => c.id);
+      this.onFilterList();
+    }))
   }
 
   ngOnDestroy() {
@@ -250,26 +247,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onFilterList() {
     this.referentielFiltred = this.referentiel.filter(r => r.selected);
 
-    const list: HumanResourceInterface[] = [];
-
-    this.allHumanResources.map(hr => {
-      const catFromList = this.categoriesFilterList.find(c => c.id === (hr.category && hr.category.id));
-      if(catFromList && catFromList.selected) {
-        list.push(hr);
-      }
-    })
-
+    const list: HumanResourceInterface[] = this.allHumanResources.filter(hr => hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1);
     this.humanResources = list;
-  }
-
-  onSelectedCategoryIdsChanged(list: number[]) {
-    this.categoriesFilterList = this.categoriesFilterList.map(cat => {
-      cat.selected = list.indexOf(cat.id) !== -1;
-
-      return cat;
-    });
-
-    this.onFilterList();
   }
 
   onSelectedReferentielIdsChanged(list: number[]) {

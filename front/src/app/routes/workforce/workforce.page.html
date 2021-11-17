@@ -5,7 +5,7 @@
       <div class="flex-1"></div>
       <mat-form-field appearance="standard">
         <mat-label>Catégories</mat-label>
-        <mat-select multiple [ngModel]="selectedCategoryIds" (ngModelChange)="onSelectedCategoryIdsChanged($event)">
+        <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
           <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
             {{ category.label }}
           </mat-option>
