@@ -125,8 +125,6 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      console.log(options)
-
       if(HRFromList.date_affectation) {
         HRFromList.date_affectation = HRFromList.date_affectation.replace(/#/, '')
         const dateSplited = HRFromList.date_affectation.split('/')
