@@ -73,6 +73,8 @@ export class HumanResourceService {
       activities,
     });
 
+    console.log(hr.length)
+
     this.hr.next(hr);
     this.hrIsModify.next(true);
   }
