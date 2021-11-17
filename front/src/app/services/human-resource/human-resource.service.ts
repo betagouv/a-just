@@ -114,10 +114,14 @@ export class HumanResourceService {
   }
 
   duplicateBackup() {
-    if (confirm('Êtes-vous sûr de vouloir dupliquer cette sauvegarde?')) {
+    const backup = this.backups.getValue().find(b => b.id === this.backupId.getValue());
+
+    const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`);
+    if (backupName) {
       return this.serverService
         .post(`human-resources/duplicate-backup`, {
           backupId: this.backupId.getValue(),
+          backupName,
         })
         .then((r) => {
           this.backupId.next(r.data);
