@@ -59,18 +59,15 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (list, title) => {
     const referentielMapping = {}
-    const backupId = await Model.models.HRBackups.createWithLabel(title)
+    const backupId = await Model.models.HRBackups.createWithLabel(title, list[0].codejur)
 
     const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
     referentielMappingList.map(ref => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })
 
-    console.log(referentielMapping)
-
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
-      console.log(HRFromList)
       const options = {
         juridiction_id: 1,
         hr_fonction_id: 1,

@@ -1,11 +1,6 @@
-import Sequelize from 'sequelize'
-
-const tableName = 'HRBackups'
-
-export default sequelizeInstance => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('UserJuridictions', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -13,13 +8,13 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       juridiction_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,
@@ -34,20 +29,14 @@ export default sequelizeInstance => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-    }
-  )
+    })
 
-  Model.associate = function (models) {  
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' }) 
-      
-    return models
-  }
-
-  return Model
+    await queryInterface.addColumn('HRBackups', 'juridiction_id', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    })
+  },
+  down: async (queryInterface /*, Sequelize*/) => {
+    return queryInterface.dropTable('UserJuridictions')
+  },
 }
