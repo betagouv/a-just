@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ServerService } from '../http-server/server.service';
@@ -23,6 +25,8 @@ export class HumanResourceService {
   );
   hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   autoReloadData: boolean = true;
+  categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<HRCategoryInterface[]>([]);
+  fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<HRFonctionInterface[]>([]);
 
   constructor(private serverService: ServerService) {}
 
@@ -34,6 +38,8 @@ export class HumanResourceService {
           this.backups.next(result.backups);
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
+          this.categories.next(result.categories);
+          this.fonctions.next(result.fonctions);
           this.hrIsModify.next(false);
         });
       } else {
@@ -71,9 +77,10 @@ export class HumanResourceService {
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
+      etp: 1,
+      fonction: this.fonctions.getValue()[0],
+      category: this.categories.getValue()[0],
     });
-
-    console.log(hr.length)
 
     this.hr.next(hr);
     this.hrIsModify.next(true);

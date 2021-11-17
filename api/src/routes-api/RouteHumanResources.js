@@ -19,6 +19,8 @@ export default class RouteHumanResources extends Route {
       hr: await this.model.getCurrentHr(backupId),
       backups: await this.model.models.HRBackups.list(),
       backupId: backupId || await this.model.models.HRBackups.lastId(),
+      categories: await this.model.models.HRCategories.getAll(),
+      fonctions: await this.model.models.HRFonctions.getAll(),
     })
   }
 

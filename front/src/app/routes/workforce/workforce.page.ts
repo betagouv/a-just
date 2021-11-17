@@ -96,7 +96,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     let listActivities: any[] = [
       {
         id: ref.id,
-        label: ref.label,
+        label: `Total de ${ref.label}`,
       },
     ];
     (ref.childrens || []).map((r) => {
