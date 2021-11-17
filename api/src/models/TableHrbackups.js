@@ -1,7 +1,21 @@
 export default (sequelizeInstance, Model) => {
-  Model.createWithLabel = async (label) => {
+  Model.createWithLabel = async (label, juridictionName) => {
+    let jurdiction = await Model.models.Juridictions.findOne({
+      where: {
+        label: juridictionName,
+      },
+    })
+
+    if(!jurdiction) {
+      jurdiction = await Model.models.Juridictions.create({
+        label: juridictionName,
+        cour_appel: juridictionName,
+      })
+    }
+
     const creation = await Model.create({
       label,
+      juridiction_id: jurdiction.dataValues.id,
     })
 
     return creation.dataValues.id
@@ -16,10 +30,37 @@ export default (sequelizeInstance, Model) => {
     return lastBackup.length ? lastBackup[0].dataValues.id : null
   }
 
-  Model.list = async () => {
-    return await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date']],
+  Model.list = async (userId) => {
+    const list = await Model.findAll({
+      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
+      include: [{
+        attributes: ['label', 'cour_appel'],
+        model: Model.models.Juridictions,
+        required: true,
+        include: [{
+          attributes: ['id'],
+          model: Model.models.UserJuridictions,
+          where: {
+            user_id: userId,
+          },
+        }],
+      }],
+      raw: true,
     })
+
+    for(let i = 0; i < list.length; i++) {
+      list[i] = {
+        id: list[i].id,
+        label: list[i].label,
+        date: list[i].date,
+        juridiction: {
+          label: list[i]['Juridiction.label'],
+          courAppel: list[i]['Juridiction.cour_appel'],
+        },
+      }
+    }
+
+    return list
   }
 
   Model.removeBackup = async (backupId) => {

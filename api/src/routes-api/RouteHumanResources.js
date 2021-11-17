@@ -14,11 +14,14 @@ export default class RouteHumanResources extends Route {
   })
   async getCurrentHr (ctx) {
     const { backupId } = this.body(ctx)
+    const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
+
+    console.log(backups)
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
-      backups: await this.model.models.HRBackups.list(),
-      backupId: backupId || await this.model.models.HRBackups.lastId(),
+      backups,
+      backupId: backupId || backups[backups.length - 1].id,
       categories: await this.model.models.HRCategories.getAll(),
       fonctions: await this.model.models.HRFonctions.getAll(),
     })

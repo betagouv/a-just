@@ -43,7 +43,9 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {  
+    Model.hasMany(models.UserJuridictions, { foreignKey: 'juridiction_id' }) 
+
     return models
   }
 
