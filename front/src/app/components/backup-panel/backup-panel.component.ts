@@ -35,6 +35,10 @@ export class BackupPanelComponent extends MainClass implements OnInit, OnDestroy
   }
 
   onChangeBackup(id: any) {
+    if(this.humanResourceService.hrIsModify.getValue() && !confirm('Vous avez des modifications en cours. Supprimer ?')) {
+      this.backupId = this.humanResourceService.backupId.getValue();
+      return;
+    }
     this.humanResourceService.backupId.next(id);
   }
 

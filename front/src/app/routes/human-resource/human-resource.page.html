@@ -4,10 +4,10 @@
     <div class="left-panel">
       <h3>Profil</h3>
       <form [formGroup]="formEditHR" (submit)="onEdit()">
-        <div class="label-aj">Nom</div>
-        <input formControlName="lastName" />
         <div class="label-aj">Prénom</div>
         <input formControlName="firstName" />
+        <div class="label-aj">Nom</div>
+        <input formControlName="lastName" />
         <div class="label-aj">Temps de travail en %</div>
         <input formControlName="etp" type="number" />
         <div class="label-aj">Date d'entrée</div>
@@ -37,6 +37,7 @@
           <button type="submit">Appliquer</button>
           <button type="button" (click)="onRemoveRH()">Supprimer</button>
           <button type="button" (click)="onReset()">Réinitialiser</button>
+          <a routerLink="/ventilations">Retour</a>
         </div>
       </form>
     </div>
@@ -87,7 +88,6 @@
     </div>
   </div>
 
-  <a routerLink="/ventilations">Retour</a>
 </aj-wrapper>
 
 <ng-template #actions>

@@ -42,7 +42,7 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
-  Model.duplicateBackup = async (backupId) => {
+  Model.duplicateBackup = async (backupId, backupName) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -52,7 +52,7 @@ export default (sequelizeInstance, Model) => {
 
     if(backup) {
       delete backup.id
-      const backupCreated = await Model.create({ ...backup, label: `${backup.label} - copie` })
+      const backupCreated = await Model.create({ ...backup, label: backupName })
       const newBackupId = backupCreated.dataValues.id
 
       const hrList = await Model.models.HumanResources.findAll({
