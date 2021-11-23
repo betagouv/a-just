@@ -6,6 +6,8 @@ import { sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -21,7 +23,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   selectedCategoryIds: any[] = [];
   selectedReferentielIds: any[] = [];
 
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService, private referentielService: ReferentielService) {
     super();
   }
 
@@ -67,8 +69,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       });
 
+      hr.workTime = this.calculWorkTime(hr);
       hr.totalAffected = Math.floor(totalAffected * 100) / 100;
     });
+  }
+
+  calculWorkTime (hr: HumanResourceInterface) {
+    const activities = this.getCurrentActivity(null, hr);    
+    return fixDecimal(sumBy(activities.filter(a => this.referentielService.idsIndispo.indexOf(a.referentielId) === -1), 'percent'));
   }
 
   totalAvailable() {

@@ -1,9 +1,9 @@
 export interface RHActivityInterface {
-	id?: number;
+	id: number;
 	codeNac?: string;
 	label?: string;
 	percent?: number;
-	referentielId?: number;
+	referentielId: number;
 	dateStart?: Date;
 	dateStop?: Date;
 }

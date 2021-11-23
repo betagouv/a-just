@@ -32,7 +32,7 @@
       </div>
       <div class="work-time">Temps de<br />Travail</div>
       <div class="total-affected">Affecté</div>
-      <div class="activities">
+      <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
         <div class="sub-item" *ngFor="let ref of referentielFiltred">
           {{ referentielMappingName(ref.label) }}
         </div>
@@ -49,6 +49,9 @@
             {{ hr.firstName}}
             {{ hr.lastName}}<br />
             {{ hr.fonction && hr.fonction.code}}<br />
+            <div>
+              <div class="tag-etp">{{hr.etp || 0}} etp</div>
+            </div>
             <a [routerLink]="['/resource-humaine', hr.id]">
               <button mat-icon-button>
                 <mat-icon>edit</mat-icon>
@@ -60,7 +63,7 @@
           </div>
         </div>
         <div class="work-time">
-          <progression-bar [percent]="(hr.etp || 0) * 100" [selected]="false" color="#2e7d32"></progression-bar>
+          <progression-bar [percent]="hr.workTime || 0" [selected]="false" color="#2e7d32"></progression-bar>
         </div>
         <div class="total-affected">
           <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>

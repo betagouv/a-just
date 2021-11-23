@@ -11,6 +11,7 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 })
 export class ReferentielService {
   referentiels: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  idsIndispo: number[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -31,12 +32,25 @@ export class ReferentielService {
       });
 
       // force to order list
-      list = orderBy(list.map(r => {
-        r.rank = referentielMappingIndex(r.label)
-        return r
-      }), ['rank'])
+      list = orderBy(
+        list.map((r) => {
+          r.rank = referentielMappingIndex(r.label);
+          return r;
+        }),
+        ['rank']
+      );
 
       this.humanResourceService.contentieuxReferentiel.next(list);
+
+      const ref = list.find((r) => r.label === 'Indisponibilité');
+      const idsIndispo = [];
+      if (ref) {
+        idsIndispo.push(ref.id);
+        (ref.childrens || []).map((c) => {
+          idsIndispo.push(c.id);
+        });
+      }
+      this.idsIndispo = idsIndispo;
     });
   }
 

@@ -60,18 +60,6 @@ export class HumanResourceService {
     const hr = this.hr.getValue();
     const activities: RHActivityInterface[] = [];
 
-    // control and create empty activity
-    this.contentieuxReferentiel
-      .getValue()
-      .map((r: ContentieuReferentielInterface) => {
-        if (activities.findIndex((a) => r.label === a.label) === -1) {
-          activities.push({
-            label: r.label,
-            percent: 0,
-          });
-        }
-      });
-
     hr.splice(0, 0, {
       id: hr.length * -1,
       firstName: 'Personne',
