@@ -84,7 +84,9 @@
         <hr />
       </ng-template>
 
-      <button (click)="activities.push({})">Ajouter une activité</button>
+      <button
+        (click)="activities.push({id: activities.length * -1, referentielId: contentieuxReferentiel[0].id})">Ajouter une
+        activité</button>
     </div>
   </div>
 
