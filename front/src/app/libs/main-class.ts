@@ -26,4 +26,12 @@ export class MainClass {
   public referentielMappingColor(name: string): string {
     return referentielMappingColor(name);
   }
+
+  public isOS() {
+    return navigator.userAgent.indexOf('AppleWebKit') !== -1;
+  }
+
+  public isNotOS() {
+    return !this.isOS();
+  }
 }
