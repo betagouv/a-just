@@ -32,7 +32,7 @@
       </div>
       <div class="work-time">Temps de<br />Travail</div>
       <div class="total-affected">Affecté</div>
-      <div class="activities">
+      <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
         <div class="sub-item" *ngFor="let ref of referentielFiltred">
           {{ referentielMappingName(ref.label) }}
         </div>
