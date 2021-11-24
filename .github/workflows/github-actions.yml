@@ -10,4 +10,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "TEST PROJECT"
+      - run: npm i
       - run: npm run test
