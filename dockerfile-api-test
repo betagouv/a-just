@@ -1,0 +1,13 @@
+FROM node:12.18.4
+
+COPY ./api /home/api
+WORKDIR /home/api
+
+#RUN apt-get -y install iptables cron
+
+CMD echo "NODE_ENV = $NODE_ENV"; \
+    npm install --production=false && \
+    npm run build:test && \ 
+    npm run test;
+# Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
+#sleep infinity;

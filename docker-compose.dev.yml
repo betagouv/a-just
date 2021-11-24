@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: fxmontigny@gmail.com
+      POSTGRES_USER: fxmontigny
+      PGADMIN_DEFAULT_PASSWORD: azerty95
+    ports:
+      - "5050:80"
+    restart: unless-stopped
