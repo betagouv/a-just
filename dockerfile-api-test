@@ -5,11 +5,9 @@ WORKDIR /home/api
 
 #RUN apt-get -y install iptables cron
 
-CMD (which yarn || npm i -g yarn@1.15.2) && \
-    echo "NODE_ENV = $NODE_ENV"; \
-    yarn install --production=false && \
-    yarn build:test && \ 
-    yarn start:production & \
-    yarn test;
+CMD echo "NODE_ENV = $NODE_ENV"; \
+    npm install --production=false && \
+    npm run build:test && \ 
+    npm run test;
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;
