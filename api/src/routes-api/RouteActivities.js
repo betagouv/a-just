@@ -13,4 +13,15 @@ export default class RouteActivities extends Route {
 
     this.sendOk(ctx, list)
   }
+
+  @Route.Get({
+    accesses: [Access.isLogin],
+  })
+  async getAll (ctx) {
+    const list = await this.model.getAll()
+
+    this.sendOk(ctx, {
+      activities: list,
+    })
+  }
 }

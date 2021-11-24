@@ -67,7 +67,7 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
   }
 
   calculDatas() {
-    const list = this.indicatorService.listActivities(this.groupName);
+    /*const list = this.indicatorService.listActivities(this.groupName);
 
     this.datasFormated.now = this.quantifyDatas(
       list.filter((l) => {
@@ -103,7 +103,7 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
         this.datasFormated.before.stock,
         this.datasFormated.now.stock
       ),
-    };
+    };*/
   }
 
   quantifyDatas(list: any[]) {

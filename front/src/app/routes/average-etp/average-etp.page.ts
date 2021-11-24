@@ -39,7 +39,7 @@ export class AverageEtpPage {
   }];
 
   constructor(private indicatorService: IndicatorService) {
-    this.indicatorService.mainCategories.subscribe((l) => {
+    /*this.indicatorService.mainCategories.subscribe((l) => {
       this.mainCategories = [
         ...l.map((i) => ({ id: i, label: i })),
         { id: null, label: 'Toute la juridiction' },
@@ -47,12 +47,12 @@ export class AverageEtpPage {
       if (this.groups.length === 0) {
         this.groups = this.indicatorService.formatGroup(this.perimeterSelected);
       }
-    });
+    });*/
   }
 
   changePerimeter(item: string | null) {
     this.perimeterSelected = item;
-    this.groups = this.indicatorService.formatGroup(this.perimeterSelected);
+    //this.groups = this.indicatorService.formatGroup(this.perimeterSelected);
   }
 
   changeRange(item: string | null) {
