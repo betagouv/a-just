@@ -5,8 +5,10 @@
     "node": "12.18.4"
   },
   "scripts": {
-    "db:build": "docker-compose -f docker-compose.yml build",
-    "db:start": "docker-compose -f docker-compose.yml up -d",
+    "db:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
+    "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+    "test": "npm run test:api",
+    "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
     "build": "npm run build:api && npm run build:front",
     "build:api": "cd api && npm i && npm run build && cd ..",
     "build:front": "cd front && npm i && npm run build && mv dist ../api/dist/front && cd ..",

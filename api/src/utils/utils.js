@@ -448,3 +448,11 @@ export async function axiosError (fct) {
     throw err
   }
 }
+
+/**
+ * @desc transforms an Object into an array of key-value pairs
+ * @todo check if this is right => currently returns array of values and use interface KeyValue
+ */
+export function objValToArray (obj) {
+  return Object.keys(obj).map(k => obj[k])
+}

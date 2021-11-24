@@ -21,7 +21,10 @@ export default class App extends AppBase {
 
   async start () {
     db.migrations().then(() => {
-      db.seeders()
+      db.seeders().then(async () => {
+        console.log('--- IS READY ---')
+        this.isReady()
+      })
     })
 
     this.models = db.initModels()
@@ -58,9 +61,13 @@ export default class App extends AppBase {
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files 
     super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files 
     
-    
-
-    
     return super.start()
+  }
+
+  isReady () {}
+
+  done () {
+    console.log('--- DONE ---')
+    process.exit()
   }
 }

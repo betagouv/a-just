@@ -5,8 +5,10 @@
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
     "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 dist/index.js",
     "build": "npm run rm-build-prod && npm run build-prod",
+    "build:test": "npm run build-prod",
     "build-prod": "babel src --out-dir dist --copy-files",
-    "rm-build-prod": "rm -rf dist"
+    "rm-build-prod": "rm -rf dist",
+    "test": "mocha"
   },
   "dependencies": {
     "@hubspot/api-client": "^4.0.0",
@@ -15,9 +17,10 @@
     "async": "^3.2.0",
     "awesome-phonenumber": "^2.44.0",
     "aws-sdk": "^2.960.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "base64-stream": "^1.0.0",
     "bcryptjs": "^2.4.3",
+    "chai-http": "^4.3.0",
     "config": "^3.3.2",
     "cron": "^1.8.2",
     "crypto": "^1.0.1",
@@ -64,9 +67,11 @@
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-3": "^6.17.0",
+    "chai": "^4.3.4",
     "eslint": "^7.13.0",
     "expect": "^26.6.2",
-    "mocha": "^8.2.1",
+    "mocha": "^8.4.0",
+    "nock": "^13.2.1",
     "nodemon": "^2.0.6",
     "prettier-eslint": "^11.0.0"
   }
