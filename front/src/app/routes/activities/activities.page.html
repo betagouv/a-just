@@ -1,4 +1,51 @@
 <aj-wrapper title="Données d'activité">
-
-
+  <div class="container">
+    <div class="header-list">
+      <div class="label month">
+        <button mat-stroked-button>Précédent</button>
+        <div class="current-month">{{activityMonth | date:'MM - YYYY'}}</div>
+        <button mat-stroked-button>Suivant</button>
+      </div>
+      <div class="column-item">Entrées</div>
+      <div class="column-item">Sorties</div>
+      <div class="column-item">Stock</div>
+    </div>
+    <div class="content-list">
+      <div *ngFor="let ref of referentiel" class="item-grouped">
+        <div class="item">
+          <div class="label">
+            <p>{{ref.label}}</p>
+            <button mat-icon-button (click)="ref.showGroup = !ref.showGroup">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <div class="column-item">
+            <input type="number" />
+          </div>
+          <div class="column-item">
+            <input type="number" />
+          </div>
+          <div class="column-item">
+            <input type="number" />
+          </div>
+        </div>
+        <div class="group" [class.enable]="ref.showGroup">
+          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
+            <div class="label">
+              <p>{{itemGroup.label}}</p>
+            </div>
+            <div class="column-item">
+              <input type="number" />
+            </div>
+            <div class="column-item">
+              <input type="number" />
+            </div>
+            <div class="column-item">
+              <input type="number" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </aj-wrapper>

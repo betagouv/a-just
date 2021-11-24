@@ -22,6 +22,7 @@ export default class RouteActivities extends Route {
 
     this.sendOk(ctx, {
       activities: list,
+      activityMonth: new Date(2021, 10),
     })
   }
 }
