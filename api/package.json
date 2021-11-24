@@ -8,7 +8,7 @@
     "build:test": "npm run build-prod",
     "build-prod": "babel src --out-dir dist --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha"
   },
   "dependencies": {
     "@hubspot/api-client": "^4.0.0",
