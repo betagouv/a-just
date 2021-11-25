@@ -37,7 +37,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.getReferentiels = async () => {
-    const formatToGraph = async (parentId = null) => {
+    const formatToGraph = async (parentId = null, index = 0) => {
       const list = await Model.findAll({
         attributes: [
           'id',
@@ -50,9 +50,9 @@ export default (sequelizeInstance, Model) => {
         raw: true,
       })
 
-      if(list && list.length) {
+      if(list && list.length && index < 3) {
         for(let i = 0; i < list.length; i++) {
-          list[i].childrens = await formatToGraph(list[i].id)
+          list[i].childrens = await formatToGraph(list[i].id, index + 1)
         }
       }
       
