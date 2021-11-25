@@ -24,6 +24,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   activities: RHActivityInterface[] = [];
   formEditHR = new FormGroup({
     etp: new FormControl(null, [Validators.required]),
+    posad: new FormControl(null, [Validators.required]),
     firstName: new FormControl(null, [Validators.required]),
     lastName: new FormControl(null, [Validators.required]),
     dateStart: new FormControl(null),
@@ -74,6 +75,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       console.log(findUser.activities);
       this.currentHR = findUser;
       this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
+      this.formEditHR.get('posad')?.setValue((findUser.posad || 0) * 100);
       this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
       this.formEditHR.get('lastName')?.setValue(findUser.lastName || '');
       this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
@@ -130,9 +132,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         note,
         category,
         fonction,
-        enable,
+        posad,
       } = this.formEditHR.value;
       this.currentHR.etp = (etp || 0) / 100;
+      this.currentHR.posad = (posad || 0) / 100;
       this.currentHR.firstName = firstName;
       this.currentHR.lastName = lastName;
       this.currentHR.dateStart = dateStart;

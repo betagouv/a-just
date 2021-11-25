@@ -10,6 +10,8 @@
         <input formControlName="lastName" />
         <div class="label-aj">Temps de travail en %</div>
         <input formControlName="etp" type="number" />
+        <div class="label-aj">Temps de travail, depuis le début de l'année, en %</div>
+        <input formControlName="posad" type="number" />
         <div class="label-aj">Date d'entrée</div>
         <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
         <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>

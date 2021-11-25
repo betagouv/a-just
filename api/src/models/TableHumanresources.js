@@ -14,7 +14,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'posad', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
       where: {
         backup_id: backupId,
       }, 
@@ -32,6 +32,7 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         etp: list[i].etp,
+        posad: list[i].posad,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         dateStart: list[i].date_entree,
@@ -107,19 +108,24 @@ export default (sequelizeInstance, Model) => {
         options.hr_fonction_id = findFonction.id
       }
 
+      if(HRFromList.etp_t) {
+        options.etp = parseFloat(HRFromList.etp_t)
+      }
+
       if(HRFromList.posad) {
-        options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
+        options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
-      if(HRFromList.prenom) {
+      if(HRFromList.prenom && HRFromList.prenom) {
         options.first_name = ucFirst(HRFromList.prenom)
-      }
-
-      if(HRFromList.nom) {
         options.last_name = ucFirst(HRFromList.nom)
         if(HRFromList.nom_marital) {
           options.last_name += ' ep. ' + ucFirst(HRFromList.nom_marital)
         }
+      } else if(HRFromList.nom_affichage) {        
+        const splitName = HRFromList.nom_affichage.split(' ')
+        options.first_name = splitName[0]
+        options.last_name = splitName[1]
       }
 
       if(HRFromList.date_affectation) {

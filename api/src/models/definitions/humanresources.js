@@ -49,6 +49,10 @@ export default sequelizeInstance => {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      posad: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
       note: {
         type: Sequelize.TEXT,
         allowNull: true,

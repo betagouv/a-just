@@ -1,4 +1,4 @@
 export interface JuridictionInterface {
-	id?: number;
-	label?: string;	
+	id: number;
+	label: string;	
 }
