@@ -6,4 +6,8 @@ export interface ContentieuReferentielInterface {
 	percent?: number;
 	selected?: boolean;
 	rank?: number;
+	in?: number;
+	out?: number;
+	stock?: number;
+	showActivityGroup?: boolean;
 }

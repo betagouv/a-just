@@ -21,9 +21,9 @@ export default sequelizeInstance => {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      contentieux: {
-        type: Sequelize.STRING(255),
-        allowNull: false,
+      contentieux_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       entrees: {
         type: Sequelize.INTEGER,
@@ -60,6 +60,8 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {    
+    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
+
     return models
   }
 

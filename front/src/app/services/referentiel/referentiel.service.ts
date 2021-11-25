@@ -3,6 +3,7 @@ import { orderBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { referentielMappingIndex } from 'src/app/utils/referentiel';
+import { ActivitiesService } from '../activities/activities.service';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
@@ -15,8 +16,13 @@ export class ReferentielService {
 
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
-  ) {}
+    private humanResourceService: HumanResourceService,
+    private activitiesService: ActivitiesService
+  ) {
+    this.activitiesService.activities.subscribe(() =>
+      this.updateReferentielValues()
+    );
+  }
 
   initDatas() {
     this.loadReferentiels().then((result) => {
@@ -41,6 +47,7 @@ export class ReferentielService {
       );
 
       this.humanResourceService.contentieuxReferentiel.next(list);
+      this.updateReferentielValues();
 
       const ref = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
@@ -58,5 +65,42 @@ export class ReferentielService {
     return this.serverService
       .get('referentiels/get-referentiels')
       .then((r) => r.data);
+  }
+
+  updateReferentielValues() {
+    const monthActivities = this.activitiesService.activityMonth.getValue();
+    const activities = this.activitiesService.activities
+      .getValue()
+      .filter(
+        (a) =>
+          a.periode.getFullYear() === monthActivities.getFullYear() &&
+          a.periode.getMonth() === monthActivities.getMonth()
+      );
+    const referentiels =
+      this.humanResourceService.contentieuxReferentiel.getValue();
+
+    // todo set in, out, stock for each
+    const list = referentiels.map((ref) => {
+      const getActivity = activities.find((a) => a.contentieux.id === ref.id);
+      ref.in = (getActivity && getActivity.entrees) || 0;
+      ref.out = (getActivity && getActivity.sorties) || 0;
+      ref.stock = (getActivity && getActivity.stock) || 0;
+
+      ref.childrens = (ref.childrens || []).map((c) => {
+        const getChildrenActivity = activities.find(
+          (a) => a.contentieux.id === c.id
+        );
+        c.in = (getChildrenActivity && getChildrenActivity.entrees) || 0;
+        c.out = (getChildrenActivity && getChildrenActivity.sorties) || 0;
+        c.stock = (getChildrenActivity && getChildrenActivity.stock) || 0;
+
+        return c;
+      });
+
+      return ref;
+    });
+
+    // update
+    this.humanResourceService.contentieuxReferentiel.next(list);
   }
 }
