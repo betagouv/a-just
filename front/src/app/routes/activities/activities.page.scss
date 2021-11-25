@@ -47,6 +47,14 @@
   padding: 8px 0;
   display: flex;
 
+  &.selectable {
+    cursor: pointer;
+
+    input {
+      cursor: pointer;
+    }
+  }
+
   .label {
     display: flex;
     align-items: center;
@@ -67,17 +75,18 @@
   .group {
     height: 0;
     overflow: hidden;
-    border-left: 4px solid gray;
 
     &.enable {
       height: inherit;
       overflow: inherit;
+      margin-bottom: 16px;
     }
 
     .group-item {
       display: flex;
       align-items: center;
       padding: 8px 0;
+      border-left: 4px solid gray;
 
       .label {
         width: 296px;
