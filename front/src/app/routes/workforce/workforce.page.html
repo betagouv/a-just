@@ -50,7 +50,7 @@
             {{ hr.lastName}}<br />
             {{ hr.fonction && hr.fonction.code}}<br />
             <div>
-              <div class="tag-etp">{{hr.etp || 0}} etp</div>
+              <div class="tag-etp">{{hr.posad || 0}} etp</div>
             </div>
             <a [routerLink]="['/resource-humaine', hr.id]">
               <button mat-icon-button>
