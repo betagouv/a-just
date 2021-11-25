@@ -78,7 +78,6 @@ export class ReferentielService {
       );
     const referentiels =
       this.humanResourceService.contentieuxReferentiel.getValue();
-    console.log('activities', activities);
 
     // todo set in, out, stock for each
     const list = referentiels.map((ref) => {
