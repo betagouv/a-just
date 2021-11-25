@@ -1,14 +1,38 @@
 <aj-wrapper title="Temps moyens">
-  <!-- <div class="board">
-    <div class="actions">
-      <aj-list-selection title="Période" [list]="rangeLimits" [item]="rangeLimitSelected"
-        (itemChanged)="changeRange($event)"></aj-list-selection>
-      <aj-list-selection title="Périmètre" [list]="mainCategories" [item]="perimeterSelected"
-        (itemChanged)="changePerimeter($event)"></aj-list-selection>
+  <div class="container">
+    <div class="header-list">
+      <div class="label month">
+      </div>
+      <div class="column-item">Temps moyens</div>
     </div>
-    <div class="content">
-      <aj-panel-indicator *ngFor="let g of groups; trackBy: trackBy" [groupName]="g" [rangeStart]="rangeStartDate"
-        [rangeEnd]="rangeEndDate"></aj-panel-indicator>
+    <div class="content-list">
+      <div *ngFor="let ref of referentiel" class="item-grouped">
+        <div class="item">
+          <div class="label">
+            <p>{{ref.label}}</p>
+            <button *ngIf="(ref.childrens || []).length" (click)="ref.showOptionGroup = !ref.showOptionGroup"
+              mat-icon-button>
+              <mat-icon>{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </div>
+          <div class="column-item">
+            <input type="number" [(ngModel)]="ref.averageProcessingTime" (ngModelChange)="onUpdateOptions(ref)"
+              min="0" />
+          </div>
+        </div>
+        <div class="group" [class.enable]="ref.showOptionGroup">
+          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
+            [style.borderColor]="referentielMappingColor(ref.label)">
+            <div class="label">
+              <p>{{itemGroup.label}}</p>
+            </div>
+            <div class="column-item">
+              <input type="number" [(ngModel)]="itemGroup.averageProcessingTime"
+                (ngModelChange)="onUpdateOptions(itemGroup)" min="0" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div> -->
+  </div>
 </aj-wrapper>
