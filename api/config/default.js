@@ -9,5 +9,5 @@ module.exports = {
   jsonwebtoken: {
     private_key: 'ghjklmlmtyuikopl^mù$',
   },
-  juridictionId: 2,
+  juridictionId: 1,
 }

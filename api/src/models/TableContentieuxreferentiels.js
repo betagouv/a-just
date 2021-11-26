@@ -17,25 +17,6 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
-  Model.getMainLabel = async (contentieux) => {
-    const ref = await Model.findOne({
-      attributes: ['id'],
-      where: {
-        label: contentieux,
-      },
-      raw: true,
-    })
-
-    if (ref) {
-      return {
-        mainTitle: ref.niveau_1,
-        title: ref.niveau_3,
-      }
-    }
-
-    return null
-  }
-
   Model.getReferentiels = async () => {
     const formatToGraph = async (parentId = null, index = 0) => {
       const list = await Model.findAll({
