@@ -104,19 +104,27 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       return (
         (dateStart === null && dateStop === null) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop === null) ||
-          (dateStart === null &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()))
+        (dateStart &&
+          dateStart.getTime() <= now.getTime() &&
+          dateStop === null) ||
+        (dateStart === null &&
+          dateStop &&
+          dateStop.getTime() >= now.getTime()) ||
+        (dateStart &&
+          dateStart.getTime() <= now.getTime() &&
+          dateStop &&
+          dateStop.getTime() >= now.getTime())
+      );
     });
 
-    return sumBy(activities, 'percent');
+    return sumBy(
+      activities.filter((ca) => {
+        return this.contentieuxReferentiel.find((r) => r.id === ca.referentielId)
+          ? true
+          : false;
+      }),
+      'percent'
+    );
   }
 
   onEdit() {
@@ -148,9 +156,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         referentielId: +(a.referentielId || 0),
       }));
 
-      const totalAffected = this.calculTotalTmpActivity(this.currentHR.activities);
-      if(totalAffected > 100) {
-        alert(`Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
+      const totalAffected = this.calculTotalTmpActivity(
+        this.currentHR.activities
+      );
+      if (totalAffected > 100) {
+        alert(
+          `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
+        );
         return;
       }
 

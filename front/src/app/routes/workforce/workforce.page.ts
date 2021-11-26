@@ -185,19 +185,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   calculTotalTmpActivity(currentActivities: RHActivityInterface[], formActivities: RHActivityInterface[]) {
-    // calcul total set activities
-    const totalForm = sumBy(formActivities, 'percent');
-
-    // calcul total current activities whitout form
-    let totalCurrentActivities = 0;
-    currentActivities.map(ca => {
-      const isInForm = formActivities.find(f => f.id === ca.referentielId);
-      if(!isInForm) {
-        totalCurrentActivities += ca.percent || 0;
+    // total main activities whitout form
+    const totalWhitout = sumBy(currentActivities.filter(ca => {
+      const ref = this.referentiel.find(r => r.id === ca.referentielId)
+      if(ref && ca.referentielId !== formActivities[0].id) {
+        return true;
+      } else {
+        return false;
       }
-    })
+    }), 'percent');
 
-    return totalForm + totalCurrentActivities;
+    return totalWhitout + (formActivities[0].percent || 0)
   }
 
   onEditActivities(action: any) {
@@ -266,5 +264,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
 
     this.onFilterList();
+  }
+
+  updateActivityPercent(ref: any, value: number) {
+    const isMainRef = this.updateActivity.hrActivities[0].id === ref.id;
+
+    if(isMainRef) {
+      this.updateActivity.hrActivities[0].percent = value;
+      for(let i = 1; i < this.updateActivity.hrActivities.length; i++) {
+        this.updateActivity.hrActivities[i].percent = 0;
+      }
+    } else {
+      ref.percent = value;
+      const sum = sumBy(this.updateActivity.hrActivities.slice(1), 'percent');
+      this.updateActivity.hrActivities[0].percent = sum;
+    }
   }
 }
