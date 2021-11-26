@@ -98,13 +98,18 @@
   <div class="popup-referentiel">
     <div class="title">
       <div class="label-aj">{{updateActivity.hrActivities[0].label}}</div>
-      <progression-bar [(percent)]="updateActivity.hrActivities[0].percent"
+      <progression-bar [percent]="updateActivity.hrActivities[0].percent"
+        (percentChange)="updateActivityPercent(updateActivity.hrActivities[0], $event)"
         [color]="referentielMappingColor(updateActivity.referentiel.label)"></progression-bar>
+    </div>
+    <div class="or">
+      <p>-- ou --</p>
     </div>
     <div class="content">
       <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
         <div class="label-aj">{{ref.label}}</div>
-        <progression-bar [(percent)]="ref.percent" [color]="referentielMappingColor(updateActivity.referentiel.label)">
+        <progression-bar [percent]="ref.percent" (percentChange)="updateActivityPercent(ref, $event)"
+          [color]="referentielMappingColor(updateActivity.referentiel.label)">
         </progression-bar>
       </div>
     </div>
