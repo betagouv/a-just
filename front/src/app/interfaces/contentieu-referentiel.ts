@@ -10,4 +10,6 @@ export interface ContentieuReferentielInterface {
 	out?: number;
 	stock?: number;
 	showActivityGroup?: boolean;
+	showOptionGroup?: boolean;
+	averageProcessingTime: number | null;
 }

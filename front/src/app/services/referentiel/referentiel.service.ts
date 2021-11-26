@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { orderBy } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { referentielMappingIndex } from 'src/app/utils/referentiel';
 import { ActivitiesService } from '../activities/activities.service';
+import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
@@ -11,16 +11,19 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
   providedIn: 'root',
 })
 export class ReferentielService {
-  referentiels: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   idsIndispo: number[] = [];
 
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     this.activitiesService.activities.subscribe(() =>
       this.updateReferentielValues()
+    );
+    this.contentieuxOptionsService.contentieuxOptions.subscribe(() =>
+      this.updateReferentielOptions()
     );
   }
 
@@ -48,6 +51,7 @@ export class ReferentielService {
 
       this.humanResourceService.contentieuxReferentiel.next(list);
       this.updateReferentielValues();
+      this.updateReferentielOptions();
 
       const ref = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
@@ -93,6 +97,32 @@ export class ReferentielService {
         c.in = (getChildrenActivity && getChildrenActivity.entrees) || 0;
         c.out = (getChildrenActivity && getChildrenActivity.sorties) || 0;
         c.stock = (getChildrenActivity && getChildrenActivity.stock) || 0;
+
+        return c;
+      });
+
+      return ref;
+    });
+
+    // update
+    this.humanResourceService.contentieuxReferentiel.next(list);
+  }
+
+  updateReferentielOptions() {
+    const options = this.contentieuxOptionsService.contentieuxOptions.getValue();
+    const referentiels =
+      this.humanResourceService.contentieuxReferentiel.getValue();
+
+    // todo set in, out, stock for each
+    const list = referentiels.map((ref) => {
+      const getOption = options.find((a) => a.contentieux.id === ref.id);
+      ref.averageProcessingTime = (getOption && getOption.averageProcessingTime) || null;
+
+      ref.childrens = (ref.childrens || []).map((c) => {
+        const getOptionActivity = options.find(
+          (a) => a.contentieux.id === c.id
+        );
+        c.averageProcessingTime = (getOptionActivity && getOptionActivity.averageProcessingTime) || null;
 
         return c;
       });

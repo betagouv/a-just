@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'ContentieuxReferentiels'
+const tableName = 'ContentieuxOptions'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,12 +13,16 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      juridiction_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      contentieux_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
-      parent_id: {
-        type: Sequelize.INTEGER,
+      average_processing_time: {
+        type: Sequelize.FLOAT,
         allowNull: true,
       },
       created_at: {

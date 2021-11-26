@@ -1,11 +1,8 @@
-import Sequelize from 'sequelize'
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('ContentieuxReferentiels', 'average_processing_time')
 
-const tableName = 'ContentieuxReferentiels'
-
-export default sequelizeInstance => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+    await queryInterface.createTable('ContentieuxOptions', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -13,12 +10,16 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      juridiction_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      contentieux_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
-      parent_id: {
-        type: Sequelize.INTEGER,
+      average_processing_time: {
+        type: Sequelize.FLOAT,
         allowNull: true,
       },
       created_at: {
@@ -34,18 +35,9 @@ export default sequelizeInstance => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-    }
-  )
-
-  Model.associate = function (models) {    
-    return models
-  }
-
-  return Model
+    })
+  },
+  down: async (queryInterface /*, Sequelize*/) => {
+    return queryInterface.dropTable('ContentieuxOptions')
+  },
 }
