@@ -42,7 +42,6 @@ export default (sequelizeInstance, Model) => {
         attributes: [
           'id',
           'label',
-          ['average_processing_time', 'averageProcessingTime'],
         ],
         where: {
           parent_id: parentId,
