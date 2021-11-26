@@ -1,4 +1,4 @@
-<aj-wrapper title="Temps moyens">
+<aj-wrapper title="Temps moyens" [actionTemplate]="actions">
   <div class="container">
     <div class="header-list">
       <div class="label month">
@@ -47,3 +47,7 @@
     </div>
   </div>
 </aj-wrapper>
+
+<ng-template #actions>
+  <aj-options-backup-panel></aj-options-backup-panel>
+</ng-template>

@@ -6,9 +6,10 @@ import { SpeedometerComponent } from './speedometer/speedometer.component';
 import { PopupComponent } from './popup/popup.component';
 import { ListSelectionComponent } from './list-selection/list-selection.component';
 import { PanelIndicatorComponent } from './panel-indicator/panel-indicator.page';
-import { BackupPanelComponent } from './backup-panel/backup-panel.component';
+import { RhBackupPanelComponent } from './rh-backup-panel/rh-backup-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../libs/material.module';
+import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component';
 
 const list = [
   WrapperComponent,
@@ -16,7 +17,8 @@ const list = [
   PopupComponent,
   ListSelectionComponent,
   PanelIndicatorComponent,
-  BackupPanelComponent,
+  RhBackupPanelComponent,
+  OptionsBackupPanelComponent,
 ];
 
 @NgModule({

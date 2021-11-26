@@ -16,8 +16,6 @@ export default class RouteHumanResources extends Route {
     const { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
 
-    console.log(backups)
-
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
       backups,
