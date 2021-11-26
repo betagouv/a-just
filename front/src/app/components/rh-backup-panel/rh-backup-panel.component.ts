@@ -4,11 +4,11 @@ import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 
 @Component({
-  selector: 'aj-backup-panel',
-  templateUrl: './backup-panel.component.html',
-  styleUrls: ['./backup-panel.component.scss'],
+  selector: 'aj-rh-backup-panel',
+  templateUrl: './rh-backup-panel.component.html',
+  styleUrls: ['./rh-backup-panel.component.scss'],
 })
-export class BackupPanelComponent extends MainClass implements OnInit, OnDestroy {
+export class RhBackupPanelComponent extends MainClass implements OnInit, OnDestroy {
   backups: BackupInterface[] = [];
   backupId: number | null = null;
   hrIsModify: boolean = false;

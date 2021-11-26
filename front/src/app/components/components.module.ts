@@ -6,7 +6,7 @@ import { SpeedometerComponent } from './speedometer/speedometer.component';
 import { PopupComponent } from './popup/popup.component';
 import { ListSelectionComponent } from './list-selection/list-selection.component';
 import { PanelIndicatorComponent } from './panel-indicator/panel-indicator.page';
-import { BackupPanelComponent } from './backup-panel/backup-panel.component';
+import { RhBackupPanelComponent } from './rh-backup-panel/rh-backup-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../libs/material.module';
 
@@ -16,7 +16,7 @@ const list = [
   PopupComponent,
   ListSelectionComponent,
   PanelIndicatorComponent,
-  BackupPanelComponent,
+  RhBackupPanelComponent,
 ];
 
 @NgModule({
