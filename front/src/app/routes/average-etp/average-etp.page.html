@@ -2,8 +2,15 @@
   <div class="container">
     <div class="header-list">
       <div class="label month">
+        Temps moyens / contentieux
       </div>
-      <div class="column-item">Temps moyens</div>
+      <div class="column-item">
+        <p>Temps moyens</p>
+        <mat-button-toggle-group [value]="perUnity">
+          <mat-button-toggle value="hour" (click)="changeUnity('hour')">Par heure</mat-button-toggle>
+          <mat-button-toggle value="day" (click)="changeUnity('day')">Par jour</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
     </div>
     <div class="content-list">
       <div *ngFor="let ref of referentiel" class="item-grouped">
@@ -16,8 +23,10 @@
             </button>
           </div>
           <div class="column-item">
-            <input type="number" [(ngModel)]="ref.averageProcessingTime" (ngModelChange)="onUpdateOptions(ref)"
-              min="0" />
+            <input type="number"
+              [ngModel]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : (8 / ref.averageProcessingTime)) : ''"
+              (ngModelChange)="onUpdateOptions(ref, $event)" min="0" />
+            <p>{{perUnity === 'hour' ? 'heures' : ' / jour'}}</p>
           </div>
         </div>
         <div class="group" [class.enable]="ref.showOptionGroup">
@@ -27,8 +36,10 @@
               <p>{{itemGroup.label}}</p>
             </div>
             <div class="column-item">
-              <input type="number" [(ngModel)]="itemGroup.averageProcessingTime"
-                (ngModelChange)="onUpdateOptions(itemGroup)" min="0" />
+              <input type="number"
+                [ngModel]="itemGroup.averageProcessingTime ? (perUnity === 'hour' ? itemGroup.averageProcessingTime : (8 / itemGroup.averageProcessingTime)) : ''"
+                (ngModelChange)="onUpdateOptions(itemGroup, $event)" min="0" />
+              <p>{{perUnity === 'hour' ? 'heures' : ' / jour'}}</p>
             </div>
           </div>
         </div>

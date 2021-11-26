@@ -10,6 +10,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 })
 export class AverageEtpPage extends MainClass implements OnDestroy {
   referentiel: ContentieuReferentielInterface[] = [];
+  perUnity: string = 'hour';
 
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
@@ -28,7 +29,14 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.watcherDestroy();
   }
 
-  onUpdateOptions(referentiel: ContentieuReferentielInterface) {
-    this.contentieuxOptionsService.updateOptions(referentiel);
+  onUpdateOptions(referentiel: ContentieuReferentielInterface, value: number) {
+    this.contentieuxOptionsService.updateOptions({
+      ...referentiel,
+      averageProcessingTime: !value ? null : (this.perUnity === 'hour' ? value : 8 / value)
+    });
+  }
+
+  changeUnity(unit: string) {
+    this.perUnity = unit;
   }
 }

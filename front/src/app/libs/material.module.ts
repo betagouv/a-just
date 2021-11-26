@@ -25,6 +25,7 @@ import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
 } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -35,6 +36,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 
 @NgModule({
   exports: [
+    MatButtonToggleModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,

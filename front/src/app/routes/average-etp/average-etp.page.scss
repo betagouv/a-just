@@ -21,11 +21,6 @@
       justify-content: center;
     }
   }
-
-  .column-item {
-    flex: 1;
-    text-align: center;
-  }
 }
 
 .header-list {
@@ -55,11 +50,16 @@
       flex: 1;
     }
   }
+}
 
-  .column-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.column-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p, input {
+    margin-right: 16px;
   }
 }
 

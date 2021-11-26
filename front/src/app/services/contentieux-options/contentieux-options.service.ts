@@ -26,7 +26,6 @@ export class ContentieuxOptionsService {
   }
 
   updateOptions(referentiel: ContentieuReferentielInterface) {
-    console.log(referentiel);
     const options = this.contentieuxOptions.getValue();
     const findIndexOptions = options.findIndex(
       (a) => a.contentieux.id === referentiel.id
