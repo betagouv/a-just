@@ -102,17 +102,19 @@
         (percentChange)="updateActivityPercent(updateActivity.hrActivities[0], $event)"
         [color]="referentielMappingColor(updateActivity.referentiel.label)"></progression-bar>
     </div>
-    <div class="or">
-      <p>-- ou --</p>
-    </div>
-    <div class="content">
-      <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
-        <div class="label-aj">{{ref.label}}</div>
-        <progression-bar [percent]="ref.percent" (percentChange)="updateActivityPercent(ref, $event)"
-          [color]="referentielMappingColor(updateActivity.referentiel.label)">
-        </progression-bar>
+    <ng-template [ngIf]="updateActivity.hrActivities.length > 1">
+      <div class="or">
+        <p>-- ou --</p>
       </div>
-    </div>
+      <div class="content">
+        <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
+          <div class="label-aj">{{ref.label}}</div>
+          <progression-bar [percent]="ref.percent" (percentChange)="updateActivityPercent(ref, $event)"
+            [color]="referentielMappingColor(updateActivity.referentiel.label)">
+          </progression-bar>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </aj-popup>
 
