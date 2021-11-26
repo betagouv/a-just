@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'ContentieuxOptions'
+const tableName = 'OptionsBackups'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,15 +13,11 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      contentieux_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+      label: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
       },
-      average_processing_time: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      backup_id: {
+      juridiction_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
@@ -47,9 +43,9 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {    
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
-    
+  Model.associate = function (models) {  
+    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' }) 
+      
     return models
   }
 
