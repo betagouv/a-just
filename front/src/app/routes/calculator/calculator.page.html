@@ -1,4 +1,33 @@
 <aj-wrapper title="Calculateur" [actionTemplate]="actions">
+  <div class="container">
+    <div class="header-list">
+      <p class="title-header-list">Contentieux :</p>
+      <mat-select [(ngModel)]="referentielIds" multiple>
+        <ng-template ngFor let-ref [ngForOf]="referentiel">
+          <mat-option [value]="ref.id">
+            {{referentielMappingName(ref.label)}}
+          </mat-option>
+          <mat-option *ngFor="let refChild of (ref.childrens || [])" [value]="refChild.id">
+            {{referentielMappingName(ref.label)}} - {{referentielMappingName(refChild.label)}}
+          </mat-option>
+        </ng-template>
+      </mat-select>
+      <div class="flex-1"></div>
+      <p class="title-header-list">Période :</p>
+      <p>Du</p>
+      <input [(ngModel)]="dateStart" [matDatepicker]="pickerDateStart" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateStart></mat-datepicker>
+      <p>Au</p>
+      <input [(ngModel)]="dateStop" [matDatepicker]="pickerDateStop" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateStop></mat-datepicker>
+    </div>
+    <div class="content-list">
+      <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
+        [dateStart]="dateStart" [dateStop]="dateStop"></aj-referentiel-calculator>
+    </div>
+  </div>
 </aj-wrapper>
 
 <ng-template #actions>

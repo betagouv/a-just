@@ -34,4 +34,8 @@ export class MainClass {
   public isNotOS() {
     return !this.isOS();
   }
+
+  public trackBy(index: number, item: any) {
+    return item.id;
+  }
 }

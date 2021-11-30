@@ -3,12 +3,18 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 
+const now = new Date(2021, 10);
+const end = new Date(2021, 10, 30);
+
 @Component({
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = [];
+  referentielIds: number[] = [];
+  dateStart: Date = new Date(now);
+  dateStop: Date = new Date(end);
 
   constructor(private humanResourceService: HumanResourceService) {
     super();
@@ -29,7 +35,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   onCalculate() {
     if (this.referentiel.length) {
-      console.log(this.referentiel);
+      this.referentielIds = this.referentiel.map(r => (r.id));
     }
+  }
+
+  trackBy(index: number, item: any) {
+    return item;
   }
 }

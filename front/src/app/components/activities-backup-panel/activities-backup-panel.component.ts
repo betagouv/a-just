@@ -55,10 +55,6 @@ export class ActivitiesBackupPanelComponent extends MainClass implements OnInit,
     //this.contentieuxOptionsService.onSaveDatas(isCopy);
   }
 
-  trackBy(index: number, item: any) {
-    return item.id;
-  }
-
   onCreateEmptyBackup() {
     //this.contentieuxOptionsService.createEmpy();
   }
