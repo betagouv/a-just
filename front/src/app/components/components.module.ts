@@ -10,6 +10,7 @@ import { RhBackupPanelComponent } from './rh-backup-panel/rh-backup-panel.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../libs/material.module';
 import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component';
+import { ActivitiesBackupPanelComponent } from './activities-backup-panel/activities-backup-panel.component';
 
 const list = [
   WrapperComponent,
@@ -19,6 +20,7 @@ const list = [
   PanelIndicatorComponent,
   RhBackupPanelComponent,
   OptionsBackupPanelComponent,
+  ActivitiesBackupPanelComponent,
 ];
 
 @NgModule({

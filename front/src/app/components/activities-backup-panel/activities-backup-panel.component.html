@@ -1,17 +1,18 @@
 <mat-form-field appearance="standard">
-    <mat-label>La ventilation affichée est</mat-label>
+    <mat-label>Les données d'activité sont </mat-label>
     <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
         <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
             {{back.label}} du {{back.date
             | date:"dd/MM/yyyy"}} - {{ back.juridiction && back.juridiction.label }}
         </mat-option>
+        <mat-option *ngIf="backups.length === 0" [value]="backupId">Par défaut</mat-option>
     </mat-select>
 </mat-form-field>
 
 <ng-template [ngIf]="readOnly === false">
-    <button [disabled]="!hrIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
+    <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
         sous</button>
-    <button [disabled]="!hrIsModify" mat-stroked-button class="left-margin"
+    <button *ngIf="backupId" [disabled]="!optionsIsModify" mat-stroked-button class="left-margin"
         (click)="onSaveHR(false)">Enregister</button>
 
     <button mat-icon-button class="left-margin" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">

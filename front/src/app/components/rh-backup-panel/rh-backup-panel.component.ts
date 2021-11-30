@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
@@ -9,6 +9,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
   styleUrls: ['./rh-backup-panel.component.scss'],
 })
 export class RhBackupPanelComponent extends MainClass implements OnInit, OnDestroy {
+  @Input() readOnly: boolean = false;
   backups: BackupInterface[] = [];
   backupId: number | null = null;
   hrIsModify: boolean = false;
