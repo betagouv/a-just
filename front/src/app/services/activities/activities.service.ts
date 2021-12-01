@@ -17,7 +17,9 @@ export class ActivitiesService {
 
   initDatas() {
     this.getAllActivities().then((result) => {
-      this.activities.next(result.activities);
+      this.activities.next(
+        result.activities.map((a: ActivityInterface) => ({ ...a, periode: new Date(a.periode) }))
+      );
       this.activityMonth.next(new Date(result.activityMonth));
     });
   }
@@ -54,7 +56,7 @@ export class ActivitiesService {
           stock: referentiel.stock || 0,
         };
       }
-    } else if(findIndexActivity !== -1) {
+    } else if (findIndexActivity !== -1) {
       // remove activity
       activities.splice(findIndexActivity, 1);
     }

@@ -3,9 +3,11 @@ import {
   referentielMappingColor,
   referentielMappingName,
 } from '../utils/referentiel';
+import { environment } from '../../environments/environment'
 
 export class MainClass {
   watcherList: Subscription[] = [];
+  environment = environment;
 
   watch(sub: any) {
     this.watcherList.push(sub);

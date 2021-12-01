@@ -1,5 +1,5 @@
 <mat-form-field appearance="standard">
-    <mat-label>La ventilation affichée est</mat-label>
+    <mat-label>La ventilation est</mat-label>
     <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
         <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
             {{back.label}} du {{back.date

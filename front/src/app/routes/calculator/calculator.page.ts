@@ -35,7 +35,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   onCalculate() {
     if (this.referentiel.length) {
-      this.referentielIds = this.referentiel.map(r => (r.id));
+      // TODO this.referentielIds = this.referentiel.map(r => (r.id));
+      this.referentielIds = this.referentiel.map(r => (r.id)).slice(0, 1);
     }
   }
 

@@ -1,3 +1,32 @@
-<p>Ref : {{ referentielId }}</p>
-<p>Début : {{ dateStart }}</p>
-<p>Fin : {{ dateStop }}</p>
+<div *ngIf="referentiel">
+  <div class="datas">
+    <h3>{{ referentiel.parent ? referentiel.parent.label + ' - ' : '' }} {{ referentiel.label }}</h3>
+    <p>Du début {{ dateStart | date:'MM/YYYY' }} à là fin {{ dateStop | date:'MM/YYYY' }}</p>
+    <p>Nombre d'entrées : {{ totalIn }}</p>
+    <p>Nombre de sorties : {{ totalOut }}</p>
+    <p>Stock de fin : {{ totalStock }}</p>
+    <p>ETP affectés :
+      <ng-template ngFor let-etp [ngForOf]="etpAffected">
+        {{etp.totalEtp}} {{etp.totalEtp > 1 ? etp.name+'s' : etp.name}}
+      </ng-template>
+    </p>
+  </div>
+
+  <div class="calcul">
+    <div class="actual-activities">
+      <p><b>Activité constatée</b></p>
+      <p>Taux de couverture : {{ (realCover || 0) * 100 }}%</p>
+      <p>DTES instantané : {{ realDTES }} mois</p>
+      <p>Temps moyens par dossier observé : {{ realDelay && realDelay > 1 ? realDelay + ' heures' : realDelay + ' heure'
+        }}</p>
+    </div>
+
+    <div class="calculate-activities">
+      <p><b>Activité calculé</b></p>
+      <p>Temps moyens par dossier saisi : XXX</p>
+      <p>Taux de couverture : XXX</p>
+      <p>Sortie possible : XXX</p>
+      <p>DTES calculé : XXX</p>
+    </div>
+  </div>
+</div>

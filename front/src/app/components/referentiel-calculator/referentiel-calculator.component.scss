@@ -2,4 +2,18 @@
 
 :host {
   display: block;
+
+  > div {
+    padding: 16px 16px;
+    border-radius: 16px;
+    display: flex;
+
+    > div {
+      flex: 1;
+    }
+  }
+
+  .actual-activities {
+    margin-bottom: 16px;
+  }
 }
