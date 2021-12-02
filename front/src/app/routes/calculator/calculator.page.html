@@ -8,7 +8,8 @@
             {{referentielMappingName(ref.label)}}
           </mat-option>
           <mat-option *ngFor="let refChild of (ref.childrens || [])" [value]="refChild.id">
-            {{referentielMappingName(ref.label)}} - {{referentielMappingName(refChild.label)}}
+            {{referentielMappingName(ref.label)}} -
+            {{referentielMappingName(refChild.label)}}
           </mat-option>
         </ng-template>
       </mat-select>
@@ -17,11 +18,12 @@
       <p>Du</p>
       <input [(ngModel)]="dateStart" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStart" />
       <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStart></mat-datepicker>
+      <mat-datepicker #pickerDateStart startView="multi-year" (monthSelected)="pickerDateStart.close()">
+      </mat-datepicker>
       <p>Au</p>
       <input [(ngModel)]="dateStop" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStop" />
       <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStop></mat-datepicker>
+      <mat-datepicker #pickerDateStop startView="multi-year" (monthSelected)="pickerDateStop.close()"></mat-datepicker>
     </div>
     <div class="content-list">
       <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
