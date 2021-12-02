@@ -1,23 +1,22 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { MainClass } from 'src/app/libs/main-class';
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service';
 
 @Component({
-  selector: 'aj-options-backup-panel',
-  templateUrl: './options-backup-panel.component.html',
-  styleUrls: ['./options-backup-panel.component.scss'],
+  selector: 'aj-activities-backup-panel',
+  templateUrl: './activities-backup-panel.component.html',
+  styleUrls: ['./activities-backup-panel.component.scss'],
 })
-export class OptionsBackupPanelComponent extends MainClass implements OnInit, OnDestroy {
+export class ActivitiesBackupPanelComponent extends MainClass implements OnInit, OnDestroy {
   @Input() readOnly: boolean = false;
   backups: BackupInterface[] = [];
-  backupId: number | null = null;
+  backupId: number | null = 1; // todo null
   optionsIsModify: boolean = false;
 
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor(/*private contentieuxOptionsService: ContentieuxOptionsService*/) {
     super();
 
-    this.watch(
+    /*this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => (this.backups = b))
     );
     this.watch(
@@ -27,7 +26,8 @@ export class OptionsBackupPanelComponent extends MainClass implements OnInit, On
       this.contentieuxOptionsService.optionsIsModify.subscribe(
         (b) => (this.optionsIsModify = b)
       )
-    );}
+    );*/
+  }
 
   ngOnInit() {}
 
@@ -36,30 +36,26 @@ export class OptionsBackupPanelComponent extends MainClass implements OnInit, On
   }
 
   onChangeBackup(id: any) {
-    if(this.contentieuxOptionsService.optionsIsModify.getValue() && !confirm('Vous avez des modifications en cours. Supprimer ?')) {
+    /*if(this.contentieuxOptionsService.optionsIsModify.getValue() && !confirm('Vous avez des modifications en cours. Supprimer ?')) {
       this.backupId = this.contentieuxOptionsService.backupId.getValue();
       return;
     }
-    this.contentieuxOptionsService.backupId.next(id);
+    this.contentieuxOptionsService.backupId.next(id);*/
   }
 
   onRemoveBackup() {
-    this.contentieuxOptionsService.removeBackup();
+    //this.contentieuxOptionsService.removeBackup();
   }
 
   onDuplicateBackup() {
-    this.contentieuxOptionsService.duplicateBackup();
+    //this.contentieuxOptionsService.duplicateBackup();
   }
 
   onSaveHR(isCopy: boolean = false) {
-    this.contentieuxOptionsService.onSaveDatas(isCopy);
-  }
-
-  trackBy(index: number, item: any) {
-    return item.id;
+    //this.contentieuxOptionsService.onSaveDatas(isCopy);
   }
 
   onCreateEmptyBackup() {
-    this.contentieuxOptionsService.createEmpy();
+    //this.contentieuxOptionsService.createEmpy();
   }
 }

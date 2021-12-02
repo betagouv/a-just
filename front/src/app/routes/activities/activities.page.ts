@@ -4,6 +4,7 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { MainClass } from 'src/app/libs/main-class';
 import { ActivitiesService } from 'src/app/services/activities/activities.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 
 @Component({
   templateUrl: './activities.page.html',
@@ -16,7 +17,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   constructor(
     private activitiesService: ActivitiesService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService,
   ) {
     super();
 
@@ -34,7 +36,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
-        (ref) => (this.referentiel = ref)
+        (ref) => {
+          this.referentiel = ref.filter(
+            (r) =>
+              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+              this.referentielService.idsSoutien.indexOf(r.id) === -1
+          );
+        }
       )
     );
   }

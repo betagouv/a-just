@@ -3,6 +3,7 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { MainClass } from 'src/app/libs/main-class';
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 
 @Component({
   templateUrl: './average-etp.page.html',
@@ -14,13 +15,20 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService, 
+    private referentielService: ReferentielService,
   ) {
     super();
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
-        (ref) => (this.referentiel = ref)
+        (ref) => {
+          this.referentiel = ref.filter(
+            (r) =>
+              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+              this.referentielService.idsSoutien.indexOf(r.id) === -1
+          );
+        }
       )
     );
   }

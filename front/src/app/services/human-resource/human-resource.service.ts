@@ -25,8 +25,12 @@ export class HumanResourceService {
   );
   hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   autoReloadData: boolean = true;
-  categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<HRCategoryInterface[]>([]);
-  fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<HRFonctionInterface[]>([]);
+  categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<
+    HRCategoryInterface[]
+  >([]);
+  fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<
+    HRFonctionInterface[]
+  >([]);
 
   constructor(private serverService: ServerService) {}
 
@@ -34,7 +38,16 @@ export class HumanResourceService {
     this.backupId.subscribe((id) => {
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
-          this.hr.next(result.hr);
+          this.hr.next(
+            result.hr.map((h: HumanResourceInterface) => ({
+              ...h,
+              activities: (h.activities || []).map((a) => ({
+                ...a,
+                dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
+                dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
+              })),
+            }))
+          );
           this.backups.next(result.backups);
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
@@ -102,7 +115,9 @@ export class HumanResourceService {
   }
 
   duplicateBackup() {
-    const backup = this.backups.getValue().find(b => b.id === this.backupId.getValue());
+    const backup = this.backups
+      .getValue()
+      .find((b) => b.id === this.backupId.getValue());
 
     const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`);
     if (backupName) {
@@ -131,7 +146,7 @@ export class HumanResourceService {
         backupName: backupName ? backupName : null,
       })
       .then((r) => {
-        alert('Enregistrement OK !')
+        alert('Enregistrement OK !');
         this.backupId.next(r.data);
       });
   }
