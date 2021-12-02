@@ -12,4 +12,5 @@ export interface ContentieuReferentielInterface {
 	showActivityGroup?: boolean;
 	showOptionGroup?: boolean;
 	averageProcessingTime: number | null;
+	parent?: ContentieuReferentielInterface;
 }

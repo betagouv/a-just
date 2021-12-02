@@ -12,6 +12,8 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 })
 export class ReferentielService {
   idsIndispo: number[] = [];
+  idsSoutien: number[] = [];
+  mainActivitiesId: number[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -53,15 +55,27 @@ export class ReferentielService {
       this.updateReferentielValues();
       this.updateReferentielOptions();
 
-      const ref = list.find((r) => r.label === 'Indisponibilité');
+      const refIndispo = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
-      if (ref) {
-        idsIndispo.push(ref.id);
-        (ref.childrens || []).map((c) => {
+      if (refIndispo) {
+        idsIndispo.push(refIndispo.id);
+        (refIndispo.childrens || []).map((c) => {
           idsIndispo.push(c.id);
         });
       }
       this.idsIndispo = idsIndispo;
+
+      const refSoutien = list.find((r) => r.label === 'Soutien');
+      const idsSoutien = [];
+      if (refSoutien) {
+        idsSoutien.push(refSoutien.id);
+        (refSoutien.childrens || []).map((c) => {
+          idsSoutien.push(c.id);
+        });
+      }
+      this.idsSoutien = idsSoutien;
+
+      this.mainActivitiesId = list.map((r) => (r.id));
     });
   }
 
