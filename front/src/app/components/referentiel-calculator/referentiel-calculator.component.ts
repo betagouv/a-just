@@ -90,7 +90,7 @@ export class ReferentielCalculatorComponent
     this.totalOut = sumBy(activities, 'sorties');
     this.totalStock = sumBy(activities, 'stock');
 
-    this.realCover = this.totalOut / this.totalIn;
+    this.realCover = fixDecimal(this.totalOut / this.totalIn);
     this.nbMonth = this.getNbMonth();
     this.realDTES = this.totalStock / this.totalOut / this.nbMonth;
 
@@ -223,7 +223,7 @@ export class ReferentielCalculatorComponent
           12) *
           this.getNbMonth()
       );
-      this.calculateCover = this.calculateOut / (this.totalIn || 0);
+      this.calculateCover = fixDecimal(this.calculateOut / (this.totalIn || 0));
       this.calculateDTES = fixDecimal(
         (this.totalStock || 0) / this.calculateOut / this.nbMonth
       );

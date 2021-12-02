@@ -151,16 +151,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     ref: ContentieuReferentielInterface | null,
     human: HumanResourceInterface
   ) {
-    const collectIds = (list: ContentieuReferentielInterface[]): number[] => {
-      let elements: number[] = [];
-      for (let i = 0; i < list.length; i++) {
-        elements.push(list[i].id);
-        elements = elements.concat(collectIds(list[i].childrens || []));
-      }
-
-      return elements;
-    };
-    const ids = ref ? collectIds([ref]) : [];
+    const ids = ref ? [ref.id] : [];
 
     const now = new Date();
     return (human.activities || []).filter((a: any) => {
@@ -169,6 +160,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       return (
         ids.length ? ids.indexOf(a.referentielId) !== -1 : true &&
+        this.referentielService.mainActivitiesId.indexOf(a.referentielId) !== -1 &&
         ((dateStart === null && dateStop === null) ||
           (dateStart &&
             dateStart.getTime() <= now.getTime() &&

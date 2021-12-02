@@ -20,7 +20,8 @@ import {
 // the `default as` syntax.
 import * as _moment from 'moment';
 // @ts-ignore
-import { default as _rollupMoment } from 'moment';
+import { default as _rollupMoment, Moment } from 'moment';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 const moment = _rollupMoment || _moment;
 
@@ -99,5 +100,30 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   trackBy(index: number, item: any) {
     return item;
+  }
+
+  chosenYearHandler(normalizedYear: Moment, date: string) {
+    if (date === 'dateStart') {
+      this.dateStart.setFullYear(normalizedYear.year());
+      this.dateStart = new Date(this.dateStart);
+    } else {
+      this.dateStop.setFullYear(normalizedYear.year());
+      this.dateStop = new Date(this.dateStop);
+    }
+  }
+
+  chosenMonthHandler(
+    normalizedMonth: Moment,
+    datepicker: MatDatepicker<Moment>,
+    date: string
+  ) {
+    if (date === 'dateStart') {
+      this.dateStart.setMonth(normalizedMonth.month());
+      this.dateStart = new Date(this.dateStart);
+    } else {
+      this.dateStop.setMonth(normalizedMonth.month());
+      this.dateStop = new Date(this.dateStop);
+    }
+    datepicker.close();
   }
 }

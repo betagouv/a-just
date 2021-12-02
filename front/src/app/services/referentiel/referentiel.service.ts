@@ -13,6 +13,7 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 export class ReferentielService {
   idsIndispo: number[] = [];
   idsSoutien: number[] = [];
+  mainActivitiesId: number[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -73,6 +74,8 @@ export class ReferentielService {
         });
       }
       this.idsSoutien = idsSoutien;
+
+      this.mainActivitiesId = list.map((r) => (r.id));
     });
   }
 

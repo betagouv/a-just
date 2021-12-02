@@ -18,12 +18,14 @@
       <p>Du</p>
       <input [(ngModel)]="dateStart" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStart" />
       <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStart startView="multi-year" (monthSelected)="pickerDateStart.close()">
+      <mat-datepicker #pickerDateStart startView="multi-year" (yearSelected)="chosenYearHandler($event, 'dateStart')"
+        (monthSelected)="chosenMonthHandler($event, pickerDateStart, 'dateStart')">
       </mat-datepicker>
       <p>Au</p>
       <input [(ngModel)]="dateStop" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStop" />
       <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStop startView="multi-year" (monthSelected)="pickerDateStop.close()"></mat-datepicker>
+      <mat-datepicker #pickerDateStop startView="multi-year" (yearSelected)="chosenYearHandler($event, 'dateStop')"
+        (monthSelected)="chosenMonthHandler($event, pickerDateStop, 'dateStop')"></mat-datepicker>
     </div>
     <div class="content-list">
       <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
