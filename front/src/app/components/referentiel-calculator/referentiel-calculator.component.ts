@@ -26,6 +26,10 @@ export class ReferentielCalculatorComponent
   realCover: number | null = null;
   realDTES: number | null = null;
   realDelay: number | null = null;
+  calculateDelay: number | null = null;
+  calculateOut: number | null = null;
+  calculateCover: number | null = null;
+  calculateDTES: number | null = null;
   nbMonth: number = 0;
   etpAffected: any[] = [];
 
@@ -88,12 +92,20 @@ export class ReferentielCalculatorComponent
 
     this.realCover = this.totalOut / this.totalIn;
     this.nbMonth = this.getNbMonth();
-    this.realDTES = (this.totalStock / this.totalOut) / this.nbMonth;
+    this.realDTES = this.totalStock / this.totalOut / this.nbMonth;
 
     this.getHRPositions();
 
     // Temps moyens par dossier observé = sorties sur la période / etp / heure
-    this.realDelay = fixDecimal(this.totalOut / sumBy(this.etpAffected, 'totalEtp') / this.environment.nbHoursPerDay);
+    this.realDelay = fixDecimal(
+      ((this.environment.nbDaysByMagistrat / 12) *
+        this.environment.nbHoursPerDay *
+        this.nbMonth) /
+        (this.totalOut / sumBy(this.etpAffected, 'totalEtp'))
+    );
+
+    // calculate activities
+    this.calculateActivities();
   }
 
   getHRPositions() {
@@ -189,5 +201,31 @@ export class ReferentielCalculatorComponent
     } while (now.getTime() <= this.dateStop.getTime());
 
     return totalMonth;
+  }
+
+  calculateActivities() {
+    if (this.referentiel && this.referentiel.averageProcessingTime) {
+      this.calculateDelay = this.referentiel.averageProcessingTime;
+      this.calculateOut = Math.floor(
+        ((((this.getTotalEtp() * this.environment.nbHoursPerDay) /
+          this.calculateDelay) *
+          this.environment.nbDaysByMagistrat) /
+          12) *
+          this.getNbMonth()
+      );
+      this.calculateCover = this.calculateOut / (this.totalIn || 0);
+      this.calculateDTES = fixDecimal(
+        (this.totalStock || 0) / this.calculateOut / this.nbMonth
+      );
+    } else {
+      this.calculateDelay = null;
+      this.calculateOut = null;
+      this.calculateCover = null;
+      this.calculateDTES = null;
+    }
+  }
+
+  getTotalEtp() {
+    return sumBy(this.etpAffected, 'totalEtp');
   }
 }

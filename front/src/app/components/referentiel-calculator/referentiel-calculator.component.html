@@ -22,11 +22,13 @@
     </div>
 
     <div class="calculate-activities">
-      <p><b>Activité calculé</b></p>
-      <p>Temps moyens par dossier saisi : XXX</p>
-      <p>Taux de couverture : XXX</p>
-      <p>Sortie possible : XXX</p>
-      <p>DTES calculé : XXX</p>
+      <p><b>Activité calculée</b></p>
+      <p>Temps moyens par dossier saisi : {{ calculateDelay && calculateDelay > 1 ? calculateDelay + ' heures' :
+        realDelay + ' heure'
+        }}</p>
+      <p>Sorties possibles : {{ calculateOut }}</p>
+      <p>Taux de couverture théorique : {{ (calculateCover || 0) * 100 }}%</p>
+      <p>DTES calculé : {{ calculateDTES }} mois</p>
     </div>
   </div>
 </div>
