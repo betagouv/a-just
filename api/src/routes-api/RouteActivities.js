@@ -45,20 +45,20 @@ export default class RouteActivities extends Route {
         },
         {
           contentieux: { id: 466 },
-          entrees: 10,
-          periode: new Date(2021, 10),
-          sorties: 0,
-          stock: 0,
+          entrees: 40,
+          periode: new Date(2021, 11),
+          sorties: 40,
+          stock: 80,
         },
         {
           contentieux: { id: 497 },
           entrees: 30,
-          periode: new Date(2021, 10),
-          sorties: 0,
-          stock: 0,
+          periode: new Date(2021, 11),
+          sorties: 40,
+          stock: 10,
         },
       ],
-      activityMonth: new Date(2021, 10),
+      activityMonth: new Date(2021, 11),
     })
   }
 }
