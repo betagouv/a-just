@@ -204,8 +204,18 @@ export class ReferentielCalculatorComponent
   }
 
   calculateActivities() {
+    this.calculateDelay = null;
     if (this.referentiel && this.referentiel.averageProcessingTime) {
       this.calculateDelay = this.referentiel.averageProcessingTime;
+    } else if (
+      this.referentiel &&
+      this.referentiel.parent &&
+      this.referentiel.parent.averageProcessingTime
+    ) {
+      this.calculateDelay = this.referentiel.parent.averageProcessingTime;
+    }
+
+    if (this.calculateDelay) {
       this.calculateOut = Math.floor(
         ((((this.getTotalEtp() * this.environment.nbHoursPerDay) /
           this.calculateDelay) *
