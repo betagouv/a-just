@@ -71,4 +71,10 @@ export class ActivitiesService {
 
     return activities;
   }
+
+  changeMonth(deltaMonth: number) {
+    const cm = new Date(this.activityMonth.getValue());
+    cm.setMonth(cm.getMonth() + deltaMonth);
+    this.activityMonth.next(cm);
+  }
 }
