@@ -24,6 +24,9 @@ export class ReferentielService {
     this.activitiesService.activities.subscribe(() =>
       this.updateReferentielValues()
     );
+    this.activitiesService.activityMonth.subscribe(() =>
+      this.updateReferentielValues()
+    );
     this.contentieuxOptionsService.contentieuxOptions.subscribe(() =>
       this.updateReferentielOptions()
     );

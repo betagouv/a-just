@@ -18,7 +18,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
+    private referentielService: ReferentielService
   ) {
     super();
 
@@ -35,15 +35,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     );
 
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe(
-        (ref) => {
-          this.referentiel = ref.filter(
-            (r) =>
-              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-              this.referentielService.idsSoutien.indexOf(r.id) === -1
-          );
-        }
-      )
+      this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
+        this.referentiel = ref.filter(
+          (r) =>
+            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+            this.referentielService.idsSoutien.indexOf(r.id) === -1
+        );
+      })
     );
   }
 
@@ -73,5 +71,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   onUpdateMainActivity(referentiel: ContentieuReferentielInterface) {
     this.activitiesService.updateActivity(referentiel);
+  }
+
+  changeMonth(deltaMonth: number) {
+    this.activitiesService.changeMonth(deltaMonth);
   }
 }
