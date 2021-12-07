@@ -92,7 +92,7 @@ export class ReferentielCalculatorComponent
 
     this.realCover = fixDecimal(this.totalOut / this.totalIn);
     this.nbMonth = this.getNbMonth();
-    this.realDTES = this.totalStock / this.totalOut / this.nbMonth;
+    this.realDTES = fixDecimal(this.totalStock / this.totalOut / this.nbMonth);
 
     this.getHRPositions();
 
