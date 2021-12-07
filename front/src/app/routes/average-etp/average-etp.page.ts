@@ -4,6 +4,7 @@ import { MainClass } from 'src/app/libs/main-class';
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
   templateUrl: './average-etp.page.html',
@@ -40,7 +41,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   onUpdateOptions(referentiel: ContentieuReferentielInterface, value: number) {
     this.contentieuxOptionsService.updateOptions({
       ...referentiel,
-      averageProcessingTime: !value ? null : (this.perUnity === 'hour' ? value : 8 / value)
+      averageProcessingTime: !value ? null : (this.perUnity === 'hour' ? value : fixDecimal(8 / value))
     });
   }
 
