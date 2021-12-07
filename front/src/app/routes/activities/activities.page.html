@@ -1,4 +1,4 @@
-<aj-wrapper title="Données d'activité">
+<aj-wrapper title="Données d'activité" [actionTemplate]="actions">
   <div class="container">
     <div class="header-list">
       <div class="label month">
@@ -54,3 +54,7 @@
     </div>
   </div>
 </aj-wrapper>
+
+<ng-template #actions>
+  <aj-activities-backup-panel></aj-activities-backup-panel>
+</ng-template>

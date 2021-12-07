@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
+import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { ServerService } from '../http-server/server.service';
 
@@ -12,20 +13,44 @@ export class ActivitiesService {
     ActivityInterface[]
   >([]);
   activityMonth: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
+  backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
+    BackupInterface[]
+  >([]);
+  backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
+    null
+  );
+  optionsIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  autoReloadData: boolean = true;
 
   constructor(private serverService: ServerService) {}
 
   initDatas() {
-    this.getAllActivities().then((result) => {
-      this.activities.next(
-        result.activities.map((a: ActivityInterface) => ({ ...a, periode: new Date(a.periode) }))
-      );
-      this.activityMonth.next(new Date(result.activityMonth));
+    this.backupId.subscribe((id) => {
+      if (this.autoReloadData) {
+        this.getAllActivities(id).then((result) => {
+          this.activities.next(
+            result.activities.map((a: ActivityInterface) => ({
+              ...a,
+              periode: new Date(a.periode),
+            }))
+          );
+          this.backups.next(result.backups);
+          this.autoReloadData = false;
+          this.backupId.next(result.backupId);
+          this.optionsIsModify.next(false);
+        });
+      } else {
+        this.autoReloadData = true;
+      }
     });
   }
 
-  getAllActivities() {
-    return this.serverService.get('activities/get-all').then((r) => r.data);
+  getAllActivities(id: number | null) {
+    return this.serverService.post('activities/get-all', {
+      backupId: id,
+    }).then((r) => r.data);
   }
 
   updateActivity(
@@ -69,6 +94,8 @@ export class ActivitiesService {
       this.activities.next(activities);
     }
 
+    this.optionsIsModify.next(true);
+
     return activities;
   }
 
@@ -76,5 +103,69 @@ export class ActivitiesService {
     const cm = new Date(this.activityMonth.getValue());
     cm.setMonth(cm.getMonth() + deltaMonth);
     this.activityMonth.next(cm);
+  }
+
+  removeBackup() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
+      return this.serverService
+        .delete(`activities/remove-backup/${this.backupId.getValue()}`)
+        .then(() => {
+          this.backupId.next(null);
+        });
+    }
+
+    return Promise.resolve();
+  }
+
+  duplicateBackup() {
+    const backup = this.backups.getValue().find(b => b.id === this.backupId.getValue());
+
+    const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`);
+    if (backupName) {
+      return this.serverService
+        .post(`activities/duplicate-backup`, {
+          backupId: this.backupId.getValue(),
+          backupName,
+        })
+        .then((r) => {
+          this.backupId.next(r.data);
+        });
+    }
+
+    return Promise.resolve();
+  }
+
+  onSaveDatas(isCopy: boolean) {
+    let backupName = null;
+    if (isCopy) {
+      backupName = prompt('Sous quel nom ?');
+    }
+    return this.serverService
+      .post(`activities/save-backup`, {
+        list: this.activities.getValue(),
+        backupId: this.backupId.getValue(),
+        backupName: backupName ? backupName : null,
+      })
+      .then((r) => {
+        alert('Enregistrement OK !')
+        this.backupId.next(r.data);
+      });
+  }
+
+  createEmpy() {
+    let backupName = prompt('Sous quel nom ?');
+
+    if (backupName) {
+      return this.serverService
+        .post(`activities/save-backup`, {
+          list: [],
+          backupName: backupName,
+        })
+        .then((r) => {
+          this.backupId.next(r.data);
+        });
+    }
+
+    return Promise.resolve();
   }
 }

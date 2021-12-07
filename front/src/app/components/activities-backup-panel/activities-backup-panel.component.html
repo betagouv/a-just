@@ -10,10 +10,10 @@
 </mat-form-field>
 
 <ng-template [ngIf]="readOnly === false">
-    <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
+    <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSave(true)">Enregistrer
         sous</button>
     <button *ngIf="backupId" [disabled]="!optionsIsModify" mat-stroked-button class="left-margin"
-        (click)="onSaveHR(false)">Enregister</button>
+        (click)="onSave(false)">Enregister</button>
 
     <button mat-icon-button class="left-margin" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
         <mat-icon>more_vert</mat-icon>
