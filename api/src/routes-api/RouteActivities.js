@@ -6,15 +6,6 @@ export default class RouteActivities extends Route {
     super({ ...params, model: 'Activities' })
   }
 
-  @Route.Get({
-    accesses: [Access.isLogin],
-  })
-  async getActivitiesGrouped (ctx) {
-    const list = await this.model.getActivitiesGrouped()
-
-    this.sendOk(ctx, list)
-  }
-
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),
