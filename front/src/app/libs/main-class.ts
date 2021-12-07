@@ -4,10 +4,15 @@ import {
   referentielMappingName,
 } from '../utils/referentiel';
 import { environment } from '../../environments/environment'
+import { fixDecimal } from '../utils/numbers';
 
 export class MainClass {
   watcherList: Subscription[] = [];
   environment = environment;
+
+  fixDecimal(n: number): number {
+    return fixDecimal(n);
+  }
 
   watch(sub: any) {
     this.watcherList.push(sub);
