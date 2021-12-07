@@ -1,10 +1,10 @@
-<aj-wrapper title="Données d'activité">
+<aj-wrapper title="Données d'activité" [actionTemplate]="actions">
   <div class="container">
     <div class="header-list">
       <div class="label month">
-        <button mat-stroked-button>Précédent</button>
+        <button mat-stroked-button (click)="changeMonth(-1)">Précédent</button>
         <div class="current-month">{{activityMonth | date:'MM - YYYY'}}</div>
-        <button mat-stroked-button>Suivant</button>
+        <button mat-stroked-button (click)="changeMonth(1)">Suivant</button>
       </div>
       <div class="column-item">Entrées</div>
       <div class="column-item">Sorties</div>
@@ -54,3 +54,7 @@
     </div>
   </div>
 </aj-wrapper>
+
+<ng-template #actions>
+  <aj-activities-backup-panel></aj-activities-backup-panel>
+</ng-template>

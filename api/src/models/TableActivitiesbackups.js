@@ -41,7 +41,7 @@ export default (sequelizeInstance, Model) => {
       },
     })
 
-    await Model.models.ContentieuxOptions.destroy({
+    await Model.models.Activities.destroy({
       where: {
         backup_id: backupId,
       },
@@ -61,7 +61,7 @@ export default (sequelizeInstance, Model) => {
       const backupCreated = await Model.create({ ...backup, label: backupName })
       const newBackupId = backupCreated.dataValues.id
 
-      const hrList = await Model.models.ContentieuxOptions.findAll({
+      const hrList = await Model.models.Activities.findAll({
         where: {
           backup_id: backupId,
         },
@@ -69,7 +69,7 @@ export default (sequelizeInstance, Model) => {
       })
       for(let x = 0; x < hrList.length; x++) {
         delete hrList[x].id
-        await Model.models.ContentieuxOptions.create({
+        await Model.models.Activities.create({
           ...hrList[x],
           backup_id: newBackupId,
         })
@@ -98,16 +98,19 @@ export default (sequelizeInstance, Model) => {
 
       const options = {
         contentieux_id: op.contentieux.id,
-        average_processing_time: op.averageProcessingTime,
+        periode: op.periode,
+        entrees: op.entrees,
+        sorties: op.sorties,
+        stock: op.stock,
         backup_id: newBackupId,
       }
 
       if(op.id && op.id > 0 && !backupName) {
         // update
-        await Model.models.ContentieuxOptions.updateById(op.id, options)
+        await Model.models.Activities.updateById(op.id, options)
       } else {
         // create
-        const newOp = await Model.models.ContentieuxOptions.create(options)
+        const newOp = await Model.models.Activities.create(options)
         op.id = newOp.dataValues.id
       }
 
@@ -115,7 +118,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove old
-    const oldNewList = (await Model.models.ContentieuxOptions.findAll({
+    const oldNewList = (await Model.models.Activities.findAll({
       attributes: ['id'],
       where: {
         backup_id: newBackupId,
@@ -124,7 +127,7 @@ export default (sequelizeInstance, Model) => {
     })).map(h => (h.id))
     for(let i = 0; i < oldNewList.length; i++) {
       if(reelIds.indexOf(oldNewList[i]) === -1) {
-        await Model.models.ContentieuxOptions.destroyById(oldNewList[i])
+        await Model.models.Activities.destroyById(oldNewList[i])
       }
     }
 
