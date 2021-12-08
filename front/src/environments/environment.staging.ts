@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   serverUrl: '/api/',
-  nbDaysByMagistrat: 210,
+  nbDaysByMagistrat: 208,
   nbHoursPerDay: 8,
 };
