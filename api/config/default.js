@@ -7,7 +7,7 @@ module.exports = {
     url: process.env.DATABASE_URL,
   },
   jsonwebtoken: {
-    private_key: 'ghjklmlmtyuikopl^mù$',
+    private_key: process.env.JSON_WEB_TOKEN,
   },
   juridictionId: 1,
 }

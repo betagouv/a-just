@@ -17,21 +17,23 @@
     <div class="actual-activities">
       <p><b>Activité constatée</b></p>
       <p>Taux de couverture :</p>
-      <aj-speedometer [percent]="(realCover || 0) * 100"></aj-speedometer>
-      <p>DTES instantané : {{ realDTES }} mois</p>
-      <p>Temps moyens par dossier observé : {{ realDelay && realDelay > 1 ? realDelay + ' heures' : realDelay + ' heure'
+      <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
+      <p>DTES instantané : {{ realDTESInMonths }} mois</p>
+      <p>Temps moyens par dossier observé : {{ realTimePerCase && realTimePerCase > 1 ? realTimePerCase + ' heures' :
+        realTimePerCase + ' heure'
         }}</p>
     </div>
 
     <div class="calculate-activities">
       <p><b>Activité calculée</b></p>
       <p>Taux de couverture :</p>
-      <aj-speedometer [percent]="(calculateCover || 0) * 100"></aj-speedometer>
-      <p>Temps moyens par dossier saisi : {{ calculateDelay && calculateDelay > 1 ? calculateDelay + ' heures' :
-        realDelay + ' heure'
+      <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
+      <p>Temps moyens par dossier saisi : {{ calculateTimePerCase && calculateTimePerCase > 1 ? calculateTimePerCase + '
+        heures' :
+        calculateTimePerCase + ' heure'
         }}</p>
       <p>Sorties possibles : {{ calculateOut }}</p>
-      <p>DTES calculé : {{ calculateDTES }} mois</p>
+      <p>DTES calculé : {{ calculateDTESInMonths }} mois</p>
     </div>
   </div>
 </div>

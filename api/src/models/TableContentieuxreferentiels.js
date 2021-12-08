@@ -83,6 +83,8 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
+    // force to reload referentiel to cache
+    await Model.getReferentiels(true)
   }
 
   Model.getContentieuxId = async (label) => {
