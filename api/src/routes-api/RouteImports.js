@@ -29,7 +29,9 @@ export default class RouteImports extends Route {
     // accesses: [Access.isLogin],
   })
   async importReferentiel (ctx) {
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'))
+    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+      delimiter: ',',
+    })
     await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
     this.sendOk(ctx, 'OK')
   }

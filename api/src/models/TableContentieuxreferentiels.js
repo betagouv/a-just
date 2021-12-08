@@ -47,15 +47,17 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.importList = async (list) => {
+    //list = list.slice(95, 102)
     // The service work by label name and not by id. Find "niveau_3" or "niveau_4" and not "id"
     await Model.destroy({
       where: {},
       force: true,
     })
-    const nbLevel = 6
+    const nbLevel = 4
 
     for (let i = 0; i < list.length; i++) {
       const ref = list[i]
+      //console.log(ref)
       let parentId = null
       for(let i = 1; i <= nbLevel; i++) {
         if(ref['niveau_' + i]) {
@@ -63,12 +65,16 @@ export default (sequelizeInstance, Model) => {
             where: {
               label: ref['niveau_' + i],
             },
+            logging: false,
           })
           if(!findInDb) {
             const newToDb = await Model.create({
               label: ref['niveau_' + i],
               parent_id: parentId,
+            }, {
+              logging: false,
             })
+            console.log('ADD ', ref['niveau_' + i], newToDb.dataValues.id, parentId)
             parentId = newToDb.dataValues.id
           } else {
             parentId = findInDb.dataValues.id
