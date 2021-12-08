@@ -1,4 +1,5 @@
 import Route from './Route'
+import { Types } from '../utils/types'
 
 export default class RouteUsers extends Route {
   constructor (params) {
@@ -12,6 +13,21 @@ export default class RouteUsers extends Route {
       this.sendOk(ctx, user)
     } else {
       this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string().required(),
+      password: Types.string().required(),
+    }),
+  })
+  async createAccount (ctx) {
+    try {
+      await this.model.createAccount(this.body(ctx))
+      this.sendOk(ctx, 'OK')
+    } catch(err) {
+      ctx.throw(401, err)
     }
   }
 }

@@ -17,7 +17,7 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
-  Model.getReferentiels = async () => {
+  Model.getReferentiels = async (force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
       const list = await Model.findAll({
         attributes: [
@@ -39,7 +39,7 @@ export default (sequelizeInstance, Model) => {
       return list
     }
 
-    if(!Model.cacheReferentielMap) {
+    if(force === true || !Model.cacheReferentielMap) {
       Model.cacheReferentielMap = await formatToGraph()
     }
 
@@ -82,6 +82,9 @@ export default (sequelizeInstance, Model) => {
         }
       }
     }
+
+    // force to reload referentiel to cache
+    await Model.getReferentiels(true)
   }
 
   Model.getContentieuxId = async (label) => {
