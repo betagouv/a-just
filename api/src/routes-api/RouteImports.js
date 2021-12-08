@@ -1,4 +1,4 @@
-import Route/*, { Access }*/ from './Route'
+import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { csvToArrayJson } from '../utils/csv'
 import { readFileSync } from 'fs'
@@ -12,7 +12,7 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       backupName: Types.string().required(),
     }),
-    // accesses: [Access.isLogin],
+    accesses: [Access.isAdmin],
   })
   async importHr (ctx) {  
     const { backupName } = this.body(ctx)
@@ -26,7 +26,7 @@ export default class RouteImports extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
     }),
-    // accesses: [Access.isLogin],
+    accesses: [Access.isAdmin],
   })
   async importReferentiel (ctx) {
     const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
