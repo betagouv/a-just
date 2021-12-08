@@ -23,13 +23,13 @@ export class ReferentielCalculatorComponent
   totalIn: number | null = null;
   totalOut: number | null = null;
   totalStock: number | null = null;
-  realCover: number | null = null;
-  realDTES: number | null = null;
-  realDelay: number | null = null;
-  calculateDelay: number | null = null;
+  realCoverage: number | null = null;
+  realDTESInMonths: number | null = null;
+  realTimePerCase: number | null = null;
+  calculateTimePerCase: number | null = null;
   calculateOut: number | null = null;
-  calculateCover: number | null = null;
-  calculateDTES: number | null = null;
+  calculateCoverage: number | null = null;
+  calculateDTESInMonths: number | null = null;
   nbMonth: number = 0;
   etpAffected: any[] = [];
 
@@ -90,14 +90,14 @@ export class ReferentielCalculatorComponent
     this.totalOut = sumBy(activities, 'sorties');
     this.totalStock = sumBy(activities, 'stock');
 
-    this.realCover = fixDecimal(this.totalOut / this.totalIn);
+    this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
     this.nbMonth = this.getNbMonth();
-    this.realDTES = fixDecimal(this.totalStock / this.totalOut / this.nbMonth);
+    this.realDTESInMonths = fixDecimal(this.totalStock / this.totalOut / this.nbMonth);
 
     this.getHRPositions();
 
     // Temps moyens par dossier observé = sorties sur la période / etp / heure
-    this.realDelay = fixDecimal(
+    this.realTimePerCase = fixDecimal(
       ((this.environment.nbDaysByMagistrat / 12) *
         this.environment.nbHoursPerDay *
         this.nbMonth) /
@@ -204,34 +204,33 @@ export class ReferentielCalculatorComponent
   }
 
   calculateActivities() {
-    this.calculateDelay = null;
+    this.calculateTimePerCase = null;
     if (this.referentiel && this.referentiel.averageProcessingTime) {
-      this.calculateDelay = this.referentiel.averageProcessingTime;
+      this.calculateTimePerCase = this.referentiel.averageProcessingTime;
     } else if (
       this.referentiel &&
       this.referentiel.parent &&
       this.referentiel.parent.averageProcessingTime
     ) {
-      this.calculateDelay = this.referentiel.parent.averageProcessingTime;
+      this.calculateTimePerCase = this.referentiel.parent.averageProcessingTime;
     }
 
-    if (this.calculateDelay) {
+    if (this.calculateTimePerCase) {
       this.calculateOut = Math.floor(
         ((((this.getTotalEtp() * this.environment.nbHoursPerDay) /
-          this.calculateDelay) *
+          this.calculateTimePerCase) *
           this.environment.nbDaysByMagistrat) /
           12) *
           this.getNbMonth()
       );
-      this.calculateCover = fixDecimal(this.calculateOut / (this.totalIn || 0));
-      this.calculateDTES = fixDecimal(
+      this.calculateCoverage = fixDecimal(this.calculateOut / (this.totalIn || 0));
+      this.calculateDTESInMonths = fixDecimal(
         (this.totalStock || 0) / this.calculateOut / this.nbMonth
       );
     } else {
-      this.calculateDelay = null;
       this.calculateOut = null;
-      this.calculateCover = null;
-      this.calculateDTES = null;
+      this.calculateCoverage = null;
+      this.calculateDTESInMonths = null;
     }
   }
 
