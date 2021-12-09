@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { sumBy } from 'lodash';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { MainClass } from 'src/app/libs/main-class';
@@ -49,22 +50,23 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.watcherDestroy();
   }
 
-  onUpdateActivity(referentiel: ContentieuReferentielInterface) {
-    const options = {
-      in: 0,
-      out: 0,
-      stock: 0,
-    };
+  onUpdateActivity(
+    referentiel: ContentieuReferentielInterface,
+    subRef: ContentieuReferentielInterface
+  ) {
+    referentiel.childrens = (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
+      if (ref.id === subRef.id) {
+        ref.in = subRef.in;
+        ref.out = subRef.out;
+        ref.stock = subRef.stock;
+      }
 
-    (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
-      options.in += ref.in || 0;
-      options.out += ref.out || 0;
-      options.stock += ref.stock || 0;
+      return ref;
     });
 
-    referentiel.in = options.in;
-    referentiel.out = options.out;
-    referentiel.stock = options.stock;
+    referentiel.in = sumBy(referentiel.childrens, 'in');
+    referentiel.out = sumBy(referentiel.childrens, 'out');
+    referentiel.stock = sumBy(referentiel.childrens, 'stock');
 
     this.activitiesService.updateActivity(referentiel);
   }

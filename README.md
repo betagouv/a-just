@@ -12,7 +12,7 @@ https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/home
 ```
 // copie des fichiers d'environement
 cp .env.exemple .env
-cp api/.env.example api/.env
+cp api/.env.example api/.env // Il faut changer les variables d'exemples
 
 // démarrage du docker postgress
 npm run db:build
