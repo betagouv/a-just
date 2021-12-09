@@ -53,14 +53,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
-    subRef: ContentieuReferentielInterface,
-    type: string,
-    value: number
+    subRef: ContentieuReferentielInterface
   ) {
     referentiel.childrens = (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
       if (ref.id === subRef.id) {
-        // @ts-ignore
-        ref[type] = value;
+        ref.in = subRef.in;
+        ref.out = subRef.out;
+        ref.stock = subRef.stock;
       }
 
       return ref;
