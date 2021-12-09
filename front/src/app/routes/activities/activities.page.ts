@@ -37,7 +37,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
-        console.log('ref', ref);
         this.referentiel = ref.filter(
           (r) =>
             this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
@@ -64,7 +63,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
       return ref;
     });
-    console.log(referentiel.childrens)
 
     referentiel.in = sumBy(referentiel.childrens, 'in');
     referentiel.out = sumBy(referentiel.childrens, 'out');
@@ -74,7 +72,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   }
 
   onUpdateMainActivity(referentiel: ContentieuReferentielInterface) {
-    console.log('update main', referentiel);
     this.activitiesService.updateActivity(referentiel);
   }
 
