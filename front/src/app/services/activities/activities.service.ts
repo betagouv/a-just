@@ -48,9 +48,11 @@ export class ActivitiesService {
   }
 
   getAllActivities(id: number | null) {
-    return this.serverService.post('activities/get-all', {
-      backupId: id,
-    }).then((r) => r.data);
+    return this.serverService
+      .post('activities/get-all', {
+        backupId: id,
+      })
+      .then((r) => r.data);
   }
 
   updateActivity(
@@ -58,8 +60,12 @@ export class ActivitiesService {
     activities: ActivityInterface[] = this.activities.getValue(),
     firstRow: boolean = true
   ) {
+    const activityMonth = this.activityMonth.getValue();
     const findIndexActivity = activities.findIndex(
-      (a) => a.contentieux.id === referentiel.id
+      (a) =>
+        a.contentieux.id === referentiel.id &&
+        a.periode.getFullYear() === activityMonth.getFullYear() &&
+        a.periode.getMonth() === activityMonth.getMonth()
     );
 
     if (referentiel.in || referentiel.out || referentiel.stock) {
@@ -90,6 +96,7 @@ export class ActivitiesService {
       activities = this.updateActivity(refChildren, activities, false);
     });
 
+
     if (firstRow) {
       this.activities.next(activities);
     }
@@ -118,7 +125,9 @@ export class ActivitiesService {
   }
 
   duplicateBackup() {
-    const backup = this.backups.getValue().find(b => b.id === this.backupId.getValue());
+    const backup = this.backups
+      .getValue()
+      .find((b) => b.id === this.backupId.getValue());
 
     const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`);
     if (backupName) {
@@ -147,7 +156,7 @@ export class ActivitiesService {
         backupName: backupName ? backupName : null,
       })
       .then((r) => {
-        alert('Enregistrement OK !')
+        alert('Enregistrement OK !');
         this.backupId.next(r.data);
       });
   }

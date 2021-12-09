@@ -40,13 +40,16 @@
               <p>{{itemGroup.label}}</p>
             </div>
             <div class="column-item">
-              <input type="number" [(ngModel)]="itemGroup.in" (ngModelChange)="onUpdateActivity(ref)" min="0" />
+              <input type="number" [ngModel]="itemGroup.in"
+                (ngModelChange)="onUpdateActivity(ref, itemGroup, 'in', $event)" min="0" />
             </div>
             <div class="column-item">
-              <input type="number" [(ngModel)]="itemGroup.out" (ngModelChange)="onUpdateActivity(ref)" min="0" />
+              <input type="number" [ngModel]="itemGroup.out"
+                (ngModelChange)="onUpdateActivity(ref, itemGroup, 'out', $event)" min="0" />
             </div>
             <div class="column-item">
-              <input type="number" [(ngModel)]="itemGroup.stock" (ngModelChange)="onUpdateActivity(ref)" min="0" />
+              <input type="number" [ngModel]="itemGroup.stock"
+                (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock', $event)" min="0" />
             </div>
           </div>
         </div>

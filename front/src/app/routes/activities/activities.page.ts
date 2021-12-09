@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { sumBy } from 'lodash';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { MainClass } from 'src/app/libs/main-class';
@@ -36,6 +37,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
+        console.log('ref', ref);
         this.referentiel = ref.filter(
           (r) =>
             this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
@@ -49,27 +51,31 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.watcherDestroy();
   }
 
-  onUpdateActivity(referentiel: ContentieuReferentielInterface) {
-    const options = {
-      in: 0,
-      out: 0,
-      stock: 0,
-    };
+  onUpdateActivity(
+    referentiel: ContentieuReferentielInterface,
+    subRef: ContentieuReferentielInterface,
+    type: string,
+    value: number
+  ) {
+    referentiel.childrens = (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
+      if (ref.id === subRef.id) {
+        // @ts-ignore
+        ref[type] = value;
+      }
 
-    (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
-      options.in += ref.in || 0;
-      options.out += ref.out || 0;
-      options.stock += ref.stock || 0;
+      return ref;
     });
+    console.log(referentiel.childrens)
 
-    referentiel.in = options.in;
-    referentiel.out = options.out;
-    referentiel.stock = options.stock;
+    referentiel.in = sumBy(referentiel.childrens, 'in');
+    referentiel.out = sumBy(referentiel.childrens, 'out');
+    referentiel.stock = sumBy(referentiel.childrens, 'stock');
 
     this.activitiesService.updateActivity(referentiel);
   }
 
   onUpdateMainActivity(referentiel: ContentieuReferentielInterface) {
+    console.log('update main', referentiel);
     this.activitiesService.updateActivity(referentiel);
   }
 
