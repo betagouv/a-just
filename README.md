@@ -13,6 +13,8 @@ https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/home
 brew install pre-commit
 pre-commit install
 
+export GITGUARDIAN_API_KEY="123456" <- Demander à vincent.viers@beta.gouv.fr
+
 // to test
 pre-commit run --all-files
 ```
