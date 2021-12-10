@@ -13,7 +13,7 @@ https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/home
 brew install pre-commit
 pre-commit install
 
-to test
+// to test
 pre-commit run --all-files
 ```
 
