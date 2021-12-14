@@ -48,4 +48,39 @@ module.exports = function () {
       assert.isOk(response.data && response.data.data.length, 'not referentiel imported')
     })
   })
+
+  describe('Test import HR', () => {
+    it('upload HR', async () => {
+      const formData = new FormData()
+      formData.append('backupName', 'initialisation')
+      formData.append('file', createReadStream(`${__dirname}/../files/hr-sample.csv`))
+
+      const response = await axios.post(
+        `${config.serverUrl}/imports/import-hr`,
+        formData,
+        {
+          headers: {
+            Authorization: userToken,
+            'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
+          },
+        }
+      )
+      assert.equal(response.status, 200, 'import HR fail')
+    })
+
+    it('load HR', async () => {
+      const response = await axios.post(
+        `${config.serverUrl}/human-resources/get-current-hr`,
+        {
+          backupId: null,
+        },
+        {
+          headers: {
+            Authorization: userToken,
+          },
+        }
+      )
+      assert.isOk(response.data && response.data.data && response.data.data.hr.length === 17, 'missing hr when imported')
+    })
+  })
 }
