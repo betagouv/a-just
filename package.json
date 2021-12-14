@@ -11,7 +11,7 @@
     "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
     "build": "npm run build:api && npm run build:front",
     "build:api": "cd api && npm i && npm run build && cd ..",
-    "build:front": "cd front && npm i && npm run build && mv dist ../api/dist/front && cd ..",
+    "build:front": "cd front && npm i && npm install --dev && npm run build && mv dist ../api/dist/front && cd ..",
     "start:production": "cd api && npm run start:production"
   },
   "dependencies": {
