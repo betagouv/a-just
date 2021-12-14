@@ -1,7 +1,7 @@
-let axios = require('axios')
-let config = require('config')
-let assert = require('chai').assert
-let server = require('../dist/index').default
+import axios from 'axios'
+import config from 'config'
+import { assert } from 'chai'
+import { default as server } from '../dist/index'
 
 describe('Test server is ready', () => {
   before((done) => {
