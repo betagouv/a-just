@@ -4,7 +4,7 @@ import { assert } from 'chai'
 
 module.exports = function () {
   let userToken = null
-  let HR = []
+  let activities = []
   let backupId = null
 
   describe('Générate user auth', () => {
@@ -18,10 +18,10 @@ module.exports = function () {
     })
   })
 
-  describe('Test HR', () => {
-    it('load HR', async () => {
+  describe('Test Activities', () => {
+    it('load Activities', async () => {
       const response = await axios.post(
-        `${config.serverUrl}/human-resources/get-current-hr`,
+        `${config.serverUrl}/activities/get-all`,
         {
           backupId: null,
         },
@@ -32,12 +32,13 @@ module.exports = function () {
         }
       )
 
-      HR = response.data && response.data.data && response.data.data.hr
+      activities = response.data && response.data.data && response.data.data.activities
       backupId = response.data && response.data.data && response.data.data.backupId
-      assert.isOk(HR.length === 17, 'missing hr when imported')
+      console.log(activities, backupId)
+      assert.isOk(activities.length === 0, 'missing activities when imported')
     })
 
-    it('edit HR', async () => {
+    /*it('edit HR', async () => {
       const response = await axios.post(
         `${config.serverUrl}/human-resources/save-backup`,
         {
@@ -87,7 +88,7 @@ module.exports = function () {
       )
 
       assert.equal(response.status, 200, 'delete backup fail')
-    })
+    })*/
   })
 
 }

@@ -11,4 +11,5 @@ module.exports = {
     private_key: process.env.JSON_WEB_TOKEN,
   },
   juridictionId: 1,
+  consoleLog: true,
 }
