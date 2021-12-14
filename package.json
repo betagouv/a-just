@@ -1,6 +1,6 @@
 {
   "name": "a-just",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "node": "12.18.4"
   },
