@@ -1,0 +1,73 @@
+version: "3.3"
+services:
+  db:
+    image: postgres:10.4
+    restart: always
+    cpus: "2.0"
+    mem_limit: 4G
+    expose:
+      - "5432"
+    networks:
+      ajust_network:
+        ipv4_address: 173.0.0.50
+    environment:
+      - POSTGRES_DB=ajust
+      - POSTGRES_USER=ajust-user
+      - POSTGRES_PASSWORD=ajust-pass
+      - TZ=Europe/Paris
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "effective_cache_size=6GB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "checkpoint_completion_target=0.7"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "default_statistics_target=100"
+      - "-c"
+      - "random_page_cost=4"
+      - "-c"
+      - "effective_io_concurrency=2"
+      - "-c"
+      - "work_mem=5242kB"
+      - "-c"
+      - "min_wal_size=1GB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "max_worker_processes=4"
+      - "-c"
+      - "max_parallel_workers_per_gather=2"
+      - "-c"
+      - "max_parallel_workers=4"
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile-api-test
+    networks:
+      ajust_network:
+        ipv4_address: 173.0.0.20
+    expose:
+      - '8080'
+    depends_on:
+      - 'db'
+    environment:
+      - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
+      - SERVER_URL=http://api/api   
+      - NODE_ENV=test
+      - JSON_WEB_TOKEN=123456789
+  
+networks:
+  ajust_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 173.0.0.0/16

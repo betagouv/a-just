@@ -1,0 +1,41 @@
+<aj-wrapper title="Calculateur" [actionTemplate]="actions">
+  <div class="container">
+    <div class="header-list">
+      <p class="title-header-list">Contentieux :</p>
+      <mat-select [(ngModel)]="referentielIds" (ngModelChange)="updateReferentielSelected()" multiple>
+        <ng-template ngFor let-ref [ngForOf]="referentiel">
+          <mat-option [value]="ref.id">
+            {{referentielMappingName(ref.label)}}
+          </mat-option>
+          <mat-option *ngFor="let refChild of (ref.childrens || [])" [value]="refChild.id">
+            {{referentielMappingName(ref.label)}} -
+            {{referentielMappingName(refChild.label)}}
+          </mat-option>
+        </ng-template>
+      </mat-select>
+      <div class="flex-1"></div>
+      <p class="title-header-list">Période :</p>
+      <p>Du</p>
+      <input [(ngModel)]="dateStart" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStart" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateStart startView="multi-year" (yearSelected)="chosenYearHandler($event, 'dateStart')"
+        (monthSelected)="chosenMonthHandler($event, pickerDateStart, 'dateStart')">
+      </mat-datepicker>
+      <p>Au</p>
+      <input [(ngModel)]="dateStop" (ngModelChange)="updateReferentielSelected()" [matDatepicker]="pickerDateStop" />
+      <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDateStop startView="multi-year" (yearSelected)="chosenYearHandler($event, 'dateStop')"
+        (monthSelected)="chosenMonthHandler($event, pickerDateStop, 'dateStop')"></mat-datepicker>
+    </div>
+    <div class="content-list">
+      <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
+        [dateStart]="dateStart" [dateStop]="dateStop"></aj-referentiel-calculator>
+    </div>
+  </div>
+</aj-wrapper>
+
+<ng-template #actions>
+  <aj-rh-backup-panel [readOnly]="true"></aj-rh-backup-panel>
+  <aj-activities-backup-panel [readOnly]="true"></aj-activities-backup-panel>
+  <aj-options-backup-panel [readOnly]="true"></aj-options-backup-panel>
+</ng-template>

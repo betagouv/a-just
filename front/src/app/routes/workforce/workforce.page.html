@@ -1,0 +1,123 @@
+<aj-wrapper title="Effectifs" [actionTemplate]="actions">
+  <div class="container">
+    <div class="title">
+      <h3>Vos effectifs</h3>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
+        <mat-label>Catégories</mat-label>
+        <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
+          <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
+            {{ category.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
+        <mat-label>Contentieux</mat-label>
+        <mat-select multiple [ngModel]="selectedReferentielIds"
+          (ngModelChange)="onSelectedReferentielIdsChanged($event)">
+          <mat-option *ngFor="let ref of referentiel" [value]="ref.id">
+            {{ referentielMappingName(ref.label) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="flex-1"></div>
+      <button mat-stroked-button (click)="addHR()">
+        <mat-icon>add</mat-icon> Ajouter un profil
+      </button>
+    </div>
+    <div class="header-list">
+      <div class="profil">
+        <p *ngIf="selectedCategoryIds.indexOf(1) !== -1">Magistrat</p> <!-- petit lol à faire évoluer -->
+      </div>
+      <div class="work-time">Temps de<br />Travail</div>
+      <div class="total-affected">Affecté</div>
+      <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
+        <div class="sub-item" *ngFor="let ref of referentielFiltred">
+          {{ referentielMappingName(ref.label) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content-list">
+      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
+        <div class="profil item">
+          <div class="image">
+            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+          </div>
+          <div class="text">
+            {{ hr.firstName}}
+            {{ hr.lastName}}<br />
+            {{ hr.fonction && hr.fonction.code}}<br />
+            <div>
+              <div class="tag-etp">{{hr.posad || 0}} etp</div>
+            </div>
+            <a [routerLink]="['/resource-humaine', hr.id]">
+              <button mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+            </a>
+            <button mat-icon-button (click)="onRemoveRH(hr.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="work-time">
+          <progression-bar [percent]="hr.workTime || 0" [selected]="false" color="#2e7d32"></progression-bar>
+        </div>
+        <div class="total-affected">
+          <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>
+        </div>
+        <div class="activities">
+          <div class="sub-item" *ngFor="let ref of referentielFiltred; let index = index">
+            <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
+              (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
+            </progression-bar>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-list">
+      <div class="profil">Effectif {{ humanResources.length }}</div>
+      <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
+      <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
+      <div class="activities">
+        <div class="sub-item" *ngFor="let ref of referentielFiltred">
+          {{ ref.totalAffected | number:'0.2-2' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</aj-wrapper>
+
+<aj-popup *ngIf="updateActivity" [title]="updateActivity.referentiel.label" [actions]="[
+{ id: 'close', content: 'Fermer' },
+{ id: 'modify', content: 'Modifier', fill: true }
+]" [closeIcon]="true" (onClose)="updateActivity = null" (selectedAction)="onEditActivities($event)">
+  <div class="popup-referentiel">
+    <div class="title">
+      <div class="label-aj">{{updateActivity.hrActivities[0].label}}</div>
+      <progression-bar [percent]="updateActivity.hrActivities[0].percent"
+        (percentChange)="updateActivityPercent(updateActivity.hrActivities[0], $event)"
+        [color]="referentielMappingColor(updateActivity.referentiel.label)"></progression-bar>
+    </div>
+    <ng-template [ngIf]="updateActivity.hrActivities.length > 1">
+      <div class="or">
+        <p>-- ou --</p>
+      </div>
+      <div class="content">
+        <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
+          <div class="label-aj">{{ref.label}}</div>
+          <progression-bar [percent]="ref.percent" (percentChange)="updateActivityPercent(ref, $event)"
+            [color]="referentielMappingColor(updateActivity.referentiel.label)">
+          </progression-bar>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</aj-popup>
+
+<ng-template #actions>
+  <aj-rh-backup-panel></aj-rh-backup-panel>
+</ng-template>

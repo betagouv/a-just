@@ -1,0 +1,39 @@
+<div *ngIf="referentiel">
+  <div class="datas">
+    <h3>{{ referentiel.parent ? referentiel.parent.label + ' - ' : '' }} {{ referentiel.label }}</h3>
+    <p>Du début {{ dateStart | date:'MM/YYYY' }} à là fin {{ dateStop | date:'MM/YYYY' }}</p>
+    <p>Nombre d'entrées : {{ totalIn }}</p>
+    <p>Nombre de sorties : {{ totalOut }}</p>
+    <p>Stock de fin : {{ totalStock }}</p>
+    <p>ETP affectés :
+      <ng-template ngFor let-etp [ngForOf]="etpAffected">
+        {{etp.totalEtp}} {{etp.totalEtp > 1 ? etp.name+'s' : etp.name}}
+      </ng-template>
+    </p>
+  </div>
+
+  <div class="calcul">
+
+    <div class="actual-activities">
+      <p><b>Activité constatée</b></p>
+      <p>Taux de couverture :</p>
+      <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
+      <p>DTES instantané : {{ realDTESInMonths }} mois</p>
+      <p>Temps moyens par dossier observé : {{ realTimePerCase && realTimePerCase > 1 ? realTimePerCase + ' heures' :
+        realTimePerCase + ' heure'
+        }}</p>
+    </div>
+
+    <div class="calculate-activities">
+      <p><b>Activité calculée</b></p>
+      <p>Taux de couverture :</p>
+      <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
+      <p>Temps moyens par dossier saisi : {{ calculateTimePerCase && calculateTimePerCase > 1 ? calculateTimePerCase + '
+        heures' :
+        calculateTimePerCase + ' heure'
+        }}</p>
+      <p>Sorties possibles : {{ calculateOut }}</p>
+      <p>DTES calculé : {{ calculateDTESInMonths }} mois</p>
+    </div>
+  </div>
+</div>
