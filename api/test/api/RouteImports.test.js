@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from 'config'
 import { assert } from 'chai'
-import FormData from 'Form-data'
+import FormData from 'form-data'
 import { createReadStream } from 'fs'
 
 module.exports = function () {
