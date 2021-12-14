@@ -1,4 +1,3 @@
-recursive: true
 spec:
   - 'test/index.test.js'
 timeout: '5000'

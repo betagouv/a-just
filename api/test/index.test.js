@@ -1,7 +1,6 @@
-import axios from 'axios'
-import config from 'config'
-import { assert } from 'chai'
 import { default as server } from '../dist/index'
+import routeIndex from './api/Route.test'
+import routeImport from './api/RouteImports.test'
 
 describe('Test server is ready', () => {
   before((done) => {
@@ -10,12 +9,8 @@ describe('Test server is ready', () => {
     }
   })
 
-  it('has 200 response code', () => {
-    axios.get(config.serverUrl)
-      .then((response) => {
-        assert.equal(response.status, 200, 'the response code is not 200')
-      })    
-  })
+  routeIndex()
+  routeImport()
 
   after(function () {
     server.done()
