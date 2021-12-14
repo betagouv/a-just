@@ -1,0 +1,16 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: block;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.title {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}

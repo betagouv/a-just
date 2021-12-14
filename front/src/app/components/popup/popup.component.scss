@@ -1,0 +1,191 @@
+@import "../../styles/utils.scss";
+
+:host {
+  &.fit-content .popup > div {
+    width: inherit;
+    height: inherit;
+    min-width: inherit;
+    min-height: inherit;
+  }
+
+  &.large .popup > div {
+    width: 80%;
+  }
+
+  &.width-500 .popup > div {
+    width: 90%;
+    max-width: 500px;
+  }
+
+  &.extra-large .popup > div {
+    width: 90%;
+    height: 90% !important;
+    max-height: 90% !important;
+  }
+
+  &.extra-large-bottom .popup {
+    align-items: flex-end;
+    padding-bottom: 48px;
+
+    > div {
+      width: 90%;
+      height: inherit;
+      min-height: inherit;
+      max-height: 100%;
+    }
+  }
+
+  &.no-blur .popup {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  &.center-title {
+    .title {
+      text-align: center;
+    }
+  }
+
+  &.is-mobile {
+    .popup {
+      background-color: rgba(255, 255, 255, 0.46);
+
+      > div {
+        padding: 16px 0 16px 16px;
+        border-radius: 6px;
+        min-width: auto;
+        min-height: auto;
+
+        > * {
+          padding-right: 16px;
+        }
+      }
+    }
+  }
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.54);
+  z-index: 100;
+
+  > div {
+    background-color: white;
+    width: fit-content;
+    min-width: 50%;
+    max-width: 90%;
+    min-height: 50%;
+    max-height: 80%;
+    padding: 24px 0 24px 24px;
+    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    border-radius: 8px;
+
+    > * {
+      padding-right: 24px;
+    }
+  }
+
+  .title {
+    font-size: 20px;
+    color: fColor(primary);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    display: flex;
+    position: relative;
+
+    .close {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      width: 32px;
+      border-radius: 32px;
+      background: #ffffff;
+      box-shadow: 2px 2px 4px rgba(31, 56, 50, 0.15);
+      text-decoration: none;
+      cursor: pointer;
+      color: fColor(primary);
+      font-size: 18px;
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .actions {
+    margin-top: 8px;
+
+    .border-actions {
+      margin-bottom: 16px;
+      height: 1px;
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      > div {
+        margin-left: 8px;
+        height: 48px;
+        color: fColor(cblack);
+        font-size: 16px;
+        border-radius: 4px;
+        border: solid 1px fColor(cpurpledark);
+        padding: 0 27px;
+        line-height: 48px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &.red {
+          color: fColor(cred);
+
+          &.fill {
+            color: white;
+            background-color: fColor(cred);
+            border: solid 1px fColor(cred);
+          }
+        }
+
+        &.fill {
+          color: white;
+          background-color: fColor(primary);
+        }
+
+        &.material-icons {
+          padding: 0 16px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  :host {
+    .popup > div {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

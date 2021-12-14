@@ -1,0 +1,25 @@
+<div class="menu">
+  <div class="images">
+    <img src="/assets/images/Logo-Ministere_de_la_justice_2020.png" class="logo" />
+    <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
+  </div>
+
+  <a *ngFor="let item of menu" [routerLink]="['/'+item.path]">
+    {{ item.label }}
+  </a>
+</div>
+
+<div class="contener">
+  <div class="header">
+    <h3>{{title}}</h3>
+    <div class="space"></div>
+    <div class="actions">
+      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+    </div>
+  </div>
+  <div class="content">
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<ng-template #defaultActionTemplate></ng-template>

@@ -1,0 +1,24 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: flex;
+  align-items: center;
+
+  .header-selection {
+    font-weight: bold;
+  }
+
+  .list {
+    > p {
+      cursor: pointer;
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.left-margin {
+  margin-left: 8px;
+}

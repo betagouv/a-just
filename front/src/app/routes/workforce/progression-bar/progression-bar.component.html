@@ -1,0 +1,12 @@
+<ng-template [ngIf]="enable">
+  <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">
+  </div>
+  <div class="progress-bar" [style.height.%]="percent || 0" [style.backgroundColor]="color" (click)="changePercent()"
+    [class.seleted]="selected">
+    <p *ngIf="percent && percent >= 30" class="s inside">{{percent || 0}}%</p>
+    <p *ngIf="percent && percent < 30" class="s top">{{percent || 0}}%</p>
+  </div>
+</ng-template>
+<ng-template [ngIf]="!enable">
+  <div class="hidden-bar"></div>
+</ng-template>

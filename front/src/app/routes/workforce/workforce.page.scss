@@ -1,0 +1,151 @@
+@import "../../styles/utils.scss";
+
+.header-list,
+.item-list,
+.footer-list {
+  display: flex;
+  width: 100%;
+}
+
+.header-list {
+  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+
+  .activities.is-not-ios {
+    margin-right: 16px;
+  }
+}
+
+.footer-list {
+  border-top: 1px solid rgba(fColor(cblack), 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .content-list {
+    flex: 1;
+    overflow: auto;
+  }
+}
+
+.item-list {
+  padding: 16px 0;
+  border-top: 1px solid rgba(fColor(cblack), 0.2);
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.profil {
+  width: 150px;
+  margin-right: 16px;
+
+  &.item {
+    display: flex;
+
+    .image {
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 40px;
+        border-radius: 40px;
+      }
+    }
+  }
+}
+
+.text {
+  flex: 1;
+
+  mat-icon {
+    color: black;
+  }
+}
+
+.work-time {
+  width: 80px;
+  margin-right: 16px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.total-affected {
+  width: 80px;
+  margin-right: 16px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activities {
+  display: flex;
+  flex: 1;
+
+  > .sub-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    progression-bar {
+      cursor: pointer;
+    }
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.popup-referentiel {
+  .label-aj {
+    margin-bottom: 4px;
+  }
+
+  > .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  > .content {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 16px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.tag-etp {
+  border-radius: 10px;
+  font-size: 12px;
+  color: white;
+  background-color: #2e7d32;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.or {
+  text-align: center;
+}
