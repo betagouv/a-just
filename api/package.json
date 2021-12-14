@@ -8,7 +8,7 @@
     "build:test": "npm run build-prod",
     "build-prod": "babel src --out-dir dist --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "node_modules/.bin/mocha"
+    "test": "nyc --reporter=lcov node_modules/.bin/mocha"
   },
   "dependencies": {
     "@hubspot/api-client": "^4.0.0",
@@ -42,6 +42,7 @@
     "moment": "^2.29.1",
     "momentjs": "^2.0.0",
     "node-sass": "^6.0.1",
+    "nyc": "^15.1.0",
     "path": "^0.12.7",
     "pdfkit": "^0.12.1",
     "pg": "^8.5.1",
