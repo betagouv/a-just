@@ -1,6 +1,7 @@
 import { default as server } from '../dist/index'
 import routeIndex from './api/Route.test'
 import routeImport from './api/RouteImports.test'
+import routeHR from './api/RouteHR.test'
 
 describe('Test server is ready', () => {
   before((done) => {
@@ -11,6 +12,7 @@ describe('Test server is ready', () => {
 
   routeIndex()
   routeImport()
+  routeHR()
 
   after(function () {
     server.done()
