@@ -13,13 +13,14 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.isLogin],
   })
   async getCurrentHr (ctx) {
-    const { backupId } = this.body(ctx)
+    let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
+    backupId = backupId || backups.length ? backups[backups.length - 1].id : null
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
       backups,
-      backupId: backupId || backups[backups.length - 1].id,
+      backupId,
       categories: await this.model.models.HRCategories.getAll(),
       fonctions: await this.model.models.HRFonctions.getAll(),
     })

@@ -55,6 +55,13 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'signup',
+    loadChildren: () =>
+      import('./signup/signup.module').then(
+        (mod) => mod.SignupModule
+      ),
+  }
 ];
 
 @NgModule({
