@@ -55,13 +55,6 @@ export class AuthService {
     });
   }
 
-  register(params = {}): Promise<any> {
-    return this.serverService.post('users/create-account', params).then((data) => {
-      this.serverService.setToken(data.token);
-      return true;
-    });
-  }
-
   onLogout() {
     return this.userService.logout();
   }

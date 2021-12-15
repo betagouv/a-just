@@ -8,18 +8,7 @@ https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/home
 # Mode dev
 1. Initialisation des variables d'environnements
 
-2. Initialisation du pre-commit
-```
-brew install pre-commit
-pre-commit install
-
-export GITGUARDIAN_API_KEY="123456" <- Demander à vincent.viers@beta.gouv.fr
-
-// to test
-pre-commit run --all-files
-```
-
-3. Initialisation de la BDD
+2. Initialisation de la BDD
 ```
 // copie des fichiers d'environement
 cp .env.exemple .env
@@ -30,7 +19,7 @@ npm run db:build
 npm run db:start
 ```
 
-4. Démarrage du serveur
+3. Démarrage du serveur
 ```
 cd api
 npm i
@@ -39,7 +28,7 @@ npm run start
 accéssible http://localhost:8080/api
 ```
 
-5. Démarrage du front
+4. Démarrage du front
 ```
 cd front
 npm i
