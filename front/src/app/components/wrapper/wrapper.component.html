@@ -4,14 +4,19 @@
     <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
   </div>
 
-  <a *ngFor="let item of menu" [routerLink]="['/'+item.path]">
-    {{ item.label }}
-  </a>
+  <div class="menu-item" *ngFor="let item of menu">
+    <a [routerLink]="['/' + item.path]">
+      {{ item.label }}
+    </a>
+  </div>
+  <div class="menu-item disconnect" (click)="onDisconnect()">
+    <p>Déconnexion</p>
+  </div>
 </div>
 
 <div class="contener">
   <div class="header">
-    <h3>{{title}}</h3>
+    <h3>{{ title }}</h3>
     <div class="space"></div>
     <div class="actions">
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
