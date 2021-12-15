@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'aj-wrapper',
@@ -30,7 +32,13 @@ export class WrapperComponent implements OnInit {
       path: 'calculateur',
     },
   ];
-  constructor() {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {}
+
+  onDisconnect() {
+    this.authService.onLogout().then(() => {
+      this.router.navigate(["/"]);
+    });
+  }
 }

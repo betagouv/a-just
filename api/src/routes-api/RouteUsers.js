@@ -20,6 +20,8 @@ export default class RouteUsers extends Route {
     bodyType: Types.object().keys({
       email: Types.string().required(),
       password: Types.string().required(),
+      firstName: Types.string(),
+      lastName: Types.string(),
     }),
   })
   async createAccount (ctx) {

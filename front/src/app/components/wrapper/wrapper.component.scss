@@ -19,9 +19,13 @@
     }
   }
 
-  a {
+  .menu-item {
     display: block;
     padding: 16px 16px;
+
+    &.disconnect {
+      cursor: pointer;
+    }
   }
 }
 

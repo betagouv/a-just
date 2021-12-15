@@ -9,10 +9,6 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async (backupId) => {
-    if(!backupId) {
-      backupId = await Model.models.HRBackups.lastId()
-    }
-
     const list = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'etp', 'posad', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
       where: {
