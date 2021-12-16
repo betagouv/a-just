@@ -33,27 +33,7 @@ export class ReferentielService {
   }
 
   initDatas() {
-    this.loadReferentiels().then((result) => {
-      let list: ContentieuReferentielInterface[] = [];
-      result.map((main: ContentieuReferentielInterface) => {
-        if (main.childrens) {
-          main.childrens.map((subMain) => {
-            if (subMain.childrens) {
-              list = list.concat(subMain.childrens);
-            }
-          });
-        }
-      });
-
-      // force to order list
-      list = orderBy(
-        list.map((r) => {
-          r.rank = referentielMappingIndex(r.label);
-          return r;
-        }),
-        ['rank']
-      );
-
+    this.loadReferentiels().then((list: ContentieuReferentielInterface[]) => {
       this.humanResourceService.contentieuxReferentiel.next(list);
       this.updateReferentielValues();
       this.updateReferentielOptions();

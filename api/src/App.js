@@ -21,7 +21,7 @@ export default class App extends AppBase {
 
   async start () {
     db.migrations().then(() => {
-      db.seeders().then(async () => {
+      db.seeders().then(() => {
         console.log('--- IS READY ---')
         this.isReady()
       })

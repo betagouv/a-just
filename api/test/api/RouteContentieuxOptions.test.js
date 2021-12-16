@@ -4,7 +4,7 @@ import { assert } from 'chai'
 
 module.exports = function () {
   let userToken = null
-  let activities = []
+  let options = []
   let backupId = null
   let referentiels = []
 
@@ -19,7 +19,7 @@ module.exports = function () {
     })
   })
 
-  describe('Test Activities', () => {
+  describe('Test Contentieux Options', () => {
     it('load Referentiel', async () => {
       const response = await axios.get(
         `${config.serverUrl}/referentiels/get-referentiels`,
@@ -34,9 +34,9 @@ module.exports = function () {
       assert.isOk(referentiels.length !== 0, 'missing referentiel')
     })
 
-    it('load Activities', async () => {
+    it('load Contentieux Options', async () => {
       const response = await axios.post(
-        `${config.serverUrl}/activities/get-all`,
+        `${config.serverUrl}/contentieux-options/get-all`,
         {
           backupId: null,
         },
@@ -47,20 +47,17 @@ module.exports = function () {
         }
       )
 
-      activities = response.data && response.data.data && response.data.data.activities
+      options = response.data && response.data.data && response.data.data.list
       backupId = response.data && response.data.data && response.data.data.backupId
-      assert.isOk(activities.length === 0, 'activities whas imported')
+      assert.isOk(options.length === 0, 'options whas imported')
     })
 
-    it('add Acitivity', async () => {
+    it('add Options', async () => {
       const response = await axios.post(
-        `${config.serverUrl}/activities/save-backup`,
+        `${config.serverUrl}/contentieux-options/save-backup`,
         {
           list: [{
-            periode: new Date(),
-            entrees: 10,
-            sorties: 20,
-            stock: 30,
+            averageProcessingTime: 8,
             contentieux: referentiels[0],
           }],
           backupId,
@@ -72,13 +69,13 @@ module.exports = function () {
           },
         }
       )
-      assert.equal(response.status, 200, 'save Activities fail')
+      assert.equal(response.status, 200, 'save Options fail')
       backupId = response.data && response.data.data
     })
 
-    it('load current activities', async () => {
+    it('load current options', async () => {
       const response = await axios.post(
-        `${config.serverUrl}/activities/get-all`,
+        `${config.serverUrl}/contentieux-options/get-all`,
         {
           backupId,
         },
@@ -89,14 +86,14 @@ module.exports = function () {
         }
       )
 
-      activities = response.data && response.data.data && response.data.data.activities
+      options = response.data && response.data.data && response.data.data.list
       backupId = response.data && response.data.data && response.data.data.backupId
-      assert.isOk(activities.length === 1, 'activities not loaded')
+      assert.isOk(options.length === 1, 'options not loaded')
     })
 
     it('delete Copy', async () => {
       const response = await axios.delete(
-        `${config.serverUrl}/activities/remove-backup/${backupId}`,
+        `${config.serverUrl}/contentieux-options/remove-backup/${backupId}`,
         {
           headers: {
             Authorization: userToken,
