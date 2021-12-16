@@ -19,7 +19,7 @@ export class WrapperComponent implements OnInit {
       label: 'Ventilations',
       path: 'ventilations',
     },
-    {
+    /*{
       label: 'Données d\'activité',
       path: 'donnees-d-activite',
     },
@@ -30,7 +30,7 @@ export class WrapperComponent implements OnInit {
     {
       label: 'Calculateur',
       path: 'calculateur',
-    },
+    },*/
   ];
   constructor(private authService: AuthService, private router: Router) {}
 
