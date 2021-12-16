@@ -1,5 +1,5 @@
-recursive: true
 spec:
   - 'test/index.test.js'
-timeout: '5000'
+timeout: '20000'
 color: true
+require: 'babel-register'
