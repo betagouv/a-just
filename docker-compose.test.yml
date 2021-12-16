@@ -59,9 +59,11 @@ services:
       - '8080'
     depends_on:
       - 'db'
+    volumes:
+      - './api/coverage:/home/api/coverage'
     environment:
       - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
-      - SERVER_URL=http://api/api   
+      - SERVER_URL=http://173.0.0.20:8080/api
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
   

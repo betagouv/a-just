@@ -1,20 +1,12 @@
-let axios = require('axios')
-let assert = require('chai').assert
-let server = require('../../dist/index')
+import axios from 'axios'
+import config from 'config'
+import { assert } from 'chai'
 
-describe('Test import datas', () => {
-  before((done) => {
-    server.isReady = function () {
-      console.log('test')
-      done()
-    }
+module.exports = function () {
+  describe('Test Route Index', () => {
+    it('has 200 response code', async () => {
+      const response = await axios.get(config.serverUrl)
+      assert.equal(response.status, 200, 'the response code is not 200')
+    })
   })
-
-  it('has 200 response code', () => {
-    axios.get(process.env.SERVER_URL || 'http://localhost:8080/api')
-      .then((response) => {
-        console.log(response)
-        assert.equal(response.status, 200, 'the response code is not 200')
-      })    
-  })
-})
+}

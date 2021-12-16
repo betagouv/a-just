@@ -1,4 +1,5 @@
 import parse from 'csv-parse'
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier
 
 export function csvToArrayJson (data, options = {}) {
   return new Promise((resolve, reject) => {
@@ -23,4 +24,28 @@ export function csvToArrayJson (data, options = {}) {
       return obj
     })
   ))
+}
+
+/**
+ * 
+ * columns = [
+        {id: 'name', title: 'NAME'},
+        {id: 'lang', title: 'LANGUAGE'}
+    ]
+ * 
+ * records = [
+    {name: 'Bob',  lang: 'French, English'},
+    {name: 'Mary', lang: 'English'}
+]
+ */
+
+export function csvBuffer (columns, records) {
+  const csvStringifier = createCsvStringifier({
+    header: columns,
+  })
+  const headers = csvStringifier.getHeaderString()
+  const data = csvStringifier.stringifyRecords(records)
+  const blobData = `${headers}${data}`
+
+  return Buffer.from(blobData)
 }

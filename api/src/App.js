@@ -21,7 +21,7 @@ export default class App extends AppBase {
 
   async start () {
     db.migrations().then(() => {
-      db.seeders().then(async () => {
+      db.seeders().then(() => {
         console.log('--- IS READY ---')
         this.isReady()
       })
@@ -53,7 +53,7 @@ export default class App extends AppBase {
         modes: [ 'query', 'subdomain', 'cookie', 'header', 'tld' ],
       }), // allows us to easily localize the API
       auth,
-      logger(), // gives detailed logs of each request made on the API
+      config.consoleLog ? logger() : () => {}, // gives detailed logs of each request made on the API
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
     ])
