@@ -36,7 +36,7 @@ export default class Route extends RouteBase {
       id,
       status: 1,
     }, raw: true })
-    user = { ...user, ...snakeToCamelObject(user) }
+    user = { ...user, ...snakeToCamelObject(user), access: await this.models.UsersAccess.getUserAccess(id) }
     this.assertUnauthorized(user)
     ctx.body.user = user
 

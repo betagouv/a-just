@@ -10,7 +10,7 @@ export default class RouteHumanResources extends Route {
     bodyType: Types.object().keys({
       backupId: Types.number(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewHR],
   })
   async getCurrentHr (ctx) {
     let { backupId } = this.body(ctx)
@@ -28,7 +28,7 @@ export default class RouteHumanResources extends Route {
 
   @Route.Delete({
     path: 'remove-backup/:backupId',
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewHR],
   })
   async removeBackup (ctx) {
     const { backupId } = ctx.params   
@@ -43,7 +43,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number().required(),
       backupName: Types.string().required(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewHR],
   })
   async duplicateBackup (ctx) {
     const { backupId, backupName } = this.body(ctx)
@@ -57,7 +57,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number(),
       backupName: Types.string(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewHR],
   })
   async saveBackup (ctx) {
     const { backupId, hrList, backupName } = this.body(ctx)

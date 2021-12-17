@@ -39,6 +39,7 @@ export class ServerService {
     }
 
     if (error.status === 403) {
+      localStorage.removeItem('token');
       window.location.href = '/';
       alert('Veuillez vous reconnecter');
       return Promise.reject('Veuillez vous reconnecter');
