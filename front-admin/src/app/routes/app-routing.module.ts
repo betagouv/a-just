@@ -1,0 +1,35 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AdminAuthGuard } from './admin-auth-guard.service';
+
+const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/login',
+    pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./login/login.module').then((mod) => mod.LoginModule),
+  },
+  {
+    path: 'users',
+    loadChildren: () =>
+      import('./users/users.module').then((mod) => mod.UsersModule),
+    canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'imports',
+    loadChildren: () =>
+      import('./imports/imports.module').then((mod) => mod.ImportsModule),
+    canActivate: [AdminAuthGuard],
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  providers: [AdminAuthGuard],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}

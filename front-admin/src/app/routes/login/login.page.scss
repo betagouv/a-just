@@ -1,0 +1,14 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  .actions {
+    display: block;
+    margin-top: 16px;
+  }
+}
