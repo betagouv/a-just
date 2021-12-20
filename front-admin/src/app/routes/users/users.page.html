@@ -1,3 +1,71 @@
 <aj-wrapper title="Utilisateurs">
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="desc">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Id </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
 
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="email"> Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="firstName"> Prénom </th>
+      <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="lastName"> Nom </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="roleName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="roleName"> Role </th>
+      <td mat-cell *matCellDef="let element"> {{element.roleName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="access">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="access"> Accès </th>
+      <td mat-cell *matCellDef="let element" [innerHTML]="element.accessName"></td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button color="primary" (click)="onEdit(element)">Modifier les accès</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <aj-popup *ngIf="userEdit" class="large" title="Modification des accès" [actions]="popupAction"
+    (selectedAction)="onPopupDetailAction($event)">
+    <div class="content-popup">
+      <div>
+        <p>Email: {{ userEdit.email }}</p>
+        <p>Prénom: {{ userEdit.firstName }}</p>
+        <p>Nom: {{ userEdit.lastName }}</p>
+
+        <div class="item item-left">
+          <p><b>Liste des pages accessibles</b></p>
+
+          <p *ngFor="let ac of access">
+            <input type="checkbox" #acDom [(ngModel)]="ac.selected" /> <label (click)="acDom.click()">{{ ac.label
+              }}</label>
+          </p>
+        </div>
+      </div>
+      <div class="item">
+        <p><b>Liste des juridictions accessibles</b></p>
+
+        <p *ngFor="let jur of juridictions">
+          <input type="checkbox" #jurDom [(ngModel)]="jur.selected" /> <label (click)="jurDom.click()">{{ jur.label
+            }}</label>
+        </p>
+      </div>
+    </div>
+  </aj-popup>
 </aj-wrapper>

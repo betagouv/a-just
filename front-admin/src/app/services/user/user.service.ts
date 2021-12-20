@@ -35,4 +35,8 @@ export class UserService {
       this.serverService.removeToken();
     });
   }
+
+  getAll() {
+    return this.serverService.get('users/get-all').then((data) => data.data || []);
+  }
 }

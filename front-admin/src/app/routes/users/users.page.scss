@@ -1,1 +1,28 @@
 @import "../../styles/utils.scss";
+
+table {
+  width: 100%;
+}
+
+.content-popup {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+	grid-gap: 16px;
+}
+
+.item {
+  margin-bottom: 16px;
+
+  &.item-left {
+    margin-top: 16px;
+  }
+
+  p {
+    line-height: 32px;
+    height: 32px;
+
+    input {
+      margin-right: 8px;
+    }
+  }
+}

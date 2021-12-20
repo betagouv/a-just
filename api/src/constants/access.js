@@ -17,3 +17,26 @@ export const accessToString = (roleId) => {
     return 'Calculateur'
   }
 }
+
+export const accessList = [
+  {
+    id: USER_ACCESS_DASHBOARD,
+    label: accessToString(USER_ACCESS_DASHBOARD),
+  },
+  {
+    id: USER_ACCESS_VENTILATIONS,
+    label: accessToString(USER_ACCESS_VENTILATIONS),
+  },
+  {
+    id: USER_ACCESS_ACTIVITIES,
+    label: accessToString(USER_ACCESS_ACTIVITIES),
+  },
+  {
+    id: USER_ACCESS_AVERAGE_TIME,
+    label: accessToString(USER_ACCESS_AVERAGE_TIME),
+  },
+  {
+    id: USER_ACCESS_CALCULATOR,
+    label: accessToString(USER_ACCESS_CALCULATOR),
+  },
+]
