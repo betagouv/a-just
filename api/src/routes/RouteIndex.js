@@ -15,7 +15,7 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile (ctx) {
-    const file = `${__dirname}/../front${ctx.request.url}`
+    const file = `${__dirname}/front${ctx.request.url}`
     console.log(file)
 
     if(ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
@@ -23,7 +23,7 @@ export default class RouteIndex extends Route {
       ctx.type = mime.getType(file)
       ctx.body = src
     } else {
-      const indexFile = `${__dirname}/../front/index.html`
+      const indexFile = `${__dirname}/front/index.html`
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
       ctx.body = src
