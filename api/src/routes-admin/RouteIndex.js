@@ -15,10 +15,11 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile (ctx) {
-    const file = `${__dirname}/../front-admin${ctx.request.url}`
+    let url = ctx.request.url.replace('/admin', '')
+    const file = `${__dirname}/../front-admin${url}`
     console.log(file)
 
-    if(ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
+    if(url && url !== '/' && existsSync(file)) {
       const src = createReadStream(file)
       ctx.type = mime.getType(file)
       ctx.body = src
