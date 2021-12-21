@@ -113,8 +113,8 @@ export default (sequelizeInstance, Model) => {
         options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
       }
 
-      if(HRFromList['%_activite']) {
-        options.posad = HRFromList['%_activite']
+      if(HRFromList["%_d'activite"]) {
+        options.posad = HRFromList["%_d'activite"]
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {
