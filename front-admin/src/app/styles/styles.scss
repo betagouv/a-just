@@ -1,0 +1,23 @@
+@import "./utils.scss";
+@import "./typography.scss";
+@import "./form.scss";
+@import "./material.scss";
+
+html,
+body {
+	height: 100vh;
+	padding: 0;
+	margin: 0;
+	background-color: white;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.flex-1 {
+	flex: 1;
+}

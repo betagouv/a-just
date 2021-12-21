@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { sumBy } from 'lodash';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { IndicatorService } from 'src/app/services/indicator/indicator.service';
 import { monthDiff } from 'src/app/utils/dates';
 
 const now = new Date();
@@ -44,7 +43,6 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
   };
 
   constructor(
-    private indicatorService: IndicatorService,
     private humanResourceService: HumanResourceService
   ) {
     // default value

@@ -31,6 +31,7 @@ function loginUser (ctx) {
     const userToRegister = {
       id: user.id,
       role: user.role,
+      access: await ctx.models.UsersAccess.getUserAccess(user.id),
       loginTokenVersion: config.loginTokenVersion,
       date: new Date(),
     }

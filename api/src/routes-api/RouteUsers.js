@@ -1,5 +1,8 @@
-import Route from './Route'
+import Route, { Access } from './Route'
 import { Types } from '../utils/types'
+import {
+  accessList,
+} from '../constants/access'
 
 export default class RouteUsers extends Route {
   constructor (params) {
@@ -28,7 +31,37 @@ export default class RouteUsers extends Route {
     try {
       await this.model.createAccount(this.body(ctx))
       this.sendOk(ctx, 'OK')
-    } catch(err) {
+    } catch (err) {
+      ctx.throw(401, err)
+    }
+  }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAll (ctx) {
+    const list = await this.model.getAll()
+
+    this.sendOk(ctx, {
+      list,
+      juridictions: await this.model.models.Juridictions.getAll(),
+      access: accessList,
+    })
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      userId: Types.number().required(),
+      access: Types.any().required(),
+      juridictions: Types.any().required(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async updateAccount (ctx) {
+    try {
+      await this.model.updateAccount(this.body(ctx))
+      this.sendOk(ctx, 'OK')
+    } catch (err) {
       ctx.throw(401, err)
     }
   }
