@@ -56,7 +56,13 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (list, title) => {
     const referentielMapping = {}
-    const backupId = await Model.models.HRBackups.createWithLabel(title, list[0].codejur)
+    console.log(list[0])
+    const backupId = await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
+    const findJuridiction = await Model.models.Juridictions.findOne({
+      where: {
+        cour_appel: list[0].codejur || list[0].juridiction,
+      },
+    })
 
     const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
     referentielMappingList.map(ref => {
@@ -76,11 +82,6 @@ export default (sequelizeInstance, Model) => {
         backup_id: backupId,
       }
 
-      const findJuridiction = await Model.models.Juridictions.findOne({
-        where: {
-          cour_appel: HRFromList.codejur,
-        },
-      })
       if(findJuridiction) {
         options.juridiction_id = findJuridiction.id
       }
@@ -110,6 +111,10 @@ export default (sequelizeInstance, Model) => {
 
       if(HRFromList.posad) {
         options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
+      }
+
+      if(HRFromList['%_activite']) {
+        options.posad = HRFromList['%_activite']
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {
