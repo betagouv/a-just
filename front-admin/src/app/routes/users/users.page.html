@@ -30,6 +30,11 @@
       <td mat-cell *matCellDef="let element" [innerHTML]="element.accessName"></td>
     </ng-container>
 
+    <ng-container matColumnDef="juridictionsName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="juridictionsName"> Juridictions </th>
+      <td mat-cell *matCellDef="let element" [innerHTML]="element.juridictionsName"></td>
+    </ng-container>
+
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let element">

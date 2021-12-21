@@ -24,6 +24,7 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
     'lastName',
     'roleName',
     'access',
+    'juridictionsName',
     'actions',
   ];
   dataSource = new MatTableDataSource();
@@ -51,7 +52,8 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
     this.userService.getAll().then(l => {
       this.dataSource.data = l.list.map((u: UserInterface) => ({
         ...u,
-        accessName: (u.accessName || '').replace(/, /g,', <br/>')
+        accessName: (u.accessName || '').replace(/, /g,', <br/>'),
+        juridictionsName: (u.juridictions || []).map(j => (j.label)).join(', <br/>'),
       }));
       this.access = l.access.map((u: PageAccessInterface) => ({id: u.id, label: u.label, selected: false}));
       this.juridictions = l.juridictions.map((u: JuridictionInterface) => ({id: u.id, label: u.label, selected: false}));
@@ -79,9 +81,14 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
   onPopupDetailAction (action: any) {
     switch (action.id) {
     case 'save': {
-      console.log(this.access.filter(a => a.selected), this.juridictions.filter(a => a.selected))
-
-      // this.onSubmit()
+      this.userService.updateUser({
+        userId: this.userEdit && this.userEdit.id,
+        access: this.access.filter(a => a.selected).map(a => (a.id)),
+        juridictions: this.juridictions.filter(a => a.selected).map(a => (a.id))
+      }).then(() => {
+        this.userEdit = null;
+        this.onLoad();
+      });
     } break
     case 'close':
       this.userEdit = null

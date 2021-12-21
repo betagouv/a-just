@@ -12,4 +12,5 @@ export interface UserInterface {
 	access?: number[];
 	accessName?: string;
 	juridictions?: JuridictionInterface[];
+	juridictionsName?: string;
 }

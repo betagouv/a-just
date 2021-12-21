@@ -49,5 +49,20 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  Model.updateAccount = async ({ userId, access, juridictions }) => {
+    const user = await Model.findOne({ 
+      where: { 
+        id: userId, 
+      },
+    })
+
+    if(user) {
+      await Model.models.UsersAccess.updateAccess(userId, access)
+      await Model.models.UserJuridictions.updateJuridictions(userId, juridictions)
+    } else {
+      throw 'User not found'
+    }
+  }
+
   return Model
 }

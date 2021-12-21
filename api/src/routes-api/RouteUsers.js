@@ -48,4 +48,21 @@ export default class RouteUsers extends Route {
       access: accessList,
     })
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      userId: Types.number().required(),
+      access: Types.any().required(),
+      juridictions: Types.any().required(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async updateAccount (ctx) {
+    try {
+      await this.model.updateAccount(this.body(ctx))
+      this.sendOk(ctx, 'OK')
+    } catch (err) {
+      ctx.throw(401, err)
+    }
+  }
 }

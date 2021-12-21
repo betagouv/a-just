@@ -39,4 +39,8 @@ export class UserService {
   getAll() {
     return this.serverService.get('users/get-all').then((data) => data.data || []);
   }
+
+  updateUser(params = {}): Promise<any> {
+    return this.serverService.post('users/update-account', params);
+  }
 }

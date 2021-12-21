@@ -9,5 +9,21 @@ export default (sequelizeInstance, Model) => {
     return access.map(a => (a.access_id))
   }
 
+  Model.updateAccess = async (userId, accessIds) => {
+    await Model.destroy({
+      where: {
+        user_id: userId,
+      },
+      force: true,
+    })
+
+    for(let i = 0; i < accessIds.length; i++) {
+      await Model.create({
+        user_id: userId,
+        access_id: accessIds[i],
+      })
+    }
+  }
+
   return Model
 }
