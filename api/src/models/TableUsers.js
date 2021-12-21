@@ -1,3 +1,5 @@
+import { roleToString } from '../constants/roles'
+import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
 
 export default (sequelizeInstance, Model) => {
@@ -28,6 +30,37 @@ export default (sequelizeInstance, Model) => {
       })
     } else {
       throw 'Email déjà existant'
+    }
+  }
+
+  Model.getAll = async () => {
+    const list = await Model.findAll({
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role'],
+      raw: true,
+    })
+
+    for(let i = 0; i < list.length; i++) {
+      list[i].access = await Model.models.UsersAccess.getUserAccess(list[i].id)
+      list[i].accessName = list[i].access.map(a => accessToString(a)).join(', ')
+      list[i].roleName = roleToString(list[i].role)
+      list[i].juridictions = await Model.models.UserJuridictions.getUserJuriction(list[i].id)
+    }
+
+    return list
+  }
+
+  Model.updateAccount = async ({ userId, access, juridictions }) => {
+    const user = await Model.findOne({ 
+      where: { 
+        id: userId, 
+      },
+    })
+
+    if(user) {
+      await Model.models.UsersAccess.updateAccess(userId, access)
+      await Model.models.UserJuridictions.updateJuridictions(userId, juridictions)
+    } else {
+      throw 'User not found'
     }
   }
 

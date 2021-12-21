@@ -1,0 +1,60 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: flex;
+  height: 100%;
+}
+
+.menu {
+  width: 200px;
+  border-right: 1px solid rgba(fColor(cblack), 0.2);
+
+  .images {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+
+    > img {
+      width: 50%;
+    }
+  }
+
+  .menu-item {
+    display: block;
+    padding: 16px 16px;
+
+    &.disconnect {
+      cursor: pointer;
+    }
+  }
+}
+
+.contener {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    padding: 24px;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.header {
+  height: 77px;
+  min-height: 77px;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.space {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}

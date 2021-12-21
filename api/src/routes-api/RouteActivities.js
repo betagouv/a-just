@@ -10,7 +10,7 @@ export default class RouteActivities extends Route {
     bodyType: Types.object().keys({
       backupId: Types.number(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async getAll (ctx) {
     let { backupId } = this.body(ctx)
@@ -27,7 +27,7 @@ export default class RouteActivities extends Route {
 
   @Route.Delete({
     path: 'remove-backup/:backupId',
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async removeBackup (ctx) {
     const { backupId } = ctx.params   
@@ -42,7 +42,7 @@ export default class RouteActivities extends Route {
       backupId: Types.number().required(),
       backupName: Types.string().required(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async duplicateBackup (ctx) {
     const { backupId, backupName } = this.body(ctx)
@@ -56,7 +56,7 @@ export default class RouteActivities extends Route {
       backupId: Types.number(),
       backupName: Types.string(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async saveBackup (ctx) {
     const { backupId, list, backupName } = this.body(ctx)
