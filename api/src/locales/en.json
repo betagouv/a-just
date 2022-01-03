@@ -1,4 +1,7 @@
 {
 	"Not found": "Not found",
-	"Email ou mot de passe incorrect": "Email ou mot de passe incorrect"
+	"Email ou mot de passe incorrect": "Email ou mot de passe incorrect",
+	"Vous devez saisir un seul backupId ou backupName !": "Vous devez saisir un seul backupId ou backupName !",
+	"Vous devez saisir au moins un backupId ou backupName !": "Vous devez saisir au moins un backupId ou backupName !",
+	"La juridiction n'existe pas !": "La juridiction n'existe pas !"
 }

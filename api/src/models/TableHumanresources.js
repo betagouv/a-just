@@ -56,7 +56,6 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (list, title) => {
     const referentielMapping = {}
-    console.log(list[0])
     const backupId = await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
     const findJuridiction = await Model.models.Juridictions.findOne({
       where: {
@@ -64,7 +63,7 @@ export default (sequelizeInstance, Model) => {
       },
     })
 
-    const referentielMappingList = await Model.models.ContentieuxReferentiels.getMainTitles()
+    const referentielMappingList = await Model.models.ContentieuxReferentiels.cacheReferentielMap
     referentielMappingList.map(ref => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
     })

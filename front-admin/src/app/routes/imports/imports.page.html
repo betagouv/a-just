@@ -1,3 +1,10 @@
 <aj-wrapper title="Imports">
-
+  <div class="import-item">
+    <h2>Importer le référentiel</h2>
+    <p>L'import de référentiel écrase l'ancien et oblige de re saisir la totalité des ventilations!</p>
+    <div class="form">
+      <input type="file" #refFile accept=".csv" />
+    </div>
+    <div class="action"><button (click)="onSendReferentiel(refFile)">Envoyer</button></div>
+  </div>
 </aj-wrapper>

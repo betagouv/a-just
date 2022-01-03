@@ -18,8 +18,8 @@ export class ServerService {
     return this.serverUrl + url;
   }
 
-  getOptions() {
-    const json = { 'Content-Type': 'application/json', Authorization: '' };
+  getOptions(header = {}) {
+    const json = { 'Content-Type': 'application/json', Authorization: '', ...header };
     const token = this.getToken();
     if (token) {
       json.Authorization = token;
@@ -105,10 +105,10 @@ export class ServerService {
     });
   }
 
-  post(url: string, params = {}, options = {}): Promise<any> {
+  post(url: string, params = {}, options = {}, header = {}): Promise<any> {
     console.log('HTTP POST ' + this.getUrl(url));
     return this._http
-      .post(this.getUrl(url), params, { ...this.getOptions(), ...options })
+      .post(this.getUrl(url), params, { ...this.getOptions(header), ...options })
       .catch(this.handleError);
   }
 

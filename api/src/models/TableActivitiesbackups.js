@@ -48,6 +48,12 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  Model.getNewBackupId = async (backupName, options = {}) => {
+    const backupCreated = await Model.create({ ...options, label: backupName })
+    
+    return backupCreated.dataValues.id
+  }
+
   Model.duplicateBackup = async (backupId, backupName) => {
     const backup = await Model.findOne({
       where: {
@@ -58,8 +64,7 @@ export default (sequelizeInstance, Model) => {
 
     if(backup) {
       delete backup.id
-      const backupCreated = await Model.create({ ...backup, label: backupName })
-      const newBackupId = backupCreated.dataValues.id
+      const newBackupId = await Model.getNewBackupId(backupName, backup)
 
       const hrList = await Model.models.Activities.findAll({
         where: {
