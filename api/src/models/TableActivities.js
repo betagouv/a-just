@@ -71,9 +71,9 @@ export default (sequelizeInstance, Model) => {
         // if existe update content
         if (findExist) {
           await findExist.update({
-            entrees: csv[i].value_entrees,
-            sorties: csv[i].value_sorties,
-            stock: csv[i].value_stock,
+            entrees: parseInt(csv[i].value_entrees),
+            sorties: parseInt(csv[i].value_sorties),
+            stock: parseInt(csv[i].value_stock),
           })
         } else {
           // else create
@@ -81,9 +81,9 @@ export default (sequelizeInstance, Model) => {
             backup_id: backupId,
             periode,
             contentieux_id: contentieux.id,
-            entrees: csv[i].value_entrees,
-            sorties: csv[i].value_sorties,
-            stock: csv[i].value_stock,
+            entrees: parseInt(csv[i].value_entrees),
+            sorties: parseInt(csv[i].value_sorties),
+            stock: parseInt(csv[i].value_stock),
           })
         }
       }
