@@ -1,21 +1,8 @@
+import { orderBy } from 'lodash'
+import { referentielMappingIndex } from '../utils/referentiel'
+
 export default (sequelizeInstance, Model) => {
   Model.cacheReferentielMap = null
-
-  Model.getMainTitles = async () => {
-    const ref = await Model.getReferentiels()
-    let list = []
-    ref.map((main) => {
-      if (main.childrens) {
-        main.childrens.map((subMain) => {
-          if (subMain.childrens) {
-            list = list.concat(subMain.childrens)
-          }
-        })
-      }
-    })
-
-    return list
-  }
 
   Model.getReferentiels = async (force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
@@ -40,7 +27,28 @@ export default (sequelizeInstance, Model) => {
     }
 
     if(force === true || !Model.cacheReferentielMap) {
-      Model.cacheReferentielMap = await formatToGraph()
+      const mainList = await await formatToGraph()
+      let list = []
+      mainList.map((main) => {
+        if (main.childrens) {
+          main.childrens.map((subMain) => {
+            if (subMain.childrens) {
+              list = list.concat(subMain.childrens)
+            }
+          })
+        }
+      })
+
+      // force to order list
+      list = orderBy(
+        list.map((r) => {
+          r.rank = referentielMappingIndex(r.label)
+          return r
+        }),
+        ['rank']
+      )
+    
+      Model.cacheReferentielMap = list 
     }
 
     return Model.cacheReferentielMap
@@ -99,5 +107,6 @@ export default (sequelizeInstance, Model) => {
     return listCont ? listCont.id : null
   }
 
+  Model.getReferentiels(true) // force to init
   return Model
 }
