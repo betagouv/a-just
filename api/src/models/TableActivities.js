@@ -133,6 +133,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.populateMainActivity = async ({ backupId, contentieuxId, periode }) => {
+    console.log('populateMainActivity', backupId, contentieuxId, periode)
     const refDb = (await Model.models.ContentieuxReferentiels.getReferentiels()).find(r => r.id === contentieuxId)
     if(!refDb) {
       return false
@@ -156,13 +157,13 @@ export default (sequelizeInstance, Model) => {
     const options = {
       entrees: await Model.sum('entrees', {
         where: optionsWhere,
-      }),
+      }) || 0,
       sorties: await Model.sum('sorties', {
         where: optionsWhere,
-      }),
+      }) || 0,
       stock: await Model.sum('stock', {
         where: optionsWhere,
-      }),
+      }) || 0,
     }
 
 
