@@ -10,27 +10,30 @@ export default class RouteImports extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupName: Types.string().required(),
+      backupName: Types.string(),
+      backupId: Types.number(),
+      file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importHr (ctx) {  
-    const { backupName } = this.body(ctx)
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+    const { backupName, backupId, file } = this.body(ctx)
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    await this.model.importList(arrayOfHR, backupName)
+    await this.model.importList(arrayOfHR, backupName, backupId)
     this.sendOk(ctx, 'OK')
   }
 
   @Route.Post({
     bodyType: Types.object().keys({
+      file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importReferentiel (ctx) {
-    console.log(ctx.request.files)
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+    const { file } = this.body(ctx)
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
     })
     await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)

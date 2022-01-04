@@ -54,9 +54,9 @@ export default (sequelizeInstance, Model) => {
     return sortBy(list, ['fonction.rank', 'category.rank', 'firstName', 'lastName'])
   }
 
-  Model.importList = async (list, title) => {
+  Model.importList = async (list, title, id) => {
     const referentielMapping = {}
-    const backupId = await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
+    const backupId = !title ? id : await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
     const findJuridiction = await Model.models.Juridictions.findOne({
       where: {
         cour_appel: list[0].codejur || list[0].juridiction,
