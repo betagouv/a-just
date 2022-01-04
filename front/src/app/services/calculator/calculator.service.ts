@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-const now = new Date(2021, 11);
+const now = new Date(2021, 0);
 const end = new Date(2021, 11, 30);
 
 @Injectable({

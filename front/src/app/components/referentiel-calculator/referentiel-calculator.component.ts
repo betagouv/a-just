@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { sortBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
@@ -14,7 +14,7 @@ import { fixDecimal } from 'src/app/utils/numbers';
 })
 export class ReferentielCalculatorComponent
   extends MainClass
-  implements OnInit
+  implements OnChanges
 {
   @Input() referentielId: number | null = null;
   @Input() dateStart: Date = new Date();
@@ -40,7 +40,8 @@ export class ReferentielCalculatorComponent
     super();
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.watcherDestroy();
     this.referentiel = this.getReferentiel();
     this.watch(
       this.activitiesService.activities.subscribe(() =>
