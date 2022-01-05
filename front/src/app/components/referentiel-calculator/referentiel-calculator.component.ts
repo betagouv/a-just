@@ -79,17 +79,17 @@ export class ReferentielCalculatorComponent
   }
 
   getActivityValues() {
-    const activities = this.activitiesService.activities
+    const activities = sortBy(this.activitiesService.activities
       .getValue()
       .filter(
         (a) =>
           a.contentieux.id === this.referentielId &&
           a.periode.getTime() >= this.dateStart.getTime() &&
           a.periode.getTime() < this.dateStop.getTime()
-      );
+      ), 'periode');
     this.totalIn = sumBy(activities, 'entrees');
     this.totalOut = sumBy(activities, 'sorties');
-    this.totalStock = sumBy(activities, 'stock');
+    this.totalStock = activities.length ? activities[activities.length - 1].stock : 0;
 
     this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
     this.nbMonth = this.getNbMonth();

@@ -86,14 +86,14 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName) => {
+  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
         label: backupName,
-        juridiction_id: config.juridictionId,
+        juridiction_id: juridictionId || config.juridictionId,
       })
       newBackupId = newBackup.dataValues.id
     }

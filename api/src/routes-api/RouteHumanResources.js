@@ -56,13 +56,14 @@ export default class RouteHumanResources extends Route {
       hrList: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
+      juridictionId: Types.number(),
     }),
     accesses: [Access.canVewHR],
   })
   async saveBackup (ctx) {
-    const { backupId, hrList, backupName } = this.body(ctx)
+    const { backupId, hrList, backupName, juridictionId } = this.body(ctx)
 
-    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName)
+    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName, juridictionId)
 
     this.sendOk(ctx, newId)
   }

@@ -12,12 +12,12 @@
         <input formControlName="etp" type="number" />
         <div class="label-aj">Temps de travail, depuis le début de l'année, en %</div>
         <input formControlName="posad" type="number" />
-        <div class="label-aj">Date d'entrée</div>
+        <div class="label-aj">Date d'arrivée dans la juridiction</div>
         <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
         <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
         <mat-datepicker #pickerDateStart></mat-datepicker>
 
-        <div class="label-aj">Date de sortie</div>
+        <div class="label-aj">Date de sortie de la juridiction</div>
         <input formControlName="dateEnd" [matDatepicker]="pickerDateEnd" />
         <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
         <mat-datepicker #pickerDateEnd></mat-datepicker>
