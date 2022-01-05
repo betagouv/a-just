@@ -109,7 +109,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       });
     });
     
-    const currentActivities = this.getCurrentActivity(ref, hr);
+    const currentActivities = this.getCurrentActivity(ref, hr, true);
     listActivities = listActivities.map(activity => {
       const percentAffected = currentActivities.find(
         (a) => a.referentielId === activity.id
@@ -148,10 +148,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   getCurrentActivity(
-    ref: ContentieuReferentielInterface | null,
-    human: HumanResourceInterface
+    ref: ContentieuReferentielInterface | null,
+    human: HumanResourceInterface,
+    listChildren = false
   ) {
-    const ids = ref ? [ref.id] : [];
+    let ids = ref ? [ref.id] : [];
+    if(ref && listChildren) {
+      ids = ids.concat((ref.childrens || []).map((c => (c.id))));
+    }
+    if(!ref) {
+      ids = [...this.referentielService.mainActivitiesId];
+    }
 
     const now = new Date();
     return (human.activities || []).filter((a: any) => {
@@ -160,7 +167,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       return (
         ids.length ? ids.indexOf(a.referentielId) !== -1 : true &&
-        this.referentielService.mainActivitiesId.indexOf(a.referentielId) !== -1 &&
         ((dateStart === null && dateStop === null) ||
           (dateStart &&
             dateStart.getTime() <= now.getTime() &&
