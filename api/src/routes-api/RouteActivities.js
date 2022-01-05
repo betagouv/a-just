@@ -55,13 +55,14 @@ export default class RouteActivities extends Route {
       list: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
+      juridictionId: Types.number(),
     }),
     accesses: [Access.canVewActivities],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName } = this.body(ctx)
+    const { backupId, list, backupName, juridictionId } = this.body(ctx)
 
-    const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName)
+    const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName, juridictionId)
 
     this.sendOk(ctx, newId)
   }
