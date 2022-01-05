@@ -66,4 +66,11 @@ export default class RouteHumanResources extends Route {
 
     this.sendOk(ctx, newId)
   }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getBackupList (ctx) {
+    this.sendOk(ctx, await this.model.models.HRBackups.getAll())
+  }
 }

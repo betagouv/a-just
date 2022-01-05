@@ -35,3 +35,16 @@ export const exportBase64ToBlob = (base64: string, type: string = 'text/csv') =>
   }
   return new Blob([ab], { type });
 };
+
+export const exportFileToString = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function () {
+      resolve(reader.result as string);
+    };
+    reader.onerror = function (error) {
+      reject(error);
+    };
+  });
+};

@@ -2,8 +2,21 @@
 
 .import-item {
   margin-bottom: 32px;
+
+  h2 {
+    margin-bottom: 8px;
+  }
   
   .form {
     margin: 16px 0;
+
+    form div {
+      margin-bottom: 16px;
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
   }
 }

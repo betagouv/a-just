@@ -10,27 +10,30 @@ export default class RouteImports extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupName: Types.string().required(),
+      backupName: Types.string(),
+      backupId: Types.number(),
+      file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importHr (ctx) {  
-    const { backupName } = this.body(ctx)
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+    const { backupName, backupId, file } = this.body(ctx)
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    await this.model.importList(arrayOfHR, backupName)
+    await this.model.importList(arrayOfHR, backupName, backupId)
     this.sendOk(ctx, 'OK')
   }
 
   @Route.Post({
     bodyType: Types.object().keys({
+      file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importReferentiel (ctx) {
-    console.log(ctx.request.files)
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+    const { file } = this.body(ctx)
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
     })
     await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
@@ -42,11 +45,12 @@ export default class RouteImports extends Route {
       backupId: Types.number(),
       backupName: Types.string(),
       juridictionId: Types.number().required(),
+      file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importActivities (ctx) {  
-    const { backupId, backupName, juridictionId } = this.body(ctx)
+    const { backupId, backupName, juridictionId, file } = this.body(ctx)
 
     if(!backupId && !backupName) {
       ctx.throw(401, ctx.state.__('Vous devez saisir au moins un backupId ou backupName !'))
@@ -65,7 +69,7 @@ export default class RouteImports extends Route {
       ctx.throw(401, ctx.state.__('La juridiction n\'existe pas !'))
     }
 
-    const arrayOfHR = await csvToArrayJson(readFileSync(ctx.request.files.file.path, 'utf8'), {
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
     await this.model.models.Activities.importList(arrayOfHR, juridictionId, backupId, backupName)

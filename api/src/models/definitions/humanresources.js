@@ -95,5 +95,13 @@ export default sequelizeInstance => {
     return models
   }
 
+  Model.addHook('afterDestroy', async (hr) => {
+    await Model.models.HRVentilations.destroy({
+      where: {
+        rh_id: hr.id,
+      },
+    })
+  })
+
   return Model
 }
