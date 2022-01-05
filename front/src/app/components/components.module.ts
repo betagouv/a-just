@@ -12,6 +12,7 @@ import { MaterialModule } from '../libs/material.module';
 import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component';
 import { ActivitiesBackupPanelComponent } from './activities-backup-panel/activities-backup-panel.component';
 import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component';
+import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 
 const list = [
   WrapperComponent,
@@ -23,6 +24,7 @@ const list = [
   OptionsBackupPanelComponent,
   ActivitiesBackupPanelComponent,
   ReferentielCalculatorComponent,
+  SelectCheckAllComponent,
 ];
 
 @NgModule({

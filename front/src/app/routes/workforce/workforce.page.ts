@@ -23,7 +23,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   selectedCategoryIds: any[] = [];
   selectedReferentielIds: any[] = [];
 
-  constructor(private humanResourceService: HumanResourceService, private referentielService: ReferentielService) {
+  constructor(
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService
+  ) {
     super();
   }
 
@@ -37,16 +40,18 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
-        this.referentiel = ref.map(r => ({...r, selected: true}));
-        this.selectedReferentielIds = ref.map(r => (r.id));
+        this.referentiel = ref.map((r) => ({ ...r, selected: true }));
+        this.selectedReferentielIds = ref.map((r) => r.id);
         this.onFilterList();
       })
     );
-    this.watch(this.humanResourceService.categories.subscribe(ref => {
-      this.categoriesFilterList = ref;
-      this.selectedCategoryIds = ref.map(c => c.id);
-      this.onFilterList();
-    }))
+    this.watch(
+      this.humanResourceService.categories.subscribe((ref) => {
+        this.categoriesFilterList = ref;
+        this.selectedCategoryIds = ref.map((c) => c.id);
+        this.onFilterList();
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -74,9 +79,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
-  calculWorkTime (hr: HumanResourceInterface) {
-    const activities = this.getCurrentActivity(null, hr);    
-    return fixDecimal(sumBy(activities.filter(a => this.referentielService.idsIndispo.indexOf(a.referentielId) === -1), 'percent'));
+  calculWorkTime(hr: HumanResourceInterface) {
+    const activities = this.getCurrentActivity(null, hr);
+    return fixDecimal(
+      sumBy(
+        activities.filter(
+          (a) =>
+            this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
+        ),
+        'percent'
+      )
+    );
   }
 
   totalAvailable() {
@@ -108,16 +121,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         label: r.label,
       });
     });
-    
+
     const currentActivities = this.getCurrentActivity(ref, hr, true);
-    listActivities = listActivities.map(activity => {
+    listActivities = listActivities.map((activity) => {
       const percentAffected = currentActivities.find(
         (a) => a.referentielId === activity.id
       );
 
       activity.percent = (percentAffected && percentAffected.percent) || 0;
       return activity;
-    })
+    });
 
     this.updateActivity = {
       referentiel: ref,
@@ -153,10 +166,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     listChildren = false
   ) {
     let ids = ref ? [ref.id] : [];
-    if(ref && listChildren) {
-      ids = ids.concat((ref.childrens || []).map((c => (c.id))));
+    if (ref && listChildren) {
+      ids = ids.concat((ref.childrens || []).map((c) => c.id));
     }
-    if(!ref) {
+    if (!ref) {
       ids = [...this.referentielService.mainActivitiesId];
     }
 
@@ -165,35 +178,41 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const dateStop = a.dateStop ? new Date(a.dateStop) : null;
       const dateStart = a.dateStart ? new Date(a.dateStart) : null;
 
-      return (
-        ids.length ? ids.indexOf(a.referentielId) !== -1 : true &&
-        ((dateStart === null && dateStop === null) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop === null) ||
-          (dateStart === null &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()))
-      );
+      return ids.length
+        ? ids.indexOf(a.referentielId) !== -1
+        : true &&
+            ((dateStart === null && dateStop === null) ||
+              (dateStart &&
+                dateStart.getTime() <= now.getTime() &&
+                dateStop === null) ||
+              (dateStart === null &&
+                dateStop &&
+                dateStop.getTime() >= now.getTime()) ||
+              (dateStart &&
+                dateStart.getTime() <= now.getTime() &&
+                dateStop &&
+                dateStop.getTime() >= now.getTime()));
     });
   }
 
-  calculTotalTmpActivity(currentActivities: RHActivityInterface[], formActivities: RHActivityInterface[]) {
+  calculTotalTmpActivity(
+    currentActivities: RHActivityInterface[],
+    formActivities: RHActivityInterface[]
+  ) {
     // total main activities whitout form
-    const totalWhitout = sumBy(currentActivities.filter(ca => {
-      const ref = this.referentiel.find(r => r.id === ca.referentielId)
-      if(ref && ca.referentielId !== formActivities[0].id) {
-        return true;
-      } else {
-        return false;
-      }
-    }), 'percent');
+    const totalWhitout = sumBy(
+      currentActivities.filter((ca) => {
+        const ref = this.referentiel.find((r) => r.id === ca.referentielId);
+        if (ref && ca.referentielId !== formActivities[0].id) {
+          return true;
+        } else {
+          return false;
+        }
+      }),
+      'percent'
+    );
 
-    return totalWhitout + (formActivities[0].percent || 0)
+    return totalWhitout + (formActivities[0].percent || 0);
   }
 
   onEditActivities(action: any) {
@@ -203,9 +222,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           null,
           this.updateActivity.hr
         );
-        const totalAffected = this.calculTotalTmpActivity(allCurrentActivities, this.updateActivity.hrActivities);
-        if(totalAffected > 100) {
-          alert(`Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`);
+        const totalAffected = this.calculTotalTmpActivity(
+          allCurrentActivities,
+          this.updateActivity.hrActivities
+        );
+        if (totalAffected > 100) {
+          alert(
+            `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
+          );
           return;
         }
 
@@ -247,15 +271,34 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onFilterList() {
-    this.referentielFiltred = this.referentiel.filter(r => r.selected);
+    this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
-    const list: HumanResourceInterface[] = this.allHumanResources.filter(hr => hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1);
+    let list: HumanResourceInterface[] = this.allHumanResources.filter(
+      (hr) =>
+        hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
+    );
+
+    if(this.referentielFiltred.length !== this.referentiel.length) {
+      const idsOfRef = this.referentielFiltred.map(r => r.id);
+      list = list.filter(h => {
+        const idsOfactivities = this.getCurrentActivity(null, h).map(a => a.referentielId)
+        for(let i = 0; i < idsOfactivities.length; i++) {
+          if(idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
+            return true;
+          }
+        }
+
+        return false;
+      });
+    }
+
     this.humanResources = list;
     this.calculateTotalOccupation();
   }
 
   onSelectedReferentielIdsChanged(list: number[]) {
-    this.referentiel = this.referentiel.map(cat => {
+    this.selectedReferentielIds = list;
+    this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1;
 
       return cat;
@@ -267,9 +310,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   updateActivityPercent(ref: any, value: number) {
     const isMainRef = this.updateActivity.hrActivities[0].id === ref.id;
 
-    if(isMainRef) {
+    if (isMainRef) {
       this.updateActivity.hrActivities[0].percent = value;
-      for(let i = 1; i < this.updateActivity.hrActivities.length; i++) {
+      for (let i = 1; i < this.updateActivity.hrActivities.length; i++) {
         this.updateActivity.hrActivities[i].percent = 0;
       }
     } else {
