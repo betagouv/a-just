@@ -34,7 +34,7 @@ export default (sequelizeInstance, Model) => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
       include: [{
-        attributes: ['label', 'cour_appel'],
+        attributes: ['id', 'label', 'cour_appel'],
         model: Model.models.Juridictions,
         required: true,
         include: [{
@@ -54,6 +54,7 @@ export default (sequelizeInstance, Model) => {
         label: list[i].label,
         date: list[i].date,
         juridiction: {
+          id: list[i]['Juridiction.id'],
           label: list[i]['Juridiction.label'],
           courAppel: list[i]['Juridiction.cour_appel'],
         },
@@ -127,16 +128,20 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName) => {
+  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
     let newBackupId = backupId
     let reelHRIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
         label: backupName,
+        juridiction_id: juridictionId,
       })
       newBackupId = newBackup.dataValues.id
+      console.log(newBackup)
     }
+
+
 
     for(let x = 0; x < list.length; x++) {
       const hr = list[x]

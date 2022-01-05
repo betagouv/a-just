@@ -4,5 +4,5 @@ export interface BackupInterface {
 	id: number;
 	label: string;
 	date: Date;
-	juridiction?: JuridictionInterface;
+	juridiction: JuridictionInterface;
 }
