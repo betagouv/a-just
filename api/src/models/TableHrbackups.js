@@ -75,12 +75,6 @@ export default (sequelizeInstance, Model) => {
         backup_id: backupId,
       },
     })
-
-    await Model.models.HRVentilations.destroy({
-      where: {
-        backup_id: backupId,
-      },
-    })
   }
 
   Model.duplicateBackup = async (backupId, backupName) => {
@@ -224,10 +218,6 @@ export default (sequelizeInstance, Model) => {
         attributes: ['label', 'cour_appel'],
         model: Model.models.Juridictions,
         required: true,
-        include: [{
-          attributes: ['id'],
-          model: Model.models.UserJuridictions,
-        }],
       }],
       raw: true,
     })

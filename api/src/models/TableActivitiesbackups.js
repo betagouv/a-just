@@ -139,5 +139,31 @@ export default (sequelizeInstance, Model) => {
     return newBackupId
   }
 
+  Model.getAll = async () => {
+    const list = await Model.findAll({
+      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
+      include: [{
+        attributes: ['label', 'cour_appel'],
+        model: Model.models.Juridictions,
+        required: true,
+      }],
+      raw: true,
+    })
+
+    for(let i = 0; i < list.length; i++) {
+      list[i] = {
+        id: list[i].id,
+        label: list[i].label,
+        date: list[i].date,
+        juridiction: {
+          label: list[i]['Juridiction.label'],
+          courAppel: list[i]['Juridiction.cour_appel'],
+        },
+      }
+    }
+
+    return list
+  }
+
   return Model
 }

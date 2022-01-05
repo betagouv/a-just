@@ -63,6 +63,13 @@ export default (sequelizeInstance, Model) => {
       },
     })
 
+    // delete old base
+    await Model.destroy({
+      where: {
+        backup_id: id,
+      },
+    })
+
     const referentielMappingList = await Model.models.ContentieuxReferentiels.cacheReferentielMap
     referentielMappingList.map(ref => {
       referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
