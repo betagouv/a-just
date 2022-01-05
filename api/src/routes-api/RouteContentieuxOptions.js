@@ -15,7 +15,7 @@ export default class RouteContentieuxOptions extends Route {
   async getAll (ctx) {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id)
-    backupId = backupId || backups.length ? backups[backups.length - 1].id : null
+    backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
     const list = await this.model.getAll(backupId)
 
     this.sendOk(ctx, {
