@@ -15,7 +15,7 @@ export default class RouteActivities extends Route {
   async getAll (ctx) {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.ActivitiesBackups.getBackup(ctx.state.user.id)
-    backupId = backupId || backups.length ? backups[backups.length - 1].id : null
+    backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
     const list = await this.model.getAll(backupId)
 
     this.sendOk(ctx, {
@@ -55,13 +55,14 @@ export default class RouteActivities extends Route {
       list: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
+      juridictionId: Types.number(),
     }),
     accesses: [Access.canVewActivities],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName } = this.body(ctx)
+    const { backupId, list, backupName, juridictionId } = this.body(ctx)
 
-    const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName)
+    const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName, juridictionId)
 
     this.sendOk(ctx, newId)
   }

@@ -15,7 +15,9 @@
       <mat-form-field appearance="standard">
         <mat-label>Contentieux</mat-label>
         <mat-select multiple [ngModel]="selectedReferentielIds"
-          (ngModelChange)="onSelectedReferentielIdsChanged($event)">
+          (ngModelChange)="onSelectedReferentielIdsChanged($event)" #selectionModel="ngModel">
+          <app-select-check-all [model]="selectionModel" [values]="referentiel">
+          </app-select-check-all>
           <mat-option *ngFor="let ref of referentiel" [value]="ref.id">
             {{ referentielMappingName(ref.label) }}
           </mat-option>
@@ -33,7 +35,7 @@
       <div class="work-time">Temps de<br />Travail</div>
       <div class="total-affected">Affecté</div>
       <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
-        <div class="sub-item" *ngFor="let ref of referentielFiltred">
+        <div class="sub-item" *ngFor="let ref of referentiel">
           {{ referentielMappingName(ref.label) }}
         </div>
       </div>
@@ -50,7 +52,7 @@
             {{ hr.lastName}}<br />
             {{ hr.fonction && hr.fonction.code}}<br />
             <div>
-              <div class="tag-etp">{{hr.posad || 0}} etp</div>
+              <div class="tag-etp">{{hr.etp || 0}} etp</div>
             </div>
             <a [routerLink]="['/resource-humaine', hr.id]">
               <button mat-icon-button>
@@ -69,7 +71,7 @@
           <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>
         </div>
         <div class="activities">
-          <div class="sub-item" *ngFor="let ref of referentielFiltred; let index = index">
+          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
             <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
               (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
             </progression-bar>
@@ -83,7 +85,7 @@
       <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
       <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
       <div class="activities">
-        <div class="sub-item" *ngFor="let ref of referentielFiltred">
+        <div class="sub-item" *ngFor="let ref of referentiel">
           {{ ref.totalAffected | number:'0.2-2' }}
         </div>
       </div>

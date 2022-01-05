@@ -26,7 +26,7 @@ import {
 } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
   showDelay: 1000,
@@ -53,6 +53,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     DragDropModule,
     MatTooltipModule,
     MatMenuModule,
+    MatCheckboxModule,
   ],
   providers: [
     {
