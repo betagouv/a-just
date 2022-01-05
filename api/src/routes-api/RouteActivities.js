@@ -65,4 +65,11 @@ export default class RouteActivities extends Route {
 
     this.sendOk(ctx, newId)
   }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getBackupList (ctx) {
+    this.sendOk(ctx, await this.model.models.ActivitiesBackups.getAll())
+  }
 }
