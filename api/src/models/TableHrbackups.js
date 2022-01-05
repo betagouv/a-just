@@ -138,10 +138,7 @@ export default (sequelizeInstance, Model) => {
         juridiction_id: juridictionId,
       })
       newBackupId = newBackup.dataValues.id
-      console.log(newBackup)
     }
-
-
 
     for(let x = 0; x < list.length; x++) {
       const hr = list[x]
