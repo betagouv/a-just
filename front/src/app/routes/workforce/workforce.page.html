@@ -48,10 +48,10 @@
     </div>
 
     <div class="content-list">
-      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
+      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById" [style.opacity]="hr.opacity">
         <div class="profil item">
           <div class="image">
-            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
           </div>
           <div class="text">
             {{ hr.firstName}}

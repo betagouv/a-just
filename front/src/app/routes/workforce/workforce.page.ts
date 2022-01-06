@@ -9,13 +9,17 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { fixDecimal } from 'src/app/utils/numbers';
 
+interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  opacity: number;
+}
+
 @Component({
   templateUrl: './workforce.page.html',
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   allHumanResources: HumanResourceInterface[] = [];
-  humanResources: HumanResourceInterface[] = [];
+  humanResources: HumanResourceSelectedInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
   updateActivity: any = null;
@@ -80,7 +84,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
-  calculWorkTime(hr: HumanResourceInterface) {
+  calculWorkTime(hr: HumanResourceSelectedInterface) {
     const activities = this.getCurrentActivity(null, hr);
     const sumActivities = fixDecimal(sumBy(activities, 'percent'));
     const sumIndispo = fixDecimal(
@@ -93,9 +97,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       )
     );
 
-    console.log(sumActivities, sumIndispo)
+    console.log(sumActivities, sumIndispo);
 
-    return fixDecimal((sumActivities - sumIndispo) * 100 / (100 - sumIndispo));
+    return fixDecimal(
+      ((sumActivities - sumIndispo) * 100) / (100 - sumIndispo)
+    );
   }
 
   totalAvailable() {
@@ -112,7 +118,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onUpdateActivity(
     ref: ContentieuReferentielInterface,
-    hr: HumanResourceInterface
+    hr: HumanResourceSelectedInterface
   ) {
     // show popup with referentiel and formated values
     let listActivities: any[] = [
@@ -155,7 +161,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   getPercentOfActivity(
     ref: ContentieuReferentielInterface,
-    human: HumanResourceInterface
+    human: HumanResourceSelectedInterface
   ) {
     const activities = this.getCurrentActivity(ref, human);
 
@@ -168,7 +174,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   getCurrentActivity(
     ref: ContentieuReferentielInterface | null,
-    human: HumanResourceInterface,
+    human: HumanResourceSelectedInterface,
     listChildren = false
   ) {
     let ids = ref ? [ref.id] : [];
@@ -276,20 +282,30 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  checkHROpacity(hr: HumanResourceInterface) {
+    
+
+    return 0.5
+  }
+
   onFilterList() {
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
-    let list: HumanResourceInterface[] = this.allHumanResources.filter(
-      (hr) =>
-        hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
-    );
+    let list: HumanResourceSelectedInterface[] = this.allHumanResources
+      .filter(
+        (hr) =>
+          hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
+      )
+      .map((h) => ({ ...h, opacity: this.checkHROpacity(h) }));
 
-    if(this.referentielFiltred.length !== this.referentiel.length) {
-      const idsOfRef = this.referentielFiltred.map(r => r.id);
-      list = list.filter(h => {
-        const idsOfactivities = this.getCurrentActivity(null, h).map(a => a.referentielId)
-        for(let i = 0; i < idsOfactivities.length; i++) {
-          if(idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
+    if (this.referentielFiltred.length !== this.referentiel.length) {
+      const idsOfRef = this.referentielFiltred.map((r) => r.id);
+      list = list.filter((h) => {
+        const idsOfactivities = this.getCurrentActivity(null, h).map(
+          (a) => a.referentielId
+        );
+        for (let i = 0; i < idsOfactivities.length; i++) {
+          if (idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
             return true;
           }
         }
