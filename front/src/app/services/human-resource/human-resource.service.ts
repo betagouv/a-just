@@ -199,4 +199,21 @@ export class HumanResourceService {
 
     return Promise.resolve();
   }
+
+  duplicateHR (rhId: number) {
+    if (confirm('Dupliquer cette personne ?')) {
+      const list = this.hr.getValue();
+      const findIndex = list.findIndex((r) => r.id === rhId);
+      if (findIndex !== -1) {
+        const person = JSON.parse(JSON.stringify(list[findIndex]));
+        person.id = list.length * -1;
+        list.push(person);
+        this.hr.next(list);
+        this.hrIsModify.next(true);
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

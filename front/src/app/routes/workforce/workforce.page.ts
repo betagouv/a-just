@@ -327,4 +327,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.updateActivity.hrActivities[0].percent = sum;
     }
   }
+
+  onDuplicateRH(rhId: number) {
+    this.humanResourceService.duplicateHR(rhId);
+  }
 }
