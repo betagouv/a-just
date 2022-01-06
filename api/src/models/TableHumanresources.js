@@ -116,7 +116,12 @@ export default (sequelizeInstance, Model) => {
       }
 
       if(HRFromList.posad) {
-        options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
+        const posadNumber = parseInt(HRFromList.posad)
+        if(!isNaN(posadNumber)) {
+          options.posad = posadNumber / 100
+        } else {
+          options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
+        }
       }
 
       if(HRFromList["%_d'activite"]) {
