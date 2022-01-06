@@ -70,14 +70,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResources.map((hr) => {
       let totalAffected = 0;
-      this.referentiel.map((ref) => {
-        const timeAffected = sumBy(this.getCurrentActivity(ref, hr), 'percent');
-        if (timeAffected) {
-          totalAffected += timeAffected;
-          ref.totalAffected =
-            (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
-        }
-      });
+      this.referentiel
+        .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
+        .map((ref) => {
+          const timeAffected = sumBy(
+            this.getCurrentActivity(ref, hr),
+            'percent'
+          );
+          if (timeAffected) {
+            totalAffected += timeAffected;
+            ref.totalAffected =
+              (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
+          }
+        });
 
       hr.workTime = this.calculWorkTime(hr);
       hr.totalAffected = Math.floor(totalAffected * 100) / 100;
@@ -86,21 +91,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   calculWorkTime(hr: HumanResourceSelectedInterface) {
     const activities = this.getCurrentActivity(null, hr);
-    const sumActivities = fixDecimal(sumBy(activities, 'percent'));
-    const sumIndispo = fixDecimal(
+    return fixDecimal(
       sumBy(
         activities.filter(
           (a) =>
-            this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
+            this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
         ),
         'percent'
       )
-    );
-
-    console.log(sumActivities, sumIndispo);
-
-    return fixDecimal(
-      ((sumActivities - sumIndispo) * 100) / (100 - sumIndispo)
     );
   }
 
@@ -230,10 +228,27 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onEditActivities(action: any) {
     switch (action.id) {
       case 'modify':
-        const allCurrentActivities = this.getCurrentActivity(
+        let allCurrentActivities = this.getCurrentActivity(
           null,
           this.updateActivity.hr
         );
+
+        if (
+          this.updateActivity.hrActivities[0].id ===
+          this.referentielService.idsIndispo[0]
+        ) {
+          // calculate indispo
+          allCurrentActivities = allCurrentActivities.filter(
+            (o) =>
+              this.referentielService.idsIndispo.indexOf(o.referentielId) !== -1
+          );
+        } else {
+          // calculate contentieux
+          allCurrentActivities = allCurrentActivities.filter(
+            (o) =>
+              this.referentielService.idsIndispo.indexOf(o.referentielId) === -1
+          );
+        }
         const totalAffected = this.calculTotalTmpActivity(
           allCurrentActivities,
           this.updateActivity.hrActivities
@@ -283,9 +298,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   checkHROpacity(hr: HumanResourceInterface) {
-    
-
-    return 0.5
+    return 0.5;
   }
 
   onFilterList() {
