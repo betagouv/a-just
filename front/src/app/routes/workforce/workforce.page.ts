@@ -22,6 +22,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   categoriesFilterList: HRCategoryInterface[] = [];
   selectedCategoryIds: any[] = [];
   selectedReferentielIds: any[] = [];
+  searchValue: string = '';
 
   constructor(
     private humanResourceService: HumanResourceService,

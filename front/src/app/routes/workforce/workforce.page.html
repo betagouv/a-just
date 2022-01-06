@@ -4,6 +4,12 @@
       <h3>Vos effectifs</h3>
       <div class="flex-1"></div>
       <mat-form-field appearance="standard">
+        <mat-label>Rechercher</mat-label>
+        <input matInput placeholder="Paul" [(ngModel)]="searchValue" (ngModelChange)="onFilterList()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
         <mat-label>Catégories</mat-label>
         <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
           <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
