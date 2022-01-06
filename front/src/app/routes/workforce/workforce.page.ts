@@ -82,6 +82,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   calculWorkTime(hr: HumanResourceInterface) {
     const activities = this.getCurrentActivity(null, hr);
+    const sumActivities = fixDecimal(sumBy(activities, 'percent'));
+    const sumIndispo = fixDecimal(
+      sumBy(
+        activities.filter(
+          (a) =>
+            this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
+        ),
+        'percent'
+      )
+    );
+
+    console.log(sumActivities, sumIndispo)
+
     return fixDecimal(
       sumBy(
         activities.filter(
