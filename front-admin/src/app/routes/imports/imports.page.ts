@@ -79,8 +79,15 @@ export class ImportsPage {
       return;
     }
 
+    const options = { file: await exportFileToString(file), backupName: null, backupId: null }
+    if(backupName) {
+      options.backupName = backupName
+    } else {
+      options.backupId = backupId
+    }
+
     this.importService
-      .importHR({ file: await exportFileToString(file), backupName, backupId })
+      .importHR(options)
       .then(() => {
         alert('OK !');
         form.reset();
