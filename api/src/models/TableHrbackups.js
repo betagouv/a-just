@@ -1,5 +1,3 @@
-import config from 'config'
-
 export default (sequelizeInstance, Model) => {
   Model.createWithLabel = async (label, juridictionName) => {
     let jurdiction = await Model.models.Juridictions.findOne({
@@ -17,7 +15,7 @@ export default (sequelizeInstance, Model) => {
 
     const creation = await Model.create({
       label,
-      juridiction_id: jurdiction ? jurdiction.dataValues.id : config.juridictionId,
+      juridiction_id: jurdiction.dataValues.id,
     })
 
     return creation.dataValues.id
