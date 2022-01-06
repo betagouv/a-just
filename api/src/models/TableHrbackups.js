@@ -17,7 +17,7 @@ export default (sequelizeInstance, Model) => {
 
     const creation = await Model.create({
       label,
-      juridiction_id: jurdiction.dataValues.id || config.juridictionId,
+      juridiction_id: jurdiction ? jurdiction.dataValues.id : config.juridictionId,
     })
 
     return creation.dataValues.id
