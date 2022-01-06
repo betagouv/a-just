@@ -95,15 +95,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     console.log(sumActivities, sumIndispo)
 
-    return fixDecimal(
-      sumBy(
-        activities.filter(
-          (a) =>
-            this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
-        ),
-        'percent'
-      )
-    );
+    return fixDecimal((sumActivities - sumIndispo) * 100 / (100 - sumIndispo));
   }
 
   totalAvailable() {
