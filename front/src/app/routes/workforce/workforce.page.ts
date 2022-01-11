@@ -9,19 +9,27 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { fixDecimal } from 'src/app/utils/numbers';
 
+interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  opacity: number;
+}
+
 @Component({
   templateUrl: './workforce.page.html',
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   allHumanResources: HumanResourceInterface[] = [];
-  humanResources: HumanResourceInterface[] = [];
+  humanResources: HumanResourceSelectedInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
   updateActivity: any = null;
   categoriesFilterList: HRCategoryInterface[] = [];
   selectedCategoryIds: any[] = [];
   selectedReferentielIds: any[] = [];
+  searchValue: string = '';
+  valuesFinded: HumanResourceInterface[] | null = null;
+  indexValuesFinded: number = 0;
+  timeoutUpdateSearch: any = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -65,21 +73,26 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResources.map((hr) => {
       let totalAffected = 0;
-      this.referentiel.map((ref) => {
-        const timeAffected = sumBy(this.getCurrentActivity(ref, hr), 'percent');
-        if (timeAffected) {
-          totalAffected += timeAffected;
-          ref.totalAffected =
-            (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
-        }
-      });
+      this.referentiel
+        .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
+        .map((ref) => {
+          const timeAffected = sumBy(
+            this.getCurrentActivity(ref, hr),
+            'percent'
+          );
+          if (timeAffected) {
+            totalAffected += timeAffected;
+            ref.totalAffected =
+              (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
+          }
+        });
 
       hr.workTime = this.calculWorkTime(hr);
       hr.totalAffected = Math.floor(totalAffected * 100) / 100;
     });
   }
 
-  calculWorkTime(hr: HumanResourceInterface) {
+  calculWorkTime(hr: HumanResourceSelectedInterface) {
     const activities = this.getCurrentActivity(null, hr);
     return fixDecimal(
       sumBy(
@@ -106,7 +119,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onUpdateActivity(
     ref: ContentieuReferentielInterface,
-    hr: HumanResourceInterface
+    hr: HumanResourceSelectedInterface
   ) {
     // show popup with referentiel and formated values
     let listActivities: any[] = [
@@ -149,7 +162,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   getPercentOfActivity(
     ref: ContentieuReferentielInterface,
-    human: HumanResourceInterface
+    human: HumanResourceSelectedInterface
   ) {
     const activities = this.getCurrentActivity(ref, human);
 
@@ -162,7 +175,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   getCurrentActivity(
     ref: ContentieuReferentielInterface | null,
-    human: HumanResourceInterface,
+    human: HumanResourceSelectedInterface,
     listChildren = false
   ) {
     let ids = ref ? [ref.id] : [];
@@ -218,10 +231,27 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onEditActivities(action: any) {
     switch (action.id) {
       case 'modify':
-        const allCurrentActivities = this.getCurrentActivity(
+        let allCurrentActivities = this.getCurrentActivity(
           null,
           this.updateActivity.hr
         );
+
+        if (
+          this.updateActivity.hrActivities[0].id ===
+          this.referentielService.idsIndispo[0]
+        ) {
+          // calculate indispo
+          allCurrentActivities = allCurrentActivities.filter(
+            (o) =>
+              this.referentielService.idsIndispo.indexOf(o.referentielId) !== -1
+          );
+        } else {
+          // calculate contentieux
+          allCurrentActivities = allCurrentActivities.filter(
+            (o) =>
+              this.referentielService.idsIndispo.indexOf(o.referentielId) === -1
+          );
+        }
         const totalAffected = this.calculTotalTmpActivity(
           allCurrentActivities,
           this.updateActivity.hrActivities
@@ -270,20 +300,50 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  checkHROpacity(hr: HumanResourceInterface) {
+    if (
+      !this.searchValue ||
+      (hr.firstName || '')
+        .toLowerCase()
+        .includes(this.searchValue.toLowerCase()) ||
+      (hr.lastName || '').toLowerCase().includes(this.searchValue.toLowerCase())
+    ) {
+      return 1;
+    }
+
+    return 0.5;
+  }
+
   onFilterList() {
+    if (
+      !this.categoriesFilterList.length ||
+      !this.referentiel.length ||
+      !this.categoriesFilterList.length
+    ) {
+      return;
+    }
+
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
-    let list: HumanResourceInterface[] = this.allHumanResources.filter(
-      (hr) =>
-        hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
-    );
+    let list: HumanResourceSelectedInterface[] = this.allHumanResources
+      .filter(
+        (hr) =>
+          hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
+      )
+      .map((h) => ({ ...h, opacity: this.checkHROpacity(h) }));
+    const valuesFinded = list.filter((h) => h.opacity === 1);
+    this.valuesFinded =
+      valuesFinded.length === list.length ? null : valuesFinded;
+    this.indexValuesFinded = 0;
 
-    if(this.referentielFiltred.length !== this.referentiel.length) {
-      const idsOfRef = this.referentielFiltred.map(r => r.id);
-      list = list.filter(h => {
-        const idsOfactivities = this.getCurrentActivity(null, h).map(a => a.referentielId)
-        for(let i = 0; i < idsOfactivities.length; i++) {
-          if(idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
+    if (this.referentielFiltred.length !== this.referentiel.length) {
+      const idsOfRef = this.referentielFiltred.map((r) => r.id);
+      list = list.filter((h) => {
+        const idsOfactivities = this.getCurrentActivity(null, h).map(
+          (a) => a.referentielId
+        );
+        for (let i = 0; i < idsOfactivities.length; i++) {
+          if (idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
             return true;
           }
         }
@@ -293,7 +353,41 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.humanResources = list;
+
     this.calculateTotalOccupation();
+
+    if (this.valuesFinded && this.valuesFinded.length) {
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+    } else {
+      this.onGoTo(list[0]);
+    }
+  }
+
+  onGoTo(hr: HumanResourceInterface) {
+    const findElement = document.getElementById(`human-${hr.id}`);
+    if (findElement) {
+      setTimeout(() => {
+        findElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 100);
+    } else {
+      setTimeout(() => this.onGoTo(hr), 200);
+    }
+  }
+
+  onFindNext(delta: number = 1) {
+    if (this.valuesFinded) {
+      this.indexValuesFinded = this.indexValuesFinded + delta;
+      if (this.indexValuesFinded > this.valuesFinded.length - 1) {
+        this.indexValuesFinded = 0;
+      } else if (this.indexValuesFinded < 0) {
+        this.indexValuesFinded = this.valuesFinded.length - 1;
+      }
+
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+    }
   }
 
   onSelectedReferentielIdsChanged(list: number[]) {
@@ -320,5 +414,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const sum = sumBy(this.updateActivity.hrActivities.slice(1), 'percent');
       this.updateActivity.hrActivities[0].percent = sum;
     }
+  }
+
+  onDuplicateRH(rhId: number) {
+    this.humanResourceService.duplicateHR(rhId);
+  }
+
+  updateSearch() {
+    if (this.timeoutUpdateSearch) {
+      clearTimeout(this.timeoutUpdateSearch);
+      this.timeoutUpdateSearch = null;
+    }
+
+    this.timeoutUpdateSearch = setTimeout(() => {
+      this.onFilterList();
+    }, 500);
   }
 }

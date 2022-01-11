@@ -4,6 +4,18 @@
       <h3>Vos effectifs</h3>
       <div class="flex-1"></div>
       <mat-form-field appearance="standard">
+        <mat-label>Rechercher</mat-label>
+        <input matInput placeholder="Paul" [(ngModel)]="searchValue" (ngModelChange)="updateSearch()" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div class="search-next" *ngIf="valuesFinded !== null">
+        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
+        </mat-icon>
+        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">expand_more
+        </mat-icon>
+      </div>
+      <div class="flex-1"></div>
+      <mat-form-field appearance="standard">
         <mat-label>Catégories</mat-label>
         <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
           <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
@@ -30,7 +42,8 @@
     </div>
     <div class="header-list">
       <div class="profil">
-        <p *ngIf="selectedCategoryIds.indexOf(1) !== -1">Magistrat</p> <!-- petit lol à faire évoluer -->
+        <p *ngIf="selectedCategoryIds.indexOf(1) !== -1">Magistrat</p>
+        <!-- petit lol à faire évoluer -->
       </div>
       <div class="work-time">Temps de<br />Travail</div>
       <div class="total-affected">Affecté</div>
@@ -42,14 +55,14 @@
     </div>
 
     <div class="content-list">
-      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById">
+      <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById" [style.opacity]="hr.opacity"
+        [id]="'human-'+hr.id">
         <div class="profil item">
           <div class="image">
-            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
+            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
           </div>
           <div class="text">
-            {{ hr.firstName}}
-            {{ hr.lastName}}<br />
+            {{ hr.firstName}} {{ hr.lastName}}<br />
             {{ hr.fonction && hr.fonction.code}}<br />
             <div>
               <div class="tag-etp">{{hr.posad || 0}} etp</div>
@@ -61,6 +74,9 @@
             </a>
             <button mat-icon-button (click)="onRemoveRH(hr.id)">
               <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-icon-button (click)="onDuplicateRH(hr.id)">
+              <mat-icon>file_copy</mat-icon>
             </button>
           </div>
         </div>

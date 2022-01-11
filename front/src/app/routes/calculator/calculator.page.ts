@@ -5,13 +5,7 @@ import { CalculatorService } from 'src/app/services/calculator/calculator.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import {
-  MomentDateAdapter,
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-} from '@angular/material-moment-adapter';
-import {
-  DateAdapter,
   MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
 } from '@angular/material/core';
 
 // Depending on whether rollup is used, moment needs to be imported differently.
@@ -43,15 +37,6 @@ export const MY_FORMATS = {
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
   providers: [
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
