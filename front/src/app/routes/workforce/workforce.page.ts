@@ -27,6 +27,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   selectedCategoryIds: any[] = [];
   selectedReferentielIds: any[] = [];
   searchValue: string = '';
+  valuesFinded: HumanResourceInterface[] | null = null;
+  indexValuesFinded: number = 0;
+  timeoutUpdateSearch: any = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -298,10 +301,28 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   checkHROpacity(hr: HumanResourceInterface) {
+    if (
+      !this.searchValue ||
+      (hr.firstName || '')
+        .toLowerCase()
+        .includes(this.searchValue.toLowerCase()) ||
+      (hr.lastName || '').toLowerCase().includes(this.searchValue.toLowerCase())
+    ) {
+      return 1;
+    }
+
     return 0.5;
   }
 
   onFilterList() {
+    if (
+      !this.categoriesFilterList.length ||
+      !this.referentiel.length ||
+      !this.categoriesFilterList.length
+    ) {
+      return;
+    }
+
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
     let list: HumanResourceSelectedInterface[] = this.allHumanResources
@@ -310,6 +331,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
       )
       .map((h) => ({ ...h, opacity: this.checkHROpacity(h) }));
+    const valuesFinded = list.filter((h) => h.opacity === 1);
+    this.valuesFinded =
+      valuesFinded.length === list.length ? null : valuesFinded;
+    this.indexValuesFinded = 0;
 
     if (this.referentielFiltred.length !== this.referentiel.length) {
       const idsOfRef = this.referentielFiltred.map((r) => r.id);
@@ -328,7 +353,41 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.humanResources = list;
+
     this.calculateTotalOccupation();
+
+    if (this.valuesFinded && this.valuesFinded.length) {
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+    } else {
+      this.onGoTo(list[0]);
+    }
+  }
+
+  onGoTo(hr: HumanResourceInterface) {
+    const findElement = document.getElementById(`human-${hr.id}`);
+    if (findElement) {
+      setTimeout(() => {
+        findElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 100);
+    } else {
+      setTimeout(() => this.onGoTo(hr), 200);
+    }
+  }
+
+  onFindNext(delta: number = 1) {
+    if (this.valuesFinded) {
+      this.indexValuesFinded = this.indexValuesFinded + delta;
+      if (this.indexValuesFinded > this.valuesFinded.length - 1) {
+        this.indexValuesFinded = 0;
+      } else if (this.indexValuesFinded < 0) {
+        this.indexValuesFinded = this.valuesFinded.length - 1;
+      }
+
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+    }
   }
 
   onSelectedReferentielIdsChanged(list: number[]) {
@@ -359,5 +418,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onDuplicateRH(rhId: number) {
     this.humanResourceService.duplicateHR(rhId);
+  }
+
+  updateSearch() {
+    if (this.timeoutUpdateSearch) {
+      clearTimeout(this.timeoutUpdateSearch);
+      this.timeoutUpdateSearch = null;
+    }
+
+    this.timeoutUpdateSearch = setTimeout(() => {
+      this.onFilterList();
+    }, 500);
   }
 }
