@@ -11,6 +11,7 @@ import { fixDecimal } from 'src/app/utils/numbers';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
+  tmpActivities?: any;
 }
 
 @Component({
@@ -73,13 +74,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResources.map((hr) => {
       let totalAffected = 0;
+      hr.tmpActivities = {};
+
       this.referentiel
         .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
         .map((ref) => {
-          const timeAffected = sumBy(
-            this.getCurrentActivity(ref, hr),
-            'percent'
-          );
+          hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
+          const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
           if (timeAffected) {
             totalAffected += timeAffected;
             ref.totalAffected =
@@ -164,10 +165,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     ref: ContentieuReferentielInterface,
     human: HumanResourceSelectedInterface
   ) {
-    const activities = this.getCurrentActivity(ref, human);
-
-    if (activities && activities.length) {
-      return activities[0].percent;
+    if (human.tmpActivities && human.tmpActivities[ref.id] && human.tmpActivities[ref.id].length) {
+      return human.tmpActivities[ref.id][0].percent;
     }
 
     return 0;
@@ -191,9 +190,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const dateStop = a.dateStop ? new Date(a.dateStop) : null;
       const dateStart = a.dateStart ? new Date(a.dateStart) : null;
 
-      return ids.length
+      return (ids.length
         ? ids.indexOf(a.referentielId) !== -1
-        : true &&
+        : true) &&
             ((dateStart === null && dateStop === null) ||
               (dateStart &&
                 dateStart.getTime() <= now.getTime() &&
@@ -337,7 +336,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded = 0;
 
     if (this.referentielFiltred.length !== this.referentiel.length) {
-      const idsOfRef = this.referentielFiltred.map((r) => r.id);
+      /*const idsOfRef = this.referentielFiltred.map((r) => r.id);
       list = list.filter((h) => {
         const idsOfactivities = this.getCurrentActivity(null, h).map(
           (a) => a.referentielId
@@ -349,7 +348,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
 
         return false;
-      });
+      });*/
     }
 
     this.humanResources = list;
