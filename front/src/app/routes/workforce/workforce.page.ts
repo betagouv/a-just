@@ -336,7 +336,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded = 0;
 
     if (this.referentielFiltred.length !== this.referentiel.length) {
-      /*const idsOfRef = this.referentielFiltred.map((r) => r.id);
+      const idsOfRef = this.referentielFiltred.map((r) => r.id);
       list = list.filter((h) => {
         const idsOfactivities = this.getCurrentActivity(null, h).map(
           (a) => a.referentielId
@@ -348,7 +348,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
 
         return false;
-      });*/
+      });
     }
 
     this.humanResources = list;
