@@ -39,10 +39,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watcherDestroy();
   }
 
-  updateReferentielSelected() {
+  updateReferentielSelected(dateRange: string = '', event: any = null) {
+    if(dateRange === 'dateStart') {
+      this.calculatorService.dateStart = new Date(event);
+      this.dateStart = new Date(event);
+    } else if(dateRange === 'dateStop') {
+      this.calculatorService.dateStop = new Date(event);
+      this.dateStop = new Date(event);
+    }
+
     this.calculatorService.referentielIds = this.referentielIds;
-    this.calculatorService.dateStart = this.dateStart;
-    this.calculatorService.dateStop = this.dateStop;
   }
 
   onCalculate() {
