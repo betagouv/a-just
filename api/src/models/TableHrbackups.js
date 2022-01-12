@@ -34,7 +34,7 @@ export default (sequelizeInstance, Model) => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
       include: [{
-        attributes: ['id', 'label', 'cour_appel'],
+        attributes: ['id', 'label', 'cour_appel', 'long_name', 'image_url'],
         model: Model.models.Juridictions,
         required: true,
         include: [{
@@ -57,6 +57,8 @@ export default (sequelizeInstance, Model) => {
           id: list[i]['Juridiction.id'],
           label: list[i]['Juridiction.label'],
           courAppel: list[i]['Juridiction.cour_appel'],
+          longName: list[i]['Juridiction.long_name'],
+          imageUrl: list[i]['Juridiction.image_url'],
         },
       }
     }

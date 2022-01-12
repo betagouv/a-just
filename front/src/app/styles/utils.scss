@@ -1,6 +1,11 @@
 $colors: (
 	primary: #000091,
-	cblack: #1e1e1e,
+	cblack: #161616,
+	cgray: #666666,
+	cbrownlight: #e6d8cb,
+	cbluedark: #000091,
+	cblue: #5151a1,
+	cbluelight: #417dc4,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
