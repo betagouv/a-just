@@ -5,6 +5,7 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { MainClass } from 'src/app/libs/main-class';
 import { ActivitiesService } from 'src/app/services/activities/activities.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { workingDay } from 'src/app/utils/dates';
 import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
@@ -79,21 +80,28 @@ export class ReferentielCalculatorComponent
   }
 
   getActivityValues() {
-    const activities = sortBy(this.activitiesService.activities
-      .getValue()
-      .filter(
-        (a) =>
-          a.contentieux.id === this.referentielId &&
-          a.periode.getTime() >= this.dateStart.getTime() &&
-          a.periode.getTime() < this.dateStop.getTime()
-      ), 'periode');
+    const activities = sortBy(
+      this.activitiesService.activities
+        .getValue()
+        .filter(
+          (a) =>
+            a.contentieux.id === this.referentielId &&
+            a.periode.getTime() >= this.dateStart.getTime() &&
+            a.periode.getTime() < this.dateStop.getTime()
+        ),
+      'periode'
+    );
     this.totalIn = sumBy(activities, 'entrees');
     this.totalOut = sumBy(activities, 'sorties');
-    this.totalStock = activities.length ? activities[activities.length - 1].stock : 0;
+    this.totalStock = activities.length
+      ? activities[activities.length - 1].stock
+      : 0;
 
     this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
     this.nbMonth = this.getNbMonth();
-    this.realDTESInMonths = fixDecimal(this.totalStock / this.totalOut / this.nbMonth);
+    this.realDTESInMonths = fixDecimal(
+      this.totalStock / this.totalOut / this.nbMonth
+    );
 
     this.getHRPositions();
 
@@ -146,47 +154,52 @@ export class ReferentielCalculatorComponent
       (a) => a.referentielId === this.referentielId
     );
     let totalEtp = 0;
-    let totalMonth = 0;
+    let totalDays = 0;
 
     if (activities.length) {
       const now = new Date(this.dateStart);
       do {
-        for (let i = 0; i < activities.length; i++) {
-          let isBiggerThanStart = !activities[i].dateStart ? true : false;
-          let isLowerThanEnd = !activities[i].dateStop ? true : false;
+        // only working day
+        if (workingDay(now)) {
+          for (let i = 0; i < activities.length; i++) {
+            let isBiggerThanStart = !activities[i].dateStart ? true : false;
+            let isLowerThanEnd = !activities[i].dateStop ? true : false;
 
-          if (activities[i].dateStart) {
-            let dateStart = new Date(
-              activities[i].dateStart!.getFullYear(),
-              activities[i].dateStart!.getMonth()
-            );
-            if (dateStart.getTime() <= now.getTime()) {
-              isBiggerThanStart = true;
+            if (activities[i].dateStart) {
+              const dateStart = new Date(
+                activities[i].dateStart!.getFullYear(),
+                activities[i].dateStart!.getMonth(),
+                activities[i].dateStart!.getDate()
+              );
+              if (dateStart.getTime() <= now.getTime()) {
+                isBiggerThanStart = true;
+              }
+            }
+
+            if (activities[i].dateStop) {
+              const dateStop = new Date(
+                activities[i].dateStop!.getFullYear(),
+                activities[i].dateStop!.getMonth(),
+                activities[i].dateStop!.getDate()
+              );
+              if (dateStop.getTime() >= now.getTime()) {
+                isLowerThanEnd = true;
+              }
+            }
+
+            if (isBiggerThanStart && isLowerThanEnd) {
+              totalEtp += activities[i].percent || 100;
+              break;
             }
           }
-
-          if (activities[i].dateStop) {
-            let dateStop = new Date(
-              activities[i].dateStop!.getFullYear(),
-              activities[i].dateStop!.getMonth()
-            );
-            if (dateStop.getTime() >= now.getTime()) {
-              isLowerThanEnd = true;
-            }
-          }
-
-          if (isBiggerThanStart && isLowerThanEnd) {
-            totalEtp += activities[i].percent || 100;
-            break;
-          }
+          totalDays++;
         }
-        totalMonth++;
-        now.setMonth(now.getMonth() + 1);
+        now.setDate(now.getDate() + 1);
       } while (now.getTime() <= this.dateStop.getTime());
     }
 
     if (totalEtp) {
-      return fixDecimal(totalEtp / totalMonth) / 100;
+      return fixDecimal(totalEtp / totalDays) / 100;
     }
 
     return 0;
@@ -224,7 +237,9 @@ export class ReferentielCalculatorComponent
           12) *
           this.getNbMonth()
       );
-      this.calculateCoverage = fixDecimal(this.calculateOut / (this.totalIn || 0));
+      this.calculateCoverage = fixDecimal(
+        this.calculateOut / (this.totalIn || 0)
+      );
       this.calculateDTESInMonths = fixDecimal(
         (this.totalStock || 0) / this.calculateOut / this.nbMonth
       );

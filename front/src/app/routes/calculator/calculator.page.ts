@@ -4,41 +4,9 @@ import { MainClass } from 'src/app/libs/main-class';
 import { CalculatorService } from 'src/app/services/calculator/calculator.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
-import {
-  MAT_DATE_FORMATS,
-} from '@angular/material/core';
-
-// Depending on whether rollup is used, moment needs to be imported differently.
-// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
-// syntax. However, rollup creates a synthetic default module and we thus need to import it using
-// the `default as` syntax.
-import * as _moment from 'moment';
-// @ts-ignore
-import { default as _rollupMoment, Moment } from 'moment';
-import { MatDatepicker } from '@angular/material/datepicker';
-
-const moment = _rollupMoment || _moment;
-
-// See the Moment.js docs for the meaning of these formats:
-// https://momentjs.com/docs/#/displaying/format/
-export const MY_FORMATS = {
-  parse: {
-    dateInput: 'MM/YYYY',
-  },
-  display: {
-    dateInput: 'MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
-
 @Component({
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
-  providers: [
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = [];
@@ -71,10 +39,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watcherDestroy();
   }
 
-  updateReferentielSelected() {
+  updateReferentielSelected(dateRange: string = '', event: any = null) {
+    if(dateRange === 'dateStart') {
+      this.calculatorService.dateStart = new Date(event);
+      this.dateStart = new Date(event);
+    } else if(dateRange === 'dateStop') {
+      this.calculatorService.dateStop = new Date(event);
+      this.dateStop = new Date(event);
+    }
+
     this.calculatorService.referentielIds = this.referentielIds;
-    this.calculatorService.dateStart = this.dateStart;
-    this.calculatorService.dateStop = this.dateStop;
   }
 
   onCalculate() {
@@ -85,30 +59,5 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   trackBy(index: number, item: any) {
     return item;
-  }
-
-  chosenYearHandler(normalizedYear: Moment, date: string) {
-    if (date === 'dateStart') {
-      this.dateStart.setFullYear(normalizedYear.year());
-      this.dateStart = new Date(this.dateStart);
-    } else {
-      this.dateStop.setFullYear(normalizedYear.year());
-      this.dateStop = new Date(this.dateStop);
-    }
-  }
-
-  chosenMonthHandler(
-    normalizedMonth: Moment,
-    datepicker: MatDatepicker<Moment>,
-    date: string
-  ) {
-    if (date === 'dateStart') {
-      this.dateStart.setMonth(normalizedMonth.month());
-      this.dateStart = new Date(this.dateStart);
-    } else {
-      this.dateStop.setMonth(normalizedMonth.month());
-      this.dateStop = new Date(this.dateStop);
-    }
-    datepicker.close();
   }
 }
