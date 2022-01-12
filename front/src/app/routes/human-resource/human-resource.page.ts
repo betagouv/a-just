@@ -153,6 +153,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.activities = (this.activities || []).map((a) => ({
         ...a,
         referentielId: +(a.referentielId || 0),
+        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
+        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
       }));
 
       const totalAffected = this.calculTotalTmpActivity(
