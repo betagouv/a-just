@@ -49,7 +49,8 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importActivities (ctx) {  
+  async importActivities (ctx) { 
+    ctx.request.socket.setTimeout(5 * 60 * 1000) // change timeout to 5 minutes
     const { backupId, backupName, juridictionId, file } = this.body(ctx)
 
     if(!backupId && !backupName) {
