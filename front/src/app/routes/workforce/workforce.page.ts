@@ -16,7 +16,10 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
 }
 
 interface HRCategorySelectedInterface extends HRCategoryInterface {
-  selected?: boolean;
+  selected: boolean;
+  etpt: number;
+  nbPersonal: number;
+  labelPlural: string;
 }
 
 @Component({
@@ -49,6 +52,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.humanResourceService.hr.subscribe((hr) => {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
         this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank']);
+        this.updateCategoryValues();
         this.onFilterList();
       })
     );
@@ -61,21 +65,40 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
     this.watch(
       this.humanResourceService.categories.subscribe((ref) => {
-        this.categoriesFilterList = ref.map(c => ({ ...c, selected: true, label: c.label && c.label === 'Magistrat' ? 'Magistrats du siège' : c.label }));
-        console.log(this.categoriesFilterList)
+        this.categoriesFilterList = ref.map((c) => ({
+          ...c,
+          selected: true,
+          label:
+            c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+          labelPlural:
+            c.label && c.label === 'Magistrat'
+              ? 'Magistrats du siège'
+              : `${c.label}s`,
+          etpt: 0,
+          nbPersonal: 0,
+        }));
+        this.updateCategoryValues();
         this.onFilterList();
       })
     );
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         const hrBackups = this.humanResourceService.backups.getValue();
-        this.hrBackup = hrBackups.find(b => b.id === backupId)
+        this.hrBackup = hrBackups.find((b) => b.id === backupId);
       })
     );
   }
 
   ngOnDestroy() {
     this.watcherDestroy();
+  }
+
+  updateCategoryValues() {
+    this.categoriesFilterList = this.categoriesFilterList.map((c) => {
+      const personal = this.humanResourceService.hr.getValue().filter(h => h.category && h.category.id === c.id);
+
+      return { ...c, etpt: sumBy(personal, 'posad'), nbPersonal: personal.length };
+    });
   }
 
   calculateTotalOccupation() {
@@ -176,7 +199,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     ref: ContentieuReferentielInterface,
     human: HumanResourceSelectedInterface
   ) {
-    if (human.tmpActivities && human.tmpActivities[ref.id] && human.tmpActivities[ref.id].length) {
+    if (
+      human.tmpActivities &&
+      human.tmpActivities[ref.id] &&
+      human.tmpActivities[ref.id].length
+    ) {
       return human.tmpActivities[ref.id][0].percent;
     }
 
@@ -201,20 +228,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const dateStop = a.dateStop ? new Date(a.dateStop) : null;
       const dateStart = a.dateStart ? new Date(a.dateStart) : null;
 
-      return (ids.length
-        ? ids.indexOf(a.referentielId) !== -1
-        : true) &&
-            ((dateStart === null && dateStop === null) ||
-              (dateStart &&
-                dateStart.getTime() <= now.getTime() &&
-                dateStop === null) ||
-              (dateStart === null &&
-                dateStop &&
-                dateStop.getTime() >= now.getTime()) ||
-              (dateStart &&
-                dateStart.getTime() <= now.getTime() &&
-                dateStop &&
-                dateStop.getTime() >= now.getTime()));
+      return (
+        (ids.length ? ids.indexOf(a.referentielId) !== -1 : true) &&
+        ((dateStart === null && dateStop === null) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop === null) ||
+          (dateStart === null &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()) ||
+          (dateStart &&
+            dateStart.getTime() <= now.getTime() &&
+            dateStop &&
+            dateStop.getTime() >= now.getTime()))
+      );
     });
   }
 
@@ -335,7 +362,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
-    const selectedCategoryIds = this.categoriesFilterList.filter(c => c.selected).map((c) => c.id);
+    const selectedCategoryIds = this.categoriesFilterList
+      .filter((c) => c.selected)
+      .map((c) => c.id);
     let list: HumanResourceSelectedInterface[] = this.allHumanResources
       .filter(
         (hr) =>

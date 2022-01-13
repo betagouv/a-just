@@ -165,6 +165,37 @@
   border-radius: 4px;
   height: 55px;
   padding: 4px 16px;
+  border-width: 1px;
+  border-style: solid;
+  margin-left: 8px;
+  cursor: pointer;
+
+  &.blue {
+    border-color: fColor(cbluedark);
+    background-color: rgba(fColor(cbluedark), 0.2);
+
+    p.label {
+      color: fColor(cbluedark);
+    }
+  }
+
+  &.pink {
+    border-color: fColor(cpink);
+    background-color: rgba(fColor(cpink), 0.2);
+
+    p.label {
+      color: fColor(cpink);
+    }
+  }
+
+  &.yellow {
+    border-color: fColor(cyellow);
+    background-color: rgba(fColor(cyellow), 0.2);
+
+    p.label {
+      color: fColor(cyellowdark);
+    }
+  }
 
   input {
     margin-right: 16px;

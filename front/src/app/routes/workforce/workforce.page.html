@@ -34,11 +34,15 @@
           </mat-option>
         </mat-select>
       </mat-form-field> -->
-      <div *ngFor="let category of categoriesFilterList" class="checkbox-button">
-        <div><input type="checkbox" /></div>
+      <div *ngFor="let category of categoriesFilterList; let index = index;" class="checkbox-button"
+        [ngClass]="{'blue': index === 0, 'pink': index === 1, 'yellow': index === 2}"
+        (click)="checkboxCategory.click()">
+        <div><input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
+            (ngModelChange)="onFilterList()" /></div>
         <div>
-          <p class="label">{{ category.label }}</p>
-          <p class="etp">{{ category.label }}</p>
+          <p class="label">{{ category.nbPersonal }} {{ category.nbPersonal > 1 ? category.labelPlural : category.label
+            }}</p>
+          <p class="etp">{{ category.etpt }} ETP-T</p>
         </div>
       </div>
     </div>
