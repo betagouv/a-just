@@ -73,7 +73,7 @@ export default class RouteImports extends Route {
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    await this.model.models.Activities.importList(arrayOfHR, juridictionId, backupId, backupName)
+    this.model.models.Activities.importList(arrayOfHR, juridictionId, backupId, backupName) // let continue alone
     this.sendOk(ctx, 'OK')
   }
 }
