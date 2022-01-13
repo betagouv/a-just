@@ -32,7 +32,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.list = async (userId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
+      attributes: ['id', 'label', ['updated_at', 'date'], 'juridiction_id'],
       include: [{
         attributes: ['id', 'label', 'cour_appel', 'long_name', 'image_url'],
         model: Model.models.Juridictions,
@@ -211,6 +211,11 @@ export default (sequelizeInstance, Model) => {
         await Model.models.HumanResources.destroyById(oldNewHRList[i])
       }
     }
+
+    // update date of backup
+    await Model.updateById(newBackupId, {
+      updated_at: new Date(),
+    })
 
     return newBackupId
   }

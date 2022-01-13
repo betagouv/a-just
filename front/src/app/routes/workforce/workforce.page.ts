@@ -8,10 +8,15 @@ import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { fixDecimal } from 'src/app/utils/numbers';
+import { BackupInterface } from 'src/app/interfaces/backup';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
   tmpActivities?: any;
+}
+
+interface HRCategorySelectedInterface extends HRCategoryInterface {
+  selected?: boolean;
 }
 
 @Component({
@@ -24,13 +29,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
   updateActivity: any = null;
-  categoriesFilterList: HRCategoryInterface[] = [];
-  selectedCategoryIds: any[] = [];
+  categoriesFilterList: HRCategorySelectedInterface[] = [];
   selectedReferentielIds: any[] = [];
   searchValue: string = '';
   valuesFinded: HumanResourceInterface[] | null = null;
   indexValuesFinded: number = 0;
   timeoutUpdateSearch: any = null;
+  hrBackup: BackupInterface | undefined;
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -56,9 +61,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
     this.watch(
       this.humanResourceService.categories.subscribe((ref) => {
-        this.categoriesFilterList = ref;
-        this.selectedCategoryIds = ref.map((c) => c.id);
+        this.categoriesFilterList = ref.map(c => ({ ...c, selected: true, label: c.label && c.label === 'Magistrat' ? 'Magistrats du siège' : c.label }));
+        console.log(this.categoriesFilterList)
         this.onFilterList();
+      })
+    );
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        const hrBackups = this.humanResourceService.backups.getValue();
+        this.hrBackup = hrBackups.find(b => b.id === backupId)
       })
     );
   }
@@ -324,10 +335,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
+    const selectedCategoryIds = this.categoriesFilterList.filter(c => c.selected).map((c) => c.id);
     let list: HumanResourceSelectedInterface[] = this.allHumanResources
       .filter(
         (hr) =>
-          hr.category && this.selectedCategoryIds.indexOf(hr.category.id) !== -1
+          hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
       )
       .map((h) => ({ ...h, opacity: this.checkHROpacity(h) }));
     const valuesFinded = list.filter((h) => h.opacity === 1);

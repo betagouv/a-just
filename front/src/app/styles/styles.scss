@@ -2,6 +2,7 @@
 @import "./typography.scss";
 @import "./form.scss";
 @import "./material.scss";
+@import "./button.scss";
 
 html,
 body {
@@ -9,7 +10,6 @@ body {
 	padding: 0;
 	margin: 0;
 	background-color: white;
-
 }
 
 * {

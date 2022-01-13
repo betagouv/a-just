@@ -3,6 +3,24 @@
 :host {
   display: flex;
   height: 100%;
+
+  &.content-margin-top-null {
+    .contener .content {
+      padding-top: 0px;
+    }
+  }
+
+  &.content-margin-left-null {
+    .contener .content {
+      padding-left: 0px;
+    }
+  }
+
+  &.content-margin-right-null {
+    .contener .content {
+      padding-right: 0px;
+    }
+  }
 }
 
 .menu {
@@ -69,6 +87,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: fColor(cgraylight);
 
   .content {
     padding: 24px;
@@ -83,6 +102,7 @@
   padding: 0 32px;
   display: flex;
   align-items: center;
+  background-color: white;
 
   h3 {
     color: fColor(cbluelight);
@@ -92,6 +112,7 @@
 
   .subtitle {
     color: fColor(cgray);
+    font-size: 14px;
   }
 }
 

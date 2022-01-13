@@ -48,7 +48,10 @@ export class HumanResourceService {
               })),
             }))
           );
-          this.backups.next(result.backups);
+          this.backups.next(result.backups.map((b: BackupInterface) => ({
+            ...b,
+            date: new Date(b.date),
+          })));
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
           this.categories.next(result.categories);

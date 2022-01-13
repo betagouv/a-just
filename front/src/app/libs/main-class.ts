@@ -5,6 +5,7 @@ import {
 } from '../utils/referentiel';
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers';
+import { getMonthString } from '../utils/dates';
 
 export class MainClass {
   watcherList: Subscription[] = [];
@@ -44,5 +45,9 @@ export class MainClass {
 
   public trackBy(index: number, item: any) {
     return item.id;
+  }
+
+  public getMonthString(date: Date) {
+    return getMonthString(date)
   }
 }
