@@ -153,14 +153,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  totalAvailable() {
-    return (sumBy(this.humanResources || [], 'etp') || 0).toFixed(2);
-  }
-
-  totalRealyAffected() {
-    return (sumBy(this.referentiel || [], 'totalAffected') || 0).toFixed(2);
-  }
-
   addHR() {
     this.humanResourceService.createHumanResource();
   }

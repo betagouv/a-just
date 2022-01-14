@@ -1,10 +1,5 @@
-import { Component, Input, OnDestroy, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { MainClass } from 'src/app/libs/main-class';
-
-export interface dataInterface {
-  id: number;
-  value: string;
-}
 
 @Component({
   selector: 'aj-date-select',
@@ -13,12 +8,11 @@ export interface dataInterface {
 })
 export class DateSelectComponent
   extends MainClass
-  implements OnChanges, OnDestroy
+  implements OnChanges
 {
   @Input() title: string | null = null;
   @Input() icon: string = 'calendar_today';
   @Input() value: Date | null = null;
-  @Input() datas: dataInterface[] = [];
   @Output() valueChange = new EventEmitter();
   realValue: string = '';
 
@@ -28,10 +22,6 @@ export class DateSelectComponent
 
   ngOnChanges() {
     this.findRealValue();
-  }
-
-  ngOnDestroy() {
-    this.watcherDestroy();
   }
 
   findRealValue() {

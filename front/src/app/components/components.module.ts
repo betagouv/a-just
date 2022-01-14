@@ -15,6 +15,7 @@ import { ReferentielCalculatorComponent } from './referentiel-calculator/referen
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 import { SelectComponent } from './select/select.component';
 import { DateSelectComponent } from './date-select/date-select.component';
+import { InputButtonComponent } from './input-button/input-button.component';
 
 const list = [
   WrapperComponent,
@@ -29,6 +30,7 @@ const list = [
   SelectCheckAllComponent,
   SelectComponent,
   DateSelectComponent,
+  InputButtonComponent,
 ];
 
 @NgModule({

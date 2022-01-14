@@ -21,6 +21,18 @@
       padding-right: 0px;
     }
   }
+
+  &.content-margin-bottom-null {
+    .contener .content {
+      padding-bottom: 0px;
+    }
+  }
+
+  &.content-margin-null {
+    .contener .content {
+      padding: 0px;
+    }
+  }
 }
 
 .menu {

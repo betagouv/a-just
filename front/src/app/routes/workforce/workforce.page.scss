@@ -1,24 +1,31 @@
 @import "../../styles/utils.scss";
 
-.header-list,
-.item-list,
-.footer-list {
+.header-list {
   display: flex;
   width: 100%;
 }
 
 .header-list {
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+  height: 87px;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1;
 
   .activities.is-not-ios {
     margin-right: 16px;
   }
+
+  .profil {
+    display: flex;
+    align-items: center;
+  }
 }
 
-.footer-list {
-  border-top: 1px solid rgba(fColor(cblack), 0.2);
+.item-list {
   display: flex;
-  align-items: center;
+  width: calc(100% - 58px);
+  margin-left: 18px;
 }
 
 .container {
@@ -29,36 +36,25 @@
   .content-list {
     flex: 1;
     overflow: auto;
+    background-color: #f5f5fe;
   }
 }
 
 .item-list {
-  padding: 16px 0;
-  border-top: 1px solid rgba(fColor(cblack), 0.2);
+  margin-top: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: white;
 
-  &:first-child {
-    border-top: none;
+  &:last-child {
+    margin-bottom: 16px;
   }
 }
 
 .profil {
-  width: 180px;
-  margin-right: 16px;
+  flex: 1;
 
   &.item {
     display: flex;
-
-    .image {
-      margin-right: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      img {
-        width: 40px;
-        border-radius: 40px;
-      }
-    }
   }
 }
 
@@ -79,28 +75,38 @@
   justify-content: center;
 }
 
-.total-affected {
-  width: 80px;
-  margin-right: 16px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .activities {
   display: flex;
-  flex: 1;
+  margin-right: 114px;
 
   > .sub-item {
-    flex: 1;
+    width: 57px;
+    align-self: stretch;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    flex-direction: column;
 
-    progression-bar {
-      cursor: pointer;
+    &:first-child div.text {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    div.text {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+      p {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 0 2px;
+      }
+    }
+
+    div.color {
+      height: 8px;
+      opacity: 0.2;
     }
   }
 }
@@ -158,7 +164,6 @@
 }
 
 .search-next {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -249,4 +254,12 @@
   p.etp {
     font-weight: bold;
   }
+}
+
+aj-input-button {
+  margin-left: 16px;
+}
+
+progression-bar {
+  cursor: pointer;
 }

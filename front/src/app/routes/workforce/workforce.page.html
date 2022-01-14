@@ -1,6 +1,6 @@
 <aj-wrapper title="Effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
-  [actionTemplate]="actions" class="content-margin-top-null content-margin-left-null content-margin-right-null">
+  [actionTemplate]="actions" class="content-margin-null">
   <div class="container">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
@@ -27,11 +27,8 @@
     </div>
     <div class="header-list">
       <div class="profil">
-        <mat-form-field appearance="standard">
-          <mat-label>Rechercher</mat-label>
-          <input matInput placeholder="Paul" [(ngModel)]="searchValue" (ngModelChange)="updateSearch()" />
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
+        <aj-input-button title="Recherche" placeholder="Indiquer le nom" [ngModel]="searchValue"
+          (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()"></aj-input-button>
         <div class="search-next" *ngIf="valuesFinded !== null">
           <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
           </mat-icon>
@@ -39,11 +36,12 @@
           </mat-icon>
         </div>
       </div>
-      <div class="work-time">Temps de<br />Travail</div>
-      <div class="total-affected">Affecté</div>
       <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
         <div class="sub-item" *ngFor="let ref of referentiel">
-          {{ referentielMappingName(ref.label) }}
+          <div class="text">
+            <p>{{ referentielMappingName(ref.label) }}</p>
+          </div>
+          <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
         </div>
       </div>
     </div>
@@ -52,9 +50,6 @@
       <div class="item-list" *ngFor="let hr of humanResources; trackBy: trackById" [style.opacity]="hr.opacity"
         [id]="'human-'+hr.id">
         <div class="profil item">
-          <div class="image">
-            <img [src]="hr.coverUrl || '/assets/images/magistrat-profil.jpeg'" />
-          </div>
           <div class="text">
             {{ hr.firstName}} {{ hr.lastName}}<br />
             {{ hr.fonction && hr.fonction.code}}<br />
@@ -77,26 +72,15 @@
         <div class="work-time">
           <progression-bar [percent]="hr.workTime || 0" [selected]="false" color="#2e7d32"></progression-bar>
         </div>
-        <div class="total-affected">
+        <!-- <div class="total-affected">
           <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>
-        </div>
+        </div>-->
         <div class="activities">
           <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
             <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
               (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
             </progression-bar>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-list">
-      <div class="profil">Effectif {{ humanResources.length }}</div>
-      <div class="work-time">ETP Dispo {{ totalAvailable() }}</div>
-      <div class="total-affected">ETP affectés {{ totalRealyAffected() }}</div>
-      <div class="activities">
-        <div class="sub-item" *ngFor="let ref of referentiel">
-          {{ ref.totalAffected | number:'0.2-2' }}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { MainClass } from 'src/app/libs/main-class';
 
 export interface dataInterface {
@@ -11,7 +11,7 @@ export interface dataInterface {
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
-export class SelectComponent extends MainClass implements OnChanges, OnDestroy {
+export class SelectComponent extends MainClass implements OnChanges {
   @Input() title: string | null = null;
   @Input() icon: string = 'expand_more';
   @Input() value: number | string | null | number[] | string[] = null;
@@ -25,10 +25,6 @@ export class SelectComponent extends MainClass implements OnChanges, OnDestroy {
 
   ngOnChanges() {
     this.findRealValue();
-  }
-
-  ngOnDestroy() {
-    this.watcherDestroy();
   }
 
   findRealValue() {
