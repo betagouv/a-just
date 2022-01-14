@@ -39,7 +39,12 @@
       <div class="activities" [ngClass]="{'is-not-ios': isNotOS()}">
         <div class="sub-item" *ngFor="let ref of referentiel">
           <div class="text">
-            <p>{{ referentielMappingName(ref.label) }}</p>
+            <div class="label">
+              <p>{{ referentielMappingName(ref.label) }}</p>
+            </div>
+            <div class="etp">
+              <p>{{ ref.totalAffected | number:'0.2-2' }} ETP</p>
+            </div>
           </div>
           <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
         </div>
