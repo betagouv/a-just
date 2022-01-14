@@ -3,45 +3,24 @@
   [actionTemplate]="actions" class="content-margin-top-null content-margin-left-null content-margin-right-null">
   <div class="container">
     <div class="title">
-      <mat-form-field appearance="standard">
-        <mat-label>Contentieux</mat-label>
-        <mat-select multiple [ngModel]="selectedReferentielIds"
-          (ngModelChange)="onSelectedReferentielIdsChanged($event)" #selectionModel="ngModel">
-          <app-select-check-all [model]="selectionModel" [values]="referentiel">
-          </app-select-check-all>
-          <mat-option *ngFor="let ref of referentiel" [value]="ref.id">
-            {{ referentielMappingName(ref.label) }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="standard">
-        <mat-label>Contentieux</mat-label>
-        <mat-select multiple [ngModel]="selectedReferentielIds"
-          (ngModelChange)="onSelectedReferentielIdsChanged($event)" #selectionModel="ngModel">
-          <app-select-check-all [model]="selectionModel" [values]="referentiel">
-          </app-select-check-all>
-          <mat-option *ngFor="let ref of referentiel" [value]="ref.id">
-            {{ referentielMappingName(ref.label) }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
+      </aj-date-select>
+      <aj-select title="Pour les contentieux" [value]="selectedReferentielIds" [datas]="formReferentiel"
+        (valueChange)="onSelectedReferentielIdsChanged($event)">
+      </aj-select>
       <div class="flex-1"></div>
-      <!-- <mat-form-field appearance="standard">
-        <mat-label>Catégories</mat-label>
-        <mat-select multiple [(ngModel)]="selectedCategoryIds" (ngModelChange)="onFilterList()">
-          <mat-option *ngFor="let category of categoriesFilterList" [value]="category.id">
-            {{ category.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field> -->
       <div *ngFor="let category of categoriesFilterList; let index = index;" class="checkbox-button"
         [ngClass]="{'blue': index === 0, 'pink': index === 1, 'yellow': index === 2}"
         (click)="checkboxCategory.click()">
-        <div><input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
-            (ngModelChange)="onFilterList()" /></div>
         <div>
-          <p class="label">{{ category.nbPersonal }} {{ category.nbPersonal > 1 ? category.labelPlural : category.label
-            }}</p>
+          <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
+            (ngModelChange)="onFilterList()" />
+        </div>
+        <div>
+          <p class="label">
+            {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
+            category.labelPlural : category.label }}
+          </p>
           <p class="etp">{{ category.etpt }} ETP-T</p>
         </div>
       </div>

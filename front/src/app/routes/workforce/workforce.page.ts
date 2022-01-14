@@ -9,6 +9,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { fixDecimal } from 'src/app/utils/numbers';
 import { BackupInterface } from 'src/app/interfaces/backup';
+import { dataInterface } from 'src/app/components/select/select.component';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
@@ -31,6 +32,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   humanResources: HumanResourceSelectedInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
+  formReferentiel: dataInterface[] = [];
   updateActivity: any = null;
   categoriesFilterList: HRCategorySelectedInterface[] = [];
   selectedReferentielIds: any[] = [];
@@ -39,6 +41,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   indexValuesFinded: number = 0;
   timeoutUpdateSearch: any = null;
   hrBackup: BackupInterface | undefined;
+  dateSelected: Date = new Date();
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -60,6 +63,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref.map((r) => ({ ...r, selected: true }));
         this.selectedReferentielIds = ref.map((r) => r.id);
+        this.formReferentiel = this.referentiel.map((r) => ({
+          id: r.id,
+          value: this.referentielMappingName(r.label),
+        }));
         this.onFilterList();
       })
     );
@@ -95,9 +102,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const personal = this.humanResourceService.hr.getValue().filter(h => h.category && h.category.id === c.id);
+      const personal = this.humanResourceService.hr
+        .getValue()
+        .filter((h) => h.category && h.category.id === c.id);
 
-      return { ...c, etpt: sumBy(personal, 'posad'), nbPersonal: personal.length };
+      return {
+        ...c,
+        etpt: sumBy(personal, 'posad'),
+        nbPersonal: personal.length,
+      };
     });
   }
 
@@ -223,7 +236,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       ids = [...this.referentielService.mainActivitiesId];
     }
 
-    const now = new Date();
+    const now = new Date(this.dateSelected);
     return (human.activities || []).filter((a: any) => {
       const dateStop = a.dateStop ? new Date(a.dateStop) : null;
       const dateStart = a.dateStart ? new Date(a.dateStart) : null;
@@ -319,7 +332,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               this.updateActivity.hr.activities.push({
                 referentielId: activity.id,
                 percent: activity.percent,
-                dateStart: new Date(),
+                dateStart: new Date(this.dateSelected),
                 dateStop: null,
               });
             }
@@ -430,7 +443,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  onSelectedReferentielIdsChanged(list: number[]) {
+  onSelectedReferentielIdsChanged(list: any) {
     this.selectedReferentielIds = list;
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1;
@@ -469,5 +482,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.timeoutUpdateSearch = setTimeout(() => {
       this.onFilterList();
     }, 500);
+  }
+
+  onDateChanged(date: any) {
+    this.dateSelected = date;
+    this.onFilterList();
   }
 }

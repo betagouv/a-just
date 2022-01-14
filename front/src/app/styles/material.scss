@@ -1,3 +1,20 @@
 .mat-form-field-wrapper {
   margin-bottom: -1.25em;
 }
+
+.hide-visualisation {
+  height: 0;
+  display: block !important;
+
+  .mat-select-trigger {
+    height: 0;
+  }
+
+  .mat-select-value {
+    display: none;
+  }
+
+  .mat-select-arrow-wrapper {
+    display: none;
+  }
+}

@@ -10,6 +10,9 @@ $colors: (
 	cpink: #a558a0,
 	cyellow: #efcb3a,
 	cyellowdark: #796830,
+	bgSelect: #f6f6f6,
+	borderSelect: #eeeeee,
+	titleSelect: #3a3a3a,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

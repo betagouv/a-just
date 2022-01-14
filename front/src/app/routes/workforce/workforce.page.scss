@@ -111,6 +111,11 @@
   border-bottom: 1px solid fColor(cbrownlight);
   padding: 0 32px 24px 32px;
   background-color: white;
+
+  aj-select,
+  aj-date-select {
+    margin-right: 8px;
+  }
 }
 
 .popup-referentiel {
@@ -177,6 +182,16 @@
     p.label {
       color: fColor(cbluedark);
     }
+
+    input {
+      border-color: fColor(cbluedark);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cbluedark);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
+    }
   }
 
   &.pink {
@@ -185,6 +200,16 @@
 
     p.label {
       color: fColor(cpink);
+    }
+
+    input {
+      border-color: fColor(cpink);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cpink);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
     }
   }
 
@@ -195,10 +220,30 @@
     p.label {
       color: fColor(cyellowdark);
     }
+
+    input {
+      border-color: fColor(cyellowdark);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cyellowdark);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
+    }
   }
 
   input {
     margin-right: 16px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    background-color: #fafafa;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    display: inline-block;
+    position: relative;
+    width: 13px;
+    height: 13px;
   }
 
   p.etp {
