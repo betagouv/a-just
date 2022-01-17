@@ -112,6 +112,71 @@
   &.item {
     display: flex;
 
+    .text {
+      flex: 1;
+      padding: 24px 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .name {
+        font-weight: bold;
+        color: fColor(titleSelect);
+        margin-bottom: 4px;
+      }
+
+      .tags {
+        > p {
+          display: inline-block;
+          height: 24px;
+          padding: 2px 8px;
+          border-radius: 40px;
+          font-size: 12px;
+          margin-right: 8px;
+          margin-bottom: 4px;
+
+          &.function {
+            color: white;
+            background-color: fColor(cbluelight);
+
+            mat-icon {
+              color: fColor(white);
+            }
+          }
+
+          &.posad {
+            color: fColor(cblack);
+            background-color: fColor(cgrayDefault);
+
+            mat-icon {
+              color: fColor(cblack);
+            }
+          }
+
+          &.unavailable {
+            color: fColor(cred);
+            background-color: rgba(fColor(cred), 0.2);
+
+            mat-icon {
+              color: fColor(cred);
+            }
+          }
+
+          mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            position: relative;
+            top: 3px;
+          }
+        }
+      }
+
+      mat-icon {
+        color: black;
+      }
+    }
+
     .read-etp {
       padding: 10px 36px;
       background-color: fColor(bgEtpGraph);
@@ -123,14 +188,6 @@
         font-weight: bold;
       }
     }
-  }
-}
-
-.text {
-  flex: 1;
-
-  mat-icon {
-    color: black;
   }
 }
 

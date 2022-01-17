@@ -11,10 +11,14 @@ import { fixDecimal } from 'src/app/utils/numbers';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { copyArray } from 'src/app/utils/array';
+import { posadLabel } from 'src/app/utils/referentiel';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
   tmpActivities?: any;
+  posadLabel: string;
+  hasIndisponibility: boolean;
+  currentActivities: RHActivityInterface[];
 }
 
 interface HRCategorySelectedInterface extends HRCategoryInterface {
@@ -131,10 +135,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   calculWorkTime(hr: HumanResourceSelectedInterface) {
-    const activities = this.getCurrentActivity(null, hr);
     return fixDecimal(
       sumBy(
-        activities.filter(
+        hr.currentActivities.filter(
           (a) =>
             this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
         ),
@@ -207,7 +210,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   getCurrentActivity(
     ref: ContentieuReferentielInterface | null,
-    human: HumanResourceSelectedInterface,
+    human: HumanResourceSelectedInterface | HumanResourceInterface,
     listChildren = false
   ) {
     let ids = ref ? [ref.id] : [];
@@ -365,7 +368,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         (hr) =>
           hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
       )
-      .map((h) => ({ ...h, opacity: this.checkHROpacity(h) }));
+      .map((h) => {
+        const currentActivities = this.getCurrentActivity(null, h);
+        const hasIndispo = currentActivities.filter(
+          (a) =>
+            this.referentielService.idsIndispo.indexOf(a.id) !== -1 && a.percent
+        );
+
+        return {
+          ...h,
+          currentActivities,
+          opacity: this.checkHROpacity(h),
+          posadLabel: posadLabel(h.posad || 0),
+          hasIndisponibility: hasIndispo.length ? true : false,
+        };
+      });
     const valuesFinded = list.filter((h) => h.opacity === 1);
     this.valuesFinded =
       valuesFinded.length === list.length ? null : valuesFinded;

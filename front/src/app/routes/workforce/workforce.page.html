@@ -1,4 +1,4 @@
-<aj-wrapper title="Effectifs"
+<aj-wrapper [title]="'Visualisation <b>instantanée</b> des effectifs'"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null">
   <div class="container">
@@ -75,12 +75,15 @@
             [id]="'human-'+hr.id">
             <div class="profil item">
               <div class="text">
-                {{ hr.firstName}} {{ hr.lastName}}<br />
-                {{ hr.fonction && hr.fonction.code}}<br />
-                <div>
-                  <div class="tag-etp">{{hr.posad || 0}} etp</div>
+                <div class="name">{{ hr.firstName}} {{ hr.lastName}}</div>
+                <div class="tags">
+                  <p class="function">{{ hr.fonction && hr.fonction.code}}</p>
+                  <p class="posad">{{ hr.posadLabel }}</p>
+                  <p class="unavailable" *ngIf="hr.hasIndisponibility">
+                    <mat-icon>warning_amber</mat-icon> indispo
+                  </p>
                 </div>
-                <a [routerLink]="['/resource-humaine', hr.id]">
+                <!-- <a [routerLink]="['/resource-humaine', hr.id]">
                   <button mat-icon-button>
                     <mat-icon>edit</mat-icon>
                   </button>
@@ -90,7 +93,7 @@
                 </button>
                 <button mat-icon-button (click)="onDuplicateRH(hr.id)">
                   <mat-icon>file_copy</mat-icon>
-                </button>
+                </button> -->
               </div>
               <div class="read-etp">
                 <p class="label">ETP Réel :</p>
