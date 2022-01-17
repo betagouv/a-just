@@ -50,4 +50,13 @@ export class MainClass {
   public getMonthString(date: Date) {
     return getMonthString(date)
   }
+
+  public getCategoryColor(label: string, opacity: number = 1) {
+    switch(label) {
+      case 'Magistrat': return `rgba(0, 0, 145, ${opacity})`;
+      case 'Fonctionnaire': return `rgba(165, 88, 160, ${opacity})`;
+    }
+
+    return `rgba(239, 203, 58, ${opacity})`;
+  }
 }

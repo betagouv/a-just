@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { sortBy, sumBy } from 'lodash';
+import { groupBy, sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
@@ -10,6 +10,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { fixDecimal } from 'src/app/utils/numbers';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { dataInterface } from 'src/app/components/select/select.component';
+import { copyArray } from 'src/app/utils/array';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
@@ -21,6 +22,14 @@ interface HRCategorySelectedInterface extends HRCategoryInterface {
   etpt: number;
   nbPersonal: number;
   labelPlural: string;
+}
+
+interface listFormatedInterface {
+  textColor: string;
+  bgColor: string;
+  label: string;
+  hr: HumanResourceSelectedInterface[];
+  referentiel: ContentieuReferentielInterface[];
 }
 
 @Component({
@@ -42,6 +51,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   timeoutUpdateSearch: any = null;
   hrBackup: BackupInterface | undefined;
   dateSelected: Date = new Date();
+  listFormated: listFormatedInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -115,28 +125,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   calculateTotalOccupation() {
-    this.referentiel.map((ref) => {
-      ref.totalAffected = 0;
-    });
-
     this.humanResources.map((hr) => {
-      let totalAffected = 0;
-      hr.tmpActivities = {};
-
-      this.referentiel
-        .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
-        .map((ref) => {
-          hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
-          const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
-          if (timeAffected) {
-            totalAffected += timeAffected;
-            ref.totalAffected =
-              (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
-          }
-        });
-
       hr.workTime = this.calculWorkTime(hr);
-      hr.totalAffected = Math.floor(totalAffected * 100) / 100;
     });
   }
 
@@ -400,12 +390,61 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.humanResources = list;
 
     this.calculateTotalOccupation();
+    this.formatListToShow();
 
     if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
     } else {
       this.onGoTo(list[0]);
     }
+  }
+
+  formatListToShow() {
+    const groupByCategory = groupBy(this.humanResources, 'category.id');
+
+    this.listFormated = Object.values(groupByCategory).map(
+      (group: HumanResourceSelectedInterface[]) => {
+        const label = group[0].category.label;
+        let referentiel = (
+          copyArray(this.referentiel) as ContentieuReferentielInterface[]
+        ).map((ref) => {
+          ref.totalAffected = 0;
+          return ref;
+        });
+
+        group.map((hr) => {
+          let totalAffected = 0;
+          hr.tmpActivities = {};
+
+          referentiel = referentiel.map((ref) => {
+            hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
+            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
+            if (timeAffected) {
+              totalAffected += timeAffected;
+              ref.totalAffected =
+                (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
+            }
+
+            return ref;
+          });
+        });
+
+        return {
+          textColor: this.getCategoryColor(label),
+          bgColor: this.getCategoryColor(label, 0.2),
+          referentiel,
+          label:
+            group.length <= 1
+              ? label && label === 'Magistrat'
+                ? 'Magistrat du siège'
+                : label
+              : label && label === 'Magistrat'
+              ? 'Magistrats du siège'
+              : `${label}s`,
+          hr: group,
+        };
+      }
+    );
   }
 
   onGoTo(hr: HumanResourceInterface) {

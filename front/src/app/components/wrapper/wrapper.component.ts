@@ -79,7 +79,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
     if (user && user.access && user.access.indexOf(2) !== -1) {
       menu.push({
-        label: 'Éffectifs',
+        label: 'Affectations',
         path: 'ventilations',
       });
     }
