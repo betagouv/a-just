@@ -17,6 +17,9 @@ $colors: (
 	titleSelect: #3a3a3a,
 	bgEtpGraph: #ececfe,
 	titleEtpGraph: #0063cb,
+	bgProgressBar: #f5f5fe,
+	borderProgressBar: #6a6af4,
+	lineProgressBar: #9a9af7,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

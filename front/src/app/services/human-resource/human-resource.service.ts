@@ -48,10 +48,12 @@ export class HumanResourceService {
               })),
             }))
           );
-          this.backups.next(result.backups.map((b: BackupInterface) => ({
-            ...b,
-            date: new Date(b.date),
-          })));
+          this.backups.next(
+            result.backups.map((b: BackupInterface) => ({
+              ...b,
+              date: new Date(b.date),
+            }))
+          );
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
           this.categories.next(result.categories);
@@ -100,9 +102,13 @@ export class HumanResourceService {
     }
   }
 
-  updateHR(list: HumanResourceInterface[]) {
+  updateHR(list: HumanResourceInterface[], silentSave: boolean = false) {
     this.hr.next(list);
     this.hrIsModify.next(true);
+
+    if (silentSave) {
+      this.onSaveHRDatas(false, true);
+    }
   }
 
   removeBackup() {
@@ -137,7 +143,7 @@ export class HumanResourceService {
     return Promise.resolve();
   }
 
-  onSaveHRDatas(isCopy: boolean) {
+  onSaveHRDatas(isCopy: boolean, silentSave: boolean = false) {
     let backupName = null;
     let juridictionId = null;
     if (isCopy) {
@@ -159,8 +165,10 @@ export class HumanResourceService {
         juridictionId,
       })
       .then((r) => {
-        alert('Enregistrement OK !');
-        this.backupId.next(r.data);
+        if(!silentSave) {
+          alert('Enregistrement OK !');
+          this.backupId.next(r.data);
+        }
       });
   }
 
@@ -203,7 +211,7 @@ export class HumanResourceService {
     return Promise.resolve();
   }
 
-  duplicateHR (rhId: number) {
+  duplicateHR(rhId: number) {
     if (confirm('Dupliquer cette personne ?')) {
       const list = this.hr.getValue();
       const findIndex = list.findIndex((r) => r.id === rhId);

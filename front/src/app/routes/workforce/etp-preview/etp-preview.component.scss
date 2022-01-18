@@ -2,4 +2,31 @@
 
 :host {
   display: block;
+  position: relative;
+
+  .preview {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-items: center;
+      width: 33px;
+      height: 33px;
+      border-radius: 33px;
+      background-color: white;
+      position: absolute;
+      top: 18px;
+
+      p {
+        margin: auto;
+        text-align: center;
+        font-size: 9px;
+        color: fColor(titleEtpGraph);
+      }
+    }
+  }
 }

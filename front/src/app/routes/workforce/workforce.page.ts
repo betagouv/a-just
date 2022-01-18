@@ -17,8 +17,9 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
   tmpActivities?: any;
   posadLabel: string;
-  hasIndisponibility: boolean;
+  hasIndisponibility: number;
   currentActivities: RHActivityInterface[];
+  percentAffected: number;
 }
 
 interface HRCategorySelectedInterface extends HRCategoryInterface {
@@ -131,6 +132,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   calculateTotalOccupation() {
     this.humanResources.map((hr) => {
       hr.workTime = this.calculWorkTime(hr);
+      hr.percentAffected = ((hr.workTime || 0) - hr.hasIndisponibility) * 100 / (100 - hr.hasIndisponibility);
     });
   }
 
@@ -326,7 +328,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
         });
 
-        this.humanResourceService.updateHR(this.humanResources);
+        this.humanResourceService.updateHR(this.humanResources, true);
         this.updateActivity = null;
         break;
       default:
@@ -370,17 +372,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       )
       .map((h) => {
         const currentActivities = this.getCurrentActivity(null, h);
-        const hasIndispo = currentActivities.filter(
+        const hasIndispo = currentActivities.find(
           (a) =>
-            this.referentielService.idsIndispo.indexOf(a.id) !== -1 && a.percent
+            this.referentielService.idsMainIndispo === a.referentielId &&
+            a.percent
         );
+        const hasIndisponibility = hasIndispo ? (hasIndispo.percent || 0) : 0;
 
         return {
           ...h,
           currentActivities,
           opacity: this.checkHROpacity(h),
           posadLabel: posadLabel(h.posad || 0),
-          hasIndisponibility: hasIndispo.length ? true : false,
+          hasIndisponibility,
+          percentAffected: 0,
         };
       });
     const valuesFinded = list.filter((h) => h.opacity === 1);
@@ -429,21 +434,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           return ref;
         });
 
-        group.map((hr) => {
-          let totalAffected = 0;
+        group = group.map((hr) => {
           hr.tmpActivities = {};
 
           referentiel = referentiel.map((ref) => {
             hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
             if (timeAffected) {
-              totalAffected += timeAffected;
               ref.totalAffected =
                 (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
             }
 
             return ref;
           });
+
+          return hr;
         });
 
         return {

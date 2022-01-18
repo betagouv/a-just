@@ -31,7 +31,9 @@
         <div class="header-list">
           <div class="profil">
             <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
-            <div class="label" [style.color]="list.textColor">{{ list.label }}</div>
+            <div class="label" [style.color]="list.textColor">
+              {{ list.label }}
+            </div>
             <div class="contentieux-label">
               <div class="text">
                 <div class="label">
@@ -58,7 +60,7 @@
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
               <div class="text">
                 <div class="label">
-                  <p>{{ referentielMappingName(ref.label) }}</p>
+                  <p><b>{{ referentielMappingName(ref.label) }}</b></p>
                 </div>
                 <div class="etp">
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
@@ -67,7 +69,7 @@
               </div>
             </div>
           </div>
-          <div class="actions" [ngClass]="{'is-not-ios': isNotOS()}"></div>
+          <div class="actions"></div>
         </div>
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
@@ -82,32 +84,40 @@
                   <p class="unavailable" *ngIf="hr.hasIndisponibility">
                     <mat-icon>warning_amber</mat-icon> indispo
                   </p>
-                </div>
-                <!-- <a [routerLink]="['/resource-humaine', hr.id]">
-                  <button mat-icon-button>
-                    <mat-icon>edit</mat-icon>
+                  <a [routerLink]="['/resource-humaine', hr.id]">
+                    <button mat-icon-button>
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </a>
+                  <button mat-icon-button (click)="onRemoveRH(hr.id)">
+                    <mat-icon>delete</mat-icon>
                   </button>
-                </a>
-                <button mat-icon-button (click)="onRemoveRH(hr.id)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-                <button mat-icon-button (click)="onDuplicateRH(hr.id)">
-                  <mat-icon>file_copy</mat-icon>
-                </button> -->
+                  <button mat-icon-button (click)="onDuplicateRH(hr.id)">
+                    <mat-icon>file_copy</mat-icon>
+                  </button>
+                </div>
               </div>
               <div class="read-etp">
-                <p class="label">ETP Réel :</p>
-                <etp-preview [etp]="(hr.workTime || 0)/ 100"></etp-preview>
+                <div>
+                  <p class="label">ETP Travaillé :</p>
+                  <etp-preview [etp]="(hr.workTime || 0) - hr.hasIndisponibility"
+                    [indisponibility]="hr.hasIndisponibility"></etp-preview>
+                </div>
               </div>
             </div>
-            <!-- <div class="total-affected">
-          <progression-bar [percent]="hr.totalAffected" [selected]="false" color="#9e9d24"></progression-bar>
-        </div>-->
             <div class="activities">
-              <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
-                <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
-                  (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
-                </progression-bar>
+              <div class="sub-activity-panel">
+                <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+                  <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
+                    (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
+                  </progression-bar>
+                </div>
+              </div>
+              <div class="progress-bar">
+                <p>Taux d'affectation : {{ hr.percentAffected | number:'0.0-0' }}%</p>
+                <div class="progress-bar-line">
+                  <div [style.width.%]="hr.percentAffected"></div>
+                </div>
               </div>
             </div>
             <div class="actions"></div>
