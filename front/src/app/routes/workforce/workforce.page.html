@@ -57,7 +57,6 @@
           </div>
           <div class="activities">
             <div class="sub-item" *ngFor="let ref of list.referentiel">
-              <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
               <div class="text">
                 <div class="label">
                   <p><b>{{ referentielMappingName(ref.label) }}</b></p>
@@ -67,6 +66,7 @@
                 </div>
                 <div class="flex-1"></div>
               </div>
+              <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
             </div>
           </div>
           <div class="actions"></div>
