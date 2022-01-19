@@ -84,17 +84,6 @@
                   <p class="unavailable" *ngIf="hr.hasIndisponibility">
                     <mat-icon>warning_amber</mat-icon> indispo
                   </p>
-                  <a [routerLink]="['/resource-humaine', hr.id]">
-                    <button mat-icon-button>
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                  </a>
-                  <button mat-icon-button (click)="onRemoveRH(hr.id)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                  <button mat-icon-button (click)="onDuplicateRH(hr.id)">
-                    <mat-icon>file_copy</mat-icon>
-                  </button>
                 </div>
               </div>
               <div class="read-etp">
@@ -107,9 +96,9 @@
             </div>
             <div class="activities">
               <div class="sub-activity-panel">
-                <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+                <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index">
                   <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
-                    (click)="onUpdateActivity(ref, hr)" [color]="referentielMappingColor(ref.label)">
+                    [color]="referentielMappingColor(ref.label)">
                   </progression-bar>
                 </div>
               </div>
@@ -120,40 +109,17 @@
                 </div>
               </div>
             </div>
-            <div class="actions"></div>
+            <div class="actions">
+              <a [routerLink]="['/resource-humaine', hr.id]">
+                <mat-icon>chevron_right</mat-icon>
+              </a>
+            </div>
           </div>
         </div>
       </ng-template>
     </div>
   </div>
 </aj-wrapper>
-
-<aj-popup *ngIf="updateActivity" [title]="updateActivity.referentiel.label" [actions]="[
-{ id: 'close', content: 'Fermer' },
-{ id: 'modify', content: 'Modifier', fill: true }
-]" [closeIcon]="true" (onClose)="updateActivity = null" (selectedAction)="onEditActivities($event)">
-  <div class="popup-referentiel">
-    <div class="title">
-      <div class="label-aj">{{updateActivity.hrActivities[0].label}}</div>
-      <progression-bar [percent]="updateActivity.hrActivities[0].percent"
-        (percentChange)="updateActivityPercent(updateActivity.hrActivities[0], $event)"
-        [color]="referentielMappingColor(updateActivity.referentiel.label)"></progression-bar>
-    </div>
-    <ng-template [ngIf]="updateActivity.hrActivities.length > 1">
-      <div class="or">
-        <p>-- ou --</p>
-      </div>
-      <div class="content">
-        <div *ngFor="let ref of updateActivity.hrActivities.slice(1)">
-          <div class="label-aj">{{ref.label}}</div>
-          <progression-bar [percent]="ref.percent" (percentChange)="updateActivityPercent(ref, $event)"
-            [color]="referentielMappingColor(updateActivity.referentiel.label)">
-          </progression-bar>
-        </div>
-      </div>
-    </ng-template>
-  </div>
-</aj-popup>
 
 <ng-template #actions>
   <button class="primary" (click)="addHR()">Ajouter un collaborateur</button>

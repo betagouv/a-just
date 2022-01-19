@@ -47,7 +47,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
   formReferentiel: dataInterface[] = [];
-  updateActivity: any = null;
   categoriesFilterList: HRCategorySelectedInterface[] = [];
   selectedReferentielIds: any[] = [];
   searchValue: string = '';
@@ -131,8 +130,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   calculateTotalOccupation() {
     this.humanResources.map((hr) => {
-      hr.workTime = this.calculWorkTime(hr);
-      hr.percentAffected = ((hr.workTime || 0) - hr.hasIndisponibility) * 100 / (100 - hr.hasIndisponibility);
+      const percentAffected = this.calculWorkTime(hr);
+      hr.workTime = (hr.posad || 0) * percentAffected;
+      hr.percentAffected = percentAffected * 100;
     });
   }
 
@@ -144,7 +144,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
         ),
         'percent'
-      )
+      ) / 100
     );
   }
 
@@ -152,47 +152,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.humanResourceService.createHumanResource();
   }
 
-  onUpdateActivity(
-    ref: ContentieuReferentielInterface,
-    hr: HumanResourceSelectedInterface
-  ) {
-    // show popup with referentiel and formated values
-    let listActivities: any[] = [
-      {
-        id: ref.id,
-        label: `Total de ${ref.label}`,
-      },
-    ];
-    (ref.childrens || []).map((r) => {
-      listActivities.push({
-        id: r.id,
-        label: r.label,
-      });
-    });
-
-    const currentActivities = this.getCurrentActivity(ref, hr, true);
-    listActivities = listActivities.map((activity) => {
-      const percentAffected = currentActivities.find(
-        (a) => a.referentielId === activity.id
-      );
-
-      activity.percent = (percentAffected && percentAffected.percent) || 0;
-      return activity;
-    });
-
-    this.updateActivity = {
-      referentiel: ref,
-      hrActivities: listActivities,
-      hr,
-    };
-  }
-
   trackById(index: number, item: any) {
     return item.id;
-  }
-
-  onRemoveRH(id: number) {
-    this.humanResourceService.removeHrById(id);
   }
 
   getPercentOfActivity(
@@ -265,78 +226,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return totalWhitout + (formActivities[0].percent || 0);
   }
 
-  onEditActivities(action: any) {
-    switch (action.id) {
-      case 'modify':
-        let allCurrentActivities = this.getCurrentActivity(
-          null,
-          this.updateActivity.hr
-        );
-
-        if (
-          this.updateActivity.hrActivities[0].id ===
-          this.referentielService.idsIndispo[0]
-        ) {
-          // calculate indispo
-          allCurrentActivities = allCurrentActivities.filter(
-            (o) =>
-              this.referentielService.idsIndispo.indexOf(o.referentielId) !== -1
-          );
-        } else {
-          // calculate contentieux
-          allCurrentActivities = allCurrentActivities.filter(
-            (o) =>
-              this.referentielService.idsIndispo.indexOf(o.referentielId) === -1
-          );
-        }
-        const totalAffected = this.calculTotalTmpActivity(
-          allCurrentActivities,
-          this.updateActivity.hrActivities
-        );
-        if (totalAffected > 100) {
-          alert(
-            `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
-          );
-          return;
-        }
-
-        const currentActivities = this.getCurrentActivity(
-          this.updateActivity.referentiel,
-          this.updateActivity.hr
-        );
-        this.updateActivity.hrActivities.map((activity: any) => {
-          const percentAffected = currentActivities.find(
-            (a) => a.referentielId === activity.id
-          );
-          activity.percent = +activity.percent; // format
-
-          if (activity.percent) {
-            if (percentAffected) {
-              percentAffected.percent = activity.percent;
-            } else {
-              this.updateActivity.hr.activities =
-                this.updateActivity.hr.activities || [];
-              this.updateActivity.hr.activities.push({
-                referentielId: activity.id,
-                percent: activity.percent,
-                dateStart: new Date(this.dateSelected),
-                dateStop: null,
-              });
-            }
-          } else if (percentAffected) {
-            percentAffected.percent = 0;
-          }
-        });
-
-        this.humanResourceService.updateHR(this.humanResources, true);
-        this.updateActivity = null;
-        break;
-      default:
-        this.updateActivity = null;
-        break;
-    }
-  }
-
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
@@ -377,7 +266,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             this.referentielService.idsMainIndispo === a.referentielId &&
             a.percent
         );
-        const hasIndisponibility = hasIndispo ? (hasIndispo.percent || 0) : 0;
+        const hasIndisponibility = hasIndispo
+          ? (hasIndispo.percent || 0) / 100
+          : 0;
 
         return {
           ...h,
@@ -429,10 +320,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const label = group[0].category.label;
         let referentiel = (
           copyArray(this.referentiel) as ContentieuReferentielInterface[]
-        ).map((ref) => {
-          ref.totalAffected = 0;
-          return ref;
-        });
+        )
+          .filter(
+            (r) => this.referentielService.idsIndispo.indexOf(r.id) === -1
+          )
+          .map((ref) => {
+            ref.totalAffected = 0;
+            return ref;
+          });
 
         group = group.map((hr) => {
           hr.tmpActivities = {};
@@ -442,7 +337,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
             if (timeAffected) {
               ref.totalAffected =
-                (ref.totalAffected || 0) + (timeAffected * (hr.etp || 0)) / 100;
+                (ref.totalAffected || 0) +
+                (timeAffected / 100) *
+                  ((hr.posad || 0) - hr.hasIndisponibility);
             }
 
             return ref;
@@ -505,25 +402,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
 
     this.onFilterList();
-  }
-
-  updateActivityPercent(ref: any, value: number) {
-    const isMainRef = this.updateActivity.hrActivities[0].id === ref.id;
-
-    if (isMainRef) {
-      this.updateActivity.hrActivities[0].percent = value;
-      for (let i = 1; i < this.updateActivity.hrActivities.length; i++) {
-        this.updateActivity.hrActivities[i].percent = 0;
-      }
-    } else {
-      ref.percent = value;
-      const sum = sumBy(this.updateActivity.hrActivities.slice(1), 'percent');
-      this.updateActivity.hrActivities[0].percent = sum;
-    }
-  }
-
-  onDuplicateRH(rhId: number) {
-    this.humanResourceService.duplicateHR(rhId);
   }
 
   updateSearch() {

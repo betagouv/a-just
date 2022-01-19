@@ -9,10 +9,6 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 1;
 
-  .actions.is-not-ios {
-    margin-right: 16px;
-  }
-
   .profil {
     display: flex;
     align-items: center;
@@ -64,8 +60,8 @@
 
 .item-list {
   display: flex;
-  width: calc(100% - 58px);
-  margin-left: 18px;
+  width: calc(100% - 32px);
+  margin-left: 16px;
   border-radius: 4px;
 }
 
@@ -140,7 +136,16 @@
   }
 
   .actions {
-    width: 74px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    a {
+      padding: 16px;
+      color: fColor(titleEtpGraph);
+      cursor: pointer;
+    }
   }
 }
 
@@ -294,7 +299,7 @@
 }
 
 .actions {
-  width: 114px;
+  width: 52px;
 }
 
 .title {
@@ -307,32 +312,6 @@
   aj-select,
   aj-date-select {
     margin-right: 8px;
-  }
-}
-
-.popup-referentiel {
-  .label-aj {
-    margin-bottom: 4px;
-  }
-
-  > .title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  > .content {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 16px;
-
-    > div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
   }
 }
 
