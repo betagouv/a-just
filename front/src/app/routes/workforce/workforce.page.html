@@ -21,7 +21,7 @@
             {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
             category.labelPlural : category.label }}
           </p>
-          <p class="etp">{{ category.etpt }} ETP-T</p>
+          <p class="etp">{{ category.etpt | number:".2-2" }} ETP-T</p>
         </div>
       </div>
     </div>
