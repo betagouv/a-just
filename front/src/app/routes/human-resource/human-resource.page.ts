@@ -148,7 +148,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
-      this.currentHR.category = this.categories.find((c) => c.id === +category);
+      this.currentHR.category = this.categories.find((c) => c.id === +category) || { id: -1, label: 'not found'};
       this.currentHR.fonction = this.fonctions.find((f) => f.id === +fonction);
       this.currentHR.activities = (this.activities || []).map((a) => ({
         ...a,
@@ -174,8 +174,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       if (findIndex !== -1) {
         allHuman[findIndex] = { ...this.currentHR };
-        this.humanResourceService.hr.next(allHuman);
-        this.humanResourceService.hrIsModify.next(true);
+        this.humanResourceService.updateHR(allHuman, true);
 
         this.router.navigate(['/ventilations']);
       }

@@ -1,5 +1,5 @@
 export interface HRCategoryInterface {
 	id: number;
-	label?: string;
+	label: string;
 	rank?: number;
 }

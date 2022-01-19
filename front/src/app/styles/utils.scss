@@ -1,6 +1,25 @@
 $colors: (
 	primary: #000091,
-	cblack: #1e1e1e,
+	cblack: #161616,
+	cgray: #666666,
+	cgrayDefault: #eeeeee,
+	cgraylight: #f9f6f2,
+	cbrownlight: #e6d8cb,
+	cbluedark: #000091,
+	cblue: #5151a1,
+	cbluelight: #417dc4,
+	cred: #ff5655,
+	cpink: #a558a0,
+	cyellow: #efcb3a,
+	cyellowdark: #796830,
+	bgSelect: #f6f6f6,
+	borderSelect: #eeeeee,
+	titleSelect: #3a3a3a,
+	bgEtpGraph: #ececfe,
+	titleEtpGraph: #0063cb,
+	bgProgressBar: #f5f5fe,
+	borderProgressBar: #6a6af4,
+	lineProgressBar: #9a9af7,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
