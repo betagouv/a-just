@@ -112,6 +112,16 @@
       display: flex;
       align-items: center;
 
+      &.low-completion {
+        p {
+          color: fColor(cred);
+        }
+
+        .progress-bar-line > div {
+          background-color: fColor(cred);
+        }
+      }
+
       p {
         width: 155px;
         font-size: 12px;
@@ -122,7 +132,6 @@
       .progress-bar-line {
         flex: 1;
         background-color: fColor(bgProgressBar);
-        border: 1px solid fColor(borderProgressBar);
         height: 6px;
         border-radius: 8px;
         margin-right: 8px;

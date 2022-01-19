@@ -79,16 +79,16 @@
               <div class="text">
                 <div class="name">{{ hr.firstName}} {{ hr.lastName}}</div>
                 <div class="tags">
-                  <p class="function">{{ hr.fonction && hr.fonction.code}}</p>
+                  <p class="function" [style.background-color]="list.textColor">{{ hr.fonction && hr.fonction.code}}</p>
                   <p class="posad">{{ hr.posadLabel }}</p>
                   <p class="unavailable" *ngIf="hr.hasIndisponibility">
                     <mat-icon>warning_amber</mat-icon> indispo
                   </p>
                 </div>
               </div>
-              <div class="read-etp">
+              <div class="read-etp" [style.background-color]="list.bgColor">
                 <div>
-                  <p class="label">ETP Travaillé :</p>
+                  <p class="label" [style.color]="list.textColor">ETP Travaillé :</p>
                   <etp-preview [etp]="(hr.posad || 0) - hr.hasIndisponibility"
                     [indisponibility]="hr.hasIndisponibility"></etp-preview>
                 </div>
@@ -102,7 +102,7 @@
                   </progression-bar>
                 </div>
               </div>
-              <div class="progress-bar">
+              <div class="progress-bar" [ngClass]="{'low-completion': hr.percentAffected < 70}">
                 <p>Taux d'affectation : {{ hr.percentAffected | number:'0.0-0' }}%</p>
                 <div class="progress-bar-line">
                   <div [style.width.%]="hr.percentAffected"></div>

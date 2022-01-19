@@ -1,4 +1,10 @@
-import { Component, ElementRef, Input, ViewChild, OnChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+  OnChanges,
+} from '@angular/core';
 import { degreesToRadians } from 'src/app/utils/geometry';
 
 @Component({
@@ -33,14 +39,24 @@ export class EtpPreviewComponent implements OnChanges {
   }
 
   generateBackground() {
-    const ctx = this.domCanvas?.nativeElement.getContext('2d');
+    const canvas = this.domCanvas?.nativeElement;
+    const ctx = canvas.getContext('2d');
+
+    // fix resolution of arc
+    canvas.style.width = this.width + "px";
+    canvas.style.height = this.height + "px";
+    const scale = window.devicePixelRatio;
+    canvas.width = Math.floor(this.width * scale);
+    canvas.height = Math.floor(this.height * scale);
+    ctx.scale(scale, scale);
+
     ctx.beginPath();
     ctx.lineWidth = 6;
     ctx.strokeStyle = '#e3e3fd';
     ctx.arc(
       this.width / 2,
       this.height - 5,
-      (this.width / 2) - 3,
+      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition(100)
     );
@@ -50,7 +66,7 @@ export class EtpPreviewComponent implements OnChanges {
     ctx.arc(
       this.width / 2,
       this.height - 5,
-      (this.width / 2) - 3,
+      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition((this.etp + this.indisponibility) * 100)
     );
@@ -60,32 +76,14 @@ export class EtpPreviewComponent implements OnChanges {
     ctx.arc(
       this.width / 2,
       this.height - 5,
-      (this.width / 2) - 3,
+      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition(this.etp * 100)
     );
     ctx.stroke();
-    /*
-    ctx.beginPath();
-    ctx.strokeStyle = '#00B252';
-    ctx.arc(
-      this.width / 2,
-      this.width / 2,
-      this.radius,
-      this.getRadiusPosition(110),
-      this.getRadiusPosition(200)
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.fillStyle = 'orange';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 1;
-    ctx.arc(this.width / 2, this.width / 2, 10, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.stroke();*/
   }
 
   getRadiusPosition(degree: number) {
-    return degreesToRadians(180 + degree * (180 / 100))
+    return degreesToRadians(180 + degree * (180 / 100));
   }
 }
