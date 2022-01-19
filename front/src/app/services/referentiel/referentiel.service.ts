@@ -12,6 +12,7 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 })
 export class ReferentielService {
   idsIndispo: number[] = [];
+  idsMainIndispo: number = 0;
   idsSoutien: number[] = [];
   mainActivitiesId: number[] = [];
 
@@ -41,6 +42,7 @@ export class ReferentielService {
       const refIndispo = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
       if (refIndispo) {
+        this.idsMainIndispo = refIndispo.id;
         idsIndispo.push(refIndispo.id);
         (refIndispo.childrens || []).map((c) => {
           idsIndispo.push(c.id);

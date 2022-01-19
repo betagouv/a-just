@@ -13,6 +13,9 @@ import { OptionsBackupPanelComponent } from './options-backup-panel/options-back
 import { ActivitiesBackupPanelComponent } from './activities-backup-panel/activities-backup-panel.component';
 import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component';
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
+import { SelectComponent } from './select/select.component';
+import { DateSelectComponent } from './date-select/date-select.component';
+import { InputButtonComponent } from './input-button/input-button.component';
 
 const list = [
   WrapperComponent,
@@ -25,6 +28,9 @@ const list = [
   ActivitiesBackupPanelComponent,
   ReferentielCalculatorComponent,
   SelectCheckAllComponent,
+  SelectComponent,
+  DateSelectComponent,
+  InputButtonComponent,
 ];
 
 @NgModule({

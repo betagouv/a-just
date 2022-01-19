@@ -91,14 +91,14 @@ export class ReferentielCalculatorComponent
         ),
       'periode'
     );
-    this.totalIn = sumBy(activities, 'entrees');
-    this.totalOut = sumBy(activities, 'sorties');
+    this.nbMonth = this.getNbMonth();
+    this.totalIn = sumBy(activities, 'entrees') / this.nbMonth;
+    this.totalOut = sumBy(activities, 'sorties') / this.nbMonth;
     this.totalStock = activities.length
       ? activities[activities.length - 1].stock
       : 0;
 
     this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
-    this.nbMonth = this.getNbMonth();
     this.realDTESInMonths = fixDecimal(
       this.totalStock / this.totalOut / this.nbMonth
     );

@@ -1,0 +1,19 @@
+button {
+  height: 57px;
+  line-height: 57px;
+  padding: 0 16px;
+  font-size: 16px;
+	border: none;
+	cursor: pointer;
+	-webkit-appearance: none;
+  border-radius: 8px;
+
+	&:focus {
+		outline: none;
+	}
+
+  &.primary {
+    color: white;
+    background-color: fColor(cbluedark);
+  }
+}

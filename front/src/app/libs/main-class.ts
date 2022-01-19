@@ -5,6 +5,7 @@ import {
 } from '../utils/referentiel';
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers';
+import { getMonthString } from '../utils/dates';
 
 export class MainClass {
   watcherList: Subscription[] = [];
@@ -44,5 +45,18 @@ export class MainClass {
 
   public trackBy(index: number, item: any) {
     return item.id;
+  }
+
+  public getMonthString(date: Date) {
+    return getMonthString(date)
+  }
+
+  public getCategoryColor(label: string, opacity: number = 1) {
+    switch(label) {
+      case 'Magistrat': return `rgba(0, 0, 145, ${opacity})`;
+      case 'Fonctionnaire': return `rgba(165, 88, 160, ${opacity})`;
+    }
+
+    return `rgba(239, 203, 58, ${opacity})`;
   }
 }

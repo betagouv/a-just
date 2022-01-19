@@ -11,7 +11,7 @@ export interface HumanResourceInterface {
 	etp?: number;
 	posad?: number;
 	workTime?: number;
-	category?: HRCategoryInterface;
+	category: HRCategoryInterface;
 	fonction?: HRFonctionInterface;
 	juridiction?: JuridictionInterface;
 	activities?: RHActivityInterface[];

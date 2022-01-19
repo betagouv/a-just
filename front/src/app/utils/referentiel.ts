@@ -53,3 +53,14 @@ export function referentielMappingIndex (name: string): number {
 
   return 0;
 }
+
+export function posadLabel(value: number): string {
+  switch(value) {
+    case 1: return 'Temps plein';
+    case 0.8: return '4/5 ème';
+    case 0.5: return 'Mi-temps';
+    case 0: return 'Ne travail pas';
+  }
+
+  return `${value * 100}%`;
+}

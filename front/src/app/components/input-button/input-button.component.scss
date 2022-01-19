@@ -1,0 +1,52 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: block;
+  border-radius: 8px;
+  background-color: fColor(bgSelect);
+  border: 1px solid fColor(borderSelect);
+  height: 55px;
+  cursor: pointer;
+  display: flex;
+  align-items: stretch;
+
+  div {
+    &.input {
+      padding: 2px 8px;
+      width: 189px;
+
+      p {
+        white-space: nowrap;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      input {
+        height: 24px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        width: 100%;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    &.button {
+      width: 57px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border: 1px solid fColor(cbluedark);
+      
+      mat-icon {
+        color: fColor(cbluedark);
+      }
+    }
+  }
+}

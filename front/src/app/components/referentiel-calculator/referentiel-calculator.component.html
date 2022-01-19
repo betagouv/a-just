@@ -2,8 +2,8 @@
   <div class="datas">
     <h3>{{ referentiel.parent ? referentiel.parent.label + ' - ' : '' }} {{ referentiel.label }}</h3>
     <p>Du {{ dateStart | date:'dd/MM/YYYY' }} au {{ dateStop | date:'dd/MM/YYYY' }}</p>
-    <p>Nombre d'entrées : {{ totalIn }}</p>
-    <p>Nombre de sorties : {{ totalOut }}</p>
+    <p>Nombre d'entrées moyennes : {{ totalIn }}</p>
+    <p>Nombre de sorties moyennes : {{ totalOut }}</p>
     <p>Stock de fin : {{ totalStock }}</p>
     <p>ETP affectés :
       <ng-template ngFor let-etp [ngForOf]="etpAffected">
