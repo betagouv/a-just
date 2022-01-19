@@ -114,13 +114,26 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
+    const idsOfRef = this.referentielFiltred.map((r) => r.id);
+
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const personal = this.humanResources
-        .filter((h) => h.category && h.category.id === c.id);
+      const personal = this.humanResources.filter(
+        (h) => h.category && h.category.id === c.id
+      );
+      let etpt = 0;
+
+      personal.map((h) => {
+        const activities = this.getCurrentActivity(null, h).filter(
+          (a) => idsOfRef.indexOf(a.referentielId) !== -1
+        );
+        if(activities.length) {
+          etpt += ((h.posad || 0) - h.hasIndisponibility) * (sumBy(activities, 'percent')) / 100;
+        }
+      });
 
       return {
         ...c,
-        etpt: sumBy(personal, 'posad') - sumBy(personal, 'hasIndisponibility'),
+        etpt,
         nbPersonal: personal.length,
       };
     });
@@ -306,7 +319,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
-    } else {
+    } else if (list.length) {
       this.onGoTo(list[0]);
     }
   }
