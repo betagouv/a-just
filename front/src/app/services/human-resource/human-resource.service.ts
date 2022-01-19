@@ -88,8 +88,7 @@ export class HumanResourceService {
       category: this.categories.getValue()[0],
     });
 
-    this.hr.next(hr);
-    this.hrIsModify.next(true);
+    this.updateHR(hr, true);
   }
 
   deleteHRById(HRId: number) {

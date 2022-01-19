@@ -98,7 +98,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt: 0,
           nbPersonal: 0,
         }));
-        this.updateCategoryValues();
         this.onFilterList();
       })
     );
@@ -116,13 +115,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const personal = this.humanResourceService.hr
-        .getValue()
+      const personal = this.humanResources
         .filter((h) => h.category && h.category.id === c.id);
 
       return {
         ...c,
-        etpt: sumBy(personal, 'posad'),
+        etpt: sumBy(personal, 'posad') - sumBy(personal, 'hasIndisponibility'),
         nbPersonal: personal.length,
       };
     });
@@ -304,6 +302,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.calculateTotalOccupation();
     this.formatListToShow();
+    this.updateCategoryValues();
 
     if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded]);

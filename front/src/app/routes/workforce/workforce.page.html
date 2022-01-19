@@ -89,7 +89,7 @@
               <div class="read-etp">
                 <div>
                   <p class="label">ETP Travaillé :</p>
-                  <etp-preview [etp]="(hr.workTime || 0) - hr.hasIndisponibility"
+                  <etp-preview [etp]="(hr.posad || 0) - hr.hasIndisponibility"
                     [indisponibility]="hr.hasIndisponibility"></etp-preview>
                 </div>
               </div>
