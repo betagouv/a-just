@@ -6,6 +6,7 @@ import {
   OnChanges,
 } from '@angular/core';
 import { degreesToRadians } from 'src/app/utils/geometry';
+import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
   selector: 'etp-preview',
@@ -16,19 +17,22 @@ export class EtpPreviewComponent implements OnChanges {
   @Input() etp: number = 0;
   @Input() indisponibility: number = 0;
   @ViewChild('canvas') domCanvas: ElementRef | null = null;
-  width: number = 80;
-  height: number = 45;
+  width: number = 40;
+  height: number = 40;
+  margin: number = 8;
+  borderWidth: number = 6;
 
   constructor() {}
 
   ngOnChanges() {
+    this.etp = fixDecimal(this.etp);
     this.onDraw();
   }
 
   onDraw() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d');
     if (ctx) {
-      ctx.clearRect(0, 0, this.width, this.width);
+      ctx.clearRect(0, 0, this.width + this.margin * 2, this.height + this.margin * 2);
       this.generateBackground();
       // this.drawArrows();
     } else {
@@ -43,44 +47,56 @@ export class EtpPreviewComponent implements OnChanges {
     const ctx = canvas.getContext('2d');
 
     // fix resolution of arc
-    canvas.style.width = this.width + "px";
-    canvas.style.height = this.height + "px";
-    const scale = window.devicePixelRatio;
-    canvas.width = Math.floor(this.width * scale);
-    canvas.height = Math.floor(this.height * scale);
+    canvas.style.width = (this.width + this.margin * 2) + "px";
+    canvas.style.height = (this.height + this.margin * 2) + "px";
+    const scale = window.devicePixelRatio * 2;
+    canvas.width = Math.floor((this.width + this.margin * 2) * scale);
+    canvas.height = Math.floor((this.height + this.margin * 2) * scale);
     ctx.scale(scale, scale);
 
     ctx.beginPath();
-    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.lineWidth = this.borderWidth;
     ctx.strokeStyle = '#e3e3fd';
     ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
       this.width / 2,
-      this.height - 5,
-      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition(100)
     );
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle = '#ffbab2';
+    ctx.strokeStyle = '#e4794a';
     ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
       this.width / 2,
-      this.height - 5,
-      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition((this.etp + this.indisponibility) * 100)
     );
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle = '#6a6af4';
+    ctx.strokeStyle = '#1dd884';
     ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
       this.width / 2,
-      this.height - 5,
-      this.width / 2 - 3,
       this.getRadiusPosition(0),
       this.getRadiusPosition(this.etp * 100)
     );
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.fillStyle = '#ffffff';
+    ctx.arc(
+      this.margin,
+      this.height / 2 + this.margin,
+      this.borderWidth / 4,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
   }
 
   getRadiusPosition(degree: number) {

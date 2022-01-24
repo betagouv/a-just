@@ -1,0 +1,25 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: block;
+  position: relative;
+
+  .preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    background-color: white;
+    line-height: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: fColor(cgreen);
+    margin: 8px;
+    font-weight: bold;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+}

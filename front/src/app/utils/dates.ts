@@ -10,6 +10,16 @@ export function workingDay(date: Date) {
   return [1,2,3,4,5].indexOf(date.getDay()) !== -1
 }
 
-export function getMonthString(date: Date) {
-  return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][date.getMonth()]
+export function getMonthString(date: Date | string) {
+  if(typeof date === 'string') {
+    date = new Date(date);
+  }
+  return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][date.getMonth()]
+}
+
+export function getShortMonthString(date: Date | string) {
+  if(typeof date === 'string') {
+    date = new Date(date);
+  }
+  return ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][date.getMonth()]
 }

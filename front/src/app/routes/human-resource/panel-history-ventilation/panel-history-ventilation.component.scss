@@ -1,0 +1,107 @@
+@import "../../../styles/utils.scss";
+
+:host {
+  display: block;
+  width: 894px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.header-panel {
+  display: flex;
+  height: 52px;
+  background-color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  margin-bottom: 1px;
+
+  > .tags {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-left: 26px;
+
+    p {
+      margin-right: 8px;
+      font-size: 14px;
+      line-height: 32px;
+      height: 32px;
+      padding: 0 16px;
+      border-radius: 29px;
+      background-color: fColor(bgTag);
+      color: fColor(colorTag);
+
+      &.category, &.time-worked {
+        color: fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+      }
+    }
+  }
+
+  > .etpt {
+    padding: 0 40px 0 26px;
+    background-color: fColor(cgreenlight);
+    display: flex;
+    align-items: center;
+
+    p {
+      font-size: 12px;
+      color: fColor(cgreen);
+      margin-right: 10px;
+    }
+  }
+}
+
+.indisponibility-panel {
+  background-color: white;
+  margin-bottom: 1px;
+  padding: 16px 24px 8px 24px;
+
+  > div {
+    height: 57px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: solid 1px fColor(cred);
+    background-color: fColor(credlight);
+    margin-right: 8px;
+    margin-bottom: 8px;
+    display: inline-flex;
+
+    div.icon {
+      margin-right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: fColor(cred);
+      }
+    }
+
+    div.text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      p {
+        font-size: 12px;
+        color: fColor(cgray);
+      }
+
+      p:last-child {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.activities-panel {
+  background-color: white;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 32px 18px 16px 18px;
+}

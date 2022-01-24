@@ -1,0 +1,40 @@
+<div class="header-panel">
+  <div class="tags">
+    <p *ngIf="dateStart" class="date">Du {{ dateStart | date:"dd" }} {{ getShortMonthString(dateStart) }} {{ dateStart |
+      date:"YYYY" }}</p>
+    <p *ngIf="dateStop" class="date">Au {{ dateStop | date:"dd" }} {{ getShortMonthString(dateStop) }} {{ dateStop |
+      date:"YYYY" }}</p>
+    <p *ngIf="category" class="category">{{ category }}</p>
+    <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+  </div>
+  <div class="etpt">
+    <p>ETP Travaillé :</p>
+    <etp-preview [etp]="etp - indisponibility" [indisponibility]="indisponibility"></etp-preview>
+  </div>
+</div>
+
+<div *ngIf="indisponibilities.length" class="indisponibility-panel">
+  <div *ngFor="let indisp of indisponibilities">
+    <div class="icon">
+      <mat-icon>event_busy</mat-icon>
+    </div>
+    <div class="text">
+      <p *ngIf="indisp.contentieux">{{ indisp.contentieux.label }}</p>
+      <p>
+        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date:"dd" }} {{
+          getShortMonthString(indisp.dateStart) }} {{ indisp.dateStart |
+          date:"YYYY" }}</ng-template>
+        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop"> au </ng-template>
+        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop"> jusqu'au </ng-template>
+        <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date:"dd" }} {{ getShortMonthString(indisp.dateStop)
+          }}
+          {{ indisp.dateStop |
+          date:"YYYY" }}</ng-template>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="activities-panel">
+  <panel-activities [etp]="etp" [activities]="activities"></panel-activities>
+</div>

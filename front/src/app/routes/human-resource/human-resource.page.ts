@@ -77,8 +77,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.formEditHR.get('posad')?.setValue((findUser.posad || 0) * 100);
       this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
       this.formEditHR.get('lastName')?.setValue(findUser.lastName || '');
-      this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
-      this.formEditHR.get('dateEnd')?.setValue(findUser.dateEnd || null);
       this.formEditHR.get('note')?.setValue(findUser.note || '');
       this.formEditHR
         .get('category')

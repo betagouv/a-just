@@ -1,0 +1,30 @@
+<div class="header-panel">
+  <div class="sub-item" *ngFor="let ref of referentiel">
+    <div class="text">
+      <div class="label">
+        <p>
+          <b>{{ referentielMappingName(ref.label) }}</b>
+        </p>
+      </div>
+      <div class="etp">
+        <p>{{ ref.totalAffected | number: "0.2-2" }}</p>
+      </div>
+      <div class="flex-1"></div>
+    </div>
+    <div class="color" [ngStyle]="{ 'background-color': referentielMappingColor(ref.label) }"></div>
+  </div>
+</div>
+
+<div class="activities-panel">
+  <div class="sub-item" *ngFor="let ref of referentiel">
+    <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)">
+    </progression-bar>
+  </div>
+</div>
+
+<div class="progress-bar" [ngClass]="{'low-completion': percentAffected < 70}">
+  <p>Taux d'affectation : {{ percentAffected | number:'0.0-0' }}%</p>
+  <div class="progress-bar-line">
+    <div [style.width.%]="percentAffected"></div>
+  </div>
+</div>

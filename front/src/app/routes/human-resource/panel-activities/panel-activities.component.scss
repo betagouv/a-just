@@ -1,0 +1,109 @@
+@import "../../../styles/utils.scss";
+
+:host {
+  display: block;
+}
+
+.header-panel {
+  display: flex;
+  height: 87px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  margin-bottom: 8px;
+
+  .sub-item {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+
+    &:first-child div.text {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    div.text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+      div {
+        display: flex;
+        align-items: center;
+
+        &.label {
+          flex: 2;
+        }
+
+        &.etp {
+          flex: 1;
+        }
+      }
+
+      p {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 0 2px;
+      }
+    }
+
+    div.color {
+      height: 8px;
+      opacity: 0.2;
+    }
+  }
+}
+
+.activities-panel {
+  display: flex;
+
+  > div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    progression-bar {
+      width: 95%;
+      height: 80px;
+    }
+  }
+}
+
+.progress-bar {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+
+  &.low-completion {
+    p {
+      color: fColor(cred);
+    }
+
+    .progress-bar-line > div {
+      background-color: fColor(cred);
+    }
+  }
+
+  p {
+    width: 155px;
+    font-size: 12px;
+    color: fColor(cgray);
+  }
+
+  .progress-bar-line {
+    flex: 1;
+    background-color: fColor(bgProgressBar);
+    height: 6px;
+    border-radius: 8px;
+    margin-left: 8px;
+
+    > div {
+      height: 100%;
+      background-color: fColor(lineProgressBar);
+      border-radius: 8px;
+    }
+  }
+}

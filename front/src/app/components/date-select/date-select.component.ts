@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, Output, EventEmitter, HostBinding } from '@angular/core';
 import { MainClass } from 'src/app/libs/main-class';
 
 @Component({
@@ -12,8 +12,10 @@ export class DateSelectComponent
 {
   @Input() title: string | null = null;
   @Input() icon: string = 'calendar_today';
-  @Input() value: Date | null = null;
+  @Input() value: Date | undefined | null = null;
+  @Input() readOnly: boolean = false;
   @Output() valueChange = new EventEmitter();
+  @HostBinding('class.read-only') onReadOnly: boolean = false;
   realValue: string = '';
 
   constructor() {
@@ -22,12 +24,13 @@ export class DateSelectComponent
 
   ngOnChanges() {
     this.findRealValue();
+    this.onReadOnly = this.readOnly;
   }
 
   findRealValue() {
     const now = new Date();
 
-    if (this.value) {
+    if (this.value && typeof this.value.getMonth === 'function') {
       if (
         now.getFullYear() === this.value.getFullYear() &&
         now.getMonth() === this.value.getMonth() &&

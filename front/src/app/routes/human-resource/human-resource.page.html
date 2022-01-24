@@ -1,5 +1,9 @@
-<aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)"
-  [actionTemplate]="actions">
+<aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations">
+
+  <panel-history-ventilation category="1 VP" [etp]="1" [indisponibilities]="activities">
+  </panel-history-ventilation>
+  <panel-history-ventilation category="1 VP" [etp]="0.8"></panel-history-ventilation>
+
   <div *ngIf="currentHR" class="profil">
     <div class="left-panel">
       <h3>Profil</h3>
@@ -12,16 +16,6 @@
         <input formControlName="etp" type="number" />
         <div class="label-aj">Temps de travail, depuis le début de l'année, en %</div>
         <input formControlName="posad" type="number" />
-        <div class="label-aj">Date d'arrivée dans la juridiction</div>
-        <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
-        <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDateStart></mat-datepicker>
-
-        <div class="label-aj">Date de sortie de la juridiction</div>
-        <input formControlName="dateEnd" [matDatepicker]="pickerDateEnd" />
-        <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDateEnd></mat-datepicker>
-
         <div class="label-aj">Commentaire libre</div>
         <textarea formControlName="note"></textarea>
 
@@ -95,5 +89,17 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <aj-rh-backup-panel></aj-rh-backup-panel>
+  <div class="actions">
+    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart" [readOnly]="true">
+    </aj-date-select>
+    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd" [readOnly]="true">
+    </aj-date-select>
+  </div>
+</ng-template>
+
+<ng-template #titleTemplate>
+  <div class="title">
+    <p class="page-name">Fiche individuelle de</p>
+    <p class="user-name">{{ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName) }}</p>
+  </div>
 </ng-template>

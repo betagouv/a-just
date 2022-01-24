@@ -28,8 +28,18 @@
 
 <div class="contener">
   <div class="header">
+    <div *ngIf="backUrl" class="back-url">
+      <a [routerLink]="backUrl">
+        <button class="outline blue small">
+          <mat-icon>chevron_left</mat-icon>Retour
+        </button>
+      </a>
+    </div>
     <h3 [innerHTML]="title"></h3>
     <p class="subtitle">{{ subtitle }}</p>
+    <ng-template [ngIf]="titleTemplate">
+      <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+    </ng-template>
     <div class="space"></div>
     <div class="actions">
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>

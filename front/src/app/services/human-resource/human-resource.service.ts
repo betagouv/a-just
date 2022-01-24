@@ -31,8 +31,19 @@ export class HumanResourceService {
   fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<
     HRFonctionInterface[]
   >([]);
+  allContentieuxReferentiel: ContentieuReferentielInterface[] = [];
 
-  constructor(private serverService: ServerService) {}
+  constructor(private serverService: ServerService) {
+    this.contentieuxReferentiel.subscribe(c => {
+      let list: ContentieuReferentielInterface[] = [];
+      c.map(cont => {
+        list.push(cont);
+        list = list.concat(cont.childrens || []);
+      });
+
+      this.allContentieuxReferentiel = list;
+    })
+  }
 
   initDatas() {
     this.backupId.subscribe((id) => {
@@ -41,6 +52,8 @@ export class HumanResourceService {
           this.hr.next(
             result.hr.map((h: HumanResourceInterface) => ({
               ...h,
+              dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
+              dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
               activities: (h.activities || []).map((a) => ({
                 ...a,
                 dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
