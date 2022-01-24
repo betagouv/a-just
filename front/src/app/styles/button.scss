@@ -7,6 +7,12 @@ button {
 	cursor: pointer;
 	-webkit-appearance: none;
   border-radius: 8px;
+  white-space: nowrap;
+
+  &.small {
+    height: 40px;
+    line-height: 37px;
+  }
 
 	&:focus {
 		outline: none;
@@ -15,5 +21,19 @@ button {
   &.primary {
     color: white;
     background-color: fColor(cbluedark);
+  }
+
+  &.outline {
+    &.blue {
+      color: fColor(primary);
+      border: 1px solid fColor(primary);
+      background-color: transparent;
+    }
+  }
+
+  mat-icon {
+    margin-right: 8px;
+    position: relative;
+    top: 6px;
   }
 }

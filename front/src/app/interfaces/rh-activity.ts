@@ -1,3 +1,5 @@
+import { ContentieuReferentielInterface } from "./contentieu-referentiel";
+
 export interface RHActivityInterface {
 	id: number;
 	codeNac?: string;
@@ -6,4 +8,5 @@ export interface RHActivityInterface {
 	referentielId: number;
 	dateStart?: Date;
 	dateStop?: Date;
+	contentieux?: ContentieuReferentielInterface;
 }

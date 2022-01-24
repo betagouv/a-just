@@ -5,7 +5,7 @@ import {
 } from '../utils/referentiel';
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers';
-import { getMonthString } from '../utils/dates';
+import { getMonthString, getShortMonthString } from '../utils/dates';
 
 export class MainClass {
   watcherList: Subscription[] = [];
@@ -47,9 +47,13 @@ export class MainClass {
     return item.id;
   }
 
-  public getMonthString(date: Date) {
-    return getMonthString(date)
+  public getMonthString(date: Date | undefined): string {
+    return date ? getMonthString(date) : ''
   }
+
+  public getShortMonthString(date: Date | undefined): string {
+    return date ? getShortMonthString(date) : ''
+  }  
 
   public getCategoryColor(label: string, opacity: number = 1) {
     switch(label) {

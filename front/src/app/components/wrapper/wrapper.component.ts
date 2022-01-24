@@ -20,8 +20,10 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() actionTemplate: TemplateRef<any> | undefined;
+  @Input() titleTemplate: TemplateRef<any> | undefined;
   @Input() title: string = '';
   @Input() subtitle: string = '';
+  @Input() backUrl: string = '';
   hrBackup: BackupInterface | undefined;
   hrBackups: BackupInterface[] = [];
   menu = [

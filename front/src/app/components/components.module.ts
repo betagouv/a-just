@@ -16,6 +16,8 @@ import { SelectCheckAllComponent } from './select-check-all/select-check-all.com
 import { SelectComponent } from './select/select.component';
 import { DateSelectComponent } from './date-select/date-select.component';
 import { InputButtonComponent } from './input-button/input-button.component';
+import { EtpPreviewComponent } from './etp-preview/etp-preview.component';
+import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 
 const list = [
   WrapperComponent,
@@ -31,6 +33,8 @@ const list = [
   SelectComponent,
   DateSelectComponent,
   InputButtonComponent,
+  EtpPreviewComponent,
+  ProgressionBarComponent,
 ];
 
 @NgModule({
