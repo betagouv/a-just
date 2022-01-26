@@ -61,11 +61,13 @@
 
   <div class="comment">
     <div class="header-comment">
-      <img src="" />
-      <p><b>Commentaire</b><br />Enregistré le xxxx</p>
+      <mat-icon>message</mat-icon>
+      <p><b>Commentaire</b><br />
+        <ng-template [ngIf]="commentUpdatedAt">Enregistré {{ formatDate(commentUpdatedAt) }}</ng-template>
+      </p>
     </div>
 
-    <textarea>Salut</textarea>
+    <textarea placeholder="Commentaire" [ngModel]="comment" (ngModelChange)="updateComment($event)"></textarea>
 
   </div>
 </div>

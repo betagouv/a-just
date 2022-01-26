@@ -176,5 +176,28 @@ export default (sequelizeInstance, Model) => {
     }
   } 
 
+  Model.haveAccess = async (HRId, userId) => {
+    const hr = await Model.findOne({
+      attributes: ['id'],
+      where: { 
+        id: HRId,
+      },
+      include: [{
+        attributes: ['id'],
+        model: Model.models.Juridictions,
+        include: [{
+          attributes: ['id'],
+          model: Model.models.UserJuridictions,
+          where: {
+            user_id: userId,
+          },
+        }],
+      }],
+      raw: true,
+    })
+
+    return hr ? true : false
+  }
+
   return Model
 }

@@ -2,7 +2,7 @@
   class="content-margin-null">
   <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [category]="h.category"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-    [dateStop]="h.dateStop"></actual-panel-situation>
+    [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [category]="h.category"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop">

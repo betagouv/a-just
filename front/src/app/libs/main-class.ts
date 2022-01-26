@@ -63,4 +63,25 @@ export class MainClass {
 
     return `rgba(239, 203, 58, ${opacity})`;
   }
+
+  public formatDate(date: Date) {
+    if(!date) {
+      return '';
+    }
+    
+    const now = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    let stringDate = '';
+
+    if(now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {
+      stringDate = 'aujourd\'hui'
+    } else if(yesterday.getFullYear() === date.getFullYear() && yesterday.getMonth() === date.getMonth() && yesterday.getDate() === date.getDate()) {
+      stringDate = 'hier'
+    } else {
+      stringDate = `le ${(date.getDate()+'').padStart(2, '0')} ${this.getShortMonthString(date)} ${date.getFullYear()}`
+    }
+
+    return `${stringDate} à ${(date.getHours()+'').padStart(2, '0')}:${(date.getMinutes()+'').padStart(2, '0')}`
+  }
 }
