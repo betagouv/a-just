@@ -32,6 +32,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   contentieuxReferentiel: ContentieuReferentielInterface[] = [];
   currentHR: HumanResourceInterface | null = null;
   activities: RHActivityInterface[] = [];
+  categoryName: string = '';
   histories: HistoryInterface[] = [];
   formEditHR = new FormGroup({
     etp: new FormControl(null, [Validators.required]),
@@ -88,6 +89,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
       this.currentHR = findUser;
+
+      const findCategory = this.categories.find(c => c.id === this.currentHR?.category.id)
+      this.categoryName = findCategory ? findCategory.label.toLowerCase() : ''
+
+
       this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
       this.formEditHR.get('posad')?.setValue((findUser.posad || 0) * 100);
       this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
@@ -105,6 +111,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     } else {
       this.currentHR = null;
       this.formEditHR.reset();
+      this.categoryName = '';
     }
 
     this.formatHRHistory();
