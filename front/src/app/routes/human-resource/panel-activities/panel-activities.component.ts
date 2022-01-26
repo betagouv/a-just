@@ -42,8 +42,13 @@ export class PanelActivitiesComponent
   }
 
   onLoadReferentiel() {
-    this.referentiel = this.humanResourceService.contentieuxReferentiel
-      .getValue()
+    this.referentiel = (
+      JSON.parse(
+        JSON.stringify(
+          this.humanResourceService.contentieuxReferentiel.getValue()
+        )
+      ) as ContentieuReferentielInterface[]
+    )
       .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
       .map((ref) => {
         const activity = this.activities.find(
@@ -51,14 +56,16 @@ export class PanelActivitiesComponent
         );
 
         ref.percent = activity && activity.percent ? activity.percent : 0;
-        ref.totalAffected = ref.percent * (this.etp || 0) / 100;
+        ref.totalAffected = (ref.percent * (this.etp || 0)) / 100;
         return ref;
       });
 
     this.percentAffected = sumBy(
       this.activities.filter(
-        (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) === -1
-        && this.referentielService.mainActivitiesId.indexOf(r.referentielId) !== -1
+        (r) =>
+          this.referentielService.idsIndispo.indexOf(r.referentielId) === -1 &&
+          this.referentielService.mainActivitiesId.indexOf(r.referentielId) !==
+            -1
       ),
       'percent'
     );

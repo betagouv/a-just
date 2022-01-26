@@ -34,15 +34,15 @@ export class HumanResourceService {
   allContentieuxReferentiel: ContentieuReferentielInterface[] = [];
 
   constructor(private serverService: ServerService) {
-    this.contentieuxReferentiel.subscribe(c => {
+    this.contentieuxReferentiel.subscribe((c) => {
       let list: ContentieuReferentielInterface[] = [];
-      c.map(cont => {
+      c.map((cont) => {
         list.push(cont);
         list = list.concat(cont.childrens || []);
       });
 
       this.allContentieuxReferentiel = list;
-    })
+    });
   }
 
   initDatas() {
@@ -177,7 +177,7 @@ export class HumanResourceService {
         juridictionId,
       })
       .then((r) => {
-        if(!silentSave) {
+        if (!silentSave) {
           alert('Enregistrement OK !');
           this.backupId.next(r.data);
         }
@@ -238,5 +238,26 @@ export class HumanResourceService {
     }
 
     return false;
+  }
+
+  filterActivitiesByDate(list: RHActivityInterface[], date: Date): RHActivityInterface[] {
+    return JSON.parse(JSON.stringify((list || []).filter((a: any) => {
+      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
+      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+
+      return (
+        (dateStart === null && dateStop === null) ||
+        (dateStart &&
+          dateStart.getTime() <= date.getTime() &&
+          dateStop === null) ||
+        (dateStart === null &&
+          dateStop &&
+          dateStop.getTime() >= date.getTime()) ||
+        (dateStart &&
+          dateStart.getTime() <= date.getTime() &&
+          dateStop &&
+          dateStop.getTime() >= date.getTime())
+      );
+    })));
   }
 }

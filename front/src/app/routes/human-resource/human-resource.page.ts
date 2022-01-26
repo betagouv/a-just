@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { sumBy } from 'lodash';
+import { maxBy, minBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
@@ -11,6 +11,16 @@ import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service';
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+
+interface HistoryInterface {
+  category: string; // 1 VP
+  etp: number; // 1 ou 0.8
+  indisponibilities: RHActivityInterface[];
+  activities: RHActivityInterface[];
+  dateStart: Date;
+  dateStop: Date;
+}
 
 @Component({
   templateUrl: './human-resource.page.html',
@@ -22,6 +32,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   contentieuxReferentiel: ContentieuReferentielInterface[] = [];
   currentHR: HumanResourceInterface | null = null;
   activities: RHActivityInterface[] = [];
+  histories: HistoryInterface[] = [];
   formEditHR = new FormGroup({
     etp: new FormControl(null, [Validators.required]),
     posad: new FormControl(null, [Validators.required]),
@@ -36,6 +47,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   constructor(
     private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
@@ -58,7 +70,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       )
     );
     this.watch(this.humanResourceService.hr.subscribe(() => this.onLoad()));
-    this.hrFonctionService.getAll().then((list) => (this.fonctions = list));
+    this.hrFonctionService.getAll().then((list) => {
+      this.fonctions = list;
+      this.onLoad();
+    });
     this.hrCategoryService.getAll().then((list) => (this.categories = list));
   }
 
@@ -91,32 +106,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR = null;
       this.formEditHR.reset();
     }
+
+    this.formatHRHistory();
   }
 
   calculTotalTmpActivity(activities: RHActivityInterface[]) {
-    const now = new Date();
-    activities = (activities || []).filter((a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
-
-      return (
-        (dateStart === null && dateStop === null) ||
-        (dateStart &&
-          dateStart.getTime() <= now.getTime() &&
-          dateStop === null) ||
-        (dateStart === null &&
-          dateStop &&
-          dateStop.getTime() >= now.getTime()) ||
-        (dateStart &&
-          dateStart.getTime() <= now.getTime() &&
-          dateStop &&
-          dateStop.getTime() >= now.getTime())
-      );
-    });
+    activities = this.humanResourceService.filterActivitiesByDate(
+      activities || [],
+      new Date()
+    );
 
     return sumBy(
       activities.filter((ca) => {
-        return this.contentieuxReferentiel.find((r) => r.id === ca.referentielId)
+        return this.contentieuxReferentiel.find(
+          (r) => r.id === ca.referentielId
+        )
           ? true
           : false;
       }),
@@ -146,7 +150,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.dateStart = dateStart;
       this.currentHR.dateEnd = dateEnd;
       this.currentHR.note = note;
-      this.currentHR.category = this.categories.find((c) => c.id === +category) || { id: -1, label: 'not found'};
+      this.currentHR.category = this.categories.find(
+        (c) => c.id === +category
+      ) || { id: -1, label: 'not found' };
       this.currentHR.fonction = this.fonctions.find((f) => f.id === +fonction);
       this.currentHR.activities = (this.activities || []).map((a) => ({
         ...a,
@@ -190,5 +196,68 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     ) {
       this.router.navigate(['/ventilations']);
     }
+  }
+
+  formatHRHistory() {
+    if(this.fonctions.length === 0 || !this.currentHR) {
+      return;
+    }
+
+    this.histories = [];
+    const activities = (
+      (this.currentHR && this.currentHR.activities) ||
+      []
+    ).filter((a) => a.percent);
+
+    const max = maxBy(
+      activities.filter((a) => a.dateStop),
+      function (o) {
+        return o.dateStop?.getTime();
+      }
+    );
+    const maxDate = max && max.dateStop ? new Date(max.dateStop) : new Date();
+    const min = minBy(
+      activities.filter((a) => a.dateStart),
+      function (o) {
+        return o.dateStart?.getTime();
+      }
+    );
+    const minDate = min && min.dateStart ? new Date(min.dateStart) : new Date();
+    const fonction = this.fonctions.find(f => f.id === this.currentHR?.category.id);
+
+    const currentDate = new Date(maxDate);
+    let idOfActivities: number[] = [];
+    while (currentDate.getTime() > minDate.getTime()) {
+      const findedActivities = this.humanResourceService.filterActivitiesByDate(activities, currentDate);
+
+      if(JSON.stringify(idOfActivities) !== JSON.stringify(findedActivities.map(f => f.id))) {
+        idOfActivities = findedActivities.map(f => f.id);
+        // new list
+        this.histories.push({
+          category: fonction && fonction.code || '',
+          etp: this.currentHR && this.currentHR.etp || 0,
+          indisponibilities: findedActivities.filter(
+            (r) => this.referentielService.idsIndispo.indexOf(r.id) !== -1
+          ),
+          activities: findedActivities,
+          dateStart: new Date(),
+          dateStop: new Date(currentDate),
+        });
+      }
+      
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    // place date start
+    this.histories = this.histories.map((h, index) => {
+      const dateStop = index + 1 < this.histories.length ? new Date(this.histories[index + 1].dateStop) : new Date(minDate);
+      dateStop.setDate(dateStop.getDate() + 1);
+      h.dateStart = new Date(dateStop);
+      return h;
+    })
+  }
+
+  trackByDate(index: number, item: any) {
+    return item.dateStart;
   }
 }

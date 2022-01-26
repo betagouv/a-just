@@ -1,0 +1,71 @@
+<div class="header-panel">
+  <div class="situation">
+    <p>Situation administrative :</p>
+    <div class="tags">
+      <p *ngIf="category" class="category">{{ category }}</p>
+      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+    </div>
+  </div>
+  <div class="etp">
+    <p>ETP Travaillé :</p>
+    <etp-preview [etp]="etp - indisponibility" [width]="56" [height]="56" [indisponibility]="indisponibility">
+    </etp-preview>
+  </div>
+  <div class="indisponibilities" *ngIf="indisponibilities.length">
+    <img src="/assets/images/a-just-fleche.svg" />
+    <p>Indisponibilités :</p>
+    <div>
+      <div *ngFor="let indisp of indisponibilities">
+        <div class="icon">
+          <mat-icon>event_busy</mat-icon>
+        </div>
+        <div class="text">
+          <p *ngIf="indisp.label">{{ indisp.label }}</p>
+          <p>
+            <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+              {{ getShortMonthString(indisp.dateStart) }}
+              {{ indisp.dateStart | date: "YYYY" }}</ng-template>
+            <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
+              au
+            </ng-template>
+            <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
+              jusqu'au
+            </ng-template>
+            <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+              {{ getShortMonthString(indisp.dateStop) }}
+              {{ indisp.dateStop | date: "YYYY" }}</ng-template>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="details">
+  <div class="activities-panel">
+    <div>
+      <p>Répartition actuelle du temps disponible par activités</p>
+      <div class="tags">
+        <p *ngIf="dateStart" class="date">
+          <mat-icon>calendar_today</mat-icon>Depuis le {{ dateStart | date: "dd" }}
+          {{ getShortMonthString(dateStart) }} {{ dateStart | date: "YYYY" }}
+        </p>
+        <p *ngIf="dateStop" class="date">
+          <mat-icon>calendar_today</mat-icon>Jusqu'au {{ dateStop | date: "dd" }}
+          {{ getShortMonthString(dateStop) }} {{ dateStop | date: "YYYY" }}
+        </p>
+      </div>
+    </div>
+    <panel-activities [etp]="etp" [activities]="activities"></panel-activities>
+  </div>
+
+  <div class="comment">
+    <div class="header-comment">
+      <img src="" />
+      <p><b>Commentaire</b><br />Enregistré le xxxx</p>
+    </div>
+
+    <textarea>Salut</textarea>
+
+  </div>
+</div>
