@@ -142,8 +142,9 @@
       display: flex;
       align-items: center;
 
-      img {
+      mat-icon {
         margin-right: 16px;
+        color: fColor(borderProgressBar);
       }
 
       p {
