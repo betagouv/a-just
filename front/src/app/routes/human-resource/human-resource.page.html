@@ -1,8 +1,12 @@
-<aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations">
-
-  <panel-history-ventilation category="1 VP" [etp]="1" [indisponibilities]="activities">
+<aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
+  class="content-margin-null">
+  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [category]="h.category"
+    [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+    [dateStop]="h.dateStop"></actual-panel-situation>
+  <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [category]="h.category"
+    [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+    [dateStop]="h.dateStop">
   </panel-history-ventilation>
-  <panel-history-ventilation category="1 VP" [etp]="0.8"></panel-history-ventilation>
 
   <div *ngIf="currentHR" class="profil">
     <div class="left-panel">
@@ -14,19 +18,25 @@
         <input formControlName="lastName" />
         <div class="label-aj">Temps de travail en %</div>
         <input formControlName="etp" type="number" />
-        <div class="label-aj">Temps de travail, depuis le début de l'année, en %</div>
+        <div class="label-aj">
+          Temps de travail, depuis le début de l'année, en %
+        </div>
         <input formControlName="posad" type="number" />
         <div class="label-aj">Commentaire libre</div>
         <textarea formControlName="note"></textarea>
 
         <div class="label-aj">Catégorie</div>
         <select formControlName="category">
-          <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">
+            {{cat.label}}
+          </option>
         </select>
 
         <div class="label-aj">Fonction</div>
         <select formControlName="fonction">
-          <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
+          <option *ngFor="let fonc of fonctions" [value]="fonc.id">
+            {{fonc.label}}
+          </option>
         </select>
 
         <div class="actions">
@@ -52,8 +62,9 @@
               <ng-template ngFor let-ref [ngForOf]="contentieuxReferentiel">
                 <option [value]="ref.id">{{ref.label}}</option>
                 <ng-template [ngIf]="ref.childrens">
-                  <option *ngFor="let subChild of ref.childrens" [value]="subChild.id">{{ref.label}} -
-                    {{subChild.label}}</option>
+                  <option *ngFor="let subChild of ref.childrens" [value]="subChild.id">
+                    {{ref.label}} - {{subChild.label}}
+                  </option>
                 </ng-template>
               </ng-template>
             </select>
@@ -70,8 +81,7 @@
             <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
             <mat-datepicker #pickerActiDateStop></mat-datepicker>
           </div>
-          <div>
-          </div>
+          <div></div>
           <div>
             <button (click)="activities.splice(index, 1)">Supprimer</button>
           </div>
@@ -80,12 +90,11 @@
         <hr />
       </ng-template>
 
-      <button
-        (click)="activities.push({id: activities.length * -1, referentielId: contentieuxReferentiel[0].id})">Ajouter une
-        activité</button>
+      <button (click)="activities.push({id: activities.length * -1, referentielId: contentieuxReferentiel[0].id})">
+        Ajouter une activité
+      </button>
     </div>
   </div>
-
 </aj-wrapper>
 
 <ng-template #actions>
@@ -100,6 +109,9 @@
 <ng-template #titleTemplate>
   <div class="title">
     <p class="page-name">Fiche individuelle de</p>
-    <p class="user-name">{{ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName) }}</p>
+    <p class="user-name">
+      {{ (currentHR && currentHR.firstName) +' '+ (currentHR &&
+      currentHR.lastName) }}
+    </p>
   </div>
 </ng-template>

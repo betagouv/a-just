@@ -16,9 +16,9 @@ import { fixDecimal } from 'src/app/utils/numbers';
 export class EtpPreviewComponent implements OnChanges {
   @Input() etp: number = 0;
   @Input() indisponibility: number = 0;
+  @Input() width: number = 40;
+  @Input() height: number = 40;
   @ViewChild('canvas') domCanvas: ElementRef | null = null;
-  width: number = 40;
-  height: number = 40;
   margin: number = 8;
   borderWidth: number = 6;
 

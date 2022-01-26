@@ -1,2 +1,3 @@
-<div class="preview">{{ etp }}</div>
+<div class="preview" [style.width.px]="width" [style.height.px]="height" [style.line-height.px]="height"
+  [style.font-size.px]="height * 12 / 40">{{ etp }}</div>
 <canvas #canvas [width]="width" [height]="height"></canvas>
