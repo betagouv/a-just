@@ -4,6 +4,8 @@
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
 
+  <add-ventilation [human]="currentHR" (ventilationChange)="onNewVentilation($event)"></add-ventilation>
+
   <p *ngIf="histories.length > 1" class="title-history">Situations antérieures du {{ categoryName }}</p>
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [category]="h.category"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
@@ -20,10 +22,6 @@
         <input formControlName="lastName" />
         <div class="label-aj">Temps de travail en %</div>
         <input formControlName="etp" type="number" />
-        <div class="label-aj">
-          Temps de travail, depuis le début de l'année, en %
-        </div>
-        <input formControlName="posad" type="number" />
         <div class="label-aj">Commentaire libre</div>
         <textarea formControlName="note"></textarea>
 

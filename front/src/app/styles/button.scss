@@ -12,6 +12,7 @@ button {
   &.small {
     height: 40px;
     line-height: 37px;
+    border-radius: 4px;
   }
 
 	&:focus {
@@ -23,11 +24,16 @@ button {
     background-color: fColor(cbluedark);
   }
 
+  &.red {
+    color: white;
+    background-color: fColor(cred);
+  }
+
   &.outline {
-    &.blue {
+    &.blue, &.primary {
       color: fColor(primary);
       border: 1px solid fColor(primary);
-      background-color: transparent;
+      background-color: white;
     }
   }
 

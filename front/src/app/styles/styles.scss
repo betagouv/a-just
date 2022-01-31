@@ -30,3 +30,9 @@ body { margin: 0; font-family: Marianne; }
 .hide {
 	display: none;
 }
+
+.grid-double {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 8px;
+}

@@ -147,7 +147,6 @@ export default (sequelizeInstance, Model) => {
 
       const options = {
         etp: hr.etp || 0,
-        posad: hr.posad || 0,
         first_name: hr.firstName || null,
         last_name: hr.lastName || null,
         date_entree: hr.dateStart || null,

@@ -80,7 +80,7 @@
                 <div class="name">{{ hr.firstName}} {{ hr.lastName}}</div>
                 <div class="tags">
                   <p class="function" [style.background-color]="list.textColor">{{ hr.fonction && hr.fonction.code}}</p>
-                  <p class="posad">{{ hr.posadLabel }}</p>
+                  <p class="etp">{{ hr.etpLabel }}</p>
                   <p class="unavailable" *ngIf="hr.hasIndisponibility">
                     <mat-icon>warning_amber</mat-icon> indispo
                   </p>
@@ -89,8 +89,8 @@
               <div class="read-etp" [style.background-color]="list.bgColor">
                 <div>
                   <p class="label" [style.color]="list.textColor">ETP Travaillé :</p>
-                  <etp-preview [etp]="(hr.posad || 0) - hr.hasIndisponibility"
-                    [indisponibility]="hr.hasIndisponibility"></etp-preview>
+                  <etp-preview [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility">
+                  </etp-preview>
                 </div>
               </div>
             </div>

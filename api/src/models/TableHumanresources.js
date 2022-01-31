@@ -10,7 +10,7 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'posad', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
       where: {
         backup_id: backupId,
       }, 
@@ -28,7 +28,6 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         etp: list[i].etp,
-        posad: list[i].posad,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         dateStart: list[i].date_entree,
@@ -111,21 +110,17 @@ export default (sequelizeInstance, Model) => {
         options.hr_fonction_id = findFonction.id
       }
 
-      if(HRFromList.etp_t) {
-        options.etp = parseFloat(HRFromList.etp_t)
-      }
-
       if(HRFromList.posad) {
         const posadNumber = parseInt(HRFromList.posad)
         if(!isNaN(posadNumber)) {
-          options.posad = posadNumber / 100
+          options.etp = posadNumber / 100
         } else {
-          options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
+          options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
         }
       }
 
       if(HRFromList["%_d'activite"]) {
-        options.posad = HRFromList["%_d'activite"]
+        options.etp = HRFromList["%_d'activite"]
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {
