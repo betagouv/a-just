@@ -4,97 +4,16 @@
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
 
-  <add-ventilation [human]="currentHR" (ventilationChange)="onNewVentilation($event)"></add-ventilation>
+  <add-ventilation [human]="currentHR" [activities]="lastActivities" [indisponibilities]="lastIndisponibilities"
+    (ventilationChange)="onNewVentilation($event)"></add-ventilation>
 
-  <p *ngIf="histories.length > 1" class="title-history">Situations antérieures du {{ categoryName }}</p>
+  <p *ngIf="histories.length > 1" class="title-history">
+    Situations antérieures du {{ categoryName }}
+  </p>
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [category]="h.category"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop">
   </panel-history-ventilation>
-
-  <div *ngIf="currentHR" class="profil">
-    <div class="left-panel">
-      <h3>Profil</h3>
-      <form [formGroup]="formEditHR" (submit)="onEdit()">
-        <div class="label-aj">Prénom</div>
-        <input formControlName="firstName" />
-        <div class="label-aj">Nom</div>
-        <input formControlName="lastName" />
-        <div class="label-aj">Temps de travail en %</div>
-        <input formControlName="etp" type="number" />
-        <div class="label-aj">Commentaire libre</div>
-        <textarea formControlName="note"></textarea>
-
-        <div class="label-aj">Catégorie</div>
-        <select formControlName="category">
-          <option *ngFor="let cat of categories" [value]="cat.id">
-            {{cat.label}}
-          </option>
-        </select>
-
-        <div class="label-aj">Fonction</div>
-        <select formControlName="fonction">
-          <option *ngFor="let fonc of fonctions" [value]="fonc.id">
-            {{fonc.label}}
-          </option>
-        </select>
-
-        <div class="actions">
-          <button type="submit">Appliquer</button>
-          <button type="button" (click)="onRemoveRH()">Supprimer</button>
-          <button type="button" (click)="onReset()">Réinitialiser</button>
-          <a routerLink="/ventilations">Retour</a>
-        </div>
-      </form>
-    </div>
-    <div class="right-panel">
-      <h3>Activités</h3>
-
-      <ng-template ngFor let-acti [ngForOf]="activities" let-index="index">
-        <div class="activities">
-          <div>
-            <div class="label-aj">Temps de travail en %</div>
-            <input [(ngModel)]="acti.percent" type="number" />
-          </div>
-          <div>
-            <div class="label-aj">Activité</div>
-            <select [(ngModel)]="acti.referentielId">
-              <ng-template ngFor let-ref [ngForOf]="contentieuxReferentiel">
-                <option [value]="ref.id">{{ref.label}}</option>
-                <ng-template [ngIf]="ref.childrens">
-                  <option *ngFor="let subChild of ref.childrens" [value]="subChild.id">
-                    {{ref.label}} - {{subChild.label}}
-                  </option>
-                </ng-template>
-              </ng-template>
-            </select>
-          </div>
-          <div>
-            <div class="label-aj">Date de début</div>
-            <input [(ngModel)]="acti.dateStart" [matDatepicker]="pickerActiDateStart" />
-            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStart"></mat-datepicker-toggle>
-            <mat-datepicker #pickerActiDateStart></mat-datepicker>
-          </div>
-          <div>
-            <div class="label-aj">Date de fin</div>
-            <input [(ngModel)]="acti.dateStop" [matDatepicker]="pickerActiDateStop" />
-            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
-            <mat-datepicker #pickerActiDateStop></mat-datepicker>
-          </div>
-          <div></div>
-          <div>
-            <button (click)="activities.splice(index, 1)">Supprimer</button>
-          </div>
-        </div>
-
-        <hr />
-      </ng-template>
-
-      <button (click)="activities.push({id: activities.length * -1, referentielId: contentieuxReferentiel[0].id})">
-        Ajouter une activité
-      </button>
-    </div>
-  </div>
 </aj-wrapper>
 
 <ng-template #actions>
