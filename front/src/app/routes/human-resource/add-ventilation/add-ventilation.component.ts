@@ -25,13 +25,13 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() human: HumanResourceInterface | null = null;
+  @Input() indisponibilities: RHActivityInterface[] = [];
+  @Input() activities: RHActivityInterface[] = [];
   @Output() ventilationChange = new EventEmitter();
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
-  showNewVentilation: boolean = true;
+  showNewVentilation: boolean = false;
   categories: HRCategoryInterface[] = [];
   fonctions: HRFonctionInterface[] = [];
-  indisponibilities: RHActivityInterface[] = [];
-  activities: RHActivityInterface[] = [];
   updateIndisponiblity: RHActivityInterface | null = null;
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
@@ -96,14 +96,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue(
         (this.human && this.human.fonction && this.human.fonction.id) || null
       );
-
-    const activities = (this.human && this.human.activities) || [];
-    this.indisponibilities = activities.filter(
-      (r) => this.referentielService.idsIndispo.indexOf(r.id) !== -1
-    );
-    this.activities = activities.filter(
-      (r) => this.referentielService.idsIndispo.indexOf(r.id) === -1
-    );
   }
 
   ngOnDestroy(): void {

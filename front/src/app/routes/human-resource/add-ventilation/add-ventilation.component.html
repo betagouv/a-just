@@ -100,7 +100,7 @@
 
     <div class="activities">
       <p>Répartition du temps disponible</p>
-      <panel-activities></panel-activities>
+      <panel-activities [activities]="activities" [etp]="(human && human.etp) || 0"></panel-activities>
     </div>
 
     <div class="actions">

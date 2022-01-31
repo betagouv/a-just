@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { maxBy, minBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
@@ -31,25 +30,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   fonctions: HRFonctionInterface[] = [];
   contentieuxReferentiel: ContentieuReferentielInterface[] = [];
   currentHR: HumanResourceInterface | null = null;
-  activities: RHActivityInterface[] = [];
   categoryName: string = '';
   histories: HistoryInterface[] = [];
-  formEditHR = new FormGroup({
-    etp: new FormControl(null, [Validators.required]),
-    firstName: new FormControl(null, [Validators.required]),
-    lastName: new FormControl(null, [Validators.required]),
-    dateStart: new FormControl(null),
-    dateEnd: new FormControl(null),
-    note: new FormControl(null),
-    fonction: new FormControl(null, [Validators.required]),
-    category: new FormControl(null, [Validators.required]),
-  });
+  lastActivities: RHActivityInterface[] = [];
+  lastIndisponibilities: RHActivityInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
-    private router: Router,
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService
   ) {
@@ -89,26 +78,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (findUser) {
       this.currentHR = findUser;
 
-      const findCategory = this.categories.find(c => c.id === this.currentHR?.category.id)
-      this.categoryName = findCategory ? findCategory.label.toLowerCase() : ''
-
-
-      this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
-      this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
-      this.formEditHR.get('lastName')?.setValue(findUser.lastName || '');
-      this.formEditHR.get('note')?.setValue(findUser.note || '');
-      this.formEditHR
-        .get('category')
-        ?.setValue((findUser.category && findUser.category.id) || null);
-      this.formEditHR
-        .get('fonction')
-        ?.setValue((findUser.fonction && findUser.fonction.id) || null);
-      this.activities = JSON.parse(
-        JSON.stringify((findUser.activities || []).filter((a) => a.percent))
-      );
+      const findCategory = this.categories.find(c => c.id === this.currentHR?.category.id);
+      this.categoryName = findCategory ? findCategory.label.toLowerCase() : '';
     } else {
       this.currentHR = null;
-      this.formEditHR.reset();
       this.categoryName = '';
     }
 
@@ -133,7 +106,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  onEdit() {
+  /*onEdit() {
     if (this.formEditHR.invalid) {
       alert("Vous devez saisir l'ensemble des champs !");
     } else if (this.currentHR) {
@@ -186,20 +159,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.router.navigate(['/ventilations']);
       }
     }
-  }
-
-  onReset() {
-    this.onLoad();
-  }
-
-  onRemoveRH() {
-    if (
-      this.currentHR &&
-      this.humanResourceService.removeHrById(this.currentHR.id)
-    ) {
-      this.router.navigate(['/ventilations']);
-    }
-  }
+  }*/
 
   formatHRHistory() {
     if(this.fonctions.length === 0 || !this.currentHR) {
@@ -257,7 +217,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       dateStop.setDate(dateStop.getDate() + 1);
       h.dateStart = new Date(dateStop);
       return h;
-    })
+    });
+
+    this.lastActivities = this.histories.length ? this.histories[0].activities : [];
+    this.lastIndisponibilities = this.histories.length ? this.histories[0].indisponibilities : [];
   }
 
   trackByDate(index: number, item: any) {
