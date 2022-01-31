@@ -4,7 +4,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { fixDecimal } from 'src/app/utils/numbers';
-import { posadLabel } from 'src/app/utils/referentiel';
+import { etpLabel } from 'src/app/utils/referentiel';
 
 @Component({
   selector: 'panel-history-ventilation',
@@ -37,6 +37,6 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
       return i;
     })
 
-    this.timeWorked = posadLabel(this.etp);
+    this.timeWorked = etpLabel(this.etp);
   }
 }

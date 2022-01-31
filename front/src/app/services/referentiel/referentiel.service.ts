@@ -41,11 +41,14 @@ export class ReferentielService {
 
       const refIndispo = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
+      this.humanResourceService.allIndisponibilityReferentiel = [];
       if (refIndispo) {
         this.idsMainIndispo = refIndispo.id;
+        this.humanResourceService.allIndisponibilityReferentiel.push(refIndispo);
         idsIndispo.push(refIndispo.id);
         (refIndispo.childrens || []).map((c) => {
           idsIndispo.push(c.id);
+          this.humanResourceService.allIndisponibilityReferentiel.push(c);
         });
       }
       this.idsIndispo = idsIndispo;

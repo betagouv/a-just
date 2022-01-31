@@ -11,12 +11,12 @@ import { fixDecimal } from 'src/app/utils/numbers';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { copyArray } from 'src/app/utils/array';
-import { posadLabel } from 'src/app/utils/referentiel';
+import { etpLabel } from 'src/app/utils/referentiel';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
   tmpActivities?: any;
-  posadLabel: string;
+  etpLabel: string;
   hasIndisponibility: number;
   currentActivities: RHActivityInterface[];
   percentAffected: number;
@@ -127,7 +127,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           (a) => idsOfRef.indexOf(a.referentielId) !== -1
         );
         if(activities.length) {
-          etpt += ((h.posad || 0) - h.hasIndisponibility) * (sumBy(activities, 'percent')) / 100;
+          etpt += ((h.etp || 0) - h.hasIndisponibility) * (sumBy(activities, 'percent')) / 100;
         }
       });
 
@@ -142,7 +142,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   calculateTotalOccupation() {
     this.humanResources.map((hr) => {
       const percentAffected = this.calculWorkTime(hr);
-      hr.workTime = (hr.posad || 0) * percentAffected;
+      hr.workTime = (hr.etp || 0) * percentAffected;
       hr.percentAffected = percentAffected * 100;
     });
   }
@@ -285,7 +285,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           ...h,
           currentActivities,
           opacity: this.checkHROpacity(h),
-          posadLabel: posadLabel(h.posad || 0),
+          etpLabel: etpLabel(h.etp || 0),
           hasIndisponibility,
           percentAffected: 0,
         };
@@ -351,7 +351,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               ref.totalAffected =
                 (ref.totalAffected || 0) +
                 (timeAffected / 100) *
-                  ((hr.posad || 0) - hr.hasIndisponibility);
+                  ((hr.etp || 0) - hr.hasIndisponibility);
             }
 
             return ref;

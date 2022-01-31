@@ -9,9 +9,10 @@ import { MaterialModule } from 'src/app/libs/material.module';
 import { PanelHistoryVentilationComponent } from './panel-history-ventilation/panel-history-ventilation.component';
 import { PanelActivitiesComponent } from './panel-activities/panel-activities.component';
 import { ActualPanelSituationComponent } from './actual-panel-situation/actual-panel-situation.component';
+import { AddVentilationComponent } from './add-ventilation/add-ventilation.component';
 
 @NgModule({
-  declarations: [HumanResourcePage, PanelHistoryVentilationComponent, PanelActivitiesComponent, ActualPanelSituationComponent],
+  declarations: [HumanResourcePage, PanelHistoryVentilationComponent, PanelActivitiesComponent, ActualPanelSituationComponent, AddVentilationComponent],
   imports: [HumanResourcePageModule, RouterModule, ComponentsModule, FormsModule, ReactiveFormsModule, CommonModule, MaterialModule],
 })
 export class HumanResourceModule {}

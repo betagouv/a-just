@@ -115,6 +115,7 @@
   display: flex;
   align-items: center;
   background-color: white;
+  border-bottom: 1px solid fColor(bgColor);
 
   .back-url {
     margin-right: 16px;

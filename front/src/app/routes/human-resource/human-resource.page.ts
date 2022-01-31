@@ -36,7 +36,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   histories: HistoryInterface[] = [];
   formEditHR = new FormGroup({
     etp: new FormControl(null, [Validators.required]),
-    posad: new FormControl(null, [Validators.required]),
     firstName: new FormControl(null, [Validators.required]),
     lastName: new FormControl(null, [Validators.required]),
     dateStart: new FormControl(null),
@@ -95,7 +94,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
 
       this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
-      this.formEditHR.get('posad')?.setValue((findUser.posad || 0) * 100);
       this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
       this.formEditHR.get('lastName')?.setValue(findUser.lastName || '');
       this.formEditHR.get('note')?.setValue(findUser.note || '');
@@ -148,10 +146,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         note,
         category,
         fonction,
-        posad,
       } = this.formEditHR.value;
       this.currentHR.etp = (etp || 0) / 100;
-      this.currentHR.posad = (posad || 0) / 100;
       this.currentHR.firstName = firstName;
       this.currentHR.lastName = lastName;
       this.currentHR.dateStart = dateStart;
@@ -266,5 +262,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   trackByDate(index: number, item: any) {
     return item.dateStart;
+  }
+
+  onNewVentilation(newVentilation: any) {
+    console.log(newVentilation);
   }
 }

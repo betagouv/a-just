@@ -32,6 +32,7 @@ export class HumanResourceService {
     HRFonctionInterface[]
   >([]);
   allContentieuxReferentiel: ContentieuReferentielInterface[] = [];
+  allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
 
   constructor(private serverService: ServerService) {
     this.contentieuxReferentiel.subscribe((c) => {

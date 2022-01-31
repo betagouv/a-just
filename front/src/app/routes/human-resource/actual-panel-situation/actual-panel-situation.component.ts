@@ -5,7 +5,7 @@ import { MainClass } from 'src/app/libs/main-class';
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { fixDecimal } from 'src/app/utils/numbers';
-import { posadLabel } from 'src/app/utils/referentiel';
+import { etpLabel } from 'src/app/utils/referentiel';
 
 @Component({
   selector: 'actual-panel-situation',
@@ -50,7 +50,7 @@ export class ActualPanelSituationComponent
       return i;
     });
 
-    this.timeWorked = posadLabel(this.etp);
+    this.timeWorked = etpLabel(this.etp);
 
     this.onLoadComment();
   }

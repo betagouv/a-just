@@ -54,7 +54,7 @@ export function referentielMappingIndex (name: string): number {
   return 0;
 }
 
-export function posadLabel(value: number): string {
+export function etpLabel(value: number): string {
   switch(value) {
     case 1: return 'Temps plein';
     case 0.8: return '4/5';
