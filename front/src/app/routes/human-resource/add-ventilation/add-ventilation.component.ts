@@ -206,14 +206,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         this.onCancel();
       }
     }
-
-    /*
-    {
-      person: this.form.value,
-      referentiels: this.updatedReferentiels,
-      indisponibilities: this.indisponibilities,
-    }
-    */
   }
 
   onAddIndispiniblity() {
@@ -271,7 +263,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
                 '')
           );
           if (index !== -1) {
-            this.indisponibilities.splice(index, 1);
+            this.indisponibilities[index].isDeleted = true;
             this.controlIndisponibilities();
           }
           this.updateIndisponiblity = null;
