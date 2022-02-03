@@ -11,6 +11,7 @@ import { HRCategoryService } from 'src/app/services/hr-category/hr-category.serv
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { today } from 'src/app/utils/dates';
 
 interface HistoryInterface {
   category: string; // 1 VP
@@ -78,7 +79,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (findUser) {
       this.currentHR = findUser;
 
-      const findCategory = this.categories.find(c => c.id === this.currentHR?.category.id);
+      const findCategory = this.categories.find(
+        (c) => c.id === this.currentHR?.category.id
+      );
       this.categoryName = findCategory ? findCategory.label.toLowerCase() : '';
     } else {
       this.currentHR = null;
@@ -107,11 +110,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   formatHRHistory() {
-    if(this.fonctions.length === 0 || !this.currentHR) {
+    if (this.fonctions.length === 0 || !this.currentHR) {
       return;
     }
 
-    console.log(this.currentHR)
+    const getToday = today();
 
     this.histories = [];
     const activities = (
@@ -125,48 +128,66 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         return o.dateStop?.getTime();
       }
     );
-    const maxDate = max && max.dateStop ? new Date(max.dateStop) : new Date();
+    const maxDate =
+      max && max.dateStop && max.dateStop.getTime() > getToday.getTime()
+        ? today(new Date(max.dateStop))
+        : new Date(today());
     const min = minBy(
       activities.filter((a) => a.dateStart),
       function (o) {
         return o.dateStart?.getTime();
       }
     );
-    const minDate = min && min.dateStart ? new Date(min.dateStart) : new Date();
-    const fonction = this.fonctions.find(f => f.id === this.currentHR?.category.id);
+    const minDate =
+      min && min.dateStart ? today(new Date(min.dateStart)) : new Date(today());
+    const fonction = this.fonctions.find(
+      (f) => f.id === this.currentHR?.category.id
+    );
 
     const currentDate = new Date(maxDate);
     let idOfActivities: number[] = [];
     while (currentDate.getTime() > minDate.getTime()) {
-      const findedActivities = this.humanResourceService.filterActivitiesByDate(activities, currentDate);
+      const findedActivities = this.humanResourceService.filterActivitiesByDate(
+        activities,
+        currentDate
+      );
 
-      if(JSON.stringify(idOfActivities) !== JSON.stringify(findedActivities.map(f => f.id))) {
-        idOfActivities = findedActivities.map(f => f.id);
+      if (
+        JSON.stringify(idOfActivities) !==
+        JSON.stringify(findedActivities.map((f) => f.id))
+      ) {
+        idOfActivities = findedActivities.map((f) => f.id);
         // new list
         this.histories.push({
-          category: fonction && fonction.code || '',
-          etp: this.currentHR && this.currentHR.etp || 0,
+          category: (fonction && fonction.code) || '',
+          etp: (this.currentHR && this.currentHR.etp) || 0,
           indisponibilities: findedActivities.filter(
-            (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
+            (r) =>
+              this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
           ),
           activities: findedActivities,
           dateStart: new Date(),
           dateStop: new Date(currentDate),
         });
       }
-      
+
       currentDate.setDate(currentDate.getDate() - 1);
     }
 
     // place date start
     this.histories = this.histories.map((h, index) => {
-      const dateStop = index + 1 < this.histories.length ? new Date(this.histories[index + 1].dateStop) : new Date(minDate);
+      const dateStop =
+        index + 1 < this.histories.length
+          ? new Date(this.histories[index + 1].dateStop)
+          : new Date(minDate);
       dateStop.setDate(dateStop.getDate() + 1);
       h.dateStart = new Date(dateStop);
       return h;
     });
 
-    this.lastActivities = this.histories.length ? this.histories[0].activities : [];
+    this.lastActivities = this.histories.length
+      ? this.histories[0].activities
+      : [];
     this.allIndisponibilities = activities.filter(
       (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
     );
