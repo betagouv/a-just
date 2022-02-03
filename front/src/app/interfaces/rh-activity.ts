@@ -9,4 +9,5 @@ export interface RHActivityInterface {
 	dateStart?: Date;
 	dateStop?: Date;
 	contentieux?: ContentieuReferentielInterface;
+	isDeleted?: boolean;
 }
