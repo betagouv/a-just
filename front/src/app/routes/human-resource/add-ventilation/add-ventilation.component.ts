@@ -29,6 +29,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
   @Output() ventilationChange = new EventEmitter();
+  indisponibilitiesVisibles: RHActivityInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   showNewVentilation: boolean = false;
   categories: HRCategoryInterface[] = [];
@@ -102,6 +103,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue(
         (this.human && this.human.fonction && this.human.fonction.id) || null
       );
+
+    this.controlIndisponibilities();
   }
 
   ngOnDestroy(): void {
@@ -177,6 +180,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           )
           .join(', ')
       : null;
+      
+    this.indisponibilitiesVisibles = this.indisponibilities.filter(i => !i.isDeleted);
   }
 
   onSave() {

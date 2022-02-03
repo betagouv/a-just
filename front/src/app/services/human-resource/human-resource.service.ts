@@ -287,13 +287,31 @@ export class HumanResourceService {
 /*activitiesStartDate: Wed Feb 02 2022 17:18:34 GMT+0100 (heure normale d’Europe centrale) {}
 
 newReferentiel
-
-indisponibilities
 */
 
-    console.log(list[index])
     if (index !== -1 && cat) {
       const activities = list[index].activities || [];
+
+      // find and update or remove from activities list
+      indisponibilities.map(i => {
+        const index = activities.findIndex(a => a.id === i.id);
+        if(i.isDeleted && i.id > 0) {
+          // delete
+          if(index !== -1) {
+            activities.splice(index, 1);
+          }
+        } else if(!i.isDeleted && i.id < 0) {
+          // create
+            activities.push(i);
+        } else if(!i.isDeleted && i.id > 0) {
+          // update
+          if(index !== -1) {
+            activities[index] = i;
+          }
+        }
+      });
+      console.log(indisponibilities)
+
 
       list[index] = {
         ...list[index],
