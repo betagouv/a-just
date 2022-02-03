@@ -118,13 +118,17 @@
         margin-right: 16px;
       }
 
-      > .tags p {
-        font-size: 14px;
-        white-space: nowrap;
-        color: fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
-        margin-right: 0;
-        margin-left: 8px;
+      > .tags {
+        justify-content: flex-end;
+
+        p {
+          font-size: 14px;
+          white-space: nowrap;
+          color: fColor(cbluedark);
+          background-color: fColor(cbluemiddle);
+          margin-right: 0;
+          margin-left: 8px;
+        }
       }
     }
   }

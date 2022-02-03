@@ -4,8 +4,8 @@
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
 
-  <add-ventilation [human]="currentHR" [activities]="lastActivities" [indisponibilities]="lastIndisponibilities"
-    (ventilationChange)="onNewVentilation($event)"></add-ventilation>
+  <add-ventilation [human]="currentHR" [activities]="lastActivities" [indisponibilities]="allIndisponibilities"
+    (ventilationChange)="onNewVentilation()"></add-ventilation>
 
   <p *ngIf="histories.length > 1" class="title-history">
     Situations antérieures du {{ categoryName }}

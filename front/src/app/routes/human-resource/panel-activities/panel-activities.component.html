@@ -16,15 +16,50 @@
 </div>
 
 <div class="activities-panel">
-  <div class="sub-item" *ngFor="let ref of referentiel">
-    <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)">
+  <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
+    <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)"
+      (click)="onTogglePanel(index)">
     </progression-bar>
   </div>
 </div>
 
-<div class="progress-bar" [ngClass]="{'low-completion': percentAffected < 70}">
-  <p>Taux d'affectation : {{ percentAffected | number:'0.0-0' }}%</p>
+<div *ngIf="refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
+    'border-top-color': referentielMappingColor(
+      referentiel[refIndexSelected].label
+    )
+  }">
+  <div class="sub-item">
+    <progression-bar [percent]="referentiel[refIndexSelected].percent"
+      [color]="referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
+      (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)">
+    </progression-bar>
+    <p>{{ referentielMappingName(referentiel[refIndexSelected].label) }}</p>
+  </div>
+  <div class="sub-item sub-item-or" *ngIf="(referentiel[refIndexSelected].childrens || []).length">
+    <p>Dont</p>
+  </div>
+  <div class="sub-item" *ngFor="let ref of referentiel[refIndexSelected].childrens || []">
+    <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(referentiel[refIndexSelected].label)"
+      [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])">
+    </progression-bar>
+    <p>{{ referentielMappingName(ref.label) }}</p>
+  </div>
+  <div class="sub-item" *ngFor="let e of emptyArray"></div>
+  <div class="arrow-block" [ngStyle]="{
+      left: (refIndexSelected * 100) / referentiel.length + '%',
+      width: 100 / referentiel.length + '%'
+    }">
+    <div class="arrow" [ngStyle]="{
+        'border-color': referentielMappingColor(
+          referentiel[refIndexSelected].label
+        )
+      }"></div>
+  </div>
+</div>
+
+<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected < 70 || percentAffected > 100}">
+  <p>Taux d'affectation : {{ percentAffected | number: "0.0-0" }}%</p>
   <div class="progress-bar-line">
-    <div [style.width.%]="percentAffected"></div>
+    <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
   </div>
 </div>

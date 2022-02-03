@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
@@ -17,8 +24,13 @@ export class PanelActivitiesComponent
 {
   @Input() etp: number = 1;
   @Input() activities: RHActivityInterface[] = [];
+  @Input() selected: boolean = false;
+  @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
+    new EventEmitter();
   referentiel: ContentieuReferentielInterface[] = [];
   percentAffected: number = 0;
+  refIndexSelected: number = -1;
+  emptyArray: number[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -41,6 +53,15 @@ export class PanelActivitiesComponent
     this.watcherDestroy();
   }
 
+  getPercentAffected(ref: ContentieuReferentielInterface) {
+    const activity = this.activities.find((a) => a.referentielId === ref.id);
+
+    return {
+      percent: activity && activity.percent ? activity.percent : 0,
+      totalAffected: ((ref.percent || 0) * (this.etp || 0)) / 100,
+    };
+  }
+
   onLoadReferentiel() {
     this.referentiel = (
       JSON.parse(
@@ -51,23 +72,63 @@ export class PanelActivitiesComponent
     )
       .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1)
       .map((ref) => {
-        const activity = this.activities.find(
-          (a) => a.referentielId === ref.id
-        );
+        const { percent, totalAffected } = this.getPercentAffected(ref);
+        ref.percent = percent;
+        ref.totalAffected = totalAffected;
 
-        ref.percent = activity && activity.percent ? activity.percent : 0;
-        ref.totalAffected = (ref.percent * (this.etp || 0)) / 100;
+        ref.childrens = (ref.childrens || []).map((c) => {
+          const { percent, totalAffected } = this.getPercentAffected(c);
+          c.percent = percent;
+          c.totalAffected = totalAffected;
+          return c;
+        });
         return ref;
       });
 
-    this.percentAffected = sumBy(
-      this.activities.filter(
-        (r) =>
-          this.referentielService.idsIndispo.indexOf(r.referentielId) === -1 &&
-          this.referentielService.mainActivitiesId.indexOf(r.referentielId) !==
-            -1
-      ),
-      'percent'
-    );
+    this.onTotalAffected();
+  }
+
+  onTotalAffected() {
+    this.percentAffected = sumBy(this.referentiel, 'percent');
+  }
+
+  onTogglePanel(index: number) {
+    if (index !== this.refIndexSelected) {
+      this.refIndexSelected = index;
+      this.emptyArray = [];
+      for (
+        let i = (this.referentiel[index].childrens || []).length;
+        i < this.referentiel.length - 2;
+        i++
+      ) {
+        this.emptyArray.push(i);
+      }
+    } else {
+      this.refIndexSelected = -1;
+    }
+  }
+
+  onChangePercent(
+    referentiel: ContentieuReferentielInterface,
+    percent: number,
+    parentReferentiel: ContentieuReferentielInterface | null = null
+  ) {
+    referentiel.percent = percent;
+    if (referentiel.childrens && referentiel.childrens.length) {
+      // is main
+      referentiel.childrens = (referentiel.childrens || []).map((r) => ({
+        ...r,
+        percent: 0,
+      }));
+    } else if (parentReferentiel) {
+      // is child
+      parentReferentiel.percent = sumBy(
+        parentReferentiel.childrens || [],
+        'percent'
+      );
+    }
+
+    this.referentielChange.emit(this.referentiel);
+    this.onTotalAffected();
   }
 }

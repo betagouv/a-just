@@ -33,7 +33,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   categoryName: string = '';
   histories: HistoryInterface[] = [];
   lastActivities: RHActivityInterface[] = [];
-  lastIndisponibilities: RHActivityInterface[] = [];
+  allIndisponibilities: RHActivityInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -220,14 +220,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     });
 
     this.lastActivities = this.histories.length ? this.histories[0].activities : [];
-    this.lastIndisponibilities = this.histories.length ? this.histories[0].indisponibilities : [];
+    this.allIndisponibilities = activities.filter(
+      (r) => this.referentielService.idsIndispo.indexOf(r.id) !== -1
+    );
   }
 
   trackByDate(index: number, item: any) {
     return item.dateStart;
   }
 
-  onNewVentilation(newVentilation: any) {
-    console.log(newVentilation);
+  onNewVentilation() {
+    // on reload values
+    this.onLoad();
   }
 }

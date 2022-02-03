@@ -27,7 +27,7 @@
 </div>
 
 <div class="contener">
-  <div class="header">
+  <div class="header" id="top">
     <div *ngIf="backUrl" class="back-url">
       <a [routerLink]="backUrl">
         <button class="outline blue small">
@@ -45,7 +45,7 @@
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>
   </div>
-  <div class="content">
+  <div class="content" id="content">
     <ng-content></ng-content>
   </div>
 </div>

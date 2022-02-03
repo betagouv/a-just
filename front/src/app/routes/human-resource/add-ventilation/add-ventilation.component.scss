@@ -104,13 +104,18 @@
             p {
               font-size: 12px;
               color: fColor(cgray);
-            }
 
-            p:last-child {
-              font-weight: bold;
+              &:last-child {
+                font-weight: bold;
+              }
             }
           }
         }
+      }
+
+      .indispo-error {
+        color: fColor(cred);
+        font-weight: bold;
       }
     }
   }
