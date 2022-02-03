@@ -6,6 +6,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { maxBy, minBy, sumBy } from 'lodash';
 import { ActionsInterface } from 'src/app/components/popup/popup.component';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
@@ -16,7 +17,7 @@ import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service';
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { today } from 'src/app/utils/dates';
 
 @Component({
   selector: 'add-ventilation',
@@ -33,6 +34,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   categories: HRCategoryInterface[] = [];
   fonctions: HRFonctionInterface[] = [];
   updateIndisponiblity: RHActivityInterface | null = null;
+  updatedReferentiels: ContentieuReferentielInterface[] = [];
+  indisponibilityError: string | null = null;
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl(null, [Validators.required]),
@@ -47,7 +50,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   constructor(
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private referentielService: ReferentielService,
     private humanResourceService: HumanResourceService
   ) {
     super();
@@ -72,6 +74,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   ngOnChanges() {
+    this.onStart();
+  }
+
+  onStart() {
     this.form.get('activitiesStartDate')?.setValue(new Date());
     this.form.get('etp')?.setValue(((this.human && this.human.etp) || 0) * 100);
     this.form
@@ -105,10 +111,109 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   onCancel() {
     this.form.reset();
     this.showNewVentilation = false;
+    const findElement = document.getElementById('content');
+    if (findElement) {
+      findElement.scrollTo({
+        behavior: 'smooth',
+        top: 0,
+      });
+    }
+  }
+
+  controlIndisponibilities() {
+    const max = maxBy(
+      this.indisponibilities.filter((a) => a.dateStop),
+      function (o) {
+        return o.dateStop?.getTime();
+      }
+    );
+    let maxDate = max && max.dateStop ? today(max.dateStop) : new Date(today());
+    const min = minBy(
+      this.indisponibilities.filter((a) => a.dateStart),
+      function (o) {
+        return o.dateStart?.getTime();
+      }
+    );
+    const minDate =
+      min && min.dateStart ? today(min.dateStart) : new Date(today());
+
+    const currentDate = new Date(maxDate);
+    let idOfActivities: number[] = [];
+    let errorsList = [];
+    while (currentDate.getTime() >= minDate.getTime()) {
+      const findedActivities = this.humanResourceService.filterActivitiesByDate(
+        this.indisponibilities,
+        currentDate
+      );
+
+      if (
+        JSON.stringify(idOfActivities) !==
+        JSON.stringify(findedActivities.map((f) => f.id))
+      ) {
+        idOfActivities = findedActivities.map((f) => f.id);
+
+        const totalPercent = sumBy(findedActivities, 'percent');
+        if (totalPercent > 100) {
+          errorsList.push({
+            date: new Date(currentDate),
+            percent: totalPercent,
+          });
+        }
+      }
+
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    this.indisponibilityError = errorsList.length
+      ? errorsList
+          .map(
+            (r) =>
+              `Le ${(r.date.getDate() + '').padStart(
+                2,
+                '0'
+              )} ${this.getShortMonthString(
+                r.date
+              )} ${r.date.getFullYear()} vous êtes à ${r.percent}% d'indisponibilité.`
+          )
+          .join(', ')
+      : null;
   }
 
   onSave() {
-    this.ventilationChange.emit(this.form.value);
+    if (this.indisponibilityError) {
+      alert(this.indisponibilityError);
+      return;
+    }
+
+    const totalAffected = sumBy(this.updatedReferentiels, 'percent');
+    if (totalAffected > 100) {
+      alert(
+        `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
+      );
+      return;
+    }
+
+    if (this.human) {
+      if (
+        this.humanResourceService.pushHRUpdate(
+          this.human?.id,
+          this.form.value,
+          this.updatedReferentiels,
+          this.indisponibilities
+        )
+      ) {
+        this.ventilationChange.emit(true);
+        this.onCancel();
+      }
+    }
+
+    /*
+    {
+      person: this.form.value,
+      referentiels: this.updatedReferentiels,
+      indisponibilities: this.indisponibilities,
+    }
+    */
   }
 
   onAddIndispiniblity() {
@@ -154,6 +259,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             });
           }
           this.updateIndisponiblity = null;
+          this.controlIndisponibilities();
         }
         break;
       case 'delete':
@@ -166,10 +272,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           );
           if (index !== -1) {
             this.indisponibilities.splice(index, 1);
+            this.controlIndisponibilities();
           }
           this.updateIndisponiblity = null;
         }
         break;
     }
+  }
+
+  onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
+    this.updatedReferentiels = referentiels;
   }
 }

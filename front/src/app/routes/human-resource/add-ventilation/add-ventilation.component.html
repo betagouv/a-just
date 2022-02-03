@@ -1,6 +1,6 @@
 <form [formGroup]="form">
   <div class="new-action" *ngIf="showNewVentilation === false">
-    <button class="fill primary small" (click)="showNewVentilation = !showNewVentilation">
+    <button class="fill primary small" (click)="showNewVentilation = !showNewVentilation; onStart();">
       Renseigner une nouvelle situation
     </button>
   </div>
@@ -95,12 +95,15 @@
             </div>
           </div>
         </div>
+        <div class="indispo-error" *ngIf="indisponibilityError">{{ indisponibilityError }}</div>
       </div>
     </div>
 
     <div class="activities">
       <p>Répartition du temps disponible</p>
-      <panel-activities [activities]="activities" [etp]="(human && human.etp) || 0"></panel-activities>
+      <panel-activities [activities]="activities" [etp]="(human && human.etp) || 0" [selected]="true"
+        (referentielChange)="onNewReferentiel($event)" #panelActivities>
+      </panel-activities>
     </div>
 
     <div class="actions">

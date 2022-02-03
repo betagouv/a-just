@@ -50,7 +50,7 @@
           <mat-icon>calendar_today</mat-icon>Depuis le {{ dateStart | date: "dd" }}
           {{ getShortMonthString(dateStart) }} {{ dateStart | date: "YYYY" }}
         </p>
-        <p *ngIf="dateStop" class="date">
+        <p *ngIf="dateStop && !isToday(dateStop)" class="date">
           <mat-icon>calendar_today</mat-icon>Jusqu'au {{ dateStop | date: "dd" }}
           {{ getShortMonthString(dateStop) }} {{ dateStop | date: "YYYY" }}
         </p>

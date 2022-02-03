@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { orderBy, sortBy, sortedUniqBy, uniqBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
@@ -6,6 +7,7 @@ import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
+import { today } from 'src/app/utils/dates';
 import { ServerService } from '../http-server/server.service';
 
 @Injectable({
@@ -241,10 +243,17 @@ export class HumanResourceService {
     return false;
   }
 
-  filterActivitiesByDate(list: RHActivityInterface[], date: Date): RHActivityInterface[] {
-    return JSON.parse(JSON.stringify((list || []).filter((a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+  filterActivitiesByDate(
+    list: RHActivityInterface[],
+    date: Date
+  ): RHActivityInterface[] {
+    list = uniqBy(
+      orderBy(JSON.parse(JSON.stringify(list || [])), ['dateStart'], ['desc']),
+      'referentielId'
+    );
+    list = list.filter((a: any) => {
+      const dateStop = a.dateStop ? today(new Date(a.dateStop)) : null;
+      const dateStart = a.dateStart ? today(new Date(a.dateStart)) : null;
 
       return (
         (dateStart === null && dateStop === null) ||
@@ -259,6 +268,48 @@ export class HumanResourceService {
           dateStop &&
           dateStop.getTime() >= date.getTime())
       );
-    })));
+    });
+
+    return list;
+  }
+
+  pushHRUpdate(humanId: number, profil: any, newReferentiel: ContentieuReferentielInterface[], indisponibilities: RHActivityInterface[]): boolean {
+    console.log(humanId, profil, newReferentiel, indisponibilities)
+    const list = this.hr.getValue();
+    const index = list.findIndex((h) => h.id === humanId);
+
+    const categories = this.categories.getValue();
+    const cat = categories.find(c => c.id === profil.categoryId);
+    const fonctions = this.fonctions.getValue();
+    const font = fonctions.find(c => c.id === profil.fonctionId);
+
+
+/*activitiesStartDate: Wed Feb 02 2022 17:18:34 GMT+0100 (heure normale d’Europe centrale) {}
+
+newReferentiel
+
+indisponibilities
+*/
+
+    console.log(list[index])
+    if (index !== -1 && cat) {
+      const activities = list[index].activities || [];
+
+      list[index] = {
+        ...list[index],
+        firstName: profil.firstName,
+        lastName: profil.lastName,
+        etp: profil.etp / 100,
+        dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
+        dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
+        category: cat,
+        fonction: font,
+        activities,
+      }
+
+      this.updateHR(list, true);
+    }
+
+    return true;
   }
 }

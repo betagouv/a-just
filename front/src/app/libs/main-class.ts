@@ -3,7 +3,7 @@ import {
   referentielMappingColor,
   referentielMappingName,
 } from '../utils/referentiel';
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments/environment';
 import { fixDecimal } from '../utils/numbers';
 import { getMonthString, getShortMonthString } from '../utils/dates';
 
@@ -48,40 +48,65 @@ export class MainClass {
   }
 
   public getMonthString(date: Date | undefined): string {
-    return date ? getMonthString(date) : ''
+    return date ? getMonthString(date) : '';
   }
 
   public getShortMonthString(date: Date | undefined): string {
-    return date ? getShortMonthString(date) : ''
-  }  
+    return date ? getShortMonthString(date) : '';
+  }
 
   public getCategoryColor(label: string, opacity: number = 1) {
-    switch(label) {
-      case 'Magistrat': return `rgba(0, 0, 145, ${opacity})`;
-      case 'Fonctionnaire': return `rgba(165, 88, 160, ${opacity})`;
+    switch (label) {
+      case 'Magistrat':
+        return `rgba(0, 0, 145, ${opacity})`;
+      case 'Fonctionnaire':
+        return `rgba(165, 88, 160, ${opacity})`;
     }
 
     return `rgba(239, 203, 58, ${opacity})`;
   }
 
   public formatDate(date: Date) {
-    if(!date) {
+    if (!date) {
       return '';
     }
-    
+
     const now = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     let stringDate = '';
 
-    if(now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {
-      stringDate = 'aujourd\'hui'
-    } else if(yesterday.getFullYear() === date.getFullYear() && yesterday.getMonth() === date.getMonth() && yesterday.getDate() === date.getDate()) {
-      stringDate = 'hier'
+    if (
+      now.getFullYear() === date.getFullYear() &&
+      now.getMonth() === date.getMonth() &&
+      now.getDate() === date.getDate()
+    ) {
+      stringDate = "aujourd'hui";
+    } else if (
+      yesterday.getFullYear() === date.getFullYear() &&
+      yesterday.getMonth() === date.getMonth() &&
+      yesterday.getDate() === date.getDate()
+    ) {
+      stringDate = 'hier';
     } else {
-      stringDate = `le ${(date.getDate()+'').padStart(2, '0')} ${this.getShortMonthString(date)} ${date.getFullYear()}`
+      stringDate = `le ${(date.getDate() + '').padStart(
+        2,
+        '0'
+      )} ${this.getShortMonthString(date)} ${date.getFullYear()}`;
     }
 
-    return `${stringDate} à ${(date.getHours()+'').padStart(2, '0')}:${(date.getMinutes()+'').padStart(2, '0')}`
+    return `${stringDate} à ${(date.getHours() + '').padStart(2, '0')}:${(
+      date.getMinutes() + ''
+    ).padStart(2, '0')}`;
+  }
+
+  public isToday(date: Date) {
+    const now = new Date();
+
+    return (
+      now.getFullYear() === date.getFullYear() &&
+      now.getMonth() === date.getMonth() &&
+      now.getDate() === date.getDate()
+    );
   }
 }

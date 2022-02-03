@@ -68,6 +68,7 @@
     progression-bar {
       width: 95%;
       height: 80px;
+      cursor: pointer;
     }
   }
 }
@@ -104,6 +105,57 @@
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
+    }
+  }
+}
+
+.sub-panel-activites {
+  display: flex;
+  margin-top: 16px;
+  padding-top: 8px;
+  margin-bottom: 16px;
+  border-top: 2px solid black;
+  position: relative;
+
+  .arrow-block {
+    position: absolute;
+    top: -6px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .arrow {
+      border: solid black;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      transform: rotate(-135deg);
+      -webkit-transform: rotate(-135deg);
+      background-color: white;
+    }
+  }
+
+  > div.sub-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    &.sub-item-or {
+      justify-self: center;
+    }
+
+    progression-bar {
+      width: 95%;
+      height: 80px;
+    }
+
+    > p {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 4px;
     }
   }
 }
