@@ -111,6 +111,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return;
     }
 
+    console.log(this.currentHR)
+
     this.histories = [];
     const activities = (
       (this.currentHR && this.currentHR.activities) ||
