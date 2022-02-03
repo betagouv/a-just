@@ -100,7 +100,7 @@ export class ReferentielCalculatorComponent
 
     this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
     this.realDTESInMonths = fixDecimal(
-      this.totalStock / this.totalOut / this.nbMonth
+      this.totalStock / this.totalOut
     );
 
     this.getHRPositions();
@@ -234,14 +234,13 @@ export class ReferentielCalculatorComponent
         ((((this.getTotalEtp() * this.environment.nbHoursPerDay) /
           this.calculateTimePerCase) *
           this.environment.nbDaysByMagistrat) /
-          12) *
-          this.getNbMonth()
+          12)
       );
       this.calculateCoverage = fixDecimal(
         this.calculateOut / (this.totalIn || 0)
       );
       this.calculateDTESInMonths = fixDecimal(
-        (this.totalStock || 0) / this.calculateOut / this.nbMonth
+        (this.totalStock || 0) / this.calculateOut
       );
     } else {
       this.calculateOut = null;
