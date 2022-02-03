@@ -106,61 +106,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  /*onEdit() {
-    if (this.formEditHR.invalid) {
-      alert("Vous devez saisir l'ensemble des champs !");
-    } else if (this.currentHR) {
-      const {
-        etp,
-        firstName,
-        lastName,
-        dateStart,
-        dateEnd,
-        note,
-        category,
-        fonction,
-      } = this.formEditHR.value;
-      this.currentHR.etp = (etp || 0) / 100;
-      this.currentHR.firstName = firstName;
-      this.currentHR.lastName = lastName;
-      this.currentHR.dateStart = dateStart;
-      this.currentHR.dateEnd = dateEnd;
-      this.currentHR.note = note;
-      this.currentHR.category = this.categories.find(
-        (c) => c.id === +category
-      ) || { id: -1, label: 'not found' };
-      this.currentHR.fonction = this.fonctions.find((f) => f.id === +fonction);
-      this.currentHR.activities = (this.activities || []).map((a) => ({
-        ...a,
-        referentielId: +(a.referentielId || 0),
-        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
-        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
-      }));
-
-      const totalAffected = this.calculTotalTmpActivity(
-        this.currentHR.activities
-      );
-      if (totalAffected > 100) {
-        alert(
-          `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
-        );
-        return;
-      }
-
-      const allHuman = this.humanResourceService.hr.getValue();
-      const findIndex = allHuman.findIndex(
-        (h) => h.id === (this.currentHR && this.currentHR.id)
-      );
-
-      if (findIndex !== -1) {
-        allHuman[findIndex] = { ...this.currentHR };
-        this.humanResourceService.updateHR(allHuman, true);
-
-        this.router.navigate(['/ventilations']);
-      }
-    }
-  }*/
-
   formatHRHistory() {
     if(this.fonctions.length === 0 || !this.currentHR) {
       return;
@@ -200,7 +145,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           category: fonction && fonction.code || '',
           etp: this.currentHR && this.currentHR.etp || 0,
           indisponibilities: findedActivities.filter(
-            (r) => this.referentielService.idsIndispo.indexOf(r.id) !== -1
+            (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
           ),
           activities: findedActivities,
           dateStart: new Date(),
@@ -221,7 +166,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     this.lastActivities = this.histories.length ? this.histories[0].activities : [];
     this.allIndisponibilities = activities.filter(
-      (r) => this.referentielService.idsIndispo.indexOf(r.id) !== -1
+      (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
     );
   }
 
