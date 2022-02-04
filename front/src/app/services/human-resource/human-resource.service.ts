@@ -315,7 +315,6 @@ export class HumanResourceService {
       if (newReferentiel.length) {
         const activitiesStartDate = new Date(profil.activitiesStartDate);
         const getTimeActivitiesStarted = activitiesStartDate.getTime();
-        console.log(getTimeActivitiesStarted)
         const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
         yesterdayActivitiesStartDate.setDate(
           yesterdayActivitiesStartDate.getDate() - 1
@@ -334,15 +333,11 @@ export class HumanResourceService {
             const dateStart = activities[i].dateStart
               ? activities[i].dateStart
               : null;
-              if (dateStart) {
-                console.log(dateStart.getTime())
-              }
-            if (dateStart && dateStart.getTime() > getTimeActivitiesStarted) {
+            if (dateStart && dateStart.getTime() >= getTimeActivitiesStarted) {
               activities.splice(i, 1);
             }
           }
         }
-        console.log(activities)
 
         newReferentiel
           .filter((r) => r.percent)
