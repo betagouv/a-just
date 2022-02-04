@@ -2,6 +2,6 @@
     <p class="title">{{ title }}</p>
     <input [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange()" />
 </div>
-<div class="button" (click)="onSearch()">
+<div *ngIf="icon" class="button" (click)="onSearch()">
     <mat-icon>{{ icon }}</mat-icon>
 </div>

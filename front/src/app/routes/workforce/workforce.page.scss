@@ -175,12 +175,46 @@
       justify-content: space-between;
 
       .name {
-        font-weight: bold;
-        color: fColor(titleSelect);
-        margin-bottom: 4px;
+        margin-bottom: 8px;
+        display: flex;
+
+        p {
+          font-weight: bold;
+          color: fColor(titleSelect);
+          flex: 1;
+        }
+
+        .tooltip {
+          margin-left: 8px;
+          position: relative;
+
+          &:hover .tooltiptext {
+            visibility: visible;
+          }
+
+          mat-icon {
+            color: fColor(borderProgressBar);
+          }
+
+          .tooltiptext {
+            visibility: hidden;
+            background-color: fColor(borderProgressBar);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            top: -5px;
+            left: 105%;
+          }
+        }
       }
 
       .tags {
+        margin-bottom: 8px;
+
         > p {
           display: inline-block;
           height: 24px;
@@ -208,15 +242,6 @@
             }
           }
 
-          &.unavailable {
-            color: fColor(cred);
-            background-color: rgba(fColor(cred), 0.2);
-
-            mat-icon {
-              color: fColor(cred);
-            }
-          }
-
           mat-icon {
             font-size: 14px;
             width: 14px;
@@ -226,29 +251,34 @@
           }
         }
       }
-
-      mat-icon {
-        color: black;
-      }
     }
 
     .read-etp {
-      padding: 10px 14px;
-      background-color: fColor(bgEtpGraph);
+      padding: 0 14px;
+      background-color: fColor(bgSelect);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-evenly;
 
-      > div {
-        .label {
-          font-size: 10px;
-          margin-bottom: 8px;
-          color: fColor(titleEtpGraph);
-          font-weight: bold;
-        }
+      .label {
+        font-size: 14px;
+        color: fColor(cgreen);
       }
     }
+  }
+}
+
+.unavailable {
+  color: fColor(titleIndisponibilitiesPanel);
+
+  mat-icon {
+    color: fColor(titleIndisponibilitiesPanel);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    position: relative;
+    top: 5px;
   }
 }
 
@@ -345,6 +375,10 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.add-collaborator {
+  margin-left: 16px;
 }
 
 .checkbox-button {
