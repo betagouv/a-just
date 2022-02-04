@@ -126,8 +126,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const activities = this.getCurrentActivity(null, h).filter(
           (a) => idsOfRef.indexOf(a.referentielId) !== -1
         );
-        if(activities.length) {
-          etpt += ((h.etp || 0) - h.hasIndisponibility) * (sumBy(activities, 'percent')) / 100;
+        if (activities.length) {
+          etpt +=
+            (((h.etp || 0) - h.hasIndisponibility) *
+              sumBy(activities, 'percent')) /
+            100;
         }
       });
 
@@ -350,8 +353,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             if (timeAffected) {
               ref.totalAffected =
                 (ref.totalAffected || 0) +
-                (timeAffected / 100) *
-                  ((hr.etp || 0) - hr.hasIndisponibility);
+                (timeAffected / 100) * ((hr.etp || 0) - hr.hasIndisponibility);
             }
 
             return ref;
@@ -379,14 +381,24 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onGoTo(hr: HumanResourceInterface) {
-    const findElement = document.getElementById(`human-${hr.id}`);
-    if (findElement) {
-      setTimeout(() => {
-        findElement.scrollIntoView({
+    const findContainer = document.getElementById('container-list');
+    if (findContainer) {
+      const findElement = findContainer.querySelector(`#human-${hr.id}`);
+      if (findElement) {
+        const headers = findContainer.querySelectorAll('.header-list');
+        const  { top } = findElement.getBoundingClientRect();
+        let topDelta = findContainer.getBoundingClientRect().top + 8;
+        for(let i = 0; i < headers.length; i++) {
+          const topHeader = headers[i].getBoundingClientRect().top;
+          if(topHeader < top) {
+            topDelta += headers[i].getBoundingClientRect().height;
+          }
+        }
+        findContainer.scrollTo({
           behavior: 'smooth',
-          block: 'start',
+          top: top - topDelta,
         });
-      }, 100);
+      }
     } else {
       setTimeout(() => this.onGoTo(hr), 200);
     }

@@ -13,7 +13,7 @@
   div {
     &.input {
       padding: 2px 8px;
-      width: 189px;
+      min-width: 189px;
 
       p {
         white-space: nowrap;

@@ -20,6 +20,9 @@ export default (sequelizeInstance, Model) => {
       }, {
         attributes: ['id', 'rank', 'code', 'label'],
         model: Model.models.HRFonctions,
+      }, {
+        attributes: ['id', 'comment'],
+        model: Model.models.HRComments,
       }],
       raw: true,
     })
@@ -34,6 +37,7 @@ export default (sequelizeInstance, Model) => {
         dateEnd: list[i].date_sortie,
         note: list[i].note,
         coverUrl: list[i].cover_url, 
+        comment: list[i]['HRComment.comment'],
         category: {
           id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],

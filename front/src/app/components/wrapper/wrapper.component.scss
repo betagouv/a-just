@@ -33,6 +33,12 @@
       padding: 0px;
     }
   }
+
+  &.header-border-none {
+    .header {
+      border-bottom: none;
+    }
+  }
 }
 
 .menu {
