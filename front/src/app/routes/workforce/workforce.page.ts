@@ -76,11 +76,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref.map((r) => ({ ...r, selected: true }));
-        this.selectedReferentielIds = ref.map((r) => r.id);
-        this.formReferentiel = this.referentiel.map((r) => ({
-          id: r.id,
-          value: this.referentielMappingName(r.label),
-        }));
+        this.formReferentiel = this.referentiel
+          .filter(
+            (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
+          )
+          .map((r) => ({
+            id: r.id,
+            value: this.referentielMappingName(r.label),
+          }));
+        this.selectedReferentielIds = this.formReferentiel.map((r) => r.id);
         this.onFilterList();
       })
     );
@@ -274,15 +278,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
       )
       .map((h) => {
-        const currentActivities = this.getCurrentActivity(null, h);
-        const hasIndispo = currentActivities.find(
-          (a) =>
-            this.referentielService.idsMainIndispo === a.referentielId &&
-            a.percent
+        const currentActivities = this.humanResourceService.filterActivitiesByDate(h.activities || [], this.dateSelected);
+        const hasIndisponibility = fixDecimal(
+          sumBy(
+            currentActivities.filter(
+              (a) =>
+                this.referentielService.idsIndispo.indexOf(a.referentielId) !==
+                -1
+            ),
+            'percent'
+          ) / 100
         );
-        const hasIndisponibility = hasIndispo
-          ? (hasIndispo.percent || 0) / 100
-          : 0;
 
         return {
           ...h,
@@ -386,11 +392,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const findElement = findContainer.querySelector(`#human-${hr.id}`);
       if (findElement) {
         const headers = findContainer.querySelectorAll('.header-list');
-        const  { top } = findElement.getBoundingClientRect();
+        const { top } = findElement.getBoundingClientRect();
         let topDelta = findContainer.getBoundingClientRect().top + 8;
-        for(let i = 0; i < headers.length; i++) {
+        for (let i = 0; i < headers.length; i++) {
           const topHeader = headers[i].getBoundingClientRect().top;
-          if(topHeader < top) {
+          if (topHeader < top) {
             topDelta += headers[i].getBoundingClientRect().height;
           }
         }

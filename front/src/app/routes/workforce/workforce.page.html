@@ -21,7 +21,7 @@
             {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
             category.labelPlural : category.label }}
           </p>
-          <p class="etp">{{ category.etpt | number:".2-2" }} ETP-T</p>
+          <p class="etp">{{ category.etpt | number:".2-2" }} ETP T</p>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
                   <p>Contentieux :</p>
                 </div>
                 <div class="etp">
-                  <p>ETP affectés :</p>
+                  <p>ETP T affectés :</p>
                 </div>
                 <div class="flex-1"></div>
               </div>
@@ -67,7 +67,7 @@
           <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">
             <div class="profil item">
-              <div class="text">
+              <a [routerLink]="['/resource-humaine', hr.id]" class="text">
                 <div class="name">
                   <p>{{ hr.firstName}} {{ hr.lastName}}</p>
                   <div *ngIf="hr.comment" class="tooltip">
@@ -84,7 +84,7 @@
                 <p class="unavailable" *ngIf="hr.hasIndisponibility">
                   <mat-icon>error</mat-icon> indisponibilité
                 </p>
-              </div>
+              </a>
               <div class="read-etp">
                 <p class="label">
                   ETP Travaillé :
@@ -102,7 +102,7 @@
                   </progression-bar>
                 </div>
               </div>
-              <div class="progress-bar" [ngClass]="{'low-completion': hr.percentAffected < 70}">
+              <div class="progress-bar" [ngClass]="{'low-completion': hr.percentAffected !== 100}">
                 <p>
                   Taux d'affectation : {{ hr.percentAffected | number:'0.0-0'
                   }}%
