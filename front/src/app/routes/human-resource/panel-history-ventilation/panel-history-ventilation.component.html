@@ -19,7 +19,7 @@
       <mat-icon>event_busy</mat-icon>
     </div>
     <div class="text">
-      <p *ngIf="indisp.contentieux">{{ indisp.contentieux.label }}</p>
+      <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
       <p>
         <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date:"dd" }} {{
           getShortMonthString(indisp.dateStart) }} {{ indisp.dateStart |

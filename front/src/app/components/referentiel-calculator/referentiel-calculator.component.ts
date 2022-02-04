@@ -92,8 +92,8 @@ export class ReferentielCalculatorComponent
       'periode'
     );
     this.nbMonth = this.getNbMonth();
-    this.totalIn = sumBy(activities, 'entrees') / this.nbMonth;
-    this.totalOut = sumBy(activities, 'sorties') / this.nbMonth;
+    this.totalIn = Math.floor(sumBy(activities, 'entrees') / this.nbMonth);
+    this.totalOut = Math.floor(sumBy(activities, 'sorties') / this.nbMonth);
     this.totalStock = activities.length
       ? activities[activities.length - 1].stock
       : 0;

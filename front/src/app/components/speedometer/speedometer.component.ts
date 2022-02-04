@@ -88,8 +88,13 @@ export class SpeedometerComponent implements OnInit {
   drawArrows() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d');
     ctx.beginPath();
-
-    const radiusAngle = this.getRadiusPosition(this.percent);
+    let percent = this.percent;
+    if(percent < 0) {
+      percent = 0;
+    } else if(percent > 200) {
+      percent = 200;
+    }
+    const radiusAngle = this.getRadiusPosition(percent);
 
     ctx.strokeStyle = 'orange';
     ctx.lineWidth = 3;

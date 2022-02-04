@@ -9,6 +9,7 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { today } from 'src/app/utils/dates';
 import { ServerService } from '../http-server/server.service';
+import { ReferentielService } from '../referentiel/referentiel.service';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +36,7 @@ export class HumanResourceService {
   >([]);
   allContentieuxReferentiel: ContentieuReferentielInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
+  copyOfIdsIndispo: number[] = [];
 
   constructor(private serverService: ServerService) {
     this.contentieuxReferentiel.subscribe((c) => {
@@ -273,27 +275,89 @@ export class HumanResourceService {
     return list;
   }
 
-  pushHRUpdate(humanId: number, profil: any, newReferentiel: ContentieuReferentielInterface[], indisponibilities: RHActivityInterface[]): boolean {
-    console.log(humanId, profil, newReferentiel, indisponibilities)
+  pushHRUpdate(
+    humanId: number,
+    profil: any,
+    newReferentiel: ContentieuReferentielInterface[],
+    indisponibilities: RHActivityInterface[]
+  ): boolean {
     const list = this.hr.getValue();
     const index = list.findIndex((h) => h.id === humanId);
 
     const categories = this.categories.getValue();
-    const cat = categories.find(c => c.id === profil.categoryId);
+    const cat = categories.find((c) => c.id === profil.categoryId);
     const fonctions = this.fonctions.getValue();
-    const font = fonctions.find(c => c.id === profil.fonctionId);
+    const font = fonctions.find((c) => c.id === profil.fonctionId);
 
-
-/*activitiesStartDate: Wed Feb 02 2022 17:18:34 GMT+0100 (heure normale d’Europe centrale) {}
-
-newReferentiel
-
-indisponibilities
-*/
-
-    console.log(list[index])
     if (index !== -1 && cat) {
       const activities = list[index].activities || [];
+
+      // find and update or remove from activities list
+      indisponibilities.map((i) => {
+        const index = activities.findIndex((a) => a.id === i.id);
+        if (i.isDeleted && i.id > 0) {
+          // delete
+          if (index !== -1) {
+            activities.splice(index, 1);
+          }
+        } else if (!i.isDeleted && i.id < 0) {
+          // create
+          activities.push(i);
+        } else if (!i.isDeleted && i.id > 0) {
+          // update
+          if (index !== -1) {
+            activities[index] = i;
+          }
+        }
+      });
+
+      if (newReferentiel.length) {
+        const activitiesStartDate = new Date(profil.activitiesStartDate);
+        const getTimeActivitiesStarted = activitiesStartDate.getTime();
+        const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
+        yesterdayActivitiesStartDate.setDate(yesterdayActivitiesStartDate.getDate() - 1);
+
+        for (let i = activities.length - 1; i >= 0; i--) {
+          if (
+            this.copyOfIdsIndispo.indexOf(activities[i].referentielId) === -1
+          ) {
+            // stop all current activities and start with this
+            if (!activities[i].dateStop) {
+              activities[i].dateStop = yesterdayActivitiesStartDate;
+            }
+
+            // remove activities started after activity start date
+            const dateStart = activities[i].dateStart
+              ? activities[i].dateStart
+              : null;
+            if (dateStart && dateStart.getTime() > getTimeActivitiesStarted) {
+              activities.splice(i, 1);
+            }
+          }
+        }
+
+        newReferentiel
+          .filter((r) => r.percent)
+          .map((ref) => {
+            activities.push({
+              id: -1,
+              percent: ref.percent,
+              referentielId: ref.id,
+              dateStart: new Date(profil.activitiesStartDate),
+            });
+
+            (ref.childrens || [])
+              .filter((r) => r.percent)
+              .map((ref) => {
+                activities.push({
+                  id: -1,
+                  percent: ref.percent,
+                  referentielId: ref.id,
+                  dateStart: new Date(profil.activitiesStartDate),
+                });
+              });
+          });
+      }
 
       list[index] = {
         ...list[index],
@@ -305,7 +369,7 @@ indisponibilities
         category: cat,
         fonction: font,
         activities,
-      }
+      };
 
       this.updateHR(list, true);
     }

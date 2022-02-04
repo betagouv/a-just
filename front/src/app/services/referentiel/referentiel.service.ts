@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { orderBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { referentielMappingIndex } from 'src/app/utils/referentiel';
 import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { ServerService } from '../http-server/server.service';
@@ -52,6 +50,7 @@ export class ReferentielService {
         });
       }
       this.idsIndispo = idsIndispo;
+      this.humanResourceService.copyOfIdsIndispo = idsIndispo;
 
       const refSoutien = list.find((r) => r.label === 'Soutien');
       const idsSoutien = [];
