@@ -25,6 +25,7 @@ export class PanelActivitiesComponent
   @Input() etp: number = 1;
   @Input() activities: RHActivityInterface[] = [];
   @Input() selected: boolean = false;
+  @Input() header: boolean = true;
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter();
   referentiel: ContentieuReferentielInterface[] = [];
@@ -55,10 +56,11 @@ export class PanelActivitiesComponent
 
   getPercentAffected(ref: ContentieuReferentielInterface) {
     const activity = this.activities.find((a) => a.referentielId === ref.id);
+    const percent = activity && activity.percent ? activity.percent : 0;
 
     return {
-      percent: activity && activity.percent ? activity.percent : 0,
-      totalAffected: ((ref.percent || 0) * (this.etp || 0)) / 100,
+      percent,
+      totalAffected: ((percent || 0) * (this.etp || 0)) / 100,
     };
   }
 
@@ -85,6 +87,7 @@ export class PanelActivitiesComponent
         return ref;
       });
 
+    this.referentielChange.emit(this.referentiel);
     this.onTotalAffected();
   }
 

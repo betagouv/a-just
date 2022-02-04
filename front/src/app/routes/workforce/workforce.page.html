@@ -95,22 +95,10 @@
               </div>
             </div>
             <div class="activities">
-              <div class="sub-activity-panel">
-                <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index">
-                  <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
-                    [color]="referentielMappingColor(ref.label)">
-                  </progression-bar>
-                </div>
-              </div>
-              <div class="progress-bar" [ngClass]="{'low-completion': hr.percentAffected !== 100}">
-                <p>
-                  Taux d'affectation : {{ hr.percentAffected | number:'0.0-0'
-                  }}%
-                </p>
-                <div class="progress-bar-line">
-                  <div [style.width.%]="hr.percentAffected"></div>
-                </div>
-              </div>
+              <div class="flex-1"></div>
+              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
+              </panel-activities>
+              <div class="flex-1"></div>
             </div>
             <div class="actions">
               <a [routerLink]="['/resource-humaine', hr.id]">

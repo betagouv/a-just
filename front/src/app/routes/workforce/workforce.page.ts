@@ -19,7 +19,6 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   etpLabel: string;
   hasIndisponibility: number;
   currentActivities: RHActivityInterface[];
-  percentAffected: number;
 }
 
 interface HRCategorySelectedInterface extends HRCategoryInterface {
@@ -146,47 +145,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
-  calculateTotalOccupation() {
-    this.humanResources.map((hr) => {
-      const percentAffected = this.calculWorkTime(hr);
-      hr.workTime = (hr.etp || 0) * percentAffected;
-      hr.percentAffected = percentAffected * 100;
-    });
-  }
-
-  calculWorkTime(hr: HumanResourceSelectedInterface) {
-    return fixDecimal(
-      sumBy(
-        hr.currentActivities.filter(
-          (a) =>
-            this.referentielService.idsIndispo.indexOf(a.referentielId) === -1
-        ),
-        'percent'
-      ) / 100
-    );
-  }
-
   addHR() {
     this.humanResourceService.createHumanResource();
   }
 
   trackById(index: number, item: any) {
     return item.id;
-  }
-
-  getPercentOfActivity(
-    ref: ContentieuReferentielInterface,
-    human: HumanResourceSelectedInterface
-  ) {
-    if (
-      human.tmpActivities &&
-      human.tmpActivities[ref.id] &&
-      human.tmpActivities[ref.id].length
-    ) {
-      return human.tmpActivities[ref.id][0].percent;
-    }
-
-    return 0;
   }
 
   getCurrentActivity(
@@ -296,7 +260,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           opacity: this.checkHROpacity(h),
           etpLabel: etpLabel(h.etp || 0),
           hasIndisponibility,
-          percentAffected: 0,
         };
       });
     const valuesFinded = list.filter((h) => h.opacity === 1);
@@ -322,7 +285,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResources = list;
 
-    this.calculateTotalOccupation();
     this.formatListToShow();
     this.updateCategoryValues();
 

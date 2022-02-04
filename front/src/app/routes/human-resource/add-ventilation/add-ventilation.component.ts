@@ -124,15 +124,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   controlIndisponibilities() {
+    const indispos = this.indisponibilities.filter((a) => !a.isDeleted);
     const max = maxBy(
-      this.indisponibilities.filter((a) => a.dateStop),
+      indispos.filter((a) => !a.isDeleted && a.dateStop),
       function (o) {
         return o.dateStop?.getTime();
       }
     );
     let maxDate = max && max.dateStop ? today(max.dateStop) : new Date(today());
     const min = minBy(
-      this.indisponibilities.filter((a) => a.dateStart),
+      indispos.filter((a) => !a.isDeleted && a.dateStart),
       function (o) {
         return o.dateStart?.getTime();
       }
@@ -145,7 +146,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     let errorsList = [];
     while (currentDate.getTime() >= minDate.getTime()) {
       const findedActivities = this.humanResourceService.filterActivitiesByDate(
-        this.indisponibilities,
+        indispos,
         currentDate
       );
 
@@ -181,7 +182,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           .join(', ')
       : null;
       
-    this.indisponibilitiesVisibles = this.indisponibilities.filter(i => !i.isDeleted);
+    this.indisponibilitiesVisibles = indispos;
   }
 
   onSave() {

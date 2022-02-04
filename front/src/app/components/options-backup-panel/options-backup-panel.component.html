@@ -1,5 +1,5 @@
 <mat-form-field appearance="standard" *ngIf="backups.length">
-    <mat-label>Temps moyens est </mat-label>
+    <mat-label>Temps moyens de comparaison </mat-label>
     <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
         <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
             {{back.label}} du {{back.date
