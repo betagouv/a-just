@@ -249,9 +249,10 @@ export class HumanResourceService {
     list: RHActivityInterface[],
     date: Date
   ): RHActivityInterface[] {
-    list = uniqBy(
-      orderBy(JSON.parse(JSON.stringify(list || [])), ['dateStart'], ['desc']),
-      'referentielId'
+    list = orderBy(
+      JSON.parse(JSON.stringify(list || [])),
+      ['dateStart'],
+      ['desc']
     );
     list = list.filter((a: any) => {
       const dateStop = a.dateStop ? today(new Date(a.dateStop)) : null;
@@ -272,7 +273,7 @@ export class HumanResourceService {
       );
     });
 
-    return list;
+    return uniqBy(list, 'referentielId');
   }
 
   pushHRUpdate(
@@ -315,7 +316,9 @@ export class HumanResourceService {
         const activitiesStartDate = new Date(profil.activitiesStartDate);
         const getTimeActivitiesStarted = activitiesStartDate.getTime();
         const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
-        yesterdayActivitiesStartDate.setDate(yesterdayActivitiesStartDate.getDate() - 1);
+        yesterdayActivitiesStartDate.setDate(
+          yesterdayActivitiesStartDate.getDate() - 1
+        );
 
         for (let i = activities.length - 1; i >= 0; i--) {
           if (
@@ -330,7 +333,7 @@ export class HumanResourceService {
             const dateStart = activities[i].dateStart
               ? activities[i].dateStart
               : null;
-            if (dateStart && dateStart.getTime() > getTimeActivitiesStarted) {
+            if (dateStart && dateStart.getTime() >= getTimeActivitiesStarted) {
               activities.splice(i, 1);
             }
           }

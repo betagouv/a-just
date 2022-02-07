@@ -18,6 +18,7 @@ import { DateSelectComponent } from './date-select/date-select.component';
 import { InputButtonComponent } from './input-button/input-button.component';
 import { EtpPreviewComponent } from './etp-preview/etp-preview.component';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
+import { PanelActivitiesComponent } from './panel-activities/panel-activities.component';
 
 const list = [
   WrapperComponent,
@@ -35,6 +36,7 @@ const list = [
   InputButtonComponent,
   EtpPreviewComponent,
   ProgressionBarComponent,
+  PanelActivitiesComponent,
 ];
 
 @NgModule({

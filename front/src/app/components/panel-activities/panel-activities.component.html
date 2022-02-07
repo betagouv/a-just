@@ -1,4 +1,4 @@
-<div class="header-panel">
+<div *ngIf="header" class="header-panel">
   <div class="sub-item" *ngFor="let ref of referentiel">
     <div class="text">
       <div class="label">
@@ -57,7 +57,7 @@
   </div>
 </div>
 
-<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected < 70 || percentAffected > 100}">
+<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100}">
   <p>Taux d'affectation : {{ percentAffected | number: "0.0-0" }}%</p>
   <div class="progress-bar-line">
     <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
