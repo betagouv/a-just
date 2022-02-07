@@ -109,4 +109,12 @@ export class MainClass {
       now.getDate() === date.getDate()
     );
   }
+
+  public getFullYear(date: Date | string) {
+    if(typeof date === 'string') {
+      date = new Date(date);
+    }
+
+    return date.getFullYear();
+  }
 }

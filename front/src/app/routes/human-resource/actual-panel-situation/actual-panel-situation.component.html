@@ -24,7 +24,7 @@
           <p>
             <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
               {{ getShortMonthString(indisp.dateStart) }}
-              {{ indisp.dateStart.getFullYear() }}</ng-template>
+              {{ getFullYear(indisp.dateStart) }}</ng-template>
             <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
               au
             </ng-template>
@@ -33,7 +33,7 @@
             </ng-template>
             <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
               {{ getShortMonthString(indisp.dateStop) }}
-              {{ indisp.dateStop.getFullYear() }}</ng-template>
+              {{ getFullYear(indisp.dateStop) }}</ng-template>
           </p>
         </div>
       </div>
