@@ -24,7 +24,7 @@
           <p>
             <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
               {{ getShortMonthString(indisp.dateStart) }}
-              {{ indisp.dateStart | date: "YYYY" }}</ng-template>
+              {{ indisp.dateStart.getFullYear() }}</ng-template>
             <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
               au
             </ng-template>
@@ -33,7 +33,7 @@
             </ng-template>
             <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
               {{ getShortMonthString(indisp.dateStop) }}
-              {{ indisp.dateStop | date: "YYYY" }}</ng-template>
+              {{ indisp.dateStop.getFullYear() }}</ng-template>
           </p>
         </div>
       </div>
@@ -48,11 +48,11 @@
       <div class="tags">
         <p *ngIf="dateStart" class="date">
           <mat-icon>calendar_today</mat-icon>Depuis le {{ dateStart | date: "dd" }}
-          {{ getShortMonthString(dateStart) }} {{ dateStart | date: "YYYY" }}
+          {{ getShortMonthString(dateStart) }} {{ dateStart.getFullYear() }}
         </p>
         <p *ngIf="dateStop && !isToday(dateStop)" class="date">
           <mat-icon>calendar_today</mat-icon>Jusqu'au {{ dateStop | date: "dd" }}
-          {{ getShortMonthString(dateStop) }} {{ dateStop | date: "YYYY" }}
+          {{ getShortMonthString(dateStop) }} {{ dateStop.getFullYear() }}
         </p>
       </div>
     </div>
