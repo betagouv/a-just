@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { groupBy, sortBy, sumBy } from 'lodash';
+import { groupBy, orderBy, sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
@@ -42,6 +42,7 @@ interface listFormatedInterface {
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   allHumanResources: HumanResourceInterface[] = [];
+  preformatedAllHumanResource: HumanResourceSelectedInterface[] = [];
   humanResources: HumanResourceSelectedInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
   referentielFiltred: ContentieuReferentielInterface[] = [];
@@ -55,6 +56,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   hrBackup: BackupInterface | undefined;
   dateSelected: Date = new Date();
   listFormated: listFormatedInterface[] = [];
+  filterSelected: ContentieuReferentielInterface | null = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -68,8 +70,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.humanResourceService.hr.subscribe((hr) => {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
         this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank']);
-        this.updateCategoryValues();
-        this.onFilterList();
+        this.preformatHumanResources();
       })
     );
     this.watch(
@@ -114,6 +115,36 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watcherDestroy();
+  }
+
+  preformatHumanResources() {
+    this.preformatedAllHumanResource = this.allHumanResources.map((h) => {
+      const currentActivities =
+        this.humanResourceService.filterActivitiesByDate(
+          h.activities || [],
+          this.dateSelected
+        );
+      const hasIndisponibility = fixDecimal(
+        sumBy(
+          currentActivities.filter(
+            (a) =>
+              this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
+          ),
+          'percent'
+        ) / 100
+      );
+
+      return {
+        ...h,
+        currentActivities,
+        opacity: 1,
+        etpLabel: etpLabel(h.etp || 0),
+        hasIndisponibility,
+      };
+    });
+
+    this.updateCategoryValues();
+    this.onFilterList();
   }
 
   updateCategoryValues() {
@@ -236,32 +267,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     const selectedCategoryIds = this.categoriesFilterList
       .filter((c) => c.selected)
       .map((c) => c.id);
-    let list: HumanResourceSelectedInterface[] = this.allHumanResources
-      .filter(
-        (hr) =>
-          hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
-      )
-      .map((h) => {
-        const currentActivities = this.humanResourceService.filterActivitiesByDate(h.activities || [], this.dateSelected);
-        const hasIndisponibility = fixDecimal(
-          sumBy(
-            currentActivities.filter(
-              (a) =>
-                this.referentielService.idsIndispo.indexOf(a.referentielId) !==
-                -1
-            ),
-            'percent'
-          ) / 100
-        );
-
-        return {
+    let list: HumanResourceSelectedInterface[] =
+      this.preformatedAllHumanResource
+        .filter(
+          (hr) =>
+            hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
+        )
+        .map((h) => ({
           ...h,
-          currentActivities,
           opacity: this.checkHROpacity(h),
-          etpLabel: etpLabel(h.etp || 0),
-          hasIndisponibility,
-        };
-      });
+        }));
     const valuesFinded = list.filter((h) => h.opacity === 1);
     this.valuesFinded =
       valuesFinded.length === list.length ? null : valuesFinded;
@@ -291,7 +306,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
     } else if (list.length) {
-      this.onGoTo(list[0]);
+      this.onGoTo(null);
     }
   }
 
@@ -330,6 +345,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           return hr;
         });
 
+        if (this.filterSelected) {
+          group = orderBy(
+            group,
+            (h) => {
+              const acti = (h.activities || []).find(
+                (a) => a.referentielId === this.filterSelected?.id
+              );
+              return acti ? acti.percent || 0 : 0;
+            },
+            ['desc']
+          );
+        }
+
         return {
           textColor: this.getCategoryColor(label),
           bgColor: this.getCategoryColor(label, 0.2),
@@ -348,23 +376,30 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  onGoTo(hr: HumanResourceInterface) {
+  onGoTo(hr: HumanResourceInterface | null) {
     const findContainer = document.getElementById('container-list');
     if (findContainer) {
-      const findElement = findContainer.querySelector(`#human-${hr.id}`);
-      if (findElement) {
-        const headers = findContainer.querySelectorAll('.header-list');
-        const { top } = findElement.getBoundingClientRect();
-        let topDelta = findContainer.getBoundingClientRect().top + 8;
-        for (let i = 0; i < headers.length; i++) {
-          const topHeader = headers[i].getBoundingClientRect().top;
-          if (topHeader < top) {
-            topDelta += headers[i].getBoundingClientRect().height;
+      if (hr) {
+        const findElement = findContainer.querySelector(`#human-${hr.id}`);
+        if (findElement) {
+          const headers = findContainer.querySelectorAll('.header-list');
+          const { top } = findElement.getBoundingClientRect();
+          let topDelta = findContainer.getBoundingClientRect().top + 8;
+          for (let i = 0; i < headers.length; i++) {
+            const topHeader = headers[i].getBoundingClientRect().top;
+            if (topHeader < top) {
+              topDelta += headers[i].getBoundingClientRect().height;
+            }
           }
+          findContainer.scrollTo({
+            behavior: 'smooth',
+            top: top - topDelta,
+          });
         }
+      } else {
         findContainer.scrollTo({
           behavior: 'smooth',
-          top: top - topDelta,
+          top: 0,
         });
       }
     } else {
@@ -409,6 +444,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onDateChanged(date: any) {
     this.dateSelected = date;
+    this.onFilterList();
+  }
+
+  onFilterBy(ref: ContentieuReferentielInterface) {
+    if (!this.filterSelected || this.filterSelected.id !== ref.id) {
+      this.filterSelected = ref;
+    } else {
+      this.filterSelected = null;
+    }
+
     this.onFilterList();
   }
 }

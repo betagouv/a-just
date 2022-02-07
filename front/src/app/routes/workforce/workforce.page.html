@@ -42,12 +42,15 @@
                 <div class="etp">
                   <p>ETP T affectés :</p>
                 </div>
-                <div class="flex-1"></div>
+                <div class="filter">
+                  <p>Trier par :</p>
+                </div>
               </div>
             </div>
           </div>
           <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel">
+            <div class="sub-item" *ngFor="let ref of list.referentiel" (click)="onFilterBy(ref)"
+              [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="text">
                 <div class="label">
                   <p><b>{{ referentielMappingName(ref.label) }}</b></p>
@@ -55,7 +58,10 @@
                 <div class="etp">
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
-                <div class="flex-1"></div>
+                <div class="filter">
+                  <mat-icon>{{ filterSelected && filterSelected.id === ref.id ? 'filter_list' : 'filter_list_off' }}
+                  </mat-icon>
+                </div>
               </div>
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
             </div>
