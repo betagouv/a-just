@@ -21,7 +21,7 @@
             {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
             category.labelPlural : category.label }}
           </p>
-          <p class="etp">{{ category.etpt | number:".2-2" }} ETP-T</p>
+          <p class="etp">{{ category.etpt | number:".2-2" }} ETP T</p>
         </div>
       </div>
     </div>
@@ -40,14 +40,17 @@
                   <p>Contentieux :</p>
                 </div>
                 <div class="etp">
-                  <p>ETP affectés :</p>
+                  <p>ETP T affectés :</p>
                 </div>
-                <div class="flex-1"></div>
+                <div class="filter">
+                  <p>Trier par :</p>
+                </div>
               </div>
             </div>
           </div>
           <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel">
+            <div class="sub-item" *ngFor="let ref of list.referentiel" (click)="onFilterBy(ref)"
+              [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="text">
                 <div class="label">
                   <p><b>{{ referentielMappingName(ref.label) }}</b></p>
@@ -55,7 +58,10 @@
                 <div class="etp">
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
-                <div class="flex-1"></div>
+                <div class="filter">
+                  <mat-icon>{{ filterSelected && filterSelected.id === ref.id ? 'filter_list' : 'filter_list_off' }}
+                  </mat-icon>
+                </div>
               </div>
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
             </div>
@@ -67,7 +73,7 @@
           <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">
             <div class="profil item">
-              <div class="text">
+              <a [routerLink]="['/resource-humaine', hr.id]" class="text">
                 <div class="name">
                   <p>{{ hr.firstName}} {{ hr.lastName}}</p>
                   <div *ngIf="hr.comment" class="tooltip">
@@ -84,7 +90,7 @@
                 <p class="unavailable" *ngIf="hr.hasIndisponibility">
                   <mat-icon>error</mat-icon> indisponibilité
                 </p>
-              </div>
+              </a>
               <div class="read-etp">
                 <p class="label">
                   ETP Travaillé :
@@ -95,22 +101,10 @@
               </div>
             </div>
             <div class="activities">
-              <div class="sub-activity-panel">
-                <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index">
-                  <progression-bar [percent]="getPercentOfActivity(ref, hr)" [selected]="false"
-                    [color]="referentielMappingColor(ref.label)">
-                  </progression-bar>
-                </div>
-              </div>
-              <div class="progress-bar" [ngClass]="{'low-completion': hr.percentAffected < 70}">
-                <p>
-                  Taux d'affectation : {{ hr.percentAffected | number:'0.0-0'
-                  }}%
-                </p>
-                <div class="progress-bar-line">
-                  <div [style.width.%]="hr.percentAffected"></div>
-                </div>
-              </div>
+              <div class="flex-1"></div>
+              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
+              </panel-activities>
+              <div class="flex-1"></div>
             </div>
             <div class="actions">
               <a [routerLink]="['/resource-humaine', hr.id]">
