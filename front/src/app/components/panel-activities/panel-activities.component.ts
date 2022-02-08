@@ -12,6 +12,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
   selector: 'panel-activities',
@@ -56,7 +57,7 @@ export class PanelActivitiesComponent
 
   getPercentAffected(ref: ContentieuReferentielInterface) {
     const activity = this.activities.find((a) => a.referentielId === ref.id);
-    const percent = activity && activity.percent ? activity.percent : 0;
+    const percent = fixDecimal(activity && activity.percent ? activity.percent : 0, 10);
 
     return {
       percent,
@@ -87,12 +88,11 @@ export class PanelActivitiesComponent
         return ref;
       });
 
-    this.referentielChange.emit(this.referentiel);
     this.onTotalAffected();
   }
 
   onTotalAffected() {
-    this.percentAffected = sumBy(this.referentiel, 'percent');
+    this.percentAffected = Math.floor(sumBy(this.referentiel, 'percent'));
   }
 
   onTogglePanel(index: number) {

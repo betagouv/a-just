@@ -10,12 +10,14 @@ $colors: (
 	cblue: #5151a1,
 	cbluemiddle: #e3e3fd,
 	cbluelight: #417dc4,
+	cblueextralight: #e2e8f0,
 	cgreen: #3a734f,
 	cgreenstrong: #00a95f,
 	cgreenlight: #e3fdeb,
 	cred: #ff5655,
 	credlight: #ffe9e9,
 	cpink: #a558a0,
+	cyellowlight: #fef6e3,
 	cyellow: #efcb3a,
 	cyellowdark: #796830,
 	bgSelect: #f6f6f6,
@@ -33,6 +35,7 @@ $colors: (
 	sortIconHeaderSelected: #4c4ce2,
 	bgIndisponibilitiesPanel: #fef4f2,
 	titleIndisponibilitiesPanel: #e4794a,
+	blueseparator: #90cdf4,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
