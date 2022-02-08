@@ -1,9 +1,5 @@
 @import "../../styles/utils.scss";
 
-aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
-  margin-left: 16px;
-}
-
 .header-list {
   padding: 20px;
   display: flex;
@@ -93,6 +89,8 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
     &.activity p {
       color: fColor(cyellowdark);
       position: relative;
+      width: 100%;
+      text-align: center;
 
       &:before {
         content: " ";
@@ -131,6 +129,46 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
   box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+
+  .width-contentieux {
+    p {
+      margin-left: 12px;
+    }
+  }
+
+  p {
+    font-size: 11px;
+    font-weight: bold;
+    color: fColor(cblack);
+    margin-top: 4px;
+    letter-spacing: -0.19px;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    margin-bottom: 2px;
+    color: fColor(headerColor);
+  }
+
+  .item {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+
+    > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+
+      p {
+        text-align: center;
+      }
+    }
+  }
 }
 
 
