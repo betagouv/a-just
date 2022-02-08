@@ -1,5 +1,5 @@
 <aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
-  class="content-margin-null">
+  [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
   <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [category]="h.category"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
