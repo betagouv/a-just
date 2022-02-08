@@ -3,9 +3,9 @@
     <p>{{ realValue }}</p>
     <mat-icon>{{ icon }}</mat-icon>
 </div>
-<mat-select multiple #matSelect class="hide-visualisation" [ngModel]="value" (ngModelChange)="onSelectedChanged($event)"
-    #selectionModel="ngModel">
-    <app-select-check-all [model]="selectionModel" [values]="datas">
+<mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
+    (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
+    <app-select-check-all *ngIf="multiple" [model]="selectionModel" [values]="datas">
     </app-select-check-all>
     <mat-option *ngFor="let ref of datas" [value]="ref.id">
         {{ ref.value }}
