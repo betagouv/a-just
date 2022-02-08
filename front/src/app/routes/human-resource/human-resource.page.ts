@@ -164,14 +164,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         JSON.stringify(findedActivities.map((f) => f.id))
       ) {
         idOfActivities = findedActivities.map((f) => f.id);
+        const indisp = findedActivities.filter(
+          (r) =>
+            this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
+        )
+
         // new list
         this.histories.push({
           category: (fonction && fonction.code) || '',
           etp: (this.currentHR && this.currentHR.etp) || 0,
-          indisponibilities: findedActivities.filter(
-            (r) =>
-              this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
-          ),
+          indisponibilities: indisp,
           activities: findedActivities,
           dateStart: new Date(),
           dateStop: new Date(currentDate),
