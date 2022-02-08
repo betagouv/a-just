@@ -274,8 +274,18 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
         .filter(
-          (hr) =>
-            hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
+          (hr) => {
+            let isOk = false;
+            if(hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1) {
+              isOk = true;
+            }
+
+            if(hr.dateEnd && hr.dateEnd.getTime() < this.dateSelected.getTime()) {
+              isOk = false;
+            }
+
+            return isOk;
+          }
         )
         .map((h) => ({
           ...h,
