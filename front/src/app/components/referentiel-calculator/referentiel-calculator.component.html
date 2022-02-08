@@ -9,7 +9,7 @@
     <p>Entrées mensuelles moyennes : {{ totalIn }}</p>
     <p>Sorties mensuelles moyennes : {{ totalOut }}</p>
     <p>Stock de fin de période : {{ totalStock }}</p>
-    <p>ETP T moyens affectés :
+    <p>ETPT moyens affectés :
       <ng-template ngFor let-etp [ngForOf]="etpAffected">
         <br /> - {{etp.totalEtp}} {{etp.totalEtp > 1 ? etp.name+'s' : etp.name}}
       </ng-template>
