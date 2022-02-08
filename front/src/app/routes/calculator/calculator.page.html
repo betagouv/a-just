@@ -1,4 +1,4 @@
-<aj-wrapper title="Calculateur" [actionTemplate]="actions">
+<aj-wrapper title="Calculateur" [actionTemplate]="actions" class="content-margin-null">
   <div class="container">
     <div class="header-list">
       <p class="title-header-list">Contentieux :</p>
@@ -14,19 +14,44 @@
         </ng-template>
       </mat-select>
       <div class="flex-1"></div>
-      <p class="title-header-list">Période :</p>
-      <p>Du</p>
-      <input [ngModel]="dateStart" (ngModelChange)="updateReferentielSelected('dateStart', $event)"
-        [matDatepicker]="pickerDateStart" />
-      <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStart>
-      </mat-datepicker>
-      <p>Au</p>
-      <input [ngModel]="dateStop" (ngModelChange)="updateReferentielSelected('dateStop', $event)"
-        [matDatepicker]="pickerDateStop" />
-      <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStop>
-      </mat-datepicker>
+      <aj-date-select title="Pour la période du" [value]="dateStart"
+        (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start">
+      </aj-date-select>
+      <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
+        class="date-stop">
+      </aj-date-select>
+    </div>
+    <div class="header-calculator">
+      <div class="title-header-calculator">
+        <div class="width-contentieux"></div>
+        <div class="item">
+          <p>Données constatées</p>
+        </div>
+        <div class="item activity">
+          <p>Activité constatée</p>
+        </div>
+        <div class="item calculate">
+          <p>Activité calculée</p>
+        </div>
+      </div>
+      <div class="explanation-calculator">
+        <div class="width-contentieux"></div>
+        <div class="item">
+          <p>Données renseignées depuis les écrans <a routerLink="/ventilations">Affectation des ETP</a> et <a
+              routerLink="/donnees-d-activite">Données d’activité</a></p>
+        </div>
+        <div class="item activity">
+          <p>Calculs effectués à partir des données constatées</p>
+        </div>
+        <div class="item calculate">
+          <p>Calculs théoriques effectués à partir des temps moyens de comparaison sélectionnés dans « Mes temps moyens
+            de comparaison »</p>
+        </div>
+      </div>
+      <div class="contentieux-header-calculator">
+        <div class="width-contentieux">Contentieux</div>
+        <div class="item"></div>
+      </div>
     </div>
     <div class="content-list">
       <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
