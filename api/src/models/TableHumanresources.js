@@ -50,7 +50,7 @@ export default (sequelizeInstance, Model) => {
           code: list[i]['HRFonction.code'],
           label: list[i]['HRFonction.label'],
         },
-        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId),
+        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId, list[i].date_sortie),
       }
     }
 

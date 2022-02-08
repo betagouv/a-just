@@ -12,6 +12,7 @@ import { BackupInterface } from 'src/app/interfaces/backup';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { copyArray } from 'src/app/utils/array';
 import { etpLabel } from 'src/app/utils/referentiel';
+import { ActivatedRoute } from '@angular/router';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
@@ -57,10 +58,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   dateSelected: Date = new Date();
   listFormated: listFormatedInterface[] = [];
   filterSelected: ContentieuReferentielInterface | null = null;
+  lastScrollTop: number = 0;
+  isFirstLoad: boolean = true;
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private route: ActivatedRoute,
   ) {
     super();
   }
@@ -270,8 +274,18 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
         .filter(
-          (hr) =>
-            hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1
+          (hr) => {
+            let isOk = false;
+            if(hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1) {
+              isOk = true;
+            }
+
+            if(hr.dateEnd && hr.dateEnd.getTime() < this.dateSelected.getTime()) {
+              isOk = false;
+            }
+
+            return isOk;
+          }
         )
         .map((h) => ({
           ...h,
@@ -303,8 +317,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.formatListToShow();
     this.updateCategoryValues();
 
-    if (this.valuesFinded && this.valuesFinded.length) {
-      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+    if(this.isFirstLoad && this.route.snapshot.fragment) {
+      this.isFirstLoad = false;
+      this.onGoTo(+this.route.snapshot.fragment)
+    } else if (this.valuesFinded && this.valuesFinded.length) {
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id);
     } else if (list.length) {
       this.onGoTo(null);
     }
@@ -376,11 +393,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  onGoTo(hr: HumanResourceInterface | null) {
+  onGoTo(hrId: number | null) {
+    let isFinded = false;
     const findContainer = document.getElementById('container-list');
     if (findContainer) {
-      if (hr) {
-        const findElement = findContainer.querySelector(`#human-${hr.id}`);
+      if (hrId) {
+        const findElement = findContainer.querySelector(`#human-${hrId}`);
         if (findElement) {
           const headers = findContainer.querySelectorAll('.header-list');
           const { top } = findElement.getBoundingClientRect();
@@ -391,19 +409,31 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               topDelta += headers[i].getBoundingClientRect().height;
             }
           }
-          findContainer.scrollTo({
+
+          let scrollTop = top - topDelta + findContainer.scrollTop;
+          if(this.lastScrollTop && this.lastScrollTop > scrollTop) {
+            scrollTop -= 88;
+          }
+
+          isFinded = true;
+          findContainer.scroll({
             behavior: 'smooth',
-            top: top - topDelta,
+            top: scrollTop,
           });
-        }
+
+          this.lastScrollTop = scrollTop;
+        } else {}
       } else {
+        isFinded = true;
         findContainer.scrollTo({
           behavior: 'smooth',
           top: 0,
         });
       }
-    } else {
-      setTimeout(() => this.onGoTo(hr), 200);
+    }
+
+    if(!isFinded) {
+      setTimeout(() => this.onGoTo(hrId), 200);
     }
   }
 
@@ -416,7 +446,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.indexValuesFinded = this.valuesFinded.length - 1;
       }
 
-      this.onGoTo(this.valuesFinded[this.indexValuesFinded]);
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id);
     }
   }
 

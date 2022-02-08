@@ -128,10 +128,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         return o.dateStop?.getTime();
       }
     );
-    const maxDate =
+    let maxDate =
       max && max.dateStop && max.dateStop.getTime() > getToday.getTime()
         ? today(new Date(max.dateStop))
         : new Date(today());
+    if(this.currentHR && this.currentHR.dateEnd) {
+      const currentDateEnd = new Date(this.currentHR.dateEnd);
+      if(currentDateEnd.getTime() > maxDate.getTime()) {
+        maxDate = currentDateEnd;
+      }
+    }
+
     const min = minBy(
       activities.filter((a) => a.dateStart),
       function (o) {
@@ -141,12 +148,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const minDate =
       min && min.dateStart ? today(new Date(min.dateStart)) : new Date(today());
     const fonction = this.fonctions.find(
-      (f) => f.id === this.currentHR?.category.id
+      (f) => f.id === this.currentHR?.fonction?.id
     );
 
     const currentDate = new Date(maxDate);
     let idOfActivities: number[] = [];
-    while (currentDate.getTime() > minDate.getTime()) {
+    while (currentDate.getTime() >= minDate.getTime()) {
       const findedActivities = this.humanResourceService.filterActivitiesByDate(
         activities,
         currentDate
@@ -157,14 +164,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         JSON.stringify(findedActivities.map((f) => f.id))
       ) {
         idOfActivities = findedActivities.map((f) => f.id);
+        const indisp = findedActivities.filter(
+          (r) =>
+            this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
+        )
+
         // new list
         this.histories.push({
           category: (fonction && fonction.code) || '',
           etp: (this.currentHR && this.currentHR.etp) || 0,
-          indisponibilities: findedActivities.filter(
-            (r) =>
-              this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
-          ),
+          indisponibilities: indisp,
           activities: findedActivities,
           dateStart: new Date(),
           dateStop: new Date(currentDate),
@@ -183,7 +192,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       h.dateStart = new Date(dateStop);
       dateStop.setDate(dateStop.getDate() + 1);
 
-      if(index === 0) {
+      if(index === 0 && this.histories.length > 1) {
         h.dateStart.setDate(h.dateStart.getDate() + 1);
       }
 

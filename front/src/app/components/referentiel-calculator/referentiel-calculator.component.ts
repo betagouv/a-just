@@ -199,7 +199,7 @@ export class ReferentielCalculatorComponent
     }
 
     if (totalEtp) {
-      return fixDecimal(totalEtp / totalDays) / 100;
+      return fixDecimal((hr.etp || 0) * totalEtp / totalDays) / 100;
     }
 
     return 0;
