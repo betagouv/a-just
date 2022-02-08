@@ -29,8 +29,8 @@
 <div class="contener">
   <div class="header" id="top">
     <div *ngIf="backUrl" class="back-url">
-      <a [routerLink]="backUrl">
-        <button class="outline blue small">
+      <a [routerLink]="backUrl" [fragment]="backAnchor">
+        <button class="primary small">
           <mat-icon>chevron_left</mat-icon>Retour
         </button>
       </a>

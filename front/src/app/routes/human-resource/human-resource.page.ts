@@ -141,12 +141,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const minDate =
       min && min.dateStart ? today(new Date(min.dateStart)) : new Date(today());
     const fonction = this.fonctions.find(
-      (f) => f.id === this.currentHR?.category.id
+      (f) => f.id === this.currentHR?.fonction?.id
     );
 
     const currentDate = new Date(maxDate);
     let idOfActivities: number[] = [];
-    while (currentDate.getTime() > minDate.getTime()) {
+    while (currentDate.getTime() >= minDate.getTime()) {
       const findedActivities = this.humanResourceService.filterActivitiesByDate(
         activities,
         currentDate

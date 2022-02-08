@@ -24,6 +24,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() title: string = '';
   @Input() subtitle: string = '';
   @Input() backUrl: string = '';
+  @Input() backAnchor: string | undefined;
   hrBackup: BackupInterface | undefined;
   hrBackups: BackupInterface[] = [];
   menu = [
