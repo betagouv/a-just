@@ -291,7 +291,7 @@ export class HumanResourceService {
     const font = fonctions.find((c) => c.id === profil.fonctionId);
 
     if (index !== -1 && cat) {
-      const activities = list[index].activities || [];
+      let activities = list[index].activities || [];
 
       // find and update or remove from activities list
       indisponibilities.map((i) => {
@@ -360,6 +360,27 @@ export class HumanResourceService {
                 });
               });
           });
+      }
+
+      let { dateEnd } = profil;
+      if(dateEnd) {
+        dateEnd = new Date(dateEnd);
+
+        // stop all activities bigger than end date
+        activities = activities.map(a => {
+          const dStart = a.dateStart ? new Date(a.dateStart) : null;
+          const dStop = a.dateStop ? new Date(a.dateStop) : null;
+
+          if(dStart && dStart.getTime() > dateEnd.getTime()) {
+            a.dateStart = new Date(dateEnd);
+          }
+
+          if(dStop && dStop.getTime() > dateEnd.getTime()) {
+            a.dateStop = new Date(dateEnd);
+          }
+
+          return a;
+        });
       }
 
       list[index] = {

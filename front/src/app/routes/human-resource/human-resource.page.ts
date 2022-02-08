@@ -128,10 +128,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         return o.dateStop?.getTime();
       }
     );
-    const maxDate =
+    let maxDate =
       max && max.dateStop && max.dateStop.getTime() > getToday.getTime()
         ? today(new Date(max.dateStop))
         : new Date(today());
+    if(this.currentHR && this.currentHR.dateEnd) {
+      const currentDateEnd = new Date(this.currentHR.dateEnd);
+      if(currentDateEnd.getTime() > maxDate.getTime()) {
+        maxDate = currentDateEnd;
+      }
+    }
+
     const min = minBy(
       activities.filter((a) => a.dateStart),
       function (o) {
@@ -183,7 +190,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       h.dateStart = new Date(dateStop);
       dateStop.setDate(dateStop.getDate() + 1);
 
-      if(index === 0) {
+      if(index === 0 && this.histories.length > 1) {
         h.dateStart.setDate(h.dateStart.getDate() + 1);
       }
 
