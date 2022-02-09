@@ -381,8 +381,6 @@ export class HumanResourceService {
           });
       }
 
-      console.log(activities)
-
       // update situation
       let situations = this.findAllSituations(list[index], activitiesStartDate);
       const cat = categories.find((c) => c.id == profil.categoryId);
@@ -406,6 +404,7 @@ export class HumanResourceService {
         situations,
         activities,
       };
+      console.log(list[index])
 
       this.updateHR(list, true);
     }
