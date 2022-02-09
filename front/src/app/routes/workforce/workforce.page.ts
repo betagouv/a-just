@@ -284,6 +284,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               isOk = false;
             }
 
+            if(hr.dateStart && hr.dateStart.getTime() > this.dateSelected.getTime()) {
+              isOk = false;
+            }
+
             return isOk;
           }
         )
