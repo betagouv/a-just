@@ -374,8 +374,6 @@ export class HumanResourceService {
         activities,
       };
 
-      console.log(list[index])
-
       this.updateHR(list, true);
     }
 
