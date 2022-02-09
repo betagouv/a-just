@@ -25,10 +25,12 @@ export default sequelizeInstance => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      // todo remove
       hr_categorie_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      // todo remove
       hr_fonction_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
@@ -45,14 +47,17 @@ export default sequelizeInstance => {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      // todo remove
       etp: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      // todo remove
       posad: {
         type: Sequelize.FLOAT,
         allowNull: true,
       },
+      // todo remove
       note: {
         type: Sequelize.TEXT,
         allowNull: true,
