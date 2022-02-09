@@ -474,7 +474,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onDateChanged(date: any) {
     this.dateSelected = date;
-    this.onFilterList();
+    this.preformatHumanResources();
   }
 
   onFilterBy(ref: ContentieuReferentielInterface) {
