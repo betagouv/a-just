@@ -18,6 +18,7 @@ import { HRCategoryService } from 'src/app/services/hr-category/hr-category.serv
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { today } from 'src/app/utils/dates';
+import { fixDecimal } from 'src/app/utils/numbers';
 
 @Component({
   selector: 'add-ventilation',
@@ -191,7 +192,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    const totalAffected = sumBy(this.updatedReferentiels, 'percent');
+    const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'));
     if (totalAffected > 100) {
       alert(
         `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
