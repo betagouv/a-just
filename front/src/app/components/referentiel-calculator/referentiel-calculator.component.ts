@@ -105,11 +105,10 @@ export class ReferentielCalculatorComponent
 
     this.getHRPositions();
 
-    // Temps moyens par dossier observé = sorties sur la période / etp / heure
+    // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
     this.realTimePerCase = fixDecimal(
       ((this.environment.nbDaysByMagistrat / 12) *
-        this.environment.nbHoursPerDay *
-        this.nbMonth) /
+        this.environment.nbHoursPerDay) /
         (this.totalOut / sumBy(this.etpAffected, 'totalEtp'))
     );
 
