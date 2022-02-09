@@ -286,9 +286,9 @@ export class HumanResourceService {
     const index = list.findIndex((h) => h.id === humanId);
 
     const categories = this.categories.getValue();
-    const cat = categories.find((c) => c.id === profil.categoryId);
+    const cat = categories.find((c) => c.id == profil.categoryId);
     const fonctions = this.fonctions.getValue();
-    const font = fonctions.find((c) => c.id === profil.fonctionId);
+    const font = fonctions.find((c) => c.id == profil.fonctionId);
 
     if (index !== -1 && cat) {
       let activities = list[index].activities || [];
@@ -362,27 +362,6 @@ export class HumanResourceService {
           });
       }
 
-      let { dateEnd } = profil;
-      if(dateEnd) {
-        dateEnd = new Date(dateEnd);
-
-        // stop all activities bigger than end date
-        activities = activities.map(a => {
-          const dStart = a.dateStart ? new Date(a.dateStart) : null;
-          const dStop = a.dateStop ? new Date(a.dateStop) : null;
-
-          if(dStart && dStart.getTime() > dateEnd.getTime()) {
-            a.dateStart = new Date(dateEnd);
-          }
-
-          if(dStop && dStop.getTime() > dateEnd.getTime()) {
-            a.dateStop = new Date(dateEnd);
-          }
-
-          return a;
-        });
-      }
-
       list[index] = {
         ...list[index],
         firstName: profil.firstName,
@@ -394,6 +373,8 @@ export class HumanResourceService {
         fonction: font,
         activities,
       };
+
+      console.log(list[index])
 
       this.updateHR(list, true);
     }
