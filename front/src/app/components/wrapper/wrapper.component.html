@@ -6,11 +6,11 @@
 
   <div class="juridiction" *ngIf="hrBackup">
     <div class="juridiction-title">
-      <h6>{{ hrBackup.juridiction.longName || hrBackup.juridiction.label }}</h6>
+      <h6>{{ hrBackup.label }}</h6>
       <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)">
-          {{ bu.juridiction.longName || bu.juridiction.label }}
+        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+          {{ bu.label }}
         </button>
       </mat-menu>
     </div>
