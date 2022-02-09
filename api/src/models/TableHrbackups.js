@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 export default (sequelizeInstance, Model) => {
   Model.createWithLabel = async (label, juridictionName) => {
     let jurdiction = await Model.models.Juridictions.findOne({
@@ -146,15 +148,12 @@ export default (sequelizeInstance, Model) => {
       const hr = list[x]
 
       const options = {
-        etp: hr.etp || 0,
         first_name: hr.firstName || null,
         last_name: hr.lastName || null,
         date_entree: hr.dateStart || null,
         date_sortie: hr.dateEnd || null,
         note: hr.note,
         backup_id: newBackupId,
-        hr_categorie_id: hr.category && hr.category.id ? hr.category.id : null,
-        hr_fonction_id: hr.fonction && hr.fonction.id ? hr.fonction.id : null,
       }
 
       if(hr.id && hr.id > 0 && !backupName) {
@@ -195,6 +194,8 @@ export default (sequelizeInstance, Model) => {
           })
         }
       }
+
+      await Model.models.HRSitutations.syncSituations(hr.situations, hr.id)
     }
 
     // remove old HR
@@ -202,13 +203,14 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id'],
       where: {
         backup_id: newBackupId,
+        id: {
+          [Op.notIn]: reelHRIds,
+        },
       },
       raw: true,
     })).map(h => (h.id))
     for(let i = 0; i < oldNewHRList.length; i++) {
-      if(reelHRIds.indexOf(oldNewHRList[i]) === -1) {
-        await Model.models.HumanResources.destroyById(oldNewHRList[i])
-      }
+      await Model.models.HumanResources.destroyById(oldNewHRList[i])
     }
 
     // update date of backup

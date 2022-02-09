@@ -23,9 +23,7 @@ export class HumanResourceService {
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
     BackupInterface[]
   >([]);
-  backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
-    null
-  );
+  backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null);
   hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   autoReloadData: boolean = true;
   categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<
@@ -39,6 +37,11 @@ export class HumanResourceService {
   copyOfIdsIndispo: number[] = [];
 
   constructor(private serverService: ServerService) {
+    if(localStorage.getItem('backupId')) {
+      const backupId = localStorage.getItem('backupId') || 0;
+      this.backupId.next(+backupId);
+    }
+
     this.contentieuxReferentiel.subscribe((c) => {
       let list: ContentieuReferentielInterface[] = [];
       c.map((cont) => {
@@ -52,6 +55,8 @@ export class HumanResourceService {
 
   initDatas() {
     this.backupId.subscribe((id) => {
+      localStorage.setItem('backupId', ''+id);
+
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
           this.hr.next(
@@ -101,9 +106,7 @@ export class HumanResourceService {
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
-      etp: 1,
-      fonction: this.fonctions.getValue()[0],
-      category: this.categories.getValue()[0],
+      situations: [],
     });
 
     this.updateHR(hr, true);
@@ -276,6 +279,25 @@ export class HumanResourceService {
     return uniqBy(list, 'referentielId');
   }
 
+  findSituation(hr: HumanResourceInterface | null, date?: Date) {
+    let situations = this.findAllSituations(hr, date);
+
+    return situations.length ? situations[0] : null;
+  }
+
+  findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
+    let situations = orderBy((hr && hr.situations || []), ['dateStart'], ['desc']);
+    
+    if(date) {
+      situations = situations.filter(hra => {
+        const dateStart = new Date(hra.dateStart); 
+        return dateStart.getTime() <= date.getTime();
+      });
+    }
+
+    return situations;
+  }
+
   pushHRUpdate(
     humanId: number,
     profil: any,
@@ -284,14 +306,17 @@ export class HumanResourceService {
   ): boolean {
     const list = this.hr.getValue();
     const index = list.findIndex((h) => h.id === humanId);
-
     const categories = this.categories.getValue();
-    const cat = categories.find((c) => c.id == profil.categoryId);
     const fonctions = this.fonctions.getValue();
-    const font = fonctions.find((c) => c.id == profil.fonctionId);
 
-    if (index !== -1 && cat) {
+    if (index !== -1) {
       let activities = list[index].activities || [];
+      const activitiesStartDate = new Date(profil.activitiesStartDate);
+      const getTimeActivitiesStarted = activitiesStartDate.getTime();
+      const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
+      yesterdayActivitiesStartDate.setDate(
+        yesterdayActivitiesStartDate.getDate() - 1
+      );
 
       // find and update or remove from activities list
       indisponibilities.map((i) => {
@@ -313,19 +338,13 @@ export class HumanResourceService {
       });
 
       if (newReferentiel.length) {
-        const activitiesStartDate = new Date(profil.activitiesStartDate);
-        const getTimeActivitiesStarted = activitiesStartDate.getTime();
-        const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
-        yesterdayActivitiesStartDate.setDate(
-          yesterdayActivitiesStartDate.getDate() - 1
-        );
-
         for (let i = activities.length - 1; i >= 0; i--) {
           if (
             this.copyOfIdsIndispo.indexOf(activities[i].referentielId) === -1
           ) {
             // stop all current activities and start with this
-            if (!activities[i].dateStop) {
+            // @ts-ignore
+            if (!activities[i].dateStop || activities[i].dateStop.getTime() > getTimeActivitiesStarted) {
               activities[i].dateStop = yesterdayActivitiesStartDate;
             }
 
@@ -362,15 +381,29 @@ export class HumanResourceService {
           });
       }
 
+      console.log(activities)
+
+      // update situation
+      let situations = this.findAllSituations(list[index], activitiesStartDate);
+      const cat = categories.find((c) => c.id == profil.categoryId);
+      const fonct = fonctions.find((c) => c.id == profil.fonctionId);
+      if(cat && fonct) {
+        situations.splice(0, 0, {
+          id: -1,
+          etp: profil.etp / 100,
+	        category: cat,
+	        fonction: fonct,
+	        dateStart: activitiesStartDate,
+        })
+      }
+
       list[index] = {
         ...list[index],
         firstName: profil.firstName,
         lastName: profil.lastName,
-        etp: profil.etp / 100,
         dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
         dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
-        category: cat,
-        fonction: font,
+        situations,
         activities,
       };
 

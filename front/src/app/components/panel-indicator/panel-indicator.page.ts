@@ -136,15 +136,15 @@ export class PanelIndicatorComponent implements OnInit, OnChanges {
     let totalEtp = 0;
 
     hr.map((human: HumanResourceInterface) => {
-      totalEtp +=
-        ((human.etp || 0) *
+      totalEtp += 1
+        /* TODO ((human.etp || 0) *
           sumBy(
             (human.activities || []).filter(
               (a) => (a.label || '') === this.groupName
             ),
             'percent'
           )) /
-        100;
+        100; */
     });
 
     console.log('this.datasFormated.now.stock = STOCK', this.datasFormated.now.stock)

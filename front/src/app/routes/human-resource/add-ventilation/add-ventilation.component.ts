@@ -80,8 +80,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   onStart() {
+    const situation = this.humanResourceService.findSituation(this.human);
+
     this.form.get('activitiesStartDate')?.setValue(new Date());
-    this.form.get('etp')?.setValue(((this.human && this.human.etp) || 0) * 100);
+    this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
     this.form
       .get('firstName')
       ?.setValue((this.human && this.human.firstName) || '');
@@ -96,14 +98,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue((this.human && this.human.dateEnd) || null);
     this.form
       .get('categoryId')
-      ?.setValue(
-        (this.human && this.human.category && this.human.category.id) || null
-      );
+      ?.setValue((situation && situation.category.id) || null);
     this.form
       .get('fonctionId')
-      ?.setValue(
-        (this.human && this.human.fonction && this.human.fonction.id) || null
-      );
+      ?.setValue((situation && situation.fonction.id) || null);
 
     this.controlIndisponibilities();
   }
@@ -178,11 +176,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
                 '0'
               )} ${this.getShortMonthString(
                 r.date
-              )} ${r.date.getFullYear()} vous êtes à ${r.percent}% d'indisponibilité.`
+              )} ${r.date.getFullYear()} vous êtes à ${
+                r.percent
+              }% d'indisponibilité.`
           )
           .join(', ')
       : null;
-      
+
     this.indisponibilitiesVisibles = indispos;
   }
 
@@ -192,7 +192,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'));
+    const totalAffected = fixDecimal(
+      sumBy(this.updatedReferentiels, 'percent')
+    );
     if (totalAffected > 100) {
       alert(
         `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
@@ -201,6 +203,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (this.human) {
+      console.log(this.updatedReferentiels)
       if (
         this.humanResourceService.pushHRUpdate(
           this.human?.id,

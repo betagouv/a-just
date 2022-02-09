@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash'
 import slugify from 'slugify'
 import { posad } from '../constants/hr'
 import { ucFirst } from '../utils/utils'
@@ -10,17 +9,11 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url'],
       where: {
         backup_id: backupId,
       }, 
       include: [{
-        attributes: ['id', 'rank', 'label'],
-        model: Model.models.HRCategories,
-      }, {
-        attributes: ['id', 'rank', 'code', 'label'],
-        model: Model.models.HRFonctions,
-      }, {
         attributes: ['id', 'comment'],
         model: Model.models.HRComments,
       }],
@@ -30,31 +23,18 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
-        etp: list[i].etp,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
-        note: list[i].note,
         coverUrl: list[i].cover_url, 
         comment: list[i]['HRComment.comment'],
-        category: {
-          id: list[i]['HRCategory.id'],
-          rank: list[i]['HRCategory.rank'],
-          code: list[i]['HRCategory.code'],
-          label: list[i]['HRCategory.label'],
-        },
-        fonction: {
-          id: list[i]['HRFonction.id'],
-          rank: list[i]['HRFonction.rank'],
-          code: list[i]['HRFonction.code'],
-          label: list[i]['HRFonction.label'],
-        },
         activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId, list[i].date_sortie),
+        situations: await Model.models.HRSitutations.getListByHumanId(list[i].id),
       }
     }
 
-    return sortBy(list, ['fonction.rank', 'category.rank', 'firstName', 'lastName'])
+    return list
   }
 
   Model.importList = async (list, title, id) => {

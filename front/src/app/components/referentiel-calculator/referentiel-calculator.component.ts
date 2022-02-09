@@ -122,7 +122,8 @@ export class ReferentielCalculatorComponent
     const list = [];
 
     for (let i = 0; i < hr.length; i++) {
-      const category = hr[i].category;
+      
+      /* TODO const category = hr[i].category;
       if (category) {
         const categoryLabel = category.label || 'default';
         hrCategories[categoryLabel] = hrCategories[categoryLabel] || {
@@ -132,7 +133,7 @@ export class ReferentielCalculatorComponent
         };
         hrCategories[categoryLabel].list.push(hr[i]);
         hrCategories[categoryLabel].totalEtp += this.getHRVentilation(hr[i]);
-      }
+      } */
     }
 
     for (const [key, value] of Object.entries(hrCategories)) {
@@ -198,7 +199,7 @@ export class ReferentielCalculatorComponent
     }
 
     if (totalEtp) {
-      return fixDecimal((hr.etp || 0) * totalEtp / totalDays) / 100;
+      //  TODO return fixDecimal((hr.etp || 0) * totalEtp / totalDays) / 100;
     }
 
     return 0;
