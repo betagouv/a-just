@@ -5,7 +5,7 @@ module.exports = {
     const fonctions = await models.HRFonctions.findAll()
 
     for(let i = 0; i < hr.length; i++) {
-      await models.HRSitutations.create({ 
+      await models.HRSituations.create({ 
         human_id: hr[i].id,
         etp: hr[i].etp || 0,
         category_id: hr[i].hr_categorie_id || categories[0].id,

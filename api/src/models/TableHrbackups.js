@@ -195,7 +195,7 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      await Model.models.HRSitutations.syncSituations(hr.situations, hr.id)
+      await Model.models.HRSituations.syncSituations(hr.situations, hr.id)
     }
 
     // remove old HR

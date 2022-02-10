@@ -30,7 +30,7 @@ export default (sequelizeInstance, Model) => {
         coverUrl: list[i].cover_url, 
         comment: list[i]['HRComment.comment'],
         activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId, list[i].date_sortie),
-        situations: await Model.models.HRSitutations.getListByHumanId(list[i].id),
+        situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
       }
     }
 
@@ -159,7 +159,7 @@ export default (sequelizeInstance, Model) => {
       }
 
       // create
-      await Model.models.HRSitutations.create({
+      await Model.models.HRSituations.create({
         ...situation,
         human_id: findHRToDB.dataValues.id,
       })
