@@ -33,10 +33,6 @@ export class ReferentielService {
 
   initDatas() {
     this.loadReferentiels().then((list: ContentieuReferentielInterface[]) => {
-      this.humanResourceService.contentieuxReferentiel.next(list);
-      this.updateReferentielValues();
-      this.updateReferentielOptions();
-
       const refIndispo = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
       this.humanResourceService.allIndisponibilityReferentiel = [];
@@ -63,6 +59,10 @@ export class ReferentielService {
       this.idsSoutien = idsSoutien;
 
       this.mainActivitiesId = list.map((r) => (r.id));
+
+      this.humanResourceService.contentieuxReferentiel.next(list);
+      this.updateReferentielValues();
+      this.updateReferentielOptions();
     });
   }
 

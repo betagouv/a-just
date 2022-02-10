@@ -1,42 +1,12 @@
 @import "../../styles/utils.scss";
 
-.header-list {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-
-  mat-select {
-    width: 400px;
-  }
-
-  .title-header-list {
-    margin-right: 16px;
-    font-size: 16px;
-    font-weight: bold;
-    color: fColor(cblack);
-  }
-
-  aj-date-select {
-    &.date-start {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    &.date-stop {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left: none;
-    }
-  }
-}
-
 .container {
   display: flex;
   flex-direction: column;
   height: calc(100% - 32px);
   margin: 16px;
   background-color: white;
+  border-radius: 8px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   .content-list {
@@ -47,7 +17,8 @@
 
 .title-header-calculator {
   display: flex;
-  padding: 10px 0;
+  padding: 24px 0 16px 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   .item {
     flex: 1;
@@ -168,6 +139,24 @@
         text-align: center;
       }
     }
+  }
+}
+
+aj-select, aj-options-backup-panel {
+  margin-left: 16px;
+}
+
+aj-date-select {
+  &.date-start {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-left: 16px;
+  }
+
+  &.date-stop {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
   }
 }
 
