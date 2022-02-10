@@ -286,7 +286,7 @@ export class HumanResourceService {
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = orderBy((hr && hr.situations || []), ['dateStart'], ['desc']);
+    let situations = orderBy((hr && hr.situations || []), ['dateStart', 'id'], ['desc', 'desc']);
     
     if(date) {
       situations = situations.filter(hra => {
