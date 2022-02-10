@@ -54,7 +54,7 @@
       </div>
       <div>
         <div class="label-aj">Temps de travail (en % d'un plein temps) :</div>
-        <input type="number" formControlName="etp" min="0" max="100" />
+        <input type="number" formControlName="etp" min="0" max="100" (ngModelChange)="etp = $event / 100" />
       </div>
     </div>
 
@@ -101,8 +101,7 @@
 
     <div class="activities">
       <p>Répartition du temps disponible</p>
-      <!-- TODO ETP form.get('etp') && form.get('etp').value ? form.get('etp').value : 0 -->
-      <panel-activities [activities]="activities" [etp]="1" [selected]="true"
+      <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
         (referentielChange)="onNewReferentiel($event)" #panelActivities>
       </panel-activities>
     </div>

@@ -38,6 +38,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   updateIndisponiblity: RHActivityInterface | null = null;
   updatedReferentiels: ContentieuReferentielInterface[] = [];
   indisponibilityError: string | null = null;
+  etp: number = 1;
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl(null, [Validators.required]),
@@ -81,6 +82,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   onStart() {
     const situation = this.humanResourceService.findSituation(this.human);
+
+    this.etp = (situation && situation.etp) || 0;
 
     this.form.get('activitiesStartDate')?.setValue(new Date());
     this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
