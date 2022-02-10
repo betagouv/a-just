@@ -1,10 +1,11 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { sortBy, sumBy } from 'lodash';
+import { mean, sortBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { MainClass } from 'src/app/libs/main-class';
 import { ActivitiesService } from 'src/app/services/activities/activities.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { workingDay } from 'src/app/utils/dates';
 import { fixDecimal } from 'src/app/utils/numbers';
 
@@ -36,7 +37,8 @@ export class ReferentielCalculatorComponent
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private referentielService: ReferentielService,
   ) {
     super();
   }
@@ -46,6 +48,11 @@ export class ReferentielCalculatorComponent
     this.referentiel = this.getReferentiel();
     this.watch(
       this.activitiesService.activities.subscribe(() =>
+        this.getActivityValues()
+      )
+    );
+    this.watch(
+      this.humanResourceService.categories.subscribe(() =>
         this.getActivityValues()
       )
     );
@@ -80,6 +87,10 @@ export class ReferentielCalculatorComponent
   }
 
   getActivityValues() {
+    if (this.humanResourceService.categories.getValue().length === 0) {
+      return;
+    }
+
     const activities = sortBy(
       this.activitiesService.activities
         .getValue()
@@ -99,9 +110,7 @@ export class ReferentielCalculatorComponent
       : 0;
 
     this.realCoverage = fixDecimal(this.totalOut / this.totalIn);
-    this.realDTESInMonths = fixDecimal(
-      this.totalStock / this.totalOut
-    );
+    this.realDTESInMonths = fixDecimal(this.totalStock / this.totalOut);
 
     this.getHRPositions();
 
@@ -119,22 +128,24 @@ export class ReferentielCalculatorComponent
   getHRPositions() {
     const hr = this.humanResourceService.hr.getValue();
     const hrCategories: any = {};
-    const list = [];
 
-    for (let i = 0; i < hr.length; i++) {
-      const category = hr[i].category;
-      if (category) {
-        const categoryLabel = category.label || 'default';
-        hrCategories[categoryLabel] = hrCategories[categoryLabel] || {
-          totalEtp: 0,
-          list: [],
-          rank: category.rank,
-        };
-        hrCategories[categoryLabel].list.push(hr[i]);
-        hrCategories[categoryLabel].totalEtp += this.getHRVentilation(hr[i]);
+    this.humanResourceService.categories.getValue().map((c) => {
+      hrCategories[c.label] = hrCategories[c.label] || {
+        totalEtp: 0,
+        list: [],
+        rank: c.rank,
+      };
+      
+      for (let i = 0; i < hr.length; i++) {
+        const etpt = this.getHRVentilation(hr[i], c.id);
+        if(etpt) {
+          hrCategories[c.label].list.push(hr[i]);
+          hrCategories[c.label].totalEtp += etpt;
+        }
       }
-    }
+    });
 
+    const list = [];
     for (const [key, value] of Object.entries(hrCategories)) {
       list.push({
         name: key,
@@ -148,60 +159,39 @@ export class ReferentielCalculatorComponent
     this.etpAffected = sortBy(list, 'rank');
   }
 
-  getHRVentilation(hr: HumanResourceInterface) {
+  getHRVentilation(hr: HumanResourceInterface, categoryId: number): number {
     const activities = (hr.activities || []).filter(
       (a) => a.referentielId === this.referentielId
     );
-    let totalEtp = 0;
-    let totalDays = 0;
+    const indisponibilities = (hr.activities || []).filter(
+      (a) => this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
+    );
+    const list = [];
 
     if (activities.length) {
       const now = new Date(this.dateStart);
       do {
         // only working day
         if (workingDay(now)) {
-          for (let i = 0; i < activities.length; i++) {
-            let isBiggerThanStart = !activities[i].dateStart ? true : false;
-            let isLowerThanEnd = !activities[i].dateStop ? true : false;
+          let etp = 0;
+          const situation = this.humanResourceService.findSituation(hr, now);
 
-            if (activities[i].dateStart) {
-              const dateStart = new Date(
-                activities[i].dateStart!.getFullYear(),
-                activities[i].dateStart!.getMonth(),
-                activities[i].dateStart!.getDate()
-              );
-              if (dateStart.getTime() <= now.getTime()) {
-                isBiggerThanStart = true;
-              }
-            }
-
-            if (activities[i].dateStop) {
-              const dateStop = new Date(
-                activities[i].dateStop!.getFullYear(),
-                activities[i].dateStop!.getMonth(),
-                activities[i].dateStop!.getDate()
-              );
-              if (dateStop.getTime() >= now.getTime()) {
-                isLowerThanEnd = true;
-              }
-            }
-
-            if (isBiggerThanStart && isLowerThanEnd) {
-              totalEtp += activities[i].percent || 100;
-              break;
-            }
+          if (situation && situation.category.id === categoryId) {
+            const activitiesFiltred =
+              this.humanResourceService.filterActivitiesByDate(activities, now);
+              const indispoFiltred =
+                this.humanResourceService.filterActivitiesByDate(indisponibilities, now);
+            etp = situation.etp * (100 - sumBy(indispoFiltred, 'percent')) / 100
+            etp *= (sumBy(activitiesFiltred, 'percent') / 100);
           }
-          totalDays++;
+
+          list.push(etp);
         }
         now.setDate(now.getDate() + 1);
       } while (now.getTime() <= this.dateStop.getTime());
     }
 
-    if (totalEtp) {
-      return fixDecimal((hr.etp || 0) * totalEtp / totalDays) / 100;
-    }
-
-    return 0;
+    return mean(list);
   }
 
   getNbMonth() {
@@ -230,10 +220,10 @@ export class ReferentielCalculatorComponent
 
     if (this.calculateTimePerCase) {
       this.calculateOut = Math.floor(
-        ((((this.getTotalEtp() * this.environment.nbHoursPerDay) /
+        (((this.getTotalEtp() * this.environment.nbHoursPerDay) /
           this.calculateTimePerCase) *
           this.environment.nbDaysByMagistrat) /
-          12)
+          12
       );
       this.calculateCoverage = fixDecimal(
         this.calculateOut / (this.totalIn || 0)
