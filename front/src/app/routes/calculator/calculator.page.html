@@ -1,27 +1,6 @@
 <aj-wrapper title="Calculateur" [actionTemplate]="actions" class="content-margin-null">
   <div class="container">
-    <div class="header-list">
-      <p class="title-header-list">Contentieux :</p>
-      <mat-select [(ngModel)]="referentielIds" (ngModelChange)="updateReferentielSelected()" multiple>
-        <ng-template ngFor let-ref [ngForOf]="referentiel">
-          <mat-option [value]="ref.id">
-            {{referentielMappingName(ref.label)}}
-          </mat-option>
-          <mat-option *ngFor="let refChild of (ref.childrens || [])" [value]="refChild.id">
-            {{referentielMappingName(ref.label)}} -
-            {{referentielMappingName(refChild.label)}}
-          </mat-option>
-        </ng-template>
-      </mat-select>
-      <div class="flex-1"></div>
-      <aj-date-select title="Pour la période du" [value]="dateStart"
-        (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start">
-      </aj-date-select>
-      <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-        class="date-stop">
-      </aj-date-select>
-    </div>
-    <div class="header-calculator">
+    <div>
       <div class="title-header-calculator">
         <div class="width-contentieux"></div>
         <div class="item">
@@ -37,15 +16,20 @@
       <div class="explanation-calculator">
         <div class="width-contentieux"></div>
         <div class="item">
-          <p>Données renseignées depuis les écrans <a routerLink="/ventilations">Affectation des ETP</a> et <a
-              routerLink="/donnees-d-activite">Données d’activité</a></p>
+          <p>
+            Données renseignées depuis les écrans
+            <a routerLink="/ventilations">Affectation des ETP</a> et
+            <a routerLink="/donnees-d-activite">Données d’activité</a>
+          </p>
         </div>
         <div class="item activity">
           <p>Calculs effectués à partir des données constatées</p>
         </div>
         <div class="item calculate">
-          <p>Calculs théoriques effectués à partir des temps moyens de comparaison sélectionnés dans « Mes temps moyens
-            de comparaison »</p>
+          <p>
+            Calculs théoriques effectués à partir des temps moyens de
+            comparaison sélectionnés dans « Mes temps moyens de comparaison »
+          </p>
         </div>
       </div>
       <div class="contentieux-header-calculator">
@@ -120,5 +104,15 @@
 </aj-wrapper>
 
 <ng-template #actions>
+  <aj-select title="Contentieux" [value]="referentielIds" [datas]="formReferentiel"
+    (valueChange)="updateReferentielSelected('referentiel', $event)">
+  </aj-select>
+  <div class="flex-1"></div>
+  <aj-date-select title="Pour la période du" [value]="dateStart"
+    (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start">
+  </aj-date-select>
+  <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
+    class="date-stop">
+  </aj-date-select>
   <aj-options-backup-panel [readOnly]="true"></aj-options-backup-panel>
 </ng-template>
