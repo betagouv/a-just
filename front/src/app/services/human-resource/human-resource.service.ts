@@ -55,8 +55,6 @@ export class HumanResourceService {
 
   initDatas() {
     this.backupId.subscribe((id) => {
-      localStorage.setItem('backupId', ''+id);
-
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
           this.hr.next(
@@ -79,6 +77,7 @@ export class HumanResourceService {
           );
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
+          localStorage.setItem('backupId', ''+result.backupId);
           this.categories.next(result.categories);
           this.fonctions.next(result.fonctions);
           this.hrIsModify.next(false);
