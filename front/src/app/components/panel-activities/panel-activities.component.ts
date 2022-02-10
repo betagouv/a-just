@@ -88,6 +88,7 @@ export class PanelActivitiesComponent
         return ref;
       });
 
+    this.referentielChange.emit(this.referentiel);
     this.onTotalAffected();
   }
 

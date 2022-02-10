@@ -13,6 +13,8 @@ import { dataInterface } from 'src/app/components/select/select.component';
 import { copyArray } from 'src/app/utils/array';
 import { etpLabel } from 'src/app/utils/referentiel';
 import { ActivatedRoute } from '@angular/router';
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
+import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
@@ -20,6 +22,10 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   etpLabel: string;
   hasIndisponibility: number;
   currentActivities: RHActivityInterface[];
+  etp: number;
+  category: HRCategoryInterface | null;
+  fonction: HRFonctionInterface | null;
+  currentSituation: HRSituationInterface | null;
 }
 
 interface HRCategorySelectedInterface extends HRCategoryInterface {
@@ -64,7 +70,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     super();
   }
@@ -137,13 +143,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           'percent'
         ) / 100
       );
+      const currentSituation = this.humanResourceService.findSituation(h, this.dateSelected);
+      const etp = (currentSituation && currentSituation.etp) || 0;
 
       return {
         ...h,
         currentActivities,
         opacity: 1,
-        etpLabel: etpLabel(h.etp || 0),
+        etpLabel: etpLabel(etp),
         hasIndisponibility,
+        currentSituation,
+        etp,
+        category: currentSituation && currentSituation.category,
+        fonction: currentSituation && currentSituation.fonction,
       };
     });
 
@@ -273,20 +285,31 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       .map((c) => c.id);
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
-        .filter(
-          (hr) => {
-            let isOk = false;
-            if(hr.category && selectedCategoryIds.indexOf(hr.category.id) !== -1) {
-              isOk = true;
-            }
-
-            if(hr.dateEnd && hr.dateEnd.getTime() < this.dateSelected.getTime()) {
-              isOk = false;
-            }
-
-            return isOk;
+        .filter((hr) => {
+          let isOk = false;
+          if (
+            hr.category &&
+            selectedCategoryIds.indexOf(hr.category.id) !== -1
+          ) {
+            isOk = true;
           }
-        )
+
+          if (
+            hr.dateEnd &&
+            hr.dateEnd.getTime() < this.dateSelected.getTime()
+          ) {
+            isOk = false;
+          }
+
+          if (
+            hr.dateStart &&
+            hr.dateStart.getTime() > this.dateSelected.getTime()
+          ) {
+            isOk = false;
+          }
+
+          return isOk;
+        })
         .map((h) => ({
           ...h,
           opacity: this.checkHROpacity(h),
@@ -317,9 +340,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.formatListToShow();
     this.updateCategoryValues();
 
-    if(this.isFirstLoad && this.route.snapshot.fragment) {
+    if (this.isFirstLoad && this.route.snapshot.fragment) {
       this.isFirstLoad = false;
-      this.onGoTo(+this.route.snapshot.fragment)
+      this.onGoTo(+this.route.snapshot.fragment);
     } else if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id);
     } else if (list.length) {
@@ -332,7 +355,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.listFormated = Object.values(groupByCategory).map(
       (group: HumanResourceSelectedInterface[]) => {
-        const label = group[0].category.label;
+        const label =
+          group[0].currentSituation && group[0].currentSituation.category
+            ? group[0].currentSituation.category.label
+            : 'Autre';
         let referentiel = (
           copyArray(this.referentiel) as ContentieuReferentielInterface[]
         )
@@ -411,7 +437,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
 
           let scrollTop = top - topDelta + findContainer.scrollTop;
-          if(this.lastScrollTop && this.lastScrollTop > scrollTop) {
+          if (this.lastScrollTop && this.lastScrollTop > scrollTop) {
             scrollTop -= 88;
           }
 
@@ -422,7 +448,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           });
 
           this.lastScrollTop = scrollTop;
-        } else {}
+        } else {
+        }
       } else {
         isFinded = true;
         findContainer.scrollTo({
@@ -432,7 +459,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     }
 
-    if(!isFinded) {
+    if (!isFinded) {
       setTimeout(() => this.onGoTo(hrId), 200);
     }
   }
@@ -474,7 +501,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onDateChanged(date: any) {
     this.dateSelected = date;
-    this.onFilterList();
+    this.preformatHumanResources();
   }
 
   onFilterBy(ref: ContentieuReferentielInterface) {
