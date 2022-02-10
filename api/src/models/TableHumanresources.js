@@ -62,9 +62,6 @@ export default (sequelizeInstance, Model) => {
       const HRFromList = list[i]
       const options = {
         juridiction_id: 1,
-        hr_fonction_id: 1,
-        hr_categorie_id: 1,
-        etp: 1,
         first_name: '',
         last_name: '',
         date_entree: today,
@@ -73,38 +70,6 @@ export default (sequelizeInstance, Model) => {
 
       if(findJuridiction) {
         options.juridiction_id = findJuridiction.id
-      }
-
-      // corps: 'MAG',
-      const findCategory = await Model.models.HRCategories.findOne({
-        where: {
-          label: 'Magistrat',
-        },
-      })
-      if(findCategory) {
-        options.hr_category_id = findCategory.id
-      }
-
-      const findFonction = await Model.models.HRFonctions.findOne({
-        where: {
-          code: HRFromList.fonction,
-        },
-      })
-      if(findFonction) {
-        options.hr_fonction_id = findFonction.id
-      }
-
-      if(HRFromList.posad) {
-        const posadNumber = parseInt(HRFromList.posad)
-        if(!isNaN(posadNumber)) {
-          options.etp = posadNumber / 100
-        } else {
-          options.etp = posad[HRFromList.posad.toLowerCase()] || 1 
-        }
-      }
-
-      if(HRFromList["%_d'activite"]) {
-        options.etp = HRFromList["%_d'activite"]
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {
@@ -152,6 +117,52 @@ export default (sequelizeInstance, Model) => {
           }
         }
       }
+
+      // add ventilation
+      const situation = {
+        fonction_id: 1,
+        category_id: 1,
+        etp: 1,
+        date_start: today,
+      }
+
+      // corps: 'MAG',
+      const findCategory = await Model.models.HRCategories.findOne({
+        where: {
+          label: 'Magistrat',
+        },
+      })
+      if(findCategory) {
+        situation.category_id = findCategory.id
+      }
+
+      const findFonction = await Model.models.HRFonctions.findOne({
+        where: {
+          code: HRFromList.fonction,
+        },
+      })
+      if(findFonction) {
+        situation.fonction_id = findFonction.id
+      }
+
+      if(HRFromList.posad) {
+        const posadNumber = parseInt(HRFromList.posad)
+        if(!isNaN(posadNumber)) {
+          situation.etp = posadNumber / 100
+        } else {
+          situation.etp = posad[HRFromList.posad.toLowerCase()] || 1 
+        }
+      }
+
+      if(HRFromList["%_d'activite"]) {
+        situation.etp = HRFromList["%_d'activite"]
+      }
+
+      // create
+      await Model.models.HRSitutations.create({
+        ...situation,
+        human_id: findHRToDB.dataValues.id,
+      })
     }
   } 
 
