@@ -10,7 +10,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = [];
-  referentielIds: number[] = this.calculatorService.referentielIds;
+  referentielIds: number[] = [];
   dateStart: Date = this.calculatorService.dateStart;
   dateStop: Date = this.calculatorService.dateStop;
 
