@@ -15,10 +15,15 @@
   }
 }
 
+.header-calculator {
+  z-index: 1;
+}
+
 .title-header-calculator {
   display: flex;
   padding: 24px 0 16px 0;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  z-index: 1;
 
   .item {
     flex: 1;
@@ -158,6 +163,10 @@ aj-date-select {
     border-bottom-left-radius: 0;
     border-left: none;
   }
+}
+
+aj-referentiel-calculator:nth-child(even) {
+  background-color: fColor(bgRowEvent);
 }
 
 

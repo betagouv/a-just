@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 import { mean, sortBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
@@ -21,6 +21,7 @@ export class ReferentielCalculatorComponent
   @Input() referentielId: number | null = null;
   @Input() dateStart: Date = new Date();
   @Input() dateStop: Date = new Date();
+  @HostBinding('class.show-children') showChildren: boolean = false;
   referentiel: ContentieuReferentielInterface | null = null;
   totalIn: number | null = null;
   totalOut: number | null = null;

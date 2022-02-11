@@ -1,44 +1,78 @@
-<div *ngIf="referentiel">
-  <div class="datas">
-    <h3>{{ referentiel.parent ? referentiel.parent.label + ' - ' : '' }} {{ referentiel.label }}</h3>
-    <p>Du {{ dateStart | date: "dd" }}
-      {{ getShortMonthString(dateStart) }}
-      {{ dateStart.getFullYear() }} au {{ dateStop | date: "dd" }}
-      {{ getShortMonthString(dateStop) }}
-      {{ dateStop.getFullYear() }}</p>
-    <p>Entrées mensuelles moyennes : {{ totalIn }}</p>
-    <p>Sorties mensuelles moyennes : {{ totalOut }}</p>
-    <p>Stock de fin de période : {{ totalStock }}</p>
-    <p>ETPT moyens affectés :
-      <ng-template ngFor let-etp [ngForOf]="etpAffected">
-        <br /> - {{etp.totalEtp}} {{etp.totalEtp > 1 ? etp.name+'s' : etp.name}}
-      </ng-template>
-    </p>
+<div *ngIf="referentiel" class="main-referentiel">
+  <div class="width-contentieux contentieux" (click)="showChildren = !showChildren">
+    <mat-icon *ngIf="referentiel.childrens && referentiel.childrens.length">{{ showChildren ? 'arrow_drop_down' :
+      'arrow_right' }}</mat-icon>
+    <p>{{ referentielMappingName(referentiel.label) }}</p>
   </div>
-
-  <div class="calcul">
-
-    <div class="actual-activities">
-      <p><b>Activité constatée</b></p>
-      <p>Taux de couverture :</p>
-      <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
-      <p>DTES instantané : {{ realDTESInMonths }} mois</p>
-      <p>Temps moyen par dossier observé : {{ realTimePerCase && realTimePerCase > 1 ? realTimePerCase + ' heures' :
-        realTimePerCase + ' heure'
-        }}</p>
+  <div class="item actual">
+    <div>
+      <p>{{ totalIn }}</p>
     </div>
-
-    <div class="calculate-activities">
-      <p><b>Activité calculée</b></p>
-      <p>Taux de couverture possible :</p>
-      <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
-      <p>Temps moyen par dossier renseigné : {{ calculateTimePerCase && calculateTimePerCase > 1 ? calculateTimePerCase
-        + '
-        heures' :
-        calculateTimePerCase + ' heure'
-        }}</p>
-      <p>Sorties possibles : {{ calculateOut }}</p>
-      <p>DTES calculé : {{ calculateDTESInMonths }} mois</p>
+    <div>
+      <p>{{ totalOut }}</p>
+    </div>
+    <div>
+      <p>{{ totalStock }}</p>
+    </div>
+    <div>
+      <p>{{ etpAffected.length >= 0 ? etpAffected[0].totalEtp : '' }}</p>
+    </div>
+    <div>
+      <p>{{ etpAffected.length >= 1 ? etpAffected[1].totalEtp : '' }}</p>
+    </div>
+    <div>
+      <p>{{ etpAffected.length >= 2 ? etpAffected[2].totalEtp : '' }}</p>
     </div>
   </div>
+  <div class="item activity">
+    <div>
+      <div class="block">
+        <p>{{ realCoverage }}</p>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <p>{{ realDTESInMonths }}</p>
+        <p class="unity">mois</p>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <p>{{ realTimePerCase }}</p>
+        <p class="unity">{{ realTimePerCase && realTimePerCase > 1 ? 'heures' :
+          'heure'
+          }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="item calculate">
+    <div>
+      <div class="block">
+        <p>{{ calculateCoverage }}</p>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <p>{{ calculateDTESInMonths }}</p>
+        <p class="unity">mois</p>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <p>{{ calculateTimePerCase }}</p>
+        <p class="unity">{{ calculateTimePerCase && calculateTimePerCase > 1 ? 'heures' :
+          'heure'
+          }}</p>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <p>{{ calculateOut }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showChildren && referentiel && referentiel.childrens && referentiel.childrens.length" class="childrens">
+  <aj-referentiel-calculator *ngFor="let r of referentiel.childrens; trackBy: trackBy" [referentielId]="r.id"
+    [dateStart]="dateStart" [dateStop]="dateStop" class="is-child"></aj-referentiel-calculator>
 </div>
