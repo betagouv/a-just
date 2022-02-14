@@ -27,7 +27,7 @@
   <div class="item activity">
     <div>
       <div class="block">
-        <p>{{ realCoverage }}</p>
+        <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
       </div>
     </div>
     <div>
@@ -48,7 +48,7 @@
   <div class="item calculate">
     <div>
       <div class="block">
-        <p>{{ calculateCoverage }}</p>
+        <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
       </div>
     </div>
     <div>
