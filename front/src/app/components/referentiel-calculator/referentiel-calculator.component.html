@@ -32,13 +32,13 @@
     </div>
     <div>
       <div class="block">
-        <p>{{ realDTESInMonths }}</p>
+        <p>{{ realDTESInMonths || 0 }}</p>
         <p class="unity">mois</p>
       </div>
     </div>
     <div>
       <div class="block">
-        <p>{{ realTimePerCase }}</p>
+        <p>{{ realTimePerCase || 0 }}</p>
         <p class="unity">{{ realTimePerCase && realTimePerCase > 1 ? 'heures' :
           'heure'
           }}</p>
@@ -53,21 +53,26 @@
     </div>
     <div>
       <div class="block">
-        <p>{{ calculateDTESInMonths }}</p>
+        <p>{{ calculateDTESInMonths || 0 }}</p>
         <p class="unity">mois</p>
       </div>
     </div>
     <div>
       <div class="block">
-        <p>{{ calculateTimePerCase }}</p>
-        <p class="unity">{{ calculateTimePerCase && calculateTimePerCase > 1 ? 'heures' :
-          'heure'
-          }}</p>
+        <ng-template [ngIf]="calculateTimePerCase !== null" [ngIfElse]="nr">
+          <p>{{ calculateTimePerCase }}</p>
+          <p class="unity">{{ calculateTimePerCase && calculateTimePerCase > 1 ? 'heures' :
+            'heure'
+            }}</p>
+        </ng-template>
       </div>
     </div>
     <div>
       <div class="block">
-        <p>{{ calculateOut }}</p>
+        <p>{{ calculateOut || 0 }}</p>
+        <p class="unity">{{ calculateOut && calculateOut > 1 ? 'dossiers' :
+          'dossier'
+          }}</p>
       </div>
     </div>
   </div>
@@ -76,3 +81,9 @@
   <aj-referentiel-calculator *ngFor="let r of referentiel.childrens; trackBy: trackBy" [referentielId]="r.id"
     [dateStart]="dateStart" [dateStop]="dateStop" class="is-child"></aj-referentiel-calculator>
 </div>
+
+<ng-template #nr>
+  <div class="ref-nr">
+    <p>N/R</p>
+  </div>
+</ng-template>

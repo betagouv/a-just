@@ -41,6 +41,7 @@ $colors: (
 	grayRow: #929292,
 	bgRowSelected: #ebf8ff,
 	bgRowBorderSelected: #bee3f8,
+	redNRColor: #f99090,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
