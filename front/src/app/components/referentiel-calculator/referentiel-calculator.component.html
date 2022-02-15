@@ -1,44 +1,89 @@
-<div *ngIf="referentiel">
-  <div class="datas">
-    <h3>{{ referentiel.parent ? referentiel.parent.label + ' - ' : '' }} {{ referentiel.label }}</h3>
-    <p>Du {{ dateStart | date: "dd" }}
-      {{ getShortMonthString(dateStart) }}
-      {{ dateStart.getFullYear() }} au {{ dateStop | date: "dd" }}
-      {{ getShortMonthString(dateStop) }}
-      {{ dateStop.getFullYear() }}</p>
-    <p>Entrées mensuelles moyennes : {{ totalIn }}</p>
-    <p>Sorties mensuelles moyennes : {{ totalOut }}</p>
-    <p>Stock de fin de période : {{ totalStock }}</p>
-    <p>ETPT moyens affectés :
-      <ng-template ngFor let-etp [ngForOf]="etpAffected">
-        <br /> - {{etp.totalEtp}} {{etp.totalEtp > 1 ? etp.name+'s' : etp.name}}
-      </ng-template>
-    </p>
+<div *ngIf="calculator" class="main-referentiel">
+  <div class="width-contentieux contentieux" (click)="showChildren = !showChildren">
+    <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{ showChildren ? 'arrow_drop_down' :
+      'arrow_right' }}</mat-icon>
+    <p>{{ referentielMappingName(calculator.contentieux.label) }}</p>
   </div>
-
-  <div class="calcul">
-
-    <div class="actual-activities">
-      <p><b>Activité constatée</b></p>
-      <p>Taux de couverture :</p>
-      <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
-      <p>DTES instantané : {{ realDTESInMonths }} mois</p>
-      <p>Temps moyen par dossier observé : {{ realTimePerCase && realTimePerCase > 1 ? realTimePerCase + ' heures' :
-        realTimePerCase + ' heure'
-        }}</p>
+  <div class="item actual">
+    <div [ngClass]="{'selected': sortBy === 'totalIn'}">
+      <p>{{ calculator.totalIn }}</p>
     </div>
-
-    <div class="calculate-activities">
-      <p><b>Activité calculée</b></p>
-      <p>Taux de couverture possible :</p>
-      <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
-      <p>Temps moyen par dossier renseigné : {{ calculateTimePerCase && calculateTimePerCase > 1 ? calculateTimePerCase
-        + '
-        heures' :
-        calculateTimePerCase + ' heure'
-        }}</p>
-      <p>Sorties possibles : {{ calculateOut }}</p>
-      <p>DTES calculé : {{ calculateDTESInMonths }} mois</p>
+    <div [ngClass]="{'selected': sortBy === 'totalOut'}">
+      <p>{{ calculator.totalOut }}</p>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'totalStock'}">
+      <p>{{ calculator.totalStock }}</p>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpMag }}</p>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpFon }}</p>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpCont }}</p>
+    </div>
+  </div>
+  <div class="item activity">
+    <div [ngClass]="{'selected': sortBy === 'realCoverage'}">
+      <div class="block">
+        <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+      </div>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
+      <div class="block">
+        <p>{{ calculator.realDTESInMonths || 0 }}</p>
+        <p class="unity">mois</p>
+      </div>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
+      <div class="block">
+        <p>{{ calculator.realTimePerCase || 0 }}</p>
+        <p class="unity">{{ calculator.realTimePerCase && calculator.realTimePerCase > 1 ? 'heures' :
+          'heure'
+          }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="item calculate">
+    <div [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
+      <div class="block">
+        <aj-speedometer [percent]="(calculator.calculateCoverage || 0) * 100"></aj-speedometer>
+      </div>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
+      <div class="block">
+        <p>{{ calculator.calculateDTESInMonths || 0 }}</p>
+        <p class="unity">mois</p>
+      </div>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
+      <div class="block">
+        <ng-template [ngIf]="calculator.calculateTimePerCase !== null" [ngIfElse]="nr">
+          <p>{{ calculator.calculateTimePerCase }}</p>
+          <p class="unity">{{ calculator.calculateTimePerCase && calculator.calculateTimePerCase > 1 ? 'heures' :
+            'heure'
+            }}</p>
+        </ng-template>
+      </div>
+    </div>
+    <div [ngClass]="{'selected': sortBy === 'calculateOut'}">
+      <div class="block">
+        <p>{{ calculator.calculateOut || 0 }}</p>
+        <p class="unity">{{ calculator.calculateOut && calculator.calculateOut > 1 ? 'dossiers' :
+          'dossier'
+          }}</p>
+      </div>
     </div>
   </div>
 </div>
+<div *ngIf="showChildren && calculator && calculator.childrens && calculator.childrens.length" class="childrens">
+  <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="calculator"
+    [sortBy]="sortBy" class="is-child"></aj-referentiel-calculator>
+</div>
+
+<ng-template #nr>
+  <div class="ref-nr">
+    <p>N/R</p>
+  </div>
+</ng-template>

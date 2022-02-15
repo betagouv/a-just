@@ -36,6 +36,12 @@ $colors: (
 	bgIndisponibilitiesPanel: #fef4f2,
 	titleIndisponibilitiesPanel: #e4794a,
 	blueseparator: #90cdf4,
+	textColorLight: #4a5568,
+	bgRowEvent: #fafafa,
+	grayRow: #929292,
+	bgRowSelected: #ebf8ff,
+	bgRowBorderSelected: #bee3f8,
+	redNRColor: #f99090,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

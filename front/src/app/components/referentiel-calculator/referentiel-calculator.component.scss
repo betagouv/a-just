@@ -3,37 +3,162 @@
 :host {
   display: block;
 
-  > div {
-    padding: 16px 16px;
-    border-radius: 16px;
-    display: flex;
+  &.show-children > .main-referentiel {
+    border-top: solid 1px fColor(bgRowBorderSelected);
+    border-bottom: solid 1px fColor(bgRowBorderSelected);
 
-    > div {
-      flex: 2;
-      
-      &.calcul {
-        flex: 3;
+    > .contentieux {
+      background-color: fColor(bgRowSelected);
+
+      mat-icon,
+      p {
+        color: fColor(borderProgressBar);
       }
+    }
 
-      > .actual-activities {
-        margin-bottom: 16px;
+    > .actual {
+      background-color: fColor(bgRowSelected);
+    }
+
+    > .item.activity {
+      background-color: #dce1d4;
+    }
+
+    > .item.calculate {
+      background-color: #d0dffc;
+    }
+  }
+
+  &.is-child {
+    > .main-referentiel {
+      > .contentieux p {
+        text-align: right;
+      }
+      
+      > .item.activity {
+        background-color: #dce1d4;
+      }
+  
+      > .item.calculate {
+        background-color: #d0dffc;
       }
     }
   }
 
-  .calcul {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 16px;
+  > .main-referentiel {
+    display: flex;
+    height: 64px;
+
+    > .contentieux {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      p {
+        font-weight: bold;
+        text-align: left;
+        margin-left: 8px;
+        flex: 1;
+      }
+    }
+
+    > .item {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+
+      &.activity {
+        background-color: fColor(cyellowlight);
+      }
+
+      &.calculate {
+        background-color: fColor(bgHeaderSelected);
+      }
+
+      &.activity,
+      &.calculate {
+        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+          0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        > div {
+          > div {
+            align-self: stretch;
+            margin: 4px 8px;
+            width: calc(100% - 16px);
+            border-radius: 4px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            > p {
+              color: fColor(grayRow);
+              font-weight: bold;
+
+              &.unity {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+
+      > div {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.selected {
+          background-color: fColor(bgHeaderSelected);
+        }
+
+        p {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  > .childrens {
+    background-color: fColor(cgrayDefault);
+
+    > aj-referentiel-calculator {
+      border-bottom: 1px solid rgba(fColor(bgRowEvent), 0.5);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
   }
 }
 
-h3 {
-  margin-bottom: 8px;
+p {
+  font-size: 14px;
+  text-align: center;
+  color: fColor(textColorLight);
 }
 
-.datas {
+.ref-nr {
+  border: 2px solid fColor(redNRColor);
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  
   p {
-    margin-bottom: 4px;
+    font-size: 12px;
+    color: fColor(redNRColor);
   }
+}
+
+// class size
+.width-contentieux {
+  width: 161px;
 }
