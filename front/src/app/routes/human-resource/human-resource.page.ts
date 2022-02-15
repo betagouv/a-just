@@ -78,11 +78,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
       this.currentHR = findUser;
-      console.log(findUser);
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
       );
+      console.log(findUser, currentSituation);
       if (currentSituation) {
         const findCategory = this.categories.find(
           (c) => c.id === currentSituation.category.id
@@ -220,6 +220,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.allIndisponibilities = activities.filter(
       (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
     );
+
+    console.log(this.histories);
   }
 
   trackByDate(index: number, item: any) {
