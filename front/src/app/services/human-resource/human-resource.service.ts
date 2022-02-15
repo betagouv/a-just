@@ -300,13 +300,18 @@ export class HumanResourceService {
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
     let situations = orderBy(
       (hr && hr.situations) || [],
-      ['dateStart', 'id'],
-      ['desc', 'desc']
+      [
+        (o) => {
+          const d = today(new Date(o.dateStart));
+          return d.getTime();
+        },
+      ],
+      ['desc']
     );
 
     if (date) {
       situations = situations.filter((hra) => {
-        const dateStart = new Date(hra.dateStart);
+        const dateStart = today(new Date(hra.dateStart));
         return dateStart.getTime() <= date.getTime();
       });
     }
@@ -360,7 +365,7 @@ export class HumanResourceService {
           ) {
             // stop all current activities and start with this
             if (
-              !activities[i].dateStop || 
+              !activities[i].dateStop ||
               // @ts-ignore
               activities[i].dateStop.getTime() > getTimeActivitiesStarted
             ) {
