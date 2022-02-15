@@ -193,7 +193,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   addHR() {
-    this.humanResourceService.createHumanResource();
+    this.humanResourceService.createHumanResource(this.dateSelected);
   }
 
   trackById(index: number, item: any) {
@@ -286,12 +286,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
         .filter((hr) => {
-          let isOk = false;
+          let isOk = true;
           if (
             hr.category &&
-            selectedCategoryIds.indexOf(hr.category.id) !== -1
+            selectedCategoryIds.indexOf(hr.category.id) === -1
           ) {
-            isOk = true;
+            isOk = false;
           }
 
           if (
@@ -314,6 +314,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           ...h,
           opacity: this.checkHROpacity(h),
         }));
+
     const valuesFinded = list.filter((h) => h.opacity === 1);
     this.valuesFinded =
       valuesFinded.length === list.length ? null : valuesFinded;
