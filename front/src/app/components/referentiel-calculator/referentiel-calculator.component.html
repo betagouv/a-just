@@ -1,85 +1,85 @@
-<div *ngIf="referentiel" class="main-referentiel">
+<div *ngIf="calculator" class="main-referentiel">
   <div class="width-contentieux contentieux" (click)="showChildren = !showChildren">
-    <mat-icon *ngIf="referentiel.childrens && referentiel.childrens.length">{{ showChildren ? 'arrow_drop_down' :
+    <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{ showChildren ? 'arrow_drop_down' :
       'arrow_right' }}</mat-icon>
-    <p>{{ referentielMappingName(referentiel.label) }}</p>
+    <p>{{ referentielMappingName(calculator.contentieux.label) }}</p>
   </div>
   <div class="item actual">
-    <div>
-      <p>{{ totalIn }}</p>
+    <div [ngClass]="{'selected': sortBy === 'totalIn'}">
+      <p>{{ calculator.totalIn }}</p>
     </div>
-    <div>
-      <p>{{ totalOut }}</p>
+    <div [ngClass]="{'selected': sortBy === 'totalOut'}">
+      <p>{{ calculator.totalOut }}</p>
     </div>
-    <div>
-      <p>{{ totalStock }}</p>
+    <div [ngClass]="{'selected': sortBy === 'totalStock'}">
+      <p>{{ calculator.totalStock }}</p>
     </div>
-    <div>
-      <p>{{ etpAffected.length >= 0 ? etpAffected[0].totalEtp : '' }}</p>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpMag }}</p>
     </div>
-    <div>
-      <p>{{ etpAffected.length >= 1 ? etpAffected[1].totalEtp : '' }}</p>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpFon }}</p>
     </div>
-    <div>
-      <p>{{ etpAffected.length >= 2 ? etpAffected[2].totalEtp : '' }}</p>
+    <div [ngClass]="{'selected': sortBy === 'etpAffected'}">
+      <p>{{ calculator.etpCont }}</p>
     </div>
   </div>
   <div class="item activity">
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'realCoverage'}">
       <div class="block">
-        <aj-speedometer [percent]="(realCoverage || 0) * 100"></aj-speedometer>
+        <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
       </div>
     </div>
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
       <div class="block">
-        <p>{{ realDTESInMonths || 0 }}</p>
+        <p>{{ calculator.realDTESInMonths || 0 }}</p>
         <p class="unity">mois</p>
       </div>
     </div>
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
       <div class="block">
-        <p>{{ realTimePerCase || 0 }}</p>
-        <p class="unity">{{ realTimePerCase && realTimePerCase > 1 ? 'heures' :
+        <p>{{ calculator.realTimePerCase || 0 }}</p>
+        <p class="unity">{{ calculator.realTimePerCase && calculator.realTimePerCase > 1 ? 'heures' :
           'heure'
           }}</p>
       </div>
     </div>
   </div>
   <div class="item calculate">
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
       <div class="block">
-        <aj-speedometer [percent]="(calculateCoverage || 0) * 100"></aj-speedometer>
+        <aj-speedometer [percent]="(calculator.calculateCoverage || 0) * 100"></aj-speedometer>
       </div>
     </div>
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
       <div class="block">
-        <p>{{ calculateDTESInMonths || 0 }}</p>
+        <p>{{ calculator.calculateDTESInMonths || 0 }}</p>
         <p class="unity">mois</p>
       </div>
     </div>
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
       <div class="block">
-        <ng-template [ngIf]="calculateTimePerCase !== null" [ngIfElse]="nr">
-          <p>{{ calculateTimePerCase }}</p>
-          <p class="unity">{{ calculateTimePerCase && calculateTimePerCase > 1 ? 'heures' :
+        <ng-template [ngIf]="calculator.calculateTimePerCase !== null" [ngIfElse]="nr">
+          <p>{{ calculator.calculateTimePerCase }}</p>
+          <p class="unity">{{ calculator.calculateTimePerCase && calculator.calculateTimePerCase > 1 ? 'heures' :
             'heure'
             }}</p>
         </ng-template>
       </div>
     </div>
-    <div>
+    <div [ngClass]="{'selected': sortBy === 'calculateOut'}">
       <div class="block">
-        <p>{{ calculateOut || 0 }}</p>
-        <p class="unity">{{ calculateOut && calculateOut > 1 ? 'dossiers' :
+        <p>{{ calculator.calculateOut || 0 }}</p>
+        <p class="unity">{{ calculator.calculateOut && calculator.calculateOut > 1 ? 'dossiers' :
           'dossier'
           }}</p>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="showChildren && referentiel && referentiel.childrens && referentiel.childrens.length" class="childrens">
-  <aj-referentiel-calculator *ngFor="let r of referentiel.childrens; trackBy: trackBy" [referentielId]="r.id"
-    [dateStart]="dateStart" [dateStop]="dateStop" class="is-child"></aj-referentiel-calculator>
+<div *ngIf="showChildren && calculator && calculator.childrens && calculator.childrens.length" class="childrens">
+  <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="calculator"
+    [sortBy]="sortBy" class="is-child"></aj-referentiel-calculator>
 </div>
 
 <ng-template #nr>
