@@ -37,68 +37,88 @@
           <p>CONTENTIEUX</p>
         </div>
         <div class="item">
-          <div>
+          <div class="tooltip" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
             <p>ENTRÉES</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'totalIn' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Entrées moyennes sur la période</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
             <p>SORTIES</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'totalOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Sorties moyennes sur la période</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('totalStock')" [ngClass]="{'selected': sortBy === 'totalStock'}">
             <p>STOCK</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'totalStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Stock à la fin de cette pérdiode</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
             <p>ETPT<br />MAG.</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'etpMag' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">ETPT Magistrats sur la période</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
             <p>ETPT<br />FON.</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'etpFon' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">ETPT Fonctionnaires sur la période</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
             <p>ETPT<br />CONT.</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'etpCont' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">ETPT Contractuels sur la période</span>
           </div>
         </div>
         <div class="item">
-          <div>
+          <div class="tooltip" (click)="onSortBy('realCoverage')" [ngClass]="{'selected': sortBy === 'realCoverage'}">
             <p>TX DE<br />COUVERTURE</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'realCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Test</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('realDTESInMonths')"
+            [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
             <p>DTES<br />INSTANTANÉ</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'realDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Test</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('realTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
             <p>TPS MOYEN<br />/ DOSSIER OBSERVÉ</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'realTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Test</span>
           </div>
         </div>
         <div class="item">
-          <div>
+          <div class="tooltip" (click)="onSortBy('calculateCoverage')"
+            [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
             <p>TX DE<br />COUVERTURE</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'calculateCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">C'est le rapport entre les sorties et les entrées</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('calculateDTESInMonths')"
+            [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
             <p>DTES<br />CALCULÉ</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'calculateDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Test</span>
           </div>
-          <div>
+          <div class="tooltip" (click)="onSortBy('calculateTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
             <p>TEMPS MOYEN<br />/ DOSSIER SAISI</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'calculateTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Temps saisi dans la page des <a routerLink="/temps-moyens">Temps
+                moyens</a></span>
           </div>
-          <div>
+          <div class="tooltip last" (click)="onSortBy('calculateOut')"
+            [ngClass]="{'selected': sortBy === 'calculateOut'}">
             <p>SORTIES<br />POSSIBLES</p>
-            <mat-icon>filter_list_off</mat-icon>
+            <mat-icon>{{ sortBy === 'calculateOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Ce sont le sortie théoriques calculé au temps de dossier saisi</span>
           </div>
         </div>
       </div>
     </div>
     <div class="content-list">
-      <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
-        [dateStart]="dateStart" [dateStop]="dateStop"></aj-referentiel-calculator>
+      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy">
+      </aj-referentiel-calculator>
     </div>
   </div>
 </aj-wrapper>

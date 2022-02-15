@@ -139,6 +139,15 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
+      cursor: pointer;
+
+      &.selected {
+        background-color: fColor(bgHeaderSelected);
+
+        mat-icon {
+          color: fColor(sortIconHeaderSelected);
+        }
+      }
 
       p {
         text-align: center;
@@ -167,6 +176,36 @@ aj-date-select {
 
 aj-referentiel-calculator:nth-child(even) {
   background-color: fColor(bgRowEvent);
+}
+
+.tooltip {
+  position: relative;
+
+  &.last .tooltip-text {
+    right: 0;
+  }
+  
+  &:hover .tooltip-text {
+    visibility: visible;
+  }
+
+  .tooltip-text {
+    position: absolute;
+    z-index: 1;
+    visibility: hidden;
+    top: calc(100% - 8px);
+    background-color: fColor(cblack);
+    color: white;
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 4px;
+    width: 200px;
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    a {
+      color: white;
+    }
+  }
 }
 
 

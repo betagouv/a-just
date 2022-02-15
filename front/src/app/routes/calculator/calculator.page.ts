@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { orderBy } from 'lodash';
 import { dataInterface } from 'src/app/components/select/select.component';
+import { CalculatorInterface } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { MainClass } from 'src/app/libs/main-class';
 import { CalculatorService } from 'src/app/services/calculator/calculator.service';
@@ -12,9 +14,12 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = [];
   referentielIds: number[] = [];
-  dateStart: Date = this.calculatorService.dateStart;
-  dateStop: Date = this.calculatorService.dateStop;
+  dateStart: Date = this.calculatorService.dateStart.getValue();
+  dateStop: Date = this.calculatorService.dateStop.getValue();
   formReferentiel: dataInterface[] = [];
+  sortBy: string = '';
+  datas: CalculatorInterface[] = [];
+  datasFilted: CalculatorInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -36,10 +41,32 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.onCalculate();
       })
     );
+    this.watch(
+      this.calculatorService.calculatorDatas.subscribe((d) =>
+        this.formatDatas(d)
+      )
+    );
   }
 
   ngOnDestroy() {
     this.watcherDestroy();
+  }
+
+  formatDatas(list: CalculatorInterface[]) {
+    this.datas = list;
+    this.filtredDatas();
+  }
+
+  filtredDatas() {
+    let list = this.datas.filter(
+      (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
+    );
+    if (this.sortBy) {
+      // @ts-ignore
+      list = orderBy(list, [(o) => { return o[this.sortBy] || 0; }], ['desc']);
+    }
+
+    this.datasFilted = list;
   }
 
   formatReferenteil() {
@@ -50,26 +77,38 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {
-    if(type === 'referentiel') {
+    if (type === 'referentiel') {
       this.referentielIds = event;
       this.calculatorService.referentielIds = this.referentielIds;
     } else if (type === 'dateStart') {
-      this.calculatorService.dateStart = new Date(event);
       this.dateStart = new Date(event);
+      this.calculatorService.dateStart.next(this.dateStart);
     } else if (type === 'dateStop') {
-      this.calculatorService.dateStop = new Date(event);
       this.dateStop = new Date(event);
+      this.calculatorService.dateStop.next(this.dateStop);
     }
+
+    this.filtredDatas();
   }
 
   onCalculate() {
     if (this.referentiel.length && this.referentielIds.length === 0) {
-      console.log(this.referentiel)
       this.referentielIds = this.referentiel.map((r) => r.id);
+      this.filtredDatas();
     }
   }
 
-  trackBy(index: number, item: any) {
-    return item;
+  trackBy(index: number, item: CalculatorInterface) {
+    return item.contentieux.id;
+  }
+
+  onSortBy(type: string) {
+    if (this.sortBy === type) {
+      this.sortBy = '';
+    } else {
+      this.sortBy = type;
+    }
+    
+    this.filtredDatas();
   }
 }

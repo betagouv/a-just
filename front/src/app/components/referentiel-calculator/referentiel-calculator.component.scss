@@ -112,6 +112,10 @@
         align-items: center;
         justify-content: center;
 
+        &.selected {
+          background-color: fColor(bgHeaderSelected);
+        }
+
         p {
           text-align: center;
         }
