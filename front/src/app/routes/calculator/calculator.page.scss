@@ -1,46 +1,12 @@
 @import "../../styles/utils.scss";
 
-aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
-  margin-left: 16px;
-}
-
-.header-list {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-
-  mat-select {
-    width: 400px;
-  }
-
-  .title-header-list {
-    margin-right: 16px;
-    font-size: 16px;
-    font-weight: bold;
-    color: fColor(cblack);
-  }
-
-  aj-date-select {
-    &.date-start {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    &.date-stop {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left: none;
-    }
-  }
-}
-
 .container {
   display: flex;
   flex-direction: column;
   height: calc(100% - 32px);
   margin: 16px;
   background-color: white;
+  border-radius: 8px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   .content-list {
@@ -49,9 +15,15 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
   }
 }
 
+.header-calculator {
+  z-index: 1;
+}
+
 .title-header-calculator {
   display: flex;
-  padding: 10px 0;
+  padding: 24px 0 16px 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  z-index: 1;
 
   .item {
     flex: 1;
@@ -93,6 +65,8 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
     &.activity p {
       color: fColor(cyellowdark);
       position: relative;
+      width: 100%;
+      text-align: center;
 
       &:before {
         content: " ";
@@ -131,6 +105,107 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
   box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+
+  .width-contentieux {
+    p {
+      margin-left: 12px;
+    }
+  }
+
+  p {
+    font-size: 11px;
+    font-weight: bold;
+    color: fColor(cblack);
+    margin-top: 4px;
+    letter-spacing: -0.19px;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    margin-bottom: 2px;
+    color: fColor(headerColor);
+  }
+
+  .item {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+
+    > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+
+      &.selected {
+        background-color: fColor(bgHeaderSelected);
+
+        mat-icon {
+          color: fColor(sortIconHeaderSelected);
+        }
+      }
+
+      p {
+        text-align: center;
+      }
+    }
+  }
+}
+
+aj-select, aj-options-backup-panel {
+  margin-left: 16px;
+}
+
+aj-date-select {
+  &.date-start {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-left: 16px;
+  }
+
+  &.date-stop {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+aj-referentiel-calculator:nth-child(even) {
+  background-color: fColor(bgRowEvent);
+}
+
+.tooltip {
+  position: relative;
+
+  &.last .tooltip-text {
+    right: 0;
+  }
+  
+  &:hover .tooltip-text {
+    visibility: visible;
+  }
+
+  .tooltip-text {
+    position: absolute;
+    z-index: 1;
+    visibility: hidden;
+    top: calc(100% - 8px);
+    background-color: fColor(cblack);
+    color: white;
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 4px;
+    width: 200px;
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    a {
+      color: white;
+    }
+  }
 }
 
 

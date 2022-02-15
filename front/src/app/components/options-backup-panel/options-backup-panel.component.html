@@ -1,17 +1,11 @@
-<mat-form-field appearance="standard" *ngIf="backups.length">
-    <mat-label>Temps moyens de comparaison </mat-label>
-    <mat-select [ngModel]="backupId" (ngModelChange)="onChangeBackup($event)">
-        <mat-option *ngFor="let back of backups; trackBy: trackBy" [value]="back.id">
-            {{back.label}} du {{back.date
-            | date:"dd/MM/yyyy"}} - {{ back.juridiction && back.juridiction.label }}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
+<aj-select title="Mes temps moyens de comparaison" [value]="selectedIds" [datas]="formDatas"
+    (valueChange)="onChangeBackup($event)" [multiple]="false">
+</aj-select>
 
 <ng-template [ngIf]="readOnly === false">
     <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
         sous</button>
-    <button *ngIf="backupId" [disabled]="!optionsIsModify" mat-stroked-button class="left-margin"
+    <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" mat-stroked-button class="left-margin"
         (click)="onSaveHR(false)">Enregister</button>
 
     <button mat-icon-button class="left-margin" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">

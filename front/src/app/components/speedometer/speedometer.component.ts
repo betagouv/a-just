@@ -18,9 +18,9 @@ Rouge logo A-JUST : #FF0000
 export class SpeedometerComponent implements OnInit {
   @Input() percent: number = 0;
   @ViewChild('canvas') domCanvas: ElementRef | null = null;
-  bottomSpaceDegrees: number = 50;
-  radius: number = 75;
-  width: number = 200;
+  bottomSpaceDegrees: number = 135;
+  radius: number = 25;
+  width: number = 55;
 
   constructor() {}
 
@@ -46,42 +46,36 @@ export class SpeedometerComponent implements OnInit {
   generateBackground() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d');
     ctx.beginPath();
-    ctx.lineWidth = 10;
-    ctx.strokeStyle = '#FF0000';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#2aac5c';
     ctx.arc(
-      this.width / 2,
+      this.width / 2 + 2,
       this.width / 2,
       this.radius,
-      this.getRadiusPosition(0),
-      this.getRadiusPosition(90)
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.strokeStyle = '#F7F02D';
-    ctx.arc(
-      this.width / 2,
-      this.width / 2,
-      this.radius,
-      this.getRadiusPosition(90),
-      this.getRadiusPosition(110)
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.strokeStyle = '#00B252';
-    ctx.arc(
-      this.width / 2,
-      this.width / 2,
-      this.radius,
-      this.getRadiusPosition(110),
+      this.getRadiusPosition(120),
       this.getRadiusPosition(200)
     );
     ctx.stroke();
     ctx.beginPath();
-    ctx.fillStyle = 'orange';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 1;
-    ctx.arc(this.width / 2, this.width / 2, 10, 0, 2 * Math.PI);
-    ctx.fill();
+    ctx.strokeStyle = '#ffe552';
+    ctx.arc(
+      this.width / 2 + 2,
+      this.width / 2,
+      this.radius,
+      this.getRadiusPosition(80),
+      this.getRadiusPosition(120)
+    );
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = '#ce0500';
+    ctx.arc(
+      this.width / 2 + 2,
+      this.width / 2,
+      this.radius,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(80)
+    );
     ctx.stroke();
   }
 
@@ -96,12 +90,12 @@ export class SpeedometerComponent implements OnInit {
     }
     const radiusAngle = this.getRadiusPosition(percent);
 
-    ctx.strokeStyle = 'orange';
-    ctx.lineWidth = 3;
-    ctx.moveTo(100, 100);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
+    ctx.moveTo(this.radius + 4, this.radius * 1.25);
     ctx.lineTo(
-      Math.cos(radiusAngle) * this.radius + this.width / 2,
-      Math.sin(radiusAngle) * this.radius + this.width / 2
+      Math.cos(radiusAngle) * (this.radius * 0.8) + this.width / 2 + 2,
+      Math.sin(radiusAngle) * (this.radius * 0.8) + this.width / 2
     );
     ctx.stroke();
   }
