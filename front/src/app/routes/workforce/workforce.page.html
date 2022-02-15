@@ -82,7 +82,7 @@
                   </div>
                 </div>
                 <div class="tags">
-                  <p class="function" [style.background-color]="list.textColor">
+                  <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="list.textColor">
                     {{ hr.fonction && hr.fonction.code}}
                   </p>
                   <p class="etp">{{ hr.etpLabel }}</p>
