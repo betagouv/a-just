@@ -78,6 +78,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
       this.currentHR = findUser;
+      console.log(findUser);
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
