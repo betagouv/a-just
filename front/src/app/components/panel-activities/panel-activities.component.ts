@@ -94,6 +94,7 @@ export class PanelActivitiesComponent
 
   onTotalAffected() {
     this.percentAffected = Math.floor(sumBy(this.referentiel, 'percent'));
+    console.log(this.referentiel, sumBy(this.referentiel, 'percent'), this.percentAffected);
   }
 
   onTogglePanel(index: number) {
