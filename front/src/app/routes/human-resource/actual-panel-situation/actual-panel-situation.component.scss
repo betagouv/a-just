@@ -119,11 +119,11 @@
       }
 
       > .tags {
+        display: flex;
         justify-content: flex-end;
 
         p {
           font-size: 14px;
-          white-space: nowrap;
           color: fColor(cbluedark);
           background-color: fColor(cbluemiddle);
           margin-right: 0;
@@ -169,8 +169,6 @@
 
 .tags {
   flex: 1;
-  display: flex;
-  align-items: center;
 
   p {
     margin-right: 8px;
@@ -181,6 +179,9 @@
     border-radius: 29px;
     background-color: fColor(bgTag);
     color: fColor(colorTag);
+    display: inline-block;
+    white-space: nowrap;
+    margin-bottom: 4px;
 
     &.category {
       color: white;
