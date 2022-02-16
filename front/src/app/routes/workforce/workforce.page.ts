@@ -128,7 +128,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   preformatHumanResources() {
-    this.preformatedAllHumanResource = this.allHumanResources.map((h) => {
+    this.preformatedAllHumanResource = orderBy(this.allHumanResources.map((h) => {
       const currentActivities =
         this.humanResourceService.filterActivitiesByDate(
           h.activities || [],
@@ -157,7 +157,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         category: currentSituation && currentSituation.category,
         fonction: currentSituation && currentSituation.fonction,
       };
-    });
+    }), ['fonction.rank'], ['asc']);
 
     this.updateCategoryValues();
     this.onFilterList();
