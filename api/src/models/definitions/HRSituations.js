@@ -23,11 +23,11 @@ export default sequelizeInstance => {
       },
       category_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       fonction_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       date_start: {
         type: Sequelize.DATE,

@@ -102,25 +102,26 @@ export class HumanResourceService {
     const hr = this.hr.getValue();
     const activities: RHActivityInterface[] = [];
     const categories = this.categories.getValue();
-    const fonctions = this.fonctions.getValue();
+    const id = hr.length * -1;
 
     hr.splice(0, 0, {
-      id: hr.length * -1,
+      id,
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
       situations: [
         {
           id: -1,
-          etp: 0,
+          etp: 1,
           category: categories[0],
-          fonction: fonctions[0],
-          dateStart: new Date(date.getFullYear()),
+          fonction: null,
+          dateStart: new Date(date.getFullYear(), 0, 1),
         },
       ],
     });
 
     this.updateHR(hr, true);
+    return id;
   }
 
   deleteHRById(HRId: number) {

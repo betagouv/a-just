@@ -207,7 +207,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       h.dateStart = new Date(dateStop);
       dateStop.setDate(dateStop.getDate() + 1);
 
-      if ((index === 0 && this.histories.length > 1 || index > 0 && index < this.histories.length - 2)) {
+      if ((index === 0 && this.histories.length > 1 || index > 0 && index < this.histories.length - 1)) {
         h.dateStart.setDate(h.dateStart.getDate() + 1);
       }
 

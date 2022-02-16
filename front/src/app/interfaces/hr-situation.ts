@@ -5,6 +5,6 @@ export interface HRSituationInterface {
 	id: number;
 	etp: number;
 	category: HRCategoryInterface;
-	fonction: HRFonctionInterface;
+	fonction: HRFonctionInterface | null;
 	dateStart: Date;
 }
