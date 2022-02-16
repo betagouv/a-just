@@ -52,19 +52,19 @@
             <mat-icon>{{ sortBy === 'totalStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Stock à la fin de la période</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
+          <div class="tooltip medium" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
             <p>ETPT<br />MAG.</p>
             <mat-icon>{{ sortBy === 'etpMag' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Total des ETP Travaillés sur la période par les magistrats affectés à ce
               contentieux</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
+          <div class="tooltip medium" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
             <p>ETPT<br />FON.</p>
             <mat-icon>{{ sortBy === 'etpFon' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Total des ETP Travaillés sur la période par les fonctionnaires affectés à ce
               contentieux</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
+          <div class="tooltip medium" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
             <p>ETPT<br />CONT.</p>
             <mat-icon>{{ sortBy === 'etpCont' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Total des ETP Travaillés sur la période par les contractuels affectés à ce
@@ -77,17 +77,24 @@
             <mat-icon>{{ sortBy === 'realCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Entrées / Sorties réelles de la période, en %</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('realDTESInMonths')"
+          <div class="tooltip large" (click)="onSortBy('realDTESInMonths')"
             [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
             <p>DTES<br />INSTANTANÉ</p>
             <mat-icon>{{ sortBy === 'realDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">Test</span>
+            <span class="tooltip-text">Le délai théorique d’écoulement du stock instantané, à une date donnée,
+              correspond au temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des
+              sorties enregistrées pour la période antérieure, mais sans prendre en compte le temps de traitement
+              nécessaire des affaires nouvelles. Il se calcule donc comme le ratio entre le stock actuel et les sorties
+              observées : DTES INSTANTANÉ = STOCK / SORTIES</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('realTimePerCase')"
+          <div class="tooltip large" (click)="onSortBy('realTimePerCase')"
             [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
             <p>TPS MOYEN<br />/ DOSSIER OBSERVÉ</p>
             <mat-icon>{{ sortBy === 'realTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">Test</span>
+            <span class="tooltip-text">Le temps de traitement moyen par dossier observé pour une période calcule le
+              temps moyen qu'ont passé les ETPT affectés sur la période sur les dossiers terminés (SORTIES) de la même
+              période. Il se calcule de la façon suivante : TPS MOYEN / DOSSIER OBSERVÉ
+              = NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x (ETPT MAG.) / SORTIES</span>
           </div>
         </div>
         <div class="item">
@@ -95,26 +102,34 @@
             [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
             <p>TAUX DE<br />COUVERTURE</p>
             <mat-icon>{{ sortBy === 'calculateCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">C'est le rapport entre les sorties et les entrées</span>
+            <span class="tooltip-text">Entrées / Sorties possible de la période, en %</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('calculateDTESInMonths')"
+          <div class="tooltip large last" (click)="onSortBy('calculateDTESInMonths')"
             [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
             <p>DTES<br />CALCULÉ</p>
             <mat-icon>{{ sortBy === 'calculateDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">Test</span>
+            <span class="tooltip-text">Le délai théorique d’écoulement du stock calculé, à une date donnée, correspond
+              au temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties
+              possibles sur la période, mais sans prendre en compte le temps de traitement nécessaire des affaires
+              nouvelles. Il se calcule donc comme le ratio entre le stock actuel et les sorties possibles : DTES
+              INSTANTANÉ = STOCK / SORTIES POSSIBLES</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('calculateTimePerCase')"
+          <div class="tooltip large last" (click)="onSortBy('calculateTimePerCase')"
             [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
             <p>TEMPS MOYEN<br />/ DOSSIER SAISI</p>
             <mat-icon>{{ sortBy === 'calculateTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">Temps saisi dans la page des <a routerLink="/temps-moyens">Temps
-                moyens</a></span>
+            <span class="tooltip-text">C'est la donnée saisie dans la page des Temps moyens (mettre un lien), dans le
+              jeu de données choisi ci-dessus dans "Mes temps moyens de comparaison.</span>
           </div>
-          <div class="tooltip last" (click)="onSortBy('calculateOut')"
+          <div class="tooltip large last" (click)="onSortBy('calculateOut')"
             [ngClass]="{'selected': sortBy === 'calculateOut'}">
             <p>SORTIES<br />POSSIBLES</p>
             <mat-icon>{{ sortBy === 'calculateOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <span class="tooltip-text">Ce sont le sortie théoriques calculé au temps de dossier saisi</span>
+            <span class="tooltip-text">La capacité de traitement d’une juridiction correspond au nombre moyen de
+              dossiers pouvant être traités (et donc sortis du stock d’affaires en cours) par période en fonction du
+              TEMPS MOYEN / DOSSIER SAISI, converti en NOMBRE DE DOSSIERS PAR ETPT. Il se calcule comme le nombre moyen
+              d’affaires traitées par un ETPT (magistrat) durant une période, multiplié par le nombre d’ETPT MAGISTRATS
+              affectés sur cette même période. SORTIES POSSIBLES = NOMBRE DE DOSSIERS PAR ETPT x ETPT MAGISTRATS</span>
           </div>
         </div>
       </div>
