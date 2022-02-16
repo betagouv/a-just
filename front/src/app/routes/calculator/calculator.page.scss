@@ -184,6 +184,14 @@ aj-referentiel-calculator:nth-child(even) {
   &.last .tooltip-text {
     right: 0;
   }
+
+  &.medium .tooltip-text {
+    width: 400px;
+  } 
+
+  &.large .tooltip-text {
+    width: 700px;
+  } 
   
   &:hover .tooltip-text {
     visibility: visible;
@@ -199,7 +207,8 @@ aj-referentiel-calculator:nth-child(even) {
     font-size: 14px;
     padding: 12px 24px;
     border-radius: 4px;
-    width: 200px;
+    max-width: 800px;
+    min-width: 200px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
     a {
