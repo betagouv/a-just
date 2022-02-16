@@ -12,7 +12,7 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 import { ReferentielService } from '../referentiel/referentiel.service';
 
 const now = new Date(2021, 0);
-const end = new Date(2021, 11, 30);
+const end = new Date(2021, 11, 31);
 
 @Injectable({
   providedIn: 'root',

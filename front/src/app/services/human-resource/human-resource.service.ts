@@ -5,6 +5,7 @@ import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
+import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { today } from 'src/app/utils/dates';
@@ -297,12 +298,27 @@ export class HumanResourceService {
     return situations.length ? situations[0] : null;
   }
 
+  distinctSituations(situations: HRSituationInterface[]) {
+    const listTimeTamps: number[] = [];
+
+    return situations.reduce((previousValue: HRSituationInterface[], currentValue: HRSituationInterface) => {
+      const d = today(currentValue.dateStart);
+      const getTime = d.getTime();
+      if(listTimeTamps.indexOf(getTime) === -1) {
+        listTimeTamps.push(getTime);
+        previousValue.push(currentValue);
+      }
+
+      return previousValue;
+    }, []);
+  }
+
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
     let situations = orderBy(
       (hr && hr.situations) || [],
       [
         (o) => {
-          const d = today(new Date(o.dateStart));
+          const d = today(o.dateStart);
           return d.getTime();
         },
       ],
@@ -311,7 +327,7 @@ export class HumanResourceService {
 
     if (date) {
       situations = situations.filter((hra) => {
-        const dateStart = today(new Date(hra.dateStart));
+        const dateStart = today(hra.dateStart);
         return dateStart.getTime() <= date.getTime();
       });
     }
@@ -332,7 +348,7 @@ export class HumanResourceService {
 
     if (index !== -1) {
       let activities = list[index].activities || [];
-      const activitiesStartDate = new Date(profil.activitiesStartDate);
+      const activitiesStartDate = today(profil.activitiesStartDate);
       const getTimeActivitiesStarted = activitiesStartDate.getTime();
       const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
       yesterdayActivitiesStartDate.setDate(
@@ -407,6 +423,7 @@ export class HumanResourceService {
 
       // update situation
       let situations = this.findAllSituations(list[index], activitiesStartDate);
+      console.log(activitiesStartDate )
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
       if (cat && fonct) {
@@ -425,7 +442,7 @@ export class HumanResourceService {
         lastName: profil.lastName,
         dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
         dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
-        situations,
+        situations: this.distinctSituations(situations),
         activities,
       };
       console.log(list[index]);
