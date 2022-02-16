@@ -3,4 +3,5 @@ export interface HRFonctionInterface {
 	code?: string;
 	label?: string;
 	rank?: number;
+	categoryId: number;
 }
