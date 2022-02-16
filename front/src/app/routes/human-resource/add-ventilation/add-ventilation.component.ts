@@ -104,7 +104,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue((situation && situation.category.id) || null);
     this.form
       .get('fonctionId')
-      ?.setValue((situation && situation.fonction.id) || null);
+      ?.setValue((situation && situation.fonction && situation.fonction.id) || null);
 
     this.controlIndisponibilities();
   }

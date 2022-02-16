@@ -193,7 +193,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   addHR() {
-    this.humanResourceService.createHumanResource(this.dateSelected);
+    const newId = this.humanResourceService.createHumanResource(this.dateSelected);
+    this.route.snapshot.fragment = newId + '';
+    this.isFirstLoad = true;
+    this.onFilterList();
   }
 
   trackById(index: number, item: any) {

@@ -193,7 +193,7 @@ aj-referentiel-calculator:nth-child(even) {
     position: absolute;
     z-index: 1;
     visibility: hidden;
-    top: calc(100% - 8px);
+    bottom: 100%;
     background-color: fColor(cblack);
     color: white;
     font-size: 14px;

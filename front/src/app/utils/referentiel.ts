@@ -59,7 +59,7 @@ export function etpLabel(value: number): string {
     case 1: return 'Temps plein';
     case 0.8: return '4/5';
     case 0.5: return 'Mi-temps';
-    case 0: return 'Ne travail pas';
+    case 0: return 'Ne travaille pas';
   }
 
   return `${value * 100}%`;
