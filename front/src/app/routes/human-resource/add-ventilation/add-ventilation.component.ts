@@ -60,9 +60,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   ngOnInit() {
     this.watch(
-      this.hrFonctionService.getAll().then((list) => {
-        this.fonctions = list;
-      })
+      this.hrFonctionService.getAll().then(() => this.loadCategories())
     );
     this.watch(
       this.hrCategoryService.getAll().then((list) => (this.categories = list))
@@ -104,13 +102,30 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue((situation && situation.category.id) || null);
     this.form
       .get('fonctionId')
-      ?.setValue((situation && situation.fonction && situation.fonction.id) || null);
+      ?.setValue(
+        (situation && situation.fonction && situation.fonction.id) || null
+      );
 
+    this.watch(
+      this.form
+        .get('categoryId')
+        ?.valueChanges.subscribe(() => this.loadCategories())
+    );
+
+    this.loadCategories();
     this.controlIndisponibilities();
   }
 
   ngOnDestroy(): void {
     this.watcherDestroy();
+  }
+
+  async loadCategories() {
+    if (this.form.value) {
+      this.fonctions = (await this.hrFonctionService.getAll()).filter(
+        (c) => c.categoryId == this.form.value.categoryId
+      );
+    }
   }
 
   onCancel() {
@@ -206,7 +221,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (this.human) {
-      console.log(this.updatedReferentiels)
+      console.log(this.updatedReferentiels);
       if (
         this.humanResourceService.pushHRUpdate(
           this.human?.id,
