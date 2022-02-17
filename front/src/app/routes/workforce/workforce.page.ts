@@ -15,6 +15,7 @@ import { etpLabel } from 'src/app/utils/referentiel';
 import { ActivatedRoute } from '@angular/router';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
+import { WorkforceService } from 'src/app/services/workforce/workforce.service';
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number;
@@ -61,7 +62,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   indexValuesFinded: number = 0;
   timeoutUpdateSearch: any = null;
   hrBackup: BackupInterface | undefined;
-  dateSelected: Date = new Date();
+  dateSelected: Date = this.workforceService.dateSelected.getValue();
   listFormated: listFormatedInterface[] = [];
   filterSelected: ContentieuReferentielInterface | null = null;
   lastScrollTop: number = 0;
@@ -70,7 +71,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private workforceService: WorkforceService,
   ) {
     super();
   }
@@ -505,6 +507,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onDateChanged(date: any) {
     this.dateSelected = date;
+    this.workforceService.dateSelected.next(date);
     this.preformatHumanResources();
   }
 
