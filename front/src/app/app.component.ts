@@ -22,7 +22,6 @@ export class AppComponent {
     private referentielService: ReferentielService,
     private activitiesService: ActivitiesService,
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private calculatorService: CalculatorService,
   ) {
     router.events.subscribe(() => {
       const user = this.userService.user.getValue();
@@ -30,7 +29,6 @@ export class AppComponent {
         this.dbReady = true;
 
         this.referentielService.initDatas();
-        this.calculatorService.syncDatas();
     
         if(user.access && user.access.indexOf(2) !== -1) {
           this.humanResourceService.initDatas();

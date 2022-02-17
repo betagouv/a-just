@@ -266,14 +266,13 @@ export class HumanResourceService {
     list: RHActivityInterface[],
     date: Date
   ): RHActivityInterface[] {
-    list = orderBy(
-      JSON.parse(JSON.stringify(list || [])),
+    list = orderBy((list || []),
       ['dateStart'],
       ['desc']
     );
     list = list.filter((a: any) => {
-      const dateStop = a.dateStop ? today(new Date(a.dateStop)) : null;
-      const dateStart = a.dateStart ? today(new Date(a.dateStart)) : null;
+      const dateStop = a.dateStop ? today(a.dateStop) : null;
+      const dateStart = a.dateStart ? today(a.dateStart) : null;
 
       return (
         (dateStart === null && dateStop === null) ||

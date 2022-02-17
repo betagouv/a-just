@@ -78,6 +78,6 @@ export class ActualPanelSituationComponent
             this.commentUpdatedAt = result ? new Date(result) : null;
           });
       }
-    }, 2000);
+    }, 1000);
   }
 }
