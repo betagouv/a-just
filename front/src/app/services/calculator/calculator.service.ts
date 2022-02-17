@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { mean, sortBy, sumBy } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
 import {
   CalculatorInterface,
   etpAffectedInterface,
@@ -27,23 +27,24 @@ export class CalculatorService {
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(now);
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end);
   referentielIds: number[] = [];
+  timeoutUpdateDatas: any = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
     private referentielService: ReferentielService
   ) {
-    this.activitiesService.activities.subscribe(() => this.syncDatas());
-    this.humanResourceService.categories.subscribe(() => this.syncDatas());
-    this.humanResourceService.hr.subscribe(() => this.syncDatas());
-    this.dateStart.subscribe(() => this.syncDatas());
-    this.dateStop.subscribe(() => this.syncDatas());
+    this.activitiesService.activities.subscribe(() => this.needLoadDatas());
+    this.humanResourceService.categories.subscribe(() => this.needLoadDatas());
+    this.humanResourceService.hr.subscribe(() => this.needLoadDatas());
+    this.dateStart.subscribe(() => this.needLoadDatas());
+    this.dateStop.subscribe(() => this.needLoadDatas());
     this.humanResourceService.contentieuxReferentiel.subscribe(() =>
-      this.syncDatas()
+      this.needLoadDatas()
     );
   }
 
-  syncDatas() {
+  needLoadDatas() {
     if (
       this.humanResourceService.categories.getValue().length === 0 ||
       this.humanResourceService.contentieuxReferentiel.getValue().length === 0
@@ -51,11 +52,26 @@ export class CalculatorService {
       return;
     }
 
+    if (this.timeoutUpdateDatas) {
+      clearTimeout(this.timeoutUpdateDatas);
+      this.timeoutUpdateDatas = null;
+    }
+
+    this.timeoutUpdateDatas = setTimeout(() => {
+      this.syncDatas();
+    }, 500);
+  }
+
+  syncDatas() {
+    console.log('sync datas');
+    console.time('sync datas');
+
     const list: CalculatorInterface[] = [];
     const nbMonth = this.getNbMonth();
     const referentiels =
       this.humanResourceService.contentieuxReferentiel.getValue();
     for (let i = 0; i < referentiels.length; i++) {
+      console.time(`ref-${referentiels[i].id}`);
       const childrens = (referentiels[i].childrens || []).map((c) => {
         const cont = { ...c, parent: referentiels[i] };
 
@@ -73,8 +89,10 @@ export class CalculatorService {
         contentieux: referentiels[i],
         nbMonth,
       });
+      console.timeEnd(`ref-${referentiels[i].id}`);
     }
 
+    console.timeEnd('sync datas');
     this.calculatorDatas.next(list);
   }
 
@@ -102,7 +120,9 @@ export class CalculatorService {
     const realCoverage = fixDecimal(totalOut / totalIn);
     const realDTESInMonths = fixDecimal(totalStock / totalOut);
 
+    console.time('getHRPositions '+referentiel.id);
     const etpAffected = this.getHRPositions(referentiel);
+    console.timeEnd('getHRPositions '+referentiel.id);
     const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
     const etpFon = etpAffected.length >= 1 ? etpAffected[1].totalEtp : 0;
     const etpCont = etpAffected.length >= 2 ? etpAffected[2].totalEtp : 0;
