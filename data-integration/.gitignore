@@ -1,1 +1,4 @@
 __pycache__/
+SDSE/*.xlsx
+SDSE/*.xls
+outputs/*.csv
