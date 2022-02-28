@@ -260,7 +260,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   onDelete() {
     if (this.currentHR) {
       if(this.humanResourceService.removeHrById(this.currentHR.id)) {
-        this.router.navigate(['/ventilations'])
+        this.router.navigate(['/ventilations']);
       }
     }
   }
