@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
+import { HumanResourceService } from '../human-resource/human-resource.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HRCommentService {
-  constructor(private serverService: ServerService) {}
+  constructor(private serverService: ServerService, private humanResourceService: HumanResourceService) {}
 
   getHRComment(id: number) {
     return this.serverService
@@ -16,6 +17,13 @@ export class HRCommentService {
   }
 
   updateHRComment(id: number, comment: string) {
+    const list = this.humanResourceService.hr.getValue();
+    const index = list.findIndex(hr => hr.id === id);
+    if(index !== -1) {
+      list[index].comment = comment;
+      this.humanResourceService.hr.next(list);
+    }
+
     return this.serverService
       .post('hr-comment/update-hr-comment', {
         hrId: id,
