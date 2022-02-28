@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { maxBy, minBy, orderBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
@@ -11,6 +11,7 @@ import { HRCategoryService } from 'src/app/services/hr-category/hr-category.serv
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { today } from 'src/app/utils/dates';
 
 interface HistoryInterface {
@@ -40,8 +41,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
+    private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService
+    private hrCategoryService: HRCategoryService,
+    private userService: UserService
   ) {
     super();
   }
@@ -248,5 +251,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   onNewVentilation() {
     // on reload values
     this.onLoad();
+  }
+
+  isAdmin() {
+    return this.userService.isAdmin();
+  }
+
+  onDelete() {
+    if (this.currentHR) {
+      if(this.humanResourceService.removeHrById(this.currentHR.id)) {
+        this.router.navigate(['/ventilations'])
+      }
+    }
   }
 }
