@@ -64,7 +64,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.fonctions = list;
       this.onLoad();
     });
-    this.hrCategoryService.getAll().then((list) => (this.categories = list));
+    this.hrCategoryService.getAll().then((list) => {
+      this.categories = list;
+      this.onLoad();
+    });
   }
 
   ngOnDestroy() {
@@ -72,6 +75,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onLoad() {
+    if (this.categories.length === 0) {
+      return;
+    }
+
     const id = +this.route.snapshot.params.id;
     const allHuman = this.humanResourceService.hr.getValue();
 
@@ -87,6 +94,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         const findCategory = this.categories.find(
           (c) => c.id === currentSituation.category.id
         );
+        console.log(findCategory);
         this.categoryName = findCategory
           ? findCategory.label.toLowerCase()
           : '';
@@ -150,7 +158,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     const min = minBy(
-      ([...activities, ...this.currentHR.situations] as any[]).filter((a) => a.dateStart),
+      ([...activities, ...this.currentHR.situations] as any[]).filter(
+        (a) => a.dateStart
+      ),
       function (o) {
         const date = new Date(o.dateStart);
         return date.getTime();
@@ -186,7 +196,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         // new list
         this.histories.push({
-          category: (findSituation && findSituation.fonction && findSituation.fonction.code) || '',
+          category:
+            (findSituation &&
+              findSituation.fonction &&
+              findSituation.fonction.code) ||
+            '',
           etp: (findSituation && findSituation.etp) || 0,
           indisponibilities: indisp,
           activities: findActivities,
@@ -207,7 +221,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       h.dateStart = new Date(dateStop);
       dateStop.setDate(dateStop.getDate() + 1);
 
-      if ((index === 0 && this.histories.length > 1 || index > 0 && index < this.histories.length - 1)) {
+      if (
+        (index === 0 && this.histories.length > 1) ||
+        (index > 0 && index < this.histories.length - 1)
+      ) {
         h.dateStart.setDate(h.dateStart.getDate() + 1);
       }
 
