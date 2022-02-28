@@ -16,6 +16,7 @@ export default class RouteHumanResources extends Route {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
     backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
+    const activities = await this.model.models.Activities.getAll(backupId)
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
@@ -23,6 +24,7 @@ export default class RouteHumanResources extends Route {
       backupId,
       categories: await this.model.models.HRCategories.getAll(),
       fonctions: await this.model.models.HRFonctions.getAll(),
+      activities,
     })
   }
 

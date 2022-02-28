@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
-import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { ServerService } from '../http-server/server.service';
 
@@ -13,47 +12,12 @@ export class ActivitiesService {
     ActivityInterface[]
   >([]);
   activityMonth: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
-  backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
-    BackupInterface[]
-  >([]);
-  backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
-    null
-  );
   optionsIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );
   autoReloadData: boolean = true;
 
   constructor(private serverService: ServerService) {}
-
-  initDatas() {
-    this.backupId.subscribe((id) => {
-      if (this.autoReloadData) {
-        this.getAllActivities(id).then((result) => {
-          this.activities.next(
-            result.activities.map((a: ActivityInterface) => ({
-              ...a,
-              periode: new Date(a.periode),
-            }))
-          );
-          this.backups.next(result.backups);
-          this.autoReloadData = false;
-          this.backupId.next(result.backupId);
-          this.optionsIsModify.next(false);
-        });
-      } else {
-        this.autoReloadData = true;
-      }
-    });
-  }
-
-  getAllActivities(id: number | null) {
-    return this.serverService
-      .post('activities/get-all', {
-        backupId: id,
-      })
-      .then((r) => r.data);
-  }
 
   updateActivity(
     referentiel: ContentieuReferentielInterface,
@@ -112,40 +76,8 @@ export class ActivitiesService {
     this.activityMonth.next(cm);
   }
 
-  removeBackup() {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
-      return this.serverService
-        .delete(`activities/remove-backup/${this.backupId.getValue()}`)
-        .then(() => {
-          this.backupId.next(null);
-        });
-    }
-
-    return Promise.resolve();
-  }
-
-  duplicateBackup() {
-    const backup = this.backups
-      .getValue()
-      .find((b) => b.id === this.backupId.getValue());
-
-    const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`);
-    if (backupName) {
-      return this.serverService
-        .post(`activities/duplicate-backup`, {
-          backupId: this.backupId.getValue(),
-          backupName,
-        })
-        .then((r) => {
-          this.backupId.next(r.data);
-        });
-    }
-
-    return Promise.resolve();
-  }
-
   onSaveDatas(isCopy: boolean) {
-    let backupName = null;
+    /*let backupName = null;
     let juridictionId = null;
     if (isCopy) {
       backupName = prompt('Sous quel nom ?');
@@ -168,30 +100,6 @@ export class ActivitiesService {
       .then((r) => {
         alert('Enregistrement OK !');
         this.backupId.next(r.data);
-      });
-  }
-
-  createEmpy() {
-    let backupName = prompt('Sous quel nom ?');
-
-    if (backupName) {
-      let juridictionId = null;
-      const list = this.backups.getValue();
-      if (list.length) {
-        juridictionId = list[list.length - 1].juridiction.id;
-      }
-
-      return this.serverService
-        .post(`activities/save-backup`, {
-          list: [],
-          backupName: backupName,
-          juridictionId,
-        })
-        .then((r) => {
-          this.backupId.next(r.data);
-        });
-    }
-
-    return Promise.resolve();
+      });*/
   }
 }

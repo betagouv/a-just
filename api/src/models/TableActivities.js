@@ -1,11 +1,11 @@
 import { Op } from 'sequelize'
 
 export default (sequelizeInstance, Model) => {
-  Model.getAll = async (backupId) => {
+  Model.getAll = async (HRBackupId) => {
     const list = await Model.findAll({
       attributes: ['periode', 'entrees', 'sorties', 'stock'],
       where: {
-        backup_id: backupId,
+        hr_backup_id: HRBackupId,
       },
       include: [
         {
@@ -32,14 +32,7 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
-  Model.importList = async (csv, juridictionId, backupId, backupName) => {
-    if (backupName) {
-      backupId = await Model.models.ActivitiesBackups.getNewBackupId(
-        backupName,
-        { juridiction_id: juridictionId }
-      )
-    }
-
+  Model.importList = async (csv, HRBackupId) => {
     for (let i = 0; i < csv.length; i++) {
       const contentieux = await Model.models.ContentieuxReferentiels.findOne({
         attributes: ['id'],
@@ -60,7 +53,7 @@ export default (sequelizeInstance, Model) => {
 
         const findExist = await Model.findOne({
           where: {
-            backup_id: backupId,
+            hr_backup_id: HRBackupId,
             contentieux_id: contentieux.id,
             periode: {
               [Op.gte]: periodeStart,
@@ -78,7 +71,7 @@ export default (sequelizeInstance, Model) => {
         } else {
           // else create
           await Model.create({
-            backup_id: backupId,
+            hr_backup_id: HRBackupId,
             periode,
             contentieux_id: contentieux.id,
             entrees: parseInt(csv[i].value_entrees) || 0,
@@ -89,17 +82,17 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    await Model.cleanActivities(backupId)
+    await Model.cleanActivities(HRBackupId)
   }
 
-  Model.cleanActivities = async (backupId) => {
+  Model.cleanActivities = async (HRBackupId) => {
     const ref = await Model.models.ContentieuxReferentiels.getReferentiels()
 
     for (let i = 0; i < ref.length; i++) {
       const activities = await Model.findAll({
         attributes: ['periode', 'contentieux_id'],
         where: {
-          backup_id: backupId,
+          hr_backup_id: HRBackupId,
         },
         raw: true,
       })
@@ -108,7 +101,7 @@ export default (sequelizeInstance, Model) => {
         // if main activity find populate with child
         if (ref.find((r) => r.id === activities[x].contentieux_id)) {
           await Model.populateMainActivity({
-            backupId,
+            HRBackupId,
             contentieuxId: activities[x].contentieux_id,
             periode: activities[x].periode,
           })
@@ -120,7 +113,7 @@ export default (sequelizeInstance, Model) => {
             )            
             if (findChild) {
               await Model.populateMainActivity({
-                backupId,
+                HRBackupId,
                 contentieuxId: ref[y].id,
                 periode: activities[x].periode,
               })
@@ -132,8 +125,8 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.populateMainActivity = async ({ backupId, contentieuxId, periode }) => {
-    console.log('populateMainActivity', backupId, contentieuxId, periode)
+  Model.populateMainActivity = async ({ HRBackupId, contentieuxId, periode }) => {
+    console.log('populateMainActivity', HRBackupId, contentieuxId, periode)
     const refDb = (await Model.models.ContentieuxReferentiels.getReferentiels()).find(r => r.id === contentieuxId)
     if(!refDb) {
       return false
@@ -145,7 +138,7 @@ export default (sequelizeInstance, Model) => {
     let childrensIds = refDb.childrens && refDb.childrens.length ? refDb.childrens.map(rd => (rd.id)) : refDb.id    
 
     const optionsWhere = {
-      backup_id: backupId,
+      hr_backup_id: HRBackupId,
       contentieux_id: childrensIds,
       periode: {
         [Op.gte]: periodeStart,
@@ -170,7 +163,7 @@ export default (sequelizeInstance, Model) => {
     // if main activity find populate with child
     const findExist = await Model.findOne({
       where: {
-        backup_id: backupId,
+        hr_backup_id: HRBackupId,
         contentieux_id: contentieuxId,
         periode: {
           [Op.gte]: periodeStart,
@@ -182,7 +175,7 @@ export default (sequelizeInstance, Model) => {
       await findExist.update(options)
     } else {
       await Model.create({
-        backup_id: backupId,
+        hr_backup_id: HRBackupId,
         contentieux_id: contentieuxId,
         periode,
         ...options,
