@@ -73,20 +73,20 @@ module.exports = {
     if (findCon) {
       const list = [
         {
-          label: 'Vacataires',
-          code: 'Vacataires',
+          label: 'Vacataire',
+          code: 'Vacataire',
         },
         {
-          label: 'Assistants spécialisés',
-          code: 'Assistants spécialisés',
+          label: 'Assistant spécialisé',
+          code: 'Assistant spécialisé',
         },
         {
-          label: 'Juristes assistants',
-          code: 'Juristes assistants',
+          label: 'Juriste assistant',
+          code: 'Juriste assistant',
         },
         {
-          label: 'Assistants de justice',
-          code: 'Assistants de justice',
+          label: 'Assistant de justice',
+          code: 'Assistant de justice',
         },
         {
           label: 'Magistrat à titre temporaire',
@@ -97,8 +97,8 @@ module.exports = {
           code: 'Magistrat honoraire (MHFJ)',
         },
         {
-          label: 'Autres',
-          code: 'Autres',
+          label: 'Autre',
+          code: 'Autre',
         },
       ]
       for (let i = 0; i < list.length; i++) {
