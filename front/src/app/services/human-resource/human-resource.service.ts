@@ -212,8 +212,7 @@ export class HumanResourceService {
       const findIndex = list.findIndex((r) => r.id === id);
       if (findIndex !== -1) {
         list.splice(findIndex, 1);
-        this.hr.next(list);
-        this.hrIsModify.next(true);
+        this.updateHR(list, true);
         return true;
       }
     }

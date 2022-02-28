@@ -14,6 +14,10 @@
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
     [dateStop]="h.dateStop">
   </panel-history-ventilation>
+
+  <div *ngIf="isAdmin()" class="text-center">
+    <mat-icon (click)="onDelete()">delete</mat-icon>
+  </div>
 </aj-wrapper>
 
 <ng-template #actions>
