@@ -106,11 +106,11 @@ export default (sequelizeInstance, Model) => {
             periode: activities[x].periode,
           })
         } else {
-        // if childreen, create parent en populate
-          for(let y = 0; y < ref.length; y++) {
+          // if childreen, create parent en populate
+          for (let y = 0; y < ref.length; y++) {
             const findChild = (ref[y].childrens || []).find(
               (c) => c.id === activities[x].contentieux_id
-            )            
+            )
             if (findChild) {
               await Model.populateMainActivity({
                 HRBackupId,
@@ -125,17 +125,26 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.populateMainActivity = async ({ HRBackupId, contentieuxId, periode }) => {
+  Model.populateMainActivity = async ({
+    HRBackupId,
+    contentieuxId,
+    periode,
+  }) => {
     console.log('populateMainActivity', HRBackupId, contentieuxId, periode)
-    const refDb = (await Model.models.ContentieuxReferentiels.getReferentiels()).find(r => r.id === contentieuxId)
-    if(!refDb) {
+    const refDb = (
+      await Model.models.ContentieuxReferentiels.getReferentiels()
+    ).find((r) => r.id === contentieuxId)
+    if (!refDb) {
       return false
     }
 
     const periodeStart = new Date(periode.getFullYear(), periode.getMonth())
     const periodeEnd = new Date(periodeStart)
     periodeEnd.setMonth(periodeEnd.getMonth() + 1)
-    let childrensIds = refDb.childrens && refDb.childrens.length ? refDb.childrens.map(rd => (rd.id)) : refDb.id    
+    let childrensIds =
+      refDb.childrens && refDb.childrens.length
+        ? refDb.childrens.map((rd) => rd.id)
+        : refDb.id
 
     const optionsWhere = {
       hr_backup_id: HRBackupId,
@@ -148,17 +157,19 @@ export default (sequelizeInstance, Model) => {
 
     // find all
     const options = {
-      entrees: await Model.sum('entrees', {
-        where: optionsWhere,
-      }) || 0,
-      sorties: await Model.sum('sorties', {
-        where: optionsWhere,
-      }) || 0,
-      stock: await Model.sum('stock', {
-        where: optionsWhere,
-      }) || 0,
+      entrees:
+        (await Model.sum('entrees', {
+          where: optionsWhere,
+        })) || 0,
+      sorties:
+        (await Model.sum('sorties', {
+          where: optionsWhere,
+        })) || 0,
+      stock:
+        (await Model.sum('stock', {
+          where: optionsWhere,
+        })) || 0,
     }
-
 
     // if main activity find populate with child
     const findExist = await Model.findOne({
@@ -171,7 +182,7 @@ export default (sequelizeInstance, Model) => {
         },
       },
     })
-    if(findExist) {
+    if (findExist) {
       await findExist.update(options)
     } else {
       await Model.create({
@@ -179,6 +190,79 @@ export default (sequelizeInstance, Model) => {
         contentieux_id: contentieuxId,
         periode,
         ...options,
+      })
+    }
+  }
+
+  Model.saveBackup = async (list, hrBackupId) => {
+    let reelIds = []
+
+    for (let x = 0; x < list.length; x++) {
+      const op = list[x]
+
+      const options = {
+        contentieux_id: op.contentieux.id,
+        periode: op.periode,
+        entrees: op.entrees,
+        sorties: op.sorties,
+        stock: op.stock,
+        hr_backup_id: hrBackupId,
+      }
+
+      if (op.id && op.id > 0) {
+        // update
+        await Model.updateById(op.id, options)
+      } else {
+        // create
+        const newOp = await Model.create(options)
+        op.id = newOp.dataValues.id
+      }
+
+      reelIds.push(op.id)
+    }
+
+    // remove old
+    const oldNewList = (
+      await Model.models.Activities.findAll({
+        attributes: ['id'],
+        where: {
+          hr_backup_id: hrBackupId,
+        },
+        raw: true,
+      })
+    ).map((h) => h.id)
+    for (let i = 0; i < oldNewList.length; i++) {
+      if (reelIds.indexOf(oldNewList[i]) === -1) {
+        await Model.destroyById(oldNewList[i])
+      }
+    }
+  }
+
+  Model.updateBy = async (contentieuxId, date, values, hrBackupId) => {
+    date = new Date(date)
+    const dateStart = new Date(date.getFullYear(), date.getMonth())
+    const dateStop = new Date(dateStart)
+    dateStop.setMonth(dateStop.getMonth() + 1)
+
+    const findActivity = await Model.findOne({
+      where: {
+        periode: {
+          [Op.gte]: dateStart,
+          [Op.lte]: dateStop,
+        },
+        hr_backup_id: hrBackupId,
+        contentieux_id: contentieuxId,
+      },
+    })
+
+    if(findActivity) {
+      await findActivity.update(values)
+    } else {
+      await Model.create({
+        ...values,
+        hr_backup_id: hrBackupId,
+        contentieux_id: contentieuxId,
+        periode: date,
       })
     }
   }

@@ -93,6 +93,7 @@ export class HumanResourceService {
               periode: new Date(a.periode),
             }))
           );
+          this.activitiesService.hrBackupId = result.backupId;
           this.hrIsModify.next(false);
         });
       } else {

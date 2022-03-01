@@ -9,18 +9,28 @@ export default class RouteActivities extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       list: Types.any(),
-      backupId: Types.number(),
-      backupName: Types.string(),
-      juridictionId: Types.number(),
+      hrBackupId: Types.number(),
     }),
     accesses: [Access.canVewActivities],
   })
   async saveBackup (ctx) {
-    /*const { backupId, list, backupName, juridictionId } = this.body(ctx)
+    const { hrBackupId, list } = this.body(ctx)
+    await this.model.saveBackup(list, hrBackupId)
+    this.sendOk(ctx, 'Ok')
+  }
 
-    // const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName, juridictionId)
-
-    this.sendOk(ctx, newId)*/
-    this.sendOk(ctx, 'ok')
+  @Route.Post({
+    bodyType: Types.object().keys({
+      contentieuxId: Types.number(),
+      date: Types.date(),
+      values: Types.any(),
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
+  })
+  async updateBy (ctx) {
+    const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
+    await this.model.updateBy(contentieuxId, date, values, hrBackupId)
+    this.sendOk(ctx, 'Ok')
   }
 }

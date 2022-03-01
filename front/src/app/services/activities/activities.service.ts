@@ -12,10 +12,7 @@ export class ActivitiesService {
     ActivityInterface[]
   >([]);
   activityMonth: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
-  optionsIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-  autoReloadData: boolean = true;
+  hrBackupId: number | null = null;
 
   constructor(private serverService: ServerService) {}
 
@@ -60,12 +57,15 @@ export class ActivitiesService {
       activities = this.updateActivity(refChildren, activities, false);
     });
 
-
     if (firstRow) {
       this.activities.next(activities);
     }
 
-    this.optionsIsModify.next(true);
+    this.updateDatasAt(referentiel.id, activityMonth, {
+      entrees: referentiel.in || 0,
+      sorties: referentiel.out || 0,
+      stock: referentiel.stock || 0,
+    });
 
     return activities;
   }
@@ -76,30 +76,19 @@ export class ActivitiesService {
     this.activityMonth.next(cm);
   }
 
-  onSaveDatas(isCopy: boolean) {
-    /*let backupName = null;
-    let juridictionId = null;
-    if (isCopy) {
-      backupName = prompt('Sous quel nom ?');
-    }
+  onSaveDatas() {
+    return this.serverService.post(`activities/save-backup`, {
+      list: this.activities.getValue(),
+      hrBackupId: this.hrBackupId,
+    });
+  }
 
-    const actualBackup = this.backups
-      .getValue()
-      .find((b) => b.id === this.backupId.getValue());
-    if (actualBackup) {
-      juridictionId = actualBackup.juridiction.id;
-    }
-
-    return this.serverService
-      .post(`activities/save-backup`, {
-        list: this.activities.getValue(),
-        backupId: this.backupId.getValue(),
-        backupName: backupName ? backupName : null,
-        juridictionId,
-      })
-      .then((r) => {
-        alert('Enregistrement OK !');
-        this.backupId.next(r.data);
-      });*/
+  updateDatasAt(contentieuxId: number, date: Date, values: any) {
+    return this.serverService.postWithoutError(`activities/update-by`, {
+      contentieuxId,
+      date,
+      values,
+      hrBackupId: this.hrBackupId,
+    });
   }
 }
