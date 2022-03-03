@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'UserJuridictions'
+const tableName = 'UserVentilations'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -17,7 +17,7 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      juridiction_id: {
+      hr_backup_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -44,7 +44,7 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {    
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' })  
+    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'hr_backup_id' })  
     Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })  
 
     return models

@@ -44,14 +44,13 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       backupId: Types.number(),
       backupName: Types.string(),
-      juridictionId: Types.number().required(),
       file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importActivities (ctx) { 
     ctx.request.socket.setTimeout(5 * 60 * 1000) // change timeout to 5 minutes
-    const { backupId, backupName, juridictionId, file } = this.body(ctx)
+    const { backupId, backupName, file } = this.body(ctx)
 
     if(!backupId && !backupName) {
       ctx.throw(401, ctx.state.__('Vous devez saisir au moins un backupId ou backupName !'))
@@ -61,19 +60,10 @@ export default class RouteImports extends Route {
       ctx.throw(401, ctx.state.__('Vous devez saisir un seul backupId ou backupName !'))
     }
 
-    const jurdicition = await this.model.models.Juridictions.findOne({
-      where: {
-        id: juridictionId,
-      },
-    })
-    if(!jurdicition) {
-      ctx.throw(401, ctx.state.__('La juridiction n\'existe pas !'))
-    }
-
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    this.model.models.Activities.importList(arrayOfHR, juridictionId, backupId, backupName) // let continue alone
+    this.model.models.Activities.importList(arrayOfHR, backupId, backupName) // let continue alone
     this.sendOk(ctx, 'OK')
   }
 }

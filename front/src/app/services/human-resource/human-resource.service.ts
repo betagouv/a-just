@@ -189,16 +189,8 @@ export class HumanResourceService {
 
   onSaveHRDatas(isCopy: boolean, silentSave: boolean = false) {
     let backupName = null;
-    let juridictionId = null;
     if (isCopy) {
       backupName = prompt('Sous quel nom ?');
-    }
-
-    const actualBackup = this.backups
-      .getValue()
-      .find((b) => b.id === this.backupId.getValue());
-    if (actualBackup) {
-      juridictionId = actualBackup.juridiction.id;
     }
 
     return this.serverService
@@ -206,7 +198,6 @@ export class HumanResourceService {
         hrList: this.hr.getValue(),
         backupId: this.backupId.getValue(),
         backupName: backupName ? backupName : null,
-        juridictionId,
       })
       .then((r) => {
         this.hrIsModify.next(false);
@@ -236,17 +227,10 @@ export class HumanResourceService {
     let backupName = prompt('Sous quel nom ?');
 
     if (backupName) {
-      let juridictionId = null;
-      const list = this.backups.getValue();
-      if (list.length) {
-        juridictionId = list[list.length - 1].juridiction.id;
-      }
-
       return this.serverService
         .post(`human-resources/save-backup`, {
           hrList: [],
           backupName: backupName,
-          juridictionId,
         })
         .then((r) => {
           this.backupId.next(r.data);

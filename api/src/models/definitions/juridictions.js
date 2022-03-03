@@ -52,8 +52,6 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {  
-    Model.hasMany(models.UserJuridictions, { foreignKey: 'juridiction_id' }) 
-    Model.hasOne(models.HRBackups, { foreignKey: 'juridiction_id', sourceKey: 'id' }) 
     
     return models
   }
