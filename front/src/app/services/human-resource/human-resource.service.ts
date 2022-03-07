@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { orderBy, uniqBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
+import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
@@ -9,6 +10,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { today } from 'src/app/utils/dates';
+import { ActivitiesService } from '../activities/activities.service';
 import { ServerService } from '../http-server/server.service';
 
 @Injectable({
@@ -38,7 +40,10 @@ export class HumanResourceService {
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   copyOfIdsIndispo: number[] = [];
 
-  constructor(private serverService: ServerService) {
+  constructor(
+    private serverService: ServerService,
+    private activitiesService: ActivitiesService
+  ) {
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0;
       this.backupId.next(+backupId);
@@ -82,6 +87,13 @@ export class HumanResourceService {
           localStorage.setItem('backupId', '' + result.backupId);
           this.categories.next(result.categories);
           this.fonctions.next(result.fonctions);
+          this.activitiesService.activities.next(
+            result.activities.map((a: ActivityInterface) => ({
+              ...a,
+              periode: new Date(a.periode),
+            }))
+          );
+          this.activitiesService.hrBackupId = result.backupId;
           this.hrIsModify.next(false);
         });
       } else {
@@ -177,16 +189,8 @@ export class HumanResourceService {
 
   onSaveHRDatas(isCopy: boolean, silentSave: boolean = false) {
     let backupName = null;
-    let juridictionId = null;
     if (isCopy) {
       backupName = prompt('Sous quel nom ?');
-    }
-
-    const actualBackup = this.backups
-      .getValue()
-      .find((b) => b.id === this.backupId.getValue());
-    if (actualBackup) {
-      juridictionId = actualBackup.juridiction.id;
     }
 
     return this.serverService
@@ -194,7 +198,6 @@ export class HumanResourceService {
         hrList: this.hr.getValue(),
         backupId: this.backupId.getValue(),
         backupName: backupName ? backupName : null,
-        juridictionId,
       })
       .then((r) => {
         this.hrIsModify.next(false);
@@ -224,17 +227,10 @@ export class HumanResourceService {
     let backupName = prompt('Sous quel nom ?');
 
     if (backupName) {
-      let juridictionId = null;
-      const list = this.backups.getValue();
-      if (list.length) {
-        juridictionId = list[list.length - 1].juridiction.id;
-      }
-
       return this.serverService
         .post(`human-resources/save-backup`, {
           hrList: [],
           backupName: backupName,
-          juridictionId,
         })
         .then((r) => {
           this.backupId.next(r.data);
@@ -265,10 +261,7 @@ export class HumanResourceService {
     list: RHActivityInterface[],
     date: Date
   ): RHActivityInterface[] {
-    list = orderBy((list || []),
-      ['dateStart'],
-      ['desc']
-    );
+    list = orderBy(list || [], ['dateStart'], ['desc']);
     list = list.filter((a: any) => {
       const dateStop = a.dateStop ? today(a.dateStop) : null;
       const dateStart = a.dateStart ? today(a.dateStart) : null;
@@ -300,16 +293,22 @@ export class HumanResourceService {
   distinctSituations(situations: HRSituationInterface[]) {
     const listTimeTamps: number[] = [];
 
-    return situations.reduce((previousValue: HRSituationInterface[], currentValue: HRSituationInterface) => {
-      const d = today(currentValue.dateStart);
-      const getTime = d.getTime();
-      if(listTimeTamps.indexOf(getTime) === -1) {
-        listTimeTamps.push(getTime);
-        previousValue.push(currentValue);
-      }
+    return situations.reduce(
+      (
+        previousValue: HRSituationInterface[],
+        currentValue: HRSituationInterface
+      ) => {
+        const d = today(currentValue.dateStart);
+        const getTime = d.getTime();
+        if (listTimeTamps.indexOf(getTime) === -1) {
+          listTimeTamps.push(getTime);
+          previousValue.push(currentValue);
+        }
 
-      return previousValue;
-    }, []);
+        return previousValue;
+      },
+      []
+    );
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
@@ -422,7 +421,7 @@ export class HumanResourceService {
 
       // update situation
       let situations = this.findAllSituations(list[index], activitiesStartDate);
-      console.log(activitiesStartDate )
+      console.log(activitiesStartDate);
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
       if (cat && fonct) {

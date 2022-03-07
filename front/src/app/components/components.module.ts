@@ -9,7 +9,6 @@ import { RhBackupPanelComponent } from './rh-backup-panel/rh-backup-panel.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../libs/material.module';
 import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component';
-import { ActivitiesBackupPanelComponent } from './activities-backup-panel/activities-backup-panel.component';
 import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component';
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 import { SelectComponent } from './select/select.component';
@@ -26,7 +25,6 @@ const list = [
   ListSelectionComponent,
   RhBackupPanelComponent,
   OptionsBackupPanelComponent,
-  ActivitiesBackupPanelComponent,
   ReferentielCalculatorComponent,
   SelectCheckAllComponent,
   SelectComponent,

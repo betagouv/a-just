@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { JuridictionInterface } from 'src/app/interfaces/juridiction';
+import { BackupInterface } from 'src/app/interfaces/backup';
 import { PageAccessInterface } from 'src/app/interfaces/page-access-interface';
 import { UserInterface } from 'src/app/interfaces/user-interface';
 import { MainClass } from 'src/app/libs/main-class';
@@ -24,12 +24,12 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
     'lastName',
     'roleName',
     'access',
-    'juridictionsName',
+    'ventilationsName',
     'actions',
   ];
   dataSource = new MatTableDataSource();
   access: FormSelection[] = [];
-  juridictions: FormSelection[] = [];
+  ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
@@ -53,10 +53,10 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
       this.dataSource.data = l.list.map((u: UserInterface) => ({
         ...u,
         accessName: (u.accessName || '').replace(/, /g,', <br/>'),
-        juridictionsName: (u.juridictions || []).map(j => (j.label)).join(', <br/>'),
+        ventilationsName: (u.ventilations || []).map(j => (j.label)).join(', <br/>'),
       }));
       this.access = l.access.map((u: PageAccessInterface) => ({id: u.id, label: u.label, selected: false}));
-      this.juridictions = l.juridictions.map((u: JuridictionInterface) => ({id: u.id, label: u.label, selected: false}));
+      this.ventilations = l.ventilations.map((u: BackupInterface) => ({id: u.id, label: u.label, selected: false}));
     });
   }
 
@@ -70,10 +70,10 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
       }
     });
 
-    this.juridictions = this.juridictions.map(u => {
+    this.ventilations = this.ventilations.map(u => {
       return {
         ...u,
-        selected: (user.juridictions || []).find(j => j.id === u.id) ? true : false
+        selected: (user.ventilations || []).find(j => j.id === u.id) ? true : false
       }
     });
   }
@@ -84,7 +84,7 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
       this.userService.updateUser({
         userId: this.userEdit && this.userEdit.id,
         access: this.access.filter(a => a.selected).map(a => (a.id)),
-        juridictions: this.juridictions.filter(a => a.selected).map(a => (a.id))
+        ventilations: this.ventilations.filter(a => a.selected).map(a => (a.id))
       }).then(() => {
         this.userEdit = null;
         this.onLoad();

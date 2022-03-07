@@ -16,6 +16,7 @@ export default class RouteHumanResources extends Route {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
     backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
+    const activities = await this.model.models.Activities.getAll(backupId)
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
@@ -23,6 +24,7 @@ export default class RouteHumanResources extends Route {
       backupId,
       categories: await this.model.models.HRCategories.getAll(),
       fonctions: await this.model.models.HRFonctions.getAll(),
+      activities,
     })
   }
 
@@ -56,14 +58,13 @@ export default class RouteHumanResources extends Route {
       hrList: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
-      juridictionId: Types.number(),
     }),
     accesses: [Access.canVewHR],
   })
   async saveBackup (ctx) {
-    const { backupId, hrList, backupName, juridictionId } = this.body(ctx)
+    const { backupId, hrList, backupName } = this.body(ctx)
 
-    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName, juridictionId)
+    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName)
 
     this.sendOk(ctx, newId)
   }

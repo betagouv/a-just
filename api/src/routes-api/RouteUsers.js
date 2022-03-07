@@ -44,7 +44,7 @@ export default class RouteUsers extends Route {
 
     this.sendOk(ctx, {
       list,
-      juridictions: await this.model.models.Juridictions.getAll(),
+      ventilations: await this.model.models.HRBackups.getAll(),
       access: accessList,
     })
   }
@@ -53,7 +53,7 @@ export default class RouteUsers extends Route {
     bodyType: Types.object().keys({
       userId: Types.number().required(),
       access: Types.any().required(),
-      juridictions: Types.any().required(),
+      ventilations: Types.any().required(),
     }),
     accesses: [Access.isAdmin],
   })

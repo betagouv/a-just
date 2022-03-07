@@ -25,41 +25,12 @@ export default sequelizeInstance => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      // todo remove
-      hr_categorie_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      // todo remove
-      hr_fonction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      juridiction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
       date_entree: {
         type: Sequelize.DATE,
         allowNull: true,
       },
       date_sortie: {
         type: Sequelize.DATE,
-        allowNull: true,
-      },
-      // todo remove
-      etp: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      // todo remove
-      posad: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      // todo remove
-      note: {
-        type: Sequelize.TEXT,
         allowNull: true,
       },
       registration_number: {
@@ -93,7 +64,6 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {   
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' }) 
     Model.hasOne(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })       
     
     return models

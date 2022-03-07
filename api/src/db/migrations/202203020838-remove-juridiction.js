@@ -1,11 +1,9 @@
-import Sequelize from 'sequelize'
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('HRBackups', 'juridiction_id')
+    await queryInterface.dropTable('UserJuridictions')
 
-const tableName = 'UserJuridictions'
-
-export default sequelizeInstance => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+    await queryInterface.createTable('UserVentilations', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -17,7 +15,7 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      juridiction_id: {
+      hr_backup_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -34,21 +32,9 @@ export default sequelizeInstance => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-    }
-  )
-
-  Model.associate = function (models) {    
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' })  
-    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })  
-
-    return models
-  }
-
-  return Model
+    })
+  },
+  down: async (queryInterface /*, Sequelize*/) => {
+    return queryInterface.dropTable('UserVentilations')
+  },
 }

@@ -55,9 +55,7 @@ export class OptionsBackupPanelComponent
         value: `${back.label} du ${(date.getDate() + '').padStart(
           2,
           '0'
-        )} ${this.getShortMonthString(date)} ${date.getFullYear()} - ${
-          back.juridiction && back.juridiction.label
-        }`,
+        )} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
       };
     });
   }

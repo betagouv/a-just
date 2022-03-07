@@ -34,10 +34,6 @@ export class AppComponent {
           this.humanResourceService.initDatas();
         }
     
-        if(user.access && user.access.indexOf(3) !== -1) {
-          this.activitiesService.initDatas(); 
-        }
-    
         if(user.access && user.access.indexOf(4) !== -1) {
           this.contentieuxOptionsService.initDatas();  
         }
