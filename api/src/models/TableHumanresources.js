@@ -40,11 +40,6 @@ export default (sequelizeInstance, Model) => {
   Model.importList = async (list, title, id) => {
     const referentielMapping = {}
     const backupId = !title ? id : await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
-    const findJuridiction = await Model.models.Juridictions.findOne({
-      where: {
-        cour_appel: list[0].codejur || list[0].juridiction,
-      },
-    })
 
     // delete old base
     await Model.destroy({
@@ -61,15 +56,10 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
       const options = {
-        juridiction_id: 1,
         first_name: '',
         last_name: '',
         date_entree: today,
         backup_id: backupId,
-      }
-
-      if(findJuridiction) {
-        options.juridiction_id = findJuridiction.id
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {

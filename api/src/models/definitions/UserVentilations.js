@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'Juridictions'
+const tableName = 'UserVentilations'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,21 +13,13 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      cour_appel: {
-        type: Sequelize.STRING(255),
+      hr_backup_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      long_name: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      image_url: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -51,10 +43,10 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {  
-    Model.hasMany(models.UserJuridictions, { foreignKey: 'juridiction_id' }) 
-    Model.hasOne(models.HRBackups, { foreignKey: 'juridiction_id', sourceKey: 'id' }) 
-    
+  Model.associate = function (models) {    
+    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'hr_backup_id' })  
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })  
+
     return models
   }
 

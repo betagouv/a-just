@@ -1,9 +1,9 @@
-<aj-wrapper title="Données d'activité" [actionTemplate]="actions">
+<aj-wrapper title="Données d'activité">
   <div class="container">
     <div class="header-list">
       <div class="label month">
         <button mat-stroked-button (click)="changeMonth(-1)">Précédent</button>
-        <div class="current-month">{{activityMonth | date:'MM - YYYY'}}</div>
+        <div class="current-month">{{activityMonth | date:'MM - YYYY'}}</div>
         <button mat-stroked-button (click)="changeMonth(1)">Suivant</button>
       </div>
       <div class="column-item">Entrées</div>
@@ -12,29 +12,29 @@
     </div>
     <div class="content-list">
       <div *ngFor="let ref of referentiel" class="item-grouped">
-        <div class="item" (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
-          [class.selectable]="(ref.childrens || []).length">
+        <div class="item" (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
+          [class.selectable]="(ref.childrens || []).length">
           <div class="label">
             <p>{{ref.label}}</p>
-            <button *ngIf="(ref.childrens || []).length" mat-icon-button>
+            <button *ngIf="(ref.childrens || []).length" mat-icon-button>
               <mat-icon>{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}</mat-icon>
             </button>
           </div>
           <div class="column-item">
-            <input type="number" [(ngModel)]="ref.in" [attr.disabled]="(ref.childrens || []).length ? true : null"
+            <input type="number" [(ngModel)]="ref.in" [attr.disabled]="(ref.childrens || []).length ? true : null"
               (ngModelChange)="onUpdateMainActivity(ref)" min="0" />
           </div>
           <div class="column-item">
-            <input type="number" [(ngModel)]="ref.out" [attr.disabled]="(ref.childrens || []).length ? true : null"
+            <input type="number" [(ngModel)]="ref.out" [attr.disabled]="(ref.childrens || []).length ? true : null"
               (ngModelChange)="onUpdateMainActivity(ref)" min="0" />
           </div>
           <div class="column-item">
-            <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="(ref.childrens || []).length ? true : null"
+            <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="(ref.childrens || []).length ? true : null"
               (ngModelChange)="onUpdateMainActivity(ref)" min="0" />
           </div>
         </div>
         <div class="group" [class.enable]="ref.showActivityGroup">
-          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
+          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
             [style.borderColor]="referentielMappingColor(ref.label)">
             <div class="label">
               <p>{{itemGroup.label}}</p>
@@ -57,7 +57,3 @@
     </div>
   </div>
 </aj-wrapper>
-
-<ng-template #actions>
-  <aj-activities-backup-panel></aj-activities-backup-panel>
-</ng-template>

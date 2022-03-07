@@ -1,4 +1,4 @@
-import { JuridictionInterface } from "./juridiction";
+import { BackupInterface } from "./backup";
 
 export interface UserInterface {
 	id?: number;
@@ -11,6 +11,6 @@ export interface UserInterface {
 	token?: string;
 	access?: number[];
 	accessName?: string;
-	juridictions?: JuridictionInterface[];
-	juridictionsName?: string;
+	ventilations?: BackupInterface[];
+	ventilationsName?: string;
 }

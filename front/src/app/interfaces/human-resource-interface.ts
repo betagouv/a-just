@@ -1,7 +1,4 @@
-import { HRCategoryInterface } from "./hr-category";
-import { HRFonctionInterface } from "./hr-fonction";
 import { HRSituationInterface } from "./hr-situation";
-import { JuridictionInterface } from "./juridiction";
 import { RHActivityInterface } from "./rh-activity";
 
 export interface HumanResourceInterface {
@@ -10,7 +7,6 @@ export interface HumanResourceInterface {
 	lastName?: string;
 	coverUrl?: string;
 	workTime?: number;
-	juridiction?: JuridictionInterface;
 	activities?: RHActivityInterface[];
 	dateStart?: Date;
 	dateEnd?: Date;
