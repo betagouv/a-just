@@ -262,5 +262,29 @@ export default (sequelizeInstance, Model) => {
     return hr
   }
 
+  Model.removeHR = async (hrId) => {
+    await Model.destroy({
+      where: {
+        id: hrId,
+      },
+    })
+
+    // delete force all references
+    await Model.models.HRVentilations.destroy({
+      where: {
+        rh_id: hrId,
+      },
+      force: true,
+    })
+
+    // delete force all situations
+    await Model.models.HRSituations.destroy({
+      where: {
+        human_id: hrId,
+      },
+      force: true,
+    })
+  }
+
   return Model
 }

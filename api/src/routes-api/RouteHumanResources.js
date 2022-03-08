@@ -88,4 +88,18 @@ export default class RouteHumanResources extends Route {
 
     this.sendOk(ctx, await this.model.updateHR(hr, backupId))
   }
+
+  @Route.Delete({
+    path: 'remove-hr/:hrId',
+    accesses: [Access.isAdmin],
+  })
+  async removeHR (ctx) {
+    const { hrId } = ctx.params   
+
+    if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.removeHR(hrId))
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 }

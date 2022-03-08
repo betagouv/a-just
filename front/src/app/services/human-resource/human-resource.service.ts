@@ -207,15 +207,21 @@ export class HumanResourceService {
       });
   }
 
-  removeHrById(id: number) {
+  async removeHrById(id: number) {
     if (confirm('Supprimer cette personne ?')) {
-      const list = this.hr.getValue();
-      const findIndex = list.findIndex((r) => r.id === id);
-      if (findIndex !== -1) {
-        list.splice(findIndex, 1);
-        this.updateHR(list, true);
-        return true;
-      }
+      return this.serverService
+        .delete(`human-resources/remove-hr/${id}`)
+        .then(() => {
+          const list = this.hr.getValue();
+          const findIndex = list.findIndex((r) => r.id === id);
+          if (findIndex !== -1) {
+            list.splice(findIndex, 1);
+            this.hr.next(list);
+            return true;
+          } else {
+            return false;
+          }
+        });
     }
 
     return false;
