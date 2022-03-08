@@ -29,7 +29,7 @@ export default (sequelizeInstance, Model) => {
         dateEnd: list[i].date_sortie,
         coverUrl: list[i].cover_url, 
         comment: list[i]['HRComment.comment'],
-        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId, list[i].date_sortie),
+        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, list[i].date_sortie),
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
       }
     }
@@ -164,10 +164,10 @@ export default (sequelizeInstance, Model) => {
       },
       include: [{
         attributes: ['id'],
-        model: Model.models.Juridictions,
+        model: Model.models.HRBackups,
         include: [{
           attributes: ['id'],
-          model: Model.models.UserJuridictions,
+          model: Model.models.UserVentilations,
           where: {
             user_id: userId,
           },
@@ -177,6 +177,89 @@ export default (sequelizeInstance, Model) => {
     })
 
     return hr ? true : false
+  }
+
+  Model.updateHR = async (hr, backupId) => {
+    const options = {
+      first_name: hr.firstName || null,
+      last_name: hr.lastName || null,
+      date_entree: hr.dateStart || null,
+      date_sortie: hr.dateEnd || null,
+      note: hr.note,
+      backup_id: backupId,
+    }
+
+    if(hr.id && hr.id > 0) {
+      // update
+      await Model.updateById(hr.id, options)
+
+      // delete force all references
+      await Model.models.HRVentilations.destroy({
+        where: {
+          rh_id: hr.id,
+        },
+        force: true,
+      })
+    } else {
+      // create
+      const newHr = await Model.models.HumanResources.create(options)
+      hr.id = newHr.dataValues.id
+    }
+
+    const activities = hr.activities || []
+    for(let i = 0; i < activities.length; i++) {
+      // add activities
+      const activity = activities[i]
+      if(activity.percent) {
+        if(!activity.referentielId) {
+          // find referentiel id
+          activity.referentielId = await Model.models.ContentieuxReferentiels.getContentieuxId(activity.label) 
+        }
+
+        await Model.models.HRVentilations.create({
+          backup_id: backupId,
+          rh_id: hr.id,
+          percent: activity.percent,
+          nac_id: activity.referentielId,
+          date_start: activity.dateStart,
+          date_stop: activity.dateStop,
+        })
+      }
+    }
+
+    await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+
+    return await Model.getHr(hr.id)
+  }
+
+  Model.getHr = async (hrId) => {
+    const hr = await Model.findOne({
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url'],
+      where: {
+        id: hrId,
+      }, 
+      include: [{
+        attributes: ['id', 'comment'],
+        model: Model.models.HRComments,
+      }],
+      raw: true,
+    })
+
+    if(hr) {
+      return {
+        id: hr.id,
+        firstName: hr.first_name,
+        lastName: hr.last_name,
+        dateStart: hr.date_entree,
+        dateEnd: hr.date_sortie,
+        coverUrl: hr.cover_url, 
+        comment: hr['HRComment.comment'],
+        activities: await Model.models.HRVentilations.getActivitiesByHR(hr.id, hr.date_sortie),
+        situations: await Model.models.HRSituations.getListByHumanId(hr.id),
+      }
+    }
+
+    return hr
   }
 
   return Model

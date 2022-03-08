@@ -75,4 +75,17 @@ export default class RouteHumanResources extends Route {
   async getBackupList (ctx) {
     this.sendOk(ctx, await this.model.models.HRBackups.getAll())
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+      hr: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async updateHr (ctx) {
+    let { backupId, hr } = this.body(ctx)
+
+    this.sendOk(ctx, await this.model.updateHR(hr, backupId))
+  }
 }
