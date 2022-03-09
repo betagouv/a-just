@@ -12,7 +12,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.list = async (userId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date']],
+      attributes: ['id', 'label', ['updated_at', 'date']],
       include: [{
         attributes: ['id'],
         model: Model.models.UserVentilations,

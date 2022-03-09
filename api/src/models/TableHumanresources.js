@@ -9,7 +9,7 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         backup_id: backupId,
       }, 
@@ -28,6 +28,8 @@ export default (sequelizeInstance, Model) => {
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
         coverUrl: list[i].cover_url, 
+        updatedAt: list[i].updated_at,
+        backupId: list[i].backup_id,
         comment: list[i]['HRComment.comment'],
         activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, list[i].date_sortie),
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
@@ -187,6 +189,7 @@ export default (sequelizeInstance, Model) => {
       date_sortie: hr.dateEnd || null,
       note: hr.note,
       backup_id: backupId,
+      updated_at: new Date(),
     }
 
     if(hr.id && hr.id > 0) {
@@ -228,13 +231,14 @@ export default (sequelizeInstance, Model) => {
     }
 
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+    await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
 
     return await Model.getHr(hr.id)
   }
 
   Model.getHr = async (hrId) => {
     const hr = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         id: hrId,
       }, 
@@ -253,7 +257,9 @@ export default (sequelizeInstance, Model) => {
         dateStart: hr.date_entree,
         dateEnd: hr.date_sortie,
         coverUrl: hr.cover_url, 
+        updatedAt: hr.updated_at,
         comment: hr['HRComment.comment'],
+        backupId: hr.backupId,
         activities: await Model.models.HRVentilations.getActivitiesByHR(hr.id, hr.date_sortie),
         situations: await Model.models.HRSituations.getListByHumanId(hr.id),
       }
@@ -263,6 +269,16 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.removeHR = async (hrId) => {
+    const hrFromDB = await Model.findOne({ 
+      where: {
+        id: hrId,
+      },
+      raw: true,
+    })
+    if(hrFromDB) {
+      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+    }
+
     await Model.destroy({
       where: {
         id: hrId,
