@@ -47,9 +47,9 @@
             <mat-icon>{{ sortBy === 'totalOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Sorties mensuelles moyennes sur la période</span>
           </div>
-          <div class="tooltip" (click)="onSortBy('totalStock')" [ngClass]="{'selected': sortBy === 'totalStock'}">
+          <div class="tooltip" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
             <p>STOCK</p>
-            <mat-icon>{{ sortBy === 'totalStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <mat-icon>{{ sortBy === 'lastStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <span class="tooltip-text">Stock à la fin de la période</span>
           </div>
           <div class="tooltip medium" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { mean, sortBy, sumBy } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   CalculatorInterface,
   etpAffectedInterface,
 } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
+import { MainClass } from 'src/app/libs/main-class';
 import { workingDay } from 'src/app/utils/dates';
 import { fixDecimal } from 'src/app/utils/numbers';
 import { environment } from 'src/environments/environment';
@@ -20,7 +21,7 @@ const end = new Date(2021, 11, 31);
 @Injectable({
   providedIn: 'root',
 })
-export class CalculatorService {
+export class CalculatorService extends MainClass {
   calculatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
     CalculatorInterface[]
   >([]);
@@ -34,6 +35,8 @@ export class CalculatorService {
     private activitiesService: ActivitiesService,
     private referentielService: ReferentielService
   ) {
+    super();
+
     this.activitiesService.activities.subscribe(() => this.needLoadDatas());
     this.humanResourceService.categories.subscribe(() => this.needLoadDatas());
     this.humanResourceService.hr.subscribe(() => this.needLoadDatas());
@@ -64,14 +67,12 @@ export class CalculatorService {
 
   syncDatas() {
     console.log('sync datas');
-    console.time('sync datas');
 
     const list: CalculatorInterface[] = [];
     const nbMonth = this.getNbMonth();
     const referentiels =
       this.humanResourceService.contentieuxReferentiel.getValue();
     for (let i = 0; i < referentiels.length; i++) {
-      console.time(`ref-${referentiels[i].id}`);
       const childrens = (referentiels[i].childrens || []).map((c) => {
         const cont = { ...c, parent: referentiels[i] };
 
@@ -89,10 +90,7 @@ export class CalculatorService {
         contentieux: referentiels[i],
         nbMonth,
       });
-      console.timeEnd(`ref-${referentiels[i].id}`);
     }
-
-    console.timeEnd('sync datas');
     this.calculatorDatas.next(list);
   }
 
@@ -113,16 +111,18 @@ export class CalculatorService {
     );
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
-    const totalStock = activities.length
-      ? activities[activities.length - 1].stock
-      : 0;
+    let lastStock = null;
+    if(activities.length) {
+      const lastActivities = activities[activities.length - 1]
+      if(lastActivities.stock !== null && this.isSameMonthAndYear(lastActivities.periode, this.dateStop.getValue())) {
+        lastStock = lastActivities.stock;
+      }
+    }
 
     const realCoverage = fixDecimal(totalOut / totalIn);
-    const realDTESInMonths = fixDecimal(totalStock / totalOut);
+    const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
 
-    console.time('getHRPositions '+referentiel.id);
     const etpAffected = this.getHRPositions(referentiel);
-    console.timeEnd('getHRPositions '+referentiel.id);
     const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
     const etpFon = etpAffected.length >= 1 ? etpAffected[1].totalEtp : 0;
     const etpCont = etpAffected.length >= 2 ? etpAffected[2].totalEtp : 0;
@@ -137,12 +137,12 @@ export class CalculatorService {
       ...this.calculateActivities(
         referentiel,
         totalIn,
-        totalStock,
+        lastStock,
         etpAffected
       ),
       totalIn,
       totalOut,
-      totalStock,
+      lastStock,
       realCoverage,
       realDTESInMonths,
       realTimePerCase,
@@ -168,7 +168,7 @@ export class CalculatorService {
   calculateActivities(
     referentiel: ContentieuReferentielInterface,
     totalIn: number,
-    totalStock: number,
+    lastStock: number | null,
     etpAffected: etpAffectedInterface[]
   ) {
     let calculateTimePerCase = null;
@@ -194,7 +194,7 @@ export class CalculatorService {
           12
       );
       calculateCoverage = fixDecimal(calculateOut / (totalIn || 0));
-      calculateDTESInMonths = fixDecimal((totalStock || 0) / calculateOut);
+      calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / calculateOut);
     } else {
       calculateOut = null;
       calculateCoverage = null;
