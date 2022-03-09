@@ -153,11 +153,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       max && max.dateStop && max.dateStop.getTime() > getToday.getTime()
         ? today(new Date(max.dateStop))
         : new Date(today());
+    let currentDateEnd = null;
     if (this.currentHR && this.currentHR.dateEnd) {
-      const currentDateEnd = new Date(this.currentHR.dateEnd);
-      if (currentDateEnd.getTime() > maxDate.getTime()) {
-        maxDate = currentDateEnd;
-      }
+      currentDateEnd = new Date(this.currentHR.dateEnd);
+    }
+    if (currentDateEnd && currentDateEnd.getTime() > maxDate.getTime()) {
+      maxDate = currentDateEnd;
     }
 
     const min = minBy(
@@ -196,6 +197,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (r) =>
             this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
         );
+        const dateStop = new Date(currentDate);
+        let etp = (findSituation && findSituation.etp) || 0;
+
+        if(currentDateEnd && currentDateEnd.getTime() <= dateStop.getTime()) {
+          etp = 0;
+        }
 
         // new list
         this.histories.push({
@@ -204,11 +211,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               findSituation.fonction &&
               findSituation.fonction.code) ||
             '',
-          etp: (findSituation && findSituation.etp) || 0,
+          etp,
           indisponibilities: indisp,
           activities: findActivities,
           dateStart: new Date(),
-          dateStop: new Date(currentDate),
+          dateStop,
         });
       }
 
@@ -259,7 +266,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   async onDelete() {
     if (this.currentHR) {
-      if(await this.humanResourceService.removeHrById(this.currentHR.id)) {
+      if (await this.humanResourceService.removeHrById(this.currentHR.id)) {
         this.router.navigate(['/ventilations']);
       }
     }
