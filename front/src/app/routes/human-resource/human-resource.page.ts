@@ -257,9 +257,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     return this.userService.isAdmin();
   }
 
-  onDelete() {
+  async onDelete() {
     if (this.currentHR) {
-      if(this.humanResourceService.removeHrById(this.currentHR.id)) {
+      if(await this.humanResourceService.removeHrById(this.currentHR.id)) {
         this.router.navigate(['/ventilations']);
       }
     }

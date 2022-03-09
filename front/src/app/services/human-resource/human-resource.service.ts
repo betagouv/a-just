@@ -64,18 +64,7 @@ export class HumanResourceService {
     this.backupId.subscribe((id) => {
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
-          this.hr.next(
-            result.hr.map((h: HumanResourceInterface) => ({
-              ...h,
-              dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
-              dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
-              activities: (h.activities || []).map((a) => ({
-                ...a,
-                dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
-                dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
-              })),
-            }))
-          );
+          this.hr.next(result.hr.map(this.formatHR));
           this.backups.next(
             result.backups.map((b: BackupInterface) => ({
               ...b,
@@ -102,6 +91,20 @@ export class HumanResourceService {
     });
   }
 
+  formatHR(h: HumanResourceInterface) {
+    return {
+      ...h,
+      dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
+      dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
+      updatedAt: new Date(h.updatedAt),
+      activities: (h.activities || []).map((a) => ({
+        ...a,
+        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
+        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
+      })),
+    };
+  }
+
   getCurrentHR(id: number | null) {
     return this.serverService
       .post('human-resources/get-current-hr', {
@@ -110,14 +113,12 @@ export class HumanResourceService {
       .then((r) => r.data);
   }
 
-  createHumanResource(date: Date) {
-    const hr = this.hr.getValue();
+  async createHumanResource(date: Date) {
     const activities: RHActivityInterface[] = [];
     const categories = this.categories.getValue();
-    const id = hr.length * -1;
 
-    hr.splice(0, 0, {
-      id,
+    const hr = {
+      id: this.hr.getValue().length * -1,
       firstName: 'Personne',
       lastName: 'XXX',
       activities,
@@ -130,10 +131,11 @@ export class HumanResourceService {
           dateStart: new Date(date.getFullYear(), 0, 1),
         },
       ],
-    });
+      updatedAt: new Date(),
+    };
 
-    this.updateHR(hr, true);
-    return id;
+    const newHR = await this.updateRemoteHR(hr);
+    return newHR.id;
   }
 
   deleteHRById(HRId: number) {
@@ -209,15 +211,31 @@ export class HumanResourceService {
       });
   }
 
-  removeHrById(id: number) {
+  async removeHrById(id: number) {
     if (confirm('Supprimer cette personne ?')) {
-      const list = this.hr.getValue();
-      const findIndex = list.findIndex((r) => r.id === id);
-      if (findIndex !== -1) {
-        list.splice(findIndex, 1);
-        this.updateHR(list, true);
-        return true;
-      }
+      return this.serverService
+        .delete(`human-resources/remove-hr/${id}`)
+        .then(() => {
+          const list = this.hr.getValue();
+          const findIndex = list.findIndex((r) => r.id === id);
+          if (findIndex !== -1) {
+            list.splice(findIndex, 1);
+            this.hr.next(list);
+
+            // update date of backup after remove
+            const hrBackups = this.backups.getValue();
+            const backupIndex = hrBackups.findIndex(
+              (b) => b.id === this.backupId.getValue()
+            );
+            if (backupIndex !== -1) {
+              hrBackups[backupIndex].date = new Date();
+              this.backups.next(hrBackups);
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
     }
 
     return false;
@@ -333,12 +351,12 @@ export class HumanResourceService {
     return situations;
   }
 
-  pushHRUpdate(
+  async pushHRUpdate(
     humanId: number,
     profil: any,
     newReferentiel: ContentieuReferentielInterface[],
     indisponibilities: RHActivityInterface[]
-  ): boolean {
+  ) {
     const list = this.hr.getValue();
     const index = list.findIndex((h) => h.id === humanId);
     const categories = this.categories.getValue();
@@ -421,7 +439,6 @@ export class HumanResourceService {
 
       // update situation
       let situations = this.findAllSituations(list[index], activitiesStartDate);
-      console.log(activitiesStartDate);
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
       if (cat && fonct) {
@@ -443,11 +460,43 @@ export class HumanResourceService {
         situations: this.distinctSituations(situations),
         activities,
       };
-      console.log(list[index]);
 
-      this.updateHR(list, true);
+      await this.updateRemoteHR(list[index]);
+      return true;
     }
 
-    return true;
+    return false;
+  }
+
+  updateRemoteHR(hr: any) {
+    return this.serverService
+      .post(`human-resources/update-hr`, {
+        hr,
+        backupId: this.backupId.getValue(),
+      })
+      .then((response) => {
+        const newHR = this.formatHR(response.data);
+        const list = this.hr.getValue();
+        const index = list.findIndex((l) => l.id === newHR.id);
+
+        if (index === -1) {
+          list.push(newHR);
+        } else {
+          list[index] = newHR;
+        }
+
+        this.hr.next(list);
+
+        const hrBackups = this.backups.getValue();
+        const backupIndex = hrBackups.findIndex(
+          (b) => b.id === this.backupId.getValue()
+        );
+        if (backupIndex !== -1) {
+          hrBackups[backupIndex].date = newHR.updatedAt;
+          this.backups.next(hrBackups);
+        }
+
+        return newHR;
+      });
   }
 }
