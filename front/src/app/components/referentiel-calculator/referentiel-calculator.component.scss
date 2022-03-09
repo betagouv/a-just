@@ -78,8 +78,8 @@
       &.actual {
         > div {
           align-self: stretch;
-          margin: 4px;
-          width: calc(100% - 8px);
+          margin: 4px 2px;
+          width: calc(100% - 4px);
         }
       }
 
