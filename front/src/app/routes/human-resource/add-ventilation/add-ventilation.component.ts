@@ -29,6 +29,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() human: HumanResourceInterface | null = null;
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
+  @Input() lastDateStart: Date | null = null;
   @Output() ventilationChange = new EventEmitter();
   indisponibilitiesVisibles: RHActivityInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
@@ -83,7 +84,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.etp = (situation && situation.etp) || 0;
 
-    this.form.get('activitiesStartDate')?.setValue(new Date());
+    this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : new Date());
     this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
     this.form
       .get('firstName')
@@ -218,6 +219,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
       );
       return;
+    }
+
+    let { activitiesStartDate, dateEnd } = this.form.value;
+    if(dateEnd && activitiesStartDate) {
+      activitiesStartDate = new Date(activitiesStartDate);
+      dateEnd = new Date(dateEnd);
+
+      if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
+        alert('Vous ne pouvez pas saisir une ventilation supérieure à la date de sortie !');
+        return;
+      }
     }
 
     if (this.human) {
