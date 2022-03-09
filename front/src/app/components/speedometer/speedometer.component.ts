@@ -21,6 +21,7 @@ export class SpeedometerComponent implements OnInit {
   bottomSpaceDegrees: number = 135;
   radius: number = 25;
   width: number = 55;
+  percentString: number = 0;
 
   constructor() {}
 
@@ -31,6 +32,8 @@ export class SpeedometerComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.percentString = Math.floor(this.percent);
+
     this.onDraw();
   }
 

@@ -75,6 +75,14 @@
         background-color: fColor(bgHeaderSelected);
       }
 
+      &.actual {
+        > div {
+          align-self: stretch;
+          margin: 4px;
+          width: calc(100% - 8px);
+        }
+      }
+
       &.activity,
       &.calculate {
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),

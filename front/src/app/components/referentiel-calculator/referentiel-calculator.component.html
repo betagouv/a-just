@@ -7,24 +7,36 @@
   </div>
   <div class="item actual">
     <div [ngClass]="{ selected: sortBy === 'totalIn' }">
-      <p>{{ calculator.totalIn }}</p>
+      <div>
+        <p>{{ calculator.totalIn }}</p>
+      </div>
     </div>
     <div [ngClass]="{ selected: sortBy === 'totalOut' }">
-      <p>{{ calculator.totalOut }}</p>
+      <div>
+        <p>{{ calculator.totalOut }}</p>
+      </div>
     </div>
     <div [ngClass]="{ selected: sortBy === 'lastStock' }">
       <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
-        <p>{{ calculator.lastStock }}</p>
+        <div>
+          <p>{{ calculator.lastStock }}</p>
+        </div>
       </ng-template>
     </div>
     <div [ngClass]="{ selected: sortBy === 'etpAffected' }">
-      <p>{{ calculator.etpMag }}</p>
+      <div>
+        <p>{{ calculator.etpMag }}</p>
+      </div>
     </div>
     <div [ngClass]="{ selected: sortBy === 'etpAffected' }">
-      <p>{{ calculator.etpFon }}</p>
+      <div>
+        <p>{{ calculator.etpFon }}</p>
+      </div>
     </div>
     <div [ngClass]="{ selected: sortBy === 'etpAffected' }">
-      <p>{{ calculator.etpCont }}</p>
+      <div>
+        <p>{{ calculator.etpCont }}</p>
+      </div>
     </div>
   </div>
   <div class="item activity">
