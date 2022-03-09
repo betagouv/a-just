@@ -5,7 +5,8 @@
     [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
 
   <add-ventilation [human]="currentHR" [activities]="lastActivities" [indisponibilities]="allIndisponibilities"
-    (ventilationChange)="onNewVentilation()"></add-ventilation>
+    [lastDateStart]="histories.length ? histories[0].dateStart : null" (ventilationChange)="onNewVentilation()">
+  </add-ventilation>
 
   <p *ngIf="histories.length > 1" class="title-history">
     Situations antérieures du {{ categoryName }}
