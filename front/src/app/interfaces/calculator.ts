@@ -9,7 +9,7 @@ export interface etpAffectedInterface {
 export interface CalculatorInterface {
 	totalIn: number | null;
 	totalOut: number | null;
-	totalStock: number | null;
+	lastStock: number | null;
 	etpMag: number | null;
 	etpFon: number | null;
 	etpCont: number | null;

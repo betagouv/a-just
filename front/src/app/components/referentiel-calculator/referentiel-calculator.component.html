@@ -12,9 +12,9 @@
     <div [ngClass]="{ selected: sortBy === 'totalOut' }">
       <p>{{ calculator.totalOut }}</p>
     </div>
-    <div [ngClass]="{ selected: sortBy === 'totalStock' }">
-      <ng-template [ngIf]="calculator.totalStock !== null" [ngIfElse]="nr">
-        <p>{{ calculator.totalStock }}</p>
+    <div [ngClass]="{ selected: sortBy === 'lastStock' }">
+      <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
+        <p>{{ calculator.lastStock }}</p>
       </ng-template>
     </div>
     <div [ngClass]="{ selected: sortBy === 'etpAffected' }">

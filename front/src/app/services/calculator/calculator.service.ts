@@ -111,16 +111,16 @@ export class CalculatorService extends MainClass {
     );
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
-    let totalStock = null;
+    let lastStock = null;
     if(activities.length) {
       const lastActivities = activities[activities.length - 1]
       if(lastActivities.stock !== null && this.isSameMonthAndYear(lastActivities.periode, this.dateStop.getValue())) {
-        totalStock = lastActivities.stock;
+        lastStock = lastActivities.stock;
       }
     }
 
     const realCoverage = fixDecimal(totalOut / totalIn);
-    const realDTESInMonths = totalStock !== null ? fixDecimal(totalStock / totalOut) : null;
+    const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
 
     const etpAffected = this.getHRPositions(referentiel);
     const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
@@ -137,12 +137,12 @@ export class CalculatorService extends MainClass {
       ...this.calculateActivities(
         referentiel,
         totalIn,
-        totalStock,
+        lastStock,
         etpAffected
       ),
       totalIn,
       totalOut,
-      totalStock,
+      lastStock,
       realCoverage,
       realDTESInMonths,
       realTimePerCase,
@@ -168,7 +168,7 @@ export class CalculatorService extends MainClass {
   calculateActivities(
     referentiel: ContentieuReferentielInterface,
     totalIn: number,
-    totalStock: number | null,
+    lastStock: number | null,
     etpAffected: etpAffectedInterface[]
   ) {
     let calculateTimePerCase = null;
@@ -194,7 +194,7 @@ export class CalculatorService extends MainClass {
           12
       );
       calculateCoverage = fixDecimal(calculateOut / (totalIn || 0));
-      calculateDTESInMonths = totalStock === null ? null : fixDecimal(totalStock / calculateOut);
+      calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / calculateOut);
     } else {
       calculateOut = null;
       calculateCoverage = null;
