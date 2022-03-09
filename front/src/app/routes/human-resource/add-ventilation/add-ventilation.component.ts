@@ -204,7 +204,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.indisponibilitiesVisibles = indispos;
   }
 
-  onSave() {
+  async onSave() {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError);
       return;
@@ -221,9 +221,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (this.human) {
-      console.log(this.updatedReferentiels);
       if (
-        this.humanResourceService.pushHRUpdate(
+        await this.humanResourceService.pushHRUpdate(
           this.human?.id,
           this.form.value,
           this.updatedReferentiels,

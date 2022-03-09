@@ -37,4 +37,7 @@
       currentHR.lastName) }}
     </p>
   </div>
+  <p class="user-updated-at">{{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+    currentHR.updatedAt.getDate() + ' ' + getMonthString(currentHR.updatedAt) + ' ' +
+    currentHR.updatedAt.getFullYear() : '' }}</p>
 </ng-template>

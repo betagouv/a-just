@@ -75,4 +75,31 @@ export default class RouteHumanResources extends Route {
   async getBackupList (ctx) {
     this.sendOk(ctx, await this.model.models.HRBackups.getAll())
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+      hr: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async updateHr (ctx) {
+    let { backupId, hr } = this.body(ctx)
+
+    this.sendOk(ctx, await this.model.updateHR(hr, backupId))
+  }
+
+  @Route.Delete({
+    path: 'remove-hr/:hrId',
+    accesses: [Access.isAdmin],
+  })
+  async removeHR (ctx) {
+    const { hrId } = ctx.params   
+
+    if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.removeHR(hrId))
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 }

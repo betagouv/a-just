@@ -4,6 +4,7 @@ import { RHActivityInterface } from "./rh-activity";
 export interface HumanResourceInterface {
 	id: number;
 	firstName?: string;
+	backupId?: number;
 	lastName?: string;
 	coverUrl?: string;
 	workTime?: number;
@@ -14,4 +15,5 @@ export interface HumanResourceInterface {
 	totalAffected?: number;
 	comment?: string;
 	situations: HRSituationInterface[];
+	updatedAt: Date;
 }

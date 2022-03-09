@@ -1,6 +1,8 @@
 @import "../../styles/utils.scss";
 
 .title {
+  margin-right: 16px;
+
   .page-name {
     font-size: 16px;
     color: fColor(titleSelect);
@@ -12,6 +14,10 @@
     color: fColor(primary);
     font-weight: bold;
   }
+}
+
+.user-updated-at {
+  font-size: 12px;
 }
 
 .actions {
