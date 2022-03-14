@@ -37,6 +37,7 @@ export default (sequelizeInstance, Model) => {
           code: list[i]['HRFonction.code'],
           label: list[i]['HRFonction.label'],
         },
+        activities: await Model.models.HRActivities.getAll(list[i].id),
       }
     }
 
@@ -75,6 +76,8 @@ export default (sequelizeInstance, Model) => {
         })
       }
       reelHRIds.push(findToBdd.id)
+
+      await Model.models.HRActivities.syncHRActivities(situation.activities || [], findToBdd.id)
     }
 
     // remove old HR

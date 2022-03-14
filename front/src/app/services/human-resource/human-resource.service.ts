@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { HRActivityInterface } from 'src/app/interfaces/hr-activity';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
@@ -131,6 +132,7 @@ export class HumanResourceService {
           dateStart: new Date(date.getFullYear(), 0, 1),
         },
       ],
+      indisponibilities: [],
       updatedAt: new Date(),
     };
 
@@ -363,93 +365,49 @@ export class HumanResourceService {
     const fonctions = this.fonctions.getValue();
 
     if (index !== -1) {
-      let activities = list[index].activities || [];
       const activitiesStartDate = today(profil.activitiesStartDate);
-      const getTimeActivitiesStarted = activitiesStartDate.getTime();
-      const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
-      yesterdayActivitiesStartDate.setDate(
-        yesterdayActivitiesStartDate.getDate() - 1
-      );
-
-      // find and update or remove from activities list
-      indisponibilities.map((i) => {
-        const index = activities.findIndex((a) => a.id === i.id);
-        if (i.isDeleted && i.id > 0) {
-          // delete
-          if (index !== -1) {
-            activities.splice(index, 1);
-          }
-        } else if (!i.isDeleted && i.id < 0) {
-          // create
-          activities.push(i);
-        } else if (!i.isDeleted && i.id > 0) {
-          // update
-          if (index !== -1) {
-            activities[index] = i;
-          }
-        }
-      });
-
-      if (newReferentiel.length) {
-        for (let i = activities.length - 1; i >= 0; i--) {
-          if (
-            this.copyOfIdsIndispo.indexOf(activities[i].referentielId) === -1
-          ) {
-            // stop all current activities and start with this
-            if (
-              !activities[i].dateStop ||
-              // @ts-ignore
-              activities[i].dateStop.getTime() > getTimeActivitiesStarted
-            ) {
-              activities[i].dateStop = yesterdayActivitiesStartDate;
-            }
-
-            // remove activities started after activity start date
-            const dateStart = activities[i].dateStart
-              ? activities[i].dateStart
-              : null;
-            if (dateStart && dateStart.getTime() >= getTimeActivitiesStarted) {
-              activities.splice(i, 1);
-            }
-          }
-        }
-
-        newReferentiel
-          .filter((r) => r.percent)
-          .map((ref) => {
-            activities.push({
-              id: -1,
-              percent: ref.percent,
-              referentielId: ref.id,
-              dateStart: new Date(profil.activitiesStartDate),
-            });
-
-            (ref.childrens || [])
-              .filter((r) => r.percent)
-              .map((ref) => {
-                activities.push({
-                  id: -1,
-                  percent: ref.percent,
-                  referentielId: ref.id,
-                  dateStart: new Date(profil.activitiesStartDate),
-                });
-              });
-          });
-      }
 
       // update situation
       let situations = this.findAllSituations(list[index], activitiesStartDate);
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
-      if (cat && fonct) {
-        situations.splice(0, 0, {
-          id: -1,
-          etp: profil.etp / 100,
-          category: cat,
-          fonction: fonct,
-          dateStart: activitiesStartDate,
-        });
+      if (!fonct) {
+        alert('Vous devez saisir une fonction !');
+        return;
       }
+
+      if (!cat) {
+        alert('Vous devez saisir une catégorie !');
+        return;
+      }
+
+      const activities: HRActivityInterface[] = [];
+      newReferentiel
+        .filter((r) => r.percent && r.percent > 0)
+        .map((r) => {
+          activities.push({
+            percent: r.percent || 0,
+            contentieux: r,
+          });
+
+          (r.childrens || [])
+            .filter((r) => r.percent && r.percent > 0)
+            .map((child) => {
+              activities.push({
+                percent: child.percent || 0,
+                contentieux: child,
+              });
+            });
+        });
+
+      situations.splice(0, 0, {
+        id: -1,
+        etp: profil.etp / 100,
+        category: cat,
+        fonction: fonct,
+        dateStart: activitiesStartDate,
+        activities,
+      });
 
       list[index] = {
         ...list[index],
@@ -458,7 +416,7 @@ export class HumanResourceService {
         dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
         dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
         situations: this.distinctSituations(situations),
-        activities,
+        indisponibilities,
       };
 
       await this.updateRemoteHR(list[index]);

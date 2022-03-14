@@ -1,3 +1,4 @@
+import { HRActivityInterface } from "./hr-activity";
 import { HRCategoryInterface } from "./hr-category";
 import { HRFonctionInterface } from "./hr-fonction";
 
@@ -7,4 +8,5 @@ export interface HRSituationInterface {
 	category: HRCategoryInterface;
 	fonction: HRFonctionInterface | null;
 	dateStart: Date;
+	activities: HRActivityInterface[];
 }

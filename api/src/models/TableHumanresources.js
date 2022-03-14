@@ -31,8 +31,8 @@ export default (sequelizeInstance, Model) => {
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
         comment: list[i]['HRComment.comment'],
-        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, list[i].date_sortie),
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
+        indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
       }
     }
 
@@ -232,6 +232,7 @@ export default (sequelizeInstance, Model) => {
 
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
+    await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     return await Model.getHr(hr.id)
   }
@@ -260,8 +261,8 @@ export default (sequelizeInstance, Model) => {
         updatedAt: hr.updated_at,
         comment: hr['HRComment.comment'],
         backupId: hr.backupId,
-        activities: await Model.models.HRVentilations.getActivitiesByHR(hr.id, hr.date_sortie),
         situations: await Model.models.HRSituations.getListByHumanId(hr.id),
+        indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
       }
     }
 
