@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { sumBy } from 'lodash';
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service';
@@ -18,7 +19,7 @@ export class ActualPanelSituationComponent
 {
   @Input() dateStart: Date = new Date();
   @Input() dateStop: Date = new Date();
-  @Input() category: string = '';
+  @Input() fonction: HRFonctionInterface | null = null;
   @Input() etp: number = 1;
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];

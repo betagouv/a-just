@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { HRActivityInterface } from 'src/app/interfaces/hr-activity';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
@@ -304,12 +303,6 @@ export class HumanResourceService {
     return uniqBy(list, 'referentielId');
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = this.findAllSituations(hr, date);
-
-    return situations.length ? situations[0] : null;
-  }
-
   distinctSituations(situations: HRSituationInterface[]) {
     const listTimeTamps: number[] = [];
 
@@ -329,6 +322,12 @@ export class HumanResourceService {
       },
       []
     );
+  }
+
+  findSituation(hr: HumanResourceInterface | null, date?: Date) {
+    let situations = this.findAllSituations(hr, date);
+
+    return situations.length ? situations[0] : null;
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
@@ -351,6 +350,28 @@ export class HumanResourceService {
     }
 
     return situations;
+  }
+
+  findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
+    let indisponibilities = orderBy(
+      (hr && hr.indisponibilities) || [],
+      [
+        (o) => {
+          const d = today(o.dateStart);
+          return d.getTime();
+        },
+      ],
+      ['desc']
+    );
+
+    if (date) {
+      indisponibilities = indisponibilities.filter((hra) => {
+        const dateStart = today(hra.dateStart);
+        return dateStart.getTime() <= date.getTime();
+      });
+    }
+
+    return indisponibilities;
   }
 
   async pushHRUpdate(
@@ -381,8 +402,9 @@ export class HumanResourceService {
         return;
       }
 
-      const activities: HRActivityInterface[] = [];
-      newReferentiel
+      const activities: RHActivityInterface[] = [];
+      // TODO
+      /*newReferentiel
         .filter((r) => r.percent && r.percent > 0)
         .map((r) => {
           activities.push({
@@ -398,7 +420,7 @@ export class HumanResourceService {
                 contentieux: child,
               });
             });
-        });
+        });*/
 
       situations.splice(0, 0, {
         id: -1,

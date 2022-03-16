@@ -100,7 +100,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue((this.human && this.human.dateEnd) || null);
     this.form
       .get('categoryId')
-      ?.setValue((situation && situation.category.id) || null);
+      ?.setValue((situation && situation.category && situation.category.id) || null);
     this.form
       .get('fonctionId')
       ?.setValue(
@@ -146,14 +146,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const max = maxBy(
       indispos.filter((a) => a.dateStop),
       function (o) {
-        return o.dateStop?.getTime();
+        const dateStop = new Date(o.dateStop ? o.dateStop : '');
+        return dateStop.getTime();
       }
     );
     let maxDate = max && max.dateStop ? today(max.dateStop) : new Date(today());
     const min = minBy(
       indispos.filter((a) => a.dateStart),
       function (o) {
-        return o.dateStart?.getTime();
+        const dateStart = new Date(o.dateStart ? o.dateStart : '');
+        return dateStart.getTime();
       }
     );
     const minDate =

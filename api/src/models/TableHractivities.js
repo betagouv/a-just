@@ -18,7 +18,7 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
-        stock: list[i].percent,
+        percent: list[i].percent,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],

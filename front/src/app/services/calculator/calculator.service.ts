@@ -264,7 +264,7 @@ export class CalculatorService extends MainClass {
           let etp = 0;
           const situation = this.humanResourceService.findSituation(hr, now);
 
-          if (situation && situation.category.id === categoryId) {
+          if (situation && situation.category && situation.category.id === categoryId) {
             const activitiesFiltred =
               this.humanResourceService.filterActivitiesByDate(activities, now);
             const indispoFiltred =

@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { sumBy } from 'lodash';
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
@@ -14,7 +15,7 @@ import { etpLabel } from 'src/app/utils/referentiel';
 export class PanelHistoryVentilationComponent extends MainClass implements OnChanges {
   @Input() dateStart: Date = new Date();
   @Input() dateStop: Date = new Date();
-  @Input() category: string = '';
+  @Input() fonction: HRFonctionInterface | null = null;
   @Input() etp: number = 1;
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];

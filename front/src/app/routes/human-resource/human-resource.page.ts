@@ -1,25 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { maxBy, minBy, orderBy, sumBy } from 'lodash';
+import { orderBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
+import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service';
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { today } from 'src/app/utils/dates';
 
-interface HistoryInterface {
-  category: string; // 1 VP
-  etp: number; // 1 ou 0.8
+interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[];
-  activities: RHActivityInterface[];
-  dateStart: Date;
   dateStop: Date;
 }
 
@@ -34,12 +30,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   currentHR: HumanResourceInterface | null = null;
   categoryName: string = '';
   histories: HistoryInterface[] = [];
-  lastActivities: RHActivityInterface[] = [];
   allIndisponibilities: RHActivityInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
@@ -93,8 +87,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.currentHR
       );
       console.log(findUser, currentSituation);
-      if (currentSituation) {
+      if (currentSituation && currentSituation.category) {
         const findCategory = this.categories.find(
+          // @ts-ignore
           (c) => c.id === currentSituation.category.id
         );
         console.log(findCategory);
@@ -135,50 +130,37 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return;
     }
 
-    const getToday = today();
-
     this.histories = [];
-    const activities = (
-      (this.currentHR && this.currentHR.activities) ||
-      []
-    ).filter((a) => a.percent);
+    const getToday = today();
+    this.allIndisponibilities = this.currentHR.indisponibilities || [];
+    const situations = orderBy(this.currentHR.situations || [], [
+      function (o: HRSituationInterface) {
+        const date = new Date(o.dateStart);
+        return date.getTime();
+      },
+    ]);
 
-    const max = maxBy(
-      activities.filter((a) => a.dateStop),
-      function (o) {
-        return o.dateStop?.getTime();
-      }
-    );
-    let maxDate =
-      max && max.dateStop && max.dateStop.getTime() > getToday.getTime()
-        ? today(new Date(max.dateStop))
-        : new Date(today());
+    const minSituation = situations[0];
+    const maxSituation = situations[situations.length - 1];
+    const minDate = today(minSituation.dateStart);
+    let maxDate = today(maxSituation.dateStart);
     let currentDateEnd = null;
     if (this.currentHR && this.currentHR.dateEnd) {
       currentDateEnd = new Date(this.currentHR.dateEnd);
     }
     if (currentDateEnd && currentDateEnd.getTime() > maxDate.getTime()) {
-      maxDate = currentDateEnd;
+      maxDate = new Date(currentDateEnd);
+    }
+    if (getToday.getTime() > maxDate.getTime()) {
+      maxDate = new Date(getToday);
     }
 
-    const min = minBy(
-      ([...activities, ...this.currentHR.situations] as any[]).filter(
-        (a) => a.dateStart
-      ),
-      function (o) {
-        const date = new Date(o.dateStart);
-        return date.getTime();
-      }
-    );
-    const minDate =
-      min && min.dateStart ? today(new Date(min.dateStart)) : new Date(today());
-
     const currentDate = new Date(maxDate);
-    let idOfActivities: number[] = [];
+    let idsDetected: number[] = [];
     while (currentDate.getTime() >= minDate.getTime()) {
       let delta: number[] = [];
-      const findActivities = this.humanResourceService.filterActivitiesByDate(
-        activities,
+      const findIndispos = this.humanResourceService.findAllIndisponibilities(
+        this.currentHR,
         currentDate
       );
       const findSituation = this.humanResourceService.findSituation(
@@ -186,34 +168,28 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         currentDate
       );
 
-      delta = findActivities.map((f) => f.id);
+      delta = findIndispos.map((f) => f.id);
       if (findSituation) {
         delta.push(findSituation.id);
       }
 
-      if (JSON.stringify(idOfActivities) !== JSON.stringify(delta)) {
-        idOfActivities = delta;
-        const indisp = findActivities.filter(
-          (r) =>
-            this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
-        );
+      if (JSON.stringify(idsDetected) !== JSON.stringify(delta)) {
+        idsDetected = delta;
         const dateStop = new Date(currentDate);
         let etp = (findSituation && findSituation.etp) || 0;
 
-        if(currentDateEnd && currentDateEnd.getTime() <= dateStop.getTime()) {
+        if (currentDateEnd && currentDateEnd.getTime() <= dateStop.getTime()) {
           etp = 0;
         }
 
         // new list
         this.histories.push({
-          category:
-            (findSituation &&
-              findSituation.fonction &&
-              findSituation.fonction.code) ||
-            '',
+          id: (findSituation && findSituation.id) || -1,
+          category: (findSituation && findSituation.category) || null,
+          fonction: (findSituation && findSituation.fonction) || null,
           etp,
-          indisponibilities: indisp,
-          activities: findActivities,
+          indisponibilities: findIndispos,
+          activities: (findSituation && findSituation.activities) || [],
           dateStart: new Date(),
           dateStop,
         });
@@ -241,14 +217,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return h;
     });
 
-    this.lastActivities = this.histories.length
-      ? this.histories[0].activities
-      : [];
-    this.allIndisponibilities = activities.filter(
-      (r) => this.referentielService.idsIndispo.indexOf(r.referentielId) !== -1
-    );
-
-    console.log(this.histories);
+    console.log(this.histories)
   }
 
   trackByDate(index: number, item: any) {
