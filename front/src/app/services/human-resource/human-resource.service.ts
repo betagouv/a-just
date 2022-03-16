@@ -389,7 +389,7 @@ export class HumanResourceService {
       const activitiesStartDate = today(profil.activitiesStartDate);
 
       // update situation
-      let situations = this.findAllSituations(list[index], activitiesStartDate);
+      let situations = list[index].situations || [];
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
       if (!fonct) {
@@ -402,9 +402,8 @@ export class HumanResourceService {
         return;
       }
 
-      const activities: RHActivityInterface[] = [];
-      // TODO
-      /*newReferentiel
+      const activities: any[] = [];
+      newReferentiel
         .filter((r) => r.percent && r.percent > 0)
         .map((r) => {
           activities.push({
@@ -420,7 +419,7 @@ export class HumanResourceService {
                 contentieux: child,
               });
             });
-        });*/
+        });
 
       situations.splice(0, 0, {
         id: -1,
