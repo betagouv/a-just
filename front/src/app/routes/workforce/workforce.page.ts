@@ -72,7 +72,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
-    private workforceService: WorkforceService,
+    private workforceService: WorkforceService
   ) {
     super();
   }
@@ -130,36 +130,39 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   preformatHumanResources() {
-    this.preformatedAllHumanResource = orderBy(this.allHumanResources.map((h) => {
-      const currentActivities =
-        this.humanResourceService.filterActivitiesByDate(
-          h.activities || [],
+    this.preformatedAllHumanResource = orderBy(
+      this.allHumanResources.map((h) => {
+        const indisponibilities =
+          this.humanResourceService.findAllIndisponibilities(
+            h,
+            this.dateSelected
+          );
+        const hasIndisponibility = fixDecimal(
+          sumBy(indisponibilities, 'percent') / 100
+        );
+        const currentSituation = this.humanResourceService.findSituation(
+          h,
           this.dateSelected
         );
-      const hasIndisponibility = fixDecimal(
-        sumBy(
-          currentActivities.filter(
-            (a) =>
-              this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
-          ),
-          'percent'
-        ) / 100
-      );
-      const currentSituation = this.humanResourceService.findSituation(h, this.dateSelected);
-      const etp = (currentSituation && currentSituation.etp) || 0;
+        const etp = (currentSituation && currentSituation.etp) || 0;
 
-      return {
-        ...h,
-        currentActivities,
-        opacity: 1,
-        etpLabel: etpLabel(etp),
-        hasIndisponibility,
-        currentSituation,
-        etp,
-        category: currentSituation && currentSituation.category,
-        fonction: currentSituation && currentSituation.fonction,
-      };
-    }), ['fonction.rank'], ['asc']);
+        return {
+          ...h,
+          currentActivities:
+            (currentSituation && currentSituation.activities) || [],
+          indisponibilities,
+          opacity: 1,
+          etpLabel: etpLabel(etp),
+          hasIndisponibility,
+          currentSituation,
+          etp,
+          category: currentSituation && currentSituation.category,
+          fonction: currentSituation && currentSituation.fonction,
+        };
+      }),
+      ['fonction.rank'],
+      ['asc']
+    );
 
     this.updateCategoryValues();
     this.onFilterList();
@@ -195,7 +198,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async addHR() {
-    const newId = await this.humanResourceService.createHumanResource(this.dateSelected);
+    const newId = await this.humanResourceService.createHumanResource(
+      this.dateSelected
+    );
     this.route.snapshot.fragment = newId + '';
     this.isFirstLoad = true;
     this.onFilterList();

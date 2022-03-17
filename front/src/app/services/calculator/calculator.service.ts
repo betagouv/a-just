@@ -13,7 +13,6 @@ import { fixDecimal } from 'src/app/utils/numbers';
 import { environment } from 'src/environments/environment';
 import { ActivitiesService } from '../activities/activities.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
-import { ReferentielService } from '../referentiel/referentiel.service';
 
 const now = new Date(2021, 0);
 const end = new Date(2021, 11, 31);
@@ -32,8 +31,7 @@ export class CalculatorService extends MainClass {
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService,
-    private referentielService: ReferentielService
+    private activitiesService: ActivitiesService
   ) {
     super();
 
@@ -112,15 +110,22 @@ export class CalculatorService extends MainClass {
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
     let lastStock = null;
-    if(activities.length) {
-      const lastActivities = activities[activities.length - 1]
-      if(lastActivities.stock !== null && this.isSameMonthAndYear(lastActivities.periode, this.dateStop.getValue())) {
+    if (activities.length) {
+      const lastActivities = activities[activities.length - 1];
+      if (
+        lastActivities.stock !== null &&
+        this.isSameMonthAndYear(
+          lastActivities.periode,
+          this.dateStop.getValue()
+        )
+      ) {
         lastStock = lastActivities.stock;
       }
     }
 
     const realCoverage = fixDecimal(totalOut / totalIn);
-    const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
+    const realDTESInMonths =
+      lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
 
     const etpAffected = this.getHRPositions(referentiel);
     const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
@@ -134,12 +139,7 @@ export class CalculatorService extends MainClass {
     );
 
     return {
-      ...this.calculateActivities(
-        referentiel,
-        totalIn,
-        lastStock,
-        etpAffected
-      ),
+      ...this.calculateActivities(referentiel, totalIn, lastStock, etpAffected),
       totalIn,
       totalOut,
       lastStock,
@@ -194,7 +194,8 @@ export class CalculatorService extends MainClass {
           12
       );
       calculateCoverage = fixDecimal(calculateOut / (totalIn || 0));
-      calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / calculateOut);
+      calculateDTESInMonths =
+        lastStock === null ? null : fixDecimal(lastStock / calculateOut);
     } else {
       calculateOut = null;
       calculateCoverage = null;
@@ -248,40 +249,34 @@ export class CalculatorService extends MainClass {
     categoryId: number,
     referentiel: ContentieuReferentielInterface
   ): number {
-    const activities = (hr.activities || []).filter(
-      (a) => a.referentielId === referentiel.id
-    );
-    const indisponibilities = (hr.activities || []).filter(
-      (a) => this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
-    );
     const list = [];
 
-    if (activities.length) {
-      const now = new Date(this.dateStart.getValue());
-      do {
-        // only working day
-        if (workingDay(now)) {
-          let etp = 0;
-          const situation = this.humanResourceService.findSituation(hr, now);
+    const now = new Date(this.dateStart.getValue());
+    do {
+      // only working day
+      if (workingDay(now)) {
+        let etp = 0;
+        const situation = this.humanResourceService.findSituation(hr, now);
 
-          if (situation && situation.category && situation.category.id === categoryId) {
-            const activitiesFiltred =
-              this.humanResourceService.filterActivitiesByDate(activities, now);
-            const indispoFiltred =
-              this.humanResourceService.filterActivitiesByDate(
-                indisponibilities,
-                now
-              );
-            etp =
-              (situation.etp * (100 - sumBy(indispoFiltred, 'percent'))) / 100;
-            etp *= sumBy(activitiesFiltred, 'percent') / 100;
-          }
-
-          list.push(etp);
+        if (
+          situation &&
+          situation.category &&
+          situation.category.id === categoryId
+        ) {
+          const activitiesFiltred = (situation.activities || []).filter(
+            (a) => a.contentieux && a.contentieux.id === referentiel.id
+          );
+          const indispoFiltred =
+            this.humanResourceService.findAllIndisponibilities(hr, now);
+          etp =
+            (situation.etp * (100 - sumBy(indispoFiltred, 'percent'))) / 100;
+          etp *= sumBy(activitiesFiltred, 'percent') / 100;
         }
-        now.setDate(now.getDate() + 1);
-      } while (now.getTime() <= this.dateStop.getValue().getTime());
-    }
+
+        list.push(etp);
+      }
+      now.setDate(now.getDate() + 1);
+    } while (now.getTime() <= this.dateStop.getValue().getTime());
 
     return mean(list);
   }
