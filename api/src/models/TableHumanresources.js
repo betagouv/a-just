@@ -195,39 +195,10 @@ export default (sequelizeInstance, Model) => {
     if(hr.id && hr.id > 0) {
       // update
       await Model.updateById(hr.id, options)
-
-      // delete force all references
-      await Model.models.HRVentilations.destroy({
-        where: {
-          rh_id: hr.id,
-        },
-        force: true,
-      })
     } else {
       // create
       const newHr = await Model.models.HumanResources.create(options)
       hr.id = newHr.dataValues.id
-    }
-
-    const activities = hr.activities || []
-    for(let i = 0; i < activities.length; i++) {
-      // add activities
-      const activity = activities[i]
-      if(activity.percent) {
-        if(!activity.referentielId) {
-          // find referentiel id
-          activity.referentielId = await Model.models.ContentieuxReferentiels.getContentieuxId(activity.label) 
-        }
-
-        await Model.models.HRVentilations.create({
-          backup_id: backupId,
-          rh_id: hr.id,
-          percent: activity.percent,
-          nac_id: activity.referentielId,
-          date_start: activity.dateStart,
-          date_stop: activity.dateStop,
-        })
-      }
     }
 
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)

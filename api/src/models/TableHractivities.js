@@ -34,15 +34,16 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < HRActivities.length; i++) {
       const hRActivity = HRActivities[i]
+      const contentieuxId = hRActivity.contentieux ? hRActivity.contentieux.id : hRActivity.referentielId
 
       const options = {
-        nac_id: hRActivity.contentieux.id,
+        nac_id: contentieuxId,
         hr_situation_id: hRSituationId,
         percent: hRActivity.percent,
       }
       let findToBdd = (findToBdd = await Model.findOne({
         where: {
-          nac_id: hRActivity.contentieux.id,
+          nac_id: contentieuxId,
           hr_situation_id: hRSituationId,
         },
       }))

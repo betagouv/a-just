@@ -44,8 +44,17 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
-  Model.syncSituations = async (list, humanId) => {
+  Model.syncSituations = async (list, humanId, cleanOldSituation = false) => {
     let reelHRIds = []
+
+    if(cleanOldSituation) {
+      await Model.destroy({
+        where: {
+          human_id: humanId,
+        },
+      })
+    }
+
 
     for (let i = 0; i < list.length; i++) {
       const situation = list[i]
@@ -94,6 +103,33 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < oldNewHRList.length; i++) {
       await Model.destroyById(oldNewHRList[i])
     }
+  }
+
+  Model.haveHRId = async (situationId, userId) => {
+    const hr = await Model.findOne({
+      attributes: ['id'],
+      where: { 
+        id: situationId,
+      },
+      include: [{
+        attributes: ['id'],
+        model: Model.models.HumanResources,
+        include: [{
+          attributes: ['id'],
+          model: Model.models.HRBackups,
+          include: [{
+            attributes: ['id'],
+            model: Model.models.UserVentilations,
+            where: {
+              user_id: userId,
+            },
+          }],
+        }],
+      }],
+      raw: true,
+    })
+
+    return hr ? hr['HumanResource.id'] : null
   }
 
   return Model

@@ -12,9 +12,9 @@
   <p *ngIf="histories.length > 1" class="title-history">
     Situations antérieures du {{ categoryName }}
   </p>
-  <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [fonction]="h.fonction"
-    [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-    [dateStop]="h.dateStop">
+  <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
+    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop">
   </panel-history-ventilation>
 
   <div *ngIf="isAdmin()" class="text-center">

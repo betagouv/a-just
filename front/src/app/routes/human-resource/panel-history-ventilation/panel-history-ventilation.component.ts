@@ -19,6 +19,7 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
   @Input() etp: number = 1;
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
+  @Input() id: number | null = null;
   indisponibility: number = 0;
   timeWorked: string = '';
 
@@ -39,5 +40,11 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
     })
 
     this.timeWorked = etpLabel(this.etp);
+  }
+
+  onRemoveSituation() {
+    if(this.id) {
+      this.humanResourceService.removeSituation(this.id)
+    }
   }
 }

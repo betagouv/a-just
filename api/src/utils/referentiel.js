@@ -53,3 +53,16 @@ export function referentielMappingIndex (name) {
 
   return 0
 }
+
+export function getIdsIndispo (list) {
+  const refIndispo = list.find((r) => r.label === 'Indisponibilité')
+  const idsIndispo = []
+  if (refIndispo) {
+    idsIndispo.push(refIndispo.id);
+    (refIndispo.childrens || []).map((c) => {
+      idsIndispo.push(c.id)
+    })
+  }
+  
+  return idsIndispo
+}

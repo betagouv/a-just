@@ -478,4 +478,35 @@ export class HumanResourceService {
         return newHR;
       });
   }
+
+  removeSituation(situationId: number) {
+    if (confirm('Supprimer cette situation ?')) {
+      return this.serverService
+        .delete(`human-resources/remove-situation/${situationId}`)
+        .then((data) => {
+          const hr = data.data;
+          const list = this.hr.getValue();
+          const findIndex = list.findIndex((r) => r.id === hr.id);
+          if (findIndex !== -1) {
+            list[findIndex] = hr;
+            this.hr.next(list);
+
+            // update date of backup after remove
+            const hrBackups = this.backups.getValue();
+            const backupIndex = hrBackups.findIndex(
+              (b) => b.id === this.backupId.getValue()
+            );
+            if (backupIndex !== -1) {
+              hrBackups[backupIndex].date = new Date();
+              this.backups.next(hrBackups);
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+    }
+
+    return false;
+  }
 }
