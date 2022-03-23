@@ -198,3 +198,12 @@
     }
   }
 }
+
+.actions-panel {
+  padding: 8px 4px;
+  background-color: white;
+
+  > button {
+    margin-right: 8px;
+  }
+}

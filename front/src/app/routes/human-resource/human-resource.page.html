@@ -1,8 +1,9 @@
 <aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
   [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
-  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [fonction]="h.fonction"
-    [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-    [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id" [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
+  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
+    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
+    [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
   </actual-panel-situation>
 
   <add-ventilation [human]="currentHR" [activities]="histories.length ? histories[0].activities : []"

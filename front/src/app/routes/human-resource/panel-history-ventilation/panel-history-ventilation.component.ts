@@ -52,4 +52,8 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
       this.humanResourceService.removeSituation(this.id)
     }
   }
+
+  onEditSituation() {
+    
+  }
 }

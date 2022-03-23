@@ -25,6 +25,7 @@ export class ActualPanelSituationComponent
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
   @Input() RHId: number | null = null;
+  @Input() id: number | null = null;
   indisponibility: number = 0;
   timeWorked: string = '';
   comment: string = '';
@@ -85,5 +86,15 @@ export class ActualPanelSituationComponent
           });
       }
     }, 1000);
+  }
+
+  onRemoveSituation() {
+    if(this.id) {
+      this.humanResourceService.removeSituation(this.id)
+    }
+  }
+
+  onEditSituation() {
+    
   }
 }
