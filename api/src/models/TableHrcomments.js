@@ -24,6 +24,11 @@ export default (sequelizeInstance, Model) => {
       com = await Model.create({ comment, human_id: hrId })
     }
 
+    // update date of backup
+    await Model.models.HumanResources.updateById(hrId, {
+      updated_at: new Date(),
+    })
+
     return com.dataValues.updatedAt
   }
 
