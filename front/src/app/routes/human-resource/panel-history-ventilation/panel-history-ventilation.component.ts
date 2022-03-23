@@ -15,6 +15,7 @@ import { etpLabel } from 'src/app/utils/referentiel';
 export class PanelHistoryVentilationComponent extends MainClass implements OnChanges {
   @Input() dateStart: Date = new Date();
   @Input() dateStop: Date = new Date();
+  @Input() dateEndToJuridiction: Date | null | undefined = null;
   @Input() fonction: HRFonctionInterface | null = null;
   @Input() etp: number = 1;
   @Input() indisponibilities: RHActivityInterface[] = [];
@@ -38,8 +39,12 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
 
       return i;
     })
-
-    this.timeWorked = etpLabel(this.etp);
+    
+    if(this.dateEndToJuridiction && this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()) {
+      this.timeWorked = 'Parti';
+    } else {
+      this.timeWorked = etpLabel(this.etp);
+    }
   }
 
   onRemoveSituation() {

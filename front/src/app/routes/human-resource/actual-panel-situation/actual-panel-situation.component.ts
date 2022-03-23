@@ -19,6 +19,7 @@ export class ActualPanelSituationComponent
 {
   @Input() dateStart: Date = new Date();
   @Input() dateStop: Date = new Date();
+  @Input() dateEndToJuridiction: Date | null | undefined = null;
   @Input() fonction: HRFonctionInterface | null = null;
   @Input() etp: number = 1;
   @Input() indisponibilities: RHActivityInterface[] = [];
@@ -51,7 +52,11 @@ export class ActualPanelSituationComponent
       return i;
     });
 
-    this.timeWorked = etpLabel(this.etp);
+    if(this.dateEndToJuridiction && this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()) {
+      this.timeWorked = 'Parti';
+    } else {
+      this.timeWorked = etpLabel(this.etp);
+    }
 
     this.onLoadComment();
   }

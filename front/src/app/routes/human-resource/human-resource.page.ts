@@ -82,17 +82,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
       this.currentHR = findUser;
+      console.log(findUser);
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
       );
-      console.log(findUser, currentSituation);
       if (currentSituation && currentSituation.category) {
         const findCategory = this.categories.find(
           // @ts-ignore
           (c) => c.id === currentSituation.category.id
         );
-        console.log(findCategory);
         this.categoryName = findCategory
           ? findCategory.label.toLowerCase()
           : '';
@@ -216,8 +215,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       return h;
     });
-
-    console.log(this.histories)
   }
 
   trackByDate(index: number, item: any) {

@@ -2,7 +2,8 @@
   [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
   <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [fonction]="h.fonction"
     [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-    [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"></actual-panel-situation>
+    [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id" [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
+  </actual-panel-situation>
 
   <add-ventilation [human]="currentHR" [activities]="histories.length ? histories[0].activities : []"
     [indisponibilities]="allIndisponibilities" [lastDateStart]="histories.length ? histories[0].dateStart : null"
@@ -14,7 +15,7 @@
   </p>
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-    [dateStart]="h.dateStart" [dateStop]="h.dateStop">
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
   </panel-history-ventilation>
 
   <div *ngIf="isAdmin()" class="text-center">
