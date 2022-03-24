@@ -14,7 +14,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { UserService } from 'src/app/services/user/user.service';
 import { today } from 'src/app/utils/dates';
 
-interface HistoryInterface extends HRSituationInterface {
+export interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[];
   dateStop: Date;
 }
@@ -31,6 +31,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   categoryName: string = '';
   histories: HistoryInterface[] = [];
   allIndisponibilities: RHActivityInterface[] = [];
+  editVentilation: HistoryInterface | null = null;
 
   constructor(
     private humanResourceService: HumanResourceService,

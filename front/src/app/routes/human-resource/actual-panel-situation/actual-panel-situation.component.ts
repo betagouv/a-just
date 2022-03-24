@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { sumBy } from 'lodash';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
+import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service';
@@ -26,6 +27,7 @@ export class ActualPanelSituationComponent
   @Input() activities: RHActivityInterface[] = [];
   @Input() RHId: number | null = null;
   @Input() id: number | null = null;
+  @Output() editVentilation = new EventEmitter();
   indisponibility: number = 0;
   timeWorked: string = '';
   comment: string = '';
@@ -95,6 +97,6 @@ export class ActualPanelSituationComponent
   }
 
   onEditSituation() {
-    
+    this.editVentilation.emit(true);
   }
 }

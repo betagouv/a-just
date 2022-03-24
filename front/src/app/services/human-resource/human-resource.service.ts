@@ -421,14 +421,30 @@ export class HumanResourceService {
             });
         });
 
-      situations.splice(0, 0, {
-        id: -1,
-        etp: profil.etp / 100,
-        category: cat,
-        fonction: fonct,
-        dateStart: activitiesStartDate,
-        activities,
+      // find if situation is in same date
+      const isSameDate = situations.findIndex((s) => {
+        const day = today(s.dateStart);
+        return activitiesStartDate.getTime() === day.getTime();
       });
+
+      if (isSameDate !== -1) {
+        situations[isSameDate] = {
+          ...situations[isSameDate],
+          etp: profil.etp / 100,
+          category: cat,
+          fonction: fonct,
+          activities,
+        };
+      } else {
+        situations.splice(0, 0, {
+          id: -1,
+          etp: profil.etp / 100,
+          category: cat,
+          fonction: fonct,
+          dateStart: activitiesStartDate,
+          activities,
+        });
+      }
 
       list[index] = {
         ...list[index],

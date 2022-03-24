@@ -30,7 +30,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
   @Input() lastDateStart: Date | null = null;
+  @Input() onEdit: boolean = false;
   @Output() ventilationChange = new EventEmitter();
+  @Output() close = new EventEmitter();
   indisponibilitiesVisibles: RHActivityInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   showNewVentilation: boolean = false;
@@ -132,6 +134,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   onCancel() {
     this.form.reset();
     this.showNewVentilation = false;
+    this.close.emit();
     const findElement = document.getElementById('content');
     if (findElement) {
       findElement.scrollTo({

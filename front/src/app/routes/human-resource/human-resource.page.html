@@ -3,12 +3,14 @@
   <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
     [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
-    [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
+    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="editVentilation = h">
   </actual-panel-situation>
 
-  <add-ventilation [human]="currentHR" [activities]="histories.length ? histories[0].activities : []"
-    [indisponibilities]="allIndisponibilities" [lastDateStart]="histories.length ? histories[0].dateStart : null"
-    (ventilationChange)="onNewVentilation()">
+  <add-ventilation [human]="currentHR"
+    [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
+    [indisponibilities]="allIndisponibilities"
+    [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
+    [onEdit]="editVentilation ? true : false" (close)="editVentilation = null" (ventilationChange)="onNewVentilation()">
   </add-ventilation>
 
   <p *ngIf="histories.length > 1" class="title-history">
@@ -16,7 +18,8 @@
   </p>
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd">
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+    (editVentilation)="editVentilation = h">
   </panel-history-ventilation>
 
   <div *ngIf="isAdmin()" class="text-center">
@@ -41,7 +44,9 @@
       currentHR.lastName) }}
     </p>
   </div>
-  <p class="user-updated-at">{{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-    currentHR.updatedAt.getDate() + ' ' + getMonthString(currentHR.updatedAt) + ' ' +
-    currentHR.updatedAt.getFullYear() : '' }}</p>
+  <p class="user-updated-at">
+    {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+    currentHR.updatedAt.getDate() + ' ' + getMonthString(currentHR.updatedAt) +
+    ' ' + currentHR.updatedAt.getFullYear() : '' }}
+  </p>
 </ng-template>
