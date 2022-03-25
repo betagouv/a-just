@@ -72,7 +72,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
-    private workforceService: WorkforceService,
+    private workforceService: WorkforceService
   ) {
     super();
   }
@@ -130,36 +130,39 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   preformatHumanResources() {
-    this.preformatedAllHumanResource = orderBy(this.allHumanResources.map((h) => {
-      const currentActivities =
-        this.humanResourceService.filterActivitiesByDate(
-          h.activities || [],
+    this.preformatedAllHumanResource = orderBy(
+      this.allHumanResources.map((h) => {
+        const indisponibilities =
+          this.humanResourceService.findAllIndisponibilities(
+            h,
+            this.dateSelected
+          );
+        const hasIndisponibility = fixDecimal(
+          sumBy(indisponibilities, 'percent') / 100
+        );
+        const currentSituation = this.humanResourceService.findSituation(
+          h,
           this.dateSelected
         );
-      const hasIndisponibility = fixDecimal(
-        sumBy(
-          currentActivities.filter(
-            (a) =>
-              this.referentielService.idsIndispo.indexOf(a.referentielId) !== -1
-          ),
-          'percent'
-        ) / 100
-      );
-      const currentSituation = this.humanResourceService.findSituation(h, this.dateSelected);
-      const etp = (currentSituation && currentSituation.etp) || 0;
+        const etp = (currentSituation && currentSituation.etp) || 0;
 
-      return {
-        ...h,
-        currentActivities,
-        opacity: 1,
-        etpLabel: etpLabel(etp),
-        hasIndisponibility,
-        currentSituation,
-        etp,
-        category: currentSituation && currentSituation.category,
-        fonction: currentSituation && currentSituation.fonction,
-      };
-    }), ['fonction.rank'], ['asc']);
+        return {
+          ...h,
+          currentActivities:
+            (currentSituation && currentSituation.activities) || [],
+          indisponibilities,
+          opacity: 1,
+          etpLabel: etpLabel(etp),
+          hasIndisponibility,
+          currentSituation,
+          etp,
+          category: currentSituation && currentSituation.category,
+          fonction: currentSituation && currentSituation.fonction,
+        };
+      }),
+      ['fonction.rank'],
+      ['asc']
+    );
 
     this.updateCategoryValues();
     this.onFilterList();
@@ -175,8 +178,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       let etpt = 0;
 
       personal.map((h) => {
-        const activities = this.getCurrentActivity(null, h).filter(
-          (a) => idsOfRef.indexOf(a.referentielId) !== -1
+        const activities = h.currentActivities.filter(
+          (a) => a.contentieux && idsOfRef.indexOf(a.contentieux.id) !== -1
         );
         if (activities.length) {
           etpt +=
@@ -195,7 +198,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async addHR() {
-    const newId = await this.humanResourceService.createHumanResource(this.dateSelected);
+    const newId = await this.humanResourceService.createHumanResource(
+      this.dateSelected
+    );
     this.route.snapshot.fragment = newId + '';
     this.isFirstLoad = true;
     this.onFilterList();
@@ -203,41 +208,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   trackById(index: number, item: any) {
     return item.id;
-  }
-
-  getCurrentActivity(
-    ref: ContentieuReferentielInterface | null,
-    human: HumanResourceSelectedInterface | HumanResourceInterface,
-    listChildren = false
-  ) {
-    let ids = ref ? [ref.id] : [];
-    if (ref && listChildren) {
-      ids = ids.concat((ref.childrens || []).map((c) => c.id));
-    }
-    if (!ref) {
-      ids = [...this.referentielService.mainActivitiesId];
-    }
-
-    const now = new Date(this.dateSelected);
-    return (human.activities || []).filter((a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
-
-      return (
-        (ids.length ? ids.indexOf(a.referentielId) !== -1 : true) &&
-        ((dateStart === null && dateStop === null) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop === null) ||
-          (dateStart === null &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()))
-      );
-    });
   }
 
   calculTotalTmpActivity(
@@ -328,8 +298,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.referentielFiltred.length !== this.referentiel.length) {
       const idsOfRef = this.referentielFiltred.map((r) => r.id);
       list = list.filter((h) => {
-        const idsOfactivities = this.getCurrentActivity(null, h).map(
-          (a) => a.referentielId
+        const idsOfactivities = h.currentActivities.map(
+          (a) => (a.contentieux && a.contentieux.id) || 0
         );
         for (let i = 0; i < idsOfactivities.length; i++) {
           if (idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
@@ -380,7 +350,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           hr.tmpActivities = {};
 
           referentiel = referentiel.map((ref) => {
-            hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
+            hr.tmpActivities[ref.id] = hr.currentActivities.filter(r => r.contentieux && r.contentieux.id === ref.id)
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
             if (timeAffected) {
               ref.totalAffected =
@@ -398,7 +368,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           group = orderBy(
             group,
             (h) => {
-              const acti = (h.activities || []).find(
+              const acti = (h.currentActivities || []).find(
                 (a) => a.referentielId === this.filterSelected?.id
               );
               return acti ? acti.percent || 0 : 0;

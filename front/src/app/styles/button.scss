@@ -35,6 +35,12 @@ button {
       border: 1px solid fColor(primary);
       background-color: white;
     }
+
+    &.red {
+      color: fColor(cred);
+      border: 1px solid fColor(cred);
+      background-color: white;
+    }
   }
 
   mat-icon {

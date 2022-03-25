@@ -26,14 +26,16 @@ export class HRCommentService {
         comment,
       })
       .then((r) => {
+        const updateAt = new Date(r.data);
         const list = this.humanResourceService.hr.getValue();
         const index = list.findIndex((hr) => hr.id === id);
         if (index !== -1) {
           list[index].comment = comment;
+          list[index].updatedAt = updateAt;
           this.humanResourceService.hr.next(list);
         }
 
-        return r.data;
+        return updateAt;
       });
   }
 }

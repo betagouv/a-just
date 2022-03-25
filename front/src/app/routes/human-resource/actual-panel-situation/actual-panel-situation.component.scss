@@ -183,7 +183,7 @@
     white-space: nowrap;
     margin-bottom: 4px;
 
-    &.category {
+    &.fonction {
       color: white;
       background-color: fColor(cbluedark);
     }
@@ -196,5 +196,14 @@
       position: relative;
       top: 2px;
     }
+  }
+}
+
+.actions-panel {
+  padding: 8px 4px;
+  background-color: white;
+
+  > button {
+    margin-right: 8px;
   }
 }

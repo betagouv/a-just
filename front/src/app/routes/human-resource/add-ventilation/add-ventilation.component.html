@@ -1,16 +1,17 @@
 <form [formGroup]="form">
-  <div class="new-action" *ngIf="showNewVentilation === false">
+  <div class="new-action" *ngIf="showNewVentilation === false && !onEdit">
     <button class="fill primary small" (click)="showNewVentilation = !showNewVentilation; onStart();">
       Renseigner une nouvelle situation
     </button>
   </div>
 
-  <div class="new-ventilation" *ngIf="showNewVentilation === true">
+  <div class="new-ventilation" *ngIf="showNewVentilation === true || onEdit">
     <div class="header">
-      <p>Renseigner une nouvelle situation</p>
+      <p *ngIf="onEdit">Modification de la situation du</p>
+      <p *ngIf="!onEdit">Renseigner une nouvelle situation</p>
       <div class="flex-1"></div>
       <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
-        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
+        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false" [readOnly]="onEdit">
       </aj-date-select>
       <div class="flex-1"></div>
       <div class="flex-1"></div>
@@ -109,7 +110,7 @@
     <div class="actions">
       <button class="small outline blue" (click)="onCancel()">Annuler</button>
       <button class="small primary" (click)="onSave()">
-        Enregistrer la nouvelle situation
+        {{ onEdit ? 'Modification de la situation' : 'Enregistrer la nouvelle situation' }}
       </button>
     </div>
   </div>

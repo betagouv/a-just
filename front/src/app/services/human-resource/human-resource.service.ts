@@ -97,11 +97,6 @@ export class HumanResourceService {
       dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
       dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
       updatedAt: new Date(h.updatedAt),
-      activities: (h.activities || []).map((a) => ({
-        ...a,
-        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
-        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
-      })),
     };
   }
 
@@ -131,6 +126,7 @@ export class HumanResourceService {
           dateStart: new Date(date.getFullYear(), 0, 1),
         },
       ],
+      indisponibilities: [],
       updatedAt: new Date(),
     };
 
@@ -302,12 +298,6 @@ export class HumanResourceService {
     return uniqBy(list, 'referentielId');
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = this.findAllSituations(hr, date);
-
-    return situations.length ? situations[0] : null;
-  }
-
   distinctSituations(situations: HRSituationInterface[]) {
     const listTimeTamps: number[] = [];
 
@@ -327,6 +317,12 @@ export class HumanResourceService {
       },
       []
     );
+  }
+
+  findSituation(hr: HumanResourceInterface | null, date?: Date) {
+    let situations = this.findAllSituations(hr, date);
+
+    return situations.length ? situations[0] : null;
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
@@ -351,6 +347,28 @@ export class HumanResourceService {
     return situations;
   }
 
+  findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
+    let indisponibilities = orderBy(
+      (hr && hr.indisponibilities) || [],
+      [
+        (o) => {
+          const d = today(o.dateStart);
+          return d.getTime();
+        },
+      ],
+      ['desc']
+    );
+
+    if (date) {
+      indisponibilities = indisponibilities.filter((hra) => {
+        const dateStart = today(hra.dateStart);
+        return dateStart.getTime() <= date.getTime();
+      });
+    }
+
+    return indisponibilities;
+  }
+
   async pushHRUpdate(
     humanId: number,
     profil: any,
@@ -363,91 +381,63 @@ export class HumanResourceService {
     const fonctions = this.fonctions.getValue();
 
     if (index !== -1) {
-      let activities = list[index].activities || [];
       const activitiesStartDate = today(profil.activitiesStartDate);
-      const getTimeActivitiesStarted = activitiesStartDate.getTime();
-      const yesterdayActivitiesStartDate = new Date(activitiesStartDate);
-      yesterdayActivitiesStartDate.setDate(
-        yesterdayActivitiesStartDate.getDate() - 1
-      );
-
-      // find and update or remove from activities list
-      indisponibilities.map((i) => {
-        const index = activities.findIndex((a) => a.id === i.id);
-        if (i.isDeleted && i.id > 0) {
-          // delete
-          if (index !== -1) {
-            activities.splice(index, 1);
-          }
-        } else if (!i.isDeleted && i.id < 0) {
-          // create
-          activities.push(i);
-        } else if (!i.isDeleted && i.id > 0) {
-          // update
-          if (index !== -1) {
-            activities[index] = i;
-          }
-        }
-      });
-
-      if (newReferentiel.length) {
-        for (let i = activities.length - 1; i >= 0; i--) {
-          if (
-            this.copyOfIdsIndispo.indexOf(activities[i].referentielId) === -1
-          ) {
-            // stop all current activities and start with this
-            if (
-              !activities[i].dateStop ||
-              // @ts-ignore
-              activities[i].dateStop.getTime() > getTimeActivitiesStarted
-            ) {
-              activities[i].dateStop = yesterdayActivitiesStartDate;
-            }
-
-            // remove activities started after activity start date
-            const dateStart = activities[i].dateStart
-              ? activities[i].dateStart
-              : null;
-            if (dateStart && dateStart.getTime() >= getTimeActivitiesStarted) {
-              activities.splice(i, 1);
-            }
-          }
-        }
-
-        newReferentiel
-          .filter((r) => r.percent)
-          .map((ref) => {
-            activities.push({
-              id: -1,
-              percent: ref.percent,
-              referentielId: ref.id,
-              dateStart: new Date(profil.activitiesStartDate),
-            });
-
-            (ref.childrens || [])
-              .filter((r) => r.percent)
-              .map((ref) => {
-                activities.push({
-                  id: -1,
-                  percent: ref.percent,
-                  referentielId: ref.id,
-                  dateStart: new Date(profil.activitiesStartDate),
-                });
-              });
-          });
-      }
 
       // update situation
-      let situations = this.findAllSituations(list[index], activitiesStartDate);
+      let situations = list[index].situations || [];
       const cat = categories.find((c) => c.id == profil.categoryId);
       const fonct = fonctions.find((c) => c.id == profil.fonctionId);
-      if (cat && fonct) {
+      if (!fonct) {
+        alert('Vous devez saisir une fonction !');
+        return;
+      }
+
+      if (!cat) {
+        alert('Vous devez saisir une catégorie !');
+        return;
+      }
+
+      const activities: any[] = [];
+      newReferentiel
+        .filter((r) => r.percent && r.percent > 0)
+        .map((r) => {
+          activities.push({
+            percent: r.percent || 0,
+            contentieux: r,
+          });
+
+          (r.childrens || [])
+            .filter((r) => r.percent && r.percent > 0)
+            .map((child) => {
+              activities.push({
+                percent: child.percent || 0,
+                contentieux: child,
+              });
+            });
+        });
+
+      // find if situation is in same date
+      const isSameDate = situations.findIndex((s) => {
+        const day = today(s.dateStart);
+        return activitiesStartDate.getTime() === day.getTime();
+      });
+
+      if (isSameDate !== -1) {
+        situations[isSameDate] = {
+          ...situations[isSameDate],
+          etp: profil.etp / 100,
+          category: cat,
+          fonction: fonct,
+          activities,
+        };
+      } else {
         situations.splice(0, 0, {
           id: -1,
           etp: profil.etp / 100,
           category: cat,
           fonction: fonct,
           dateStart: activitiesStartDate,
+          activities,
         });
       }
 
@@ -458,7 +448,7 @@ export class HumanResourceService {
         dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
         dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
         situations: this.distinctSituations(situations),
-        activities,
+        indisponibilities,
       };
 
       await this.updateRemoteHR(list[index]);
@@ -498,5 +488,36 @@ export class HumanResourceService {
 
         return newHR;
       });
+  }
+
+  removeSituation(situationId: number) {
+    if (confirm('Supprimer cette situation ?')) {
+      return this.serverService
+        .delete(`human-resources/remove-situation/${situationId}`)
+        .then((data) => {
+          const hr = data.data;
+          const list = this.hr.getValue();
+          const findIndex = list.findIndex((r) => r.id === hr.id);
+          if (findIndex !== -1) {
+            list[findIndex] = hr;
+            this.hr.next(list);
+
+            // update date of backup after remove
+            const hrBackups = this.backups.getValue();
+            const backupIndex = hrBackups.findIndex(
+              (b) => b.id === this.backupId.getValue()
+            );
+            if (backupIndex !== -1) {
+              hrBackups[backupIndex].date = new Date();
+              this.backups.next(hrBackups);
+            }
+            return true;
+          } else {
+            return false;
+          }
+        });
+    }
+
+    return false;
   }
 }

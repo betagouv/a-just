@@ -102,4 +102,20 @@ export default class RouteHumanResources extends Route {
       this.sendOk(ctx, null)
     }
   }
+
+  @Route.Delete({
+    path: 'remove-situation/:situationId',
+    accesses: [Access.canVewHR],
+  })
+  async removeSituation (ctx) {
+    const { situationId } = ctx.params   
+    const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
+    if(hrId) {
+      if(await this.models.HRSituations.destroyById(situationId)) {
+        this.sendOk(ctx, await this.model.getHr(hrId))
+      }
+    }
+    
+    this.sendOk(ctx, null)
+  }
 }
