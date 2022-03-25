@@ -210,30 +210,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return item.id;
   }
 
-  getCurrentActivity(
-    ref: ContentieuReferentielInterface | null,
-    human: HumanResourceSelectedInterface | HumanResourceInterface,
-    listChildren = false
-  ) {
-    let ids = ref ? [ref.id] : [];
-    if (ref && listChildren) {
-      ids = ids.concat((ref.childrens || []).map((c) => c.id));
-    }
-    if (!ref) {
-      ids = [...this.referentielService.mainActivitiesId];
-    }
-
-    const situation = this.humanResourceService.findSituation(
-      human,
-      this.dateSelected
-    );
-    const activities = (situation && situation.activities) || [];
-
-    return activities.filter((a) =>
-      ids.length ? ids.indexOf(a.referentielId) !== -1 : true
-    );
-  }
-
   calculTotalTmpActivity(
     currentActivities: RHActivityInterface[],
     formActivities: RHActivityInterface[]
@@ -374,7 +350,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           hr.tmpActivities = {};
 
           referentiel = referentiel.map((ref) => {
-            hr.tmpActivities[ref.id] = this.getCurrentActivity(ref, hr);
+            hr.tmpActivities[ref.id] = hr.currentActivities.filter(r => r.contentieux && r.contentieux.id === ref.id)
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent');
             if (timeAffected) {
               ref.totalAffected =
