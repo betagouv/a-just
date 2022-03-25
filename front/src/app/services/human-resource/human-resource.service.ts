@@ -97,11 +97,6 @@ export class HumanResourceService {
       dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
       dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
       updatedAt: new Date(h.updatedAt),
-      activities: (h.activities || []).map((a) => ({
-        ...a,
-        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
-        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
-      })),
     };
   }
 

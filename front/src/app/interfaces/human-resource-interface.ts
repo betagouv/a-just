@@ -8,7 +8,6 @@ export interface HumanResourceInterface {
 	lastName?: string;
 	coverUrl?: string;
 	workTime?: number;
-	activities?: RHActivityInterface[]; // TODO remove
 	dateStart?: Date;
 	dateEnd?: Date;
 	note?: string;

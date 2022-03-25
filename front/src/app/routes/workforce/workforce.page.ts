@@ -178,8 +178,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       let etpt = 0;
 
       personal.map((h) => {
-        const activities = this.getCurrentActivity(null, h).filter(
-          (a) => idsOfRef.indexOf(a.referentielId) !== -1
+        const activities = h.currentActivities.filter(
+          (a) => a.contentieux && idsOfRef.indexOf(a.contentieux.id) !== -1
         );
         if (activities.length) {
           etpt +=
@@ -223,26 +223,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       ids = [...this.referentielService.mainActivitiesId];
     }
 
-    const now = new Date(this.dateSelected);
-    return (human.activities || []).filter((a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
+    const situation = this.humanResourceService.findSituation(
+      human,
+      this.dateSelected
+    );
+    const activities = (situation && situation.activities) || [];
 
-      return (
-        (ids.length ? ids.indexOf(a.referentielId) !== -1 : true) &&
-        ((dateStart === null && dateStop === null) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop === null) ||
-          (dateStart === null &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()) ||
-          (dateStart &&
-            dateStart.getTime() <= now.getTime() &&
-            dateStop &&
-            dateStop.getTime() >= now.getTime()))
-      );
-    });
+    return activities.filter((a) =>
+      ids.length ? ids.indexOf(a.referentielId) !== -1 : true
+    );
   }
 
   calculTotalTmpActivity(
@@ -333,8 +322,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.referentielFiltred.length !== this.referentiel.length) {
       const idsOfRef = this.referentielFiltred.map((r) => r.id);
       list = list.filter((h) => {
-        const idsOfactivities = this.getCurrentActivity(null, h).map(
-          (a) => a.referentielId
+        const idsOfactivities = h.currentActivities.map(
+          (a) => (a.contentieux && a.contentieux.id) || 0
         );
         for (let i = 0; i < idsOfactivities.length; i++) {
           if (idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
@@ -403,7 +392,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           group = orderBy(
             group,
             (h) => {
-              const acti = (h.activities || []).find(
+              const acti = (h.currentActivities || []).find(
                 (a) => a.referentielId === this.filterSelected?.id
               );
               return acti ? acti.percent || 0 : 0;
