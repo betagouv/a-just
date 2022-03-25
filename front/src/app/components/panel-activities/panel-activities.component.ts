@@ -56,7 +56,7 @@ export class PanelActivitiesComponent
   }
 
   getPercentAffected(ref: ContentieuReferentielInterface) {
-    const activity = this.activities.find((a) => a.referentielId === ref.id);
+    const activity = this.activities.find((a) => a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id);
     const percent = fixDecimal(activity && activity.percent ? activity.percent : 0, 10);
 
     return {

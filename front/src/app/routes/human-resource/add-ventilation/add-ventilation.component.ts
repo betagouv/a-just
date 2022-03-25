@@ -30,7 +30,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
   @Input() lastDateStart: Date | null = null;
+  @Input() onEdit: boolean = false;
   @Output() ventilationChange = new EventEmitter();
+  @Output() close = new EventEmitter();
   indisponibilitiesVisibles: RHActivityInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   showNewVentilation: boolean = false;
@@ -100,7 +102,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       ?.setValue((this.human && this.human.dateEnd) || null);
     this.form
       .get('categoryId')
-      ?.setValue((situation && situation.category.id) || null);
+      ?.setValue((situation && situation.category && situation.category.id) || null);
     this.form
       .get('fonctionId')
       ?.setValue(
@@ -132,6 +134,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   onCancel() {
     this.form.reset();
     this.showNewVentilation = false;
+    this.close.emit();
     const findElement = document.getElementById('content');
     if (findElement) {
       findElement.scrollTo({
@@ -142,18 +145,20 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   controlIndisponibilities() {
-    const indispos = this.indisponibilities.filter((a) => !a.isDeleted);
+    const indispos = this.indisponibilities;
     const max = maxBy(
-      indispos.filter((a) => !a.isDeleted && a.dateStop),
+      indispos.filter((a) => a.dateStop),
       function (o) {
-        return o.dateStop?.getTime();
+        const dateStop = new Date(o.dateStop ? o.dateStop : '');
+        return dateStop.getTime();
       }
     );
     let maxDate = max && max.dateStop ? today(max.dateStop) : new Date(today());
     const min = minBy(
-      indispos.filter((a) => !a.isDeleted && a.dateStart),
+      indispos.filter((a) => a.dateStart),
       function (o) {
-        return o.dateStart?.getTime();
+        const dateStart = new Date(o.dateStart ? o.dateStart : '');
+        return dateStart.getTime();
       }
     );
     const minDate =
@@ -227,7 +232,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       dateEnd = new Date(dateEnd);
 
       if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
-        alert('Vous ne pouvez pas saisir une ventilation supérieure à la date de sortie !');
+        alert('Vous ne pouvez pas saisir une situation posterieur à la date de sortie !');
         return;
       }
     }
@@ -302,7 +307,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
                 '')
           );
           if (index !== -1) {
-            this.indisponibilities[index].isDeleted = true;
+            this.indisponibilities.splice(index, 1);
             this.controlIndisponibilities();
           }
           this.updateIndisponiblity = null;

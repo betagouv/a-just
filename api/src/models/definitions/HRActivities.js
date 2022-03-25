@@ -1,8 +1,6 @@
 import Sequelize from 'sequelize'
 
-// TODO A SUPPRIMER DANS UN SECOND TEMPS, après une mise en prod
-
-const tableName = 'HRVentilations'
+const tableName = 'HRActivities'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -15,7 +13,7 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      rh_id: {
+      hr_situation_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -26,18 +24,6 @@ export default sequelizeInstance => {
       percent: {
         type: Sequelize.FLOAT,
         allowNull: false,
-      },
-      date_start: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      date_stop: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      backup_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
