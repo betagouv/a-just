@@ -1,5 +1,5 @@
 <div *ngIf="calculator" class="main-referentiel">
-  <div class="width-contentieux contentieux" (click)="showChildren = !showChildren">
+  <div class="width-contentieux contentieux" (click)="onToggleChildren()">
     <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{
       showChildren ? "arrow_drop_down" : "arrow_right"
       }}</mat-icon>

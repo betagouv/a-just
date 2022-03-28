@@ -12,6 +12,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.ContentieuxReferentiels,
         },
       ],
+      order: [['date_start', 'desc']],
       raw: true,
     })
 

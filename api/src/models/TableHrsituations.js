@@ -17,6 +17,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.HRFonctions,
         },
       ],
+      order: [['date_start', 'desc']],
       raw: true,
     })
 

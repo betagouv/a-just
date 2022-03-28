@@ -320,22 +320,23 @@ export class HumanResourceService {
   }
 
   findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = this.findAllSituations(hr, date);
+    let situations = (hr && hr.situations) || [];
 
-    return situations.length ? situations[0] : null;
+    if (date) {
+      for (let i = situations.length - 1; i > 0; i--) {
+        const dateStart = today(situations[i].dateStart);
+        if (dateStart.getTime() <= date.getTime()) {
+          return situations[i];
+        }
+      }
+      return null;
+    } else {
+      return situations.length ? situations[0] : null;
+    }
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = orderBy(
-      (hr && hr.situations) || [],
-      [
-        (o) => {
-          const d = today(o.dateStart);
-          return d.getTime();
-        },
-      ],
-      ['desc']
-    );
+    let situations = (hr && hr.situations) || [];
 
     if (date) {
       situations = situations.filter((hra) => {
@@ -348,16 +349,7 @@ export class HumanResourceService {
   }
 
   findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
-    let indisponibilities = orderBy(
-      (hr && hr.indisponibilities) || [],
-      [
-        (o) => {
-          const d = today(o.dateStart);
-          return d.getTime();
-        },
-      ],
-      ['desc']
-    );
+    let indisponibilities = (hr && hr.indisponibilities) || [];
 
     if (date) {
       indisponibilities = indisponibilities.filter((hra) => {

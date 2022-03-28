@@ -46,6 +46,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.formatDatas(d)
       )
     );
+
+    this.calculatorService.syncDatas();
   }
 
   ngOnDestroy() {
