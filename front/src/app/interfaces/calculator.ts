@@ -24,4 +24,6 @@ export interface CalculatorInterface {
 	nbMonth: number;
 	childrens: CalculatorInterface[];
 	etpAffected: etpAffectedInterface[];
+	needToCalculate: boolean;
+	childIsVisible: boolean;
 }

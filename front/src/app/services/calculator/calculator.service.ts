@@ -35,39 +35,114 @@ export class CalculatorService extends MainClass {
   ) {
     super();
 
-    this.activitiesService.activities.subscribe(() => this.needLoadDatas());
-    this.humanResourceService.categories.subscribe(() => this.needLoadDatas());
-    this.humanResourceService.hr.subscribe(() => this.needLoadDatas());
-    this.dateStart.subscribe(() => this.needLoadDatas());
-    this.dateStop.subscribe(() => this.needLoadDatas());
-    this.humanResourceService.contentieuxReferentiel.subscribe(() =>
-      this.needLoadDatas()
+    this.watch(
+      this.dateStart.subscribe(() => {
+        this.cleanDatas();
+      })
+    );
+
+    this.watch(
+      this.dateStop.subscribe(() => {
+        this.cleanDatas();
+      })
+    );
+
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe(() => {
+        this.prepareDatas();
+      })
     );
   }
 
-  needLoadDatas() {
-    if (
-      this.humanResourceService.categories.getValue().length === 0 ||
-      this.humanResourceService.contentieuxReferentiel.getValue().length === 0
-    ) {
+  loadChildren(referentielId: number) {
+    console.log(referentielId)
+    const list: CalculatorInterface[] = this.calculatorDatas.getValue();
+    const findIndex = list.findIndex(c => c.contentieux.id === referentielId);
+    if(findIndex !== -1) {
+      list[findIndex].childrens = (list[findIndex].childrens || []).map((c) => {
+        if (list[findIndex].childIsVisible && c.needToCalculate === true) {
+          return {
+            ...c,
+            nbMonth: list[findIndex].nbMonth,
+            needToCalculate: false,
+            ...this.getActivityValues(c.contentieux, list[findIndex].nbMonth),
+          };
+        }
+
+        return c;
+      });
+      this.calculatorDatas.next(list);
+    }
+  }
+
+  cleanDatas() {
+    console.log('clean datas');
+
+    const list: CalculatorInterface[] = this.calculatorDatas.getValue();
+    for (let i = 0; i < list.length; i++) {
+      const childrens = (list[i].childrens || []).map((c) => {
+        return {
+          ...c,
+          totalIn: null,
+          totalOut: null,
+          lastStock: null,
+          etpMag: null,
+          etpFon: null,
+          etpCont: null,
+          realCoverage: null,
+          realDTESInMonths: null,
+          realTimePerCase: null,
+          calculateCoverage: null,
+          calculateDTESInMonths: null,
+          calculateTimePerCase: null,
+          calculateOut: null,
+          etpAffected: [],
+          childrens: [],
+          nbMonth: 0,
+          needToCalculate: true,
+        };
+      });
+
+      list[i] = {
+        ...list[i],
+        totalIn: null,
+        totalOut: null,
+        lastStock: null,
+        etpMag: null,
+        etpFon: null,
+        etpCont: null,
+        realCoverage: null,
+        realDTESInMonths: null,
+        realTimePerCase: null,
+        calculateCoverage: null,
+        calculateDTESInMonths: null,
+        calculateTimePerCase: null,
+        calculateOut: null,
+        etpAffected: [],
+        childrens,
+        nbMonth: 0,
+        needToCalculate: true,
+      };
+    }
+    this.calculatorDatas.next(list);
+    this.syncDatas();
+  }
+
+  prepareDatas() {
+    if (this.humanResourceService.categories.getValue().length === 0) {
+      setTimeout(() => {
+        this.prepareDatas();
+      }, 100);
       return;
     }
 
-    if (this.timeoutUpdateDatas) {
-      clearTimeout(this.timeoutUpdateDatas);
-      this.timeoutUpdateDatas = null;
+    if(this.calculatorDatas.getValue().length !== 0) {
+      return;
     }
 
-    this.timeoutUpdateDatas = setTimeout(() => {
-      this.syncDatas();
-    }, 500);
-  }
-
-  syncDatas() {
-    console.log('sync datas');
+    console.log('prepare datas');
 
     const list: CalculatorInterface[] = [];
-    const nbMonth = this.getNbMonth();
     const referentiels =
       this.humanResourceService.contentieuxReferentiel.getValue();
     for (let i = 0; i < referentiels.length; i++) {
@@ -75,21 +150,96 @@ export class CalculatorService extends MainClass {
         const cont = { ...c, parent: referentiels[i] };
 
         return {
-          ...this.getActivityValues(cont, nbMonth),
+          totalIn: null,
+          totalOut: null,
+          lastStock: null,
+          etpMag: null,
+          etpFon: null,
+          etpCont: null,
+          realCoverage: null,
+          realDTESInMonths: null,
+          realTimePerCase: null,
+          calculateCoverage: null,
+          calculateDTESInMonths: null,
+          calculateTimePerCase: null,
+          calculateOut: null,
+          etpAffected: [],
           childrens: [],
           contentieux: cont,
-          nbMonth,
+          nbMonth: 0,
+          needToCalculate: true,
+          childIsVisible: false,
         };
       });
 
       list.push({
-        ...this.getActivityValues(referentiels[i], nbMonth),
+        totalIn: null,
+        totalOut: null,
+        lastStock: null,
+        etpMag: null,
+        etpFon: null,
+        etpCont: null,
+        realCoverage: null,
+        realDTESInMonths: null,
+        realTimePerCase: null,
+        calculateCoverage: null,
+        calculateDTESInMonths: null,
+        calculateTimePerCase: null,
+        calculateOut: null,
+        etpAffected: [],
         childrens,
         contentieux: referentiels[i],
-        nbMonth,
+        nbMonth: 0,
+        needToCalculate: true,
+        childIsVisible: false,
       });
     }
     this.calculatorDatas.next(list);
+    this.syncDatas();
+  }
+
+  syncDatas() {
+    if (this.calculatorDatas.getValue().length === 0) {
+      this.prepareDatas();
+      return;
+    }
+
+    console.time('sync datas');
+
+    const list: CalculatorInterface[] = this.calculatorDatas.getValue();
+    const nbMonth = this.getNbMonth();
+    for (let i = 0; i < list.length; i++) {
+      const childrens = (list[i].childrens || []).map((c) => {
+        if (list[i].childIsVisible && c.needToCalculate === true) {
+          return {
+            ...c,
+            nbMonth,
+            needToCalculate: false,
+            ...this.getActivityValues(c.contentieux, nbMonth),
+          };
+        }
+
+        return c;
+      });
+
+      if (list[i].needToCalculate === true) {
+        list[i] = {
+          ...list[i],
+          ...this.getActivityValues(list[i].contentieux, nbMonth),
+          childrens,
+          nbMonth,
+          needToCalculate: false,
+        };
+      } else {
+        list[i] = {
+          ...list[i],
+          childrens,
+          needToCalculate: false,
+        };
+      }
+    }
+    this.calculatorDatas.next(list);
+    console.timeEnd('sync datas');
   }
 
   getActivityValues(
