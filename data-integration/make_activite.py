@@ -4,11 +4,13 @@ import sys
 import pandas as pd
 
 JURIDICTION = sys.argv[1]
-FICHIER = f"SDSE/C2135_{JURIDICTION}_310122.xlsx"
+DATE_FILE = sys.argv[3]
+FICHIER = f"SDSE/C2135_{JURIDICTION}_{DATE_FILE}.xlsx"
 CONTENTIEUX = sys.argv[2]
 ALL_SHEETS = [f"{CONTENTIEUX} ({i})" for i in ["Stock", "AN", "AT"]]
 
-REGEX_NAC = re.compile(r"(\d\d[A-Z])")  # un NAC contient 2 chiffres et une lettre
+# un NAC contient 2 chiffres et une lettre
+REGEX_NAC = re.compile(r"(\d\d[A-Z])")
 
 MAPPING_SHEET_NIVEAU_3 = {
     "JAF": "Contentieux JAF",
@@ -42,7 +44,8 @@ def run():
     activite_aggregee = activite.groupby(["Niveau 4", "periode"], as_index=False).agg(
         {"value_stock": sum, "value_entrees": sum, "value_sorties": sum}
     )
-    activite_aggregee.to_csv(f"outputs/{JURIDICTION}_activite_{CONTENTIEUX}.csv")
+    activite_aggregee.to_csv(
+        f"outputs/{JURIDICTION}_activite_{CONTENTIEUX}.csv")
 
 
 def get_sdse():
@@ -117,7 +120,7 @@ def get_nomenclature():
     # ]
 
     # Extract nomenclature in a {NAC} -> {Category de Contentieux} format
-    mapping = nomenclature.set_index("NAC").to_dict(orient="index")
+    mapping = nomenclature.set_index("NAC").to_dict("index")
     # get the correct mapping for 00A based on contentieux
     mapping.update(CONTEXTUAL_MAPPING_00A.get(CONTENTIEUX, {}))
     return mapping
