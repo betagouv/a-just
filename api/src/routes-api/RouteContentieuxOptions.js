@@ -8,7 +8,7 @@ export default class RouteContentieuxOptions extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number(),
+      backupId: Types.any(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
