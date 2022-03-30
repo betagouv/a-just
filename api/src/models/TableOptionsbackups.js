@@ -1,10 +1,8 @@
-import config from 'config'
-
 export default (sequelizeInstance, Model) => {
-  Model.getBackup = async (userId) => {
+  Model.getBackup = async (/*userId*/) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
-      include: [{
+      attributes: ['id', 'label', ['created_at', 'date']],
+      /* include: [{
         attributes: ['label', 'cour_appel'],
         model: Model.models.Juridictions,
         required: true,
@@ -15,7 +13,7 @@ export default (sequelizeInstance, Model) => {
             user_id: userId,
           },
         }],
-      }],
+      }], */
       raw: true,
     })
 
@@ -24,10 +22,6 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
-        juridiction: {
-          label: list[i]['Juridiction.label'],
-          courAppel: list[i]['Juridiction.cour_appel'],
-        },
       }
     }
 
@@ -81,14 +75,13 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
+  Model.saveBackup = async (list, backupId, backupName) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
         label: backupName,
-        juridiction_id: juridictionId || config.juridictionId,
       })
       newBackupId = newBackup.dataValues.id
     }

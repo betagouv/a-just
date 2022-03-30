@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivitiesService } from './services/activities/activities.service';
+import { CalculatorService } from './services/calculator/calculator.service';
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service';
 import { HumanResourceService } from './services/human-resource/human-resource.service';
 import { ReferentielService } from './services/referentiel/referentiel.service';
@@ -20,7 +21,7 @@ export class AppComponent {
     private userService: UserService,
     private referentielService: ReferentielService,
     private activitiesService: ActivitiesService,
-    private contentieuxOptionsService: ContentieuxOptionsService
+    private contentieuxOptionsService: ContentieuxOptionsService,
   ) {
     router.events.subscribe(() => {
       const user = this.userService.user.getValue();
@@ -31,10 +32,6 @@ export class AppComponent {
     
         if(user.access && user.access.indexOf(2) !== -1) {
           this.humanResourceService.initDatas();
-        }
-    
-        if(user.access && user.access.indexOf(3) !== -1) {
-          this.activitiesService.initDatas(); 
         }
     
         if(user.access && user.access.indexOf(4) !== -1) {

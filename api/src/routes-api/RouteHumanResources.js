@@ -16,6 +16,7 @@ export default class RouteHumanResources extends Route {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
     backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
+    const activities = await this.model.models.Activities.getAll(backupId)
 
     this.sendOk(ctx, {
       hr: await this.model.getCurrentHr(backupId),
@@ -23,6 +24,7 @@ export default class RouteHumanResources extends Route {
       backupId,
       categories: await this.model.models.HRCategories.getAll(),
       fonctions: await this.model.models.HRFonctions.getAll(),
+      activities,
     })
   }
 
@@ -56,14 +58,13 @@ export default class RouteHumanResources extends Route {
       hrList: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
-      juridictionId: Types.number(),
     }),
     accesses: [Access.canVewHR],
   })
   async saveBackup (ctx) {
-    const { backupId, hrList, backupName, juridictionId } = this.body(ctx)
+    const { backupId, hrList, backupName } = this.body(ctx)
 
-    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName, juridictionId)
+    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName)
 
     this.sendOk(ctx, newId)
   }
@@ -73,5 +74,48 @@ export default class RouteHumanResources extends Route {
   })
   async getBackupList (ctx) {
     this.sendOk(ctx, await this.model.models.HRBackups.getAll())
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+      hr: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async updateHr (ctx) {
+    let { backupId, hr } = this.body(ctx)
+
+    this.sendOk(ctx, await this.model.updateHR(hr, backupId))
+  }
+
+  @Route.Delete({
+    path: 'remove-hr/:hrId',
+    accesses: [Access.isAdmin],
+  })
+  async removeHR (ctx) {
+    const { hrId } = ctx.params   
+
+    if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.removeHR(hrId))
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Delete({
+    path: 'remove-situation/:situationId',
+    accesses: [Access.canVewHR],
+  })
+  async removeSituation (ctx) {
+    const { situationId } = ctx.params   
+    const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
+    if(hrId) {
+      if(await this.models.HRSituations.destroyById(situationId)) {
+        this.sendOk(ctx, await this.model.getHr(hrId))
+      }
+    }
+    
+    this.sendOk(ctx, null)
   }
 }

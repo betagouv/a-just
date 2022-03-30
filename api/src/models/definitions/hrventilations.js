@@ -1,5 +1,7 @@
 import Sequelize from 'sequelize'
 
+// TODO A SUPPRIMER DANS UN SECOND TEMPS, après une mise en prod
+
 const tableName = 'HRVentilations'
 
 export default sequelizeInstance => {

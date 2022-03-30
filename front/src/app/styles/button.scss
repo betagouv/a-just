@@ -1,0 +1,51 @@
+button {
+  height: 57px;
+  line-height: 57px;
+  padding: 0 16px;
+  font-size: 16px;
+	border: none;
+	cursor: pointer;
+	-webkit-appearance: none;
+  border-radius: 8px;
+  white-space: nowrap;
+
+  &.small {
+    height: 40px;
+    line-height: 37px;
+    border-radius: 4px;
+  }
+
+	&:focus {
+		outline: none;
+	}
+
+  &.primary {
+    color: white;
+    background-color: fColor(cbluedark);
+  }
+
+  &.red {
+    color: white;
+    background-color: fColor(cred);
+  }
+
+  &.outline {
+    &.blue, &.primary {
+      color: fColor(primary);
+      border: 1px solid fColor(primary);
+      background-color: white;
+    }
+
+    &.red {
+      color: fColor(cred);
+      border: 1px solid fColor(cred);
+      background-color: white;
+    }
+  }
+
+  mat-icon {
+    margin-right: 8px;
+    position: relative;
+    top: 6px;
+  }
+}

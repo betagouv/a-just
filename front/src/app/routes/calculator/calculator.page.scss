@@ -1,29 +1,13 @@
 @import "../../styles/utils.scss";
 
-aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
-  margin-left: 16px;
-}
-
-.header-list {
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 16px 0;
-
-  mat-select {
-    width: 400px;
-  }
-
-  .title-header-list {
-    margin-right: 16px;
-  }
-}
-
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 32px);
+  margin: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   .content-list {
     flex: 1;
@@ -31,6 +15,210 @@ aj-rh-backup-panel, aj-options-backup-panel, aj-activities-backup-panel {
   }
 }
 
-aj-referentiel-calculator {
-  margin-bottom: 16px;
+.header-calculator {
+  z-index: 1;
+}
+
+.title-header-calculator {
+  display: flex;
+  padding: 24px 0 16px 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  z-index: 1;
+
+  .item {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+
+    &.activity p {
+      color: fColor(cyellowdark);
+      background-color: fColor(cyellowlight);
+    }
+
+    &.calculate p {
+      color: fColor(cbluedark);
+      background-color: fColor(cbluemiddle);
+    }
+
+    p {
+      border-radius: 16px;
+      padding: 4px 12px;
+      background-color: fColor(cgrayDefault);
+      color: fColor(cblackdark);
+      font-weight: bold;
+      font-size: 14px;
+    }
+  }
+}
+
+.explanation-calculator {
+  background-color: fColor(bgProgressBar);
+  display: flex;
+  border-top: 1px solid fColor(cblueextralight);
+
+  .item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.activity p {
+      color: fColor(cyellowdark);
+      position: relative;
+      width: 100%;
+      text-align: center;
+
+      &:before {
+        content: " ";
+        position: absolute;
+        left: 0;
+        width: 1px;
+        background-color: fColor(blueseparator);
+        top: -2px;
+        bottom: -2px;
+      }
+
+      &:after {
+        content: " ";
+        position: absolute;
+        right: 0;
+        width: 1px;
+        background-color: fColor(blueseparator);
+        top: -2px;
+        bottom: -2px;
+      }
+    }
+
+    &.calculate p {
+      color: fColor(cbluedark);
+    }
+
+    p {
+      font-size: 12px;
+      padding: 4px 14px;
+    }
+  }
+}
+
+.contentieux-header-calculator {
+  display: flex;
+  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+
+  .width-contentieux {
+    p {
+      margin-left: 12px;
+    }
+  }
+
+  p {
+    font-size: 11px;
+    font-weight: bold;
+    color: fColor(cblack);
+    margin-top: 4px;
+    letter-spacing: -0.19px;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    margin-bottom: 2px;
+    color: fColor(headerColor);
+  }
+
+  .item {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+
+    > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+
+      &.selected {
+        background-color: fColor(bgHeaderSelected);
+
+        mat-icon {
+          color: fColor(sortIconHeaderSelected);
+        }
+      }
+
+      p {
+        text-align: center;
+      }
+    }
+  }
+}
+
+aj-select, aj-options-backup-panel {
+  margin-left: 16px;
+}
+
+aj-date-select {
+  &.date-start {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-left: 16px;
+  }
+
+  &.date-stop {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+aj-referentiel-calculator:nth-child(even) {
+  background-color: fColor(bgRowEvent);
+}
+
+.tooltip {
+  position: relative;
+
+  &.last .tooltip-text {
+    right: 0;
+  }
+
+  &.medium .tooltip-text {
+    width: 400px;
+  } 
+
+  &.large .tooltip-text {
+    width: 700px;
+  } 
+  
+  &:hover .tooltip-text {
+    visibility: visible;
+  }
+
+  .tooltip-text {
+    position: absolute;
+    z-index: 1;
+    visibility: hidden;
+    bottom: 100%;
+    background-color: fColor(cblack);
+    color: white;
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 4px;
+    max-width: 800px;
+    min-width: 200px;
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    a {
+      color: white;
+    }
+  }
+}
+
+
+// class size
+.width-contentieux {
+  width: 161px;
 }

@@ -2,15 +2,32 @@
 
 :host {
   display: block;
-  width: 200px;
-  height: 200px;
+  width: 70px;
+  height: 55px;
   position: relative;
+}
+
+canvas {
+  position: relative;
+  left: 4px;
+  top: 3px;
 }
 
 .title {
   position: absolute;
-  bottom: 8px;
+  bottom: 0px;
   left: 0;
   right: 0;
   text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: fColor(cyellowdark);
+
+  &.alert {
+    color: #ce0500;
+  }
+
+  &.good {
+    color: #2aac5c;
+  }
 }

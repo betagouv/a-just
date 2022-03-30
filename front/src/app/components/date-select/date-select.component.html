@@ -1,0 +1,7 @@
+<p (click)="readOnly === false ? picker.open() : null" class="title">{{ title }}</p>
+<div (click)="readOnly === false ? picker.open() : null">
+    <p>{{ realValue }}</p>
+    <mat-icon>{{ icon }}</mat-icon>
+</div>
+<input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)">
+<mat-datepicker #picker></mat-datepicker>

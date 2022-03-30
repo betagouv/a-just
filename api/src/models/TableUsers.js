@@ -43,13 +43,13 @@ export default (sequelizeInstance, Model) => {
       list[i].access = await Model.models.UsersAccess.getUserAccess(list[i].id)
       list[i].accessName = list[i].access.map(a => accessToString(a)).join(', ')
       list[i].roleName = roleToString(list[i].role)
-      list[i].juridictions = await Model.models.UserJuridictions.getUserJuriction(list[i].id)
+      list[i].ventilations = await Model.models.UserVentilations.getUserVentilations(list[i].id)
     }
 
     return list
   }
 
-  Model.updateAccount = async ({ userId, access, juridictions }) => {
+  Model.updateAccount = async ({ userId, access, ventilations }) => {
     const user = await Model.findOne({ 
       where: { 
         id: userId, 
@@ -58,7 +58,7 @@ export default (sequelizeInstance, Model) => {
 
     if(user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
-      await Model.models.UserJuridictions.updateJuridictions(userId, juridictions)
+      await Model.models.UserVentilations.updateVentilations(userId, ventilations)
     } else {
       throw 'User not found'
     }

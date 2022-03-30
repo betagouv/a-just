@@ -1,99 +1,52 @@
-<aj-wrapper [title]="'Fiche de '+ (currentHR && currentHR.firstName) +' '+ (currentHR && currentHR.lastName)"
-  [actionTemplate]="actions">
-  <div *ngIf="currentHR" class="profil">
-    <div class="left-panel">
-      <h3>Profil</h3>
-      <form [formGroup]="formEditHR" (submit)="onEdit()">
-        <div class="label-aj">Prénom</div>
-        <input formControlName="firstName" />
-        <div class="label-aj">Nom</div>
-        <input formControlName="lastName" />
-        <div class="label-aj">Temps de travail en %</div>
-        <input formControlName="etp" type="number" />
-        <div class="label-aj">Temps de travail, depuis le début de l'année, en %</div>
-        <input formControlName="posad" type="number" />
-        <div class="label-aj">Date d'arrivée dans la juridiction</div>
-        <input formControlName="dateStart" [matDatepicker]="pickerDateStart" />
-        <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDateStart></mat-datepicker>
+<aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
+  [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
+  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
+    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
+    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="editVentilation = h">
+  </actual-panel-situation>
 
-        <div class="label-aj">Date de sortie de la juridiction</div>
-        <input formControlName="dateEnd" [matDatepicker]="pickerDateEnd" />
-        <mat-datepicker-toggle matSuffix [for]="pickerDateEnd"></mat-datepicker-toggle>
-        <mat-datepicker #pickerDateEnd></mat-datepicker>
+  <add-ventilation [human]="currentHR"
+    [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
+    [indisponibilities]="allIndisponibilities"
+    [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
+    [onEdit]="editVentilation ? true : false" (close)="editVentilation = null" (ventilationChange)="onNewVentilation()">
+  </add-ventilation>
 
-        <div class="label-aj">Commentaire libre</div>
-        <textarea formControlName="note"></textarea>
+  <p *ngIf="histories.length > 1" class="title-history">
+    Situations antérieures du {{ categoryName }}
+  </p>
+  <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
+    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+    (editVentilation)="editVentilation = h">
+  </panel-history-ventilation>
 
-        <div class="label-aj">Catégorie</div>
-        <select formControlName="category">
-          <option *ngFor="let cat of categories" [value]="cat.id">{{cat.label}}</option>
-        </select>
-
-        <div class="label-aj">Fonction</div>
-        <select formControlName="fonction">
-          <option *ngFor="let fonc of fonctions" [value]="fonc.id">{{fonc.label}}</option>
-        </select>
-
-        <div class="actions">
-          <button type="submit">Appliquer</button>
-          <button type="button" (click)="onRemoveRH()">Supprimer</button>
-          <button type="button" (click)="onReset()">Réinitialiser</button>
-          <a routerLink="/ventilations">Retour</a>
-        </div>
-      </form>
-    </div>
-    <div class="right-panel">
-      <h3>Activités</h3>
-
-      <ng-template ngFor let-acti [ngForOf]="activities" let-index="index">
-        <div class="activities">
-          <div>
-            <div class="label-aj">Temps de travail en %</div>
-            <input [(ngModel)]="acti.percent" type="number" />
-          </div>
-          <div>
-            <div class="label-aj">Activité</div>
-            <select [(ngModel)]="acti.referentielId">
-              <ng-template ngFor let-ref [ngForOf]="contentieuxReferentiel">
-                <option [value]="ref.id">{{ref.label}}</option>
-                <ng-template [ngIf]="ref.childrens">
-                  <option *ngFor="let subChild of ref.childrens" [value]="subChild.id">{{ref.label}} -
-                    {{subChild.label}}</option>
-                </ng-template>
-              </ng-template>
-            </select>
-          </div>
-          <div>
-            <div class="label-aj">Date de début</div>
-            <input [(ngModel)]="acti.dateStart" [matDatepicker]="pickerActiDateStart" />
-            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStart"></mat-datepicker-toggle>
-            <mat-datepicker #pickerActiDateStart></mat-datepicker>
-          </div>
-          <div>
-            <div class="label-aj">Date de fin</div>
-            <input [(ngModel)]="acti.dateStop" [matDatepicker]="pickerActiDateStop" />
-            <mat-datepicker-toggle matSuffix [for]="pickerActiDateStop"></mat-datepicker-toggle>
-            <mat-datepicker #pickerActiDateStop></mat-datepicker>
-          </div>
-          <div>
-          </div>
-          <div>
-            <button (click)="activities.splice(index, 1)">Supprimer</button>
-          </div>
-        </div>
-
-        <hr />
-      </ng-template>
-
-      <button
-        (click)="activities.push({id: activities.length * -1, referentielId: contentieuxReferentiel[0].id})">Ajouter une
-        activité</button>
-    </div>
+  <div *ngIf="isAdmin()" class="text-center">
+    <mat-icon (click)="onDelete()">delete</mat-icon>
   </div>
-
 </aj-wrapper>
 
 <ng-template #actions>
-  <aj-rh-backup-panel></aj-rh-backup-panel>
+  <div class="actions">
+    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart" [readOnly]="true">
+    </aj-date-select>
+    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd" [readOnly]="true">
+    </aj-date-select>
+  </div>
+</ng-template>
+
+<ng-template #titleTemplate>
+  <div class="title">
+    <p class="page-name">Fiche individuelle de</p>
+    <p class="user-name">
+      {{ (currentHR && currentHR.firstName) +' '+ (currentHR &&
+      currentHR.lastName) }}
+    </p>
+  </div>
+  <p class="user-updated-at">
+    {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+    currentHR.updatedAt.getDate() + ' ' + getMonthString(currentHR.updatedAt) +
+    ' ' + currentHR.updatedAt.getFullYear() : '' }}
+  </p>
 </ng-template>

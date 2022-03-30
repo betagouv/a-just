@@ -1,0 +1,44 @@
+<div class="header-panel">
+  <div class="tags">
+    <p *ngIf="dateStart" class="date">Du {{ dateStart | date:"dd" }} {{ getShortMonthString(dateStart) }} {{
+      getFullYear(dateStart) }}</p>
+    <p *ngIf="dateStop" class="date">Au {{ dateStop | date:"dd" }} {{ getShortMonthString(dateStop) }} {{
+      getFullYear(dateStop) }}</p>
+    <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
+    <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+  </div>
+  <div class="etpt">
+    <p>ETPTravaillé :</p>
+    <etp-preview [etp]="etp - indisponibility" [indisponibility]="indisponibility"></etp-preview>
+  </div>
+</div>
+
+<div *ngIf="indisponibilities.length" class="indisponibility-panel">
+  <div *ngFor="let indisp of indisponibilities">
+    <div class="icon">
+      <mat-icon>event_busy</mat-icon>
+    </div>
+    <div class="text">
+      <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
+      <p>
+        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+          {{ getShortMonthString(indisp.dateStart) }}
+          {{ getFullYear(indisp.dateStart) }}</ng-template>
+        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop"> au </ng-template>
+        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop"> jusqu'au </ng-template>
+        <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+          {{ getShortMonthString(indisp.dateStop) }}
+          {{ getFullYear(indisp.dateStop) }}</ng-template>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="activities-panel">
+  <panel-activities [etp]="etp - indisponibility" [activities]="activities"></panel-activities>
+</div>
+
+<div class="actions-panel">
+  <button (click)="onEditSituation()" class="outline small primary">Modifier</button>
+  <button (click)="onRemoveSituation()" class="outline small red">Supprimer</button>
+</div>

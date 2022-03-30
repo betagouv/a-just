@@ -25,6 +25,10 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      category_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

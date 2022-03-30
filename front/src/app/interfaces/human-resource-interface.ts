@@ -1,22 +1,19 @@
-import { HRCategoryInterface } from "./hr-category";
-import { HRFonctionInterface } from "./hr-fonction";
-import { JuridictionInterface } from "./juridiction";
+import { HRSituationInterface } from "./hr-situation";
 import { RHActivityInterface } from "./rh-activity";
 
 export interface HumanResourceInterface {
 	id: number;
 	firstName?: string;
+	backupId?: number;
 	lastName?: string;
 	coverUrl?: string;
-	etp?: number;
-	posad?: number;
 	workTime?: number;
-	category?: HRCategoryInterface;
-	fonction?: HRFonctionInterface;
-	juridiction?: JuridictionInterface;
-	activities?: RHActivityInterface[];
 	dateStart?: Date;
 	dateEnd?: Date;
 	note?: string;
 	totalAffected?: number;
+	comment?: string;
+	situations: HRSituationInterface[];
+	indisponibilities: RHActivityInterface[];
+	updatedAt: Date;
 }

@@ -8,7 +8,7 @@ import {
   HostBinding,
 } from '@angular/core';
 
-interface ActionsInterface {
+export interface ActionsInterface {
   type?: string;
   red?: boolean;
   fill?: boolean;
@@ -32,6 +32,7 @@ export class PopupComponent implements OnInit, OnDestroy {
   }
   @Input() title: string = '';
   @Input() actions: ActionsInterface[] = [];
+  @Input() actionsLeft: ActionsInterface[] = [];
   @Input() closeIcon = false;
   @Input() minHeight: string = '';
   @Output() selectedAction = new EventEmitter();
