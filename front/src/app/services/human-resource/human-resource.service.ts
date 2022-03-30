@@ -323,7 +323,8 @@ export class HumanResourceService {
     let situations = (hr && hr.situations) || [];
 
     if (date) {
-      for (let i = situations.length - 1; i > 0; i--) {
+      date = today(date);
+      for (let i = situations.length - 1; i >= 0; i--) {
         const dateStart = today(situations[i].dateStart);
         if (dateStart.getTime() <= date.getTime()) {
           return situations[i];
