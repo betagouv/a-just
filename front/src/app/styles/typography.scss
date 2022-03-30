@@ -3,6 +3,8 @@
 html,
 body,
 button,
+textarea,
+select,
 h1,
 h2,
 h3,
@@ -31,6 +33,10 @@ h3 {
   font-size: 28px;
   line-height: 36px;
   color: fColor(cblack);
+
+  b {
+    color: fColor(cbluelight);
+  }
 }
 
 h4 {

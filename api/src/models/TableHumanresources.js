@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash'
 import slugify from 'slugify'
 import { posad } from '../constants/hr'
 import { ucFirst } from '../utils/utils'
@@ -10,16 +9,13 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 export default (sequelizeInstance, Model) => {
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'etp', 'posad', 'date_entree', 'date_sortie', 'note', 'backup_id', 'cover_url'],
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         backup_id: backupId,
       }, 
       include: [{
-        attributes: ['id', 'rank', 'label'],
-        model: Model.models.HRCategories,
-      }, {
-        attributes: ['id', 'rank', 'code', 'label'],
-        model: Model.models.HRFonctions,
+        attributes: ['id', 'comment'],
+        model: Model.models.HRComments,
       }],
       raw: true,
     })
@@ -27,41 +23,25 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
-        etp: list[i].etp,
-        posad: list[i].posad,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
-        note: list[i].note,
         coverUrl: list[i].cover_url, 
-        category: {
-          id: list[i]['HRCategory.id'],
-          rank: list[i]['HRCategory.rank'],
-          code: list[i]['HRCategory.code'],
-          label: list[i]['HRCategory.label'],
-        },
-        fonction: {
-          id: list[i]['HRFonction.id'],
-          rank: list[i]['HRFonction.rank'],
-          code: list[i]['HRFonction.code'],
-          label: list[i]['HRFonction.label'],
-        },
-        activities: await Model.models.HRVentilations.getActivitiesByHR(list[i].id, backupId),
+        updatedAt: list[i].updated_at,
+        backupId: list[i].backup_id,
+        comment: list[i]['HRComment.comment'],
+        situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
+        indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
       }
     }
 
-    return sortBy(list, ['fonction.rank', 'category.rank', 'firstName', 'lastName'])
+    return list
   }
 
   Model.importList = async (list, title, id) => {
     const referentielMapping = {}
     const backupId = !title ? id : await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
-    const findJuridiction = await Model.models.Juridictions.findOne({
-      where: {
-        cour_appel: list[0].codejur || list[0].juridiction,
-      },
-    })
 
     // delete old base
     await Model.destroy({
@@ -78,54 +58,10 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       const HRFromList = list[i]
       const options = {
-        juridiction_id: 1,
-        hr_fonction_id: 1,
-        hr_categorie_id: 1,
-        etp: 1,
         first_name: '',
         last_name: '',
         date_entree: today,
         backup_id: backupId,
-      }
-
-      if(findJuridiction) {
-        options.juridiction_id = findJuridiction.id
-      }
-
-      // corps: 'MAG',
-      const findCategory = await Model.models.HRCategories.findOne({
-        where: {
-          label: 'Magistrat',
-        },
-      })
-      if(findCategory) {
-        options.hr_category_id = findCategory.id
-      }
-
-      const findFonction = await Model.models.HRFonctions.findOne({
-        where: {
-          code: HRFromList.fonction,
-        },
-      })
-      if(findFonction) {
-        options.hr_fonction_id = findFonction.id
-      }
-
-      if(HRFromList.etp_t) {
-        options.etp = parseFloat(HRFromList.etp_t)
-      }
-
-      if(HRFromList.posad) {
-        const posadNumber = parseInt(HRFromList.posad)
-        if(!isNaN(posadNumber)) {
-          options.posad = posadNumber / 100
-        } else {
-          options.posad = posad[HRFromList.posad.toLowerCase()] || 1 
-        }
-      }
-
-      if(HRFromList["%_d'activite"]) {
-        options.posad = HRFromList["%_d'activite"]
       }
 
       if(HRFromList.prenom && HRFromList.prenom) {
@@ -173,8 +109,170 @@ export default (sequelizeInstance, Model) => {
           }
         }
       }
+
+      // add ventilation
+      const situation = {
+        fonction_id: 1,
+        category_id: 1,
+        etp: 1,
+        date_start: today,
+      }
+
+      // corps: 'MAG',
+      const findCategory = await Model.models.HRCategories.findOne({
+        where: {
+          label: 'Magistrat',
+        },
+      })
+      if(findCategory) {
+        situation.category_id = findCategory.id
+      }
+
+      const findFonction = await Model.models.HRFonctions.findOne({
+        where: {
+          code: HRFromList.fonction,
+        },
+      })
+      if(findFonction) {
+        situation.fonction_id = findFonction.id
+      }
+
+      if(HRFromList.posad) {
+        const posadNumber = parseInt(HRFromList.posad)
+        if(!isNaN(posadNumber)) {
+          situation.etp = posadNumber / 100
+        } else {
+          situation.etp = posad[HRFromList.posad.toLowerCase()] || 1 
+        }
+      }
+
+      if(HRFromList["%_d'activite"]) {
+        situation.etp = HRFromList["%_d'activite"]
+      }
+
+      // create
+      await Model.models.HRSituations.create({
+        ...situation,
+        human_id: findHRToDB.dataValues.id,
+      })
     }
   } 
+
+  Model.haveAccess = async (HRId, userId) => {
+    const hr = await Model.findOne({
+      attributes: ['id'],
+      where: { 
+        id: HRId,
+      },
+      include: [{
+        attributes: ['id'],
+        model: Model.models.HRBackups,
+        include: [{
+          attributes: ['id'],
+          model: Model.models.UserVentilations,
+          where: {
+            user_id: userId,
+          },
+        }],
+      }],
+      raw: true,
+    })
+
+    return hr ? true : false
+  }
+
+  Model.updateHR = async (hr, backupId) => {
+    const options = {
+      first_name: hr.firstName || null,
+      last_name: hr.lastName || null,
+      date_entree: hr.dateStart || null,
+      date_sortie: hr.dateEnd || null,
+      note: hr.note,
+      backup_id: backupId,
+      updated_at: new Date(),
+    }
+
+    if(hr.id && hr.id > 0) {
+      // update
+      await Model.updateById(hr.id, options)
+    } else {
+      // create
+      const newHr = await Model.models.HumanResources.create(options)
+      hr.id = newHr.dataValues.id
+    }
+
+    await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+    await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
+    await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
+
+    return await Model.getHr(hr.id)
+  }
+
+  Model.getHr = async (hrId) => {
+    const hr = await Model.findOne({
+      attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      where: {
+        id: hrId,
+      }, 
+      include: [{
+        attributes: ['id', 'comment'],
+        model: Model.models.HRComments,
+      }],
+      raw: true,
+    })
+
+    if(hr) {
+      return {
+        id: hr.id,
+        firstName: hr.first_name,
+        lastName: hr.last_name,
+        dateStart: hr.date_entree,
+        dateEnd: hr.date_sortie,
+        coverUrl: hr.cover_url, 
+        updatedAt: hr.updated_at,
+        comment: hr['HRComment.comment'],
+        backupId: hr.backupId,
+        situations: await Model.models.HRSituations.getListByHumanId(hr.id),
+        indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
+      }
+    }
+
+    return hr
+  }
+
+  Model.removeHR = async (hrId) => {
+    const hrFromDB = await Model.findOne({ 
+      where: {
+        id: hrId,
+      },
+      raw: true,
+    })
+    if(hrFromDB) {
+      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+    }
+
+    await Model.destroy({
+      where: {
+        id: hrId,
+      },
+    })
+
+    // delete force all references
+    await Model.models.HRVentilations.destroy({
+      where: {
+        rh_id: hrId,
+      },
+      force: true,
+    })
+
+    // delete force all situations
+    await Model.models.HRSituations.destroy({
+      where: {
+        human_id: hrId,
+      },
+      force: true,
+    })
+  }
 
   return Model
 }

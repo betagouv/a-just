@@ -1,0 +1,153 @@
+<form [formGroup]="form">
+  <div class="new-action" *ngIf="showNewVentilation === false && !onEdit">
+    <button class="fill primary small" (click)="showNewVentilation = !showNewVentilation; onStart();">
+      Renseigner une nouvelle situation
+    </button>
+  </div>
+
+  <div class="new-ventilation" *ngIf="showNewVentilation === true || onEdit">
+    <div class="header">
+      <p *ngIf="onEdit">Modification de la situation du</p>
+      <p *ngIf="!onEdit">Renseigner une nouvelle situation</p>
+      <div class="flex-1"></div>
+      <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false" [readOnly]="onEdit">
+      </aj-date-select>
+      <div class="flex-1"></div>
+      <div class="flex-1"></div>
+    </div>
+
+    <div class="administration">
+      <p>Situation administrative</p>
+      <div class="grid-double">
+        <div>
+          <div class="label-aj">Prénom :</div>
+          <input type="text" formControlName="firstName" />
+        </div>
+        <div>
+          <div class="label-aj">Nom :</div>
+          <input type="text" formControlName="lastName" />
+        </div>
+      </div>
+      <div class="grid-double">
+        <aj-date-select title="Date d'arrivée" [showToday]="false" [value]="form.get('dateStart')?.value"
+          (valueChange)="form.get('dateStart')?.setValue($event)">
+        </aj-date-select>
+        <aj-date-select title="Date de départ" [showToday]="false" [value]="form.get('dateEnd')?.value"
+          (valueChange)="form.get('dateEnd')?.setValue($event)">
+        </aj-date-select>
+      </div>
+      <div>
+        <div class="label-aj">Catégorie :</div>
+        <select formControlName="categoryId">
+          <option *ngFor="let cat of categories" [value]="cat.id">
+            {{ cat.label }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <div class="label-aj">Fonction :</div>
+        <select formControlName="fonctionId">
+          <option *ngFor="let fonc of fonctions" [value]="fonc.id">
+            {{ fonc.label }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <div class="label-aj">Temps de travail (en % d'un plein temps) :</div>
+        <input type="number" formControlName="etp" min="0" max="100" (ngModelChange)="etp = $event / 100" />
+      </div>
+    </div>
+
+    <div class="indisponibilities">
+      <div>
+        <div class="indispo-header">
+          <p>Indisponibilités</p>
+          <button class="outline blue small" (click)="onAddIndispiniblity()">
+            Ajouter une indisponibilité
+          </button>
+        </div>
+        <div class="indispo-content">
+          <div *ngFor="let indisp of indisponibilitiesVisibles">
+            <div class="icon">
+              <mat-icon>event_busy</mat-icon>
+            </div>
+            <div class="text">
+              <p>
+                {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)
+              </p>
+              <p>
+                <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+                  {{ getShortMonthString(indisp.dateStart) }}
+                  {{ getFullYear(indisp.dateStart) }}</ng-template>
+                <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
+                  au
+                </ng-template>
+                <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
+                  jusqu'au
+                </ng-template>
+                <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+                  {{ getShortMonthString(indisp.dateStop) }}
+                  {{ getFullYear(indisp.dateStop) }}</ng-template>
+              </p>
+            </div>
+            <div class="action">
+              <button class="fill red small" (click)="updateIndisponiblity = indisp">Modifier</button>
+            </div>
+          </div>
+        </div>
+        <div class="indispo-error" *ngIf="indisponibilityError">{{ indisponibilityError }}</div>
+      </div>
+    </div>
+
+    <div class="activities">
+      <p>Répartition du temps disponible</p>
+      <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
+        (referentielChange)="onNewReferentiel($event)" #panelActivities>
+      </panel-activities>
+    </div>
+
+    <div class="actions">
+      <button class="small outline blue" (click)="onCancel()">Annuler</button>
+      <button class="small primary" (click)="onSave()">
+        {{ onEdit ? 'Modification de la situation' : 'Enregistrer la nouvelle situation' }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<aj-popup *ngIf="updateIndisponiblity" [actions]="[
+    { id: 'close', content: 'Annuler' },
+    { id: 'modify', content: 'Enregister', fill: true }
+  ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
+  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
+  <p class="title">
+    {{
+    updateIndisponiblity.id > 0
+    ? "Modification de l'indisponibilité"
+    : "Nouvelle indisponibilité"
+    }}
+  </p>
+  <div class="form">
+    <div>
+      <div class="label-aj">Motif d'indisponibilité</div>
+      <select [(ngModel)]="updateIndisponiblity.referentielId">
+        <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
+          {{ cat.label }}
+        </option>
+      </select>
+    </div>
+    <div class="grid-double">
+      <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
+        (valueChange)="updateIndisponiblity.dateStart = $event">
+      </aj-date-select>
+      <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
+        (valueChange)="updateIndisponiblity.dateStop = $event">
+      </aj-date-select>
+    </div>
+    <div>
+      <div class="label-aj">Indisponibilité (en % d'un plein temps) :</div>
+      <input type="number" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />
+    </div>
+  </div>
+</aj-popup>

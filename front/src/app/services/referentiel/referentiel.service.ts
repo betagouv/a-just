@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { orderBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { referentielMappingIndex } from 'src/app/utils/referentiel';
 import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { ServerService } from '../http-server/server.service';
@@ -12,6 +10,7 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 })
 export class ReferentielService {
   idsIndispo: number[] = [];
+  idsMainIndispo: number = 0;
   idsSoutien: number[] = [];
   mainActivitiesId: number[] = [];
 
@@ -34,19 +33,20 @@ export class ReferentielService {
 
   initDatas() {
     this.loadReferentiels().then((list: ContentieuReferentielInterface[]) => {
-      this.humanResourceService.contentieuxReferentiel.next(list);
-      this.updateReferentielValues();
-      this.updateReferentielOptions();
-
       const refIndispo = list.find((r) => r.label === 'Indisponibilité');
       const idsIndispo = [];
+      this.humanResourceService.allIndisponibilityReferentiel = [];
       if (refIndispo) {
+        this.idsMainIndispo = refIndispo.id;
+        this.humanResourceService.allIndisponibilityReferentiel.push(refIndispo);
         idsIndispo.push(refIndispo.id);
         (refIndispo.childrens || []).map((c) => {
           idsIndispo.push(c.id);
+          this.humanResourceService.allIndisponibilityReferentiel.push(c);
         });
       }
       this.idsIndispo = idsIndispo;
+      this.humanResourceService.copyOfIdsIndispo = idsIndispo;
 
       const refSoutien = list.find((r) => r.label === 'Soutien');
       const idsSoutien = [];
@@ -59,6 +59,10 @@ export class ReferentielService {
       this.idsSoutien = idsSoutien;
 
       this.mainActivitiesId = list.map((r) => (r.id));
+
+      this.humanResourceService.contentieuxReferentiel.next(list);
+      this.updateReferentielValues();
+      this.updateReferentielOptions();
     });
   }
 

@@ -1,26 +1,6 @@
+import { Op } from 'sequelize'
+
 export default (sequelizeInstance, Model) => {
-  Model.createWithLabel = async (label, juridictionName) => {
-    let jurdiction = await Model.models.Juridictions.findOne({
-      where: {
-        label: juridictionName,
-      },
-    })
-
-    if(!jurdiction) {
-      jurdiction = await Model.models.Juridictions.create({
-        label: juridictionName,
-        cour_appel: juridictionName,
-      })
-    }
-
-    const creation = await Model.create({
-      label,
-      juridiction_id: jurdiction.dataValues.id,
-    })
-
-    return creation.dataValues.id
-  }
-
   Model.lastId = async () => {
     const lastBackup = await Model.findAll({
       order: [['id', 'desc']],
@@ -32,18 +12,13 @@ export default (sequelizeInstance, Model) => {
 
   Model.list = async (userId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
+      attributes: ['id', 'label', ['updated_at', 'date']],
       include: [{
-        attributes: ['id', 'label', 'cour_appel'],
-        model: Model.models.Juridictions,
-        required: true,
-        include: [{
-          attributes: ['id'],
-          model: Model.models.UserJuridictions,
-          where: {
-            user_id: userId,
-          },
-        }],
+        attributes: ['id'],
+        model: Model.models.UserVentilations,
+        where: {
+          user_id: userId,
+        },
       }],
       raw: true,
     })
@@ -53,11 +28,6 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
-        juridiction: {
-          id: list[i]['Juridiction.id'],
-          label: list[i]['Juridiction.label'],
-          courAppel: list[i]['Juridiction.cour_appel'],
-        },
       }
     }
 
@@ -128,14 +98,13 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
+  Model.saveBackup = async (list, backupId, backupName) => {
     let newBackupId = backupId
     let reelHRIds = []
     // if backup name create a copy
     if(backupName) {
       const newBackup = await Model.create({
         label: backupName,
-        juridiction_id: juridictionId,
       })
       newBackupId = newBackup.dataValues.id
     }
@@ -144,16 +113,12 @@ export default (sequelizeInstance, Model) => {
       const hr = list[x]
 
       const options = {
-        etp: hr.etp || 0,
-        posad: hr.posad || 0,
         first_name: hr.firstName || null,
         last_name: hr.lastName || null,
         date_entree: hr.dateStart || null,
         date_sortie: hr.dateEnd || null,
         note: hr.note,
         backup_id: newBackupId,
-        hr_categorie_id: hr.category && hr.category.id ? hr.category.id : null,
-        hr_fonction_id: hr.fonction && hr.fonction.id ? hr.fonction.id : null,
       }
 
       if(hr.id && hr.id > 0 && !backupName) {
@@ -194,6 +159,8 @@ export default (sequelizeInstance, Model) => {
           })
         }
       }
+
+      await Model.models.HRSituations.syncSituations(hr.situations, hr.id)
     }
 
     // remove old HR
@@ -201,26 +168,27 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id'],
       where: {
         backup_id: newBackupId,
+        id: {
+          [Op.notIn]: reelHRIds,
+        },
       },
       raw: true,
     })).map(h => (h.id))
     for(let i = 0; i < oldNewHRList.length; i++) {
-      if(reelHRIds.indexOf(oldNewHRList[i]) === -1) {
-        await Model.models.HumanResources.destroyById(oldNewHRList[i])
-      }
+      await Model.models.HumanResources.destroyById(oldNewHRList[i])
     }
+
+    // update date of backup
+    await Model.updateById(newBackupId, {
+      updated_at: new Date(),
+    })
 
     return newBackupId
   }
 
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date'], 'juridiction_id'],
-      include: [{
-        attributes: ['label', 'cour_appel'],
-        model: Model.models.Juridictions,
-        required: true,
-      }],
+      attributes: ['id', 'label', ['created_at', 'date']],
       raw: true,
     })
 
@@ -229,10 +197,6 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
-        juridiction: {
-          label: list[i]['Juridiction.label'],
-          courAppel: list[i]['Juridiction.cour_appel'],
-        },
       }
     }
 

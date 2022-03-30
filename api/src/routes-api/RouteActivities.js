@@ -8,69 +8,29 @@ export default class RouteActivities extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number(),
-    }),
-    accesses: [Access.canVewActivities],
-  })
-  async getAll (ctx) {
-    let { backupId } = this.body(ctx)
-    const backups = await this.model.models.ActivitiesBackups.getBackup(ctx.state.user.id)
-    backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
-    const list = await this.model.getAll(backupId)
-
-    this.sendOk(ctx, {
-      activities: list,
-      backups,
-      backupId,
-    })
-  }
-
-  @Route.Delete({
-    path: 'remove-backup/:backupId',
-    accesses: [Access.canVewActivities],
-  })
-  async removeBackup (ctx) {
-    const { backupId } = ctx.params   
-
-    await this.model.models.ActivitiesBackups.removeBackup(backupId)
-
-    this.sendOk(ctx, 'OK')
-  }
-
-  @Route.Post({
-    bodyType: Types.object().keys({
-      backupId: Types.number().required(),
-      backupName: Types.string().required(),
-    }),
-    accesses: [Access.canVewActivities],
-  })
-  async duplicateBackup (ctx) {
-    const { backupId, backupName } = this.body(ctx)
-
-    this.sendOk(ctx, await this.model.models.ActivitiesBackups.duplicateBackup(backupId, backupName))
-  }
-
-  @Route.Post({
-    bodyType: Types.object().keys({
       list: Types.any(),
-      backupId: Types.number(),
-      backupName: Types.string(),
-      juridictionId: Types.number(),
+      hrBackupId: Types.number(),
     }),
     accesses: [Access.canVewActivities],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName, juridictionId } = this.body(ctx)
-
-    const newId = await this.model.models.ActivitiesBackups.saveBackup(list, backupId, backupName, juridictionId)
-
-    this.sendOk(ctx, newId)
+    const { hrBackupId, list } = this.body(ctx)
+    await this.model.saveBackup(list, hrBackupId)
+    this.sendOk(ctx, 'Ok')
   }
 
-  @Route.Get({
-    accesses: [Access.isAdmin],
+  @Route.Post({
+    bodyType: Types.object().keys({
+      contentieuxId: Types.number(),
+      date: Types.date(),
+      values: Types.any(),
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
   })
-  async getBackupList (ctx) {
-    this.sendOk(ctx, await this.model.models.ActivitiesBackups.getAll())
+  async updateBy (ctx) {
+    const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
+    await this.model.updateBy(contentieuxId, date, values, hrBackupId)
+    this.sendOk(ctx, 'Ok')
   }
 }

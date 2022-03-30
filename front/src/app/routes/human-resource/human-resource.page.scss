@@ -1,5 +1,35 @@
 @import "../../styles/utils.scss";
 
+.title {
+  margin-right: 16px;
+
+  .page-name {
+    font-size: 16px;
+    color: fColor(titleSelect);
+    font-weight: bold;
+  }
+
+  .user-name {
+    font-size: 22px;
+    color: fColor(primary);
+    font-weight: bold;
+  }
+}
+
+.user-updated-at {
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  
+  aj-date-select {
+    margin-left: 16px;
+  }
+}
+
+
+
 .actions {
   button {
     display: block;
@@ -17,4 +47,20 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 	grid-gap: 16px;
+}
+
+panel-history-ventilation {
+  margin: 16px auto;
+}
+
+.title-history {
+  margin: 16px auto;
+  font-size: 16px;
+  font-weight: bold;
+  color: fColor(cblack);
+  text-align: center;
+}
+
+add-ventilation {
+  margin: 0 auto 32px auto;
 }

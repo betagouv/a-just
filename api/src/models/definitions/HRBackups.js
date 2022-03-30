@@ -17,10 +17,6 @@ export default sequelizeInstance => {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
-      juridiction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -44,8 +40,8 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {  
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' }) 
-      
+    Model.hasOne(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'id' }) 
+
     return models
   }
 

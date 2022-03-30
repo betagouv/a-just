@@ -1,16 +1,23 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { sumBy } from 'lodash';
+import { orderBy, sumBy } from 'lodash';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
+import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service';
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { UserService } from 'src/app/services/user/user.service';
+import { today } from 'src/app/utils/dates';
+
+export interface HistoryInterface extends HRSituationInterface {
+  indisponibilities: RHActivityInterface[];
+  dateStop: Date;
+}
 
 @Component({
   templateUrl: './human-resource.page.html',
@@ -21,25 +28,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   fonctions: HRFonctionInterface[] = [];
   contentieuxReferentiel: ContentieuReferentielInterface[] = [];
   currentHR: HumanResourceInterface | null = null;
-  activities: RHActivityInterface[] = [];
-  formEditHR = new FormGroup({
-    etp: new FormControl(null, [Validators.required]),
-    posad: new FormControl(null, [Validators.required]),
-    firstName: new FormControl(null, [Validators.required]),
-    lastName: new FormControl(null, [Validators.required]),
-    dateStart: new FormControl(null),
-    dateEnd: new FormControl(null),
-    note: new FormControl(null),
-    fonction: new FormControl(null, [Validators.required]),
-    category: new FormControl(null, [Validators.required]),
-  });
+  categoryName: string = '';
+  histories: HistoryInterface[] = [];
+  allIndisponibilities: RHActivityInterface[] = [];
+  editVentilation: HistoryInterface | null = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService
+    private hrCategoryService: HRCategoryService,
+    private userService: UserService
   ) {
     super();
   }
@@ -58,8 +58,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       )
     );
     this.watch(this.humanResourceService.hr.subscribe(() => this.onLoad()));
-    this.hrFonctionService.getAll().then((list) => (this.fonctions = list));
-    this.hrCategoryService.getAll().then((list) => (this.categories = list));
+    this.hrFonctionService.getAll().then((list) => {
+      this.fonctions = list;
+      this.onLoad();
+    });
+    this.hrCategoryService.getAll().then((list) => {
+      this.categories = list;
+      this.onLoad();
+    });
   }
 
   ngOnDestroy() {
@@ -67,58 +73,51 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onLoad() {
+    if (this.categories.length === 0) {
+      return;
+    }
+
     const id = +this.route.snapshot.params.id;
     const allHuman = this.humanResourceService.hr.getValue();
 
     const findUser = allHuman.find((h) => h.id === id);
     if (findUser) {
       this.currentHR = findUser;
-      this.formEditHR.get('etp')?.setValue((findUser.etp || 0) * 100);
-      this.formEditHR.get('posad')?.setValue((findUser.posad || 0) * 100);
-      this.formEditHR.get('firstName')?.setValue(findUser.firstName || '');
-      this.formEditHR.get('lastName')?.setValue(findUser.lastName || '');
-      this.formEditHR.get('dateStart')?.setValue(findUser.dateStart || null);
-      this.formEditHR.get('dateEnd')?.setValue(findUser.dateEnd || null);
-      this.formEditHR.get('note')?.setValue(findUser.note || '');
-      this.formEditHR
-        .get('category')
-        ?.setValue((findUser.category && findUser.category.id) || null);
-      this.formEditHR
-        .get('fonction')
-        ?.setValue((findUser.fonction && findUser.fonction.id) || null);
-      this.activities = JSON.parse(
-        JSON.stringify((findUser.activities || []).filter((a) => a.percent))
+      console.log(findUser);
+
+      const currentSituation = this.humanResourceService.findSituation(
+        this.currentHR
       );
+      if (currentSituation && currentSituation.category) {
+        const findCategory = this.categories.find(
+          // @ts-ignore
+          (c) => c.id === currentSituation.category.id
+        );
+        this.categoryName = findCategory
+          ? findCategory.label.toLowerCase()
+          : '';
+      } else {
+        this.categoryName = '';
+      }
     } else {
       this.currentHR = null;
-      this.formEditHR.reset();
+      this.categoryName = '';
     }
+
+    this.formatHRHistory();
   }
 
   calculTotalTmpActivity(activities: RHActivityInterface[]) {
-    const now = new Date();
-    activities = (activities || []).filter((a: any) => {
-      const dateStop = a.dateStop ? new Date(a.dateStop) : null;
-      const dateStart = a.dateStart ? new Date(a.dateStart) : null;
-
-      return (
-        (dateStart === null && dateStop === null) ||
-        (dateStart &&
-          dateStart.getTime() <= now.getTime() &&
-          dateStop === null) ||
-        (dateStart === null &&
-          dateStop &&
-          dateStop.getTime() >= now.getTime()) ||
-        (dateStart &&
-          dateStart.getTime() <= now.getTime() &&
-          dateStop &&
-          dateStop.getTime() >= now.getTime())
-      );
-    });
+    activities = this.humanResourceService.filterActivitiesByDate(
+      activities || [],
+      new Date()
+    );
 
     return sumBy(
       activities.filter((ca) => {
-        return this.contentieuxReferentiel.find((r) => r.id === ca.referentielId)
+        return this.contentieuxReferentiel.find(
+          (r) => r.id === ca.referentielId
+        )
           ? true
           : false;
       }),
@@ -126,72 +125,117 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     );
   }
 
-  onEdit() {
-    if (this.formEditHR.invalid) {
-      alert("Vous devez saisir l'ensemble des champs !");
-    } else if (this.currentHR) {
-      const {
-        etp,
-        firstName,
-        lastName,
-        dateStart,
-        dateEnd,
-        note,
-        category,
-        fonction,
-        posad,
-      } = this.formEditHR.value;
-      this.currentHR.etp = (etp || 0) / 100;
-      this.currentHR.posad = (posad || 0) / 100;
-      this.currentHR.firstName = firstName;
-      this.currentHR.lastName = lastName;
-      this.currentHR.dateStart = dateStart;
-      this.currentHR.dateEnd = dateEnd;
-      this.currentHR.note = note;
-      this.currentHR.category = this.categories.find((c) => c.id === +category);
-      this.currentHR.fonction = this.fonctions.find((f) => f.id === +fonction);
-      this.currentHR.activities = (this.activities || []).map((a) => ({
-        ...a,
-        referentielId: +(a.referentielId || 0),
-        dateStart: a.dateStart ? new Date(a.dateStart) : undefined,
-        dateStop: a.dateStop ? new Date(a.dateStop) : undefined,
-      }));
-
-      const totalAffected = this.calculTotalTmpActivity(
-        this.currentHR.activities
-      );
-      if (totalAffected > 100) {
-        alert(
-          `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
-        );
-        return;
-      }
-
-      const allHuman = this.humanResourceService.hr.getValue();
-      const findIndex = allHuman.findIndex(
-        (h) => h.id === (this.currentHR && this.currentHR.id)
-      );
-
-      if (findIndex !== -1) {
-        allHuman[findIndex] = { ...this.currentHR };
-        this.humanResourceService.hr.next(allHuman);
-        this.humanResourceService.hrIsModify.next(true);
-
-        this.router.navigate(['/ventilations']);
-      }
+  formatHRHistory() {
+    if (this.fonctions.length === 0 || !this.currentHR) {
+      return;
     }
+
+    this.histories = [];
+    const getToday = today();
+    this.allIndisponibilities = this.currentHR.indisponibilities || [];
+    const situations = orderBy(this.currentHR.situations || [], [
+      function (o: HRSituationInterface) {
+        const date = new Date(o.dateStart);
+        return date.getTime();
+      },
+    ]);
+
+    const minSituation = situations[0];
+    const maxSituation = situations[situations.length - 1];
+    const minDate = today(minSituation.dateStart);
+    let maxDate = today(maxSituation.dateStart);
+    let currentDateEnd = null;
+    if (this.currentHR && this.currentHR.dateEnd) {
+      currentDateEnd = new Date(this.currentHR.dateEnd);
+    }
+    if (currentDateEnd && currentDateEnd.getTime() > maxDate.getTime()) {
+      maxDate = new Date(currentDateEnd);
+    }
+    if (getToday.getTime() > maxDate.getTime()) {
+      maxDate = new Date(getToday);
+    }
+
+    const currentDate = new Date(maxDate);
+    let idsDetected: number[] = [];
+    while (currentDate.getTime() >= minDate.getTime()) {
+      let delta: number[] = [];
+      const findIndispos = this.humanResourceService.findAllIndisponibilities(
+        this.currentHR,
+        currentDate
+      );
+      const findSituation = this.humanResourceService.findSituation(
+        this.currentHR,
+        currentDate
+      );
+
+      delta = findIndispos.map((f) => f.id);
+      if (findSituation) {
+        delta.push(findSituation.id);
+      }
+
+      if (JSON.stringify(idsDetected) !== JSON.stringify(delta)) {
+        idsDetected = delta;
+        const dateStop = new Date(currentDate);
+        let etp = (findSituation && findSituation.etp) || 0;
+
+        if (currentDateEnd && currentDateEnd.getTime() <= dateStop.getTime()) {
+          etp = 0;
+        }
+
+        // new list
+        this.histories.push({
+          id: (findSituation && findSituation.id) || -1,
+          category: (findSituation && findSituation.category) || null,
+          fonction: (findSituation && findSituation.fonction) || null,
+          etp,
+          indisponibilities: findIndispos,
+          activities: (findSituation && findSituation.activities) || [],
+          dateStart: new Date(),
+          dateStop,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    // place date start
+    this.histories = this.histories.map((h, index) => {
+      const dateStop =
+        index + 1 < this.histories.length
+          ? new Date(this.histories[index + 1].dateStop)
+          : new Date(minDate);
+      h.dateStart = new Date(dateStop);
+      dateStop.setDate(dateStop.getDate() + 1);
+
+      if (
+        (index === 0 && this.histories.length > 1) ||
+        (index > 0 && index < this.histories.length - 1)
+      ) {
+        h.dateStart.setDate(h.dateStart.getDate() + 1);
+      }
+
+      return h;
+    });
   }
 
-  onReset() {
+  trackByDate(index: number, item: any) {
+    return item.dateStart;
+  }
+
+  onNewVentilation() {
+    // on reload values
     this.onLoad();
   }
 
-  onRemoveRH() {
-    if (
-      this.currentHR &&
-      this.humanResourceService.removeHrById(this.currentHR.id)
-    ) {
-      this.router.navigate(['/ventilations']);
+  isAdmin() {
+    return this.userService.isAdmin();
+  }
+
+  async onDelete() {
+    if (this.currentHR) {
+      if (await this.humanResourceService.removeHrById(this.currentHR.id)) {
+        this.router.navigate(['/ventilations']);
+      }
     }
   }
 }

@@ -1,0 +1,7 @@
+<div class="input">
+    <p class="title">{{ title }}</p>
+    <input [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange()" />
+</div>
+<div *ngIf="icon" class="button" (click)="onSearch()">
+    <mat-icon>{{ icon }}</mat-icon>
+</div>

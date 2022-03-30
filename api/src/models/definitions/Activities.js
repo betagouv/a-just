@@ -13,9 +13,9 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      backup_id: {
+      hr_backup_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       periode: {
         type: Sequelize.DATE,

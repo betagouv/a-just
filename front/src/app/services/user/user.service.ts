@@ -7,7 +7,7 @@ import { ServerService } from '../http-server/server.service'
   providedIn: 'root',
 })
 export class UserService {
-  user: BehaviorSubject<UserInterface | null> = new BehaviorSubject<UserInterface | null>(null);
+  user: BehaviorSubject<UserInterface | null> = new BehaviorSubject<UserInterface | null>(null);
 
   constructor (
     private serverService: ServerService
@@ -34,5 +34,14 @@ export class UserService {
       this.user.next(null);
       this.serverService.removeToken();
     });
+  }
+
+  isAdmin () {
+    const user = this.user.getValue();
+    if(user && user.role === 1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

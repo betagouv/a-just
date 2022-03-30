@@ -24,12 +24,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     super();
 
     this.watch(
-      this.activitiesService.activities.subscribe((a) => {
-        this.activities = a;
-      })
-    );
-
-    this.watch(
       this.activitiesService.activityMonth.subscribe(
         (a) => (this.activityMonth = a)
       )

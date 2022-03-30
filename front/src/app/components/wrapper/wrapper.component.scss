@@ -3,19 +3,80 @@
 :host {
   display: flex;
   height: 100%;
+
+  &.content-margin-top-null {
+    .contener .content {
+      padding-top: 0px;
+    }
+  }
+
+  &.content-margin-left-null {
+    .contener .content {
+      padding-left: 0px;
+    }
+  }
+
+  &.content-margin-right-null {
+    .contener .content {
+      padding-right: 0px;
+    }
+  }
+
+  &.content-margin-bottom-null {
+    .contener .content {
+      padding-bottom: 0px;
+    }
+  }
+
+  &.content-margin-null {
+    .contener .content {
+      padding: 0px;
+    }
+  }
+
+  &.header-border-none {
+    .header {
+      border-bottom: none;
+    }
+  }
 }
 
 .menu {
-  width: 200px;
-  border-right: 1px solid rgba(fColor(cblack), 0.2);
+  width: 222px;
+  margin-right: 1px;
+  background-color: white;
 
   .images {
     display: flex;
     align-items: center;
-    margin-bottom: 32px;
+    justify-content: space-around;
+    margin-bottom: 29px;
+    margin-top: 29px;
 
     > img {
-      width: 50%;
+      width: 45%;
+    }
+  }
+
+  .juridiction {
+    padding: 19px 10px 23px 10px;
+    background-color: fColor(cblue);
+    margin-bottom: 16px;
+    border: 1px solid fColor(cblack);
+
+    .juridiction-title {
+      display: flex;
+
+      h6 {
+        color: white;
+      }
+
+      mat-icon {
+        margin-left: 2px;
+        margin-top: 4px;
+        color: white;
+        cursor: pointer;
+      }
     }
   }
 
@@ -23,8 +84,20 @@
     display: block;
     padding: 16px 16px;
 
-    &.disconnect {
+    &.disconnect,
+    a,
+    p {
       cursor: pointer;
+      color: fColor(cblack);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    &.selected {
+      a,
+      p {
+        color: fColor(cbluedark);
+      }
     }
   }
 }
@@ -42,12 +115,27 @@
 }
 
 .header {
-  height: 77px;
-  min-height: 77px;
-  padding: 0 24px;
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+  height: 87px;
+  min-height: 87px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
+  background-color: white;
+  border-bottom: 1px solid fColor(bgColor);
+
+  .back-url {
+    margin-right: 16px;
+  }
+
+  h3 {
+    color: fColor(cblack);
+    font-size: 22px;
+    margin-right: 16px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
 }
 
 .space {

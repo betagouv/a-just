@@ -25,36 +25,12 @@ export default sequelizeInstance => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      hr_categorie_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      hr_fonction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      juridiction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
       date_entree: {
         type: Sequelize.DATE,
         allowNull: true,
       },
       date_sortie: {
         type: Sequelize.DATE,
-        allowNull: true,
-      },
-      etp: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      posad: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
-      },
-      note: {
-        type: Sequelize.TEXT,
         allowNull: true,
       },
       registration_number: {
@@ -87,10 +63,9 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {  
-    Model.hasOne(models.HRCategories, { foreignKey: 'id', sourceKey: 'hr_categorie_id' })  
-    Model.hasOne(models.HRFonctions, { foreignKey: 'id', sourceKey: 'hr_fonction_id' })    
-    Model.hasOne(models.Juridictions, { foreignKey: 'id', sourceKey: 'juridiction_id' })     
+  Model.associate = function (models) {   
+    Model.hasOne(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })  
+    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'backup_id' })       
     
     return models
   }

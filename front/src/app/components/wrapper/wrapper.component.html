@@ -4,7 +4,19 @@
     <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
   </div>
 
-  <div class="menu-item" *ngFor="let item of menu">
+  <div class="juridiction" *ngIf="hrBackups.length">
+    <div class="juridiction-title">
+      <h6>{{ hrBackup && hrBackup.label }}</h6>
+      <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+          {{ bu.label }}
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
     <a [routerLink]="['/' + item.path]">
       {{ item.label }}
     </a>
@@ -15,14 +27,25 @@
 </div>
 
 <div class="contener">
-  <div class="header">
-    <h3>{{ title }}</h3>
+  <div class="header" id="top">
+    <div *ngIf="backUrl" class="back-url">
+      <a [routerLink]="backUrl" [fragment]="backAnchor">
+        <button class="primary small">
+          <mat-icon>chevron_left</mat-icon>Retour
+        </button>
+      </a>
+    </div>
+    <h3 [innerHTML]="title"></h3>
+    <p class="subtitle">{{ subtitle }}</p>
+    <ng-template [ngIf]="titleTemplate">
+      <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+    </ng-template>
     <div class="space"></div>
     <div class="actions">
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>
   </div>
-  <div class="content">
+  <div class="content" id="content">
     <ng-content></ng-content>
   </div>
 </div>

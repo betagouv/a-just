@@ -2,22 +2,33 @@
   <div>
     <div class="title">
       {{ title }}
-      <i class="material-icons close pointer" *ngIf="closeIcon" (click)="onClose.emit()">close</i>
+      <div class="flex-1"></div>
+      <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">Fermer <i class="material-icons pointer">close</i>
+      </div>
     </div>
     <div class="content">
       <ng-content></ng-content>
     </div>
-    <div class="actions" *ngIf="actions.length > 0">
-      <div class="border-actions"></div>
-      <div class="row-actions">
-        <div *ngFor="let action of actions" (click)="onSelectAction(action)" class="pointer" [ngClass]="{
+    <div class="actions" *ngIf="actions.length + actionsLeft.length > 0">
+      <button *ngFor="let action of actionsLeft" (click)="onSelectAction(action)" class="small" [ngClass]="{
             'material-icons': action.type && action.type === 'icon',
             red: action.red && action.red === true,
-            fill: action.fill && action.fill === true
+            primary: !action.red,
+            fill: action.fill && action.fill === true,
+            outline: !action.fill
           }">
-          {{ action.content }}
-        </div>
-      </div>
+        {{ action.content }}
+      </button>
+      <div class="flex-1"></div>
+      <button *ngFor="let action of actions" (click)="onSelectAction(action)" class="small" [ngClass]="{
+            'material-icons': action.type && action.type === 'icon',
+            red: action.red && action.red === true,
+            primary: !action.red,
+            fill: action.fill && action.fill === true,
+            outline: !action.fill
+          }">
+        {{ action.content }}
+      </button>
     </div>
   </div>
 </div>

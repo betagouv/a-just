@@ -1,42 +1,156 @@
-<aj-wrapper title="Calculateur" [actionTemplate]="actions">
+<aj-wrapper title="Calculateur" [actionTemplate]="actions" class="content-margin-null">
   <div class="container">
-    <div class="header-list">
-      <p class="title-header-list">Contentieux :</p>
-      <mat-select [(ngModel)]="referentielIds" (ngModelChange)="updateReferentielSelected()" multiple>
-        <ng-template ngFor let-ref [ngForOf]="referentiel">
-          <mat-option [value]="ref.id">
-            {{referentielMappingName(ref.label)}}
-          </mat-option>
-          <mat-option *ngFor="let refChild of (ref.childrens || [])" [value]="refChild.id">
-            {{referentielMappingName(ref.label)}} -
-            {{referentielMappingName(refChild.label)}}
-          </mat-option>
-        </ng-template>
-      </mat-select>
-      <div class="flex-1"></div>
-      <p class="title-header-list">Période :</p>
-      <p>Du</p>
-      <input [ngModel]="dateStart" (ngModelChange)="updateReferentielSelected('dateStart', $event)"
-        [matDatepicker]="pickerDateStart" />
-      <mat-datepicker-toggle matSuffix [for]="pickerDateStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStart>
-      </mat-datepicker>
-      <p>Au</p>
-      <input [ngModel]="dateStop" (ngModelChange)="updateReferentielSelected('dateStop', $event)"
-        [matDatepicker]="pickerDateStop" />
-      <mat-datepicker-toggle matSuffix [for]="pickerDateStop"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDateStop>
-      </mat-datepicker>
+    <div class="header-calculator">
+      <div class="title-header-calculator">
+        <div class="width-contentieux"></div>
+        <div class="item">
+          <p>Données constatées</p>
+        </div>
+        <div class="item activity">
+          <p>Activité constatée</p>
+        </div>
+        <div class="item calculate">
+          <p>Activité calculée</p>
+        </div>
+      </div>
+      <div class="explanation-calculator">
+        <div class="width-contentieux"></div>
+        <div class="item">
+          <p>
+            Données renseignées depuis les écrans
+            <a routerLink="/ventilations">Affectation des ETP</a> et
+            <a routerLink="/donnees-d-activite">Données d’activité</a>
+          </p>
+        </div>
+        <div class="item activity">
+          <p>Calculs effectués à partir des données constatées</p>
+        </div>
+        <div class="item calculate">
+          <p>
+            Calculs théoriques effectués à partir des temps moyens de
+            comparaison sélectionnés dans « Mes temps moyens de comparaison »
+          </p>
+        </div>
+      </div>
+      <div class="contentieux-header-calculator">
+        <div class="width-contentieux">
+          <p>CONTENTIEUX</p>
+        </div>
+        <div class="item">
+          <div class="tooltip" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
+            <p>ENTRÉES</p>
+            <mat-icon>{{ sortBy === 'totalIn' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Entrées mensuelles moyennes sur la période</span>
+          </div>
+          <div class="tooltip" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
+            <p>SORTIES</p>
+            <mat-icon>{{ sortBy === 'totalOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Sorties mensuelles moyennes sur la période</span>
+          </div>
+          <div class="tooltip" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
+            <p>STOCK</p>
+            <mat-icon>{{ sortBy === 'lastStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Stock à la fin de la période</span>
+          </div>
+          <div class="tooltip medium" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
+            <p>ETPT<br />MAG.</p>
+            <mat-icon>{{ sortBy === 'etpMag' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Total des ETP Travaillés sur la période par les magistrats affectés à ce
+              contentieux</span>
+          </div>
+          <div class="tooltip medium" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
+            <p>ETPT<br />FON.</p>
+            <mat-icon>{{ sortBy === 'etpFon' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Total des ETP Travaillés sur la période par les fonctionnaires affectés à ce
+              contentieux</span>
+          </div>
+          <div class="tooltip medium" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
+            <p>ETPT<br />CONT.</p>
+            <mat-icon>{{ sortBy === 'etpCont' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Total des ETP Travaillés sur la période par les contractuels affectés à ce
+              contentieux</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="tooltip" (click)="onSortBy('realCoverage')" [ngClass]="{'selected': sortBy === 'realCoverage'}">
+            <p>TAUX DE<br />COUVERTURE</p>
+            <mat-icon>{{ sortBy === 'realCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Entrées / Sorties réelles de la période, en %</span>
+          </div>
+          <div class="tooltip large" (click)="onSortBy('realDTESInMonths')"
+            [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
+            <p>DTES<br />INSTANTANÉ</p>
+            <mat-icon>{{ sortBy === 'realDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Le délai théorique d’écoulement du stock instantané, à une date donnée,
+              correspond au temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des
+              sorties enregistrées pour la période antérieure, mais sans prendre en compte le temps de traitement
+              nécessaire des affaires nouvelles. Il se calcule donc comme le ratio entre le stock actuel et les sorties
+              observées : DTES INSTANTANÉ = STOCK / SORTIES</span>
+          </div>
+          <div class="tooltip large" (click)="onSortBy('realTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
+            <p>TPS MOYEN<br />/ DOSSIER OBSERVÉ</p>
+            <mat-icon>{{ sortBy === 'realTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Le temps de traitement moyen par dossier observé pour une période calcule le
+              temps moyen qu'ont passé les ETPT affectés sur la période sur les dossiers terminés (SORTIES) de la même
+              période. Il se calcule de la façon suivante : TPS MOYEN / DOSSIER OBSERVÉ
+              = NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x (ETPT MAG.) / SORTIES</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="tooltip" (click)="onSortBy('calculateCoverage')"
+            [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
+            <p>TAUX DE<br />COUVERTURE</p>
+            <mat-icon>{{ sortBy === 'calculateCoverage' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Entrées / Sorties possible de la période, en %</span>
+          </div>
+          <div class="tooltip large last" (click)="onSortBy('calculateDTESInMonths')"
+            [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
+            <p>DTES<br />CALCULÉ</p>
+            <mat-icon>{{ sortBy === 'calculateDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">Le délai théorique d’écoulement du stock calculé, à une date donnée, correspond
+              au temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties
+              possibles sur la période, mais sans prendre en compte le temps de traitement nécessaire des affaires
+              nouvelles. Il se calcule donc comme le ratio entre le stock actuel et les sorties possibles : DTES
+              INSTANTANÉ = STOCK / SORTIES POSSIBLES</span>
+          </div>
+          <div class="tooltip large last" (click)="onSortBy('calculateTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
+            <p>TEMPS MOYEN<br />/ DOSSIER SAISI</p>
+            <mat-icon>{{ sortBy === 'calculateTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">C'est la donnée saisie dans la page des Temps moyens (mettre un lien), dans le
+              jeu de données choisi ci-dessus dans "Mes temps moyens de comparaison".</span>
+          </div>
+          <div class="tooltip large last" (click)="onSortBy('calculateOut')"
+            [ngClass]="{'selected': sortBy === 'calculateOut'}">
+            <p>SORTIES<br />POSSIBLES</p>
+            <mat-icon>{{ sortBy === 'calculateOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
+            <span class="tooltip-text">La capacité de traitement d’une juridiction correspond au nombre moyen de
+              dossiers pouvant être traités (et donc sortis du stock d’affaires en cours) par période en fonction du
+              TEMPS MOYEN / DOSSIER SAISI, converti en NOMBRE DE DOSSIERS PAR ETPT. Il se calcule comme le nombre moyen
+              d’affaires traitées par un ETPT (magistrat) durant une période, multiplié par le nombre d’ETPT MAGISTRATS
+              affectés sur cette même période. SORTIES POSSIBLES = NOMBRE DE DOSSIERS PAR ETPT x ETPT MAGISTRATS</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="content-list">
-      <aj-referentiel-calculator *ngFor="let r of referentielIds; trackBy: trackBy" [referentielId]="r"
-        [dateStart]="dateStart" [dateStop]="dateStop"></aj-referentiel-calculator>
+      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy">
+      </aj-referentiel-calculator>
     </div>
   </div>
 </aj-wrapper>
 
 <ng-template #actions>
-  <aj-rh-backup-panel [readOnly]="true"></aj-rh-backup-panel>
-  <aj-activities-backup-panel [readOnly]="true"></aj-activities-backup-panel>
+  <aj-select title="Contentieux" [value]="referentielIds" [datas]="formReferentiel"
+    (valueChange)="updateReferentielSelected('referentiel', $event)">
+  </aj-select>
+  <div class="flex-1"></div>
+  <aj-date-select title="Pour la période du" [value]="dateStart"
+    (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start">
+  </aj-date-select>
+  <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
+    class="date-stop">
+  </aj-date-select>
   <aj-options-backup-panel [readOnly]="true"></aj-options-backup-panel>
 </ng-template>
