@@ -1,5 +1,6 @@
 import { orderBy } from 'lodash'
-import { referentielMappingIndex } from '../utils/referentiel'
+import { Op } from 'sequelize'
+import { extractCodeFromLabelImported, referentielMappingIndex } from '../utils/referentiel'
 
 export default (sequelizeInstance, Model) => {
   Model.cacheReferentielMap = null
@@ -54,38 +55,126 @@ export default (sequelizeInstance, Model) => {
     return Model.cacheReferentielMap
   }
 
+  Model.formatReferentielWithCode = async (list) => {
+    for (let i = 0; i < list.length; i++) {
+      const ref = list[i]
+
+      for (let i = 3; i <= 4; i++) {
+        if(ref['niveau_' + i]) {
+          const extract = extractCodeFromLabelImported(ref['niveau_' + i])
+          if(extract && extract.code) {
+            const findToDB = await Model.findOne({
+              where: {
+                label: extract.label,
+                code_import: null,
+              },
+            })
+            if(findToDB) {
+              console.log(extract)
+              await findToDB.update({
+                code_import: extract.code,
+              })
+            }
+          }
+        }
+      }
+    }
+  }
+
   Model.importList = async (list) => {
     // The service work by label name and not by id. Find "niveau_3" or "niveau_4" and not "id"
+    const listCodeUpdated = []
+    const deltaToUpdate = []
 
+    const minLevel = 3
     const nbLevel = 4
 
     for (let i = 0; i < list.length; i++) {
       const ref = list[i]
       //console.log(ref)
       let parentId = null
-      for(let i = 1; i <= nbLevel; i++) {
-        if(ref['niveau_' + i]) {
+      for(let i = minLevel - 1; i <= nbLevel; i++) {
+        if(i === minLevel - 1) {
+          // get main group
           const findInDb = await Model.findOne({
             where: {
               label: ref['niveau_' + i],
             },
             logging: false,
           })
-          if(!findInDb) {
-            /*const newToDb = await Model.create({
-              label: ref['niveau_' + i],
-              parent_id: parentId,
-            }, {
+          if(findInDb) {
+            parentId = findInDb.dataValues.id
+          }
+        }
+
+        if(ref['niveau_' + i]) {
+          const extract = extractCodeFromLabelImported(ref['niveau_' + i])
+          if(extract && extract.code) {
+            if(listCodeUpdated.indexOf(extract.code) === -1) {
+              listCodeUpdated.push(extract.code) 
+            }
+
+            const findInDb = await Model.findOne({
+              where: {
+                code_import: extract.code,
+              },
               logging: false,
-            })*/
-            console.log('ADD ', ref['niveau_' + i]/*, newToDb.dataValues.id, parentId*/)
-            // parentId = newToDb.dataValues.id
-          } else {
-            //parentId = findInDb.dataValues.id
+            })
+            if(!findInDb) {
+              const newToDb = await Model.create({
+                label: extract.label,
+                code_import: extract.code,
+                parent_id: parentId,
+              }, {
+                logging: false,
+              })
+              
+              parentId = newToDb.dataValues.id
+              deltaToUpdate.push({
+                type: 'CREATE',
+                id: newToDb.dataValues.id,
+                label: extract.label,
+              })
+            } else {
+              if(extract.label !== findInDb.dataValues.label) {
+                deltaToUpdate.push({
+                  type: 'UPDATE',
+                  oldLabel: findInDb.dataValues.label,
+                  id: findInDb.dataValues.id,
+                  label: extract.label,
+                }) 
+
+                // update only one time         
+                await findInDb.update({ label: extract.label })
+              }
+              parentId = findInDb.dataValues.id
+            }
           }
         }
       }
     }
+
+    // REMOVE OLD REFERENTIELS
+    const listToRemove = await Model.findAll({
+      attributes: ['id', 'label', 'code_import', 'parent_id'],
+      where: {
+        code_import: {
+          [Op.notIn]: listCodeUpdated,
+        },
+      },
+      raw: true,
+    })
+    listToRemove.map(l => {
+      deltaToUpdate.push({
+        type: 'DELETE',
+        label: l.label,
+        id: l.id,
+      })
+    })
+
+
+    console.log(deltaToUpdate)
+    // TODO Lister et supprimer les anciennes ref
 
     // force to reload referentiel to cache
     await Model.getReferentiels(true)
