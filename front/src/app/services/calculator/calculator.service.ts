@@ -8,7 +8,7 @@ import {
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { MainClass } from 'src/app/libs/main-class';
-import { workingDay } from 'src/app/utils/dates';
+import { month, workingDay } from 'src/app/utils/dates';
 import { fixDecimal } from 'src/app/utils/numbers';
 import { environment } from 'src/environments/environment';
 import { ActivitiesService } from '../activities/activities.service';
@@ -55,10 +55,10 @@ export class CalculatorService extends MainClass {
   }
 
   loadChildren(referentielId: number) {
-    console.log(referentielId)
+    console.log(referentielId);
     const list: CalculatorInterface[] = this.calculatorDatas.getValue();
-    const findIndex = list.findIndex(c => c.contentieux.id === referentielId);
-    if(findIndex !== -1) {
+    const findIndex = list.findIndex((c) => c.contentieux.id === referentielId);
+    if (findIndex !== -1) {
       list[findIndex].childrens = (list[findIndex].childrens || []).map((c) => {
         if (list[findIndex].childIsVisible && c.needToCalculate === true) {
           return {
@@ -136,7 +136,7 @@ export class CalculatorService extends MainClass {
       return;
     }
 
-    if(this.calculatorDatas.getValue().length !== 0) {
+    if (this.calculatorDatas.getValue().length !== 0) {
       return;
     }
 
@@ -208,6 +208,7 @@ export class CalculatorService extends MainClass {
 
     const list: CalculatorInterface[] = this.calculatorDatas.getValue();
     const nbMonth = this.getNbMonth();
+    console.log('nbMonth', nbMonth);
     for (let i = 0; i < list.length; i++) {
       const childrens = (list[i].childrens || []).map((c) => {
         if (list[i].childIsVisible && c.needToCalculate === true) {
@@ -252,8 +253,10 @@ export class CalculatorService extends MainClass {
         .filter(
           (a) =>
             a.contentieux.id === referentiel.id &&
-            a.periode.getTime() >= this.dateStart.getValue().getTime() &&
-            a.periode.getTime() < this.dateStop.getValue().getTime()
+            month(a.periode).getTime() >=
+              month(this.dateStart.getValue()).getTime() &&
+            month(a.periode).getTime() <=
+              month(this.dateStop.getValue()).getTime()
         ),
       'periode'
     );
@@ -311,6 +314,10 @@ export class CalculatorService extends MainClass {
       totalMonth++;
       now.setMonth(now.getMonth() + 1);
     } while (now.getTime() <= this.dateStop.getValue().getTime());
+
+    if (totalMonth <= 0) {
+      totalMonth = 1;
+    }
 
     return totalMonth;
   }
