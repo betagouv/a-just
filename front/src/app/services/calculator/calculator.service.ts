@@ -26,6 +26,8 @@ export class CalculatorService extends MainClass {
   >([]);
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(now);
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end);
+  dateStartFirstLoad: boolean = true;
+  dateStopFirstLoad: boolean = true;
   referentielIds: number[] = [];
   timeoutUpdateDatas: any = null;
 
@@ -37,13 +39,21 @@ export class CalculatorService extends MainClass {
 
     this.watch(
       this.dateStart.subscribe(() => {
-        this.cleanDatas();
+        if(this.dateStartFirstLoad) {
+          this.dateStartFirstLoad = false;
+        } else {
+          this.cleanDatas();
+        }
       })
     );
 
     this.watch(
       this.dateStop.subscribe(() => {
-        this.cleanDatas();
+        if(this.dateStopFirstLoad) {
+          this.dateStopFirstLoad = false;
+        } else {
+          this.cleanDatas();
+        }
       })
     );
 
@@ -208,7 +218,6 @@ export class CalculatorService extends MainClass {
 
     const list: CalculatorInterface[] = this.calculatorDatas.getValue();
     const nbMonth = this.getNbMonth();
-    console.log('nbMonth', nbMonth);
     for (let i = 0; i < list.length; i++) {
       const childrens = (list[i].childrens || []).map((c) => {
         if (list[i].childIsVisible && c.needToCalculate === true) {
