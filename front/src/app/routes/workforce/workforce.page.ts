@@ -365,11 +365,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         });
 
         if (this.filterSelected) {
+          console.log(this.filterSelected, group)
           group = orderBy(
             group,
             (h) => {
               const acti = (h.currentActivities || []).find(
-                (a) => a.referentielId === this.filterSelected?.id
+                (a) => a.contentieux?.id === this.filterSelected?.id
               );
               return acti ? acti.percent || 0 : 0;
             },
