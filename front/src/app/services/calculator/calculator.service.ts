@@ -6,6 +6,7 @@ import {
   etpAffectedInterface,
 } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { MainClass } from 'src/app/libs/main-class';
 import { month, workingDay } from 'src/app/utils/dates';
@@ -378,23 +379,26 @@ export class CalculatorService extends MainClass {
 
   getHRPositions(referentiel: ContentieuReferentielInterface) {
     const hr = this.humanResourceService.hr.getValue();
+    const categories = this.humanResourceService.categories.getValue();
     const hrCategories: any = {};
 
-    this.humanResourceService.categories.getValue().map((c) => {
+    categories.map((c) => {
       hrCategories[c.label] = hrCategories[c.label] || {
         totalEtp: 0,
         list: [],
         rank: c.rank,
       };
-
-      for (let i = 0; i < hr.length; i++) {
-        const etpt = this.getHRVentilation(hr[i], c.id, referentiel);
-        if (etpt) {
-          hrCategories[c.label].list.push(hr[i]);
-          hrCategories[c.label].totalEtp += etpt;
-        }
-      }
     });
+
+    for (let i = 0; i < hr.length; i++) {
+      const etptAll = this.getHRVentilation(hr[i], referentiel, categories);
+      Object.values(etptAll).map(c => {
+        if(c.etpt) {
+          hrCategories[c.label].list.push(hr[i]);
+          hrCategories[c.label].totalEtp += c.etpt;
+        }
+      })
+    }
 
     const list = [];
     for (const [key, value] of Object.entries(hrCategories)) {
@@ -412,38 +416,51 @@ export class CalculatorService extends MainClass {
 
   getHRVentilation(
     hr: HumanResourceInterface,
-    categoryId: number,
-    referentiel: ContentieuReferentielInterface
+    referentiel: ContentieuReferentielInterface,
+    categories: HRCategoryInterface[]
   ): number {
-    const list = [];
+    const list: any = {};
+    categories.map(c => {
+      list[c.id] = {
+        etpt: 0,
+        ...c,
+      };
+    });
 
     const now = new Date(this.dateStart.getValue());
+    let nbDay = 0;
     do {
       // only working day
       if (workingDay(now)) {
-        let etp = 0;
+        nbDay++;
         const situation = this.humanResourceService.findSituation(hr, now);
 
         if (
           situation &&
           situation.category &&
-          situation.category.id === categoryId
+          situation.category.id
         ) {
           const activitiesFiltred = (situation.activities || []).filter(
             (a) => a.contentieux && a.contentieux.id === referentiel.id
           );
           const indispoFiltred =
             this.humanResourceService.findAllIndisponibilities(hr, now);
-          etp =
+          let etp =
             (situation.etp * (100 - sumBy(indispoFiltred, 'percent'))) / 100;
           etp *= sumBy(activitiesFiltred, 'percent') / 100;
+
+          list[situation.category.id].etpt += etp;
         }
 
-        list.push(etp);
       }
       now.setDate(now.getDate() + 1);
     } while (now.getTime() <= this.dateStop.getValue().getTime());
 
-    return mean(list);
-  }
+    // format render
+    for(const property in list) {
+      list[property].etpt = list[property].etpt / nbDay
+    }
+
+    return list;
+  } 
 }
