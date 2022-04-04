@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
+import { HRCategoryInterface, HRCategorySelectedInterface } from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
@@ -39,6 +39,7 @@ export class HumanResourceService {
   allContentieuxReferentiel: ContentieuReferentielInterface[] = [];
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   copyOfIdsIndispo: number[] = [];
+  categoriesFilterList: HRCategorySelectedInterface[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -64,6 +65,28 @@ export class HumanResourceService {
     this.backupId.subscribe((id) => {
       if (this.autoReloadData) {
         this.getCurrentHR(id).then((result) => {
+          localStorage.setItem('backupId', '' + result.backupId);
+          this.categories.next(result.categories);
+          this.categoriesFilterList = this.categories.getValue().map((c) => ({
+            ...c,
+            selected: true,
+            label:
+              c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+            labelPlural:
+              c.label && c.label === 'Magistrat'
+                ? 'Magistrats du siège'
+                : `${c.label}s`,
+            etpt: 0,
+            nbPersonal: 0,
+          }));
+          this.fonctions.next(result.fonctions);
+          this.activitiesService.activities.next(
+            result.activities.map((a: ActivityInterface) => ({
+              ...a,
+              periode: new Date(a.periode),
+            }))
+          );
+          this.activitiesService.hrBackupId = result.backupId;
           this.hr.next(result.hr.map(this.formatHR));
           this.backups.next(
             result.backups.map((b: BackupInterface) => ({
@@ -73,16 +96,6 @@ export class HumanResourceService {
           );
           this.autoReloadData = false;
           this.backupId.next(result.backupId);
-          localStorage.setItem('backupId', '' + result.backupId);
-          this.categories.next(result.categories);
-          this.fonctions.next(result.fonctions);
-          this.activitiesService.activities.next(
-            result.activities.map((a: ActivityInterface) => ({
-              ...a,
-              periode: new Date(a.periode),
-            }))
-          );
-          this.activitiesService.hrBackupId = result.backupId;
           this.hrIsModify.next(false);
         });
       } else {

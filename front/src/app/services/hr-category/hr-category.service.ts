@@ -19,7 +19,7 @@ export class HRCategoryService {
 
     return this.serverService
       .get('hr-categories/get-all')
-      .then((r) => r.data || [])
+      .then((r) => r.data || [])
       .then(list => {
         this.categories = list;
         return list;
