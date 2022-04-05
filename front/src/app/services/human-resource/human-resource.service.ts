@@ -334,9 +334,17 @@ export class HumanResourceService {
 
   findSituation(hr: HumanResourceInterface | null, date?: Date) {
     let situations = (hr && hr.situations) || [];
+    date = today(date);
+
+    if(hr?.dateEnd) {
+      // control de date when the person goone
+      const dateEnd = today(hr.dateEnd);
+      if(dateEnd.getTime() <= date.getTime()) {
+        return null;
+      }
+    }
 
     if (date) {
-      date = today(date);
       for (let i = situations.length - 1; i >= 0; i--) {
         const dateStart = today(situations[i].dateStart);
         if (dateStart.getTime() <= date.getTime()) {

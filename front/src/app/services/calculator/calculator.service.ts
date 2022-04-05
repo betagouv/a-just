@@ -59,7 +59,7 @@ export class CalculatorService extends MainClass {
     );
 
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe(() => {
+      this.humanResourceService.hr.subscribe(() => {
         this.prepareDatas();
       })
     );
@@ -144,10 +144,6 @@ export class CalculatorService extends MainClass {
       setTimeout(() => {
         this.prepareDatas();
       }, 100);
-      return;
-    }
-
-    if (this.calculatorDatas.getValue().length !== 0) {
       return;
     }
 
