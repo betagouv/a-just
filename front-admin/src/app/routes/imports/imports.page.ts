@@ -34,7 +34,7 @@ export class ImportsPage {
 
     if (
       !confirm(
-        'Confirmer la modification du référentiel ? Cette action entrainera une modification ultérieure de toutes les ventilations.'
+        'Confirmer la modification du référentiel ?'
       )
     ) {
       return;
@@ -42,9 +42,10 @@ export class ImportsPage {
 
     this.importService
       .importReferentiel(await exportFileToString(refDom.files[0]))
-      .then(() => {
-        alert('OK !');
+      .then((url) => {
         refDom.value = '';
+        // @ts-ignore
+        window.open(url, '_blank').focus();
       });
   }
 

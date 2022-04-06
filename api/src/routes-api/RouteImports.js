@@ -1,7 +1,9 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { csvToArrayJson } from '../utils/csv'
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
+import { join } from 'path'
+import config from 'config'
 
 export default class RouteImports extends Route {
   constructor (params) {
@@ -29,14 +31,19 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       file: Types.string(),
     }),
-    //accesses: [Access.isAdmin],
+    // accesses: [Access.isAdmin],
   })
   async importReferentiel (ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
     })
-    this.sendOk(ctx, await this.model.models.ContentieuxReferentiels.importList(arrayOfHR))
+    const result = await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
+    if (!existsSync(join(__dirname, '../public/tmp'))){
+      mkdirSync(join(__dirname, '../public/tmp'))
+    }
+    writeFileSync(join(__dirname, '../public/tmp/update-referentiel.json'), JSON.stringify(result))
+    this.sendOk(ctx, `${config.serverUrl}/public/tmp/update-referentiel.json`)
   }
 
   // A supprimer après mise à jour
