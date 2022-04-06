@@ -4,7 +4,7 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { groupBy, orderBy, sortBy, sumBy } from 'lodash';
 import { MainClass } from 'src/app/libs/main-class';
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
+import { HRCategoryInterface, HRCategorySelectedInterface } from 'src/app/interfaces/hr-category';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { fixDecimal } from 'src/app/utils/numbers';
@@ -27,13 +27,6 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   category: HRCategoryInterface | null;
   fonction: HRFonctionInterface | null;
   currentSituation: HRSituationInterface | null;
-}
-
-interface HRCategorySelectedInterface extends HRCategoryInterface {
-  selected: boolean;
-  etpt: number;
-  nbPersonal: number;
-  labelPlural: string;
 }
 
 interface listFormatedInterface {
@@ -81,7 +74,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hr.subscribe((hr) => {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank']);
-        this.categoriesFilterList = sortBy(this.categoriesFilterList, ['rank']);
+        this.categoriesFilterList = this.humanResourceService.categoriesFilterList;
         this.preformatHumanResources();
       })
     );
@@ -101,19 +94,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
     );
     this.watch(
-      this.humanResourceService.categories.subscribe((ref) => {
-        this.categoriesFilterList = ref.map((c) => ({
-          ...c,
-          selected: true,
-          label:
-            c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
-          labelPlural:
-            c.label && c.label === 'Magistrat'
-              ? 'Magistrats du siège'
-              : `${c.label}s`,
-          etpt: 0,
-          nbPersonal: 0,
-        }));
+      this.humanResourceService.categories.subscribe(() => {
         this.onFilterList();
       })
     );
@@ -253,6 +234,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return;
     }
 
+    this.humanResourceService.categoriesFilterList = this.categoriesFilterList; // copy to memoryse selection
     this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
     const selectedCategoryIds = this.categoriesFilterList
@@ -369,7 +351,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             group,
             (h) => {
               const acti = (h.currentActivities || []).find(
-                (a) => a.referentielId === this.filterSelected?.id
+                (a) => a.contentieux?.id === this.filterSelected?.id
               );
               return acti ? acti.percent || 0 : 0;
             },
