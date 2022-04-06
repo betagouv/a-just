@@ -164,20 +164,45 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
-    listToRemove.map(l => {
+    for(let i = 0; i < listToRemove.length; i++) {
+      const l = listToRemove[i]
+      await Model.destroyById(l.id)
       deltaToUpdate.push({
         type: 'DELETE',
         label: l.label,
         id: l.id,
       })
+    }
+
+    const humanList = []
+    const idNacFinded = deltaToUpdate.map(d => (d.id))
+    const humanFromDB = await Model.models.HumanResources.findAll({
+      raw: true,
     })
+    for(let i = 0; i < humanFromDB.length; i++) {
+      const situations = await Model.models.HRSituations.getListByHumanId(humanFromDB[i].id)
+      const activities = situations.reduce((acc, cur) => {
+        const filterActivities = (cur.activities || []).filter(c => idNacFinded.indexOf(c.contentieux.id) !== -1)
+        return acc.concat(filterActivities)
+      }, [])
 
-
-    console.log(deltaToUpdate)
-    // TODO Lister et supprimer les anciennes ref
+      if(activities.length) {
+        const contentieuxIds = activities.map(a => (a.contentieux.id))
+        humanList.push({
+          person: humanFromDB[i],
+          activitiesImpacted: activities,
+          impact: deltaToUpdate.filter(d => contentieuxIds.indexOf(d.id) !== -1),
+        })
+      }
+    }
 
     // force to reload referentiel to cache
     await Model.getReferentiels(true)
+
+    return { 
+      persons: humanList,
+      referentiel: deltaToUpdate,
+    }
   }
 
   Model.getContentieuxId = async (label) => {

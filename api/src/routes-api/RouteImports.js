@@ -29,15 +29,14 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       file: Types.string(),
     }),
-    accesses: [Access.isAdmin],
+    //accesses: [Access.isAdmin],
   })
   async importReferentiel (ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
     })
-    await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
-    this.sendOk(ctx, 'OK')
+    this.sendOk(ctx, await this.model.models.ContentieuxReferentiels.importList(arrayOfHR))
   }
 
   // A supprimer après mise à jour

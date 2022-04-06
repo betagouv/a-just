@@ -68,12 +68,12 @@ export function getIdsIndispo (list) {
 }
 
 export function extractCodeFromLabelImported (label) {
-  const regex = new RegExp('([0-9.]*) (.*)')
+  const regex = new RegExp('([0-9.]*)(.*)')
   const regexExec = regex.exec(label)
   if(regexExec) {
     return {
       code: regexExec[1],
-      label: regexExec[2],
+      label: (regexExec[2] + '').trim(),
     }
   }
 
