@@ -17,6 +17,10 @@ export default sequelizeInstance => {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
+      code_import: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       parent_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
