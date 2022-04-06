@@ -3,3 +3,10 @@ export interface HRCategoryInterface {
 	label: string;
 	rank?: number;
 }
+
+export interface HRCategorySelectedInterface extends HRCategoryInterface {
+  selected: boolean;
+  etpt: number;
+  nbPersonal: number;
+  labelPlural: string;
+}
