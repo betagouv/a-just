@@ -28,3 +28,8 @@ export function today(date = new Date()) {
   const now = new Date(date);
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
+
+export function month(date = new Date()) {
+  const now = new Date(date);
+  return new Date(now.getFullYear(), now.getMonth());
+}
