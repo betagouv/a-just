@@ -40,7 +40,7 @@ export default class RouteImports extends Route {
     })
     const result = await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
     if (!existsSync(join(__dirname, '../public/tmp'))){
-      mkdirSync(join(__dirname, '../public/tmp'))
+      mkdirSync(join(__dirname, '../public/tmp'), { recursive: true })
     }
     writeFileSync(join(__dirname, '../public/tmp/update-referentiel.json'), JSON.stringify(result))
     this.sendOk(ctx, `${config.serverUrl}/public/tmp/update-referentiel.json`)
