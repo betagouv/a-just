@@ -41,7 +41,7 @@
     "lodash": "^4.17.20",
     "logzio-nodejs": "^2.0.2",
     "mime": "^2.5.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "momentjs": "^2.0.0",
     "node-sass": "^6.0.1",
     "nyc": "^15.1.0",
