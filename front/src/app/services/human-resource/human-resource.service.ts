@@ -333,7 +333,6 @@ export class HumanResourceService {
   }
 
   findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = (hr && hr.situations) || [];
     if(date) {
       date = today(date);
     }
@@ -346,17 +345,8 @@ export class HumanResourceService {
       }
     }
 
-    if (date) {
-      for (let i = situations.length - 1; i >= 0; i--) {
-        const dateStart = today(situations[i].dateStart);
-        if (dateStart.getTime() <= date.getTime()) {
-          return situations[i];
-        }
-      }
-      return null;
-    } else {
-      return situations.length ? situations[0] : null;
-    }
+    let situations = this.findAllSituations(hr, date);
+    return situations.length ? situations[0] : null;
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
