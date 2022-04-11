@@ -190,6 +190,7 @@ export default (sequelizeInstance, Model) => {
         const contentieuxIds = activities.map(a => (a.contentieux.id))
         humanList.push({
           person: humanFromDB[i],
+          situations,
           activitiesImpacted: activities,
           impact: deltaToUpdate.filter(d => contentieuxIds.indexOf(d.id) !== -1),
         })
