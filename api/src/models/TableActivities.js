@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
@@ -33,51 +34,66 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.importList = async (csv, HRBackupId) => {
+    const contentieuxIds = {}
+
     for (let i = 0; i < csv.length; i++) {
-      const contentieux = await Model.models.ContentieuxReferentiels.findOne({
-        attributes: ['id'],
-        where: {
-          label: csv[i].niveau_4,
-        },
-        raw: true,
-      })
-
-      if (contentieux) {
-        const periode = new Date(csv[i].periode)
-        const periodeStart = new Date(
-          periode.getFullYear(),
-          periode.getMonth()
-        )
-        const periodeEnd = new Date(periodeStart)
-        periodeEnd.setMonth(periodeEnd.getMonth() + 1)
-
-        const findExist = await Model.findOne({
-          where: {
-            hr_backup_id: HRBackupId,
-            contentieux_id: contentieux.id,
-            periode: {
-              [Op.gte]: periodeStart,
-              [Op.lte]: periodeEnd,
+      const contentieuxCSVLabel = extractCodeFromLabelImported(csv[i].niveau_4)
+      if(contentieuxCSVLabel && contentieuxCSVLabel.code) {
+        if(!contentieuxIds[contentieuxCSVLabel.code]) {
+          const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+            attributes: ['id'],
+            where: {
+              code_import: contentieuxCSVLabel.code,
             },
-          },
-        })
-        // if existe update content
-        if (findExist) {
-          await findExist.update({
-            entrees: parseInt(csv[i].value_entrees) || 0,
-            sorties: parseInt(csv[i].value_sorties) || 0,
-            stock: parseInt(csv[i].value_stock) || 0,
+            raw: true,
           })
-        } else {
+
+          if (contentieux) {
+            contentieuxIds[contentieuxCSVLabel.code] = contentieux.id
+          }
+        }
+
+        if (contentieuxIds[contentieuxCSVLabel.code]) {
+          const periode = new Date(csv[i].periode)
+          const periodeStart = new Date(
+            periode.getFullYear(),
+            periode.getMonth()
+          )
+          const periodeEnd = new Date(periodeStart)
+          periodeEnd.setMonth(periodeEnd.getMonth() + 1)
+
+          const findExist = await Model.findOne({
+            where: {
+              hr_backup_id: HRBackupId,
+              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
+              periode: {
+                [Op.gte]: periodeStart,
+                [Op.lte]: periodeEnd,
+              },
+            },
+          })
+          // if existe update content
+          if (findExist && 
+            (parseInt(csv[i].value_entrees) !== findExist.dataValues.entrees || 
+            parseInt(csv[i].value_sorties) !== findExist.dataValues.sorties || 
+            parseInt(csv[i].value_stock) !== findExist.dataValues.stock)
+          ) {
+            await findExist.update({
+              entrees: parseInt(csv[i].value_entrees) || 0,
+              sorties: parseInt(csv[i].value_sorties) || 0,
+              stock: parseInt(csv[i].value_stock) || 0,
+            })
+          } else {
           // else create
-          await Model.create({
-            hr_backup_id: HRBackupId,
-            periode,
-            contentieux_id: contentieux.id,
-            entrees: parseInt(csv[i].value_entrees) || 0,
-            sorties: parseInt(csv[i].value_sorties) || 0,
-            stock: parseInt(csv[i].value_stock) || 0,
-          })
+            await Model.create({
+              hr_backup_id: HRBackupId,
+              periode,
+              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
+              entrees: parseInt(csv[i].value_entrees) || 0,
+              sorties: parseInt(csv[i].value_sorties) || 0,
+              stock: parseInt(csv[i].value_stock) || 0,
+            })
+          }
         }
       }
     }
