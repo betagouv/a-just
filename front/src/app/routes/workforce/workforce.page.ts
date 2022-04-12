@@ -89,7 +89,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             value: this.referentielMappingName(r.label),
           }));
-        this.selectedReferentielIds = this.formReferentiel.map((r) => r.id);
+        this.selectedReferentielIds = this.humanResourceService.selectedReferentielIds;
         this.onFilterList();
       })
     );
@@ -437,6 +437,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   onSelectedReferentielIdsChanged(list: any) {
     this.selectedReferentielIds = list;
+    this.humanResourceService.selectedReferentielIds = this.selectedReferentielIds;
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1;
 

@@ -4,7 +4,10 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { HRCategoryInterface, HRCategorySelectedInterface } from 'src/app/interfaces/hr-category';
+import {
+  HRCategoryInterface,
+  HRCategorySelectedInterface,
+} from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
@@ -40,6 +43,7 @@ export class HumanResourceService {
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   copyOfIdsIndispo: number[] = [];
   categoriesFilterList: HRCategorySelectedInterface[] = [];
+  selectedReferentielIds: number[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -58,6 +62,9 @@ export class HumanResourceService {
       });
 
       this.allContentieuxReferentiel = list;
+      this.selectedReferentielIds = c
+        .filter((a) => this.copyOfIdsIndispo.indexOf(a.id) === -1)
+        .map((r) => r.id);
     });
   }
 
@@ -71,7 +78,9 @@ export class HumanResourceService {
             ...c,
             selected: true,
             label:
-              c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+              c.label && c.label === 'Magistrat'
+                ? 'Magistrat du siège'
+                : c.label,
             labelPlural:
               c.label && c.label === 'Magistrat'
                 ? 'Magistrats du siège'
@@ -333,14 +342,14 @@ export class HumanResourceService {
   }
 
   findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    if(date) {
+    if (date) {
       date = today(date);
     }
 
-    if(hr?.dateEnd && date) {
+    if (hr?.dateEnd && date) {
       // control de date when the person goone
       const dateEnd = today(hr.dateEnd);
-      if(dateEnd.getTime() <= date.getTime()) {
+      if (dateEnd.getTime() <= date.getTime()) {
         return null;
       }
     }
