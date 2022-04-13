@@ -377,7 +377,17 @@ export class HumanResourceService {
     if (date) {
       indisponibilities = indisponibilities.filter((hra) => {
         const dateStart = today(hra.dateStart);
-        return dateStart.getTime() <= date.getTime();
+
+        if(dateStart.getTime() <= date.getTime()) {
+          if(hra.dateStop) {
+            const dateStop = today(hra.dateStop);
+            if(dateStop.getTime() > date.getTime()) {
+              return true;
+            }
+          }
+        }
+
+        return false;
       });
     }
 
