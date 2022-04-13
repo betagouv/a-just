@@ -24,7 +24,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   constructor(
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
   ) {
     super();
   }

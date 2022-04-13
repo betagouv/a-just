@@ -104,7 +104,9 @@ export class HumanResourceService {
             }))
           );
           this.autoReloadData = false;
-          this.backupId.next(result.backupId);
+          if(id !== result.backupId) {
+            this.backupId.next(result.backupId);
+          }
           this.hrIsModify.next(false);
         });
       } else {
