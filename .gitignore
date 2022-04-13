@@ -3,3 +3,5 @@ build/
 .DS_Store
 api/.nyc_output
 api/coverage
+api/S06_men_20220224-002021_RGC-CA_f05.csv
+api/S06_men_20220224-002021_RGC-CA_f05.xml

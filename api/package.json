@@ -14,6 +14,7 @@
     "@hubspot/api-client": "^4.0.0",
     "@sentry/node": "^6.2.3",
     "@sentry/tracing": "^6.2.3",
+    "@wmfs/xml2csv": "^1.26.0",
     "async": "^3.2.0",
     "awesome-phonenumber": "^2.44.0",
     "aws-sdk": "^2.960.0",
@@ -60,7 +61,8 @@
     "string-strip-html": "^6.3.0",
     "stripe": "^8.132.0",
     "winston": "^3.3.3",
-    "winston-logzio": "^5.1.2"
+    "winston-logzio": "^5.1.2",
+    "xml2csv": "^1.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
