@@ -13,6 +13,7 @@ import { month, workingDay } from 'src/app/utils/dates';
 import { fixDecimal } from 'src/app/utils/numbers';
 import { environment } from 'src/environments/environment';
 import { ActivitiesService } from '../activities/activities.service';
+import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
 const now = new Date(2021, 0);
@@ -27,22 +28,19 @@ export class CalculatorService extends MainClass {
   >([]);
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(now);
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end);
-  dateStartFirstLoad: boolean = true;
-  dateStopFirstLoad: boolean = true;
   referentielIds: number[] = [];
   timeoutUpdateDatas: any = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private contentieuxOptionsService: ContentieuxOptionsService,
   ) {
     super();
 
     this.watch(
       this.dateStart.subscribe(() => {
-        if(this.dateStartFirstLoad) {
-          this.dateStartFirstLoad = false;
-        } else {
+        if(this.calculatorDatas.getValue().length) {
           this.cleanDatas();
         }
       })
@@ -50,9 +48,15 @@ export class CalculatorService extends MainClass {
 
     this.watch(
       this.dateStop.subscribe(() => {
-        if(this.dateStopFirstLoad) {
-          this.dateStopFirstLoad = false;
-        } else {
+        if(this.calculatorDatas.getValue().length) {
+          this.cleanDatas();
+        }
+      })
+    );
+
+    this.watch(
+      this.contentieuxOptionsService.backupId.subscribe(() => {
+        if(this.calculatorDatas.getValue().length) {
           this.cleanDatas();
         }
       })
@@ -141,9 +145,6 @@ export class CalculatorService extends MainClass {
 
   prepareDatas() {
     if (this.humanResourceService.categories.getValue().length === 0) {
-      setTimeout(() => {
-        this.prepareDatas();
-      }, 100);
       return;
     }
 

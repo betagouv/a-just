@@ -46,7 +46,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   preformatedAllHumanResource: HumanResourceSelectedInterface[] = [];
   humanResources: HumanResourceSelectedInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
-  referentielFiltred: ContentieuReferentielInterface[] = [];
   formReferentiel: dataInterface[] = [];
   categoriesFilterList: HRCategorySelectedInterface[] = [];
   selectedReferentielIds: any[] = [];
@@ -150,8 +149,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    const idsOfRef = this.referentielFiltred.map((r) => r.id);
-
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
       const personal = this.humanResources.filter(
         (h) => h.category && h.category.id === c.id
@@ -160,7 +157,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       personal.map((h) => {
         const activities = h.currentActivities.filter(
-          (a) => a.contentieux && idsOfRef.indexOf(a.contentieux.id) !== -1
+          (a) => a.contentieux && this.selectedReferentielIds.indexOf(a.contentieux.id) !== -1
         );
         if (activities.length) {
           etpt +=
@@ -235,7 +232,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.humanResourceService.categoriesFilterList = this.categoriesFilterList; // copy to memoryse selection
-    this.referentielFiltred = this.referentiel.filter((r) => r.selected);
 
     const selectedCategoryIds = this.categoriesFilterList
       .filter((c) => c.selected)
@@ -277,14 +273,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       valuesFinded.length === list.length ? null : valuesFinded;
     this.indexValuesFinded = 0;
 
-    if (this.referentielFiltred.length !== this.referentiel.length) {
-      const idsOfRef = this.referentielFiltred.map((r) => r.id);
+    if (this.selectedReferentielIds.length !== this.referentiel.length) {
       list = list.filter((h) => {
         const idsOfactivities = h.currentActivities.map(
           (a) => (a.contentieux && a.contentieux.id) || 0
         );
         for (let i = 0; i < idsOfactivities.length; i++) {
-          if (idsOfRef.indexOf(idsOfactivities[i]) !== -1) {
+          if (this.selectedReferentielIds.indexOf(idsOfactivities[i]) !== -1) {
             return true;
           }
         }

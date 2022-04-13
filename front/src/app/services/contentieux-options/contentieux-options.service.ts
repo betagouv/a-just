@@ -31,7 +31,9 @@ export class ContentieuxOptionsService {
           this.contentieuxOptions.next(result.list);
           this.backups.next(result.backups);
           this.autoReloadData = false;
-          this.backupId.next(result.backupId);
+          if(id !== result.backupId) {
+            this.backupId.next(result.backupId);
+          }
           this.optionsIsModify.next(false);
         });
       } else {

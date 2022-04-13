@@ -15,6 +15,7 @@ export default (sequelizeInstance, Model) => {
         where: {
           parent_id: parentId,
         },
+        order: [['code_import', 'asc']],
         raw: true,
       })
 
