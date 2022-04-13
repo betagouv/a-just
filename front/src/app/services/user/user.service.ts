@@ -29,6 +29,10 @@ export class UserService {
     return this.serverService.post('users/create-account', params).then((data) => data.data || null);
   }
 
+  forgotPassword(params = {}): Promise<any> {
+    return this.serverService.post('users/forgot-password', params).then((data) => data.data || null);
+  }
+
   logout () {
     return this.serverService.get('auths/logout').then(() => {
       this.user.next(null);
