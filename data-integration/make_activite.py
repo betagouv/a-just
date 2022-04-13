@@ -13,23 +13,23 @@ ALL_SHEETS = [f"{CONTENTIEUX} ({i})" for i in ["Stock", "AN", "AT"]]
 REGEX_NAC = re.compile(r"(\d\d[A-Z])")
 
 MAPPING_SHEET_NIVEAU_3 = {
-    "JAF": "Contentieux JAF",
-    "CNS": "Civil Non Spécialisé",
-    "JLD": "JLD civil",
-    "SOC": "Contentieux Social",
+    "JAF": "2. Contentieux JAF",
+    "CNS": "4. Civil Non Spécialisé",
+    "JLD": "5. JLD civil",
+    "SOC": "1. Contentieux Social",
 }
 
 CONTEXTUAL_MAPPING_00A = {
-    "JAF": {"00A": {"Niveau 4": "Autres JAF"}},
-    "CNS": {"00A": {"Niveau 4": "Contentieux général"}},
-    "SOC": {"00A": {"Niveau 4": "Contentieux de la protection sociale"}},
+    "JAF": {"00A": {"Niveau 4": "2.9. Autres JAF"}},
+    "CNS": {"00A": {"Niveau 4": "4.17. Autres civil NS"}},
+    "SOC": {"00A": {"Niveau 4": "1.4. Autres contentieux sociaux"}},
 }
 
 CONTEXTUAL_MAPPING_AUTRE = {
-    "CNS": "Autres civil NS",
-    "JAF": "Autres JAF",
-    "SOC": "Contentieux de la protection sociale",
-    "JLD": "Autres JLD",
+    "CNS": "4.17. Autres civil NS",
+    "JAF": "2.9. Autres JAF",
+    "SOC": "1.4. Autres contentieux sociaux",
+    "JLD": "5.3. Autres JLD civil",
 }
 
 

@@ -4,8 +4,10 @@ Ce dossier contient les scripts python servant aux opérations liées à la mani
 
 - `clean_nomenclature.py` permet de transformer le fichier `config/nomenclature.csv` en un fichier `config/nomenclature_clean.csv` directement utilisable par le script d'import des données
 - `make_activite.py` permet de générer de la donnée aggrégée via la nomenclature A-JUST. Il prend deux arguments : `python make_activite.py {juridiction} {contentieux} {date du fichier}`
+- `aggregate_activite.py` permet de fusionner les données générées par make_activite : `python aggregate_activite.py {juridiction}`
 
 Il faut d'abord placer les fichiers Excel envoyés par la SDSE (`C2135_{JURIDICTION}_{date du fichier}.xlsx`) dans le dossier `SDSE`. Les fichiers csv de sortie sont dans `output`.
+
 
 ## Installation 
 
