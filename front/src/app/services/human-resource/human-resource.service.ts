@@ -375,13 +375,14 @@ export class HumanResourceService {
     let indisponibilities = (hr && hr.indisponibilities) || [];
 
     if (date) {
+      date = today(date);
       indisponibilities = indisponibilities.filter((hra) => {
         const dateStart = today(hra.dateStart);
 
-        if(dateStart.getTime() <= date.getTime()) {
+        if(date && dateStart.getTime() <= date.getTime()) {
           if(hra.dateStop) {
             const dateStop = today(hra.dateStop);
-            if(dateStop.getTime() > date.getTime()) {
+            if(dateStop.getTime() >= date.getTime()) {
               return true;
             }
           }
