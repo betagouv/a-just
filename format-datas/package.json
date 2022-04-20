@@ -2,7 +2,8 @@
   "name": "a-just-format-datas",
   "version": "0.0.1",
   "scripts": {
-    "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js"
+    "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
+    "start:production": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js TODO sans nodemon"
   },
   "dependencies": {
     "@wmfs/xml2csv": "^1.26.0",

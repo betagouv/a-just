@@ -1,6 +1,5 @@
 import { join } from 'path'
 import config from 'config'
-import db from './models'
 import path from 'path'
 import xml2csv from '@wmfs/xml2csv'
 
