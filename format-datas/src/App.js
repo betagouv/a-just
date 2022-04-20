@@ -1,6 +1,28 @@
-const xml2csv = require('@wmfs/xml2csv')
+import { join } from 'path'
+import config from 'config'
+import db from './models'
+import path from 'path'
+import xml2csv from '@wmfs/xml2csv'
 
-xml2csv(
+
+export default class App {
+  constructor () {}
+
+  start () {
+    console.log('--- START ---')
+    this.done()
+  }
+
+  done () {
+    console.log('--- DONE ---')
+    process.exit()
+  }
+}
+
+
+
+
+/* xml2csv(
   {
     xmlPath: 'S06_men_20220224-002021_RGC-CA_f05.xml',
     csvPath: 'S06_men_20220224-002021_RGC-CA_f05.csv',
@@ -36,6 +58,4 @@ xml2csv(
     console.log(err)
     console.log(result)
   }
-)
-
-console.log('done')
+)*/
