@@ -16,9 +16,10 @@ import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
-const now = new Date();
-now.setMonth(now.getMonth() - 3);
-const end = new Date();
+const start = month();
+start.setMonth(start.getMonth() - 4);
+const end = month();
+end.setMonth(start.getMonth() - 1);
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class CalculatorService extends MainClass {
   calculatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
     CalculatorInterface[]
   >([]);
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(now);
+  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start);
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end);
   referentielIds: number[] = [];
   timeoutUpdateDatas: any = null;
