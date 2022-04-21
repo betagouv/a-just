@@ -4,7 +4,10 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivityInterface } from 'src/app/interfaces/activity';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { HRCategoryInterface, HRCategorySelectedInterface } from 'src/app/interfaces/hr-category';
+import {
+  HRCategoryInterface,
+  HRCategorySelectedInterface,
+} from 'src/app/interfaces/hr-category';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
@@ -40,6 +43,7 @@ export class HumanResourceService {
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   copyOfIdsIndispo: number[] = [];
   categoriesFilterList: HRCategorySelectedInterface[] = [];
+  selectedReferentielIds: number[] = [];
 
   constructor(
     private serverService: ServerService,
@@ -58,6 +62,9 @@ export class HumanResourceService {
       });
 
       this.allContentieuxReferentiel = list;
+      this.selectedReferentielIds = c
+        .filter((a) => this.copyOfIdsIndispo.indexOf(a.id) === -1)
+        .map((r) => r.id);
     });
   }
 
@@ -71,7 +78,9 @@ export class HumanResourceService {
             ...c,
             selected: true,
             label:
-              c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+              c.label && c.label === 'Magistrat'
+                ? 'Magistrat du siège'
+                : c.label,
             labelPlural:
               c.label && c.label === 'Magistrat'
                 ? 'Magistrats du siège'
@@ -333,30 +342,20 @@ export class HumanResourceService {
   }
 
   findSituation(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = (hr && hr.situations) || [];
-    if(date) {
+    if (date) {
       date = today(date);
     }
 
-    if(hr?.dateEnd && date) {
+    if (hr?.dateEnd && date) {
       // control de date when the person goone
       const dateEnd = today(hr.dateEnd);
-      if(dateEnd.getTime() <= date.getTime()) {
+      if (dateEnd.getTime() <= date.getTime()) {
         return null;
       }
     }
 
-    if (date) {
-      for (let i = situations.length - 1; i >= 0; i--) {
-        const dateStart = today(situations[i].dateStart);
-        if (dateStart.getTime() <= date.getTime()) {
-          return situations[i];
-        }
-      }
-      return null;
-    } else {
-      return situations.length ? situations[0] : null;
-    }
+    let situations = this.findAllSituations(hr, date);
+    return situations.length ? situations[0] : null;
   }
 
   findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
@@ -376,9 +375,20 @@ export class HumanResourceService {
     let indisponibilities = (hr && hr.indisponibilities) || [];
 
     if (date) {
+      date = today(date);
       indisponibilities = indisponibilities.filter((hra) => {
         const dateStart = today(hra.dateStart);
-        return dateStart.getTime() <= date.getTime();
+
+        if(date && dateStart.getTime() <= date.getTime()) {
+          if(hra.dateStop) {
+            const dateStop = today(hra.dateStop);
+            if(dateStop.getTime() >= date.getTime()) {
+              return true;
+            }
+          }
+        }
+
+        return false;
       });
     }
 

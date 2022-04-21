@@ -11,7 +11,7 @@
       <p *ngIf="!onEdit">Renseigner une nouvelle situation</p>
       <div class="flex-1"></div>
       <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
-        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false" [readOnly]="onEdit">
+        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
       </aj-date-select>
       <div class="flex-1"></div>
       <div class="flex-1"></div>
