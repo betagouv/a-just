@@ -61,7 +61,21 @@ const routes: Routes = [
       import('./signup/signup.module').then(
         (mod) => mod.SignupModule
       ),
-  }
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    loadChildren: () =>
+      import('./forgot-password/forgot-password.module').then(
+        (mod) => mod.ForgotPasswordModule
+      ),
+  },
+  {
+    path: 'nouveau-mot-de-passe',
+    loadChildren: () =>
+      import('./change-password/change-password.module').then(
+        (mod) => mod.ChangePasswordModule
+      ),
+  },
 ];
 
 @NgModule({
