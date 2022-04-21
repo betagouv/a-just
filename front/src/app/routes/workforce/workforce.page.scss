@@ -17,17 +17,28 @@
     padding-left: 24px;
     width: 416px;
 
-    mat-icon {
-      margin-right: 8px;
-    }
-
-    > .label {
+    > .label-container {
+      display: flex;
+      align-items: center;
       flex: 1;
+      align-self: stretch;
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+
+      > .label {
+        flex: 1;
+      }
+
+    
     }
 
     > .contentieux-label {
       align-self: stretch;
       display: flex;
+      background-color: fColor(bgSelect);
+      width: 125px!important;
 
       > .text {
         flex: 1;
@@ -49,10 +60,8 @@
 
         > .label {
           flex: 1;
-          //height: 40px;
           display: flex;
           align-items: flex-end;
-
         }
         > .etp {
           display: flex;
@@ -267,6 +276,7 @@
 
     .read-etp {
       padding: 0 14px;
+      width: 125px!important;
       background-color: fColor(bgSelect);
       display: flex;
       flex-direction: column;
