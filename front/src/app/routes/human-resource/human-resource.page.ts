@@ -147,6 +147,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     let currentDateEnd = null;
     if (this.currentHR && this.currentHR.dateEnd) {
       currentDateEnd = new Date(this.currentHR.dateEnd);
+      currentDateEnd.setDate(currentDateEnd.getDate() + 1);
     }
     if (currentDateEnd && currentDateEnd.getTime() > maxDate.getTime()) {
       maxDate = new Date(currentDateEnd);

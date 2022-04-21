@@ -349,7 +349,7 @@ export class HumanResourceService {
     if (hr?.dateEnd && date) {
       // control de date when the person goone
       const dateEnd = today(hr.dateEnd);
-      if (dateEnd.getTime() <= date.getTime()) {
+      if (dateEnd.getTime() < date.getTime()) {
         return null;
       }
     }

@@ -1,8 +1,11 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import {
-  accessList,
-} from '../constants/access'
+import { accessList } from '../constants/access'
+import { validateEmail } from '../utils/utils'
+import { crypt } from '../utils'
+import { sentEmail } from '../utils/email'
+import { TEMPLATE_FORGOT_PASSWORD_ID } from '../constants/email'
+import config from 'config'
 
 export default class RouteUsers extends Route {
   constructor (params) {
@@ -64,5 +67,72 @@ export default class RouteUsers extends Route {
     } catch (err) {
       ctx.throw(401, err)
     }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string().required(),
+    }),
+  })
+  async forgotPassword (ctx) {
+    let { email } = this.body(ctx)
+    email = (email || '').trim().toLowerCase()
+
+    if (validateEmail(email)) {
+      // send message by email
+      const user = await this.model.findOne({ where: { email } })
+      if (user) {
+        const key = crypt.generateRandomNumber(6)
+        await user.update({ new_password_token: key })
+
+        await sentEmail(
+          {
+            email,
+          },
+          TEMPLATE_FORGOT_PASSWORD_ID,
+          {
+            code: key,
+            serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
+          }
+        )
+        this.sendOk(
+          ctx,
+          'Un email de changement de mot de passe est bien parti. Le mail peut mettre quelques minutes à arriver.'
+        )
+        return
+      }
+    }
+
+    ctx.throw(401, ctx.state.__('Information de contact non valide!'))
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string().required(),
+      code: Types.string().required(),
+      password: Types.string().required(),
+    }),
+  })
+  async changePassword (ctx) {
+    let { email, code, password } = this.body(ctx)
+    email = (email || '').trim().toLowerCase()
+
+    const user = await this.model.findOne({
+      where: { email, new_password_token: code },
+    })
+    if (user) {
+      if (await user.update({ new_password_token: null, password })) {
+        this.sendOk(ctx, {
+          status: true,
+          msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
+        })
+      }
+      return
+    }
+
+    ctx.throw(401, {
+      status: false,
+      msg: ctx.state.__('Information de contact non valide!'),
+    })
   }
 }
