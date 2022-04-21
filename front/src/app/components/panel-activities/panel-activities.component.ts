@@ -32,7 +32,6 @@ export class PanelActivitiesComponent
   referentiel: ContentieuReferentielInterface[] = [];
   percentAffected: number = 0;
   refIndexSelected: number = -1;
-  emptyArray: number[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -99,14 +98,6 @@ export class PanelActivitiesComponent
   onTogglePanel(index: number) {
     if (index !== this.refIndexSelected) {
       this.refIndexSelected = index;
-      this.emptyArray = [];
-      for (
-        let i = (this.referentiel[index].childrens || []).length;
-        i < this.referentiel.length - 2;
-        i++
-      ) {
-        this.emptyArray.push(i);
-      }
     } else {
       this.refIndexSelected = -1;
     }

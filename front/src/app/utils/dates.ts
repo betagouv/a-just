@@ -24,7 +24,7 @@ export function getShortMonthString(date: Date | string) {
   return ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][date.getMonth()]
 }
 
-export function today(date = new Date()) {
+export function today(date = new Date()): Date {
   const now = new Date(date);
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
