@@ -16,8 +16,9 @@ import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
-const now = new Date(2021, 0);
-const end = new Date(2021, 11, 31);
+const now = new Date();
+now.setMonth(now.getMonth() - 3);
+const end = new Date();
 
 @Injectable({
   providedIn: 'root',
