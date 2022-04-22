@@ -16,10 +16,8 @@ import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
-const start = month();
-start.setMonth(start.getMonth() - 4);
-const end = month();
-end.setMonth(start.getMonth() - 1);
+const start = month(new Date(),-3);
+const end = month(new Date(),-1,"lastday");
 
 @Injectable({
   providedIn: 'root',
