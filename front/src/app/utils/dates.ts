@@ -29,7 +29,8 @@ export function today(date = new Date()): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-export function month(date = new Date()) {
+export function month(date = new Date(), monthToAdd?: number, lastDay?: string) {
   const now = new Date(date);
-  return new Date(now.getFullYear(), now.getMonth());
+  monthToAdd ? now.setMonth(now.getMonth() + monthToAdd) : null;
+  return lastDay ? new Date(now.getFullYear(), now.getMonth()+1, 0) : new Date(now.getFullYear(), now.getMonth());
 }
