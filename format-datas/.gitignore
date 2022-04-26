@@ -10,4 +10,5 @@ config/local*
 src/models/TableOrders.js
 uploads/
 output.pdf
-src/public/tmp
+tmp
+inputs/*
