@@ -1,13 +1,31 @@
 <p (click)="matSelect.open()" class="title">{{ title }}</p>
 <div (click)="matSelect.open()">
-    <p>{{ realValue }}</p>
-    <mat-icon>{{ icon }}</mat-icon>
+  <p>{{ realValue }}</p>
+  <mat-icon>{{ icon }}</mat-icon>
 </div>
-<mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
-    (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
-    <app-select-check-all *ngIf="multiple" [model]="selectionModel" [values]="datas">
-    </app-select-check-all>
+<mat-select
+  [multiple]="multiple"
+  #matSelect
+  class="hide-visualisation"
+  [ngModel]="value"
+  (ngModelChange)="onSelectedChanged($event)"
+  #selectionModel="ngModel"
+>
+  <app-select-check-all
+    *ngIf="multiple"
+    [model]="selectionModel"
+    [values]="this.subReferentiel ? this.subReferentielData : this.datas"
+    check="true"
+  >
+  </app-select-check-all>
+  <div *ngIf="!subReferentiel; else subReferentielTemplate">
     <mat-option *ngFor="let ref of datas" [value]="ref.id">
-        {{ ref.value }}
+      {{ ref.value }}
     </mat-option>
+  </div>
+  <ng-template #subReferentielTemplate>
+    <mat-option *ngFor="let ref of subReferentielData" [value]="ref.id">
+      {{ ref.value }}
+    </mat-option>
+  </ng-template>
 </mat-select>

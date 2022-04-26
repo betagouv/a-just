@@ -40,7 +40,7 @@
     <ng-template [ngIf]="titleTemplate">
       <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
     </ng-template>
-    <div class="space"></div>
+    <div *ngIf="!alignLeft" class="space"></div>
     <div class="actions">
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>

@@ -10,6 +10,13 @@ import { MainClass } from 'src/app/libs/main-class';
 export interface dataInterface {
   id: number;
   value: string;
+  childrens?: childrenInterface[];
+}
+
+export interface childrenInterface {
+  id: number;
+  value: string;
+  parentId?: number;
 }
 
 @Component({
@@ -23,7 +30,9 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() value: number | string | null | number[] | string[] = null;
   @Input() datas: dataInterface[] = [];
   @Input() multiple: boolean = true;
+  @Input() subReferentiel: undefined | number[] = undefined;
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter();
+  subReferentielData: dataInterface[] = [];
   realValue: string = '';
 
   constructor() {
@@ -36,21 +45,29 @@ export class SelectComponent extends MainClass implements OnChanges {
 
   findRealValue() {
     let valueFormated: number[] | string[] = [];
-    if (Array.isArray(valueFormated)) {
-      // @ts-ignore
-      valueFormated = this.value;
-    } else {
-      valueFormated = [valueFormated];
-    }
+    // @ts-ignore
+    valueFormated = this.subReferentiel
+      ? this.subReferentiel
+      : Array.isArray(valueFormated)
+      ? this.value
+      : [valueFormated];
 
+    this.subReferentielData = [];
     this.realValue = valueFormated
       .map((val) => {
         const find = this.datas.find((d) => d.id === val);
-        if (find) {
-          return find.value;
-        }
-
-        return this.value;
+        if (find && !this.subReferentiel) return find.value;
+        else if (find && this.subReferentiel)
+          return [find.childrens].map((s) =>
+            s
+              ?.map((t) => {
+                this.subReferentielData.push(t);
+                this.subReferentiel?.push(t.id);
+                return t.value;
+              })
+              .join(', ')
+          );
+        else return this.value;
       })
       .join(', ');
   }
