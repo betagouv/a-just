@@ -1,0 +1,25 @@
+<aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
+</aj-wrapper>
+
+<ng-template #actions>
+  <aj-select
+    title="Contentieux"
+    class="contentieux"
+    [value]="referentielIds"
+    [datas]="formReferentiel"
+    (valueChange)="updateReferentielSelected('referentiel', $event)"
+  >
+  </aj-select>
+  <aj-select
+    title="Sous Contentieux"
+    [value]="subReferentielIds"
+    [datas]="formReferentiel"
+    [subReferentiel]="referentielIds"
+    (valueChange)="updateReferentielSelected('subReferentiel', $event)"
+  >
+  </aj-select>
+  <div class="export-button">
+    <div class="shape">D</div>
+    <p class="title">Exporter en PDF</p>
+  </div>
+</ng-template>

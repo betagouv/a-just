@@ -76,6 +76,13 @@ const routes: Routes = [
         (mod) => mod.ChangePasswordModule
       ),
   },
+  {
+    path: 'simulateur',
+    loadChildren: () =>
+      import('./simulator/simulator.module').then(
+        (mod) => mod.SimulatorModule
+      ),
+  },
 ];
 
 @NgModule({
