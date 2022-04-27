@@ -97,7 +97,7 @@ export default class RouteUsers extends Route {
         )
         this.sendOk(
           ctx,
-          'Un email de changement de mot de passe est bien parti. Le mail peut mettre quelques minutes à arriver.'
+          'Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d\'ici quelques minutes, un e-mail de réinitialisation à l\'adresse correspondant à votre compte d\'inscription.'
         )
         return
       }
