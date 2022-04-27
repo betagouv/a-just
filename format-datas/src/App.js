@@ -39,7 +39,7 @@ export default class App {
       let isEnd = false
  
       // get header
-      while ((line = liner.next()) !== null && !isEnd) {
+      while ((line = liner.next()) !== false && !isEnd) {
         const lineFormated = line.toString('ascii').trim()
 
         if(nbLine === 2) {
@@ -62,7 +62,7 @@ export default class App {
       let dataLines
       let totalLine = 0
       nbLine = 0
-      while ((line = liner.next()) !== null) {
+      while ((line = liner.next()) !== false) {
         const lineFormated = line.toString('ascii').trim()
         const tag = this.getTagName(lineFormated)
 
