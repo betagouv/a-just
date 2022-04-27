@@ -28,7 +28,9 @@ const routes: Routes = [
   {
     path: 'donnees-d-activite',
     loadChildren: () =>
-      import('./activities/activities.module').then((mod) => mod.ActivitiesModule),
+      import('./activities/activities.module').then(
+        (mod) => mod.ActivitiesModule
+      ),
     canActivate: [AuthGuard],
   },
   {
@@ -58,9 +60,7 @@ const routes: Routes = [
   {
     path: 'signup',
     loadChildren: () =>
-      import('./signup/signup.module').then(
-        (mod) => mod.SignupModule
-      ),
+      import('./signup/signup.module').then((mod) => mod.SignupModule),
   },
   {
     path: 'mot-de-passe-oublie',
@@ -79,9 +79,8 @@ const routes: Routes = [
   {
     path: 'simulateur',
     loadChildren: () =>
-      import('./simulator/simulator.module').then(
-        (mod) => mod.SimulatorModule
-      ),
+      import('./simulator/simulator.module').then((mod) => mod.SimulatorModule),
+    canActivate: [AuthGuard],
   },
 ];
 
