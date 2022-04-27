@@ -1,13 +1,33 @@
 import path from 'path'
 import lineByLine from 'n-readlines'
-import { appendFileSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'fs'
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'fs'
+import {
+  HEADER_COLUMN_NAMES,
+  TAG_JURIDICTION_ID_COLUMN_NAME,
+  TAG_JURIDICTION_VALUE_COLUMN_NAME,
+} from './constants/SDSE-ref'
 
 export default class App {
   constructor () {}
 
   async start () {
     console.log('--- START ---')
-    await this.convertFilesToCsv()
+
+    const tmpFolder = path.join(__dirname, '../tmp')
+    //const inputFolder = path.join(__dirname, '../inputs')
+    /*rmSync(tmpFolder, { recursive: true, force: true })
+    mkdirSync(tmpFolder, { recursive: true })
+
+    const juridictionMap = {} // this.getJuridictionsValues(inputFolder)
+    await this.getActivitiesValues(tmpFolder, inputFolder, juridictionMap) */
+    await this.formatAndGroupJuridiction(tmpFolder)
 
     this.done()
   }
@@ -17,19 +37,50 @@ export default class App {
     process.exit()
   }
 
-  async convertFilesToCsv () {
-    const tmpFolder = path.join(__dirname, '../tmp')
-    const inputFolder = path.join(__dirname, '../inputs')
-    rmSync(tmpFolder, { recursive: true, force: true })
-    mkdirSync(tmpFolder, { recursive: true })
+  async getJuridictionsValues (inputFolder) {
+    const files = readdirSync(inputFolder).filter(
+      (f) => f.endsWith('.xml') && f.indexOf('COMPTEURS') !== -1
+    )
+    const list = {}
 
-    const files = readdirSync(inputFolder)
-      .filter((f) => f.endsWith('.xml'))
-
-    for(let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i++) {
       const file = files[i]
       console.log(file)
-      const csvPath = `${tmpFolder}/${file.replace('.xml', '.csv')}`
+
+      let liner = new lineByLine(`${inputFolder}/${file}`)
+      let line
+      let lastId = null
+
+      // get header
+      while ((line = liner.next()) !== false) {
+        const lineFormated = line.toString('ascii').trim()
+        const tagName = this.getTagName(lineFormated)
+        const value = this.getTagValue(lineFormated)
+
+        if (!lastId && tagName === TAG_JURIDICTION_ID_COLUMN_NAME) {
+          lastId = value
+        } else if (lastId && tagName === TAG_JURIDICTION_VALUE_COLUMN_NAME) {
+          list[lastId] = value
+          lastId = null
+        }
+      }
+    }
+
+    return list
+  }
+
+  getCsvOutputPath (tmpFolder, juridiction) {
+    return `${tmpFolder}/export-activities-${juridiction}.csv`
+  }
+
+  async getActivitiesValues (tmpFolder, inputFolder, juridictionMap) {
+    const files = readdirSync(inputFolder).filter(
+      (f) => f.endsWith('.xml') && f.indexOf('COMPTEURS') === -1
+    )
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -37,26 +88,35 @@ export default class App {
       let secondTag = ''
       let headerMap = []
       let isEnd = false
- 
+
       // get header
       while ((line = liner.next()) !== false && !isEnd) {
         const lineFormated = line.toString('ascii').trim()
 
-        if(nbLine === 2) {
+        if (nbLine === 2) {
           secondTag = this.getTagName(lineFormated)
-        } else if(`</${secondTag}>` === lineFormated) {
+        } else if (`</${secondTag}>` === lineFormated) {
           isEnd = true
-        } else if(nbLine > 2) {
+        } else if (nbLine > 2) {
           const newTag = this.getTagName(lineFormated)
-          headerMap.push(newTag)
+          if (HEADER_COLUMN_NAMES.indexOf(newTag) !== -1) {
+            headerMap.push(newTag)
+          }
         }
 
-        nbLine ++
+        nbLine++
       }
 
-      // create file
-      writeFileSync(csvPath, `${headerMap.join(',')}\n`)
-      
+      console.log(headerMap)
+      const regex = new RegExp('_RGC-(.*?)_', 'g')
+      let testRegex
+      let getTypeOfJuridiction
+      if ((testRegex = regex.exec(file)) !== null) {
+        getTypeOfJuridiction = testRegex[1]
+      } else {
+        break
+      }
+
       // complete file
       liner = new lineByLine(`${inputFolder}/${file}`)
       let dataLines
@@ -66,21 +126,39 @@ export default class App {
         const lineFormated = line.toString('ascii').trim()
         const tag = this.getTagName(lineFormated)
 
-        if(tag === secondTag) {
+        if (tag === secondTag) {
           secondTag = this.getTagName(lineFormated)
-          dataLines = headerMap.map(() => ('')) // create empty map
-        } else if(`</${secondTag}>` === lineFormated) {
-          // console.log('add new line', dataLines)
-          appendFileSync(csvPath, `${dataLines.join(',')}\n`)
-          totalLine++
-        } else if(nbLine > 2) {
+          dataLines = headerMap.map(() => '') // create empty map
+        } else if (`</${secondTag}>` === lineFormated) {
+          const regexValue = new RegExp(`^${getTypeOfJuridiction}(T|N|S)`)
+          if(regexValue.test(dataLines[1])) {
+            console.log('add new line', dataLines)
+
+            // add juridiction name
+            if(juridictionMap[dataLines[0]]) {
+              dataLines[0] = juridictionMap[dataLines[0]]
+            }
+
+            // create file if not exist
+            if(!existsSync(this.getCsvOutputPath(tmpFolder, dataLines[0]))) {
+              // create file
+              writeFileSync(this.getCsvOutputPath(tmpFolder, dataLines[0]), `${headerMap.join(',')}\n`)
+            }
+
+            appendFileSync(
+              this.getCsvOutputPath(tmpFolder, dataLines[0]),
+              `${dataLines.join(',')}\n`
+            )
+            totalLine++
+          }
+        } else if (nbLine > 2) {
           const index = headerMap.indexOf(tag)
-          if(index !== -1) {
+          if (index !== -1) {
             dataLines[index] = this.getTagValue(lineFormated)
           }
         }
 
-        nbLine ++
+        nbLine++
       }
 
       console.log(`add ${totalLine} lines`)
@@ -94,9 +172,20 @@ export default class App {
 
   getTagValue (stringNotFormated) {
     let tab = stringNotFormated.trim().split('>')
-    if(tab.length > 1) {
+    if (tab.length > 1) {
       return tab[1].trim().split('<')[0]
     }
     return ' '
+  }
+
+  formatAndGroupJuridiction (tmpFolder) {
+    const files = readdirSync(tmpFolder).filter(
+      (f) => f.endsWith('.csv')
+    )
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      console.log(file)
+    }
   }
 }
