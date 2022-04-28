@@ -57,17 +57,30 @@ export class SelectComponent extends MainClass implements OnChanges {
       .map((val) => {
         const find = this.datas.find((d) => d.id === val);
         if (find && !this.subReferentiel) return find.value;
-        else if (find && this.subReferentiel)
+        else if (
+          find &&
+          this.subReferentiel &&
+          this.value &&
+          Object.keys(this.value).length !== find.childrens?.length
+        ) {
           return [find.childrens].map((s) =>
             s
               ?.map((t) => {
                 this.subReferentielData.push(t);
-                this.subReferentiel?.push(t.id);
                 return t.value;
               })
               .join(', ')
           );
-        else return this.value;
+        } else if (
+          find &&
+          this.value &&
+          Object.keys(this.value).length === find.childrens?.length
+        ) {
+          [find.childrens].map((s) =>
+            s?.map((t) => this.subReferentielData.push(t))
+          );
+          return 'Tous';
+        } else return this.value;
       })
       .join(', ');
   }
