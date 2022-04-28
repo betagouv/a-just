@@ -18,6 +18,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   formReferentiel: dataInterface[] = [];
   datas: CalculatorInterface[] = [];
   referentiel: ContentieuReferentielInterface[] = [];
+  dateStart: Date = new Date();
+  dateStop: Date | null = null;
+  tomorrow: Date | null = null;
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -28,6 +31,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    this.tomorrow = new Date(this.dateStart);
+    this.tomorrow.setDate(this.tomorrow.getDate() + 1);
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
@@ -75,6 +80,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.calculatorService.referentielIds = this.referentielIds;
     } else if (type === 'subReferentiel') {
       this.subReferentielIds = event;
+    } else if (type === 'dateStart') {
+      //this.dateStart = new Date(event);
+      this.calculatorService.dateStart.next(this.dateStart);
+    } else if (type === 'dateStop') {
+      //this.dateStop = new Date(event);
+      //this.calculatorService.dateStop.next(this.dateStop);
     }
   }
 }

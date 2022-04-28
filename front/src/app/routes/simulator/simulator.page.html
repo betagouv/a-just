@@ -1,6 +1,27 @@
 <aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
+  <div class="top-bar-container">
+    <p>Période choisie :</p>
+    <div class="container-timeline">
+      <div class="container-timeline-button">
+        <aj-date-select-blue
+          class="select-disabled"
+          [value]="dateStart"
+          (valueChange)="updateReferentielSelected('dateStart', $event)"
+        >
+        </aj-date-select-blue>
+        <div class="space"></div>
+        <aj-date-select-blue
+          [title]="'Fin de période'"
+          [value]="dateStop"
+          (valueChange)="updateReferentielSelected('dateStart', $event)"
+          [min]="tomorrow"
+        >
+        </aj-date-select-blue>
+      </div>
+      <div class="Rectangle"></div>
+    </div>
+  </div>
 </aj-wrapper>
-
 <ng-template #actions>
   <aj-select
     title="Contentieux"

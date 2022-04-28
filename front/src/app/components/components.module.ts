@@ -17,6 +17,7 @@ import { InputButtonComponent } from './input-button/input-button.component';
 import { EtpPreviewComponent } from './etp-preview/etp-preview.component';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 import { PanelActivitiesComponent } from './panel-activities/panel-activities.component';
+import { DateSelectBlueComponent } from './date-select-blue/date-select-blue.component';
 
 const list = [
   WrapperComponent,
@@ -33,11 +34,18 @@ const list = [
   EtpPreviewComponent,
   ProgressionBarComponent,
   PanelActivitiesComponent,
+  DateSelectBlueComponent,
 ];
 
 @NgModule({
   declarations: [...list],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+  ],
   exports: list,
 })
 export class ComponentsModule {}
