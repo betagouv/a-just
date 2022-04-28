@@ -2,7 +2,7 @@
   "name": "a-just-format-datas",
   "version": "0.0.1",
   "scripts": {
-    "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
+    "start": "TZ='Europe/Paris' nodemon --watch src --exec babel-node src/index.js",
     "start:production": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js TODO sans nodemon"
   },
   "dependencies": {
@@ -11,7 +11,7 @@
     "aws-sdk": "^2.960.0",
     "base64-stream": "^1.0.0",
     "config": "^3.3.2",
-    "csv-parse": "^4.14.0",
+    "csv-parse": "^4.16.3",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^8.2.0",

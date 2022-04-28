@@ -5,14 +5,16 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from 'fs'
+import { csvToArrayJson } from '../utils/csv'
 import {
-  HEADER_COLUMN_NAMES,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
+import { orderBy } from 'lodash'
 
 export default class App {
   constructor () {}
@@ -21,13 +23,17 @@ export default class App {
     console.log('--- START ---')
 
     const tmpFolder = path.join(__dirname, '../tmp')
-    //const inputFolder = path.join(__dirname, '../inputs')
-    /*rmSync(tmpFolder, { recursive: true, force: true })
+    const inputFolder = path.join(__dirname, '../inputs')
+    const outputFolder = path.join(__dirname, '../outputs')
+    rmSync(outputFolder, { recursive: true, force: true })
+    mkdirSync(outputFolder, { recursive: true })
+
+    rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
 
     const juridictionMap = {} // this.getJuridictionsValues(inputFolder)
-    await this.getActivitiesValues(tmpFolder, inputFolder, juridictionMap) */
-    await this.formatAndGroupJuridiction(tmpFolder)
+    await this.getActivitiesValues(tmpFolder, inputFolder, juridictionMap)
+    await this.formatAndGroupJuridiction(tmpFolder, outputFolder)
 
     this.done()
   }
@@ -99,15 +105,14 @@ export default class App {
           isEnd = true
         } else if (nbLine > 2) {
           const newTag = this.getTagName(lineFormated)
-          if (HEADER_COLUMN_NAMES.indexOf(newTag) !== -1) {
-            headerMap.push(newTag)
-          }
+          headerMap.push(newTag)
         }
 
         nbLine++
       }
+      
+      headerMap.push('type_juridiction')
 
-      console.log(headerMap)
       const regex = new RegExp('_RGC-(.*?)_', 'g')
       let testRegex
       let getTypeOfJuridiction
@@ -132,8 +137,6 @@ export default class App {
         } else if (`</${secondTag}>` === lineFormated) {
           const regexValue = new RegExp(`^${getTypeOfJuridiction}(T|N|S)`)
           if(regexValue.test(dataLines[1])) {
-            console.log('add new line', dataLines)
-
             // add juridiction name
             if(juridictionMap[dataLines[0]]) {
               dataLines[0] = juridictionMap[dataLines[0]]
@@ -144,6 +147,8 @@ export default class App {
               // create file
               writeFileSync(this.getCsvOutputPath(tmpFolder, dataLines[0]), `${headerMap.join(',')}\n`)
             }
+
+            dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
 
             appendFileSync(
               this.getCsvOutputPath(tmpFolder, dataLines[0]),
@@ -178,14 +183,44 @@ export default class App {
     return ' '
   }
 
-  formatAndGroupJuridiction (tmpFolder) {
+  async formatAndGroupJuridiction (tmpFolder, outputFolder) {
     const files = readdirSync(tmpFolder).filter(
       (f) => f.endsWith('.csv')
     )
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      const listInObject = {}
+
+      const arrayOfCsv = await csvToArrayJson(readFileSync(`${tmpFolder}/${file}`, 'utf8'), {
+        delimiter: ',',
+      })
+      arrayOfCsv.map(a => {
+        if(!listInObject[a.periode]) {
+          listInObject[`${a.periode}-${a.nataff}`] = {
+            started: 0,
+            finished: 0,
+            stock: 0,
+            periode: a.periode,
+            nac: a.nataff,
+          }
+        }
+
+        switch(a.c_tus.charAt(a.type_juridiction.length)) {
+        case 'T':
+          listInObject[`${a.periode}-${a.nataff}`].finished += (+a.nbaff)
+          break
+        case 'N':
+          listInObject[`${a.periode}-${a.nataff}`].started += (+a.nbaff)
+          break
+        case 'S':
+          listInObject[`${a.periode}-${a.nataff}`].started += (+a.stock)
+          break
+        }
+      })
+
+      const list = orderBy(Object.values(listInObject), ['periode', 'nac'], ['asc', 'asc'])
+      writeFileSync(`${outputFolder}/${file.replace('.csv', '.json')}`, JSON.stringify({ list }))
     }
   }
 }

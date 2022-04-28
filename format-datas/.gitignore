@@ -12,3 +12,5 @@ uploads/
 output.pdf
 tmp
 inputs/*
+outputs/*
+inputs copy/*
