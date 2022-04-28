@@ -3,7 +3,6 @@ import { dataInterface } from 'src/app/components/select/select.component';
 import { CalculatorInterface } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { MainClass } from 'src/app/libs/main-class';
-import { CalculatorService } from 'src/app/services/calculator/calculator.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { isLabeledStatement } from 'typescript';
@@ -24,7 +23,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private calculatorService: CalculatorService,
     private referentielService: ReferentielService
   ) {
     super();
@@ -77,15 +75,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       const fnd = this.referentiel.find((o) => o.id === event[0]);
       fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
       this.referentielIds = event;
-      this.calculatorService.referentielIds = this.referentielIds;
     } else if (type === 'subReferentiel') {
       this.subReferentielIds = event;
     } else if (type === 'dateStart') {
       //this.dateStart = new Date(event);
-      this.calculatorService.dateStart.next(this.dateStart);
     } else if (type === 'dateStop') {
       //this.dateStop = new Date(event);
-      //this.calculatorService.dateStop.next(this.dateStop);
     }
   }
 }
