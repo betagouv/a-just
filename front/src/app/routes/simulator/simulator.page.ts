@@ -45,7 +45,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   onCalculate() {
     if (this.referentiel.length && this.referentielIds.length === 0) {
-      this.referentielIds = this.referentiel.map((r) => r.id);
+      this.referentielIds = [this.referentiel[0].id];
+      this.referentiel[0].childrens !== undefined
+        ? (this.subReferentielIds = this.referentiel[0].childrens?.map(
+            (line) => line.id
+          ))
+        : null;
     }
   }
 
@@ -63,9 +68,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
-      this.referentielIds.forEach((value) =>
-        this.subReferentielIds.push(value)
-      );
+      this.subReferentielIds = [];
+      const fnd = this.referentiel.find((o) => o.id === event[0]);
+      fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
       this.referentielIds = event;
       this.calculatorService.referentielIds = this.referentielIds;
     } else if (type === 'subReferentiel') {
