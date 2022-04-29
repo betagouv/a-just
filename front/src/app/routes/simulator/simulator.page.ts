@@ -46,12 +46,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   onCalculate() {
     if (this.referentiel.length && this.referentielIds.length === 0) {
+      /** 
       this.referentielIds = [this.referentiel[0].id];
       this.referentiel[0].childrens !== undefined
         ? (this.subReferentielIds = this.referentiel[0].childrens?.map(
             (line) => line.id
           ))
         : null;
+    */
     }
   }
 
