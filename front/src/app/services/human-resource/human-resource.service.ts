@@ -350,7 +350,6 @@ export class HumanResourceService {
       // control de date when the person goone
       const dateEnd = today(hr.dateEnd);
       if (dateEnd.getTime() < date.getTime()) {
-        //return null;
         return {
           id: 0,
           etp: 0,
@@ -362,7 +361,6 @@ export class HumanResourceService {
       }
     }
     let situations = this.findAllSituations(hr, date);
-    console.log('Situuuuuu', situations);
     return situations.length ? situations[0] : null;
   }
 
