@@ -350,11 +350,19 @@ export class HumanResourceService {
       // control de date when the person goone
       const dateEnd = today(hr.dateEnd);
       if (dateEnd.getTime() < date.getTime()) {
-        return null;
+        //return null;
+        return {
+          id: 0,
+          etp: 0,
+          category: null,
+          fonction: null,
+          dateStart: dateEnd,
+          activities: [],
+        };
       }
     }
-
     let situations = this.findAllSituations(hr, date);
+    console.log('Situuuuuu', situations);
     return situations.length ? situations[0] : null;
   }
 
@@ -379,10 +387,10 @@ export class HumanResourceService {
       indisponibilities = indisponibilities.filter((hra) => {
         const dateStart = today(hra.dateStart);
 
-        if(date && dateStart.getTime() <= date.getTime()) {
-          if(hra.dateStop) {
+        if (date && dateStart.getTime() <= date.getTime()) {
+          if (hra.dateStop) {
             const dateStop = today(hra.dateStop);
-            if(dateStop.getTime() >= date.getTime()) {
+            if (dateStop.getTime() >= date.getTime()) {
               return true;
             }
           }
