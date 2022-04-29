@@ -7,14 +7,16 @@
           class="select-disabled"
           [value]="dateStart"
           (valueChange)="updateReferentielSelected('dateStart', $event)"
+          [max]="dateStop"
+          [min]="today"
         >
         </aj-date-select-blue>
         <div class="space"></div>
         <aj-date-select-blue
           [title]="'Fin de période'"
           [value]="dateStop"
-          (valueChange)="updateReferentielSelected('dateStart', $event)"
-          [min]="tomorrow"
+          (valueChange)="updateReferentielSelected('dateStop', $event)"
+          [min]="dateStart"
         >
         </aj-date-select-blue>
       </div>
