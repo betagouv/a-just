@@ -16,8 +16,8 @@ import { ActivitiesService } from '../activities/activities.service';
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 
-const start = month(new Date(),-3);
-const end = month(new Date(),-1,"lastday");
+const start = month(new Date(), -4);
+const end = month(new Date(), -2, 'lastday');
 
 @Injectable({
   providedIn: 'root',
@@ -34,13 +34,13 @@ export class CalculatorService extends MainClass {
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
-    private contentieuxOptionsService: ContentieuxOptionsService,
+    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super();
 
     this.watch(
       this.dateStart.subscribe(() => {
-        if(this.calculatorDatas.getValue().length) {
+        if (this.calculatorDatas.getValue().length) {
           this.cleanDatas();
         }
       })
@@ -48,7 +48,7 @@ export class CalculatorService extends MainClass {
 
     this.watch(
       this.dateStop.subscribe(() => {
-        if(this.calculatorDatas.getValue().length) {
+        if (this.calculatorDatas.getValue().length) {
           this.cleanDatas();
         }
       })
@@ -56,7 +56,7 @@ export class CalculatorService extends MainClass {
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
-        if(this.calculatorDatas.getValue().length) {
+        if (this.calculatorDatas.getValue().length) {
           this.cleanDatas();
         }
       })
@@ -389,12 +389,12 @@ export class CalculatorService extends MainClass {
 
     for (let i = 0; i < hr.length; i++) {
       const etptAll = this.getHRVentilation(hr[i], referentiel, categories);
-      Object.values(etptAll).map(c => {
-        if(c.etpt) {
+      Object.values(etptAll).map((c) => {
+        if (c.etpt) {
           hrCategories[c.label].list.push(hr[i]);
           hrCategories[c.label].totalEtp += c.etpt;
         }
-      })
+      });
     }
 
     const list = [];
@@ -417,7 +417,7 @@ export class CalculatorService extends MainClass {
     categories: HRCategoryInterface[]
   ): number {
     const list: any = {};
-    categories.map(c => {
+    categories.map((c) => {
       list[c.id] = {
         etpt: 0,
         ...c,
@@ -432,11 +432,7 @@ export class CalculatorService extends MainClass {
         nbDay++;
         const situation = this.humanResourceService.findSituation(hr, now);
 
-        if (
-          situation &&
-          situation.category &&
-          situation.category.id
-        ) {
+        if (situation && situation.category && situation.category.id) {
           const activitiesFiltred = (situation.activities || []).filter(
             (a) => a.contentieux && a.contentieux.id === referentiel.id
           );
@@ -448,16 +444,15 @@ export class CalculatorService extends MainClass {
 
           list[situation.category.id].etpt += etp;
         }
-
       }
       now.setDate(now.getDate() + 1);
     } while (now.getTime() <= this.dateStop.getValue().getTime());
 
     // format render
-    for(const property in list) {
-      list[property].etpt = list[property].etpt / nbDay
+    for (const property in list) {
+      list[property].etpt = list[property].etpt / nbDay;
     }
 
     return list;
-  } 
+  }
 }
