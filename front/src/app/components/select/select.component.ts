@@ -31,6 +31,7 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() datas: dataInterface[] = [];
   @Input() multiple: boolean = true;
   @Input() subReferentiel: undefined | number[] = undefined;
+  @Input() defaultRealValue: string = '';
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter();
   subReferentielData: dataInterface[] = [];
   realValue: string = '';

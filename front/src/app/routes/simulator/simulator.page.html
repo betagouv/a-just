@@ -28,6 +28,7 @@
   <aj-select
     title="Contentieux"
     class="contentieux"
+    [defaultRealValue]="'Sélectionner un contentieux'"
     [value]="referentielIds"
     [datas]="formReferentiel"
     (valueChange)="updateReferentielSelected('referentiel', $event)"
