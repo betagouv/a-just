@@ -70,7 +70,6 @@ export class CalculatorService extends MainClass {
   }
 
   loadChildren(referentielId: number) {
-    console.log(referentielId);
     const list: CalculatorInterface[] = this.calculatorDatas.getValue();
     const findIndex = list.findIndex((c) => c.contentieux.id === referentielId);
     if (findIndex !== -1) {
