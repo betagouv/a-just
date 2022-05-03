@@ -12,6 +12,7 @@ import { isLabeledStatement } from 'typescript';
   styleUrls: ['./simulator.page.scss'],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
+  mooveClass: string = '';
   referentielIds: number[] = [];
   subReferentielIds: number[] = [];
   formReferentiel: dataInterface[] = [];
@@ -79,6 +80,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.subReferentielIds = event;
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
+      if (this.dateStart.getDate() !== this.today.getDate())
+        this.mooveClass = 'future';
+      else this.mooveClass = '';
     } else if (type === 'dateStop') {
       this.dateStop = new Date(event);
       console.log('test date', this.dateStop);
