@@ -1,6 +1,109 @@
 @import "../../styles/utils.scss";
 
 :host {
+
+    .actual-situation {
+        background-color: #fef6e3;
+        position: relative;
+        display: flex;
+
+        &::before {
+            content: '';
+            height: 100%;
+            width: 24px;
+            position: absolute;
+            background-color: #fef6e3;
+            top: 0px;
+            left: -24px;
+        }
+
+        &::after {
+            content: '';
+            height: 100%;
+            width: 24px;
+            position: absolute;
+            background-color: #fef6e3;
+            top: 0px;
+            right: -24px;
+        }
+
+        .line-title {
+            padding: 30px 0px;
+            width: 200px;
+
+            &:first-child {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+
+        .line-item:last-child {
+            margin-right: 72px;
+        }
+
+        .line-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #161616;
+
+            &.orange-bg {
+                background-color: #feecc2;
+            }
+
+            input {
+                text-align: center;
+                height: 40px;
+                font-weight: normal;
+                background-color: #eeeeee;
+                border: none;
+                width: 80px;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                position: relative;
+                border-bottom: solid 2px #e5e5e5;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .items {
+        height: 64px;
+        background-color: #fff;
+        display: flex;
+
+        .item:first-child {
+            margin-left: 200px;
+        }
+
+        .item:last-child {
+            margin-right: 72px;
+        }
+
+        .item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.blue-bg {
+                background-color: #f5f5fe;
+            }
+
+            p {
+                text-align: center;
+                font-size: 12px;
+                font-weight: bold;
+                color: #161616;
+            }
+        }
+
+    }
+
     aj-wrapper {
         background-color: white;
     }
