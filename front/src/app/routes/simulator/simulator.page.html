@@ -4,7 +4,7 @@
     <div class="container-timeline">
       <div class="container-timeline-button">
         <aj-date-select-blue
-          class="select-disabled"
+          class="select-disabled {{mooveClass}}"
           [value]="dateStart"
           (valueChange)="updateReferentielSelected('dateStart', $event)"
           [max]="dateStop"
@@ -20,7 +20,9 @@
         >
         </aj-date-select-blue>
       </div>
-      <div class="Rectangle"></div>
+      <div class="Rectangle">
+        <div class="{{mooveClass}}"></div>
+      </div>
     </div>
   </div>
 </aj-wrapper>
