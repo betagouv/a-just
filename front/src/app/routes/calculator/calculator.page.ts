@@ -24,7 +24,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   constructor(
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
-    private referentielService: ReferentielService,
+    private referentielService: ReferentielService
   ) {
     super();
   }
@@ -64,10 +64,19 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
     );
     if (this.sortBy) {
-      // @ts-ignore
-      list = orderBy(list, [(o) => { return o[this.sortBy] || 0; }], ['desc']);
+      list = orderBy(
+        list,
+        [
+          (o) => {
+            // @ts-ignore
+            return o[this.sortBy] || 0;
+          },
+        ],
+        ['desc']
+      );
     }
 
+    console.log('filtered', this.datasFilted);
     this.datasFilted = list;
   }
 
@@ -110,7 +119,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     } else {
       this.sortBy = type;
     }
-    
+
     this.filtredDatas();
   }
 }

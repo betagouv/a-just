@@ -19,6 +19,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   dateStart: Date = this.simulatorService.dateStart.getValue();
   dateStop: Date | null = this.simulatorService.dateStop.getValue();
   today: Date = new Date();
+  todaySituation: Object | null = null;
+  datasFilted: CalculatorInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -41,6 +43,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.onCalculate();
       })
     );
+
+    this.watch(
+      this.simulatorService.simulatorDatas.subscribe((d) => {
+        this.formatDatas(d);
+        console.log('sub', this.simulatorService.simulatorDatas.getValue());
+      })
+    );
+
+    this.simulatorService.syncDatas();
   }
 
   ngOnDestroy() {}
@@ -70,6 +81,27 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }));
   }
 
+  formatDatas(list: CalculatorInterface[]) {
+    this.datas = list;
+    this.filtredDatas();
+  }
+
+  filtredDatas() {
+    //console.log('data - filtered', this.datas);
+
+    let list = this.datas.filter(
+      (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
+    );
+    //console.log('list - filtered', list);
+
+    this.datasFilted = list;
+    //console.log('filtered', this.datasFilted);
+    //console.log('filtered', typeof this.datasFilted[0]);
+    this.datasFilted[0]
+      ? console.log('filtered', this.datasFilted[0].etpMag)
+      : null;
+  }
+
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
       this.subReferentielIds = [];
@@ -77,10 +109,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
       this.referentielIds = event;
       this.simulatorService.referentielIds = this.referentielIds;
-      this.simulatorService.subReferentielIds = this.subReferentielIds;
+      this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'subReferentiel') {
       this.subReferentielIds = event;
-      this.simulatorService.subReferentielIds = this.subReferentielIds;
+      this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
       this.simulatorService.dateStart.next(this.dateStart);
@@ -88,5 +120,40 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.dateStop = new Date(event);
       this.simulatorService.dateStop.next(this.dateStop);
     }
+    this.filtredDatas();
+  }
+
+  getFieldValue(param: string) {
+    if (this.datasFilted[0]) {
+      //console.log(this.datasFilted[0]);
+      switch (param) {
+        case 'etpMag':
+          return this.datasFilted[0].etpMag;
+        case 'totalOut':
+          return this.datasFilted[0].totalOut;
+        case 'totalIn':
+          return this.datasFilted[0].totalIn;
+        case 'lastStock':
+          return this.datasFilted[0].lastStock || 'N/R';
+
+        case 'etpMag':
+          return this.datasFilted[0].etpMag;
+
+        case 'etpFon':
+          return this.datasFilted[0].etpFon;
+
+        case 'realCoverage':
+          return this.datasFilted[0].realCoverage;
+
+        case 'realDTESInMonths':
+          return this.datasFilted[0].realDTESInMonths || 'N/R';
+
+        case 'realTimePerCase':
+          return this.datasFilted[0].realTimePerCase;
+        case 'ETPTGreffe':
+          return 'N/R';
+      }
+    }
+    return;
   }
 }

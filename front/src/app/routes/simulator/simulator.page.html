@@ -23,6 +23,71 @@
       <div class="Rectangle"></div>
     </div>
   </div>
+  <div class="items">
+    <div class="item blue-bg">
+      <p>Entrées mensuelles</p>
+    </div>
+    <div class="item">
+      <p>Sorties mensuelles</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Stock</p>
+    </div>
+    <div class="item">
+      <p>ETPT magistrat</p>
+    </div>
+    <div class="item blue-bg">
+      <p>ETPT greffe</p>
+    </div>
+    <div class="item">
+      <p>ETPT contractuels</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Taux de couverture</p>
+    </div>
+    <div class="item">
+      <p>DTES</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Temps moyen / dossier</p>
+    </div>
+  </div>
+  <div class="actual-situation">
+    <div class="line-title">
+      <p>
+        Situation<br />
+        à aujourd'hui
+      </p>
+    </div>
+
+    <div class="line-item orange-bg">
+      <input value="{{getFieldValue('totalIn')}}" />
+    </div>
+    <div class="line-item">
+      <input value="{{getFieldValue('totalOut')}}" />
+    </div>
+    <div class="line-item orange-bg">
+      <input value="{{getFieldValue('lastStock')}}" />
+    </div>
+    <div class="line-item">
+      <input value="{{getFieldValue('etpMag')}}" />
+    </div>
+    <div class="line-item orange-bg">
+      <input value="{{getFieldValue('ETPTGreffe')}}" />
+    </div>
+    <div class="line-item">
+      <input value="{{getFieldValue('etpFon')}}" />
+    </div>
+    <div class="line-item orange-bg">
+      <input value="{{getFieldValue('realCoverage')}}" />
+    </div>
+    <div class="line-item">
+      <input value="{{getFieldValue('realDTESInMonths')}}" />
+    </div>
+    <div class="line-item orange-bg">
+      <input value="{{getFieldValue('realTimePerCase')}}" />
+    </div>
+  </div>
 </aj-wrapper>
 <ng-template #actions>
   <aj-select
