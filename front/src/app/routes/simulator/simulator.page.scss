@@ -104,6 +104,9 @@
 
     aj-date-select-blue {
         margin: 0 50px; //128px;
+        transition-timing-function: linear;
+        transition-property: margin-left;
+        transition-duration: 0.1s;
 
         &.future {
             margin-left: 208px;
@@ -131,7 +134,7 @@
             bottom: -2px;
             left: -3px;
             right: 0px;
-            transition-timing-function: ease;
+
 
             &.future {
                 display: block;
