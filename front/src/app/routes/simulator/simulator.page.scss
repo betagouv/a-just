@@ -206,7 +206,10 @@
     }
 
     aj-date-select-blue {
-        margin: 0 128px;
+        margin: 0 50px; //128px;
+        transition-timing-function: linear;
+        transition-property: margin-left;
+        transition-duration: 0.1s;
 
         &.future {
             margin-left: 208px;
@@ -220,11 +223,29 @@
         background-color: #ececfe;
         position: relative;
         display: block;
-        margin-left: 152.5px;
-        margin-right: 302px;
+        margin-left: 74px;
+        margin-right: 74px;
         margin-top: 18px;
 
-        div {
+        .blue-line {
+            display: none;
+            height: 4px;
+            margin: 2px 4px;
+            border-radius: 3px;
+            background-color: #6a6af4;
+            position: absolute;
+            bottom: -2px;
+            left: -3px;
+            right: 0px;
+
+
+            &.future {
+                display: block;
+                left: 155.5px
+            }
+        }
+
+        .dot {
             display: inline-block;
             width: 8px;
             height: 8px;
@@ -235,7 +256,7 @@
             left: -3px;
 
             &.future {
-                left: 77px;
+                left: 155.5px
             }
         }
 

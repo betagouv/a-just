@@ -17,11 +17,13 @@
           [value]="dateStop"
           (valueChange)="updateReferentielSelected('dateStop', $event)"
           [min]="dateStart"
+          [side]="'right'"
         >
         </aj-date-select-blue>
       </div>
       <div class="Rectangle">
-        <div class="{{mooveClass}}"></div>
+        <div class="dot {{mooveClass}}"></div>
+        <div class="blue-line {{mooveClass}}"></div>
       </div>
     </div>
   </div>
