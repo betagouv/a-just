@@ -11,6 +11,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
   styleUrls: ['./simulator.page.scss'],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
+  mooveClass: string = '';
   referentielIds: number[] = [];
   subReferentielIds: number[] = [];
   formReferentiel: dataInterface[] = [];
@@ -115,6 +116,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
+
+      if (this.dateStart.getDate() !== this.today.getDate())
+        this.mooveClass = 'future';
+      else this.mooveClass = '';
       this.simulatorService.dateStart.next(this.dateStart);
     } else if (type === 'dateStop') {
       this.dateStop = new Date(event);
