@@ -47,7 +47,7 @@ export class SimulatorService extends MainClass {
 
     this.watch(
       this.subReferentielIds.subscribe(() => {
-        console.log('suuuuub', this.subReferentielIds.getValue());
+        //console.log('suuuuub', this.subReferentielIds.getValue());
         if (this.subReferentielIds.getValue().length) {
           this.cleanDatas();
         }
@@ -168,12 +168,7 @@ export class SimulatorService extends MainClass {
       'periode'
     );
 
-    console.log('Activities', activities);
-    console.log(
-      'Activities 2',
-      Math.floor(sumBy(activities, 'entrees') / nbMonth),
-      sumBy(activities, 'entrees')
-    );
+    //console.log('Activities', activities);
 
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
@@ -358,12 +353,12 @@ export class SimulatorService extends MainClass {
     for (let i = 0; i < list.length; i++) {
       const childrens = (list[i].childrens || []).map((c) => {
         //console.log('c ->', c);
-        console.log(
-          'cc ->',
-          this.subReferentielIds.getValue().includes(c.contentieux.id)
-        );
-        console.log('ccc subRef ->', this.subReferentielIds.getValue());
-        console.log('cc contentieux.id ->', c.contentieux.id);
+        //console.log(
+        //  'cc ->',
+        // this.subReferentielIds.getValue().includes(c.contentieux.id)
+        //);
+        //console.log('ccc subRef ->', this.subReferentielIds.getValue());
+        //console.log('cc contentieux.id ->', c.contentieux.id);
         if (this.subReferentielIds.getValue().includes(c.contentieux.id)) {
           if (list[i].childIsVisible && c.needToCalculate === true) {
             return {
