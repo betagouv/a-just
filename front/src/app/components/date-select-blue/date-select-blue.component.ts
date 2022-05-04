@@ -24,6 +24,8 @@ export class DateSelectBlueComponent extends MainClass implements OnChanges {
   @HostBinding('class.read-only') onReadOnly: boolean = false;
   @Input() min: Date | null = null;
   @Input() max: Date | null = null;
+  @Input() side: string = '';
+
   realValue: string = '';
 
   constructor() {

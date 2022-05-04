@@ -4,7 +4,7 @@
 <div class="space" (click)="readOnly === false ? picker.open() : null"></div>
 <div class="icon" (click)="readOnly === false ? picker.open() : null">
   <mat-icon>{{ icon }}</mat-icon>
-  <div class="triangle"></div>
+  <div class="triangle {{ side }}"></div>
 </div>
 <input
   matInput
