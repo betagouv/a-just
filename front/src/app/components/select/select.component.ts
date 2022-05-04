@@ -64,14 +64,16 @@ export class SelectComponent extends MainClass implements OnChanges {
           this.value &&
           Object.keys(this.value).length !== find.childrens?.length
         ) {
-          return [find.childrens].map((s) =>
-            s
-              ?.map((t) => {
-                this.subReferentielData.push(t);
-                return t.value;
-              })
-              .join(', ')
+          let tmpRealValue = '';
+          [find.childrens].map((s) =>
+            s?.map((t) => {
+              this.subReferentielData.push(t);
+              tmpRealValue = (this.value as number[]).includes(t.id as never)
+                ? tmpRealValue.concat(t.value, ', ')
+                : tmpRealValue;
+            })
           );
+          return tmpRealValue.slice(0, -2);
         } else if (
           find &&
           this.value &&

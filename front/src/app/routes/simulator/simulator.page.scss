@@ -207,6 +207,10 @@
 
     aj-date-select-blue {
         margin: 0 128px;
+
+        &.future {
+            margin-left: 208px;
+        }
     }
 
     .Rectangle {
@@ -220,6 +224,20 @@
         margin-right: 302px;
         margin-top: 18px;
 
+        div {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 7.5px;
+            background-color: #6a6af4;
+            position: absolute;
+            bottom: -2px;
+            left: -3px;
+
+            &.future {
+                left: 77px;
+            }
+        }
 
         &::before {
             content: '';
