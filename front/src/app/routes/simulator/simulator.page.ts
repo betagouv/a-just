@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { CalculatorInterface } from 'src/app/interfaces/calculator';
@@ -9,6 +10,19 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        // :enter is alias to 'void => *'
+        style({ opacity: 0 }),
+        animate(500, style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        // :leave is alias to '* => void'
+        animate(500, style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   mooveClass: string = '';
@@ -48,7 +62,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.watch(
       this.simulatorService.simulatorDatas.subscribe((d) => {
         this.formatDatas(d);
-        console.log('sub', this.simulatorService.simulatorDatas.getValue());
+        //console.log('sub', this.simulatorService.simulatorDatas.getValue());
       })
     );
 
@@ -98,12 +112,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.datasFilted = list;
     //console.log('filtered', this.datasFilted);
     //console.log('filtered', typeof this.datasFilted[0]);
-    this.datasFilted[0]
-      ? console.log('filtered', this.datasFilted[0].etpMag)
-      : null;
+    //this.datasFilted[0]
+    //  ? console.log('filtered', this.datasFilted[0].etpMag)
+    //  : null;
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {
+    console.log(
+      'typeof',
+      typeof this.referentielIds,
+      this.referentielIds.length,
+      this.referentielIds
+    );
     if (type === 'referentiel') {
       this.subReferentielIds = [];
       const fnd = this.referentiel.find((o) => o.id === event[0]);
@@ -130,7 +150,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   getFieldValue(param: string) {
     if (this.datasFilted[0]) {
-      //console.log(this.datasFilted[0]);
       switch (param) {
         case 'etpMag':
           return this.datasFilted[0].etpMag;
@@ -140,19 +159,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           return this.datasFilted[0].totalIn;
         case 'lastStock':
           return this.datasFilted[0].lastStock || 'N/R';
-
         case 'etpMag':
           return this.datasFilted[0].etpMag;
 
         case 'etpFon':
           return this.datasFilted[0].etpFon;
-
         case 'realCoverage':
           return this.datasFilted[0].realCoverage;
-
         case 'realDTESInMonths':
           return this.datasFilted[0].realDTESInMonths || 'N/R';
-
         case 'realTimePerCase':
           return this.datasFilted[0].realTimePerCase;
         case 'ETPTGreffe':
