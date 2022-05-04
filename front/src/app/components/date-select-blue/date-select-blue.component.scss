@@ -1,6 +1,13 @@
 @import "../../styles/utils.scss";
 
+mat-datepicker-popup {
+    position: absolute;
+    right: 70px !important;
+}
+
 :host {
+
+
     display: flex;
     position: relative;
     width: 200px;
@@ -83,12 +90,14 @@
         width: 0;
         height: 0;
         display: block;
-        position: relative;
+        position: absolute;
         padding: 0;
         border: 0;
-        position: absolute;
-        left: 0px;
         bottom: -5px;
+
+        &.right {
+            right: 0px;
+        }
     }
 
 }
