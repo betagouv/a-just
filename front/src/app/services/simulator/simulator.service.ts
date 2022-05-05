@@ -31,6 +31,8 @@ export class SimulatorService extends MainClass {
   subReferentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>(
     []
   );
+  startCurrentSituation = month(new Date(), -15);
+  endCurrentSituation = month(new Date(), -3, 'lastday');
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -40,14 +42,13 @@ export class SimulatorService extends MainClass {
     this.watch(
       this.dateStart.subscribe(() => {
         if (this.simulatorDatas.getValue().length) {
-          this.cleanDatas();
+          //this.cleanDatas();
         }
       })
     );
 
     this.watch(
       this.subReferentielIds.subscribe(() => {
-        //console.log('suuuuub', this.subReferentielIds.getValue());
         if (this.subReferentielIds.getValue().length) {
           this.cleanDatas();
         }
@@ -57,7 +58,7 @@ export class SimulatorService extends MainClass {
     this.watch(
       this.dateStop.subscribe(() => {
         if (this.simulatorDatas.getValue().length) {
-          this.cleanDatas();
+          //this.cleanDatas();
         }
       })
     );
@@ -102,7 +103,6 @@ export class SimulatorService extends MainClass {
         rank: value.rank,
       });
     }
-
     return sortBy(list, 'rank');
   }
 
@@ -119,18 +119,22 @@ export class SimulatorService extends MainClass {
       };
     });
 
-    const now = new Date(this.dateStart.getValue());
+    const now = new Date(this.startCurrentSituation);
     let nbDay = 0;
     do {
       // only working day
       if (workingDay(now)) {
         nbDay++;
         const situation = this.humanResourceService.findSituation(hr, now);
-
+        //console.log('findSituation', situation);
+        //console.log('referentiel', referentiel);
         if (situation && situation.category && situation.category.id) {
           const activitiesFiltred = (situation.activities || []).filter(
-            (a) => a.contentieux && a.contentieux.id === referentiel.id
+            (a) =>
+              a.contentieux &&
+              this.subReferentielIds.getValue().includes(a.contentieux.id) //a.contentieux.id === referentiel.id //
           );
+          //console.log('activitiesFiltred', activitiesFiltred);
           const indispoFiltred =
             this.humanResourceService.findAllIndisponibilities(hr, now);
           let etp =
@@ -141,7 +145,7 @@ export class SimulatorService extends MainClass {
         }
       }
       now.setDate(now.getDate() + 1);
-    } while (now.getTime() <= this.dateStop.getValue().getTime());
+    } while (now.getTime() <= this.endCurrentSituation.getTime());
 
     // format render
     for (const property in list) {
@@ -155,45 +159,35 @@ export class SimulatorService extends MainClass {
     referentiel: ContentieuReferentielInterface,
     nbMonth: number
   ) {
-    const startDate = month(new Date(), -12);
     const activities = sortBy(
       this.activitiesService.activities.getValue().filter((a) => {
-        //console.log('a', a);
         return (
-          a.contentieux.id === referentiel.id &&
-          month(a.periode).getTime() >= month(startDate).getTime() &&
-          month(a.periode).getTime() <= month(new Date()).getTime()
+          this.subReferentielIds.getValue().includes(a.contentieux.id) &&
+          month(a.periode).getTime() >=
+            month(this.startCurrentSituation).getTime() &&
+          month(a.periode).getTime() <=
+            month(this.endCurrentSituation).getTime()
         );
       }),
       'periode'
     );
 
-    //console.log('Activities', activities);
-
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
     let lastStock = null;
+
     if (activities.length) {
-      const lastActivities = activities[activities.length - 1];
-      if (
-        lastActivities.stock !== null &&
-        this.isSameMonthAndYear(
-          lastActivities.periode,
-          this.dateStop.getValue()
-        )
-      ) {
-        lastStock = lastActivities.stock;
-      }
+      const lastActivities: any = activities.filter((a) =>
+        this.isSameMonthAndYear(a.periode, this.endCurrentSituation)
+      );
+      lastStock = sumBy(lastActivities, 'stock');
     }
 
     const realCoverage = fixDecimal(totalOut / totalIn);
     const realDTESInMonths =
       lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
-
     const etpAffected = this.getHRPositions(referentiel);
     const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
-    const etpFon = etpAffected.length >= 1 ? etpAffected[1].totalEtp : 0;
-    const etpCont = etpAffected.length >= 2 ? etpAffected[2].totalEtp : 0;
 
     // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
     const realTimePerCase = fixDecimal(
@@ -202,7 +196,6 @@ export class SimulatorService extends MainClass {
     );
 
     return {
-      ...this.calculateActivities(referentiel, totalIn, lastStock, etpAffected),
       totalIn,
       totalOut,
       lastStock,
@@ -210,71 +203,7 @@ export class SimulatorService extends MainClass {
       realDTESInMonths,
       realTimePerCase,
       etpMag,
-      etpFon,
-      etpCont,
-      etpAffected,
     };
-  }
-  calculateActivities(
-    referentiel: ContentieuReferentielInterface,
-    totalIn: number,
-    lastStock: number | null,
-    etpAffected: etpAffectedInterface[]
-  ) {
-    let calculateTimePerCase = null;
-    let calculateOut = null;
-    let calculateCoverage = null;
-    let calculateDTESInMonths = null;
-
-    if (referentiel && referentiel.averageProcessingTime) {
-      calculateTimePerCase = referentiel.averageProcessingTime;
-    } else if (
-      referentiel &&
-      referentiel.parent &&
-      referentiel.parent.averageProcessingTime
-    ) {
-      calculateTimePerCase = referentiel.parent.averageProcessingTime;
-    }
-
-    if (calculateTimePerCase) {
-      calculateOut = Math.floor(
-        (((sumBy(etpAffected, 'totalEtp') * environment.nbHoursPerDay) /
-          calculateTimePerCase) *
-          environment.nbDaysByMagistrat) /
-          12
-      );
-      calculateCoverage = fixDecimal(calculateOut / (totalIn || 0));
-      calculateDTESInMonths =
-        lastStock === null ? null : fixDecimal(lastStock / calculateOut);
-    } else {
-      calculateOut = null;
-      calculateCoverage = null;
-      calculateDTESInMonths = null;
-    }
-
-    return {
-      calculateTimePerCase,
-      calculateOut,
-      calculateCoverage,
-      calculateDTESInMonths,
-    };
-  }
-
-  getNbMonth() {
-    let totalMonth = 12;
-
-    const now = new Date(this.dateStart.getValue());
-    do {
-      totalMonth++;
-      now.setMonth(now.getMonth() + 1);
-    } while (now.getTime() <= this.dateStop.getValue().getTime());
-
-    if (totalMonth <= 0) {
-      //totalMonth = 1;
-      totalMonth = 12;
-    }
-
-    return totalMonth;
   }
 
   prepareDatas() {
@@ -282,15 +211,12 @@ export class SimulatorService extends MainClass {
       return;
     }
 
-    console.log('prepare datas');
-
     const list: CalculatorInterface[] = [];
     const referentiels =
       this.humanResourceService.contentieuxReferentiel.getValue();
     for (let i = 0; i < referentiels.length; i++) {
       const childrens = (referentiels[i].childrens || []).map((c) => {
         const cont = { ...c, parent: referentiels[i] };
-
         return {
           totalIn: null,
           totalOut: null,
@@ -309,7 +235,7 @@ export class SimulatorService extends MainClass {
           childrens: [],
           contentieux: cont,
           nbMonth: 0,
-          needToCalculate: true,
+          needToCalculate: false,
           childIsVisible: false,
         };
       });
@@ -346,56 +272,38 @@ export class SimulatorService extends MainClass {
       return;
     }
 
-    console.time('sync datas');
-
     const list: CalculatorInterface[] = this.simulatorDatas.getValue();
-    const nbMonth = this.getNbMonth();
+    const nbMonth = 12;
     for (let i = 0; i < list.length; i++) {
-      const childrens = (list[i].childrens || []).map((c) => {
-        //console.log('c ->', c);
-        //console.log(
-        //  'cc ->',
-        // this.subReferentielIds.getValue().includes(c.contentieux.id)
-        //);
-        //console.log('ccc subRef ->', this.subReferentielIds.getValue());
-        //console.log('cc contentieux.id ->', c.contentieux.id);
-        if (this.subReferentielIds.getValue().includes(c.contentieux.id)) {
-          if (list[i].childIsVisible && c.needToCalculate === true) {
-            return {
-              ...c,
-              nbMonth,
-              needToCalculate: false,
-              ...this.getActivityValues(c.contentieux, nbMonth),
-            };
-          }
-
-          return c;
+      const childrens: any = (list[i].childrens || []).map((c) => {
+        if (
+          c !== undefined &&
+          this.subReferentielIds.getValue().includes(c.contentieux?.id) &&
+          list[i].childIsVisible &&
+          c.needToCalculate === true
+        ) {
+          return {
+            ...c,
+            nbMonth,
+            needToCalculate: false,
+            ...this.getActivityValues(c.contentieux, nbMonth),
+          };
         }
-        return c;
+        return;
       });
 
-      if (list[i].needToCalculate === true) {
-        list[i] = {
-          ...list[i],
-          ...this.getActivityValues(list[i].contentieux, nbMonth),
-          childrens,
-          nbMonth,
-          needToCalculate: false,
-        };
-      } else {
-        list[i] = {
-          ...list[i],
-          childrens,
-          needToCalculate: false,
-        };
-      }
+      list[i] = {
+        ...list[i],
+        ...this.getActivityValues(list[i].contentieux, nbMonth),
+        childrens,
+        nbMonth,
+        needToCalculate: false,
+      };
     }
     this.simulatorDatas.next(list);
-    console.timeEnd('sync datas');
   }
-  cleanDatas() {
-    console.log('clean datas');
 
+  cleanDatas() {
     const list: CalculatorInterface[] = this.simulatorDatas.getValue();
     for (let i = 0; i < list.length; i++) {
       const childrens = (list[i].childrens || []).map((c) => {

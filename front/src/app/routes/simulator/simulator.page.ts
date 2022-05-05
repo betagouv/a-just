@@ -13,12 +13,10 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
-        // :enter is alias to 'void => *'
         style({ opacity: 0 }),
         animate(500, style({ opacity: 1 })),
       ]),
       transition(':leave', [
-        // :leave is alias to '* => void'
         animate(500, style({ opacity: 0 })),
       ]),
     ]),
@@ -55,14 +53,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentielService.idsSoutien.indexOf(r.id) === -1
         );
         this.formatReferenteil();
-        this.onCalculate();
       })
     );
 
     this.watch(
       this.simulatorService.simulatorDatas.subscribe((d) => {
         this.formatDatas(d);
-        //console.log('sub', this.simulatorService.simulatorDatas.getValue());
       })
     );
 
@@ -71,18 +67,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   ngOnDestroy() {}
 
-  onCalculate() {
-    if (this.referentiel.length && this.referentielIds.length === 0) {
-      /** 
-      this.referentielIds = [this.referentiel[0].id];
-      this.referentiel[0].childrens !== undefined
-        ? (this.subReferentielIds = this.referentiel[0].childrens?.map(
-            (line) => line.id
-          ))
-        : null;
-    */
-    }
-  }
 
   formatReferenteil() {
     this.formReferentiel = this.referentiel.map((r) => ({
@@ -102,28 +86,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   filtredDatas() {
-    //console.log('data - filtered', this.datas);
-
     let list = this.datas.filter(
       (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
     );
-    //console.log('list - filtered', list);
-
     this.datasFilted = list;
-    //console.log('filtered', this.datasFilted);
-    //console.log('filtered', typeof this.datasFilted[0]);
-    //this.datasFilted[0]
-    //  ? console.log('filtered', this.datasFilted[0].etpMag)
-    //  : null;
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {
-    console.log(
-      'typeof',
-      typeof this.referentielIds,
-      this.referentielIds.length,
-      this.referentielIds
-    );
     if (type === 'referentiel') {
       this.subReferentielIds = [];
       const fnd = this.referentiel.find((o) => o.id === event[0]);
@@ -136,7 +105,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
-
       if (this.dateStart.getDate() !== this.today.getDate())
         this.mooveClass = 'future';
       else this.mooveClass = '';
@@ -149,7 +117,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   getFieldValue(param: string) {
-    if (this.datasFilted[0]) {
+    if (this.datasFilted[0] && this.subReferentielIds.length) {
       switch (param) {
         case 'etpMag':
           return this.datasFilted[0].etpMag;
@@ -158,20 +126,19 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         case 'totalIn':
           return this.datasFilted[0].totalIn;
         case 'lastStock':
-          return this.datasFilted[0].lastStock || 'N/R';
+          return this.datasFilted[0].lastStock; 
         case 'etpMag':
           return this.datasFilted[0].etpMag;
-
         case 'etpFon':
           return this.datasFilted[0].etpFon;
         case 'realCoverage':
           return this.datasFilted[0].realCoverage;
         case 'realDTESInMonths':
-          return this.datasFilted[0].realDTESInMonths || 'N/R';
+          return this.datasFilted[0].realDTESInMonths; 
         case 'realTimePerCase':
           return this.datasFilted[0].realTimePerCase;
         case 'ETPTGreffe':
-          return 'N/R';
+          return '';
       }
     }
     return;
