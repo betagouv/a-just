@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*", "test/**/*", "config"],
+  "exclude": ["node_modules"]
+}
