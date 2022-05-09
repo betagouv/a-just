@@ -15,6 +15,7 @@ import {
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
 import { orderBy } from 'lodash'
+import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 export default class App {
   constructor () {}
@@ -31,9 +32,11 @@ export default class App {
     rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
 
+    const referentiel = await this.getReferentiel(inputFolder)
+    console.log(referentiel)
     const juridictionMap = {} // this.getJuridictionsValues(inputFolder)
     await this.getActivitiesValues(tmpFolder, inputFolder, juridictionMap)
-    await this.formatAndGroupJuridiction(tmpFolder, outputFolder)
+    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, referentiel)
 
     this.done()
   }
@@ -183,7 +186,7 @@ export default class App {
     return ' '
   }
 
-  async formatAndGroupJuridiction (tmpFolder, outputFolder) {
+  async formatAndGroupJuridiction (tmpFolder, outputFolder, referentiel) {
     const files = readdirSync(tmpFolder).filter(
       (f) => f.endsWith('.csv')
     )
@@ -196,31 +199,73 @@ export default class App {
         delimiter: ',',
       })
       arrayOfCsv.map(a => {
-        if(!listInObject[a.periode]) {
-          listInObject[`${a.periode}-${a.nataff}`] = {
-            started: 0,
-            finished: 0,
-            stock: 0,
-            periode: a.periode,
-            nac: a.nataff,
-          }
-        }
+        const codeRef = referentiel[a.nataff]
+        if(codeRef) {
+          // only if we now the naff code
 
-        switch(a.c_tus.charAt(a.type_juridiction.length)) {
-        case 'T':
-          listInObject[`${a.periode}-${a.nataff}`].finished += (+a.nbaff)
-          break
-        case 'N':
-          listInObject[`${a.periode}-${a.nataff}`].started += (+a.nbaff)
-          break
-        case 'S':
-          listInObject[`${a.periode}-${a.nataff}`].started += (+a.stock)
-          break
+          if(!listInObject[`${a.periode}-${codeRef}`]) {
+            listInObject[`${a.periode}-${codeRef}`] = {
+              started: 0,
+              finished: 0,
+              stock: 0,
+              periode: a.periode,
+              codeRef,
+              codesNac: [],
+            }
+          }
+
+          if(listInObject[`${a.periode}-${codeRef}`].codesNac.indexOf(a.nataff) === -1) {
+            listInObject[`${a.periode}-${codeRef}`].codesNac.push(a.nataff)
+          }
+
+          switch(a.c_tus.charAt(a.type_juridiction.length)) {
+          case 'T':
+            listInObject[`${a.periode}-${codeRef}`].finished += (+a.nbaff)
+            break
+          case 'N':
+            listInObject[`${a.periode}-${codeRef}`].started += (+a.nbaff)
+            break
+          case 'S':
+            listInObject[`${a.periode}-${codeRef}`].started += (+a.stock)
+            break
+          }
         }
       })
 
       const list = orderBy(Object.values(listInObject), ['periode', 'nac'], ['asc', 'asc'])
       writeFileSync(`${outputFolder}/${file.replace('.csv', '.json')}`, JSON.stringify({ list }))
     }
+  }
+
+  async getReferentiel (inputFolder) {
+    const referentielFiles = readdirSync(inputFolder).filter(
+      (f) => f.endsWith('.csv') && f.toLowerCase().indexOf('nomenclature') !== -1
+    )
+    const listInObject = {}
+
+    if(referentielFiles) {
+      for (let i = 0; i < referentielFiles.length; i++) {
+        const file = referentielFiles[i]
+  
+        const arrayOfCsv = await csvToArrayJson(readFileSync(`${inputFolder}/${file}`, 'utf8'), {
+          delimiter: ';',
+        })
+
+        arrayOfCsv.map(a => {
+          let lastRefCode = ''
+          
+          Object.values(a).map(objectToAnalyse => {
+            const extract = extractCodeFromLabelImported(objectToAnalyse)
+            if(extract && extract.code) {
+              lastRefCode = extract.code
+            } else if(lastRefCode && (!extract || !extract.code) && !listInObject[objectToAnalyse]) {
+              listInObject[objectToAnalyse] = lastRefCode
+            }
+          })
+        })
+      }
+    }
+
+    return listInObject
   }
 }
