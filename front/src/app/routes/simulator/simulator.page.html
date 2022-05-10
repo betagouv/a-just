@@ -1,0 +1,54 @@
+<aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
+  <div class="top-bar-container">
+    <p>Période choisie :</p>
+    <div class="container-timeline">
+      <div class="container-timeline-button">
+        <aj-date-select-blue
+          class="select-disabled {{mooveClass}}"
+          [value]="dateStart"
+          (valueChange)="updateReferentielSelected('dateStart', $event)"
+          [max]="dateStop"
+          [min]="today"
+        >
+        </aj-date-select-blue>
+        <div class="space"></div>
+        <aj-date-select-blue
+          [title]="'Fin de période'"
+          [value]="dateStop"
+          (valueChange)="updateReferentielSelected('dateStop', $event)"
+          [min]="dateStart"
+          [side]="'right'"
+        >
+        </aj-date-select-blue>
+      </div>
+      <div class="Rectangle">
+        <div class="dot {{mooveClass}}"></div>
+        <div class="blue-line {{mooveClass}}"></div>
+      </div>
+    </div>
+  </div>
+</aj-wrapper>
+<ng-template #actions>
+  <aj-select
+    title="Contentieux"
+    class="contentieux"
+    [defaultRealValue]="'Sélectionner un contentieux'"
+    [value]="referentielIds"
+    [datas]="formReferentiel"
+    (valueChange)="updateReferentielSelected('referentiel', $event)"
+    [multiple]="false"
+  >
+  </aj-select>
+  <aj-select
+    title="Sous Contentieux"
+    [value]="subReferentielIds"
+    [datas]="formReferentiel"
+    [subReferentiel]="referentielIds"
+    (valueChange)="updateReferentielSelected('subReferentiel', $event)"
+  >
+  </aj-select>
+  <div class="export-button">
+    <div class="shape">D</div>
+    <p class="title">Exporter en PDF</p>
+  </div>
+</ng-template>

@@ -3,11 +3,11 @@
 :host {
   display: block;
 
-  &.show-children > .main-referentiel {
+  &.show-children>.main-referentiel {
     border-top: solid 1px fColor(bgRowBorderSelected);
     border-bottom: solid 1px fColor(bgRowBorderSelected);
 
-    > .contentieux {
+    >.contentieux {
       background-color: fColor(bgRowSelected);
 
       mat-icon,
@@ -16,40 +16,40 @@
       }
     }
 
-    > .actual {
+    >.actual {
       background-color: fColor(bgRowSelected);
     }
 
-    > .item.activity {
+    >.item.activity {
       background-color: #dce1d4;
     }
 
-    > .item.calculate {
+    >.item.calculate {
       background-color: #d0dffc;
     }
   }
 
   &.is-child {
-    > .main-referentiel {
-      > .contentieux p {
+    >.main-referentiel {
+      >.contentieux p {
         text-align: right;
       }
-      
-      > .item.activity {
+
+      >.item.activity {
         background-color: #dce1d4;
       }
-  
-      > .item.calculate {
+
+      >.item.calculate {
         background-color: #d0dffc;
       }
     }
   }
 
-  > .main-referentiel {
+  >.main-referentiel {
     display: flex;
     height: 64px;
 
-    > .contentieux {
+    >.contentieux {
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -62,7 +62,7 @@
       }
     }
 
-    > .item {
+    >.item {
       flex: 1;
       display: flex;
       align-items: stretch;
@@ -76,7 +76,7 @@
       }
 
       &.actual {
-        > div {
+        >div {
           align-self: stretch;
           margin: 4px 2px;
           width: calc(100% - 4px);
@@ -88,8 +88,8 @@
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
           0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
-        > div {
-          > div {
+        >div {
+          >div {
             align-self: stretch;
             margin: 4px 8px;
             width: calc(100% - 16px);
@@ -102,19 +102,27 @@
             align-items: center;
             justify-content: center;
 
-            > p {
+            >p {
               color: fColor(grayRow);
               font-weight: bold;
+              font-size: 16px;
 
               &.unity {
-                font-size: 12px;
+                font-size: 16px;
+              }
+            }
+
+            .ref-nr {
+              p {
+                font-size: 16px;
+                color: fColor(redNRColor);
               }
             }
           }
         }
       }
 
-      > div {
+      >div {
         flex: 1;
         display: flex;
         align-items: center;
@@ -131,10 +139,10 @@
     }
   }
 
-  > .childrens {
+  >.childrens {
     background-color: fColor(cgrayDefault);
 
-    > aj-referentiel-calculator {
+    >aj-referentiel-calculator {
       border-bottom: 1px solid rgba(fColor(bgRowEvent), 0.5);
 
       &:last-child {
@@ -159,7 +167,7 @@ p {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  
+
   p {
     font-size: 12px;
     color: fColor(redNRColor);

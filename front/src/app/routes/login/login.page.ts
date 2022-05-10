@@ -19,7 +19,7 @@ export class LoginPage {
   ngOnInit() {
     this.userService.me().then((data) => {
       if (data) {
-        this.router.navigate(["/dashboard"]);
+        this.router.navigate(["/ventilations"]);
       }
     });
   }
@@ -27,7 +27,7 @@ export class LoginPage {
   onSubmit() {
     let { email, password } = this.form.value;
     this.authService.login({ email, password }).then(() => {
-      this.router.navigate(["/dashboard"]);
+      this.router.navigate(["/ventilations"]);
     });
   }
 }

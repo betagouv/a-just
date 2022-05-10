@@ -7,21 +7,47 @@ export function monthDiff(d1: Date, d2: Date) {
 }
 
 export function workingDay(date: Date) {
-  return [1,2,3,4,5].indexOf(date.getDay()) !== -1
+  return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1;
 }
 
 export function getMonthString(date: Date | string) {
-  if(typeof date === 'string') {
+  if (typeof date === 'string') {
     date = new Date(date);
   }
-  return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][date.getMonth()]
+  return [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ][date.getMonth()];
 }
 
 export function getShortMonthString(date: Date | string) {
-  if(typeof date === 'string') {
+  if (typeof date === 'string') {
     date = new Date(date);
   }
-  return ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][date.getMonth()]
+  return [
+    'Janv.',
+    'Févr.',
+    'Mars',
+    'Avr.',
+    'Mai',
+    'Juin',
+    'Juil.',
+    'Août',
+    'Sept.',
+    'Oct.',
+    'Nov.',
+    'Déc.',
+  ][date.getMonth()];
 }
 
 export function today(date = new Date()): Date {
@@ -29,7 +55,17 @@ export function today(date = new Date()): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-export function month(date = new Date()) {
+export function month(
+  date = new Date(),
+  monthToAdd?: number,
+  lastDay?: string
+) {
   const now = new Date(date);
-  return new Date(now.getFullYear(), now.getMonth());
+  if (monthToAdd) {
+    now.setDate(1);
+    now.setMonth(now.getMonth() + monthToAdd);
+  }
+  return lastDay
+    ? new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    : new Date(now.getFullYear(), now.getMonth());
 }

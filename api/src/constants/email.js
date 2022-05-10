@@ -1,0 +1,1 @@
+export const TEMPLATE_FORGOT_PASSWORD_ID = 1

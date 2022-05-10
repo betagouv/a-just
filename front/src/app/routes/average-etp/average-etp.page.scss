@@ -1,94 +1,96 @@
 @import "../../styles/utils.scss";
 
 .container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
-  .content-list {
-    flex: 1;
-    overflow: auto;
-  }
+    .content-list {
+        flex: 1;
+        overflow: auto;
+    }
 }
 
-.header-list, .content-list {
-  .label {
-    width: 300px;
+.header-list,
+.content-list {
+    .label {
+        width: 300px;
 
-    &.month {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        &.month {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
-  }
 }
 
 .header-list {
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
-  padding: 8px 0;
-  display: flex;
-  align-items: center;
-
-  .current-month {
-    margin: 0 16px;
-  }
-
-  .activities.is-not-ios {
-    margin-right: 16px;
-  }
-}
-
-.item {
-  padding: 8px 0;
-  display: flex;
-
-  .label {
+    border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+    padding: 8px 0;
     display: flex;
     align-items: center;
 
-    p {
-      flex: 1;
+    .current-month {
+        margin: 0 16px;
     }
-  }
+
+    .activities.is-not-ios {
+        margin-right: 16px;
+    }
+}
+
+.item {
+    padding: 8px 0;
+    display: flex;
+
+    .label {
+        display: flex;
+        align-items: center;
+
+        p {
+            flex: 1;
+        }
+    }
 }
 
 .column-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  p, input {
-    margin-right: 16px;
-  }
+    p,
+    input {
+        margin-right: 16px;
+    }
 }
 
 .item-grouped {
-  .group {
-    height: 0;
-    overflow: hidden;
+    .group {
+        height: 0;
+        overflow: hidden;
 
-    &.enable {
-      height: inherit;
-      overflow: inherit;
-      margin-bottom: 16px;
+        &.enable {
+            height: inherit;
+            overflow: inherit;
+            margin-bottom: 16px;
+        }
+
+        .group-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-left: 4px solid gray;
+
+            .label {
+                width: 296px;
+                padding-left: 8px;
+            }
+
+            .column-item {
+                flex: 1;
+                text-align: center;
+            }
+        }
     }
-
-    .group-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 0;
-      border-left: 4px solid gray;
-
-      .label {
-        width: 296px;
-        padding-left: 8px;
-      }
-    
-      .column-item {
-        flex: 1;
-        text-align: center;
-      }
-    }
-  }
 }

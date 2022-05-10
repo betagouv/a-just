@@ -25,6 +25,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() subtitle: string = '';
   @Input() backUrl: string = '';
   @Input() backAnchor: string | undefined;
+  @Input() alignLeft: boolean | undefined;
+
   hrBackup: BackupInterface | undefined;
   hrBackups: BackupInterface[] = [];
   menu = [
@@ -73,20 +75,21 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   updateMenu(user: UserInterface | null) {
     const menu = [];
 
+    // Onglet Panorama retiré temporairement
+    /*
     if (user && user.access && user.access.indexOf(1) !== -1) {
       menu.push({
         label: 'Panorama',
         path: 'dashboard',
       });
     }
-
+    */
     if (user && user.access && user.access.indexOf(2) !== -1) {
       menu.push({
-        label: 'Affectations',
+        label: 'Ventilateur',
         path: 'ventilations',
       });
     }
-
     if (user && user.access && user.access.indexOf(3) !== -1) {
       menu.push({
         label: "Données d'activité",
@@ -108,6 +111,12 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
       });
     }
 
+    if (user && user.access && user.access.indexOf(5) !== -1) {
+      menu.push({
+        label: 'Simulateur',
+        path: 'simulateur',
+      });
+    }
     this.menu = menu;
   }
 

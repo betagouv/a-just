@@ -3,6 +3,8 @@ export const USER_ACCESS_VENTILATIONS = 2 // Ventilations
 export const USER_ACCESS_ACTIVITIES = 3 // Données d'activité
 export const USER_ACCESS_AVERAGE_TIME = 4 // Temps moyens
 export const USER_ACCESS_CALCULATOR = 5 // Calculateur
+export const USER_ACCESS_SIMULATOR = 6 // Simulateur
+
 export const accessToString = (roleId) => {
   switch(roleId) {
   case USER_ACCESS_DASHBOARD:
@@ -15,6 +17,8 @@ export const accessToString = (roleId) => {
     return 'Temps moyens'
   case USER_ACCESS_CALCULATOR:
     return 'Calculateur'
+  case USER_ACCESS_SIMULATOR:
+      return 'Simulateur'
   }
 }
 
@@ -38,5 +42,9 @@ export const accessList = [
   {
     id: USER_ACCESS_CALCULATOR,
     label: accessToString(USER_ACCESS_CALCULATOR),
+  },
+  {
+    id: USER_ACCESS_SIMULATOR,
+    label: accessToString(USER_ACCESS_SIMULATOR),
   },
 ]
