@@ -25,7 +25,8 @@ export class EtpPreviewComponent implements OnChanges {
   constructor() {}
 
   ngOnChanges() {
-    this.etp = fixDecimal(this.etp);
+    const fixDec = fixDecimal(this.etp);
+    this.etp = fixDec < 0 ? 0 : fixDec;
     this.onDraw();
   }
 
@@ -34,7 +35,6 @@ export class EtpPreviewComponent implements OnChanges {
     if (ctx) {
       ctx.clearRect(0, 0, this.width + this.margin * 2, this.height + this.margin * 2);
       this.generateBackground();
-      // this.drawArrows();
     } else {
       setTimeout(() => {
         this.onDraw();
@@ -73,7 +73,7 @@ export class EtpPreviewComponent implements OnChanges {
       this.height / 2 + this.margin,
       this.width / 2,
       this.getRadiusPosition(0),
-      this.getRadiusPosition((this.etp + this.indisponibility) * 100)
+      this.getRadiusPosition(this.indisponibility > this.etp ? 0 : ((this.etp + this.indisponibility) * 100))
     );
     ctx.stroke();
     ctx.beginPath();

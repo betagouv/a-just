@@ -28,7 +28,9 @@ const routes: Routes = [
   {
     path: 'donnees-d-activite',
     loadChildren: () =>
-      import('./activities/activities.module').then((mod) => mod.ActivitiesModule),
+      import('./activities/activities.module').then(
+        (mod) => mod.ActivitiesModule
+      ),
     canActivate: [AuthGuard],
   },
   {
@@ -58,10 +60,28 @@ const routes: Routes = [
   {
     path: 'signup',
     loadChildren: () =>
-      import('./signup/signup.module').then(
-        (mod) => mod.SignupModule
+      import('./signup/signup.module').then((mod) => mod.SignupModule),
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    loadChildren: () =>
+      import('./forgot-password/forgot-password.module').then(
+        (mod) => mod.ForgotPasswordModule
       ),
-  }
+  },
+  {
+    path: 'nouveau-mot-de-passe',
+    loadChildren: () =>
+      import('./change-password/change-password.module').then(
+        (mod) => mod.ChangePasswordModule
+      ),
+  },
+  {
+    path: 'simulateur',
+    loadChildren: () =>
+      import('./simulator/simulator.module').then((mod) => mod.SimulatorModule),
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({

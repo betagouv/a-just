@@ -1,0 +1,103 @@
+@import "../../styles/utils.scss";
+
+mat-datepicker-popup {
+    position: absolute;
+    right: 70px !important;
+}
+
+:host {
+
+
+    display: flex;
+    position: relative;
+    width: 200px;
+    height: 42px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: solid 1px #6a6af4;
+    background-color: #ececfe;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &.read-only {
+        cursor: inherit;
+        opacity: 0.7;
+    }
+
+    p.title {
+        color: #0063cb;
+        white-space: nowrap;
+        font-size: 14px;
+        align-self: center;
+        line-height: 1px;
+        padding-left: 16px;
+    }
+
+    div.space {
+        flex: 1;
+    }
+
+    div.icon {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #6a6af4;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            margin: 0px 16px;
+            color: white;
+        }
+
+        .triangle {
+            display: inline-block;
+            height: 0;
+            width: 0;
+            border-top: 4px solid #6a6af4;
+            border-right: 4px solid transparent;
+            border-left: 4px solid transparent;
+            position: absolute;
+            left: 20px;
+            bottom: -5px;
+
+            &.right {
+                left: 170px;
+
+                &::before {
+                    border-top: 4px solid #6a6af4;
+                }
+            }
+
+            &::before {
+                content: '';
+                display: inline-block;
+                height: 0;
+                width: 0;
+                border-top: 4px solid #ececfe;
+                border-right: 4px solid transparent;
+                border-left: 4px solid transparent;
+                position: absolute;
+                bottom: 2px;
+                left: -4px;
+            }
+        }
+    }
+
+    input {
+        width: 0;
+        height: 0;
+        display: block;
+        position: absolute;
+        padding: 0;
+        border: 0;
+        bottom: -5px;
+
+        &.right {
+            right: 0px;
+        }
+    }
+
+}

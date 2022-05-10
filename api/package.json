@@ -54,7 +54,7 @@
     "sequelize": "^6.3.5",
     "sequelize-cli": "^6.2.0",
     "sequelize-transforms": "^2.0.0",
-    "sib-api-v3-sdk": "^8.0.2",
+    "sib-api-v3-sdk": "^8.3.0",
     "slugify": "^1.6.1",
     "socket.io": "^4.1.2",
     "stream": "^0.0.2",

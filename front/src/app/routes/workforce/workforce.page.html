@@ -30,9 +30,11 @@
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list">
           <div class="profil">
-            <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
-            <div class="label" [style.color]="list.textColor">
-              {{ list.label }}
+            <div class="label-container ">
+              <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
+              <div class="label" [style.color]="list.textColor">
+                {{ list.label }}
+              </div>
             </div>
             <div class="contentieux-label">
               <div class="text">
@@ -40,10 +42,10 @@
                   <p>Contentieux :</p>
                 </div>
                 <div class="etp">
-                  <p>ETPT affectés :</p>
+                  <p>ETP affectés :</p>
                 </div>
                 <div class="filter">
-                  <p>Trier par :</p>
+                  <p class="etp-header">Trier par :</p>
                 </div>
               </div>
             </div>
