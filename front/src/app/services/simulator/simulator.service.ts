@@ -39,26 +39,11 @@ export class SimulatorService extends MainClass {
     private activitiesService: ActivitiesService
   ) {
     super();
-    this.watch(
-      this.dateStart.subscribe(() => {
-        if (this.simulatorDatas.getValue().length) {
-          //this.cleanDatas();
-        }
-      })
-    );
 
     this.watch(
       this.subReferentielIds.subscribe(() => {
         if (this.subReferentielIds.getValue().length) {
           this.cleanDatas();
-        }
-      })
-    );
-
-    this.watch(
-      this.dateStop.subscribe(() => {
-        if (this.simulatorDatas.getValue().length) {
-          //this.cleanDatas();
         }
       })
     );
@@ -126,15 +111,12 @@ export class SimulatorService extends MainClass {
       if (workingDay(now)) {
         nbDay++;
         const situation = this.humanResourceService.findSituation(hr, now);
-        //console.log('findSituation', situation);
-        //console.log('referentiel', referentiel);
         if (situation && situation.category && situation.category.id) {
           const activitiesFiltred = (situation.activities || []).filter(
             (a) =>
               a.contentieux &&
-              this.subReferentielIds.getValue().includes(a.contentieux.id) //a.contentieux.id === referentiel.id //
+              this.subReferentielIds.getValue().includes(a.contentieux.id)
           );
-          //console.log('activitiesFiltred', activitiesFiltred);
           const indispoFiltred =
             this.humanResourceService.findAllIndisponibilities(hr, now);
           let etp =
