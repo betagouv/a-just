@@ -197,21 +197,16 @@ export default (sequelizeInstance, Model) => {
       await Model.updateById(hr.id, options)
     } else {
       // create
-      try {
-        const newHr = await Model.create(options)
-        console.log('is created ', newHr)
-        hr.id = newHr.dataValues.id
-      } catch(err) {
-        console.log(err)
-      }
+      const newHr = await Model.create(options)
+      hr.id = newHr.dataValues.id
     }
 
-    /*console.log('syncSituations', hr.situations || [])
+    console.log('syncSituations', hr.situations || [])
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
     console.log('updateById', backupId)
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     console.log('syncIndisponibilites', hr.indisponibilities || [])
-    await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)*/
+    await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     console.log('getHr', hr.id)
     return await Model.getHr(hr.id)
