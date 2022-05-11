@@ -198,6 +198,7 @@ export default (sequelizeInstance, Model) => {
     } else {
       // create
       const newHr = await Model.create(options)
+      console.log('is created ', newHr)
       hr.id = newHr.dataValues.id
     }
 
