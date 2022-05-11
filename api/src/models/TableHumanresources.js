@@ -190,7 +190,7 @@ export default (sequelizeInstance, Model) => {
       backup_id: backupId,
       updated_at: new Date(),
     }
-    console.log('updateHR', hr)
+    console.log('updateHR', hr, options)
 
     if(hr.id && hr.id > 0) {
       // update
