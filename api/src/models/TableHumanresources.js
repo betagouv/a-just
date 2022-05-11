@@ -190,6 +190,7 @@ export default (sequelizeInstance, Model) => {
       backup_id: backupId,
       updated_at: new Date(),
     }
+    console.log('updateHR', hr)
 
     if(hr.id && hr.id > 0) {
       // update
@@ -200,10 +201,14 @@ export default (sequelizeInstance, Model) => {
       hr.id = newHr.dataValues.id
     }
 
+    console.log('syncSituations', hr.situations || [])
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+    console.log('updateById', backupId)
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
+    console.log('syncIndisponibilites', hr.indisponibilities || [])
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
+    console.log('getHr', hr.id)
     return await Model.getHr(hr.id)
   }
 
