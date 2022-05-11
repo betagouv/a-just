@@ -16,9 +16,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
         style({ opacity: 0 }),
         animate(500, style({ opacity: 1 })),
       ]),
-      transition(':leave', [
-        animate(500, style({ opacity: 0 })),
-      ]),
+      transition(':leave', [animate(500, style({ opacity: 0 }))]),
     ]),
   ],
 })
@@ -66,7 +64,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {}
-
 
   formatReferenteil() {
     this.formReferentiel = this.referentiel.map((r) => ({
@@ -126,7 +123,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         case 'totalIn':
           return this.datasFilted[0].totalIn;
         case 'lastStock':
-          return this.datasFilted[0].lastStock; 
+          return this.datasFilted[0].lastStock;
         case 'etpMag':
           return this.datasFilted[0].etpMag;
         case 'etpFon':
@@ -134,12 +131,20 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         case 'realCoverage':
           return this.datasFilted[0].realCoverage;
         case 'realDTESInMonths':
-          return this.datasFilted[0].realDTESInMonths; 
+          return this.datasFilted[0].realDTESInMonths;
         case 'realTimePerCase':
-          return this.datasFilted[0].realTimePerCase;
+          return this.decimalToStringDate(this.datasFilted[0].realTimePerCase);
         case 'ETPTGreffe':
           return '';
       }
+    }
+    return;
+  }
+  decimalToStringDate(decimal: number | null) {
+    if (decimal != null) {
+      const n = new Date(0, 0);
+      n.setMinutes(+decimal * 60);
+      return n.toTimeString().slice(0, 5);
     }
     return;
   }
