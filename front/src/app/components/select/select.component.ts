@@ -46,12 +46,20 @@ export class SelectComponent extends MainClass implements OnChanges {
   }
 
   findRealValue() {
-    const find = !this.parent
+    let find = !this.parent
       ? this.datas.find((d) => d.id === this.value)
       : this.datas.find((d) => d.id === this.parent);
 
-    if (find && !this.subReferentiel) this.realValue = find.value;
-    else if (
+    let tmpStr = '';
+
+    if (find && !this.subReferentiel && typeof this.value === 'number') {
+      this.datas.map((v) => {
+        if (v.id === this.value) {
+          tmpStr = tmpStr.concat(v.value, tmpStr);
+        }
+      });
+      this.realValue = tmpStr;
+    } else if (
       find &&
       this.subReferentiel &&
       this.value &&
@@ -60,16 +68,15 @@ export class SelectComponent extends MainClass implements OnChanges {
       this.subReferentielData = [];
       this.value = this.subReferentiel;
 
-      let tmpRealValue = '';
       [find.childrens].map((s) =>
         s?.map((t) => {
           this.subReferentielData.push(t);
-          tmpRealValue = (this.value as number[]).includes(t.id as never)
-            ? tmpRealValue.concat(t.value, ', ')
-            : tmpRealValue;
+          tmpStr = (this.value as number[]).includes(t.id as never)
+            ? tmpStr.concat(t.value, ', ')
+            : tmpStr;
         })
       );
-      this.realValue = tmpRealValue.slice(0, -2);
+      this.realValue = tmpStr.slice(0, -2);
     } else if (
       find &&
       this.subReferentiel &&
@@ -82,38 +89,37 @@ export class SelectComponent extends MainClass implements OnChanges {
         s?.map((t) => this.subReferentielData.push(t))
       );
       this.realValue = 'Tous';
+    } else if (Array.isArray(this.value) && this.value.length !== 0) {
+      const arrayValues = Array.isArray(this.value) ? this.value : [this.value];
+      this.datas.map((v) => {
+        arrayValues.map((x) => {
+          if (v.id === x) {
+            tmpStr = tmpStr.concat(v.value, ', ');
+            this.realValue = tmpStr.slice(0, -2);
+          }
+        });
+      });
     } else this.realValue = '';
   }
 
   onSelectedChanged(list: number[] | number) {
     if (this.parent && Array.isArray(list)) {
-      if (list.length === 0) {
-        this.value = [];
-        this.subReferentiel = [];
-      } else if (list.length === 1) {
-        this.value = list;
-      } else if (list.length === 2) {
-        const test = list.filter(
+      if (list.length === 0) this.value = this.subReferentiel = [];
+      else if (list.length === 1) this.value = list;
+      else if (list.length === 2)
+        this.value = this.subReferentiel = list.filter(
           (v) => ![this.value as number[]][0].includes(v)
         );
-        this.value = test;
-        this.subReferentiel = test;
-      } else if (list.length === this.subReferentielData.length) {
+      else if (list.length === this.subReferentielData.length)
         this.value = list;
-      } else if (list.length === this.subReferentielData.length - 1) {
-        const test = [this.value as number[]][0].filter(
+      else if (list.length === this.subReferentielData.length - 1)
+        this.value = this.subReferentiel = [this.value as number[]][0].filter(
           (v) => !list.includes(v)
         );
-        this.value = test;
-        this.subReferentiel = test;
-      }
-    } else if (typeof list === 'number') {
-      this.value = [list];
-    } else {
-      this.value = list;
-    }
-    //@ts-ignore
-    this.valueChange.emit(this.value);
+    } else if (typeof list === 'number') this.value = [list];
+    else this.value = list;
+
+    this.valueChange.emit(this.value as number[]);
     this.findRealValue();
   }
 }
