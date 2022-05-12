@@ -32,7 +32,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   dateStop: Date | null = new Date();
   today: Date = new Date();
   todaySituation: Object | null = null;
-  datasFilted: CalculatorInterface[] = [];
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -57,7 +56,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        this.formatDatas(d);
+        this.formatDatas(this.simulatorService.situationActuelle.getValue());
       })
     );
 
@@ -80,11 +79,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   formatDatas(list: SimulatorInterface | null) {
     this.datas = list;
-    this.filtredDatas();
-  }
-
-  filtredDatas() {
-    //this.datasFilted = list;
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {
@@ -93,58 +87,64 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       const fnd = this.referentiel.find((o) => o.id === event[0]);
       fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
       this.referentielId = event[0];
-      //console.log('event subid', this.subReferentielIds, this.referentielId);
       this.simulatorService.referentielOrSubReferentielId.next(
-        this.referentielId
+        this.referentielId as number
       );
-      //this.simulatorService.referentielIds = this.referentielIds;
-      //this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'subReferentiel') {
       this.subReferentielIds = event;
-      //console.log('sortie', event);
-      //this.simulatorService.subReferentielIds.next(this.subReferentielIds);
+      const tmpRefLength = this.referentiel.find(
+        (v) => v.id === this.referentielId
+      );
+      if (event.length === tmpRefLength?.childrens?.length)
+        this.simulatorService.referentielOrSubReferentielId.next(
+          this.referentielId as number
+        );
+      else
+        this.simulatorService.referentielOrSubReferentielId.next(
+          this.subReferentielIds[0] as number
+        );
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
       if (this.dateStart.getDate() !== this.today.getDate())
         this.mooveClass = 'future';
       else this.mooveClass = '';
-      //this.simulatorService.dateStart.next(this.dateStart);
     } else if (type === 'dateStop') {
       this.dateStop = new Date(event);
-      //this.simulatorService.dateStop.next(this.dateStop);
     }
-    //this.filtredDatas();
-    //console.log(this.referentielId, this.subReferentielIds, this.referentiel);
   }
 
   getFieldValue(param: string) {
-    if (this.datasFilted[0] && this.subReferentielIds.length) {
+    if (
+      (this.simulatorService.situationActuelle.getValue() !== null &&
+        this.subReferentielIds.length) ||
+      this.referentielId === 485
+    ) {
       switch (param) {
         case 'etpMag':
-          return this.datasFilted[0].etpMag;
+          return this.datas?.etpMag || '0';
         case 'totalOut':
-          return this.datasFilted[0].totalOut;
+          return this.datas?.totalOut || '0';
         case 'totalIn':
-          return this.datasFilted[0].totalIn;
+          return this.datas?.totalIn || '0';
         case 'lastStock':
-          return this.datasFilted[0].lastStock;
+          return this.datas?.lastStock || '0';
         case 'etpMag':
-          return this.datasFilted[0].etpMag;
+          return this.datas?.etpMag || '0';
         case 'etpFon':
-          return this.datasFilted[0].etpFon;
+          return this.datas?.etpFon || '0';
         case 'realCoverage':
-          return this.datasFilted[0].realCoverage;
+          return this.datas?.realCoverage || '0';
         case 'realDTESInMonths':
-          return this.datasFilted[0].realDTESInMonths;
+          return this.datas?.realDTESInMonths || '0';
         case 'realTimePerCase':
-          return this.decimalToStringDate(this.datasFilted[0].realTimePerCase);
+          return this.decimalToStringDate(this.datas?.realTimePerCase) || '0';
         case 'ETPTGreffe':
           return '';
       }
     }
     return;
   }
-  decimalToStringDate(decimal: number | null) {
+  decimalToStringDate(decimal: number | null | undefined) {
     if (decimal != null) {
       const n = new Date(0, 0);
       n.setMinutes(+decimal * 60);
