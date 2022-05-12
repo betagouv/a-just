@@ -56,7 +56,11 @@
       <p>Temps moyen / dossier</p>
     </div>
   </div>
-  <div class="actual-situation" *ngIf="referentielId" [@fadeInOut]>
+  <div
+    class="actual-situation"
+    *ngIf="subReferentielIds.length!==0 || referentielId===485"
+    [@fadeInOut]
+  >
     <div class="line-title">
       <p>
         Situation<br />
