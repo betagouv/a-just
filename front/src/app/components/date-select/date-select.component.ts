@@ -16,7 +16,7 @@ import { MainClass } from 'src/app/libs/main-class';
 export class DateSelectComponent extends MainClass implements OnChanges {
   @Input() title: string | null = null;
   @Input() icon: string = 'calendar_today';
-  @Input() value: Date | undefined | null = null;
+  @Input() value: Date | string | undefined | null = null;
   @Input() readOnly: boolean = false;
   @Input() showToday: boolean = true;
   @Output() valueChange = new EventEmitter();
@@ -34,6 +34,10 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   findRealValue() {
     const now = new Date();
+
+    if(typeof this.value === "string") {
+      this.value = new Date(this.value);
+    }
 
     if (this.value && typeof this.value.getMonth === 'function') {
       if (
