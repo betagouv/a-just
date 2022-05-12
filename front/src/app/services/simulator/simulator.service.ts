@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { sortBy, sumBy } from 'lodash';
+import { last, sortBy, sumBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { SimulatorInterface } from 'src/app/interfaces/simulator';
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
@@ -20,12 +20,11 @@ const end = new Date();
 export class SimulatorService extends MainClass {
   situationActuelle: BehaviorSubject<SimulatorInterface | null> =
     new BehaviorSubject<SimulatorInterface | null>(null);
-  referentielOrSubReferentielId: BehaviorSubject<number | null> =
+  contentieuOrSubContentieuId: BehaviorSubject<number | null> =
     new BehaviorSubject<number | null>(null);
 
-  startCurrentSituation = month(new Date(), -14);
-  endCurrentSituation = month(new Date(), -3, 'lastday');
-
+  startCurrentSituation = month(new Date(), -13);
+  endCurrentSituation = month(new Date(), -2, 'lastday');
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService
@@ -33,9 +32,9 @@ export class SimulatorService extends MainClass {
     super();
 
     this.watch(
-      this.referentielOrSubReferentielId.subscribe(() => {
-        if (this.referentielOrSubReferentielId.getValue()) {
-          this.syncDatas(this.referentielOrSubReferentielId.getValue());
+      this.contentieuOrSubContentieuId.subscribe(() => {
+        if (this.contentieuOrSubContentieuId.getValue()) {
+          this.syncDatas(this.contentieuOrSubContentieuId.getValue());
         }
       })
     );
@@ -77,9 +76,19 @@ export class SimulatorService extends MainClass {
     let lastStock = null;
 
     if (activities.length) {
-      const lastActivities: any = activities.filter((a) =>
-        this.isSameMonthAndYear(a.periode, this.endCurrentSituation)
-      );
+      let lastActivities: any = [];
+      let nbOfMonth = 1;
+      do {
+        nbOfMonth--;
+        lastActivities = activities.filter((a) =>
+          this.isSameMonthAndYear(
+            a.periode,
+            month(this.endCurrentSituation, -1, 'lastday')
+          )
+        );
+      } while (lastActivities.length === 0 || nbOfMonth != -12);
+
+      console.log('lastAct', lastActivities);
       lastStock = sumBy(lastActivities, 'stock');
 
       const realCoverage = fixDecimal(totalOut / totalIn);

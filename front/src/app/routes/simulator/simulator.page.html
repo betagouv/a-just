@@ -58,7 +58,7 @@
   </div>
   <div
     class="actual-situation"
-    *ngIf="subReferentielIds.length!==0 || referentielId===485"
+    *ngIf="subList.length!==0 || this.getElementById(this.contentieuId)?.childrens?.length"
     [@fadeInOut]
   >
     <div class="line-title">
@@ -102,7 +102,7 @@
     title="Contentieux"
     class="contentieux"
     [defaultRealValue]="'Sélectionner un contentieux'"
-    [value]="referentielId"
+    [value]="contentieuId"
     [datas]="formReferentiel"
     (valueChange)="updateReferentielSelected('referentiel', $event)"
     [multiple]="false"
@@ -110,11 +110,11 @@
   </aj-select>
   <aj-select
     title="Sous Contentieux"
-    [value]="subReferentielIds"
+    [value]="subList"
     [datas]="formReferentiel"
-    [subReferentiel]="subReferentielIds"
-    [parent]="referentielId"
-    (valueChange)="updateReferentielSelected('subReferentiel', $event)"
+    [subList]="subList"
+    [parent]="contentieuId"
+    (valueChange)="updateReferentielSelected('subList', $event)"
   >
   </aj-select>
   <div class="export-button">
