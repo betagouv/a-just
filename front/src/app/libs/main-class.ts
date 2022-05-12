@@ -118,6 +118,14 @@ export class MainClass {
     return date.getFullYear();
   }
 
+  public getDate(date: Date | string) {
+    if(typeof date === 'string') {
+      date = new Date(date);
+    }
+
+    return date.getDate();
+  }
+
   public isSameMonthAndYear(date1: Date, date2: Date) {
     date1 = new Date(date1);
     date2 = new Date(date2);

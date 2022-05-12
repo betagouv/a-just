@@ -187,7 +187,6 @@ export default (sequelizeInstance, Model) => {
       last_name: hr.lastName || null,
       date_entree: hr.dateStart || null,
       date_sortie: hr.dateEnd || null,
-      note: hr.note,
       backup_id: backupId,
       updated_at: new Date(),
     }
@@ -197,7 +196,7 @@ export default (sequelizeInstance, Model) => {
       await Model.updateById(hr.id, options)
     } else {
       // create
-      const newHr = await Model.models.HumanResources.create(options)
+      const newHr = await Model.create(options)
       hr.id = newHr.dataValues.id
     }
 

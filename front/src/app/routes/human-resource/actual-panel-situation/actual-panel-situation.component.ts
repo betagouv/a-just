@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { sumBy } from 'lodash';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
-import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service';
@@ -42,18 +41,9 @@ export class ActualPanelSituationComponent
   }
 
   ngOnChanges() {
-    const referentiel = this.humanResourceService.allContentieuxReferentiel;
-
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     );
-    this.indisponibilities = this.indisponibilities.map((i) => {
-      if (!i.contentieux) {
-        i.contentieux = referentiel.find((r) => r.id === i.referentielId);
-      }
-
-      return i;
-    });
 
     if(this.dateEndToJuridiction && this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()) {
       this.timeWorked = 'Parti';
