@@ -44,13 +44,6 @@ export class PanelHistoryVentilationComponent
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     );
-    this.indisponibilities = this.indisponibilities.map((i) => {
-      if (!i.contentieux) {
-        i.contentieux = referentiel.find((r) => r.id === i.referentielId);
-      }
-
-      return i;
-    });
 
     if (
       this.dateEndToJuridiction &&
