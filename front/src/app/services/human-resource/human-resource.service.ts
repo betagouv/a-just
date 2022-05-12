@@ -95,6 +95,14 @@ export class HumanResourceService {
               periode: new Date(a.periode),
             }))
           );
+          console.log(
+            this.activitiesService.activities.getValue().filter(
+              (a) =>
+                a.sorties !== 0 &&
+                //[447, 448, 449, 450, 486].indexOf(a?.contentieux?.id) !== -1
+                a?.contentieux?.id === 486
+            )
+          );
           this.activitiesService.hrBackupId = result.backupId;
           this.hr.next(result.hr.map(this.formatHR));
           this.backups.next(

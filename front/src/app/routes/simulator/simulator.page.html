@@ -56,11 +56,7 @@
       <p>Temps moyen / dossier</p>
     </div>
   </div>
-  <div
-    class="actual-situation"
-    *ngIf="referentielIds.length !== 0"
-    [@fadeInOut]
-  >
+  <div class="actual-situation" *ngIf="referentielId" [@fadeInOut]>
     <div class="line-title">
       <p>
         Situation<br />
@@ -102,7 +98,7 @@
     title="Contentieux"
     class="contentieux"
     [defaultRealValue]="'Sélectionner un contentieux'"
-    [value]="referentielIds"
+    [value]="referentielId"
     [datas]="formReferentiel"
     (valueChange)="updateReferentielSelected('referentiel', $event)"
     [multiple]="false"
@@ -112,7 +108,8 @@
     title="Sous Contentieux"
     [value]="subReferentielIds"
     [datas]="formReferentiel"
-    [subReferentiel]="referentielIds"
+    [subReferentiel]="subReferentielIds"
+    [parent]="referentielId"
     (valueChange)="updateReferentielSelected('subReferentiel', $event)"
   >
   </aj-select>
