@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { CalculatorInterface } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { SimulatorInterface } from 'src/app/interfaces/simulator';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
@@ -22,13 +23,13 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   mooveClass: string = '';
-  referentielIds: number[] = [];
+  referentielId: number | null = null;
   subReferentielIds: number[] = [];
   formReferentiel: dataInterface[] = [];
-  datas: CalculatorInterface[] = [];
+  datas: SimulatorInterface | null = null;
   referentiel: ContentieuReferentielInterface[] = [];
-  dateStart: Date = this.simulatorService.dateStart.getValue();
-  dateStop: Date | null = this.simulatorService.dateStop.getValue();
+  dateStart: Date = new Date();
+  dateStop: Date | null = new Date();
   today: Date = new Date();
   todaySituation: Object | null = null;
   datasFilted: CalculatorInterface[] = [];
@@ -55,12 +56,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     );
 
     this.watch(
-      this.simulatorService.simulatorDatas.subscribe((d) => {
+      this.simulatorService.situationActuelle.subscribe((d) => {
         this.formatDatas(d);
       })
     );
 
-    this.simulatorService.syncDatas();
+    this.simulatorService.syncDatas(this.referentielId);
   }
 
   ngOnDestroy() {}
@@ -77,16 +78,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }));
   }
 
-  formatDatas(list: CalculatorInterface[]) {
+  formatDatas(list: SimulatorInterface | null) {
     this.datas = list;
     this.filtredDatas();
   }
 
   filtredDatas() {
-    let list = this.datas.filter(
-      (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
-    );
-    this.datasFilted = list;
+    //this.datasFilted = list;
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {
@@ -94,23 +92,29 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.subReferentielIds = [];
       const fnd = this.referentiel.find((o) => o.id === event[0]);
       fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
-      this.referentielIds = event;
-      this.simulatorService.referentielIds = this.referentielIds;
-      this.simulatorService.subReferentielIds.next(this.subReferentielIds);
+      this.referentielId = event[0];
+      //console.log('event subid', this.subReferentielIds, this.referentielId);
+      this.simulatorService.referentielOrSubReferentielId.next(
+        this.referentielId
+      );
+      //this.simulatorService.referentielIds = this.referentielIds;
+      //this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'subReferentiel') {
       this.subReferentielIds = event;
-      this.simulatorService.subReferentielIds.next(this.subReferentielIds);
+      //console.log('sortie', event);
+      //this.simulatorService.subReferentielIds.next(this.subReferentielIds);
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
       if (this.dateStart.getDate() !== this.today.getDate())
         this.mooveClass = 'future';
       else this.mooveClass = '';
-      this.simulatorService.dateStart.next(this.dateStart);
+      //this.simulatorService.dateStart.next(this.dateStart);
     } else if (type === 'dateStop') {
       this.dateStop = new Date(event);
-      this.simulatorService.dateStop.next(this.dateStop);
+      //this.simulatorService.dateStop.next(this.dateStop);
     }
-    this.filtredDatas();
+    //this.filtredDatas();
+    //console.log(this.referentielId, this.subReferentielIds, this.referentiel);
   }
 
   getFieldValue(param: string) {

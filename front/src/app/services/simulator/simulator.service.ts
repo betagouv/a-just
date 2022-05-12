@@ -6,6 +6,8 @@ import {
   etpAffectedInterface,
 } from 'src/app/interfaces/calculator';
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
+import { SimulatorInterface } from 'src/app/interfaces/simulator';
+
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface';
 import { MainClass } from 'src/app/libs/main-class';
@@ -22,15 +24,11 @@ const end = new Date();
   providedIn: 'root',
 })
 export class SimulatorService extends MainClass {
-  simulatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
-    CalculatorInterface[]
-  >([]);
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start);
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end);
-  referentielIds: number[] = [];
-  subReferentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>(
-    []
-  );
+  situationActuelle: BehaviorSubject<SimulatorInterface | null> =
+    new BehaviorSubject<SimulatorInterface | null>(null);
+  referentielOrSubReferentielId: BehaviorSubject<number | null> =
+    new BehaviorSubject<number | null>(null);
+
   startCurrentSituation = month(new Date(), -15);
   endCurrentSituation = month(new Date(), -3, 'lastday');
 
@@ -41,21 +39,20 @@ export class SimulatorService extends MainClass {
     super();
 
     this.watch(
-      this.subReferentielIds.subscribe(() => {
-        if (this.subReferentielIds.getValue().length) {
-          this.cleanDatas();
+      this.referentielOrSubReferentielId.subscribe(() => {
+        if (this.referentielOrSubReferentielId.getValue()) {
+          console.log(
+            'donnée entré',
+            typeof this.referentielOrSubReferentielId.getValue()
+          );
+          this.syncDatas(this.referentielOrSubReferentielId.getValue());
+          console.log('situ', this.situationActuelle.getValue());
         }
-      })
-    );
-
-    this.watch(
-      this.humanResourceService.hr.subscribe(() => {
-        this.prepareDatas();
       })
     );
   }
 
-  getHRPositions(referentiel: ContentieuReferentielInterface) {
+  getHRPositions(referentiel: number) {
     const hr = this.humanResourceService.hr.getValue();
     const categories = this.humanResourceService.categories.getValue();
     const hrCategories: any = {};
@@ -93,7 +90,7 @@ export class SimulatorService extends MainClass {
 
   getHRVentilation(
     hr: HumanResourceInterface,
-    referentiel: ContentieuReferentielInterface,
+    referentielId: number,
     categories: HRCategoryInterface[]
   ): number {
     const list: any = {};
@@ -113,9 +110,7 @@ export class SimulatorService extends MainClass {
         const situation = this.humanResourceService.findSituation(hr, now);
         if (situation && situation.category && situation.category.id) {
           const activitiesFiltred = (situation.activities || []).filter(
-            (a) =>
-              a.contentieux &&
-              this.subReferentielIds.getValue().includes(a.contentieux.id)
+            (a) => a.contentieux?.id == referentielId
           );
           const indispoFiltred =
             this.humanResourceService.findAllIndisponibilities(hr, now);
@@ -137,14 +132,13 @@ export class SimulatorService extends MainClass {
     return list;
   }
 
-  getActivityValues(
-    referentiel: ContentieuReferentielInterface,
-    nbMonth: number
-  ) {
+  getActivityValues(referentielId: number | null, nbMonth: number) {
     const activities = sortBy(
       this.activitiesService.activities.getValue().filter((a) => {
+        //console.log(a.contentieux.id, referentielId);
+        //console.log(typeof a.contentieux.id);
         return (
-          this.subReferentielIds.getValue().includes(a.contentieux.id) &&
+          a.contentieux.id === referentielId &&
           month(a.periode).getTime() >=
             month(this.startCurrentSituation).getTime() &&
           month(a.periode).getTime() <=
@@ -154,6 +148,7 @@ export class SimulatorService extends MainClass {
       'periode'
     );
 
+    console.log('activities', activities);
     const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth);
     const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth);
     let lastStock = null;
@@ -168,171 +163,53 @@ export class SimulatorService extends MainClass {
     const realCoverage = fixDecimal(totalOut / totalIn);
     const realDTESInMonths =
       lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
-    const etpAffected = this.getHRPositions(referentiel);
-    const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
+    console.log('refId', referentielId);
 
-    // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
-    const realTimePerCase = fixDecimal(
-      ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
-        (totalOut / sumBy(etpAffected, 'totalEtp'))
-    );
+    if (referentielId) {
+      const etpAffected = this.getHRPositions(referentielId);
+      console.log('affect', etpAffected);
+      const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
 
+      // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
+      const realTimePerCase = fixDecimal(
+        ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
+          (totalOut / sumBy(etpAffected, 'totalEtp'))
+      );
+      return {
+        totalIn,
+        totalOut,
+        lastStock,
+        realCoverage,
+        realDTESInMonths,
+        realTimePerCase,
+        etpMag,
+        etpAffected,
+      };
+    }
     return {
       totalIn,
       totalOut,
       lastStock,
       realCoverage,
       realDTESInMonths,
-      realTimePerCase,
-      etpMag,
+      realTimePerCase: null,
+      etpMag: null,
+      etpAffected: null,
     };
   }
 
-  prepareDatas() {
-    if (this.humanResourceService.categories.getValue().length === 0) {
-      return;
-    }
-
-    const list: CalculatorInterface[] = [];
-    const referentiels =
-      this.humanResourceService.contentieuxReferentiel.getValue();
-    for (let i = 0; i < referentiels.length; i++) {
-      const childrens = (referentiels[i].childrens || []).map((c) => {
-        const cont = { ...c, parent: referentiels[i] };
-        return {
-          totalIn: null,
-          totalOut: null,
-          lastStock: null,
-          etpMag: null,
-          etpFon: null,
-          etpCont: null,
-          realCoverage: null,
-          realDTESInMonths: null,
-          realTimePerCase: null,
-          calculateCoverage: null,
-          calculateDTESInMonths: null,
-          calculateTimePerCase: null,
-          calculateOut: null,
-          etpAffected: [],
-          childrens: [],
-          contentieux: cont,
-          nbMonth: 0,
-          needToCalculate: false,
-          childIsVisible: false,
-        };
-      });
-
-      list.push({
-        totalIn: null,
-        totalOut: null,
-        lastStock: null,
-        etpMag: null,
-        etpFon: null,
-        etpCont: null,
-        realCoverage: null,
-        realDTESInMonths: null,
-        realTimePerCase: null,
-        calculateCoverage: null,
-        calculateDTESInMonths: null,
-        calculateTimePerCase: null,
-        calculateOut: null,
-        etpAffected: [],
-        childrens,
-        contentieux: referentiels[i],
-        nbMonth: 0,
-        needToCalculate: true,
-        childIsVisible: false,
-      });
-    }
-    this.simulatorDatas.next(list);
-    this.syncDatas();
-  }
-
-  syncDatas() {
-    if (this.simulatorDatas.getValue().length === 0) {
-      this.prepareDatas();
-      return;
-    }
-
-    const list: CalculatorInterface[] = this.simulatorDatas.getValue();
+  syncDatas(referentielId: number | null) {
     const nbMonth = 12;
-    for (let i = 0; i < list.length; i++) {
-      const childrens: any = (list[i].childrens || []).map((c) => {
-        if (
-          c !== undefined &&
-          this.subReferentielIds.getValue().includes(c.contentieux?.id) &&
-          list[i].childIsVisible &&
-          c.needToCalculate === true
-        ) {
-          return {
-            ...c,
-            nbMonth,
-            needToCalculate: false,
-            ...this.getActivityValues(c.contentieux, nbMonth),
-          };
-        }
-        return;
-      });
+    const list: SimulatorInterface | null = {
+      etpFon: null,
+      etpCont: null,
+      calculateCoverage: null,
+      calculateDTESInMonths: null,
+      calculateTimePerCase: null,
+      nbMonth,
+      ...this.getActivityValues(referentielId, nbMonth),
+    };
 
-      list[i] = {
-        ...list[i],
-        ...this.getActivityValues(list[i].contentieux, nbMonth),
-        childrens,
-        nbMonth,
-        needToCalculate: false,
-      };
-    }
-    this.simulatorDatas.next(list);
-  }
-
-  cleanDatas() {
-    const list: CalculatorInterface[] = this.simulatorDatas.getValue();
-    for (let i = 0; i < list.length; i++) {
-      const childrens = (list[i].childrens || []).map((c) => {
-        return {
-          ...c,
-          totalIn: null,
-          totalOut: null,
-          lastStock: null,
-          etpMag: null,
-          etpFon: null,
-          etpCont: null,
-          realCoverage: null,
-          realDTESInMonths: null,
-          realTimePerCase: null,
-          calculateCoverage: null,
-          calculateDTESInMonths: null,
-          calculateTimePerCase: null,
-          calculateOut: null,
-          etpAffected: [],
-          childrens: [],
-          nbMonth: 0,
-          needToCalculate: true,
-        };
-      });
-
-      list[i] = {
-        ...list[i],
-        totalIn: null,
-        totalOut: null,
-        lastStock: null,
-        etpMag: null,
-        etpFon: null,
-        etpCont: null,
-        realCoverage: null,
-        realDTESInMonths: null,
-        realTimePerCase: null,
-        calculateCoverage: null,
-        calculateDTESInMonths: null,
-        calculateTimePerCase: null,
-        calculateOut: null,
-        etpAffected: [],
-        childrens,
-        nbMonth: 0,
-        needToCalculate: true,
-      };
-    }
-    this.simulatorDatas.next(list);
-    this.syncDatas();
+    this.situationActuelle.next(list);
   }
 }
