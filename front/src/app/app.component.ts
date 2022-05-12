@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActivitiesService } from './services/activities/activities.service';
-import { CalculatorService } from './services/calculator/calculator.service';
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service';
 import { HumanResourceService } from './services/human-resource/human-resource.service';
 import { ReferentielService } from './services/referentiel/referentiel.service';
@@ -20,7 +18,6 @@ export class AppComponent {
     private humanResourceService: HumanResourceService,
     private userService: UserService,
     private referentielService: ReferentielService,
-    private activitiesService: ActivitiesService,
     private contentieuxOptionsService: ContentieuxOptionsService,
   ) {
     router.events.subscribe(() => {

@@ -1,0 +1,16 @@
+node_modules
+.idea/
+dist
+.DS_Store
+.env.local
+.env
+public/img/generators
+IGNORE/
+config/local*
+src/models/TableOrders.js
+uploads/
+output.pdf
+tmp
+inputs/*
+outputs/*
+inputs copy/*

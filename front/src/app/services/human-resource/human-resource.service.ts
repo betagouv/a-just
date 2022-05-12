@@ -399,6 +399,9 @@ export class HumanResourceService {
             if (dateStop.getTime() >= date.getTime()) {
               return true;
             }
+          } else {
+            // return true if they are no end date
+            return true;
           }
         }
 
@@ -539,7 +542,7 @@ export class HumanResourceService {
           const list = this.hr.getValue();
           const findIndex = list.findIndex((r) => r.id === hr.id);
           if (findIndex !== -1) {
-            list[findIndex] = hr;
+            list[findIndex] = this.formatHR(hr);
             this.hr.next(list);
 
             // update date of backup after remove

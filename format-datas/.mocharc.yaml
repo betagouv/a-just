@@ -1,0 +1,5 @@
+spec:
+  - 'test/index.test.js'
+timeout: '20000'
+color: true
+require: 'babel-register'
