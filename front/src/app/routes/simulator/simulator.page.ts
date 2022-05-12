@@ -23,8 +23,8 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service';
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   mooveClass: string = '';
-  referentielId: number | null = null;
-  subReferentielIds: number[] = [];
+  contentieuId: number | null = null;
+  subList: number[] = [];
   formReferentiel: dataInterface[] = [];
   datas: SimulatorInterface | null = null;
   referentiel: ContentieuReferentielInterface[] = [];
@@ -60,7 +60,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       })
     );
 
-    this.simulatorService.syncDatas(this.referentielId);
+    this.simulatorService.syncDatas(this.contentieuId);
   }
 
   ngOnDestroy() {}
@@ -83,25 +83,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
-      this.subReferentielIds = [];
+      this.subList = [];
       const fnd = this.referentiel.find((o) => o.id === event[0]);
-      fnd?.childrens?.map((value) => this.subReferentielIds.push(value.id));
-      this.referentielId = event[0];
-      this.simulatorService.referentielOrSubReferentielId.next(
-        this.referentielId as number
+      fnd?.childrens?.map((value) => this.subList.push(value.id));
+      this.contentieuId = event[0];
+      this.simulatorService.contentieuOrSubContentieuId.next(
+        this.contentieuId as number
       );
-    } else if (type === 'subReferentiel') {
-      this.subReferentielIds = event;
+    } else if (type === 'subList') {
+      this.subList = event;
       const tmpRefLength = this.referentiel.find(
-        (v) => v.id === this.referentielId
+        (v) => v.id === this.contentieuId
       );
       if (event.length === tmpRefLength?.childrens?.length)
-        this.simulatorService.referentielOrSubReferentielId.next(
-          this.referentielId as number
+        this.simulatorService.contentieuOrSubContentieuId.next(
+          this.contentieuId as number
         );
       else
-        this.simulatorService.referentielOrSubReferentielId.next(
-          this.subReferentielIds[0] as number
+        this.simulatorService.contentieuOrSubContentieuId.next(
+          this.subList[0] as number
         );
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event);
@@ -113,11 +113,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  getElementById(id: number | null) {
+    return this.referentiel?.find((v) => id);
+  }
   getFieldValue(param: string) {
+    const find = this.referentiel?.find((v) => this.contentieuId);
     if (
       (this.simulatorService.situationActuelle.getValue() !== null &&
-        this.subReferentielIds.length) ||
-      this.referentielId === 485
+        this.subList.length) ||
+      this.getElementById(this.contentieuId)?.childrens?.length
     ) {
       switch (param) {
         case 'etpMag':

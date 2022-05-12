@@ -30,7 +30,7 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() value: number | string | null | number[] | string[] = null;
   @Input() datas: dataInterface[] = [];
   @Input() multiple: boolean = true;
-  @Input() subReferentiel: number[] | null = null;
+  @Input() subList: number[] | null = null;
   @Input() parent: number | null = null;
   @Input() defaultRealValue: string = '';
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter();
@@ -52,7 +52,7 @@ export class SelectComponent extends MainClass implements OnChanges {
 
     let tmpStr = '';
 
-    if (find && !this.subReferentiel && typeof this.value === 'number') {
+    if (find && !this.subList && typeof this.value === 'number') {
       this.datas.map((v) => {
         if (v.id === this.value) {
           tmpStr = tmpStr.concat(v.value, tmpStr);
@@ -61,12 +61,12 @@ export class SelectComponent extends MainClass implements OnChanges {
       this.realValue = tmpStr;
     } else if (
       find &&
-      this.subReferentiel &&
+      this.subList &&
       this.value &&
       Object.keys(this.value).length !== find.childrens?.length
     ) {
       this.subReferentielData = [];
-      this.value = this.subReferentiel;
+      this.value = this.subList;
 
       [find.childrens].map((s) =>
         s?.map((t) => {
@@ -79,12 +79,12 @@ export class SelectComponent extends MainClass implements OnChanges {
       this.realValue = tmpStr.slice(0, -2);
     } else if (
       find &&
-      this.subReferentiel &&
+      this.subList &&
       this.value &&
       Object.keys(this.value).length === find.childrens?.length
     ) {
       this.subReferentielData = [];
-      this.value = this.subReferentiel;
+      this.value = this.subList;
       [find.childrens].map((s) =>
         s?.map((t) => this.subReferentielData.push(t))
       );
@@ -104,16 +104,16 @@ export class SelectComponent extends MainClass implements OnChanges {
 
   onSelectedChanged(list: number[] | number) {
     if (this.parent && Array.isArray(list)) {
-      if (list.length === 0) this.value = this.subReferentiel = [];
+      if (list.length === 0) this.value = this.subList = [];
       else if (list.length === 1) this.value = list;
       else if (list.length === 2)
-        this.value = this.subReferentiel = list.filter(
+        this.value = this.subList = list.filter(
           (v) => ![this.value as number[]][0].includes(v)
         );
       else if (list.length === this.subReferentielData.length)
         this.value = list;
       else if (list.length === this.subReferentielData.length - 1)
-        this.value = this.subReferentiel = [this.value as number[]][0].filter(
+        this.value = this.subList = [this.value as number[]][0].filter(
           (v) => !list.includes(v)
         );
     } else if (typeof list === 'number') this.value = [list];
