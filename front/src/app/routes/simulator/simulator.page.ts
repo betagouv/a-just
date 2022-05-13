@@ -117,14 +117,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     getElementById(id: number | null) {
-        return this.referentiel?.find((v) => id)
+        return this.referentiel?.find((v) => v.id === id)
     }
     getFieldValue(param: string) {
-        const find = this.referentiel?.find((v) => this.contentieuId)
         if (
             (this.simulatorService.situationActuelle.getValue() !== null &&
                 this.subList.length) ||
-            this.getElementById(this.contentieuId)?.childrens?.length
+            !this.getElementById(this.contentieuId)?.childrens?.length
         ) {
             switch (param) {
                 case 'etpMag':
