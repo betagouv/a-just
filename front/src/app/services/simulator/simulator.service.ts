@@ -22,7 +22,8 @@ export class SimulatorService extends MainClass {
         new BehaviorSubject<SimulatorInterface | null>(null)
     contentieuOrSubContentieuId: BehaviorSubject<number | null> =
         new BehaviorSubject<number | null>(null)
-
+    dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
+    dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
     startCurrentSituation = month(new Date(), -13)
     endCurrentSituation = month(new Date(), -2, 'lastday')
     constructor(
@@ -38,9 +39,20 @@ export class SimulatorService extends MainClass {
                 }
             })
         )
+
+        this.watch(
+            this.dateStart.subscribe(() => {
+                if (this.contentieuOrSubContentieuId.getValue()) {
+                    this.syncDatas(
+                        this.contentieuOrSubContentieuId.getValue(),
+                        this.dateStart.getValue()
+                    )
+                }
+            })
+        )
     }
 
-    syncDatas(referentielId: number | null) {
+    syncDatas(referentielId: number | null, dateStart?: Date) {
         if (referentielId !== null) {
             const nbMonth = 12
             const list: SimulatorInterface | null = {

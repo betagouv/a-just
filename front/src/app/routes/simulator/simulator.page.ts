@@ -23,6 +23,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     mooveClass: string = ''
+    disabled: string = 'disabled'
     contentieuId: number | null = null
     subList: number[] = []
     formReferentiel: dataInterface[] = []
@@ -56,6 +57,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         )
 
         this.watch(
+            // ajouter paramètre
             this.simulatorService.situationActuelle.subscribe((d) => {
                 this.formatDatas(
                     this.simulatorService.situationActuelle.getValue()
@@ -93,6 +95,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.simulatorService.contentieuOrSubContentieuId.next(
                 this.contentieuId as number
             )
+            this.disabled = ''
         } else if (type === 'subList') {
             this.subList = event
             const tmpRefLength = this.referentiel.find(
@@ -106,11 +109,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.simulatorService.contentieuOrSubContentieuId.next(
                     this.subList[0] as number
                 )
+            if (!event.length) this.disabled = 'disabled'
+            else this.disabled = ''
         } else if (type === 'dateStart') {
             this.dateStart = new Date(event)
             if (this.dateStart.getDate() !== this.today.getDate())
                 this.mooveClass = 'future'
             else this.mooveClass = ''
+            this.disabled = 'disabled-date'
+            this.simulatorService.dateStart.next(this.dateStart)
         } else if (type === 'dateStop') {
             this.dateStop = new Date(event)
         }

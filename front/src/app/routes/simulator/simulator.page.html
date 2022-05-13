@@ -4,7 +4,7 @@
         <div class="container-timeline">
             <div class="container-timeline-button">
                 <aj-date-select-blue
-                    class="select-disabled {{mooveClass}}"
+                    class="select-disabled {{mooveClass}} {{disabled}}"
                     [value]="dateStart"
                     (valueChange)="updateReferentielSelected('dateStart', $event)"
                     [max]="dateStop"
@@ -13,6 +13,7 @@
                 </aj-date-select-blue>
                 <div class="space"></div>
                 <aj-date-select-blue
+                    class="{{disabled}}"
                     [title]="'Fin de période'"
                     [value]="dateStop"
                     (valueChange)="updateReferentielSelected('dateStop', $event)"
@@ -100,7 +101,7 @@
 <ng-template #actions>
     <aj-select
         title="Contentieux"
-        class="contentieux"
+        class="contentieux {{disabled}}"
         [defaultRealValue]="'Sélectionner un contentieux'"
         [value]="contentieuId"
         [datas]="formReferentiel"
@@ -110,6 +111,7 @@
     </aj-select>
     <aj-select
         title="Sous Contentieux"
+        class="{{disabled}}"
         [value]="subList"
         [datas]="formReferentiel"
         [subList]="subList"

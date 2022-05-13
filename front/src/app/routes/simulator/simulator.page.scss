@@ -156,8 +156,16 @@
         }
     }
 
-    .contentieux {
-        margin: 16px 16px 16px 34px;
+    aj-select {
+        &.contentieux {
+            margin: 16px 16px 16px 34px;
+        }
+
+        &.disabled-date {
+            cursor: auto;
+            opacity: 0.5;
+            ;
+        }
     }
 
     .export-button {
@@ -214,6 +222,11 @@
         &.future {
             margin-left: 208px;
         }
+
+        &.disabled {
+            cursor: auto;
+            opacity: 0.5;
+        }
     }
 
     .Rectangle {
@@ -243,6 +256,11 @@
                 display: block;
                 left: 155.5px
             }
+
+            &.disabled {
+                cursor: auto;
+                opacity: 0.5;
+            }
         }
 
         .dot {
@@ -258,6 +276,7 @@
             &.future {
                 left: 155.5px
             }
+
         }
 
         &::before {
