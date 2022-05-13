@@ -87,8 +87,6 @@ export class SimulatorService extends MainClass {
                     )
                 )
             } while (lastActivities.length === 0 || nbOfMonth != -12)
-
-            console.log('lastAct', lastActivities)
             lastStock = sumBy(lastActivities, 'stock')
 
             const realCoverage = fixDecimal(totalOut / totalIn)
