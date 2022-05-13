@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { sumBy } from 'lodash';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
-import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity';
 import { MainClass } from 'src/app/libs/main-class';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
@@ -27,7 +26,7 @@ export class PanelHistoryVentilationComponent
   @Input() dateStop: Date = new Date();
   @Input() dateEndToJuridiction: Date | null | undefined = null;
   @Input() fonction: HRFonctionInterface | null = null;
-  @Input() etp: number = 1;
+  @Input() etp: number = 0;
   @Input() indisponibilities: RHActivityInterface[] = [];
   @Input() activities: RHActivityInterface[] = [];
   @Input() id: number | null = null;
@@ -45,19 +44,12 @@ export class PanelHistoryVentilationComponent
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     );
-    this.indisponibilities = this.indisponibilities.map((i) => {
-      if (!i.contentieux) {
-        i.contentieux = referentiel.find((r) => r.id === i.referentielId);
-      }
-
-      return i;
-    });
 
     if (
       this.dateEndToJuridiction &&
-      this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
+      this.dateEndToJuridiction.getTime() < this.dateStop.getTime()
     ) {
-      this.timeWorked = 'Temps plein';
+      this.timeWorked = 'Sortie';
     } else {
       this.timeWorked = etpLabel(this.etp);
     }

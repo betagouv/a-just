@@ -256,7 +256,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.updateIndisponiblity = {
       id: this.indisponibilities.length * -1 - 1,
       percent: 0,
-      referentielId: this.allIndisponibilityReferentiel[0].id,
+      contentieux: { 
+        ...this.allIndisponibilityReferentiel[0],
+      },
       dateStart: new Date(),
     };
   }
@@ -271,16 +273,22 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       case 'modify':
         {
           if (this.updateIndisponiblity) {
-            this.updateIndisponiblity.referentielId =
-              +this.updateIndisponiblity.referentielId;
-          }
+            // force id to int with selector
+            this.updateIndisponiblity.contentieux.id =
+              +this.updateIndisponiblity.contentieux.id;
 
           const index = this.indisponibilities.findIndex(
             (i) => i.id === this.updateIndisponiblity?.id
           );
           const contentieux = this.allIndisponibilityReferentiel.find(
-            (c) => c.id === this.updateIndisponiblity?.referentielId
+            // @ts-ignore
+            (c) => c.id === this.updateIndisponiblity.contentieux.id
           );
+
+          if(!contentieux) {
+            alert('Il y a un problème avec l\'indisponibilitiés choisie.')
+            return false;
+          }
 
           if (index !== -1) {
             this.indisponibilities[index] = {
@@ -295,7 +303,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             });
           }
           this.updateIndisponiblity = null;
-          this.controlIndisponibilities();
+          this.controlIndisponibilities();  
+          }
         }
         break;
       case 'delete':
@@ -314,6 +323,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         }
         break;
     }
+
+    return true;
   }
 
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {

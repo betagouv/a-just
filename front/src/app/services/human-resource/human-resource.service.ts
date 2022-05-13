@@ -95,6 +95,14 @@ export class HumanResourceService {
               periode: new Date(a.periode),
             }))
           );
+          console.log(
+            this.activitiesService.activities.getValue().filter(
+              (a) =>
+                a.sorties !== 0 &&
+                //[447, 448, 449, 450, 486].indexOf(a?.contentieux?.id) !== -1
+                a?.contentieux?.id === 486
+            )
+          );
           this.activitiesService.hrBackupId = result.backupId;
           this.hr.next(result.hr.map(this.formatHR));
           this.backups.next(
@@ -391,6 +399,9 @@ export class HumanResourceService {
             if (dateStop.getTime() >= date.getTime()) {
               return true;
             }
+          } else {
+            // return true if they are no end date
+            return true;
           }
         }
 
@@ -531,7 +542,7 @@ export class HumanResourceService {
           const list = this.hr.getValue();
           const findIndex = list.findIndex((r) => r.id === hr.id);
           if (findIndex !== -1) {
-            list[findIndex] = hr;
+            list[findIndex] = this.formatHR(hr);
             this.hr.next(list);
 
             // update date of backup after remove

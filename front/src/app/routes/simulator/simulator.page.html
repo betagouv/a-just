@@ -27,13 +27,82 @@
       </div>
     </div>
   </div>
+  <div class="items">
+    <div class="item blue-bg">
+      <p>Entrées mensuelles</p>
+    </div>
+    <div class="item">
+      <p>Sorties mensuelles</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Stock</p>
+    </div>
+    <div class="item">
+      <p>ETPT magistrat</p>
+    </div>
+    <div class="item blue-bg">
+      <p>ETPT greffe</p>
+    </div>
+    <div class="item">
+      <p>ETPT contractuels</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Taux de couverture</p>
+    </div>
+    <div class="item">
+      <p>DTES</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Temps moyen / dossier</p>
+    </div>
+  </div>
+  <div
+    class="actual-situation"
+    *ngIf="subList.length!==0 || this.getElementById(this.contentieuId)?.childrens?.length"
+    [@fadeInOut]
+  >
+    <div class="line-title">
+      <p>
+        Situation<br />
+        à aujourd'hui
+      </p>
+    </div>
+
+    <div class="line-item orange-bg">
+      <input [value]="getFieldValue('totalIn')" disabled />
+    </div>
+    <div class="line-item">
+      <input [value]="getFieldValue('totalOut')" disabled />
+    </div>
+    <div class="line-item orange-bg">
+      <input [value]="getFieldValue('lastStock')" disabled />
+    </div>
+    <div class="line-item">
+      <input [value]="getFieldValue('etpMag')" disabled />
+    </div>
+    <div class="line-item orange-bg">
+      <input [value]="getFieldValue('ETPTGreffe')" disabled />
+    </div>
+    <div class="line-item">
+      <input [value]="getFieldValue('etpFon')" disabled />
+    </div>
+    <div class="line-item orange-bg">
+      <input [value]="getFieldValue('realCoverage')" disabled />
+    </div>
+    <div class="line-item">
+      <input [value]="getFieldValue('realDTESInMonths')" disabled />
+    </div>
+    <div class="line-item orange-bg">
+      <input [value]="getFieldValue('realTimePerCase')" disabled />
+    </div>
+  </div>
 </aj-wrapper>
 <ng-template #actions>
   <aj-select
     title="Contentieux"
     class="contentieux"
     [defaultRealValue]="'Sélectionner un contentieux'"
-    [value]="referentielIds"
+    [value]="contentieuId"
     [datas]="formReferentiel"
     (valueChange)="updateReferentielSelected('referentiel', $event)"
     [multiple]="false"
@@ -41,10 +110,11 @@
   </aj-select>
   <aj-select
     title="Sous Contentieux"
-    [value]="subReferentielIds"
+    [value]="subList"
     [datas]="formReferentiel"
-    [subReferentiel]="referentielIds"
-    (valueChange)="updateReferentielSelected('subReferentiel', $event)"
+    [subList]="subList"
+    [parent]="contentieuId"
+    (valueChange)="updateReferentielSelected('subList', $event)"
   >
   </aj-select>
   <div class="export-button">

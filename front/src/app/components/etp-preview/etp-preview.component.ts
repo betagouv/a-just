@@ -73,7 +73,7 @@ export class EtpPreviewComponent implements OnChanges {
       this.height / 2 + this.margin,
       this.width / 2,
       this.getRadiusPosition(0),
-      this.getRadiusPosition(this.indisponibility > this.etp ? 0 : ((this.etp + this.indisponibility) * 100))
+      this.getRadiusPosition((this.etp + this.indisponibility) * 100)
     );
     ctx.stroke();
     ctx.beginPath();

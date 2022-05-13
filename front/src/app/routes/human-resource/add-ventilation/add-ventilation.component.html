@@ -131,7 +131,7 @@
   <div class="form">
     <div>
       <div class="label-aj">Motif d'indisponibilité</div>
-      <select [(ngModel)]="updateIndisponiblity.referentielId">
+      <select [(ngModel)]="updateIndisponiblity.contentieux.id">
         <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
           {{ cat.label }}
         </option>
