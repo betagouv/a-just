@@ -134,10 +134,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     return this.datas?.totalIn || '0'
                 case 'lastStock':
                     return this.datas?.lastStock || '0'
-                case 'etpMag':
-                    return this.datas?.etpMag || '0'
                 case 'etpFon':
-                    return this.datas?.etpFon || '0'
+                    return ''
                 case 'realCoverage':
                     return this.datas?.realCoverage || '0'
                 case 'realDTESInMonths':
@@ -157,7 +155,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         if (decimal != null) {
             const n = new Date(0, 0)
             n.setMinutes(+decimal * 60)
-            return n.toTimeString().slice(0, 5)
+            return n.toTimeString().slice(0, 5).replace(':', 'h')
         }
         return
     }

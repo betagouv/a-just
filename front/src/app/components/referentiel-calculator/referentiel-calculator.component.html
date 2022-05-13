@@ -60,20 +60,18 @@
         </div>
         <div [ngClass]="{ selected: sortBy === 'realTimePerCase' }">
             <div class="block">
-                <p>
-                    {{
-                        this.decimalToStringDate(calculator.realTimePerCase) ||
-                            0
-                    }}
-                </p>
-                <p class="unity">
-                    {{
-                        calculator.realTimePerCase &&
-                        calculator.realTimePerCase > 1
-                            ? 'heures'
-                            : 'heure'
-                    }}
-                </p>
+                <ng-template
+                    [ngIf]="calculator.calculateTimePerCase !== null"
+                    [ngIfElse]="nr"
+                >
+                    <p>
+                        {{
+                            this.decimalToStringDate(
+                                calculator.realTimePerCase
+                            ) || 0
+                        }}
+                    </p>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -102,13 +100,11 @@
                     [ngIf]="calculator.calculateTimePerCase !== null"
                     [ngIfElse]="nr"
                 >
-                    <p>{{ calculator.calculateTimePerCase }}</p>
-                    <p class="unity">
+                    <p>
                         {{
-                            calculator.calculateTimePerCase &&
-                            calculator.calculateTimePerCase > 1
-                                ? 'heures'
-                                : 'heure'
+                            this.decimalToStringDate(
+                                calculator.calculateTimePerCase
+                            )
                         }}
                     </p>
                 </ng-template>
