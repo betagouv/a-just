@@ -56,7 +56,7 @@ export class SimulatorService extends MainClass {
         if (referentielId !== null) {
             const nbMonth = 12
             const list: SimulatorInterface | null = {
-                ...this.getActivityValues(referentielId, nbMonth),
+                ...this.getActivityValues(referentielId, nbMonth, dateStart),
                 etpFon: null,
                 etpCont: null,
                 calculateCoverage: null,
@@ -68,7 +68,11 @@ export class SimulatorService extends MainClass {
         }
     }
 
-    getActivityValues(referentielId: number | null, nbMonth: number) {
+    getActivityValues(
+        referentielId: number | null,
+        nbMonth: number,
+        dateStart?: Date
+    ) {
         // get 12 last months starting from now
         let activities = sortBy(
             this.activitiesService.activities
@@ -127,8 +131,8 @@ export class SimulatorService extends MainClass {
             )
         }
 
-        const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
-        const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
+        let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
+        let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
 
         let lastStock = null
         if (activities.length) {
@@ -149,9 +153,11 @@ export class SimulatorService extends MainClass {
 
             lastStock = sumBy(lastActivities, 'stock')
 
-            const realCoverage = fixDecimal(totalOut / totalIn)
+            let realCoverage = fixDecimal(totalOut / totalIn)
             const realDTESInMonths =
-                lastStock !== null ? fixDecimal(lastStock / totalOut) : null
+                lastStock !== null && totalOut !== null
+                    ? fixDecimal(lastStock / totalOut)
+                    : null
 
             const etpAffected = this.getHRPositions(referentielId as number)
             const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
@@ -162,6 +168,38 @@ export class SimulatorService extends MainClass {
                     environment.nbHoursPerDay) /
                     (totalOut / sumBy(etpAffected, 'totalEtp'))
             )
+
+            const today = new Date()
+            if (
+                dateStart &&
+                (dateStart?.getDate() !== today.getDate() ||
+                    dateStart?.getMonth() !== today.getMonth() ||
+                    dateStart?.getFullYear() !== today.getFullYear())
+            ) {
+                let nbDay = 0
+                const now = new Date()
+                do {
+                    // only working day
+                    if (workingDay(now)) {
+                        nbDay++
+                    }
+                    now.setDate(now.getDate() + 1)
+                } while (now.getTime() <= this.dateStart.getValue().getTime())
+
+                totalOut = Math.floor(
+                    (sumBy(activities, 'sorties') +
+                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase)) /
+                        (nbMonth + nbDay / 21)
+                )
+
+                lastStock = Math.floor(
+                    lastStock -
+                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase) +
+                        (nbDay / 21) * totalIn
+                )
+
+                realCoverage = fixDecimal(totalOut / totalIn)
+            }
 
             return {
                 totalIn,

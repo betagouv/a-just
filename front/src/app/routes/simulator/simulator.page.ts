@@ -33,6 +33,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     dateStop: Date | null = new Date()
     today: Date = new Date()
     todaySituation: Object | null = null
+    startRealValue: string = ''
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -113,11 +114,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             else this.disabled = ''
         } else if (type === 'dateStart') {
             this.dateStart = new Date(event)
-            if (this.dateStart.getDate() !== this.today.getDate())
+            if (
+                this.dateStart.getDate() !== this.today.getDate() ||
+                this.dateStart.getMonth() !== this.today.getMonth() ||
+                this.dateStart.getFullYear() !== this.today.getFullYear()
+            )
                 this.mooveClass = 'future'
             else this.mooveClass = ''
             this.disabled = 'disabled-date'
             this.simulatorService.dateStart.next(this.dateStart)
+            this.startRealValue = this.findRealValue()
         } else if (type === 'dateStop') {
             this.dateStop = new Date(event)
         }
@@ -143,10 +149,22 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     return this.datas?.lastStock || '0'
                 case 'etpFon':
                     return ''
-                case 'realCoverage':
+                case 'realCoverage': {
+                    if (this.datas?.realCoverage)
+                        return (
+                            Math.trunc(this.datas?.realCoverage * 100) + '%' ||
+                            '0'
+                        )
                     return this.datas?.realCoverage || '0'
+                }
                 case 'realDTESInMonths':
-                    return this.datas?.realDTESInMonths || '0'
+                    if (
+                        this.datas?.realDTESInMonths &&
+                        this.datas?.realDTESInMonths !== Infinity
+                    ) {
+                        return this.datas?.realDTESInMonths + ' mois' || '0'
+                    }
+                    return '0'
                 case 'realTimePerCase':
                     return (
                         this.decimalToStringDate(this.datas?.realTimePerCase) ||
@@ -165,5 +183,26 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             return n.toTimeString().slice(0, 5).replace(':', 'h')
         }
         return
+    }
+
+    findRealValue() {
+        const today = new Date()
+        if (
+            today.getDate() === this.dateStart.getDate() &&
+            today.getMonth() === this.dateStart.getMonth() &&
+            today.getFullYear() === this.dateStart.getFullYear()
+        )
+            return ''
+        else if (
+            this.dateStart &&
+            typeof this.dateStart.getMonth === 'function'
+        ) {
+            return `${(this.dateStart.getDate() + '').padStart(
+                2,
+                '0'
+            )} ${this.getShortMonthString(
+                this.dateStart
+            )} ${this.dateStart.getFullYear()}`
+        } else return ''
     }
 }
