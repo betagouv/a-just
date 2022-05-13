@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { last, sortBy, sumBy } from 'lodash'
+import { groupBy, last, sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -24,8 +24,8 @@ export class SimulatorService extends MainClass {
         new BehaviorSubject<number | null>(null)
     dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
     dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
-    startCurrentSituation = month(new Date(), -13)
-    endCurrentSituation = month(new Date(), -2, 'lastday')
+    startCurrentSituation = month(new Date(), -12)
+    endCurrentSituation = month(new Date(), -1, 'lastday')
     constructor(
         private humanResourceService: HumanResourceService,
         private activitiesService: ActivitiesService
@@ -69,7 +69,8 @@ export class SimulatorService extends MainClass {
     }
 
     getActivityValues(referentielId: number | null, nbMonth: number) {
-        const activities = sortBy(
+        // get 12 last months starting from now
+        let activities = sortBy(
             this.activitiesService.activities
                 .getValue()
                 .filter(
@@ -83,11 +84,55 @@ export class SimulatorService extends MainClass {
             'periode'
         )
 
+        // check when is the last month available on this periode with entrees and sorties
+        let counter = 1
+        let lastActivitiesEntreesSorties: any = []
+        do {
+            counter--
+            lastActivitiesEntreesSorties = activities.filter((a) =>
+                this.isSameMonthAndYear(
+                    a.periode,
+                    month(this.endCurrentSituation, counter, 'lastday')
+                )
+            )
+            if (
+                lastActivitiesEntreesSorties.length !== 0 &&
+                (lastActivitiesEntreesSorties[0].entrees ||
+                    lastActivitiesEntreesSorties[0].sorties)
+            )
+                break
+        } while (lastActivitiesEntreesSorties.length === 0 && counter != -12)
+
+        // if last month not available, then get the 12 last months starting from the last available
+        if (counter !== -12 && counter !== 0) {
+            activities = sortBy(
+                this.activitiesService.activities
+                    .getValue()
+                    .filter(
+                        (a) =>
+                            a.contentieux.id === referentielId &&
+                            month(a.periode).getTime() >=
+                                month(
+                                    this.startCurrentSituation,
+                                    counter
+                                ).getTime() &&
+                            month(a.periode).getTime() <=
+                                month(
+                                    this.endCurrentSituation,
+                                    counter,
+                                    'lastday'
+                                ).getTime()
+                    ),
+                'periode'
+            )
+        }
+
         const totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
         const totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
-        let lastStock = null
 
+        let lastStock = null
         if (activities.length) {
+            // get the last stock available
             let lastActivities: any = []
             let nbOfMonth = 1
             do {
@@ -95,10 +140,13 @@ export class SimulatorService extends MainClass {
                 lastActivities = activities.filter((a) =>
                     this.isSameMonthAndYear(
                         a.periode,
-                        month(this.endCurrentSituation, -1, 'lastday')
+                        month(this.endCurrentSituation, nbOfMonth, 'lastday')
                     )
                 )
-            } while (lastActivities.length === 0 || nbOfMonth != -12)
+                if (lastActivities.length !== 0 && lastActivities[0].stock)
+                    break
+            } while (lastActivities.length === 0 && nbOfMonth != -12)
+
             lastStock = sumBy(lastActivities, 'stock')
 
             const realCoverage = fixDecimal(totalOut / totalIn)
@@ -191,40 +239,26 @@ export class SimulatorService extends MainClass {
             }
         })
 
-        const now = new Date(this.startCurrentSituation)
-        let nbDay = 0
-        do {
-            // only working day
-            if (workingDay(now)) {
-                nbDay++
-                const situation = this.humanResourceService.findSituation(
-                    hr,
-                    now
-                )
-                if (situation && situation.category && situation.category.id) {
-                    const activitiesFiltred = (
-                        situation.activities || []
-                    ).filter((a) => a.contentieux?.id == referentielId)
-                    const indispoFiltred =
-                        this.humanResourceService.findAllIndisponibilities(
-                            hr,
-                            now
-                        )
-                    let etp =
-                        (situation.etp *
-                            (100 - sumBy(indispoFiltred, 'percent'))) /
-                        100
-                    etp *= sumBy(activitiesFiltred, 'percent') / 100
+        const now = new Date(this.endCurrentSituation)
 
-                    list[situation.category.id].etpt += etp
-                }
-            }
-            now.setDate(now.getDate() + 1)
-        } while (now.getTime() <= this.endCurrentSituation.getTime())
+        // only working day
+        const situation = this.humanResourceService.findSituation(hr, now)
+        if (situation && situation.category && situation.category.id) {
+            const activitiesFiltred = (situation.activities || []).filter(
+                (a) => a.contentieux?.id == referentielId
+            )
+            const indispoFiltred =
+                this.humanResourceService.findAllIndisponibilities(hr, now)
+            let etp =
+                (situation.etp * (100 - sumBy(indispoFiltred, 'percent'))) / 100
+            etp *= sumBy(activitiesFiltred, 'percent') / 100
+
+            list[situation.category.id].etpt += etp
+        }
 
         // format render
         for (const property in list) {
-            list[property].etpt = list[property].etpt / nbDay
+            list[property].etpt = list[property].etpt / 1
         }
 
         return list
