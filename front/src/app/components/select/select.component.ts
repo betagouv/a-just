@@ -30,7 +30,8 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() value: number | string | null | number[] | string[] = null;
   @Input() datas: dataInterface[] = [];
   @Input() multiple: boolean = true;
-  @Input() subReferentiel: undefined | number[] = undefined;
+  @Input() subList: number[] | null = null;
+  @Input() parent: number | null = null;
   @Input() defaultRealValue: string = '';
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter();
   subReferentielData: dataInterface[] = [];
@@ -45,56 +46,80 @@ export class SelectComponent extends MainClass implements OnChanges {
   }
 
   findRealValue() {
-    let valueFormated: number[] | string[] = [];
-    // @ts-ignore
-    valueFormated = this.subReferentiel
-      ? this.subReferentiel
-      : Array.isArray(valueFormated)
-      ? this.value
-      : [valueFormated];
+    let find = !this.parent
+      ? this.datas.find((d) => d.id === this.value)
+      : this.datas.find((d) => d.id === this.parent);
 
-    this.subReferentielData = [];
-    this.realValue = valueFormated
-      .map((val) => {
-        const find = this.datas.find((d) => d.id === val);
-        if (find && !this.subReferentiel) return find.value;
-        else if (
-          find &&
-          this.subReferentiel &&
-          this.value &&
-          Object.keys(this.value).length !== find.childrens?.length
-        ) {
-          let tmpRealValue = '';
-          [find.childrens].map((s) =>
-            s?.map((t) => {
-              this.subReferentielData.push(t);
-              tmpRealValue = (this.value as number[]).includes(t.id as never)
-                ? tmpRealValue.concat(t.value, ', ')
-                : tmpRealValue;
-            })
-          );
-          return tmpRealValue.slice(0, -2);
-        } else if (
-          find &&
-          this.value &&
-          Object.keys(this.value).length === find.childrens?.length
-        ) {
-          [find.childrens].map((s) =>
-            s?.map((t) => this.subReferentielData.push(t))
-          );
-          return 'Tous';
-        } else return this.value;
-      })
-      .join(', ');
+    let tmpStr = '';
+
+    if (find && !this.subList && typeof this.value === 'number') {
+      this.datas.map((v) => {
+        if (v.id === this.value) {
+          tmpStr = tmpStr.concat(v.value, tmpStr);
+        }
+      });
+      this.realValue = tmpStr;
+    } else if (
+      find &&
+      this.subList &&
+      this.value &&
+      Object.keys(this.value).length !== find.childrens?.length
+    ) {
+      this.subReferentielData = [];
+      this.value = this.subList;
+
+      [find.childrens].map((s) =>
+        s?.map((t) => {
+          this.subReferentielData.push(t);
+          tmpStr = (this.value as number[]).includes(t.id as never)
+            ? tmpStr.concat(t.value, ', ')
+            : tmpStr;
+        })
+      );
+      this.realValue = tmpStr.slice(0, -2);
+    } else if (
+      find &&
+      this.subList &&
+      this.value &&
+      Object.keys(this.value).length === find.childrens?.length
+    ) {
+      this.subReferentielData = [];
+      this.value = this.subList;
+      [find.childrens].map((s) =>
+        s?.map((t) => this.subReferentielData.push(t))
+      );
+      this.realValue = 'Tous';
+    } else if (Array.isArray(this.value) && this.value.length !== 0) {
+      const arrayValues = Array.isArray(this.value) ? this.value : [this.value];
+      this.datas.map((v) => {
+        arrayValues.map((x) => {
+          if (v.id === x) {
+            tmpStr = tmpStr.concat(v.value, ', ');
+            this.realValue = tmpStr.slice(0, -2);
+          }
+        });
+      });
+    } else this.realValue = '';
   }
 
   onSelectedChanged(list: number[] | number) {
-    if (typeof list === 'number') {
-      this.value = [list];
-    } else {
-      this.value = list;
-    }
-    this.valueChange.emit(this.value);
+    if (this.parent && Array.isArray(list)) {
+      if (list.length === 0) this.value = this.subList = [];
+      else if (list.length === 1) this.value = list;
+      else if (list.length === 2)
+        this.value = this.subList = list.filter(
+          (v) => ![this.value as number[]][0].includes(v)
+        );
+      else if (list.length === this.subReferentielData.length)
+        this.value = list;
+      else if (list.length === this.subReferentielData.length - 1)
+        this.value = this.subList = [this.value as number[]][0].filter(
+          (v) => !list.includes(v)
+        );
+    } else if (typeof list === 'number') this.value = [list];
+    else this.value = list;
+
+    this.valueChange.emit(this.value as number[]);
     this.findRealValue();
   }
 }
