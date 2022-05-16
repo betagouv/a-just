@@ -44,6 +44,12 @@ $colors: (
 	bgRowSelected: #ebf8ff,
 	bgRowBorderSelected: #bee3f8,
 	redNRColor: #f99090,
+	tooltipBgColor: #f3f6fe,
+	tooltipContentColor: #29437c,
+	tooltipBgTitleColor: #33569e,
+	tooltipContentTitleColor: #ffffff,
+	tooltipBgFooterColor: #5576c2,
+	tooltipContentFooterColor: #ffffff,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

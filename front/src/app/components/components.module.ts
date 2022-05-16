@@ -18,6 +18,8 @@ import { EtpPreviewComponent } from './etp-preview/etp-preview.component';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 import { PanelActivitiesComponent } from './panel-activities/panel-activities.component';
 import { DateSelectBlueComponent } from './date-select-blue/date-select-blue.component';
+import { TooltipsComponent } from './tooltips/tooltips.component';
+import { PipesModule } from '../pipes/pipes.module';
 
 const list = [
   WrapperComponent,
@@ -35,6 +37,7 @@ const list = [
   ProgressionBarComponent,
   PanelActivitiesComponent,
   DateSelectBlueComponent,
+  TooltipsComponent,
 ];
 
 @NgModule({
@@ -45,6 +48,7 @@ const list = [
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    PipesModule,
   ],
   exports: list,
 })
