@@ -140,7 +140,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
       cursor: pointer;
 
       &.selected {
@@ -149,6 +148,10 @@
         mat-icon {
           color: fColor(sortIconHeaderSelected);
         }
+      }
+
+      mat-icon {
+        margin-bottom: 4px;
       }
 
       p {
@@ -178,45 +181,6 @@ aj-date-select {
 
 aj-referentiel-calculator:nth-child(even) {
   background-color: fColor(bgRowEvent);
-}
-
-.tooltip {
-  position: relative;
-
-  &.last .tooltip-text {
-    right: 0;
-  }
-
-  &.medium .tooltip-text {
-    width: 400px;
-  } 
-
-  &.large .tooltip-text {
-    width: 700px;
-  } 
-  
-  &:hover .tooltip-text {
-    visibility: visible;
-  }
-
-  .tooltip-text {
-    position: absolute;
-    z-index: 1;
-    visibility: hidden;
-    bottom: 100%;
-    background-color: fColor(cblack);
-    color: white;
-    font-size: 14px;
-    padding: 12px 24px;
-    border-radius: 4px;
-    max-width: 800px;
-    min-width: 200px;
-    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-
-    a {
-      color: white;
-    }
-  }
 }
 
 
