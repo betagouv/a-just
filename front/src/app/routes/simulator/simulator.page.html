@@ -207,6 +207,7 @@
     <aj-select
         title="Sous Contentieux"
         class="{{disabled}}"
+        [class.notSelectable]="contentieuId===null"
         [value]="subList"
         [datas]="formReferentiel"
         [subList]="subList"

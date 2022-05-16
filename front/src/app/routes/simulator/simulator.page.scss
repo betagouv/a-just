@@ -188,6 +188,8 @@
     }
 
     aj-select {
+        pointer-events: all;
+
         &.contentieux {
             margin: 16px 16px 16px 34px;
         }
@@ -197,6 +199,10 @@
             cursor: auto;
             opacity: 0.5;
             ;
+        }
+
+        &.notSelectable {
+            pointer-events: none;
         }
     }
 

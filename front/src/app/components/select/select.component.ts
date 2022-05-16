@@ -31,7 +31,7 @@ export class SelectComponent extends MainClass implements OnChanges {
     @Input() datas: dataInterface[] = []
     @Input() multiple: boolean = true
     @Input() subList: number[] | null = null
-    @Input() parent: number | null = null
+    @Input() parent: number | string | null = null
     @Input() defaultRealValue: string = ''
     @Output() valueChange: EventEmitter<number[] | string[]> =
         new EventEmitter()
