@@ -1,0 +1,10 @@
+<div class="tooltip-text animate__animated" *ngIf="title || content || footer"
+  [ngStyle]="{visibility: tooltipsIsVisible ? 'visible' : 'hidden', animate__fadeIn: tooltipsIsVisible}">
+  <div>
+    <div class="triangle"></div>
+    <mat-icon (click)="tooltipsIsVisible = false; $event.stopPropagation();">close</mat-icon>
+    <div class="title" *ngIf="title" [innerHTML]="title | sanitizeHtml"></div>
+    <div class="content" *ngIf="content" [innerHTML]="content | sanitizeHtml"></div>
+    <div class="footer" *ngIf="footer" [innerHTML]="footer | sanitizeHtml"></div>
+  </div>
+</div>

@@ -140,7 +140,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
       cursor: pointer;
 
       &.selected {
@@ -149,6 +148,10 @@
         mat-icon {
           color: fColor(sortIconHeaderSelected);
         }
+      }
+
+      mat-icon {
+        margin-bottom: 4px;
       }
 
       p {
