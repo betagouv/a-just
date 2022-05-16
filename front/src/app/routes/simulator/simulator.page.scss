@@ -1,6 +1,8 @@
 @import "../../styles/utils.scss";
 
+
 :host {
+
 
     .actual-situation {
         background-color: #fef6e3;
@@ -59,7 +61,7 @@
                 font-weight: normal;
                 background-color: #eeeeee;
                 border: none;
-                width: 80px;
+                width: 85px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
                 position: relative;
@@ -157,8 +159,17 @@
         }
     }
 
-    .contentieux {
-        margin: 16px 16px 16px 34px;
+    aj-select {
+        &.contentieux {
+            margin: 16px 16px 16px 34px;
+        }
+
+        &.disabled-date {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+            ;
+        }
     }
 
     .export-button {
@@ -215,6 +226,12 @@
         &.future {
             margin-left: 208px;
         }
+
+        &.disabled {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+        }
     }
 
     .Rectangle {
@@ -244,6 +261,12 @@
                 display: block;
                 left: 155.5px
             }
+
+            &.disabled {
+                pointer-events: none;
+                cursor: auto;
+                opacity: 0.5;
+            }
         }
 
         .dot {
@@ -259,6 +282,7 @@
             &.future {
                 left: 155.5px
             }
+
         }
 
         &::before {
