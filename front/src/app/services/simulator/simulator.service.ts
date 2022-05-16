@@ -20,6 +20,8 @@ const end = new Date()
 export class SimulatorService extends MainClass {
     situationActuelle: BehaviorSubject<SimulatorInterface | null> =
         new BehaviorSubject<SimulatorInterface | null>(null)
+    situationProjected: BehaviorSubject<SimulatorInterface | null> =
+        new BehaviorSubject<SimulatorInterface | null>(null)
     contentieuOrSubContentieuId: BehaviorSubject<number | null> =
         new BehaviorSubject<number | null>(null)
     dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
@@ -50,13 +52,30 @@ export class SimulatorService extends MainClass {
                 }
             })
         )
+
+        this.watch(
+            this.dateStop.subscribe(() => {
+                if (this.contentieuOrSubContentieuId.getValue()) {
+                    this.syncDatas(
+                        this.contentieuOrSubContentieuId.getValue(),
+                        undefined,
+                        this.dateStop.getValue()
+                    )
+                }
+            })
+        )
     }
 
-    syncDatas(referentielId: number | null, dateStart?: Date) {
+    syncDatas(referentielId: number | null, dateStart?: Date, dateStop?: Date) {
         if (referentielId !== null) {
             const nbMonth = 12
             const list: SimulatorInterface | null = {
-                ...this.getActivityValues(referentielId, nbMonth, dateStart),
+                ...this.getActivityValues(
+                    referentielId,
+                    nbMonth,
+                    dateStart,
+                    dateStop
+                ),
                 etpFon: null,
                 etpCont: null,
                 calculateCoverage: null,
@@ -64,14 +83,15 @@ export class SimulatorService extends MainClass {
                 calculateTimePerCase: null,
                 nbMonth,
             }
-            this.situationActuelle.next(list)
+            if (!dateStop) this.situationActuelle.next(list)
         }
     }
 
     getActivityValues(
         referentielId: number | null,
         nbMonth: number,
-        dateStart?: Date
+        dateStart?: Date,
+        dateStop?: Date
     ) {
         // get 12 last months starting from now
         let activities = sortBy(
@@ -135,6 +155,7 @@ export class SimulatorService extends MainClass {
         let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
 
         let lastStock = null
+
         if (activities.length) {
             // get the last stock available
             let lastActivities: any = []
@@ -199,6 +220,50 @@ export class SimulatorService extends MainClass {
                 )
 
                 realCoverage = fixDecimal(totalOut / totalIn)
+            }
+            if (dateStop) {
+                let nbDay = 0
+                const start = dateStart || new Date()
+                do {
+                    // only working day
+                    if (workingDay(start)) {
+                        nbDay++
+                    }
+                    start.setDate(start.getDate() + 1)
+                } while (start.getTime() <= this.dateStop.getValue().getTime())
+
+                const projectedTotalOut = Math.floor(
+                    (sumBy(activities, 'sorties') +
+                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase)) /
+                        (nbMonth + nbDay / 21)
+                )
+
+                const projectedLastStock = Math.floor(
+                    lastStock -
+                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase) +
+                        (nbDay / 21) * totalIn
+                )
+
+                const projectedRealCoverage = fixDecimal(
+                    projectedTotalOut / totalIn
+                )
+                const list = {
+                    totalIn,
+                    totalOut: projectedTotalOut,
+                    lastStock: projectedLastStock,
+                    realCoverage: projectedRealCoverage,
+                    realDTESInMonths,
+                    realTimePerCase,
+                    etpMag,
+                    etpAffected,
+                    etpFon: null,
+                    etpCont: null,
+                    calculateCoverage: null,
+                    calculateDTESInMonths: null,
+                    calculateTimePerCase: null,
+                    nbMonth,
+                }
+                this.situationProjected.next(list)
             }
 
             return {

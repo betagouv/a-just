@@ -64,37 +64,132 @@
     >
         <div class="line-title">
             <p>
-                Situation<br />
+                Situation{{startRealValue? ' au':''}}<br />
                 {{startRealValue || "à aujourd'hui"}}
             </p>
         </div>
 
         <div class="line-item orange-bg">
-            <input [value]="getFieldValue('totalIn')" disabled />
+            <input
+                [value]="getFieldValue('totalIn',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item">
-            <input [value]="getFieldValue('totalOut')" disabled />
+            <input
+                [value]="getFieldValue('totalOut',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item orange-bg">
-            <input [value]="getFieldValue('lastStock')" disabled />
+            <input
+                [value]="getFieldValue('lastStock',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item">
-            <input [value]="getFieldValue('etpMag')" disabled />
+            <input
+                [value]="getFieldValue('etpMag',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item orange-bg">
-            <input [value]="getFieldValue('ETPTGreffe')" disabled />
+            <input
+                [value]="getFieldValue('ETPTGreffe',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item">
-            <input [value]="getFieldValue('etpFon')" disabled />
+            <input
+                [value]="getFieldValue('etpFon',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item orange-bg">
-            <input [value]="getFieldValue('realCoverage')" disabled />
+            <input
+                [value]="getFieldValue('realCoverage',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item">
-            <input [value]="getFieldValue('realDTESInMonths')" disabled />
+            <input
+                [value]="getFieldValue('realDTESInMonths',firstSituationData)"
+                disabled
+            />
         </div>
         <div class="line-item orange-bg">
-            <input [value]="getFieldValue('realTimePerCase')" disabled />
+            <input
+                [value]="getFieldValue('realTimePerCase',firstSituationData)"
+                disabled
+            />
+        </div>
+    </div>
+
+    <div
+        class="actual-situation color-blue"
+        *ngIf="dateStop!==null"
+        [@fadeInOut]
+    >
+        <div class="line-title">
+            <p>
+                Situation projetée<br />
+                au {{stopRealValue}}
+            </p>
+        </div>
+
+        <div class="line-item grey-bg">
+            <input
+                [value]="getFieldValue('totalIn',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item">
+            <input
+                [value]="getFieldValue('totalOut',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item grey-bg">
+            <input
+                [value]="getFieldValue('lastStock',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item">
+            <input
+                [value]="getFieldValue('etpMag',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item grey-bg">
+            <input
+                [value]="getFieldValue('ETPTGreffe',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item">
+            <input
+                [value]="getFieldValue('etpFon',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item grey-bg">
+            <input
+                [value]="getFieldValue('realCoverage',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item">
+            <input
+                [value]="getFieldValue('realDTESInMonths',projectedSituationData)"
+                disabled
+            />
+        </div>
+        <div class="line-item grey-bg">
+            <input
+                [value]="getFieldValue('realTimePerCase',projectedSituationData)"
+                disabled
+            />
         </div>
     </div>
 </aj-wrapper>
@@ -119,6 +214,9 @@
         (valueChange)="updateReferentielSelected('subList', $event)"
     >
     </aj-select>
+    <div class="reset-button {{disabled}}" (click)="resetParams()">
+        <p class="title">Reset</p>
+    </div>
     <div class="export-button">
         <div class="shape">D</div>
         <p class="title">Exporter en PDF</p>

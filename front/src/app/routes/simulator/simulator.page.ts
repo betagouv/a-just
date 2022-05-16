@@ -27,13 +27,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     contentieuId: number | null = null
     subList: number[] = []
     formReferentiel: dataInterface[] = []
-    datas: SimulatorInterface | null = null
+    firstSituationData: SimulatorInterface | null = null
+    projectedSituationData: SimulatorInterface | null = null
     referentiel: ContentieuReferentielInterface[] = []
     dateStart: Date = new Date()
-    dateStop: Date | null = new Date()
+    dateStop: Date | null = null
     today: Date = new Date()
-    todaySituation: Object | null = null
     startRealValue: string = ''
+    stopRealValue: string = ''
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -58,11 +59,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         )
 
         this.watch(
-            // ajouter paramètre
             this.simulatorService.situationActuelle.subscribe((d) => {
-                this.formatDatas(
+                this.firstSituationData =
                     this.simulatorService.situationActuelle.getValue()
-                )
+            })
+        )
+
+        this.watch(
+            this.simulatorService.situationProjected.subscribe((d) => {
+                this.projectedSituationData =
+                    this.simulatorService.situationProjected.getValue()
             })
         )
 
@@ -81,10 +87,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 parentId: r.id,
             })),
         }))
-    }
-
-    formatDatas(list: SimulatorInterface | null) {
-        this.datas = list
     }
 
     updateReferentielSelected(type: string = '', event: any = null) {
@@ -123,16 +125,20 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             else this.mooveClass = ''
             this.disabled = 'disabled-date'
             this.simulatorService.dateStart.next(this.dateStart)
-            this.startRealValue = this.findRealValue()
+            this.startRealValue = this.findRealValue(this.dateStart)
         } else if (type === 'dateStop') {
+            this.disabled = 'disabled-date'
+
             this.dateStop = new Date(event)
+            this.simulatorService.dateStop.next(this.dateStop)
+            this.stopRealValue = this.findRealValue(this.dateStop)
         }
     }
 
     getElementById(id: number | null) {
         return this.referentiel?.find((v) => v.id === id)
     }
-    getFieldValue(param: string) {
+    getFieldValue(param: string, data: SimulatorInterface | null) {
         if (
             (this.simulatorService.situationActuelle.getValue() !== null &&
                 this.subList.length) ||
@@ -140,35 +146,31 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         ) {
             switch (param) {
                 case 'etpMag':
-                    return this.datas?.etpMag || '0'
+                    return data?.etpMag || '0'
                 case 'totalOut':
-                    return this.datas?.totalOut || '0'
+                    return data?.totalOut || '0'
                 case 'totalIn':
-                    return this.datas?.totalIn || '0'
+                    return data?.totalIn || '0'
                 case 'lastStock':
-                    return this.datas?.lastStock || '0'
+                    return data?.lastStock || '0'
                 case 'etpFon':
                     return ''
                 case 'realCoverage': {
-                    if (this.datas?.realCoverage)
-                        return (
-                            Math.trunc(this.datas?.realCoverage * 100) + '%' ||
-                            '0'
-                        )
-                    return this.datas?.realCoverage || '0'
+                    if (data?.realCoverage)
+                        return Math.trunc(data?.realCoverage * 100) + '%' || '0'
+                    return data?.realCoverage || '0'
                 }
                 case 'realDTESInMonths':
                     if (
-                        this.datas?.realDTESInMonths &&
-                        this.datas?.realDTESInMonths !== Infinity
+                        data?.realDTESInMonths &&
+                        data?.realDTESInMonths !== Infinity
                     ) {
-                        return this.datas?.realDTESInMonths + ' mois' || '0'
+                        return data?.realDTESInMonths + ' mois' || '0'
                     }
                     return '0'
                 case 'realTimePerCase':
                     return (
-                        this.decimalToStringDate(this.datas?.realTimePerCase) ||
-                        '0'
+                        this.decimalToStringDate(data?.realTimePerCase) || '0'
                     )
                 case 'ETPTGreffe':
                     return ''
@@ -185,24 +187,32 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         return
     }
 
-    findRealValue() {
+    findRealValue(date: Date) {
         const today = new Date()
         if (
-            today.getDate() === this.dateStart.getDate() &&
-            today.getMonth() === this.dateStart.getMonth() &&
-            today.getFullYear() === this.dateStart.getFullYear()
+            today.getDate() === date.getDate() &&
+            today.getMonth() === date.getMonth() &&
+            today.getFullYear() === date.getFullYear()
         )
             return ''
-        else if (
-            this.dateStart &&
-            typeof this.dateStart.getMonth === 'function'
-        ) {
-            return `${(this.dateStart.getDate() + '').padStart(
+        else if (date && typeof date.getMonth === 'function') {
+            return `${(date.getDate() + '').padStart(
                 2,
                 '0'
-            )} ${this.getShortMonthString(
-                this.dateStart
-            )} ${this.dateStart.getFullYear()}`
+            )} ${this.getShortMonthString(date)} ${date.getFullYear()}`
         } else return ''
+    }
+
+    resetParams() {
+        this.contentieuId = null
+        this.subList = []
+        this.firstSituationData = null
+        this.projectedSituationData = null
+        this.dateStart = new Date()
+        this.dateStop = null
+        this.startRealValue = ''
+        this.stopRealValue = ''
+        this.mooveClass = ''
+        this.disabled = 'disabled'
     }
 }
