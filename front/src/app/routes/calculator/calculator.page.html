@@ -32,7 +32,7 @@
           </p>
         </div>
       </div>
-      <div class="contentieux-header-calculator">
+      <div class="contentieux-header-calculator" title="">
         <div class="width-contentieux">
           <p>Contentieux</p>
         </div>
@@ -41,26 +41,26 @@
             <p>Entrées</p>
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'totalIn' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <aj-tooltips title="Entrées" content="entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
+            <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
           </div>
           <div (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
             <p>Sorties</p>
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'totalOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <aj-tooltips title="Sorties" content="sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
+            <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
           </div>
           <div (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
             <p>Stock</p>
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'lastStock' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <aj-tooltips title="Stock" content="dossiers en stock à la fin de la période choisie"></aj-tooltips>
+            <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
           </div>
           <div class="tooltip medium" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
             <p>ETPT <br />Mag.</p>
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'etpMag' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips class="medium" title="ETPT mag."
-              content="total des ETP travaillés sur la période par les magistrats affectés à ce contentieux">
+              content="Total des ETP travaillés sur la période par les magistrats affectés à ce contentieux">
             </aj-tooltips>
           </div>
           <div class="tooltip medium" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
@@ -68,7 +68,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'etpFon' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips class="medium" title="ETPT greffe"
-              content="total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
+              content="Total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
             </aj-tooltips>
           </div>
           <div class="tooltip medium" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
@@ -76,7 +76,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'etpCont' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips class="medium" title="ETPT cont."
-              content="total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
+              content="Total des ETP travaillés sur la période par les agents contractuels affectés à ce contentieux">
             </aj-tooltips>
           </div>
         </div>
@@ -93,7 +93,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'realDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips title="DTES instantané" class="medium"
-              content="délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure."
+              content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure."
               footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
             </aj-tooltips>
           </div>
@@ -103,7 +103,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'realTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips title="Temps moyen par dossier observé" class="large"
-              content="temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
+              content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
               footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
             </aj-tooltips>
           </div>
@@ -124,7 +124,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'calculateDTESInMonths' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips title="DTES calculé" class="large left"
-              content="délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties possibles sur la période."
+              content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties possibles sur la période."
               footer="Mode de calcul :<br/><b>STOCK/SORTIES POSSIBLES</b>">
             </aj-tooltips>
           </div>
@@ -134,7 +134,7 @@
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'calculateTimePerCase' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
             <aj-tooltips title="Temps moyen par dossier saisi" class="medium left"
-              content="donnée saisie dans le jeu de données choisi dans «Mes temps moyens de comparaison»">
+              content="Donnée saisie dans le jeu de données choisi dans «Mes temps moyens de comparaison»">
             </aj-tooltips>
           </div>
           <div class="tooltip large last" (click)="onSortBy('calculateOut')"
@@ -142,8 +142,8 @@
             <p>Sorties<br />possibles</p>
             <div class="flex-1"></div>
             <mat-icon>{{ sortBy === 'calculateOut' ? 'filter_list' : 'filter_list_off' }}</mat-icon>
-            <aj-tooltips title="DTES calculé" class="large left"
-              content="nombre moyen de dossiers pouvant être traités mensuellement par les ETPT affectés en fonction du temps moyen de traitement par dossier choisi."
+            <aj-tooltips title="Sorties possibles" class="large left"
+              content="Nombre moyen de dossiers pouvant être traités mensuellement par les ETPT affectés en fonction du temps moyen de traitement par dossier choisi."
               footer="Mode de calcul :<br/><b>NOMBRE DE DOSSIERS PAR ETPT x ETPT MAGISTRATS</b>">
             </aj-tooltips>
           </div>
