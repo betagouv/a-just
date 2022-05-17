@@ -192,6 +192,73 @@
             />
         </div>
     </div>
+
+    <div
+        class="actual-situation color-white"
+        *ngIf="dateStop!==null"
+        [@fadeInOut]
+    >
+        <div class="line-title">
+            <p>
+                Modifier<br />
+                des paramètres
+            </p>
+        </div>
+
+        <div class="line-item blue-bg">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item blue-bg">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item blue-bg">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item blue-bg">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+        <div class="line-item blue-bg">
+            <div class="ajusted-button">
+                <p class="title">Ajuster</p>
+            </div>
+        </div>
+    </div>
+    <div class="options" *ngIf="dateStop!==null" [@fadeInOut]>
+        <div class="init-button">
+            <p class="title">Réinitialiser</p>
+        </div>
+        <div class="simulate-button">
+            <p class="title">Simuler</p>
+        </div>
+    </div>
 </aj-wrapper>
 <ng-template #actions>
     <aj-select

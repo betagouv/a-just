@@ -45,6 +45,7 @@
   width: 222px;
   margin-right: 1px;
   background-color: white;
+  z-index: 2;
 
   .images {
     display: flex;
@@ -53,7 +54,7 @@
     margin-bottom: 29px;
     margin-top: 29px;
 
-    > img {
+    >img {
       width: 45%;
     }
   }
@@ -94,6 +95,7 @@
     }
 
     &.selected {
+
       a,
       p {
         color: fColor(cbluedark);
