@@ -216,7 +216,7 @@ export class SimulatorService extends MainClass {
                     (sumBy(activities, 'sorties') +
                         (nbDay / 17.33) *
                             ((etpMag * 8 * 17.33) / realTimePerCase)) /
-                        nbMonth
+                        (nbMonth + nbDay / 17.33)
                 )
 
                 lastStock = Math.floor(
@@ -249,7 +249,7 @@ export class SimulatorService extends MainClass {
                     (sumBy(activities, 'sorties') +
                         (nbDay / 17.33) *
                             ((etpMag * 8 * 17.33) / realTimePerCase)) /
-                        nbMonth
+                        (nbMonth + nbDay / 17.33)
                 )
 
                 const projectedLastStock = Math.floor(
