@@ -175,7 +175,7 @@ export class SimulatorService extends MainClass {
             lastStock = sumBy(lastActivities, 'stock')
 
             let realCoverage = fixDecimal(totalOut / totalIn)
-            const realDTESInMonths =
+            let realDTESInMonths =
                 lastStock !== null && totalOut !== null
                     ? fixDecimal(lastStock / totalOut)
                     : null
@@ -207,17 +207,23 @@ export class SimulatorService extends MainClass {
                     now.setDate(now.getDate() + 1)
                 } while (now.getTime() <= this.dateStart.getValue().getTime())
 
-                realTimePerCase = fixDecimal(
-                    ((environment.nbDaysByMagistrat / 12) *
-                        environment.nbHoursPerDay) /
-                        (totalOut / sumBy(etpAffected, 'totalEtp'))
-                )
+                /**
                 totalOut = Math.floor(
                     (sumBy(activities, 'sorties') +
                         (nbDay / 17.33) *
                             ((etpMag * 8 * 17.33) / realTimePerCase)) /
                         (nbMonth + nbDay / 17.33)
                 )
+ */
+
+                etpAffected = this.getHRPositions(
+                    referentielId as number,
+                    dateStart
+                )
+
+                etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+
+                totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
 
                 lastStock = Math.floor(
                     lastStock -
@@ -226,13 +232,10 @@ export class SimulatorService extends MainClass {
                 )
 
                 realCoverage = fixDecimal(totalOut / totalIn)
-
-                etpAffected = this.getHRPositions(
-                    referentielId as number,
-                    dateStart
-                )
-
-                etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+                realDTESInMonths =
+                    lastStock !== null && totalOut !== null
+                        ? fixDecimal(lastStock / totalOut)
+                        : null
             }
             if (dateStop) {
                 let nbDay = 0
@@ -245,11 +248,17 @@ export class SimulatorService extends MainClass {
                     start.setDate(start.getDate() + 1)
                 } while (start.getTime() <= this.dateStop.getValue().getTime())
 
+                const projectedEtpAffected = this.getHRPositions(
+                    referentielId as number,
+                    dateStop
+                )
+                const projectedEtpMag =
+                    projectedEtpAffected.length >= 0
+                        ? projectedEtpAffected[0].totalEtp
+                        : 0
+
                 const projectedTotalOut = Math.floor(
-                    (sumBy(activities, 'sorties') +
-                        (nbDay / 17.33) *
-                            ((etpMag * 8 * 17.33) / realTimePerCase)) /
-                        (nbMonth + nbDay / 17.33)
+                    (projectedEtpMag * 8 * 17.33) / realTimePerCase
                 )
 
                 const projectedLastStock = Math.floor(
@@ -262,29 +271,18 @@ export class SimulatorService extends MainClass {
                 const projectedRealCoverage = fixDecimal(
                     projectedTotalOut / totalIn
                 )
-
-                const projectedEtpAffected = this.getHRPositions(
-                    referentielId as number,
-                    dateStop
-                )
-                const projectedEtpMag =
-                    projectedEtpAffected.length >= 0
-                        ? projectedEtpAffected[0].totalEtp
-                        : 0
-
-                const projectedRealTimePerCase = fixDecimal(
-                    ((environment.nbDaysByMagistrat / 12) *
-                        environment.nbHoursPerDay) /
-                        (totalOut / sumBy(etpAffected, 'totalEtp'))
-                )
+                const projectedRealDTESInMonths =
+                    projectedLastStock !== null && projectedTotalOut !== null
+                        ? fixDecimal(projectedLastStock / projectedTotalOut)
+                        : null
 
                 const list = {
                     totalIn,
                     totalOut: projectedTotalOut,
                     lastStock: projectedLastStock,
                     realCoverage: projectedRealCoverage,
-                    realDTESInMonths,
-                    realTimePerCase: projectedRealTimePerCase,
+                    realDTESInMonths: projectedRealDTESInMonths,
+                    realTimePerCase: realTimePerCase,
                     etpMag: projectedEtpMag,
                     etpAffected: projectedEtpAffected,
                     etpFon: null,
