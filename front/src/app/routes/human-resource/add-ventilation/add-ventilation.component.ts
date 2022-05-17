@@ -272,6 +272,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         break;
       case 'modify':
         {
+          if(this.updateIndisponiblity && !this.updateIndisponiblity.percent) {
+            alert('Vous devez saisir un temps d\'indisponibilitié !')
+            return false;
+          }
+
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =
