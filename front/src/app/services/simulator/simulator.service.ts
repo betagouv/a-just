@@ -180,11 +180,11 @@ export class SimulatorService extends MainClass {
                     ? fixDecimal(lastStock / totalOut)
                     : null
 
-            const etpAffected = this.getHRPositions(referentielId as number)
-            const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+            let etpAffected = this.getHRPositions(referentielId as number)
+            let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
             // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
-            const realTimePerCase = fixDecimal(
+            let realTimePerCase = fixDecimal(
                 ((environment.nbDaysByMagistrat / 12) *
                     environment.nbHoursPerDay) /
                     (totalOut / sumBy(etpAffected, 'totalEtp'))
@@ -207,10 +207,16 @@ export class SimulatorService extends MainClass {
                     now.setDate(now.getDate() + 1)
                 } while (now.getTime() <= this.dateStart.getValue().getTime())
 
+                realTimePerCase = fixDecimal(
+                    ((environment.nbDaysByMagistrat / 12) *
+                        environment.nbHoursPerDay) /
+                        (totalOut / sumBy(etpAffected, 'totalEtp'))
+                )
                 totalOut = Math.floor(
                     (sumBy(activities, 'sorties') +
-                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase)) /
-                        (nbMonth + nbDay / 21)
+                        (nbDay / 17.33) *
+                            ((etpMag * 8 * 17.33) / realTimePerCase)) /
+                        nbMonth
                 )
 
                 lastStock = Math.floor(
@@ -220,6 +226,13 @@ export class SimulatorService extends MainClass {
                 )
 
                 realCoverage = fixDecimal(totalOut / totalIn)
+
+                etpAffected = this.getHRPositions(
+                    referentielId as number,
+                    dateStart
+                )
+
+                etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
             }
             if (dateStop) {
                 let nbDay = 0
@@ -234,28 +247,46 @@ export class SimulatorService extends MainClass {
 
                 const projectedTotalOut = Math.floor(
                     (sumBy(activities, 'sorties') +
-                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase)) /
-                        (nbMonth + nbDay / 21)
+                        (nbDay / 17.33) *
+                            ((etpMag * 8 * 17.33) / realTimePerCase)) /
+                        nbMonth
                 )
 
                 const projectedLastStock = Math.floor(
                     lastStock -
-                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase) +
-                        (nbDay / 21) * totalIn
+                        (nbDay / 17.33) *
+                            ((etpMag * 8 * 17.33) / realTimePerCase) +
+                        (nbDay / 17.33) * totalIn
                 )
 
                 const projectedRealCoverage = fixDecimal(
                     projectedTotalOut / totalIn
                 )
+
+                const projectedEtpAffected = this.getHRPositions(
+                    referentielId as number,
+                    dateStop
+                )
+                const projectedEtpMag =
+                    projectedEtpAffected.length >= 0
+                        ? projectedEtpAffected[0].totalEtp
+                        : 0
+
+                const projectedRealTimePerCase = fixDecimal(
+                    ((environment.nbDaysByMagistrat / 12) *
+                        environment.nbHoursPerDay) /
+                        (totalOut / sumBy(etpAffected, 'totalEtp'))
+                )
+
                 const list = {
                     totalIn,
                     totalOut: projectedTotalOut,
                     lastStock: projectedLastStock,
                     realCoverage: projectedRealCoverage,
                     realDTESInMonths,
-                    realTimePerCase,
-                    etpMag,
-                    etpAffected,
+                    realTimePerCase: projectedRealTimePerCase,
+                    etpMag: projectedEtpMag,
+                    etpAffected: projectedEtpAffected,
                     etpFon: null,
                     etpCont: null,
                     calculateCoverage: null,
@@ -289,7 +320,7 @@ export class SimulatorService extends MainClass {
             }
     }
 
-    getHRPositions(referentiel: number) {
+    getHRPositions(referentiel: number, date?: Date) {
         const hr = this.humanResourceService.hr.getValue()
         const categories = this.humanResourceService.categories.getValue()
         const hrCategories: any = {}
@@ -306,7 +337,8 @@ export class SimulatorService extends MainClass {
             const etptAll = this.getHRVentilation(
                 hr[i],
                 referentiel,
-                categories
+                categories,
+                date
             )
             Object.values(etptAll).map((c) => {
                 if (c.etpt) {
@@ -332,7 +364,8 @@ export class SimulatorService extends MainClass {
     getHRVentilation(
         hr: HumanResourceInterface,
         referentielId: number,
-        categories: HRCategoryInterface[]
+        categories: HRCategoryInterface[],
+        date?: Date
     ): number {
         const list: any = {}
         categories.map((c) => {
@@ -342,7 +375,7 @@ export class SimulatorService extends MainClass {
             }
         })
 
-        const now = new Date(this.endCurrentSituation)
+        const now = date ? date : new Date()
 
         // only working day
         const situation = this.humanResourceService.findSituation(hr, now)
