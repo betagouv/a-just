@@ -383,9 +383,12 @@ export class SimulatorService extends MainClass {
             )
             const indispoFiltred =
                 this.humanResourceService.findAllIndisponibilities(hr, now)
-            let etp =
-                (situation.etp * (100 - sumBy(indispoFiltred, 'percent'))) / 100
-            etp *= sumBy(activitiesFiltred, 'percent') / 100
+
+            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent')
+            if (reelEtp < 0) {
+                reelEtp = 0
+            }
+            const etp = (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100
 
             list[situation.category.id].etpt += etp
         }
