@@ -63,6 +63,7 @@ export class ReferentielService {
       this.humanResourceService.contentieuxReferentiel.next(list);
       this.updateReferentielValues();
       this.updateReferentielOptions();
+      console.log('referentiel', list)
     });
   }
 
