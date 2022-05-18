@@ -277,6 +277,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             return false;
           }
 
+          if(this.updateIndisponiblity && !this.updateIndisponiblity.dateStart) {
+            alert('Vous devez saisir une date de départ d\'indisponibilitié !')
+            return false;
+          }
+
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =
