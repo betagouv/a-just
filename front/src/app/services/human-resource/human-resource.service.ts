@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { orderBy, uniqBy } from 'lodash'
+import { orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivityInterface } from 'src/app/interfaces/activity'
 import { BackupInterface } from 'src/app/interfaces/backup'
@@ -445,7 +445,6 @@ export class HumanResourceService {
                         percent: r.percent || 0,
                         contentieux: r,
                     })
-
                     ;(r.childrens || [])
                         .filter((r) => r.percent && r.percent > 0)
                         .map((child) => {
@@ -561,5 +560,34 @@ export class HumanResourceService {
         }
 
         return false
+    }
+
+    getEtpByDateAndPerson(
+        referentielId: number,
+        date: Date,
+        hr: HumanResourceInterface
+    ) {
+        const situation = this.findSituation(hr, date)
+
+        if (situation && situation.category && situation.category.id) {
+            const activitiesFiltred = (situation.activities || []).filter(
+                (a) => a.contentieux && a.contentieux.id === referentielId
+            )
+            const indispoFiltred = this.findAllIndisponibilities(hr, date)
+            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent')
+            if (reelEtp < 0) {
+                reelEtp = 0
+            }
+
+            return {
+                etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
+                situation,
+            }
+        }
+
+        return {
+            etp: null,
+            situation: null,
+        }
     }
 }
