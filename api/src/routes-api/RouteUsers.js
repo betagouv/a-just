@@ -6,6 +6,7 @@ import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
 import { TEMPLATE_FORGOT_PASSWORD_ID } from '../constants/email'
 import config from 'config'
+import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 
 export default class RouteUsers extends Route {
   constructor (params) {
@@ -31,8 +32,10 @@ export default class RouteUsers extends Route {
     }),
   })
   async createAccount (ctx) {
+    const { email, firstName, lastName } = this.body(ctx)
     try {
       await this.model.createAccount(this.body(ctx))
+      await this.models.Logs.addLog(USER_USER_SIGN_IN, null, { email, firstName, lastName })
       this.sendOk(ctx, 'OK')
     } catch (err) {
       ctx.throw(401, err)
@@ -61,8 +64,11 @@ export default class RouteUsers extends Route {
     accesses: [Access.isAdmin],
   })
   async updateAccount (ctx) {
+    const { userId } = this.body(ctx)
+
     try {
       await this.model.updateAccount(this.body(ctx))
+      await this.models.Logs.addLog(ADMIN_CHANGE_USER_ACCESS, ctx.state.user.id, { userId })
       this.sendOk(ctx, 'OK')
     } catch (err) {
       ctx.throw(401, err)
@@ -95,6 +101,7 @@ export default class RouteUsers extends Route {
             serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
           }
         )
+        await this.models.Logs.addLog(USER_USER_FORGOT_PASSWORD, null, { email })
         this.sendOk(
           ctx,
           'Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d\'ici quelques minutes, un e-mail de réinitialisation à l\'adresse correspondant à votre compte d\'inscription.'
