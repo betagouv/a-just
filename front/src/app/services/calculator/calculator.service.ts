@@ -447,33 +447,11 @@ export class CalculatorService extends MainClass {
             // only working day
             if (workingDay(now)) {
                 nbDay++
-                const situation = this.humanResourceService.findSituation(
-                    hr,
-                    now
-                )
+                const { etp, situation } = this.humanResourceService.getEtpByDateAndPerson(referentiel.id, now, hr)
 
-                if (situation && situation.category && situation.category.id) {
-                    const activitiesFiltred = (
-                        situation.activities || []
-                    ).filter(
-                        (a) =>
-                            a.contentieux && a.contentieux.id === referentiel.id
-                    )
-                    const indispoFiltred =
-                        this.humanResourceService.findAllIndisponibilities(
-                            hr,
-                            now
-                        )
-                    let reelEtp =
-                        situation.etp - sumBy(indispoFiltred, 'percent')
-                    if (reelEtp < 0) {
-                        reelEtp = 0
-                    }
-
-                    const etp =
-                        (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100
-
-                    list[situation.category.id].etpt += etp
+                if(etp !== null) {
+                  // @ts-ignore
+                  list[situation.category.id].etpt += etp
                 }
             }
             now.setDate(now.getDate() + 1)
