@@ -194,12 +194,25 @@ export class SimulatorService extends MainClass {
                     ? etpAffectedToCompute[0].totalEtp
                     : 0
 
+            console.log(
+                month(this.startCurrentSituation, counter),
+                true,
+                month(this.endCurrentSituation, counter, 'lastday')
+            )
             console.log('display etpMagToCompute', etpMagToCompute)
             // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
             let realTimePerCase = fixDecimal(
                 ((environment.nbDaysByMagistrat / 12) *
                     environment.nbHoursPerDay) /
                     (totalOut / sumBy(etpAffected, 'totalEtp'))
+            )
+            console.log(
+                'display realTimePerCase',
+                fixDecimal(
+                    ((environment.nbDaysByMagistrat / 12) *
+                        environment.nbHoursPerDay) /
+                        (totalOut / sumBy(etpAffectedToCompute, 'totalEtp'))
+                )
             )
 
             const today = new Date()
