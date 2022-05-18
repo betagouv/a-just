@@ -1,5 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
+import { ADMIN_REMOVE_HR } from '../constants/log-codes'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
@@ -97,6 +98,7 @@ export default class RouteHumanResources extends Route {
     const { hrId } = ctx.params   
 
     if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      await this.models.Logs.addLog(ADMIN_REMOVE_HR, ctx.state.user.id, { hrId })
       this.sendOk(ctx, await this.model.removeHR(hrId))
     } else {
       this.sendOk(ctx, null)

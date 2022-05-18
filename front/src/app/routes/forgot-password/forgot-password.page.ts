@@ -19,6 +19,7 @@ export class ForgotPassword {
     this.userService.forgotPassword({ email }).then((msg) => {
       if(msg) {
         alert(msg);
+        this.router.navigate(['/login']);
       }
     });
   }
