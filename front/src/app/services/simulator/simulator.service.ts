@@ -374,22 +374,15 @@ export class SimulatorService extends MainClass {
         })
 
         const now = date ? date : new Date()
-
-        // only working day
-        const situation = this.humanResourceService.findSituation(hr, now)
-        if (situation && situation.category && situation.category.id) {
-            const activitiesFiltred = (situation.activities || []).filter(
-                (a) => a.contentieux?.id == referentielId
+        const { etp, situation } =
+            this.humanResourceService.getEtpByDateAndPerson(
+                referentielId,
+                now,
+                hr
             )
-            const indispoFiltred =
-                this.humanResourceService.findAllIndisponibilities(hr, now)
 
-            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent')
-            if (reelEtp < 0) {
-                reelEtp = 0
-            }
-            const etp = (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100
-
+        if (etp !== null) {
+            // @ts-ignore
             list[situation.category.id].etpt += etp
         }
 
