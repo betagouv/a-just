@@ -10,6 +10,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { ActivitiesService } from '../activities/activities.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { environment } from 'src/environments/environment'
+import { nbOfWorkingDays } from 'src/app/utils/dates'
 
 const start = new Date()
 const end = new Date()
@@ -108,7 +109,7 @@ export class SimulatorService extends MainClass {
             'periode'
         )
 
-        // check when is the last month available on this periode with entrees and sorties
+        // check when is the last month available on this periode with in and out flows
         let counter = 1
         let lastActivitiesEntreesSorties: any = []
         do {
@@ -153,13 +154,12 @@ export class SimulatorService extends MainClass {
 
         let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
         let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
-
         let lastStock = null
 
         if (activities.length) {
-            // get the last stock available
             let lastActivities: any = []
             let nbOfMonth = 1
+            // compute number of months without stock starting from today
             do {
                 nbOfMonth--
                 lastActivities = activities.filter((a) =>
@@ -172,47 +172,59 @@ export class SimulatorService extends MainClass {
                     break
             } while (lastActivities.length === 0 && nbOfMonth != -12)
 
+            // last available stock
             lastStock = sumBy(lastActivities, 'stock')
 
+            // Compute realCoverage & realDTESInMonths using last available stock
             let realCoverage = fixDecimal(totalOut / totalIn)
             let realDTESInMonths =
                 lastStock !== null && totalOut !== null
                     ? fixDecimal(lastStock / totalOut)
                     : null
 
+            // Compute etpAffected & etpMag today (on specific date) to display & output
             let etpAffected = this.getHRPositions(referentielId as number)
             let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
+            // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
             let etpAffectedToCompute = this.getHRPositions(
                 referentielId as number,
-                month(this.startCurrentSituation, counter),
+                new Date(month(this.startCurrentSituation, counter)),
                 true,
-                month(this.endCurrentSituation, counter, 'lastday')
+                new Date(month(this.endCurrentSituation, counter, 'lastday'))
             )
-            let etpMagToCompute =
-                etpAffectedToCompute.length >= 0
-                    ? etpAffectedToCompute[0].totalEtp
-                    : 0
 
-            console.log(
-                month(this.startCurrentSituation, counter),
-                true,
-                month(this.endCurrentSituation, counter, 'lastday')
-            )
-            console.log('display etpMagToCompute', etpMagToCompute)
-            // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
+            // Compute realTimePerCase to display using the etpAffected 12 last months available
             let realTimePerCase = fixDecimal(
                 ((environment.nbDaysByMagistrat / 12) *
                     environment.nbHoursPerDay) /
-                    (totalOut / sumBy(etpAffected, 'totalEtp'))
+                    (totalOut / sumBy(etpAffectedToCompute, 'totalEtp'))
             )
-            console.log(
-                'display realTimePerCase',
-                fixDecimal(
-                    ((environment.nbDaysByMagistrat / 12) *
-                        environment.nbHoursPerDay) /
-                        (totalOut / sumBy(etpAffectedToCompute, 'totalEtp'))
-                )
+
+            // Compute totalOut with etp at dateStart (specific date) to display
+            totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+
+            // Projection of etpAffected between the last month available and today to compute stock
+            let fururEtpAffectedToCompute = this.getHRPositions(
+                referentielId as number,
+                month(this.endCurrentSituation, counter, 'lastday'),
+                true,
+                new Date()
+            )
+            let futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
+
+            // Compute nb of day
+            const nbOfDays = nbOfWorkingDays(
+                month(this.endCurrentSituation, counter, 'lastday'),
+                new Date()
+            )
+
+            // Compute stock projection until today
+            lastStock = Math.floor(
+                lastStock -
+                    (nbOfDays / 17.33) *
+                        ((futurEtpToCompute * 8 * 17.33) / realTimePerCase) +
+                    (nbOfDays / 17.33) * totalIn
             )
 
             const today = new Date()
@@ -224,36 +236,41 @@ export class SimulatorService extends MainClass {
             ) {
                 let nbDay = 0
                 const now = new Date()
+
+                // Count the number of days until de start date selected
                 do {
-                    // only working day
                     if (workingDay(now)) {
                         nbDay++
                     }
                     now.setDate(now.getDate() + 1)
                 } while (now.getTime() <= this.dateStart.getValue().getTime())
 
-                /**
-                totalOut = Math.floor(
-                    (sumBy(activities, 'sorties') +
-                        (nbDay / 17.33) *
-                            ((etpMag * 8 * 17.33) / realTimePerCase)) /
-                        (nbMonth + nbDay / 17.33)
-                )
- */
-
+                // Compute etpAffected & etpMag at dateStart (specific date) to display
                 etpAffected = this.getHRPositions(
                     referentielId as number,
                     dateStart
                 )
-
                 etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
+                // Compute totalOut with etp at dateStart (specific date) to display
                 totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
 
+                // Projection of etpAffected between the last month available and today to compute stock
+                fururEtpAffectedToCompute = this.getHRPositions(
+                    referentielId as number,
+                    new Date(),
+                    true,
+                    dateStart
+                )
+                futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
+
+                // Compute projectedStock with etp at dateStart
                 lastStock = Math.floor(
                     lastStock -
-                        (nbDay / 21) * ((etpMag * 8 * 21) / realTimePerCase) +
-                        (nbDay / 21) * totalIn
+                        (nbDay / 17.33) *
+                            ((futurEtpToCompute * 8 * 17.33) /
+                                realTimePerCase) +
+                        (nbDay / 17.33) * totalIn
                 )
 
                 realCoverage = fixDecimal(totalOut / totalIn)
@@ -265,31 +282,41 @@ export class SimulatorService extends MainClass {
             if (dateStop) {
                 let nbDay = 0
                 const start = dateStart || new Date()
+                // Count number of days between start and stop dates
                 do {
-                    // only working day
                     if (workingDay(start)) {
                         nbDay++
                     }
                     start.setDate(start.getDate() + 1)
                 } while (start.getTime() <= this.dateStop.getValue().getTime())
 
+                // Compute projected etp at stop date (specific date) to display
                 const projectedEtpAffected = this.getHRPositions(
                     referentielId as number,
                     dateStop
                 )
-                const projectedEtpMag =
-                    projectedEtpAffected.length >= 0
-                        ? projectedEtpAffected[0].totalEtp
-                        : 0
+                const projectedEtp = sumBy(projectedEtpAffected, 'totalEtp')
 
+                // Compute projected out flow with projected etp at stop date (specific date)
                 const projectedTotalOut = Math.floor(
-                    (projectedEtpMag * 8 * 17.33) / realTimePerCase
+                    (projectedEtp * 8 * 17.33) / realTimePerCase
                 )
 
+                // Projection of etpAffected between start and stop date to compute stock
+                fururEtpAffectedToCompute = this.getHRPositions(
+                    referentielId as number,
+                    dateStart,
+                    true,
+                    dateStop
+                )
+                futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
+
+                // Compute projectedStock with etp at datestop
                 const projectedLastStock = Math.floor(
                     lastStock -
                         (nbDay / 17.33) *
-                            ((etpMag * 8 * 17.33) / realTimePerCase) +
+                            ((futurEtpToCompute * 8 * 17.33) /
+                                realTimePerCase) +
                         (nbDay / 17.33) * totalIn
                 )
 
@@ -308,7 +335,7 @@ export class SimulatorService extends MainClass {
                     realCoverage: projectedRealCoverage,
                     realDTESInMonths: projectedRealDTESInMonths,
                     realTimePerCase: realTimePerCase,
-                    etpMag: projectedEtpMag,
+                    etpMag: projectedEtp,
                     etpAffected: projectedEtpAffected,
                     etpFon: null,
                     etpCont: null,
@@ -448,41 +475,23 @@ export class SimulatorService extends MainClass {
                 ...c,
             }
         })
-
-        const now = dateStart instanceof Date ? dateStart : new Date()
-        const stop = dateStop instanceof Date ? dateStop : new Date()
+        const now = dateStart instanceof Date ? new Date(dateStart) : new Date()
+        const stop = dateStop instanceof Date ? new Date(dateStop) : new Date()
 
         let nbDay = 0
         do {
             // only working day
             if (workingDay(now)) {
                 nbDay++
-                const situation = this.humanResourceService.findSituation(
-                    hr,
-                    now
-                )
-
-                if (situation && situation.category && situation.category.id) {
-                    const activitiesFiltred = (
-                        situation.activities || []
-                    ).filter(
-                        (a) =>
-                            a.contentieux && a.contentieux.id === referentielId
+                const { etp, situation } =
+                    this.humanResourceService.getEtpByDateAndPerson(
+                        referentielId,
+                        now,
+                        hr
                     )
-                    const indispoFiltred =
-                        this.humanResourceService.findAllIndisponibilities(
-                            hr,
-                            now
-                        )
-                    let reelEtp =
-                        situation.etp - sumBy(indispoFiltred, 'percent')
-                    if (reelEtp < 0) {
-                        reelEtp = 0
-                    }
 
-                    const etp =
-                        (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100
-
+                if (etp !== null) {
+                    // @ts-ignore
                     list[situation.category.id].etpt += etp
                 }
             }
