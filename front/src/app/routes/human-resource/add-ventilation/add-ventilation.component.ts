@@ -86,7 +86,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.etp = (situation && situation.etp) || 0;
 
-    this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : new Date());
+    this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
     this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
     this.form
       .get('firstName')
@@ -227,6 +227,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     let { activitiesStartDate, dateEnd } = this.form.value;
+    if(!activitiesStartDate) {
+      alert('Vous devez saisir une date de début de situation !');
+      return;
+    }
+
     if(dateEnd && activitiesStartDate) {
       activitiesStartDate = new Date(activitiesStartDate);
       dateEnd = new Date(dateEnd);

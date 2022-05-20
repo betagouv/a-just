@@ -142,15 +142,7 @@ export class HumanResourceService {
             firstName: 'Personne',
             lastName: 'XXX',
             activities,
-            situations: [
-                {
-                    id: -1,
-                    etp: 1,
-                    category: categories[0],
-                    fonction: null,
-                    dateStart: new Date(date.getFullYear(), 0, 1),
-                },
-            ],
+            situations: [],
             indisponibilities: [],
             updatedAt: new Date(),
         }
