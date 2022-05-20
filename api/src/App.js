@@ -4,6 +4,7 @@ const koaBody = require('koa-body')
 import { i18n, compress, cors, helmet, addDefaultBody, logger } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
+import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
@@ -56,11 +57,14 @@ export default class App extends AppBase {
       config.consoleLog ? logger() : () => {}, // gives detailed logs of each request made on the API
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
+      givePassword,
     ])
 
+    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files 
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files 
     super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files 
     super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files 
+
     
     return super.start()
   }
