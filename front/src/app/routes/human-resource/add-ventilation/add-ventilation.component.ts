@@ -72,7 +72,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.contentieuxReferentiel.subscribe(
         () =>
           (this.allIndisponibilityReferentiel =
-            this.humanResourceService.allIndisponibilityReferentiel)
+            this.humanResourceService.allIndisponibilityReferentiel.slice(1))
       )
     );
   }
@@ -273,12 +273,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       case 'modify':
         {
           if(this.updateIndisponiblity && !this.updateIndisponiblity.percent) {
-            alert('Vous devez saisir un temps d\'indisponibilitié !')
+            alert('Vous devez saisir un temps d\'indisponibilité !')
             return false;
           }
 
           if(this.updateIndisponiblity && !this.updateIndisponiblity.dateStart) {
-            alert('Vous devez saisir une date de départ d\'indisponibilitié !')
+            alert('Vous devez saisir une date de départ d\'indisponibilité !')
+            return false;
+          }
+
+          if(this.updateIndisponiblity && !this.allIndisponibilityReferentiel.find(i => i.id === this.updateIndisponiblity?.contentieux.id)) {
+            alert('Vous devez saisir un type d\'indisponibilité !')
             return false;
           }
 
