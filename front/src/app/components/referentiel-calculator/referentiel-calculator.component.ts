@@ -34,7 +34,7 @@ export class ReferentielCalculatorComponent extends MainClass {
     decimalToStringDate(decimal: number | null) {
         if (decimal != null) {
             const n = new Date(0, 0)
-            n.setMinutes(+decimal * 60)
+            n.setMinutes(Math.ceil(+decimal * 60))
             return n.toTimeString().slice(0, 5).replace(':', 'h')
         }
         return
