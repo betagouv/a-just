@@ -237,7 +237,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       dateEnd = new Date(dateEnd);
 
       if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
-        alert('Vous ne pouvez pas saisir une situation posterieur à la date de sortie !');
+        alert('Vous ne pouvez pas saisir une situation postérieure à la date de sortie !');
         return;
       }
     }
