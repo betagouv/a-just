@@ -111,7 +111,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
       });
     }
 
-    if (user && user.access && user.access.indexOf(5) !== -1) {
+    if (user && user.access && user.access.indexOf(6) !== -1) {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',

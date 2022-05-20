@@ -48,6 +48,8 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {    
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
+
     return models
   }
 
