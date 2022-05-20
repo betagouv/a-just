@@ -175,13 +175,6 @@ export class SimulatorService extends MainClass {
             // last available stock
             lastStock = sumBy(lastActivities, 'stock')
 
-            // Compute realCoverage & realDTESInMonths using last available stock
-            let realCoverage = fixDecimal(totalOut / totalIn)
-            let realDTESInMonths =
-                lastStock !== null && totalOut !== null
-                    ? fixDecimal(lastStock / totalOut)
-                    : null
-
             // Compute etpAffected & etpMag today (on specific date) to display & output
             let etpAffected = this.getHRPositions(referentielId as number)
             let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
@@ -226,6 +219,13 @@ export class SimulatorService extends MainClass {
                         ((futurEtpToCompute * 8 * 17.33) / realTimePerCase) +
                     (nbOfDays / 17.33) * totalIn
             )
+
+            // Compute realCoverage & realDTESInMonths using last available stock
+            let realCoverage = fixDecimal(totalOut / totalIn)
+            let realDTESInMonths =
+                lastStock !== null && totalOut !== null
+                    ? fixDecimal(lastStock / totalOut)
+                    : null
 
             const today = new Date()
             if (
