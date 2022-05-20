@@ -23,7 +23,6 @@ export class TimeSelectorComponent implements OnInit {
     }
 
     onChangeHour(event: any) {
-        console.log(this.timeToDecimal(event))
         this.value = this.timeToDecimal(event)
         this.valueChange.emit(this.timeToDecimal(event))
     }
