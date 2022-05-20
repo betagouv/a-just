@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { mean, sortBy, sumBy } from 'lodash'
+import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import {
     CalculatorInterface,
