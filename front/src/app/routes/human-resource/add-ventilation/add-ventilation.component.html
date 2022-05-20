@@ -131,15 +131,8 @@
   <div class="form">
     <div>
       <div class="label-aj">Motif d'indisponibilité</div>
-      <select *ngIf="updateIndisponiblity.contentieux.id === allIndisponibilityReferentiel[0].id"
-        [(ngModel)]="updateIndisponiblity.contentieux.id">
+      <select [(ngModel)]="updateIndisponiblity.contentieux.id">
         <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
-          {{ cat.label }}
-        </option>
-      </select>
-      <select *ngIf="updateIndisponiblity.contentieux.id !== allIndisponibilityReferentiel[0].id"
-        [(ngModel)]="updateIndisponiblity.contentieux.id">
-        <option *ngFor="let cat of allIndisponibilityReferentiel.slice(1)" [value]="cat.id">
           {{ cat.label }}
         </option>
       </select>

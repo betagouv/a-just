@@ -140,6 +140,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       },
     ]);
 
+    if(!situations.length) {
+      return;
+    }
+
     const minSituation = situations[0];
     const maxSituation = situations[situations.length - 1];
     const minDate = today(minSituation.dateStart);

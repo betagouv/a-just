@@ -145,8 +145,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           fonction: currentSituation && currentSituation.fonction,
         };
       }),
-      ['fonction.rank'],
-      ['asc']
+      ['fonction.rank', 'lastName'],
+      ['asc', 'asc']
     );
 
     this.updateCategoryValues();

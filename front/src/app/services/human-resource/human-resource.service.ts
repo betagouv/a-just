@@ -142,15 +142,7 @@ export class HumanResourceService {
             firstName: 'Personne',
             lastName: 'XXX',
             activities,
-            situations: [
-                {
-                    id: -1,
-                    etp: 1,
-                    category: categories[0],
-                    fonction: null,
-                    dateStart: new Date(date.getFullYear(), 0, 1),
-                },
-            ],
+            situations: [],
             indisponibilities: [],
             updatedAt: new Date(),
         }
@@ -574,7 +566,7 @@ export class HumanResourceService {
                 (a) => a.contentieux && a.contentieux.id === referentielId
             )
             const indispoFiltred = this.findAllIndisponibilities(hr, date)
-            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent')
+            let reelEtp = situation.etp - (sumBy(indispoFiltred, 'percent') / 100)
             if (reelEtp < 0) {
                 reelEtp = 0
             }
