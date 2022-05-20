@@ -574,7 +574,7 @@ export class HumanResourceService {
                 (a) => a.contentieux && a.contentieux.id === referentielId
             )
             const indispoFiltred = this.findAllIndisponibilities(hr, date)
-            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent')
+            let reelEtp = situation.etp - (sumBy(indispoFiltred, 'percent') / 100)
             if (reelEtp < 0) {
                 reelEtp = 0
             }
