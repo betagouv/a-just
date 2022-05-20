@@ -72,7 +72,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.contentieuxReferentiel.subscribe(
         () =>
           (this.allIndisponibilityReferentiel =
-            this.humanResourceService.allIndisponibilityReferentiel)
+            this.humanResourceService.allIndisponibilityReferentiel.slice(1))
       )
     );
   }
@@ -86,7 +86,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.etp = (situation && situation.etp) || 0;
 
-    this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : new Date());
+    this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
     this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
     this.form
       .get('firstName')
@@ -227,12 +227,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     let { activitiesStartDate, dateEnd } = this.form.value;
+    if(!activitiesStartDate) {
+      alert('Vous devez saisir une date de début de situation !');
+      return;
+    }
+
     if(dateEnd && activitiesStartDate) {
       activitiesStartDate = new Date(activitiesStartDate);
       dateEnd = new Date(dateEnd);
 
       if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
-        alert('Vous ne pouvez pas saisir une situation posterieur à la date de sortie !');
+        alert('Vous ne pouvez pas saisir une situation postérieure à la date de sortie !');
         return;
       }
     }
@@ -273,12 +278,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       case 'modify':
         {
           if(this.updateIndisponiblity && !this.updateIndisponiblity.percent) {
-            alert('Vous devez saisir un temps d\'indisponibilitié !')
+            alert('Vous devez saisir un temps d\'indisponibilité !')
             return false;
           }
 
           if(this.updateIndisponiblity && !this.updateIndisponiblity.dateStart) {
-            alert('Vous devez saisir une date de départ d\'indisponibilitié !')
+            alert('Vous devez saisir une date de départ d\'indisponibilité !')
+            return false;
+          }
+
+          if(this.updateIndisponiblity && !this.allIndisponibilityReferentiel.find(i => i.id === this.updateIndisponiblity?.contentieux.id)) {
+            alert('Vous devez saisir un type d\'indisponibilité !')
             return false;
           }
 
