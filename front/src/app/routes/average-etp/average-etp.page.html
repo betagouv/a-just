@@ -33,9 +33,18 @@
                     </div>
                     <div class="column-item">
                         <app-time-selector
+                            *ngIf="perUnity === 'hour'"
                             [value]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : 0"
                             (valueChange)="onUpdateOptions(ref, $event)"
                         ></app-time-selector>
+                        <input
+                            *ngIf="perUnity !== 'hour'"
+                            type="number"
+                            [ngModel]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : ''"
+                            (ngModelChange)="onUpdateOptions(ref, $event)"
+                            min="0"
+                        />
+
                         <p>
                             {{perUnity === 'hour' ? '&nbsp; temps moyen en
                             heure:minute' : 'nombre de dossier par jour'}}
@@ -53,9 +62,18 @@
                         </div>
                         <div class="column-item">
                             <app-time-selector
+                                *ngIf="perUnity === 'hour'"
                                 [value]="itemGroup.averageProcessingTime ? (perUnity === 'hour' ? itemGroup.averageProcessingTime : fixDecimal(8 / itemGroup.averageProcessingTime)) : 0"
                                 (valueChange)="onUpdateOptions(itemGroup, $event)"
                             ></app-time-selector>
+                            <input
+                                *ngIf="perUnity !== 'hour'"
+                                type="number"
+                                [ngModel]="itemGroup.averageProcessingTime ? (perUnity === 'hour' ? itemGroup.averageProcessingTime : fixDecimal(8 / itemGroup.averageProcessingTime)) : ''"
+                                (ngModelChange)="onUpdateOptions(itemGroup, $event)"
+                                min="0"
+                            />
+
                             <p>
                                 {{perUnity === 'hour' ? '&nbsp; temps moyen en
                                 heure:minute' : 'nombre de dossier par jour'}}
