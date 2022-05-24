@@ -287,7 +287,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             return false;
           }
 
-          if(this.updateIndisponiblity && !this.allIndisponibilityReferentiel.find(i => i.id === this.updateIndisponiblity?.contentieux.id)) {
+          console.log(this.updateIndisponiblity, this.allIndisponibilityReferentiel)
+          if(this.updateIndisponiblity && !this.allIndisponibilityReferentiel.find(i => i.id == this.updateIndisponiblity?.contentieux.id)) {
             alert('Vous devez saisir un type d\'indisponibilité !')
             return false;
           }

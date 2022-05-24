@@ -53,3 +53,8 @@ Always Data
 https://admin.alwaysdata.com/
 francois-xavier.montigny@beta.gouv.fr
 Demander le mot de passe à FX
+
+## Visibilité des logs serveur utilisateurs
+URL en GET, il faut utiliser Postman pour saisir un mot de passe en Baerer. 
+https://a-just.incubateur.net/logs/system
+Les mots de passe sont sur le document des mots de passes de Resanna
