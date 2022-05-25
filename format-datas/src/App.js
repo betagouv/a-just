@@ -11,11 +11,13 @@ import {
 } from 'fs'
 import { csvToArrayJson } from '../utils/csv'
 import {
+  authorizateIELST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
-import { orderBy } from 'lodash'
-import { extractCodeFromLabelImported } from '../utils/referentiel'
+import { groupBy, map, sumBy } from 'lodash'
+import YAML from 'yaml'
+import { XMLParser } from 'fast-xml-parser'
 
 export default class App {
   constructor () {}
@@ -26,17 +28,22 @@ export default class App {
     const tmpFolder = path.join(__dirname, '../tmp')
     const inputFolder = path.join(__dirname, '../inputs')
     const outputFolder = path.join(__dirname, '../outputs')
+
+    const categoriesOfRules = this.getRules(inputFolder)
+    const referentiel = await this.getReferentiel(inputFolder)
+
+    /*rmSync(tmpFolder, { recursive: true, force: true })
+    mkdirSync(tmpFolder, { recursive: true })
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)*/
+
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
-
-    rmSync(tmpFolder, { recursive: true, force: true })
-    mkdirSync(tmpFolder, { recursive: true })
-
-    const referentiel = await this.getReferentiel(inputFolder)
-    console.log(referentiel)
-    const juridictionMap = {} // this.getJuridictionsValues(inputFolder)
-    await this.getActivitiesValues(tmpFolder, inputFolder, juridictionMap)
-    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, referentiel)
+    await this.formatAndGroupJuridiction(
+      tmpFolder,
+      outputFolder,
+      categoriesOfRules,
+      referentiel
+    )
 
     this.done()
   }
@@ -44,6 +51,24 @@ export default class App {
   done () {
     console.log('--- DONE ---')
     process.exit()
+  }
+
+  getRules (inputFolder) {
+    const files = readdirSync(inputFolder).filter((f) => f.endsWith('.yml'))
+    let categories = []
+
+    for (let i = 0; i < files.length; i++) {
+      const fileName = files[i]
+      console.log(fileName)
+
+      const file = readFileSync(`${inputFolder}/${fileName}`, 'utf8')
+      const yamlParsed = YAML.parse(file)
+      categories = categories.concat(
+        Object.values(yamlParsed.categories || [])
+      )
+    }
+
+    return categories
   }
 
   async getJuridictionsValues (inputFolder) {
@@ -82,11 +107,13 @@ export default class App {
     return `${tmpFolder}/export-activities-${juridiction}.csv`
   }
 
-  async getActivitiesValues (tmpFolder, inputFolder, juridictionMap) {
+  async getGroupByJuridiction (tmpFolder, inputFolder) {
     const files = readdirSync(inputFolder).filter(
-      (f) => f.endsWith('.xml') && f.indexOf('COMPTEURS') === -1
+      (f) => f.endsWith('.xml') && f.toLowerCase().indexOf('nomenc') === -1
     )
 
+    let headerMap = []
+    // generate header
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       console.log(file)
@@ -95,7 +122,6 @@ export default class App {
       let line
       let nbLine = 0
       let secondTag = ''
-      let headerMap = []
       let isEnd = false
 
       // get header
@@ -108,13 +134,22 @@ export default class App {
           isEnd = true
         } else if (nbLine > 2) {
           const newTag = this.getTagName(lineFormated)
-          headerMap.push(newTag)
+          // merge all columns name
+          if (headerMap.indexOf(newTag) === -1) {
+            headerMap.push(newTag)
+          }
         }
 
         nbLine++
       }
-      
-      headerMap.push('type_juridiction')
+    }
+    headerMap.push('type_juridiction')
+
+    console.log(headerMap)
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      console.log(file)
 
       const regex = new RegExp('_RGC-(.*?)_', 'g')
       let testRegex
@@ -126,36 +161,40 @@ export default class App {
       }
 
       // complete file
-      liner = new lineByLine(`${inputFolder}/${file}`)
-      let dataLines
+      let liner = new lineByLine(`${inputFolder}/${file}`)
+      let dataLines = headerMap.map(() => '') // create empty map
       let totalLine = 0
-      nbLine = 0
+      let nbLine = 0
+      let line
+      let secondTag = ''
       while ((line = liner.next()) !== false) {
         const lineFormated = line.toString('ascii').trim()
         const tag = this.getTagName(lineFormated)
 
-        if (tag === secondTag) {
+        if (nbLine === 2) {
+          secondTag = this.getTagName(lineFormated)
+        } else if (tag === secondTag) {
           secondTag = this.getTagName(lineFormated)
           dataLines = headerMap.map(() => '') // create empty map
         } else if (`</${secondTag}>` === lineFormated) {
-          const regexValue = new RegExp(`^${getTypeOfJuridiction}(T|N|S)`)
-          if(regexValue.test(dataLines[1])) {
-            // add juridiction name
-            if(juridictionMap[dataLines[0]]) {
-              dataLines[0] = juridictionMap[dataLines[0]]
-            }
-
-            // create file if not exist
-            if(!existsSync(this.getCsvOutputPath(tmpFolder, dataLines[0]))) {
+          // create file if not exist and only for authorizes jurdiction
+          const codeJuridiction = dataLines[0]
+          if (authorizateIELST.indexOf(codeJuridiction) !== -1) {
+            if (
+              !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
+            ) {
               // create file
-              writeFileSync(this.getCsvOutputPath(tmpFolder, dataLines[0]), `${headerMap.join(',')}\n`)
+              writeFileSync(
+                this.getCsvOutputPath(tmpFolder, codeJuridiction),
+                `${headerMap.join(',')},\n`
+              )
             }
 
             dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
 
             appendFileSync(
-              this.getCsvOutputPath(tmpFolder, dataLines[0]),
-              `${dataLines.join(',')}\n`
+              this.getCsvOutputPath(tmpFolder, codeJuridiction),
+              `${dataLines.join(',')},\n`
             )
             totalLine++
           }
@@ -167,9 +206,12 @@ export default class App {
         }
 
         nbLine++
+        if (nbLine % 1000000 === 0) {
+          console.log(nbLine)
+        }
       }
 
-      console.log(`add ${totalLine} lines`)
+      console.log(`add ${totalLine} lines add`)
     }
   }
 
@@ -186,86 +228,169 @@ export default class App {
     return ' '
   }
 
-  async formatAndGroupJuridiction (tmpFolder, outputFolder, referentiel) {
-    const files = readdirSync(tmpFolder).filter(
-      (f) => f.endsWith('.csv')
-    )
+  async formatAndGroupJuridiction (
+    tmpFolder,
+    outputFolder,
+    categoriesOfRules,
+    referentiel
+  ) {
+    const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
+
+    // id, code_import, periode, stock, entrees, sorties
+    // .....
 
     for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      const listInObject = {}
+      const fileName = files[i]
+      console.log(fileName)
 
-      const arrayOfCsv = await csvToArrayJson(readFileSync(`${tmpFolder}/${file}`, 'utf8'), {
-        delimiter: ',',
+      const arrayOfCsv = await csvToArrayJson(
+        readFileSync(`${tmpFolder}/${fileName}`, 'utf8'),
+        {
+          delimiter: ',',
+        }
+      )
+      const groupByMonthObject = groupBy(arrayOfCsv, 'periode')
+      let list = []
+      Object.values(groupByMonthObject).map((monthValues) => {
+        // format string to integer
+        monthValues = monthValues.map((m) => ({
+          ...m,
+          nbaff: m.nbaff ? parseInt(m.nbaff) : 0,
+          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : 0,
+        }))
+
+        const formatMonthDataFromRules = this.formatMonthFromRules(
+          monthValues,
+          categoriesOfRules,
+          referentiel
+        )
+        list = list.concat(formatMonthDataFromRules)
       })
-      arrayOfCsv.map(a => {
-        const codeRef = referentiel[a.nataff]
-        if(codeRef) {
-          // only if we now the naff code
 
-          if(!listInObject[`${a.periode}-${codeRef}`]) {
-            listInObject[`${a.periode}-${codeRef}`] = {
-              started: 0,
-              finished: 0,
-              stock: 0,
-              periode: a.periode,
-              codeRef,
-              codesNac: [],
+      writeFileSync(
+        `${outputFolder}/${fileName}`,
+        `${['code_import,periode,entrees,sorties,stock']
+          .concat(
+            list.map(
+              (l) =>
+                `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock}`
+            )
+          )
+          .join(',\n')}`
+      )
+    }
+  }
+
+  formatMonthFromRules (monthValues, categoriesOfRules, referentiel) {
+    // id, code_import, periode, stock, entrees, sorties
+    // .....
+
+    const list = {}
+    //console.log(monthValues)
+    categoriesOfRules.map((rule) => {
+      if (!list[rule['Code nomenclature']]) {
+        list[rule['Code nomenclature']] = {
+          entrees: 0,
+          sorties: 0,
+          stock: 0,
+          periode: monthValues.length ? monthValues[0].periode : null,
+          code_import: rule['Code nomenclature'],
+        }
+      }
+
+      if (rule.filtres) {
+        const nodesToUse = ['entrees', 'sorties', 'stock']
+        for (let i = 0; i < nodesToUse.length; i++) {
+          const node = nodesToUse[i]
+          const newRules = rule.filtres[node]
+
+          // find c_tus code
+          const cTusCodes = (newRules.C_TUS || []).reduce((acc, cur) => {
+            const cTusFinded = referentiel.find(
+              (r) => r.LIBELLE === cur && r.TYPE_NOMENC === 'C_TUS'
+            )
+            if (cTusFinded) {
+              acc.push(cTusFinded.CODE)
+            }
+
+            return acc
+          }, [])
+
+          let lines = monthValues.filter(
+            (m) =>
+              (!newRules.NATAFF || newRules.NATAFF.indexOf(m.nataff) !== -1) &&
+              cTusCodes.indexOf(m.c_tus) !== -1
+          )
+
+          // EXCLUDES QUERIES
+          const regexDifferent = new RegExp('"(.*)"', 'g')
+          const isDifferent = new RegExp('(.*?)<>(.*?)"(.*)"', 'g')
+          let testRegex
+          if (
+            newRules.AUTSAI &&
+            (testRegex = regexDifferent.exec(newRules.AUTSAI)) !== null
+          ) {
+            const finded = referentiel.find(
+              (r) => r.LIBELLE === testRegex[1] && r.TYPE_NOMENC === 'AUTSAI'
+            )
+            if (finded) {
+              // is different 
+              if(isDifferent.test(newRules.AUTSAI)) {
+                lines = lines.filter((m) => m.autsai !== finded.CODE)
+              } else {
+                lines = lines.filter((m) => m.autsai === finded.CODE)
+              }
             }
           }
 
-          if(listInObject[`${a.periode}-${codeRef}`].codesNac.indexOf(a.nataff) === -1) {
-            listInObject[`${a.periode}-${codeRef}`].codesNac.push(a.nataff)
+          if (
+            newRules.AUTDJU &&
+            (testRegex = regexDifferent.exec(newRules.AUTDJU)) !== null
+          ) {
+            const finded = referentiel.find(
+              (r) => r.LIBELLE === testRegex[1] && r.TYPE_NOMENC === 'AUTDJU'
+            )
+            if (finded) {
+              // is different 
+              if(isDifferent.test(newRules.AUTDJU)) {
+                lines = lines.filter((m) => m.autju !== finded.CODE)
+              } else {
+                lines = lines.filter((m) => m.autju === finded.CODE)
+              }
+            }
           }
 
-          switch(a.c_tus.charAt(a.type_juridiction.length)) {
-          case 'T':
-            listInObject[`${a.periode}-${codeRef}`].finished += (+a.nbaff)
-            break
-          case 'N':
-            listInObject[`${a.periode}-${codeRef}`].started += (+a.nbaff)
-            break
-          case 'S':
-            listInObject[`${a.periode}-${codeRef}`].started += (+a.stock)
-            break
-          }
+          // save values
+          list[rule['Code nomenclature']][node] = sumBy(
+            lines,
+            (newRules.TOTAL || '').toLowerCase()
+          )
         }
-      })
+      }
+    })
 
-      const list = orderBy(Object.values(listInObject), ['periode', 'nac'], ['asc', 'asc'])
-      writeFileSync(`${outputFolder}/${file.replace('.csv', '.json')}`, JSON.stringify({ list }))
-    }
+    return Object.values(list)
   }
 
   async getReferentiel (inputFolder) {
     const referentielFiles = readdirSync(inputFolder).filter(
-      (f) => f.endsWith('.csv') && f.toLowerCase().indexOf('nomenclature') !== -1
+      (f) => f.endsWith('.xml') && f.toLowerCase().indexOf('nomenc') !== -1
     )
-    const listInObject = {}
+    let list = []
 
-    if(referentielFiles) {
+    if (referentielFiles) {
       for (let i = 0; i < referentielFiles.length; i++) {
         const file = referentielFiles[i]
-  
-        const arrayOfCsv = await csvToArrayJson(readFileSync(`${inputFolder}/${file}`, 'utf8'), {
-          delimiter: ';',
-        })
 
-        arrayOfCsv.map(a => {
-          let lastRefCode = ''
-          
-          Object.values(a).map(objectToAnalyse => {
-            const extract = extractCodeFromLabelImported(objectToAnalyse)
-            if(extract && extract.code) {
-              lastRefCode = extract.code
-            } else if(lastRefCode && (!extract || !extract.code) && !listInObject[objectToAnalyse]) {
-              listInObject[objectToAnalyse] = lastRefCode
-            }
-          })
-        })
+        const parser = new XMLParser()
+        const xml = parser.parse(
+          readFileSync(`${inputFolder}/${file}`, { encoding: 'utf8' })
+        )
+
+        list = list.concat(xml.ROWSET.ROW)
       }
     }
 
-    return listInObject
+    return list
   }
 }
