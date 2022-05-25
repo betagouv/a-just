@@ -17,7 +17,7 @@
                     [title]="'Fin de période'"
                     [value]="dateStop"
                     (valueChange)="updateReferentielSelected('dateStop', $event)"
-                    [min]="dateStart"
+                    [min]="getMin()"
                     [side]="'right'"
                 >
                 </aj-date-select-blue>

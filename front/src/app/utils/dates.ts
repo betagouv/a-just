@@ -79,3 +79,13 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
     } while (start.getTime() <= endDate.getTime())
     return nbOfWorkingDays
 }
+
+export function nbOfDays(startDate: Date, endDate: Date) {
+    const start = new Date(startDate)
+    let nbOfDay = 0
+    do {
+        nbOfDay++
+        start.setDate(start.getDate() + 1)
+    } while (start.getTime() <= endDate.getTime())
+    return nbOfDay
+}

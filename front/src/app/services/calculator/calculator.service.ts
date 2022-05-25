@@ -447,11 +447,16 @@ export class CalculatorService extends MainClass {
             // only working day
             if (workingDay(now)) {
                 nbDay++
-                const { etp, situation } = this.humanResourceService.getEtpByDateAndPerson(referentiel.id, now, hr)
+                const { etp, situation } =
+                    this.humanResourceService.getEtpByDateAndPerson(
+                        referentiel.id,
+                        now,
+                        hr
+                    )
 
-                if(etp !== null) {
-                  // @ts-ignore
-                  list[situation.category.id].etpt += etp
+                if (etp !== null) {
+                    // @ts-ignore
+                    list[situation.category.id].etpt += etp
                 }
             }
             now.setDate(now.getDate() + 1)

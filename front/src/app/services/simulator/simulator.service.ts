@@ -5,12 +5,16 @@ import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
-import { month, workingDay } from 'src/app/utils/dates'
+import {
+    month,
+    nbOfDays,
+    workingDay,
+    nbOfWorkingDays,
+} from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { ActivitiesService } from '../activities/activities.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { environment } from 'src/environments/environment'
-import { nbOfWorkingDays } from 'src/app/utils/dates'
 
 const start = new Date()
 const end = new Date()
@@ -207,7 +211,11 @@ export class SimulatorService extends MainClass {
             let futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
 
             // Compute nb of day
-            const nbOfDays = nbOfWorkingDays(
+            const countOfWorkingDays = nbOfWorkingDays(
+                month(this.endCurrentSituation, counter, 'lastday'),
+                new Date()
+            )
+            const countOfCalandarDays = nbOfDays(
                 month(this.endCurrentSituation, counter, 'lastday'),
                 new Date()
             )
@@ -215,9 +223,10 @@ export class SimulatorService extends MainClass {
             // Compute stock projection until today
             lastStock = Math.floor(
                 lastStock -
-                    (nbOfDays / 17.33) *
-                        ((futurEtpToCompute * 8 * 17.33) / realTimePerCase) +
-                    (nbOfDays / 17.33) * totalIn
+                    (countOfCalandarDays / (365 / 12)) *
+                        17.33 *
+                        ((futurEtpToCompute * 8) / realTimePerCase) +
+                    (countOfCalandarDays / (365 / 12)) * totalIn
             )
 
             // Compute realCoverage & realDTESInMonths using last available stock
@@ -234,16 +243,10 @@ export class SimulatorService extends MainClass {
                     dateStart?.getMonth() !== today.getMonth() ||
                     dateStart?.getFullYear() !== today.getFullYear())
             ) {
-                let nbDay = 0
-                const now = new Date()
-
-                // Count the number of days until de start date selected
-                do {
-                    if (workingDay(now)) {
-                        nbDay++
-                    }
-                    now.setDate(now.getDate() + 1)
-                } while (now.getTime() <= this.dateStart.getValue().getTime())
+                const nbDayCalendar = nbOfDays(
+                    new Date(),
+                    new Date(this.dateStart.getValue())
+                )
 
                 // Compute etpAffected & etpMag at dateStart (specific date) to display
                 etpAffected = this.getHRPositions(
@@ -267,10 +270,10 @@ export class SimulatorService extends MainClass {
                 // Compute projectedStock with etp at dateStart
                 lastStock = Math.floor(
                     lastStock -
-                        (nbDay / 17.33) *
-                            ((futurEtpToCompute * 8 * 17.33) /
-                                realTimePerCase) +
-                        (nbDay / 17.33) * totalIn
+                        (nbDayCalendar / (365 / 12)) *
+                            17.33 *
+                            ((futurEtpToCompute * 8) / realTimePerCase) +
+                        (nbDayCalendar / (365 / 12)) * totalIn
                 )
 
                 realCoverage = fixDecimal(totalOut / totalIn)
@@ -280,15 +283,10 @@ export class SimulatorService extends MainClass {
                         : null
             }
             if (dateStop) {
-                let nbDay = 0
-                const start = dateStart || new Date()
-                // Count number of days between start and stop dates
-                do {
-                    if (workingDay(start)) {
-                        nbDay++
-                    }
-                    start.setDate(start.getDate() + 1)
-                } while (start.getTime() <= this.dateStop.getValue().getTime())
+                const nbDayCalendarProjected = nbOfDays(
+                    new Date(this.dateStart.getValue()),
+                    new Date(this.dateStop.getValue())
+                )
 
                 // Compute projected etp at stop date (specific date) to display
                 const projectedEtpAffected = this.getHRPositions(
@@ -314,10 +312,10 @@ export class SimulatorService extends MainClass {
                 // Compute projectedStock with etp at datestop
                 const projectedLastStock = Math.floor(
                     lastStock -
-                        (nbDay / 17.33) *
-                            ((futurEtpToCompute * 8 * 17.33) /
-                                realTimePerCase) +
-                        (nbDay / 17.33) * totalIn
+                        (nbDayCalendarProjected / (365 / 12)) *
+                            17.33 *
+                            ((futurEtpToCompute * 8) / realTimePerCase) +
+                        (nbDayCalendarProjected / (365 / 12)) * totalIn
                 )
 
                 const projectedRealCoverage = fixDecimal(
