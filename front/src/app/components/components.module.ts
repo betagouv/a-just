@@ -21,7 +21,6 @@ import { DateSelectBlueComponent } from './date-select-blue/date-select-blue.com
 import { TooltipsComponent } from './tooltips/tooltips.component'
 import { PipesModule } from '../pipes/pipes.module'
 import { TimeSelectorComponent } from './time-selector/time-selector.component'
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
 
 const list = [
     WrapperComponent,
@@ -52,7 +51,6 @@ const list = [
         ReactiveFormsModule,
         MaterialModule,
         PipesModule,
-        NgxMaterialTimepickerModule,
     ],
     exports: list,
 })

@@ -1,9 +1,12 @@
-<div class="ngx-timepicker-field-example">
-    <ngx-timepicker-field
-        [format]="24"
-        [defaultTime]="decimalToStringDate(value)"
-        [ngModel]="decimalToStringDate(value)"
-        [controlOnly]="true"
-        (timeChanged)="onChangeHour($event)"
-    ></ngx-timepicker-field>
+<div>
+    <form [formGroup]="timeForm">
+        <input formControlName="hour" type="number" style="width: 100px" />
+        h
+        <input
+            formControlName="minute"
+            type="number"
+            style="width: 100px"
+            (ngModelChange)="(value)"
+        />
+    </form>
 </div>
