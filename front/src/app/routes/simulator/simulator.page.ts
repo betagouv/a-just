@@ -178,11 +178,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         }
         return
     }
+
     decimalToStringDate(decimal: number | null | undefined) {
         if (decimal != null) {
-            const n = new Date(0, 0)
-            n.setMinutes(+decimal * 60)
-            return n.toTimeString().slice(0, 5).replace(':', 'h')
+            const strArray = String(decimal).split('.')
+            let minute = strArray[1]
+                ? String(Math.ceil((1 / 100) * +strArray[1] * 60))
+                : '00'
+            minute = minute.length === 1 ? '0' + minute : minute
+            return strArray[0] + 'h' + minute
         }
         return
     }
@@ -214,5 +218,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.stopRealValue = ''
         this.mooveClass = ''
         this.disabled = 'disabled'
+    }
+
+    getMin(): Date {
+        const date = new Date(this.dateStart)
+        date.setDate(this.dateStart.getDate() + 1)
+        return date
     }
 }
