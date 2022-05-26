@@ -3,6 +3,53 @@
 
 
 :host {
+    aj-popup {
+        #circle {
+            width: 70px;
+            height: 70px;
+            background: #ececfe;
+            border-radius: 70px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+
+
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3a3a3a;
+            text-align: center;
+            margin-bottom: 23px;
+        }
+
+        .rectangle {
+            width: 496px;
+            height: 84px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            background-color: #f6f6f6;
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+
+            div {
+                flex: 1;
+                color: #3a3a3a;
+                font-size: 18px;
+            }
+
+            input {
+                width: 120px;
+                height: 40px;
+            }
+        }
+
+
+    }
 
     .options {
         height: 80px;
@@ -159,6 +206,8 @@
             }
 
             .ajusted-button {
+                pointer-events: all;
+                cursor: pointer;
                 border: solid 2px #000091;
                 width: 80px;
                 height: 32px;

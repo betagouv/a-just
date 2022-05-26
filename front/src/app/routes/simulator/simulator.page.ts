@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -8,6 +8,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
+// import { tree } from 'src/app/routes/simulator/simulator.tree'
 @Component({
     templateUrl: './simulator.page.html',
     styleUrls: ['./simulator.page.scss'],
@@ -22,6 +23,8 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
     ],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
+    @ViewChild('ETPT')
+    openPopup: boolean = false
     mooveClass: string = ''
     disabled: string = 'disabled'
     contentieuId: number | null = null
@@ -35,6 +38,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     today: Date = new Date()
     startRealValue: string = ''
     stopRealValue: string = ''
+
+    // decisionTree = tree
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -224,5 +229,15 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         const date = new Date(this.dateStart)
         date.setDate(this.dateStart.getDate() + 1)
         return date
+    }
+
+    printConsole(button: any): void {
+        console.log(button.id)
+        this.openPopup = true
+        //console.log(this.decisionTree.find((obj) => obj.label === button.id))
+    }
+
+    doSomething(): void {
+        console.log('do')
     }
 }
