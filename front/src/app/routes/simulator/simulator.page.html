@@ -229,41 +229,48 @@
             >
                 <p class="title">Ajuster</p>
             </div>
-        </div>
-        <aj-popup
-            *ngIf="openPopup===true"
-            [actions]="[
+
+            <aj-popup
+                *ngIf="openPopup===true"
+                [actions]="[
     { id: 'modify', content: 'Ajuster', fill: true }
   ]"
-            [closeIcon]="true"
-            (onClose)="openPopup = false"
-            [removeShadow]="'noShadow'"
-            (selectedAction)="doSomething()"
-        >
-            <div id="circle">
-                <object
-                    data="../../../assets/icons/stock.svg"
-                    width="24"
-                    height="24"
-                ></object>
-            </div>
-            <p>Ajustement du stock</p>
-            <div class="rectangle">
-                <div>
-                    Atteindre au {{stopRealValue}} <br />
-                    un volume de
+                [closeIcon]="true"
+                (onClose)="openPopup = false"
+                [removeShadow]="'noShadow'"
+                (selectedAction)="doSomething($event,volume.value)"
+            >
+                <div id="circle">
+                    <img src="/assets/icons/stock.svg" />
                 </div>
-                <input type="number" />
-            </div>
-            <div class="rectangle">
-                <div>
-                    Atteindre au {{stopRealValue}} <br />
-                    un volume de
+                <p>Ajustement {{getPopupTitle()}}</p>
+                <div class="rectangle">
+                    <div class="title">
+                        Atteindre au {{stopRealValue}} <br />
+                        un volume de
+                    </div>
+                    <input
+                        type="number"
+                        (oninput)="onUpdateValue($event)"
+                        (focusin)="resetPercentage = true"
+                        (focusout)="resetPercentage = false"
+                        #volume
+                    />
                 </div>
-                <input type="number" />
-            </div>
-        </aj-popup>
-
+                <div class="rectangle">
+                    <div class="title">
+                        Atteindre au {{stopRealValue}} <br />
+                        un volume de
+                    </div>
+                    <aj-input-percentage
+                        (focusin)="volume.value = ''"
+                        [referenceValue]="3000"
+                        [reset]="resetPercentage"
+                        (valueChange)="onUpdateValue($event)"
+                    ></aj-input-percentage>
+                </div>
+            </aj-popup>
+        </div>
         <div class="line-item blue-bg">
             <div class="ajusted-button">
                 <p class="title">Ajuster</p>

@@ -1,5 +1,11 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import {
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -8,7 +14,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-// import { tree } from 'src/app/routes/simulator/simulator.tree'
+import { tree } from 'src/app/routes/simulator/simulator.tree'
 @Component({
     templateUrl: './simulator.page.html',
     styleUrls: ['./simulator.page.scss'],
@@ -23,7 +29,8 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
     ],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
-    @ViewChild('ETPT')
+    //@ViewChild('percentageInput')
+    //@ViewChild('ETPT')
     openPopup: boolean = false
     mooveClass: string = ''
     disabled: string = 'disabled'
@@ -39,7 +46,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     startRealValue: string = ''
     stopRealValue: string = ''
 
-    // decisionTree = tree
+    resetPercentage: boolean = false
+    valueToAjust: string = ''
+    currentNode: any | undefined = {}
+
+    decisionTree = tree
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -233,11 +244,28 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     printConsole(button: any): void {
         console.log(button.id)
+        const find = this.decisionTree.find((item) => item.label === button.id)
+        console.log(find)
+        this.currentNode = find
         this.openPopup = true
-        //console.log(this.decisionTree.find((obj) => obj.label === button.id))
     }
 
-    doSomething(): void {
-        console.log('do')
+    doSomething(event: any, volumeInput: any): void {
+        const result = volumeInput | parseInt(this.valueToAjust) | 0
+        console.log('do', result)
+    }
+
+    resetP() {
+        this.resetPercentage = true
+        console.log('reset', this.resetPercentage)
+    }
+
+    onUpdateValue(event: any) {
+        console.log('the event - ', event)
+        this.valueToAjust = event
+    }
+
+    getPopupTitle(): string {
+        return this.currentNode?.popupTitle
     }
 }
