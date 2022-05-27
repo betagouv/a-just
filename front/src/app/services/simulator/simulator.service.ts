@@ -63,7 +63,7 @@ export class SimulatorService extends MainClass {
                 if (this.contentieuOrSubContentieuId.getValue()) {
                     this.syncDatas(
                         this.contentieuOrSubContentieuId.getValue(),
-                        undefined,
+                        this.dateStart.getValue(),
                         this.dateStop.getValue()
                     )
                 }
@@ -210,24 +210,20 @@ export class SimulatorService extends MainClass {
             )
             let futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
 
-            // Compute nb of day
-            const countOfWorkingDays = nbOfWorkingDays(
-                month(this.endCurrentSituation, counter, 'lastday'),
-                new Date()
-            )
             const countOfCalandarDays = nbOfDays(
                 month(this.endCurrentSituation, counter, 'lastday'),
                 new Date()
             )
 
             // Compute stock projection until today
-            lastStock = Math.floor(
-                lastStock -
+            lastStock =
+                Math.floor(lastStock) -
+                Math.floor(
                     (countOfCalandarDays / (365 / 12)) *
                         17.33 *
-                        ((futurEtpToCompute * 8) / realTimePerCase) +
-                    (countOfCalandarDays / (365 / 12)) * totalIn
-            )
+                        ((futurEtpToCompute * 8) / realTimePerCase)
+                ) +
+                Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
 
             // Compute realCoverage & realDTESInMonths using last available stock
             let realCoverage = fixDecimal(totalOut / totalIn)
@@ -268,13 +264,14 @@ export class SimulatorService extends MainClass {
                 futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
 
                 // Compute projectedStock with etp at dateStart
-                lastStock = Math.floor(
-                    lastStock -
+                lastStock =
+                    Math.floor(lastStock) -
+                    Math.floor(
                         (nbDayCalendar / (365 / 12)) *
                             17.33 *
-                            ((futurEtpToCompute * 8) / realTimePerCase) +
-                        (nbDayCalendar / (365 / 12)) * totalIn
-                )
+                            ((futurEtpToCompute * 8) / realTimePerCase)
+                    ) +
+                    Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
 
                 realCoverage = fixDecimal(totalOut / totalIn)
                 realDTESInMonths =
@@ -310,13 +307,14 @@ export class SimulatorService extends MainClass {
                 futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
 
                 // Compute projectedStock with etp at datestop
-                const projectedLastStock = Math.floor(
-                    lastStock -
+                const projectedLastStock =
+                    Math.floor(lastStock) -
+                    Math.floor(
                         (nbDayCalendarProjected / (365 / 12)) *
                             17.33 *
-                            ((futurEtpToCompute * 8) / realTimePerCase) +
-                        (nbDayCalendarProjected / (365 / 12)) * totalIn
-                )
+                            ((futurEtpToCompute * 8) / realTimePerCase)
+                    ) +
+                    Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
 
                 const projectedRealCoverage = fixDecimal(
                     projectedTotalOut / totalIn
