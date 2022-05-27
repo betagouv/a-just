@@ -21,6 +21,7 @@ import { DateSelectBlueComponent } from './date-select-blue/date-select-blue.com
 import { TooltipsComponent } from './tooltips/tooltips.component'
 import { PipesModule } from '../pipes/pipes.module'
 import { TimeSelectorComponent } from './time-selector/time-selector.component'
+import { InputPercentageComponent } from './input-percent/input-percentage.component'
 
 const list = [
     WrapperComponent,
@@ -40,6 +41,7 @@ const list = [
     DateSelectBlueComponent,
     TooltipsComponent,
     TimeSelectorComponent,
+    InputPercentageComponent,
 ]
 
 @NgModule({
