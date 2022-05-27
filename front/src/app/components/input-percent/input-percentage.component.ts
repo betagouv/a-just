@@ -16,6 +16,7 @@ import { FormControl, FormGroup } from '@angular/forms'
 })
 export class InputPercentageComponent implements OnInit, OnChanges {
     @Input() referenceValue: number = 0
+    @Input() defaultValue: string | null = null
     @Input() reset: boolean = false
     @Output() valueChange = new EventEmitter()
 
@@ -40,7 +41,13 @@ export class InputPercentageComponent implements OnInit, OnChanges {
         console.log('onchange', this.reset)
         if (this.reset === true) {
             this.valueForm.controls['percentage'].setValue('')
+            this.defaultValue = null
             this.reset = false
+        }
+        if (this.defaultValue !== null) {
+            this.valueForm.controls['percentage'].setValue(
+                this.returnPercentage(this.defaultValue)
+            )
         }
     }
     print(x: any) {
@@ -54,5 +61,12 @@ export class InputPercentageComponent implements OnInit, OnChanges {
                       ((-parseInt(x) * 1) / 100) * this.referenceValue
               )
             : ''
+    }
+
+    returnPercentage(value: string): number {
+        return (
+            (-(this.referenceValue - parseInt(value)) / this.referenceValue) *
+            100
+        )
     }
 }

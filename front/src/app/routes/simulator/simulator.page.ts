@@ -49,6 +49,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     resetPercentage: boolean = false
     valueToAjust: string = ''
     currentNode: any | undefined = {}
+    paramsToAjust = {
+        param1: { label: '', value: '', input: 0 },
+        param2: { label: '', value: '', input: 0 },
+    }
 
     decisionTree = tree
 
@@ -243,16 +247,35 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     printConsole(button: any): void {
-        console.log(button.id)
+        console.log(button.id, button.value)
         const find = this.decisionTree.find((item) => item.label === button.id)
         console.log(find)
         this.currentNode = find
         this.openPopup = true
     }
 
-    doSomething(event: any, volumeInput: any): void {
+    doSomething(event: any, volumeInput: any, inputField: any): void {
+        if (volumeInput) {
+            this.paramsToAjust.param1.value = volumeInput
+            this.paramsToAjust.param1.label = inputField.id
+            this.paramsToAjust.param1.input = 1
+        } else if (parseInt(this.valueToAjust)) {
+            this.paramsToAjust.param1.value = this.valueToAjust
+            this.paramsToAjust.param1.label = inputField.id
+            this.paramsToAjust.param1.input = 2
+        } else {
+            this.paramsToAjust.param1.value = ''
+            this.paramsToAjust.param1.label = ''
+            this.paramsToAjust.param1.input = 0
+        }
+
         const result = volumeInput | parseInt(this.valueToAjust) | 0
-        console.log('do', result)
+        if (result !== 0) {
+            inputField.value = result
+            this.valueToAjust = ''
+        } else inputField.value = 'Ajuster'
+        this.openPopup = false
+        console.log('do', result, event)
     }
 
     resetP() {
@@ -263,9 +286,5 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     onUpdateValue(event: any) {
         console.log('the event - ', event)
         this.valueToAjust = event
-    }
-
-    getPopupTitle(): string {
-        return this.currentNode?.popupTitle
     }
 }

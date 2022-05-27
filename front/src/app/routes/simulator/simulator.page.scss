@@ -43,6 +43,10 @@
                 flex: 1;
                 color: #3a3a3a;
                 font-size: 18px;
+
+                span {
+                    font-size: 14px;
+                }
             }
 
             input,
@@ -71,6 +75,7 @@
 
             &:focus-within {
                 border: solid 1px #8585f6;
+                background-color: #f5f5fe;
             }
 
         }
@@ -243,14 +248,23 @@
                 border: solid 2px #000091;
                 width: 80px;
                 height: 32px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                text-align: center;
+                color: #000091;
+                font-size: 16px;
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+                background-color: transparent;
+                padding-bottom: 5px;
 
-                p {
-                    text-align: center;
-                    color: #000091;
-                    font-size: 14px;
+                &.filled {
+                    background-color: #eeeeee;
+                    border: none;
+                    color: black;
+                    border-bottom: solid 2px #e5e5e5 !important;
+
+                    :focus {
+                        border: solid 2px #3a3a3a !important;
+                    }
                 }
             }
         }
