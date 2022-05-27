@@ -1,0 +1,14 @@
+<div class="input-container">
+    <form [formGroup]="valueForm">
+        <input
+            formControlName="percentage"
+            class="main-input"
+            value="50"
+            type="number"
+            #percentageInput
+        /><span class="percent">{{ percentageInput.value ? '%' : '' }}</span
+        ><span class="compute"
+            >{{ returnSomething(percentageInput.value) }}
+        </span>
+    </form>
+</div>

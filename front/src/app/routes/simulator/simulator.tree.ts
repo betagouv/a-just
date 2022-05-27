@@ -1,6 +1,7 @@
 const tree = [
     {
         label: 'ETPT',
+        popupTitle: 'des ETPT',
         toDefine: [
             'Un nombre',
             'Un différentiel par rapport à la valeur de la situation initiale (+ou- N ETPT)',
