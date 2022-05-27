@@ -15,7 +15,10 @@
             justify-content: center;
             margin-bottom: 18px;
 
-
+            img {
+                height: 24px;
+                width: 24px;
+            }
         }
 
         p {
@@ -36,17 +39,45 @@
             align-items: center;
             margin-top: 8px;
 
-            div {
+            .title {
                 flex: 1;
                 color: #3a3a3a;
                 font-size: 18px;
             }
 
-            input {
-                width: 120px;
+            input,
+            aj-input-percentage {
+                width: 120px !important;
                 height: 40px;
+                font-size: 18px;
+                border-bottom: solid 2px #e5e5e5 !important;
+
+                :focus {
+                    border: solid 2px #3a3a3a !important;
+                }
             }
+
+            /* Chrome, Safari, Edge, Opera */
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            /* Firefox */
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
+
+            &:focus-within {
+                border: solid 1px #8585f6;
+            }
+
         }
+
+
+
+
 
 
     }
@@ -202,6 +233,7 @@
 
                 &:focus {
                     outline: none;
+                    border-bottom: solid 2px #3a3a3a !important;
                 }
             }
 
