@@ -221,14 +221,15 @@
             </div>
         </div>
         <div class="line-item">
-            <div
+            <input
                 class="ajusted-button"
                 id="ETPT"
+                [class.filled]="ETPT.value!=='Ajuster'"
                 (click)="printConsole(ETPT)"
+                value="Ajuster"
+                readonly="readonly"
                 #ETPT
-            >
-                <p class="title">Ajuster</p>
-            </div>
+            />
 
             <aj-popup
                 *ngIf="openPopup===true"
@@ -238,34 +239,41 @@
                 [closeIcon]="true"
                 (onClose)="openPopup = false"
                 [removeShadow]="'noShadow'"
-                (selectedAction)="doSomething($event,volume.value)"
+                (selectedAction)="doSomething($event,volume.value,ETPT)"
             >
                 <div id="circle">
                     <img src="/assets/icons/stock.svg" />
                 </div>
-                <p>Ajustement {{getPopupTitle()}}</p>
+                <p>Ajustement {{currentNode?.popupTitle}}</p>
+
                 <div class="rectangle">
                     <div class="title">
                         Atteindre au {{stopRealValue}} <br />
-                        un volume de
+                        {{currentNode?.toDefine[0]}} :
                     </div>
                     <input
                         type="number"
                         (oninput)="onUpdateValue($event)"
                         (focusin)="resetPercentage = true"
                         (focusout)="resetPercentage = false"
+                        value="{{paramsToAjust.param1.input ===1?paramsToAjust.param1.value:''}}"
                         #volume
                     />
                 </div>
                 <div class="rectangle">
                     <div class="title">
-                        Atteindre au {{stopRealValue}} <br />
-                        un volume de
+                        Définir {{currentNode?.toDefine[1]}} :<br />
+                        <span
+                            >(en % par rapport à la situation {{startRealValue?
+                            'au' : "d'"}}
+                            {{startRealValue||"aujourd'hui"}})</span
+                        >
                     </div>
                     <aj-input-percentage
                         (focusin)="volume.value = ''"
                         [referenceValue]="3000"
                         [reset]="resetPercentage"
+                        [defaultValue]="paramsToAjust.param1.input ===2 ? paramsToAjust.param1.value : null"
                         (valueChange)="onUpdateValue($event)"
                     ></aj-input-percentage>
                 </div>
