@@ -192,125 +192,251 @@
             />
         </div>
     </div>
-
     <div
         class="actual-situation color-white"
         *ngIf="dateStop!==null"
         [@fadeInOut]
     >
+        <div class="options">
+            <div
+                id="init-button"
+                class="init-button"
+                (click)="initParams([totalIn, totalOut, lastStock, etpMag,ETPTGreffe, etpFon, realCoverage, realDTESInMonths, realTimePerCase])"
+            >
+                <p class="title">Réinitialiser</p>
+            </div>
+            <div class="simulate-button">
+                <p class="title">Simuler</p>
+            </div>
+        </div>
         <div class="line-title">
             <p>
                 Modifier<br />
                 des paramètres
             </p>
         </div>
+        <aj-popup
+            *ngIf="openPopup===true"
+            [actions]="[
+    { id: 'modify', content: 'Ajuster', fill: true }
+  ]"
+            [closeIcon]="true"
+            (onClose)="openPopup = false"
+            [removeShadow]="'noShadow'"
+            (selectedAction)="doSomething($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag,ETPTGreffe, etpFon, realCoverage,realDTESInMonths,realTimePerCase])"
+        >
+            <div id="circle">
+                <img src="/assets/icons/stock.svg" />
+            </div>
+            <p>Ajustement {{getText('title')}}</p>
 
-        <div class="line-item blue-bg">
-            <div class="ajusted-button" (click)="printConsole($event)" #Entrée>
-                <p class="title">Ajuster</p>
+            <div class="rectangle">
+                <div class="title">
+                    Atteindre au {{stopRealValue}} <br />
+                    {{getText('firstInput')}} :
+                </div>
+                <input
+                    type="number"
+                    (oninput)="onUpdateValue($event)"
+                    (focusin)="resetPercentage = true"
+                    (focusout)="resetPercentage = false"
+                    value="{{valueSaved(1)}}"
+                    #volume
+                />
             </div>
-        </div>
-        <div class="line-item">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <div class="rectangle" *ngIf="getNbOfParams()===2">
+                <div class="title">
+                    Définir {{getText('secondInput')}} :<br />
+                    <span
+                        >(en % par rapport à la situation {{startRealValue? 'au'
+                        : "d'"}} {{startRealValue||"aujourd'hui"}})</span
+                    >
+                </div>
+                <aj-input-percentage
+                    (focusin)="volume.value = ''"
+                    [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,projectedSituationData))"
+                    [reset]="resetPercentage"
+                    [defaultValue]="valueSaved(2)"
+                    (valueChange)="onUpdateValue($event)"
+                ></aj-input-percentage>
             </div>
-        </div>
+        </aj-popup>
         <div class="line-item blue-bg">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <input
+                class="ajusted-button"
+                id="totalIn"
+                [class.filled]="totalIn.value!=='Ajuster'"
+                (click)="printConsole(totalIn)"
+                value="Ajuster"
+                readonly="readonly"
+                #totalIn
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',projectedSituationData))}}%
+
+                <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item">
             <input
                 class="ajusted-button"
-                id="ETPT"
-                [class.filled]="ETPT.value!=='Ajuster'"
-                (click)="printConsole(ETPT)"
+                id="totalOut"
+                [class.filled]="totalOut.value!=='Ajuster'"
+                (click)="printConsole(totalOut)"
                 value="Ajuster"
                 readonly="readonly"
-                #ETPT
+                #totalOut
             />
-
-            <aj-popup
-                *ngIf="openPopup===true"
-                [actions]="[
-    { id: 'modify', content: 'Ajuster', fill: true }
-  ]"
-                [closeIcon]="true"
-                (onClose)="openPopup = false"
-                [removeShadow]="'noShadow'"
-                (selectedAction)="doSomething($event,volume.value,ETPT)"
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id"
+                [@fadeInOut]
             >
-                <div id="circle">
-                    <img src="/assets/icons/stock.svg" />
-                </div>
-                <p>Ajustement {{currentNode?.popupTitle}}</p>
+                {{percentageModifiedInputText(totalOut.id,getFieldValue('totalOut',projectedSituationData))}}%
+                <div class="triangle"></div>
+            </div>
+        </div>
+        <div class="line-item blue-bg">
+            <input
+                class="ajusted-button"
+                id="lastStock"
+                [class.filled]="lastStock.value!=='Ajuster'"
+                (click)="printConsole(lastStock)"
+                value="Ajuster"
+                readonly="readonly"
+                #lastStock
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(lastStock.id,getFieldValue('lastStock',projectedSituationData))}}%
 
-                <div class="rectangle">
-                    <div class="title">
-                        Atteindre au {{stopRealValue}} <br />
-                        {{currentNode?.toDefine[0]}} :
-                    </div>
-                    <input
-                        type="number"
-                        (oninput)="onUpdateValue($event)"
-                        (focusin)="resetPercentage = true"
-                        (focusout)="resetPercentage = false"
-                        value="{{paramsToAjust.param1.input ===1?paramsToAjust.param1.value:''}}"
-                        #volume
-                    />
-                </div>
-                <div class="rectangle">
-                    <div class="title">
-                        Définir {{currentNode?.toDefine[1]}} :<br />
-                        <span
-                            >(en % par rapport à la situation {{startRealValue?
-                            'au' : "d'"}}
-                            {{startRealValue||"aujourd'hui"}})</span
-                        >
-                    </div>
-                    <aj-input-percentage
-                        (focusin)="volume.value = ''"
-                        [referenceValue]="3000"
-                        [reset]="resetPercentage"
-                        [defaultValue]="paramsToAjust.param1.input ===2 ? paramsToAjust.param1.value : null"
-                        (valueChange)="onUpdateValue($event)"
-                    ></aj-input-percentage>
-                </div>
-            </aj-popup>
-        </div>
-        <div class="line-item blue-bg">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+                <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <input
+                class="ajusted-button"
+                id="etpMag"
+                [class.filled]="etpMag.value!=='Ajuster'"
+                (click)="printConsole(etpMag)"
+                value="Ajuster"
+                readonly="readonly"
+                #etpMag
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(etpMag.id,getFieldValue('etpMag',projectedSituationData))}}%
+
+                <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item blue-bg">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <input
+                class="ajusted-button"
+                id="ETPTGreffe"
+                [class.filled]="ETPTGreffe.value!=='Ajuster'"
+                (click)="printConsole(ETPTGreffe)"
+                value="Ajuster"
+                readonly="readonly"
+                #ETPTGreffe
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===ETPTGreffe.id  || paramsToAjust.param2.label===ETPTGreffe.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(ETPTGreffe.id,getFieldValue('ETPTGreffe',projectedSituationData))}}%
+                <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <input
+                class="ajusted-button"
+                id="etpFon"
+                [class.filled]="etpFon.value!=='Ajuster'"
+                (click)="printConsole(etpFon)"
+                value="Ajuster"
+                readonly="readonly"
+                #etpFon
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',projectedSituationData))}}%
+
+                <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item blue-bg">
-            <div class="ajusted-button">
-                <p class="title">Ajuster</p>
+            <input
+                class="ajusted-button"
+                id="realCoverage"
+                [class.filled]="realCoverage.value!=='Ajuster'"
+                (click)="printConsole(realCoverage)"
+                value="Ajuster"
+                readonly="readonly"
+                #realCoverage
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',projectedSituationData))}}%
+                <div class="triangle"></div>
             </div>
         </div>
-    </div>
-    <div class="options" *ngIf="dateStop!==null" [@fadeInOut]>
-        <div class="init-button">
-            <p class="title">Réinitialiser</p>
+        <div class="line-item">
+            <input
+                class="ajusted-button"
+                id="realDTESInMonths"
+                [class.filled]="realDTESInMonths.value!=='Ajuster'"
+                (click)="printConsole(realDTESInMonths)"
+                value="Ajuster"
+                readonly="readonly"
+                #realDTESInMonths
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(realDTESInMonths.id,getFieldValue('realDTESInMonths',projectedSituationData))}}%
+
+                <div class="triangle"></div>
+            </div>
         </div>
-        <div class="simulate-button">
-            <p class="title">Simuler</p>
+        <div class="line-item blue-bg">
+            <input
+                class="ajusted-button"
+                id="realTimePerCase"
+                [class.filled]="realTimePerCase.value!=='Ajuster'"
+                (click)="printConsole(realTimePerCase)"
+                value="Ajuster"
+                readonly="readonly"
+                #realTimePerCase
+            />
+            <div
+                class="modified-label"
+                *ngIf="paramsToAjust.param1.label===realTimePerCase.id  || paramsToAjust.param2.label===realTimePerCase.id"
+                [@fadeInOut]
+            >
+                {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',projectedSituationData))}}%
+
+                <div class="triangle"></div>
+            </div>
         </div>
     </div>
 </aj-wrapper>

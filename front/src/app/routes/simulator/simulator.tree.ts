@@ -1,41 +1,38 @@
 const tree = [
     {
-        label: 'ETPT',
-        popupTitle: 'des ETPT',
-        toDefine: [
-            'un volume de',
-            'une variation de',
-        ],
+        label: 'etpMag',
+        popupTitle: 'des etpMag',
+        toDefine: ['un volume de', 'une variation de'],
         toAjust: [
             {
-                label: 'Entrées',
+                label: 'totalIn',
                 toDefine: [
                     'Une valeur sur la période',
                     'Une variation en % sur la période',
                 ],
                 toSimulate: {
-                    toDisplay: ['Entrées', 'ETPT', 'Temps moyen / dossier'],
+                    toDisplay: ['totalIn', 'etpMag', 'realTimePerCase'],
                     toCalculate: [
                         {
-                            label: 'Sorties',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Stock',
+                            label: 'lastStock',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Taux de couverture',
+                            label: 'realCoverage',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'DTES',
+                            label: 'realDTESInMonths',
                             fct: (param: number) => {
                                 return param
                             },
@@ -45,32 +42,28 @@ const tree = [
             },
 
             {
-                label: 'Sorties',
+                label: 'totalOut',
                 toDefine: [
                     'Une valeur sur la période',
                     'Une variation en % sur la période',
                 ],
                 toSimulate: {
-                    toDisplay: [
-                        'Entrées',
-                        'Sortie moyennes mensuelles',
-                        'ETPT',
-                    ],
+                    toDisplay: ['totalIn', 'totalOut', 'etpMag'],
                     toCalculate: [
                         {
-                            label: 'Entrées',
+                            label: 'totalIn',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Sorties moyennes mensuelles',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'ETPT',
+                            label: 'etpMag',
                             fct: (param: number) => {
                                 return param
                             },
@@ -80,31 +73,31 @@ const tree = [
             },
 
             {
-                label: 'Temps moyen / dossier',
+                label: 'realTimePerCase',
                 toDefine: ['Un temps moyen par dossier'],
                 toSimulate: {
-                    toDisplay: ['Entrées', 'ETPT', 'Temps moyen / dossier'],
+                    toDisplay: ['totalIn', 'etpMag', 'realTimePerCase'],
                     toCalculate: [
                         {
-                            label: 'Sorties',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Stock',
+                            label: 'lastStock',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Taux de couverture',
+                            label: 'realCoverage',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'DTES',
+                            label: 'realDTESInMonths',
                             fct: (param: number) => {
                                 return param
                             },
@@ -114,34 +107,34 @@ const tree = [
             },
 
             {
-                label: 'DTES',
+                label: 'realDTESInMonths',
                 toDefine: [
                     'Une valeur',
                     'Une variation en % par rapport à la valeur en début de période',
                 ],
                 toSimulate: {
-                    toDisplay: ['Entrées', 'ETPT', 'DTES'],
+                    toDisplay: ['totalIn', 'etpMag', 'realDTESInMonths'],
                     toCalculate: [
                         {
-                            label: 'Sorties',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Stock',
+                            label: 'lastStock',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Taux de couverture',
+                            label: 'realCoverage',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Temps moyen / dossier',
+                            label: 'realTimePerCase',
                             fct: (param: number) => {
                                 return param
                             },
@@ -151,33 +144,30 @@ const tree = [
             },
 
             {
-                label: 'Stock',
-                toDefine: [
-                    'Une valeur',
-                    'Une variation en % par rapport à la valeur en début de période',
-                ],
+                label: 'lastStock',
+                toDefine: ['une valeur de', 'une variation de'],
                 toSimulate: {
                     toDisplay: [
-                        'Entrées',
-                        'Stock',
-                        'ETPT',
-                        'Temps moyen / dossier',
+                        'totalIn',
+                        'lastStock',
+                        'etpMag',
+                        'realTimePerCase',
                     ],
                     toCalculate: [
                         {
-                            label: 'Sorties',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Taux de couverture',
+                            label: 'realCoverage',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'DTES',
+                            label: 'realDTESInMonths',
                             fct: (param: number) => {
                                 return param
                             },
@@ -187,31 +177,31 @@ const tree = [
             },
 
             {
-                label: 'Taux de couverture',
+                label: 'realCoverage',
                 toDefine: ['Une valeur en %'],
                 toSimulate: {
-                    toDisplay: ['Entrées', 'ETPT', 'Taux de couverture'],
+                    toDisplay: ['totalIn', 'etpMag', 'realCoverage'],
                     toCalculate: [
                         {
-                            label: 'Sorties',
+                            label: 'totalOut',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Stock',
+                            label: 'lastStock',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'DTES',
+                            label: 'realDTESInMonths',
                             fct: (param: number) => {
                                 return param
                             },
                         },
                         {
-                            label: 'Temps moyen / dossier',
+                            label: 'realTimePerCase',
                             fct: (param: number) => {
                                 return param
                             },
@@ -220,6 +210,12 @@ const tree = [
                 },
             },
         ],
+    },
+    {
+        label: 'lastStock',
+        popupTitle: 'des Stocks',
+        toDefine: ['un volume de'],
+        toAjust: [],
     },
 ]
 export { tree }
