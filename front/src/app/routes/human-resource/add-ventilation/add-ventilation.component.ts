@@ -226,18 +226,27 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    let { activitiesStartDate, dateEnd } = this.form.value;
+    let { activitiesStartDate, dateEnd, dateStart } = this.form.value;
     if(!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
       return;
     }
 
+    activitiesStartDate = new Date(activitiesStartDate);
     if(dateEnd && activitiesStartDate) {
-      activitiesStartDate = new Date(activitiesStartDate);
       dateEnd = new Date(dateEnd);
 
       if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
-        alert('Vous ne pouvez pas saisir une situation postérieure à la date de sortie !');
+        alert('Vous ne pouvez pas saisir une situation postérieure à la date de départ !');
+        return;
+      }
+    }
+
+    if(dateStart && activitiesStartDate) {
+      dateStart = new Date(dateStart);
+
+      if(activitiesStartDate.getTime() < dateStart.getTime()) {
+        alert('Vous ne pouvez pas saisir une situation antérieure à la date d\'arrivée !');
         return;
       }
     }
