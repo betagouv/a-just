@@ -10,7 +10,8 @@
     [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
     [indisponibilities]="allIndisponibilities"
     [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
-    [onEdit]="editVentilation ? true : false" (close)="editVentilation = null" (ventilationChange)="onNewVentilation()">
+    [onEdit]="editVentilation || histories.length === 0 ? true : false" (close)="editVentilation = null"
+    (ventilationChange)="onNewVentilation()">
   </add-ventilation>
 
   <p *ngIf="histories.length > 1" class="title-history">
