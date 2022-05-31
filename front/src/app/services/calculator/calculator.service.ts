@@ -296,9 +296,9 @@ export class CalculatorService extends MainClass {
             lastStock !== null ? fixDecimal(lastStock / totalOut) : null
 
         const etpAffected = this.getHRPositions(referentiel)
-        const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-        const etpFon = etpAffected.length >= 1 ? etpAffected[1].totalEtp : 0
-        const etpCont = etpAffected.length >= 2 ? etpAffected[2].totalEtp : 0
+        const etpMag = etpAffected.length >= 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
+        const etpFon = etpAffected.length >= 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
+        const etpCont = etpAffected.length >= 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
 
         // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
         const realTimePerCase = fixDecimal(
@@ -409,7 +409,7 @@ export class CalculatorService extends MainClass {
             Object.values(etptAll).map((c) => {
                 if (c.etpt) {
                     hrCategories[c.label].list.push(hr[i])
-                    hrCategories[c.label].totalEtp += c.etpt
+                    hrCategories[c.label].totalEtp += fixDecimal(c.etpt, 1000)
                 }
             })
         }
@@ -419,7 +419,7 @@ export class CalculatorService extends MainClass {
             list.push({
                 name: key,
                 // @ts-ignore
-                totalEtp: fixDecimal(value.totalEtp || 0),
+                totalEtp: value.totalEtp,
                 // @ts-ignore
                 rank: value.rank,
             })
