@@ -15,6 +15,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { tree } from 'src/app/routes/simulator/simulator.tree'
+import { forEach, result } from 'lodash'
 @Component({
     templateUrl: './simulator.page.html',
     styleUrls: ['./simulator.page.scss'],
@@ -46,12 +47,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     startRealValue: string = ''
     stopRealValue: string = ''
 
+    buttonSelected: any = undefined
     resetPercentage: boolean = false
-    valueToAjust: string = ''
+    valueToAjust = { value: '', percentage: null }
     currentNode: any | undefined = {}
     paramsToAjust = {
-        param1: { label: '', value: '', input: 0 },
-        param2: { label: '', value: '', input: 0 },
+        param1: {
+            label: '',
+            value: '',
+            percentage: null,
+            input: 0,
+            button: { value: '' },
+        },
+        param2: {
+            label: '',
+            value: '',
+            percentage: null,
+            input: 0,
+            button: { value: '' },
+        },
     }
 
     decisionTree = tree
@@ -158,7 +172,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     getElementById(id: number | null) {
         return this.referentiel?.find((v) => v.id === id)
     }
-    getFieldValue(param: string, data: SimulatorInterface | null) {
+    getFieldValue(param: string, data: SimulatorInterface | null): any {
         if (
             (this.simulatorService.situationActuelle.getValue() !== null &&
                 this.subList.length) ||
@@ -237,6 +251,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.startRealValue = ''
         this.stopRealValue = ''
         this.mooveClass = ''
+        document.getElementById('init-button')?.click()
         this.disabled = 'disabled'
     }
 
@@ -247,44 +262,261 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     printConsole(button: any): void {
-        console.log(button.id, button.value)
+        this.buttonSelected = button
         const find = this.decisionTree.find((item) => item.label === button.id)
-        console.log(find)
-        this.currentNode = find
+
+        if (this.paramsToAjust.param1.input === 0) this.currentNode = find
         this.openPopup = true
     }
 
-    doSomething(event: any, volumeInput: any, inputField: any): void {
+    doSomething(
+        event: any,
+        volumeInput: any,
+        inputField: any,
+        allButton: any
+    ): void {
+        const paramsToAjust =
+            this.paramsToAjust.param1.input === 0 && this.currentNode
+                ? this.currentNode.toAjust.map((x: any) => x.label)
+                : null
+
         if (volumeInput) {
-            this.paramsToAjust.param1.value = volumeInput
-            this.paramsToAjust.param1.label = inputField.id
-            this.paramsToAjust.param1.input = 1
-        } else if (parseInt(this.valueToAjust)) {
-            this.paramsToAjust.param1.value = this.valueToAjust
-            this.paramsToAjust.param1.label = inputField.id
-            this.paramsToAjust.param1.input = 2
+            if (
+                !this.paramsToAjust.param1.value ||
+                this.paramsToAjust.param1.label === inputField.id
+            ) {
+                this.paramsToAjust.param1.value = volumeInput
+                this.paramsToAjust.param1.label = inputField.id
+                this.paramsToAjust.param1.input = 1
+                this.paramsToAjust.param1.button = inputField
+                this.paramsToAjust.param1.percentage = null
+                this.disabled = 'disabled-only-date'
+            } else {
+                this.paramsToAjust.param2.value = volumeInput
+                this.paramsToAjust.param2.label = inputField.id
+                this.paramsToAjust.param2.input = 1
+                this.paramsToAjust.param2.button = inputField
+                this.paramsToAjust.param2.percentage = null
+
+                allButton.map((x: any) => {
+                    if (
+                        x.id !== this.paramsToAjust.param1.label &&
+                        x.id !== this.paramsToAjust.param2.label
+                    ) {
+                        x.classList.add('disable')
+                    }
+                })
+            }
+        } else if (parseInt(this.valueToAjust.value)) {
+            if (
+                !this.paramsToAjust.param1.value ||
+                this.paramsToAjust.param1.label === inputField.id
+            ) {
+                this.paramsToAjust.param1.value = this.valueToAjust.value
+                this.paramsToAjust.param1.label = inputField.id
+                this.paramsToAjust.param1.input = 2
+                this.paramsToAjust.param1.button = inputField
+                this.paramsToAjust.param1.percentage =
+                    this.valueToAjust.percentage
+                this.disabled = 'disabled-only-date'
+            } else {
+                this.paramsToAjust.param2.value = this.valueToAjust.value
+                this.paramsToAjust.param2.label = inputField.id
+                this.paramsToAjust.param2.input = 2
+                this.paramsToAjust.param2.button = inputField
+                this.paramsToAjust.param2.percentage =
+                    this.valueToAjust.percentage
+
+                allButton.map((x: any) => {
+                    if (
+                        x.id !== this.paramsToAjust.param1.label &&
+                        x.id !== this.paramsToAjust.param2.label
+                    ) {
+                        x.classList.add('disable')
+                    }
+                })
+            }
         } else {
-            this.paramsToAjust.param1.value = ''
-            this.paramsToAjust.param1.label = ''
-            this.paramsToAjust.param1.input = 0
+            if (inputField.id === this.paramsToAjust.param1.label) {
+                this.paramsToAjust.param1.value = ''
+                this.paramsToAjust.param1.label = ''
+                this.paramsToAjust.param1.input = 0
+                this.paramsToAjust.param1.percentage = null
+                this.paramsToAjust.param2.value = ''
+                this.paramsToAjust.param2.label = ''
+                this.paramsToAjust.param2.input = 0
+                this.paramsToAjust.param2.percentage = null
+                allButton.map((x: any) => {
+                    x.classList.remove('disable')
+                })
+                this.paramsToAjust.param2.button.value = 'Ajuster'
+                this.currentNode = undefined
+                this.disabled = 'disabled-date'
+            } else if (inputField.id === this.paramsToAjust.param2.label) {
+                this.paramsToAjust.param2.value = ''
+                this.paramsToAjust.param2.label = ''
+                this.paramsToAjust.param2.input = 0
+                this.paramsToAjust.param2.percentage = null
+                const param1ToAjust = this.currentNode.toAjust.map(
+                    (x: any) => x.label
+                )
+
+                allButton.map((x: any) => {
+                    if (param1ToAjust && param1ToAjust.includes(x.id))
+                        x.classList.remove('disable')
+                })
+            }
         }
 
-        const result = volumeInput | parseInt(this.valueToAjust) | 0
+        const result = volumeInput | parseInt(this.valueToAjust.value) | 0
         if (result !== 0) {
             inputField.value = result
-            this.valueToAjust = ''
+            this.valueToAjust.value = ''
+
+            allButton.map((x: any) => {
+                if (
+                    paramsToAjust &&
+                    !paramsToAjust.includes(x.id) &&
+                    x.id !== inputField.id &&
+                    x.id !== paramsToAjust?.param1?.label &&
+                    x.id !== paramsToAjust?.param2?.label
+                )
+                    x.classList.add('disable')
+            })
         } else inputField.value = 'Ajuster'
         this.openPopup = false
-        console.log('do', result, event)
     }
 
     resetP() {
         this.resetPercentage = true
-        console.log('reset', this.resetPercentage)
     }
 
     onUpdateValue(event: any) {
-        console.log('the event - ', event)
         this.valueToAjust = event
+    }
+
+    valueSaved(input: number): string {
+        if (input === 1) {
+            if (this.buttonSelected.id === this.paramsToAjust.param1.label)
+                return this.paramsToAjust.param1.input === 1
+                    ? this.paramsToAjust.param1.value
+                    : ''
+            else
+                return this.paramsToAjust.param2.input === 1
+                    ? this.paramsToAjust.param2.value
+                    : ''
+        } else if (input === 2) {
+            if (this.buttonSelected.id === this.paramsToAjust.param1.label)
+                return this.paramsToAjust.param1.input === 2 &&
+                    this.paramsToAjust.param1.percentage !== null
+                    ? String(this.paramsToAjust.param1.percentage)
+                    : ''
+            else
+                return this.paramsToAjust.param2.input === 2 &&
+                    this.paramsToAjust.param2.percentage !== null
+                    ? String(this.paramsToAjust.param2.percentage)
+                    : ''
+        }
+        return ''
+    }
+    percentageModifiedInputText(
+        id: string,
+        projectedValue: string | number | undefined
+    ) {
+        return this.paramsToAjust.param1.label === id
+            ? this.paramsToAjust.param1.percentage
+                ? this.paramsToAjust.param1.percentage
+                : this.ratio(
+                      this.paramsToAjust.param1.value,
+                      projectedValue as string
+                  )
+            : this.paramsToAjust.param2.percentage
+            ? this.paramsToAjust.param2.percentage
+            : this.ratio(
+                  this.paramsToAjust.param2.value,
+                  projectedValue as string
+              )
+    }
+
+    ratio(result: string, initialValue: string) {
+        return Math.round(
+            ((parseInt(result) - parseInt(initialValue)) * 100) /
+                parseInt(initialValue as string)
+        )
+    }
+
+    getReferenceValue(value: any) {
+        return parseInt(value)
+    }
+
+    initParams(buttons: any) {
+        this.disabled = 'disabled-date'
+        buttons.forEach((x: any) => {
+            x.value = 'Ajuster'
+            x.classList.remove('disable')
+        })
+        this.paramsToAjust = {
+            param1: {
+                label: '',
+                value: '',
+                percentage: null,
+                input: 0,
+                button: { value: '' },
+            },
+            param2: {
+                label: '',
+                value: '',
+                percentage: null,
+                input: 0,
+                button: { value: '' },
+            },
+        }
+    }
+
+    getText(label: string): string {
+        if (label === 'title') {
+            if (
+                this.buttonSelected.id === this.paramsToAjust.param1.label ||
+                this.paramsToAjust.param1.input === 0
+            )
+                return this.currentNode.popupTitle
+            else
+                return this.currentNode.toAjust.find(
+                    (x: any) => x.label === this.buttonSelected.id
+                ).label
+        } else if (label === 'firstInput') {
+            if (
+                this.buttonSelected.id === this.paramsToAjust.param1.label ||
+                this.paramsToAjust.param1.input === 0
+            )
+                return this.currentNode.toDefine[0]
+            else
+                return this.currentNode.toAjust.find(
+                    (x: any) => x.label === this.buttonSelected.id
+                ).toDefine[0]
+        } else if (label === 'secondInput') {
+            if (
+                this.buttonSelected.id === this.paramsToAjust.param1.label ||
+                this.paramsToAjust.param1.input === 0
+            )
+                return this.currentNode.toDefine[1]
+            else
+                return this.currentNode.toAjust.find(
+                    (x: any) => x.label === this.buttonSelected.id
+                ).toDefine[1]
+        }
+        return ''
+    }
+
+    getNbOfParams(): number {
+        if (
+            this.buttonSelected.id === this.paramsToAjust.param1.label ||
+            this.paramsToAjust.param1.input === 0
+        )
+            return this.currentNode.toDefine.length
+        else
+            return this.currentNode.toAjust.find(
+                (x: any) => x.label === this.buttonSelected.id
+            ).toDefine.length
     }
 }

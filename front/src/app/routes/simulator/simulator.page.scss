@@ -93,9 +93,13 @@
         align-items: center;
         justify-content: center;
         border-bottom: solid 1px #e5e5e5;
-        position: relative;
+        position: absolute;
+        bottom: -104px;
+        width: 100%;
 
         .init-button {
+            pointer-events: all;
+            cursor: pointer;
             width: 122px;
             height: 40px;
             margin: 0 8px 0 0;
@@ -210,6 +214,7 @@
             align-items: center;
             justify-content: center;
             color: #161616;
+            position: relative;
 
             &.orange-bg {
                 background-color: #feecc2;
@@ -221,6 +226,48 @@
 
             &.blue-bg {
                 background-color: #f4f6fe;
+            }
+
+            .modified-label {
+
+                position: absolute;
+                bottom: -15px;
+                display: block;
+                text-align: center;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+                    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+                border: solid 1px #fa7a35;
+                background-color: #e4794a;
+                border-radius: 4px;
+                width: 74px;
+                height: 35px;
+                line-height: 31px;
+                font-size: 16px;
+                color: #fff;
+
+                .triangle {
+                    height: 0;
+                    width: 0;
+                    border-bottom: 4px solid #fa7a35;
+                    border-right: 4px solid transparent;
+                    border-left: 4px solid transparent;
+                    position: absolute;
+                    left: 30.5px;
+                    top: -5px;
+
+                    &::before {
+                        content: "";
+                        height: 0;
+                        width: 0;
+                        border-bottom: 4px solid #e4794a;
+                        border-right: 4px solid transparent;
+                        border-left: 4px solid transparent;
+                        position: absolute;
+                        top: 2px;
+                        left: -4px;
+                    }
+                }
+
             }
 
             input {
@@ -255,6 +302,12 @@
                 border-top-right-radius: 0px;
                 background-color: transparent;
                 padding-bottom: 5px;
+
+                &.disable {
+                    pointer-events: none;
+                    cursor: auto;
+                    opacity: 0.1;
+                }
 
                 &.filled {
                     background-color: #eeeeee;
@@ -347,7 +400,8 @@
 
         .container-timeline-button {
             display: flex;
-            flex: 1
+            flex: 1;
+
         }
 
         .space {
@@ -363,6 +417,13 @@
         }
 
         &.disabled-date {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+            ;
+        }
+
+        &.disabled-only-date {
             pointer-events: none;
             cursor: auto;
             opacity: 0.5;
@@ -389,6 +450,13 @@
         height: 55px;
 
         &.disabled-date {
+            pointer-events: all;
+            cursor: pointer;
+            opacity: 1;
+            ;
+        }
+
+        &.disabled-only-date {
             pointer-events: all;
             cursor: pointer;
             opacity: 1;
@@ -458,6 +526,12 @@
         }
 
         &.disabled {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+        }
+
+        &.disabled-only-date {
             pointer-events: none;
             cursor: auto;
             opacity: 0.5;
