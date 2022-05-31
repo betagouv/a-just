@@ -164,22 +164,22 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const minDate =
       min && min.dateStart ? today(min.dateStart) : new Date(today());
 
-    const currentDate = new Date(maxDate);
-    let idOfActivities: number[] = [];
+    const currentDate = new Date(minDate);
+    let idOfIndisponibilities: number[] = [];
     let errorsList = [];
-    while (currentDate.getTime() >= minDate.getTime()) {
-      const findedActivities = this.humanResourceService.filterActivitiesByDate(
-        indispos,
+    while (currentDate.getTime() <= maxDate.getTime()) {
+      const findedIndispo = this.human ? this.humanResourceService.findAllIndisponibilities(
+        {...this.human, indisponibilities: indispos},
         currentDate
-      );
+      ) : [];
 
       if (
-        JSON.stringify(idOfActivities) !==
-        JSON.stringify(findedActivities.map((f) => f.id))
+        JSON.stringify(idOfIndisponibilities) !==
+        JSON.stringify(findedIndispo.map((f) => f.id))
       ) {
-        idOfActivities = findedActivities.map((f) => f.id);
+        idOfIndisponibilities = findedIndispo.map((f) => f.id);
 
-        const totalPercent = sumBy(findedActivities, 'percent');
+        const totalPercent = sumBy(findedIndispo, 'percent');
         if (totalPercent > 100) {
           errorsList.push({
             date: new Date(currentDate),
@@ -188,7 +188,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         }
       }
 
-      currentDate.setDate(currentDate.getDate() - 1);
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
     this.indisponibilityError = errorsList.length
@@ -226,6 +226,30 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
+    // find indisponibility dates
+    const listIndispoDateStart = this.indisponibilities.reduce<Date[]>((acc, current) => {
+      if(current.dateStart) {
+        const dateStart = new Date(current.dateStart);
+        acc.push(dateStart)
+      }
+
+      return acc;
+    }, [])
+    const minIndispoDateStart = minBy(listIndispoDateStart, function(o) { return o.getTime() })
+    const maxIndispoDateStart = maxBy(listIndispoDateStart, function(o) { return o.getTime() })
+    const listIndispoDateStop = this.indisponibilities.reduce<Date[]>((acc, current) => {
+      if(current.dateStop) {
+        const dateStop = new Date(current.dateStop);
+        acc.push(dateStop)
+      }
+
+      return acc;
+    }, [])
+    const minIndispoDateStop = minBy(listIndispoDateStop, function(o) { return o.getTime() })
+    const maxIndispoDateStop = maxBy(listIndispoDateStop, function(o) { return o.getTime() })
+    console.log({minIndispoDateStart, maxIndispoDateStart, minIndispoDateStop, maxIndispoDateStop})
+
+
     let { activitiesStartDate, dateEnd, dateStart } = this.form.value;
     if(!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
@@ -236,8 +260,21 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if(dateEnd && activitiesStartDate) {
       dateEnd = new Date(dateEnd);
 
+      // check activity date
       if(activitiesStartDate.getTime() >= dateEnd.getTime()) {
         alert('Vous ne pouvez pas saisir une situation postérieure à la date de départ !');
+        return;
+      }
+
+      // check indisponibilities dates
+      if(maxIndispoDateStart && maxIndispoDateStart.getTime() > dateEnd.getTime()) {
+        alert('Vous ne pouvez pas saisir une date de début d\'indisponibilités postérieure à la date de départ !');
+        return;
+      }
+
+      // check indisponibilities dates
+      if(maxIndispoDateStop && maxIndispoDateStop.getTime() > dateEnd.getTime()) {
+        alert('Vous ne pouvez pas saisir une date de fin d\'indisponibilités postérieure à la date de départ !');
         return;
       }
     }
@@ -245,11 +282,26 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if(dateStart && activitiesStartDate) {
       dateStart = new Date(dateStart);
 
+      // check activity date
       if(activitiesStartDate.getTime() < dateStart.getTime()) {
         alert('Vous ne pouvez pas saisir une situation antérieure à la date d\'arrivée !');
         return;
       }
+
+      // check indisponibilities dates
+      if(minIndispoDateStart && minIndispoDateStart.getTime() < dateStart.getTime()) {
+        alert('Vous ne pouvez pas saisir une date de début d\'indisponibilités postérieure à la date d\'arrivée !');
+        return;
+      }
+
+      // check indisponibilities dates
+      if(minIndispoDateStop && minIndispoDateStop.getTime() < dateStart.getTime()) {
+        alert('Vous ne pouvez pas saisir une date de fin d\'indisponibilités postérieure à la date d\'arrivée !');
+        return;
+      }
     }
+
+    
 
     if (this.human) {
       if (
