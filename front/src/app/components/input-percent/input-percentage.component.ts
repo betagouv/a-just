@@ -25,47 +25,47 @@ export class InputPercentageComponent implements OnInit, OnChanges {
     })
     constructor() {
         this.valueForm.controls.percentage.valueChanges.subscribe((value) => {
-            console.log(value)
-
-            this.valueChange.emit(
-                this.returnSomething(
-                    this.valueForm.controls['percentage'].value
-                )
-            )
+            this.valueChange.emit({
+                value: Math.round(
+                    parseInt(
+                        this.returnSomething(
+                            this.valueForm.controls['percentage'].value
+                        )
+                    )
+                ),
+                percentage: this.valueForm.controls['percentage'].value,
+            })
         })
     }
 
     ngOnInit(): void {}
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log('onchange', this.reset)
         if (this.reset === true) {
             this.valueForm.controls['percentage'].setValue('')
             this.defaultValue = null
             this.reset = false
         }
         if (this.defaultValue !== null) {
-            this.valueForm.controls['percentage'].setValue(
-                this.returnPercentage(this.defaultValue)
-            )
+            this.valueForm.controls['percentage'].setValue(this.defaultValue)
         }
-    }
-    print(x: any) {
-        console.log(x)
     }
 
     returnSomething(x: any): string {
         return x
             ? String(
-                  this.referenceValue -
-                      ((-parseInt(x) * 1) / 100) * this.referenceValue
+                  Math.round(
+                      this.referenceValue -
+                          ((-parseInt(x) * 1) / 100) * this.referenceValue
+                  )
               )
             : ''
     }
 
     returnPercentage(value: string): number {
         return (
-            (-(this.referenceValue - parseInt(value)) / this.referenceValue) *
+            (-(this.referenceValue - Math.round(parseInt(value))) /
+                this.referenceValue) *
             100
         )
     }
