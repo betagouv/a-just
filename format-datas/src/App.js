@@ -15,7 +15,7 @@ import {
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
-import { groupBy, map, sumBy } from 'lodash'
+import { groupBy, sumBy } from 'lodash'
 import YAML from 'yaml'
 import { XMLParser } from 'fast-xml-parser'
 
@@ -269,14 +269,14 @@ export default class App {
 
       writeFileSync(
         `${outputFolder}/${fileName}`,
-        `${['code_import,periode,entrees,sorties,stock']
+        `${['code_import,periode,entrees,sorties,stock,']
           .concat(
             list.map(
               (l) =>
-                `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock}`
+                `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`
             )
           )
-          .join(',\n')}`
+          .join('\n')}`
       )
     }
   }
@@ -286,7 +286,7 @@ export default class App {
     // .....
 
     const list = {}
-    //console.log(monthValues)
+
     categoriesOfRules.map((rule) => {
       if (!list[rule['Code nomenclature']]) {
         list[rule['Code nomenclature']] = {
@@ -306,11 +306,11 @@ export default class App {
 
           // find c_tus code
           const cTusCodes = (newRules.C_TUS || []).reduce((acc, cur) => {
-            const cTusFinded = referentiel.find(
+            const cTusFinded = referentiel.filter(
               (r) => r.LIBELLE === cur && r.TYPE_NOMENC === 'C_TUS'
             )
-            if (cTusFinded) {
-              acc.push(cTusFinded.CODE)
+            if (cTusFinded.length) {
+              acc = acc.concat(cTusFinded.map(c => c.CODE))
             }
 
             return acc
@@ -358,6 +358,13 @@ export default class App {
                 lines = lines.filter((m) => m.autju === finded.CODE)
               }
             }
+          }
+
+          if(node === 'entrees' && rule['Code nomenclature'] === '2.1.') {
+            console.log((newRules.TOTAL || '').toLowerCase(), sumBy(
+              lines,
+              (newRules.TOTAL || '').toLowerCase()
+            ))
           }
 
           // save values
