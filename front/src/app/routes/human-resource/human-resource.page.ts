@@ -243,4 +243,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
     }
   }
+
+  updateHuman(nodeName: string, value: any) {
+    if(this.currentHR) {
+      // @ts-ignore
+      this.currentHR[nodeName] = value;
+      this.humanResourceService.updateHR()
+    }
+  }
 }
