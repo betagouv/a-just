@@ -30,9 +30,11 @@
 
 <ng-template #actions>
   <div class="actions">
-    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart" [readOnly]="true">
+    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
+      (valueChange)="updateHuman('dateStart', $event)">
     </aj-date-select>
-    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd" [readOnly]="true">
+    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
+      (valueChange)="updateHuman('dateStop', $event)">
     </aj-date-select>
   </div>
 </ng-template>
