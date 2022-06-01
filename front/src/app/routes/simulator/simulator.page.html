@@ -201,7 +201,7 @@
             <div
                 id="init-button"
                 class="init-button"
-                (click)="initParams([totalIn, totalOut, lastStock, etpMag,ETPTGreffe, etpFon, realCoverage, realDTESInMonths, realTimePerCase])"
+                (click)="initParams([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, realTimePerCase])"
             >
                 <p class="title">Réinitialiser</p>
             </div>
@@ -223,7 +223,7 @@
             [closeIcon]="true"
             (onClose)="openPopup = false"
             [removeShadow]="'noShadow'"
-            (selectedAction)="doSomething($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag,ETPTGreffe, etpFon, realCoverage,realDTESInMonths,realTimePerCase])"
+            (selectedAction)="doSomething($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,realTimePerCase])"
         >
             <div id="circle">
                 <img src="/assets/icons/stock.svg" />
@@ -254,7 +254,7 @@
                 </div>
                 <aj-input-percentage
                     (focusin)="volume.value = ''"
-                    [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,projectedSituationData))"
+                    [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
                     [reset]="resetPercentage"
                     [defaultValue]="valueSaved(2)"
                     (valueChange)="onUpdateValue($event)"
@@ -276,7 +276,7 @@
                 *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',projectedSituationData))}}%
+                {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
@@ -296,7 +296,7 @@
                 *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(totalOut.id,getFieldValue('totalOut',projectedSituationData))}}%
+                {{percentageModifiedInputText(totalOut.id,getFieldValue('totalOut',firstSituationData))}}%
                 <div class="triangle"></div>
             </div>
         </div>
@@ -315,7 +315,7 @@
                 *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(lastStock.id,getFieldValue('lastStock',projectedSituationData))}}%
+                {{percentageModifiedInputText(lastStock.id,getFieldValue('lastStock',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
@@ -335,14 +335,14 @@
                 *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(etpMag.id,getFieldValue('etpMag',projectedSituationData))}}%
+                {{percentageModifiedInputText(etpMag.id,getFieldValue('etpMag',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item blue-bg">
             <input
-                class="ajusted-button"
+                class="ajusted-button disable"
                 id="ETPTGreffe"
                 [class.filled]="ETPTGreffe.value!=='Ajuster'"
                 (click)="printConsole(ETPTGreffe)"
@@ -355,13 +355,13 @@
                 *ngIf="paramsToAjust.param1.label===ETPTGreffe.id  || paramsToAjust.param2.label===ETPTGreffe.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(ETPTGreffe.id,getFieldValue('ETPTGreffe',projectedSituationData))}}%
+                {{percentageModifiedInputText(ETPTGreffe.id,getFieldValue('ETPTGreffe',firstSituationData))}}%
                 <div class="triangle"></div>
             </div>
         </div>
         <div class="line-item">
             <input
-                class="ajusted-button"
+                class="ajusted-button disable"
                 id="etpFon"
                 [class.filled]="etpFon.value!=='Ajuster'"
                 (click)="printConsole(etpFon)"
@@ -374,7 +374,7 @@
                 *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',projectedSituationData))}}%
+                {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
@@ -394,7 +394,7 @@
                 *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',projectedSituationData))}}%
+                {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',firstSituationData))}}%
                 <div class="triangle"></div>
             </div>
         </div>
@@ -413,7 +413,7 @@
                 *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(realDTESInMonths.id,getFieldValue('realDTESInMonths',projectedSituationData))}}%
+                {{percentageModifiedInputText(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
@@ -433,7 +433,7 @@
                 *ngIf="paramsToAjust.param1.label===realTimePerCase.id  || paramsToAjust.param2.label===realTimePerCase.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',projectedSituationData))}}%
+                {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',firstSituationData))}}%
 
                 <div class="triangle"></div>
             </div>
