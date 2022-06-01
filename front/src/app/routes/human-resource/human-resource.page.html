@@ -34,7 +34,7 @@
       (valueChange)="updateHuman('dateStart', $event)">
     </aj-date-select>
     <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
-      (valueChange)="updateHuman('dateStop', $event)">
+      (valueChange)="updateHuman('dateEnd', $event)">
     </aj-date-select>
   </div>
 </ng-template>
@@ -43,8 +43,14 @@
   <div class="title">
     <p class="page-name">Fiche individuelle de</p>
     <p class="user-name">
-      {{ (currentHR && currentHR.firstName) +' '+ (currentHR &&
-      currentHR.lastName) }}
+      <span contenteditable data-placeholder="Prénom"
+        (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '')">{{
+        (currentHR &&
+        currentHR.firstName)
+        }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
+        (blur)="updateHuman('lastName', $event && $event.target ? $event.target : '')">{{ (currentHR &&
+        currentHR.lastName) }}</span>
+      <mat-icon>drive_file_rename_outline</mat-icon>
     </p>
   </div>
   <p class="user-updated-at">

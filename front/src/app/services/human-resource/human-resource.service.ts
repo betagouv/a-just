@@ -401,6 +401,27 @@ export class HumanResourceService {
         return indisponibilities
     }
 
+    async updatePersonById(humanId: number, params: Object) {
+        const list = this.hr.getValue()
+        const index = list.findIndex((h) => h.id === humanId)
+        const categories = this.categories.getValue()
+        const fonctions = this.fonctions.getValue()
+
+        if (index !== -1) {
+            list[index] = {
+                ...list[index],
+                ...params,
+            }
+
+            console.log(list[index])
+
+            await this.updateRemoteHR(list[index])
+            return true
+        }
+
+        return false
+    }
+
     async pushHRUpdate(
         humanId: number,
         profil: any,
@@ -566,7 +587,7 @@ export class HumanResourceService {
                 (a) => a.contentieux && a.contentieux.id === referentielId
             )
             const indispoFiltred = this.findAllIndisponibilities(hr, date)
-            let reelEtp = situation.etp - (sumBy(indispoFiltred, 'percent') / 100)
+            let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
             if (reelEtp < 0) {
                 reelEtp = 0
             }

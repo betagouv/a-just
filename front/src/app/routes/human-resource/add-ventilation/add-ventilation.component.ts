@@ -45,10 +45,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl(null, [Validators.required]),
-    firstName: new FormControl(null, [Validators.required]),
-    lastName: new FormControl(null, [Validators.required]),
-    dateStart: new FormControl(null),
-    dateEnd: new FormControl(null),
     fonctionId: new FormControl(null, [Validators.required]),
     categoryId: new FormControl(null, [Validators.required]),
   });
@@ -88,18 +84,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.form.get('activitiesStartDate')?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
     this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100);
-    this.form
-      .get('firstName')
-      ?.setValue((this.human && this.human.firstName) || '');
-    this.form
-      .get('lastName')
-      ?.setValue((this.human && this.human.lastName) || '');
-    this.form
-      .get('dateStart')
-      ?.setValue((this.human && this.human.dateStart) || null);
-    this.form
-      .get('dateEnd')
-      ?.setValue((this.human && this.human.dateEnd) || null);
     this.form
       .get('categoryId')
       ?.setValue((situation && situation.category && situation.category.id) || null);
@@ -250,15 +234,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     console.log({minIndispoDateStart, maxIndispoDateStart, minIndispoDateStop, maxIndispoDateStop})
 
 
-    let { activitiesStartDate, dateEnd, dateStart } = this.form.value;
+    let { activitiesStartDate } = this.form.value;
     if(!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
       return;
     }
 
     activitiesStartDate = new Date(activitiesStartDate);
-    if(dateEnd && activitiesStartDate) {
-      dateEnd = new Date(dateEnd);
+    if(this.human && this.human.dateEnd && activitiesStartDate) {
+      const dateEnd = new Date(this.human.dateEnd);
 
       // check activity date
       if(activitiesStartDate.getTime() > dateEnd.getTime()) {
@@ -279,8 +263,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
     }
 
-    if(dateStart && activitiesStartDate) {
-      dateStart = new Date(dateStart);
+    if(this.human && this.human.dateStart && activitiesStartDate) {
+      const dateStart = new Date(this.human.dateStart);
 
       // check activity date
       if(activitiesStartDate.getTime() < dateStart.getTime()) {

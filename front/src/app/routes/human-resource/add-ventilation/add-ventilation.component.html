@@ -19,24 +19,6 @@
 
     <div class="administration">
       <p>Situation administrative</p>
-      <div class="grid-double">
-        <div>
-          <div class="label-aj">Prénom :</div>
-          <input type="text" formControlName="firstName" />
-        </div>
-        <div>
-          <div class="label-aj">Nom :</div>
-          <input type="text" formControlName="lastName" />
-        </div>
-      </div>
-      <div class="grid-double">
-        <aj-date-select title="Date d'arrivée" [showToday]="false" [value]="form.get('dateStart')?.value"
-          (valueChange)="form.get('dateStart')?.setValue($event)">
-        </aj-date-select>
-        <aj-date-select title="Date de départ" [showToday]="false" [value]="form.get('dateEnd')?.value"
-          (valueChange)="form.get('dateEnd')?.setValue($event)">
-        </aj-date-select>
-      </div>
       <div>
         <div class="label-aj">Catégorie :</div>
         <select formControlName="categoryId">
