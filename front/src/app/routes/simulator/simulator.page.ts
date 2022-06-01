@@ -424,25 +424,29 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         projectedValue: string | number | undefined
     ) {
         return this.paramsToAjust.param1.label === id
-            ? this.paramsToAjust.param1.percentage
-                ? this.paramsToAjust.param1.percentage
+            ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
+                ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
                 : this.ratio(
                       this.paramsToAjust.param1.value,
                       projectedValue as string
                   )
-            : this.paramsToAjust.param2.percentage
-            ? this.paramsToAjust.param2.percentage
+            : this.percantageWithSign(this.paramsToAjust.param2.percentage)
+            ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
             : this.ratio(
                   this.paramsToAjust.param2.value,
                   projectedValue as string
               )
     }
 
+    percantageWithSign(value: number | null) {
+        return value && value >= 0 ? '+' + value : value
+    }
     ratio(result: string, initialValue: string) {
-        return Math.round(
+        const roundedValue = Math.round(
             ((parseInt(result) - parseInt(initialValue)) * 100) /
                 parseInt(initialValue as string)
         )
+        return roundedValue >= 0 ? '+' + roundedValue : roundedValue
     }
 
     getReferenceValue(value: any) {
