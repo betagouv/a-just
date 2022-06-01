@@ -32,9 +32,9 @@ export default class App {
     const categoriesOfRules = this.getRules(inputFolder)
     const referentiel = await this.getReferentiel(inputFolder)
 
-    /*rmSync(tmpFolder, { recursive: true, force: true })
+    rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)*/
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
@@ -350,6 +350,7 @@ export default class App {
             const finded = referentiel.find(
               (r) => r.LIBELLE === testRegex[1] && r.TYPE_NOMENC === 'AUTDJU'
             )
+            console.log('finded AUTDJU', finded)
             if (finded) {
               // is different 
               if(isDifferent.test(newRules.AUTDJU)) {
