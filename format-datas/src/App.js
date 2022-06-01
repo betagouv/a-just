@@ -32,9 +32,9 @@ export default class App {
     const categoriesOfRules = this.getRules(inputFolder)
     const referentiel = await this.getReferentiel(inputFolder)
 
-    rmSync(tmpFolder, { recursive: true, force: true })
+    /*rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)*/
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
@@ -303,70 +303,12 @@ export default class App {
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
           const newRules = rule.filtres[node]
+          let lines = monthValues
 
-          // find c_tus code
-          const cTusCodes = (newRules.C_TUS || []).reduce((acc, cur) => {
-            const cTusFinded = referentiel.filter(
-              (r) => r.LIBELLE === cur && r.TYPE_NOMENC === 'C_TUS'
-            )
-            if (cTusFinded.length) {
-              acc = acc.concat(cTusFinded.map(c => c.CODE))
-            }
-
-            return acc
-          }, [])
-
-          let lines = monthValues.filter(
-            (m) =>
-              (!newRules.NATAFF || newRules.NATAFF.indexOf(m.nataff) !== -1) &&
-              cTusCodes.indexOf(m.c_tus) !== -1
-          )
-
-          // EXCLUDES QUERIES
-          const regexDifferent = new RegExp('"(.*)"', 'g')
-          const isDifferent = new RegExp('(.*?)<>(.*?)"(.*)"', 'g')
-          let testRegex
-          if (
-            newRules.AUTSAI &&
-            (testRegex = regexDifferent.exec(newRules.AUTSAI)) !== null
-          ) {
-            const finded = referentiel.find(
-              (r) => r.LIBELLE === testRegex[1] && r.TYPE_NOMENC === 'AUTSAI'
-            )
-            if (finded) {
-              // is different 
-              if(isDifferent.test(newRules.AUTSAI)) {
-                lines = lines.filter((m) => m.autsai !== finded.CODE)
-              } else {
-                lines = lines.filter((m) => m.autsai === finded.CODE)
-              }
-            }
-          }
-
-          if (
-            newRules.AUTDJU &&
-            (testRegex = regexDifferent.exec(newRules.AUTDJU)) !== null
-          ) {
-            const finded = referentiel.find(
-              (r) => r.LIBELLE === testRegex[1] && r.TYPE_NOMENC === 'AUTDJU'
-            )
-            console.log('finded AUTDJU', finded)
-            if (finded) {
-              // is different 
-              if(isDifferent.test(newRules.AUTDJU)) {
-                lines = lines.filter((m) => m.autju !== finded.CODE)
-              } else {
-                lines = lines.filter((m) => m.autju === finded.CODE)
-              }
-            }
-          }
-
-          if(node === 'entrees' && rule['Code nomenclature'] === '2.1.') {
-            console.log((newRules.TOTAL || '').toLowerCase(), sumBy(
-              lines,
-              (newRules.TOTAL || '').toLowerCase()
-            ))
-          }
+          // EXCLUDES INCLUDES QUERIES
+          Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
+            lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
+          })
 
           // save values
           list[rule['Code nomenclature']][node] = sumBy(
@@ -378,6 +320,51 @@ export default class App {
     })
 
     return Object.values(list)
+  }
+
+  filterDatasByNomenc (rules, lines, node, referentiel) {
+    let nodeValues = rules[node]
+    const regexIfDifferent = new RegExp('<>(.*?)"(.*)"', 'g')
+    let include = true
+    let listCodeToFind = []
+    if(typeof nodeValues === 'undefined') {
+      return lines
+    }
+
+    // force to read array of string
+    if(typeof nodeValues === 'string') {
+      nodeValues = [nodeValues]
+    }
+
+    nodeValues.map(value => {
+      value = value.trim() // clean string
+      let label = value
+      let testRegex
+
+      if((testRegex = regexIfDifferent.exec(value)) !== null) {
+        label = testRegex[2]
+        include = false // warning need to be alway same
+      }
+      
+      const findRefList = referentiel.filter(
+        (r) => r.LIBELLE === label && r.TYPE_NOMENC === node
+      )
+      let codeList = findRefList.map(f => f.CODE)
+      if(codeList.length === 0) {
+        // if no code finded then find by label
+        codeList = [label]
+      }
+
+      listCodeToFind = listCodeToFind.concat(codeList)
+    })
+
+    if(include) {
+      lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) !== -1)
+    } else {
+      lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) === -1)
+    }
+
+    return lines
   }
 
   async getReferentiel (inputFolder) {
