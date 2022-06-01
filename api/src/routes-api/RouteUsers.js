@@ -4,7 +4,7 @@ import { accessList } from '../constants/access'
 import { validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
-import { TEMPLATE_FORGOT_PASSWORD_ID } from '../constants/email'
+import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN } from '../constants/email'
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 
@@ -35,6 +35,16 @@ export default class RouteUsers extends Route {
     const { email, firstName, lastName } = this.body(ctx)
     try {
       await this.model.createAccount(this.body(ctx))
+      await sentEmail(
+        {
+          email: config.contactEmail,
+        },
+        TEMPLATE_NEW_USER_SIGNIN,
+        {
+          email,
+          serverUrl: config.frontUrl,
+        }
+      )
       await this.models.Logs.addLog(USER_USER_SIGN_IN, null, { email, firstName, lastName })
       this.sendOk(ctx, 'OK')
     } catch (err) {
