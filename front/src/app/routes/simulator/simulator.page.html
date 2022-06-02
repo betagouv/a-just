@@ -223,7 +223,7 @@
             [closeIcon]="true"
             (onClose)="openPopup = false"
             [removeShadow]="'noShadow'"
-            (selectedAction)="doSomething($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,realTimePerCase])"
+            (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,realTimePerCase])"
         >
             <div id="circle">
                 <img src="/assets/icons/stock.svg" />
@@ -236,13 +236,19 @@
                     {{getText('firstInput')}} :
                 </div>
                 <input
+                    [class.displayNone]="buttonSelected.id === 'realTimePerCase'"
                     type="number"
-                    (oninput)="onUpdateValue($event)"
+                    (oninput)="onUpdateValueToAjust($event)"
                     (focusin)="resetPercentage = true"
                     (focusout)="resetPercentage = false"
                     value="{{valueSaved(1)}}"
                     #volume
                 />
+                <app-time-selector
+                    *ngIf="buttonSelected.id === 'realTimePerCase'"
+                    [value]="parseFloat(valueSaved(1))"
+                    (valueChange)="valueChange(volume,$event)"
+                ></app-time-selector>
             </div>
             <div class="rectangle" *ngIf="getNbOfParams()===2">
                 <div class="title">
@@ -257,7 +263,7 @@
                     [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
                     [reset]="resetPercentage"
                     [defaultValue]="valueSaved(2)"
-                    (valueChange)="onUpdateValue($event)"
+                    (valueChange)="onUpdateValueToAjust($event)"
                 ></aj-input-percentage>
             </div>
         </aj-popup>
@@ -266,7 +272,7 @@
                 class="ajusted-button"
                 id="totalIn"
                 [class.filled]="totalIn.value!=='Ajuster'"
-                (click)="printConsole(totalIn)"
+                (click)="openPopupWithParams(totalIn)"
                 value="Ajuster"
                 readonly="readonly"
                 #totalIn
@@ -286,7 +292,7 @@
                 class="ajusted-button"
                 id="totalOut"
                 [class.filled]="totalOut.value!=='Ajuster'"
-                (click)="printConsole(totalOut)"
+                (click)="openPopupWithParams(totalOut)"
                 value="Ajuster"
                 readonly="readonly"
                 #totalOut
@@ -305,7 +311,7 @@
                 class="ajusted-button"
                 id="lastStock"
                 [class.filled]="lastStock.value!=='Ajuster'"
-                (click)="printConsole(lastStock)"
+                (click)="openPopupWithParams(lastStock)"
                 value="Ajuster"
                 readonly="readonly"
                 #lastStock
@@ -325,7 +331,7 @@
                 class="ajusted-button"
                 id="etpMag"
                 [class.filled]="etpMag.value!=='Ajuster'"
-                (click)="printConsole(etpMag)"
+                (click)="openPopupWithParams(etpMag)"
                 value="Ajuster"
                 readonly="readonly"
                 #etpMag
@@ -345,7 +351,7 @@
                 class="ajusted-button disable"
                 id="ETPTGreffe"
                 [class.filled]="ETPTGreffe.value!=='Ajuster'"
-                (click)="printConsole(ETPTGreffe)"
+                (click)="openPopupWithParams(ETPTGreffe)"
                 value="Ajuster"
                 readonly="readonly"
                 #ETPTGreffe
@@ -364,7 +370,7 @@
                 class="ajusted-button disable"
                 id="etpFon"
                 [class.filled]="etpFon.value!=='Ajuster'"
-                (click)="printConsole(etpFon)"
+                (click)="openPopupWithParams(etpFon)"
                 value="Ajuster"
                 readonly="readonly"
                 #etpFon
@@ -384,7 +390,7 @@
                 class="ajusted-button"
                 id="realCoverage"
                 [class.filled]="realCoverage.value!=='Ajuster'"
-                (click)="printConsole(realCoverage)"
+                (click)="openPopupWithParams(realCoverage)"
                 value="Ajuster"
                 readonly="readonly"
                 #realCoverage
@@ -403,7 +409,7 @@
                 class="ajusted-button"
                 id="realDTESInMonths"
                 [class.filled]="realDTESInMonths.value!=='Ajuster'"
-                (click)="printConsole(realDTESInMonths)"
+                (click)="openPopupWithParams(realDTESInMonths)"
                 value="Ajuster"
                 readonly="readonly"
                 #realDTESInMonths
@@ -423,7 +429,7 @@
                 class="ajusted-button"
                 id="realTimePerCase"
                 [class.filled]="realTimePerCase.value!=='Ajuster'"
-                (click)="printConsole(realTimePerCase)"
+                (click)="openPopupWithParams(realTimePerCase)"
                 value="Ajuster"
                 readonly="readonly"
                 #realTimePerCase
@@ -433,7 +439,7 @@
                 *ngIf="paramsToAjust.param1.label===realTimePerCase.id  || paramsToAjust.param2.label===realTimePerCase.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',firstSituationData))}}%
+                {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',firstSituationData,true))}}%
 
                 <div class="triangle"></div>
             </div>

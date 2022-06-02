@@ -91,3 +91,5 @@ export function nbOfDays(startDate: Date, endDate: Date) {
     } while (start.getTime() <= endDate.getTime())
     return nbOfDay
 }
+
+export function decimalToDateString(decimal: number | null | undefined) {}

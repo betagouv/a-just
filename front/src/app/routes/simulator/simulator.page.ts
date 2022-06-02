@@ -30,8 +30,6 @@ import { forEach, result } from 'lodash'
     ],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
-    //@ViewChild('percentageInput')
-    //@ViewChild('ETPT')
     openPopup: boolean = false
     mooveClass: string = ''
     disabled: string = 'disabled'
@@ -46,7 +44,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     today: Date = new Date()
     startRealValue: string = ''
     stopRealValue: string = ''
-
     buttonSelected: any = undefined
     resetPercentage: boolean = false
     valueToAjust = { value: '', percentage: null }
@@ -172,7 +169,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     getElementById(id: number | null) {
         return this.referentiel?.find((v) => v.id === id)
     }
-    getFieldValue(param: string, data: SimulatorInterface | null): any {
+    getFieldValue(
+        param: string,
+        data: SimulatorInterface | null,
+        initialValue = false
+    ): any {
         if (
             (this.simulatorService.situationActuelle.getValue() !== null &&
                 this.subList.length) ||
@@ -192,7 +193,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 case 'realCoverage': {
                     if (data?.realCoverage)
                         return Math.trunc(data?.realCoverage * 100) + '%' || '0'
-                    return data?.realCoverage || '0'
+                    else return '0'
                 }
                 case 'realDTESInMonths':
                     if (
@@ -203,26 +204,17 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     }
                     return '0'
                 case 'realTimePerCase':
-                    return (
-                        this.decimalToStringDate(data?.realTimePerCase) || '0'
-                    )
+                    if (initialValue) return data?.realTimePerCase || '0'
+                    else
+                        return (
+                            this.decimalToStringDate(data?.realTimePerCase) ||
+                            '0'
+                        )
                 case 'ETPTGreffe':
                     return ''
             }
         }
-        return
-    }
-
-    decimalToStringDate(decimal: number | null | undefined) {
-        if (decimal != null) {
-            const strArray = String(decimal).split('.')
-            let minute = strArray[1]
-                ? String(Math.ceil((1 / 100) * +strArray[1] * 60))
-                : '00'
-            minute = minute.length === 1 ? '0' + minute : minute
-            return strArray[0] + 'h' + minute
-        }
-        return
+        return ''
     }
 
     findRealValue(date: Date) {
@@ -255,13 +247,30 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.disabled = 'disabled'
     }
 
+    // get minimum date you can select on the date picker
     getMin(): Date {
         const date = new Date(this.dateStart)
         date.setDate(this.dateStart.getDate() + 1)
         return date
     }
 
-    printConsole(button: any): void {
+    decimalToStringDate(decimal: number | null | undefined) {
+        if (decimal != null) {
+            const strArray = String(decimal).split('.')
+            const decimalMinute =
+                strArray[1] && +strArray[1].length === 1
+                    ? +strArray[1] * 10
+                    : +strArray[1]
+            let minute = strArray[1]
+                ? String(Math.ceil((1 / 100) * decimalMinute * 60))
+                : '00'
+            minute = minute.length === 1 ? '0' + minute : minute
+            return strArray[0] + 'h' + minute
+        }
+        return
+    }
+
+    openPopupWithParams(button: any): void {
         this.buttonSelected = button
         const find = this.decisionTree.find((item) => item.label === button.id)
 
@@ -269,18 +278,19 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.openPopup = true
     }
 
-    doSomething(
-        event: any,
-        volumeInput: any,
-        inputField: any,
-        allButton: any
-    ): void {
+    setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
+        // get list of params to ajust from the currentNode selected
         const paramsToAjust =
             this.paramsToAjust.param1.input === 0 && this.currentNode
                 ? this.currentNode.toAjust.map((x: any) => x.label)
                 : null
 
-        if (volumeInput) {
+        // if param comming from input type volume
+        if (
+            volumeInput &&
+            !(inputField.id === 'realTimePerCase' && volumeInput === '0')
+        ) {
+            // if param 1 not filled yet or if param 1 selected to be edited
             if (
                 !this.paramsToAjust.param1.value ||
                 this.paramsToAjust.param1.label === inputField.id
@@ -291,6 +301,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param1.button = inputField
                 this.paramsToAjust.param1.percentage = null
                 this.disabled = 'disabled-only-date'
+                //else edit param 2
             } else {
                 this.paramsToAjust.param2.value = volumeInput
                 this.paramsToAjust.param2.label = inputField.id
@@ -298,6 +309,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param2.button = inputField
                 this.paramsToAjust.param2.percentage = null
 
+                // disable all buttons excepted those already filled
                 allButton.map((x: any) => {
                     if (
                         x.id !== this.paramsToAjust.param1.label &&
@@ -307,7 +319,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     }
                 })
             }
+            // if param comming from input type %
         } else if (parseInt(this.valueToAjust.value)) {
+            // if param 1 not filled yet or if param 1 selected to be edited
             if (
                 !this.paramsToAjust.param1.value ||
                 this.paramsToAjust.param1.label === inputField.id
@@ -319,6 +333,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param1.percentage =
                     this.valueToAjust.percentage
                 this.disabled = 'disabled-only-date'
+                //else edit param 2
             } else {
                 this.paramsToAjust.param2.value = this.valueToAjust.value
                 this.paramsToAjust.param2.label = inputField.id
@@ -327,6 +342,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param2.percentage =
                     this.valueToAjust.percentage
 
+                // disable all buttons excepted those already filled
                 allButton.map((x: any) => {
                     if (
                         x.id !== this.paramsToAjust.param1.label &&
@@ -336,7 +352,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     }
                 })
             }
+            //else (no value filled in popup)
         } else {
+            // if param1 reset => reset all params
             if (inputField.id === this.paramsToAjust.param1.label) {
                 this.paramsToAjust.param1.value = ''
                 this.paramsToAjust.param1.label = ''
@@ -352,6 +370,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param2.button.value = 'Ajuster'
                 this.currentNode = undefined
                 this.disabled = 'disabled-date'
+                // else if param2 reset => reset only param2
             } else if (inputField.id === this.paramsToAjust.param2.label) {
                 this.paramsToAjust.param2.value = ''
                 this.paramsToAjust.param2.label = ''
@@ -368,9 +387,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             }
         }
 
-        const result = volumeInput | parseInt(this.valueToAjust.value) | 0
+        // get 1 result from inputs
+        let result = 0
+        if (volumeInput !== '') result = parseFloat(volumeInput)
+        else if (
+            this.valueToAjust.value !== '' &&
+            String(this.valueToAjust.value) !== 'NaN'
+        )
+            result = parseInt(this.valueToAjust.value)
+
+        // if result
         if (result !== 0) {
-            inputField.value = result
+            // affect the value to the editable input
+            if (inputField.id === 'realTimePerCase' && result)
+                inputField.value = this.decimalToStringDate(result)
+            else if (inputField.id === 'realCoverage' && result)
+                inputField.value = result + '%'
+            else if (inputField.id === 'realDTESInMonths' && result)
+                inputField.value = result + ' mois'
+            else inputField.value = result
             this.valueToAjust.value = ''
 
             allButton.map((x: any) => {
@@ -383,19 +418,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 )
                     x.classList.add('disable')
             })
+            // else (no value edited) reset the input to 'Ajuster'
         } else inputField.value = 'Ajuster'
+        //close the popup
         this.openPopup = false
     }
 
-    resetP() {
-        this.resetPercentage = true
-    }
-
-    onUpdateValue(event: any) {
+    onUpdateValueToAjust(event: any) {
         this.valueToAjust = event
     }
 
     valueSaved(input: number): string {
+        // if input type volume (quantity)
         if (input === 1) {
             if (this.buttonSelected.id === this.paramsToAjust.param1.label)
                 return this.paramsToAjust.param1.input === 1
@@ -405,6 +439,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 return this.paramsToAjust.param2.input === 1
                     ? this.paramsToAjust.param2.value
                     : ''
+            // if input type percentage (%)
         } else if (input === 2) {
             if (this.buttonSelected.id === this.paramsToAjust.param1.label)
                 return this.paramsToAjust.param1.input === 2 &&
@@ -419,10 +454,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         }
         return ''
     }
+
     percentageModifiedInputText(
         id: string,
         projectedValue: string | number | undefined
     ) {
+        if (id === 'realTimePerCase' && projectedValue === -100) return ''
+
         return this.paramsToAjust.param1.label === id
             ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
                 ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -441,11 +479,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     percantageWithSign(value: number | null) {
         return value && value >= 0 ? '+' + value : value
     }
+
     ratio(result: string, initialValue: string) {
-        const roundedValue = Math.round(
-            ((parseInt(result) - parseInt(initialValue)) * 100) /
-                parseInt(initialValue as string)
-        )
+        const roundedValue =
+            Math.round(
+                (((parseFloat(result) - parseFloat(initialValue)) * 100) /
+                    parseFloat(initialValue as string)) *
+                    100
+            ) / 100
         return roundedValue >= 0 ? '+' + roundedValue : roundedValue
     }
 
@@ -522,5 +563,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             return this.currentNode.toAjust.find(
                 (x: any) => x.label === this.buttonSelected.id
             ).toDefine.length
+    }
+
+    valueChange(button: any, event: any) {
+        button.value = event
+    }
+
+    parseFloat(value: string): number {
+        if (value !== '') return parseFloat(value)
+        else return 0
     }
 }
