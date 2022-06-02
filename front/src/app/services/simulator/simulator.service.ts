@@ -332,7 +332,7 @@ export class SimulatorService extends MainClass {
                     lastStock: projectedLastStock,
                     realCoverage: projectedRealCoverage,
                     realDTESInMonths: projectedRealDTESInMonths,
-                    realTimePerCase: realTimePerCase,
+                    realTimePerCase,
                     etpMag: projectedEtp,
                     etpAffected: projectedEtpAffected,
                     etpFon: null,
