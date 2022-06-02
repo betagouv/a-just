@@ -93,6 +93,41 @@
 
     }
 
+    .choices {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 12px;
+        margin-bottom: 8px;
+
+        .choice {
+            flex: 1;
+            width: 260px;
+            height: 105px;
+            border-radius: 8px;
+            background-color: #f6f6f6;
+            font-size: 18px;
+            line-height: 1.56;
+            text-align: center;
+            color: #3a3a3a;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:first-child {
+                margin-right: 12px;
+            }
+
+            &:hover {
+                border: solid 1px #8585f6;
+                background-color: #f5f5fe;
+            }
+        }
+    }
+
     .options {
         height: 80px;
         display: flex;
@@ -115,6 +150,8 @@
         }
 
         .simulate-button {
+            pointer-events: all;
+            cursor: pointer;
             width: 91px;
             height: 40px;
             margin: 0 0 0 8px;
