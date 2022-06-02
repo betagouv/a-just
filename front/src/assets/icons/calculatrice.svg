@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <g id="3---Simulateur" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Simulateur/v0.2/2_AucunParams-Copy-2" transform="translate(-779.000000, -332.000000)">
+            <g id="PopIn" transform="translate(505.000000, 282.000000)">
+                <g id="Group-41" transform="translate(145.000000, 32.000000)">
+                    <g id="Group-38" transform="translate(111.000000, 0.000000)">
+                        <g id="Group" transform="translate(18.000000, 18.000000)">
+                            <polygon id="Path" points="0 0 24 0 24 24 0 24"></polygon>
+                            <path d="M4,2 L20,2 C20.5522847,2 21,2.44771525 21,3 L21,21 C21,21.5522847 20.5522847,22 20,22 L4,22 C3.44771525,22 3,21.5522847 3,21 L3,3 C3,2.44771525 3.44771525,2 4,2 Z M5,4 L5,20 L19,20 L19,4 L5,4 Z M7,6 L17,6 L17,10 L7,10 L7,6 Z M7,12 L9,12 L9,14 L7,14 L7,12 Z M7,16 L9,16 L9,18 L7,18 L7,16 Z M11,12 L13,12 L13,14 L11,14 L11,12 Z M11,16 L13,16 L13,18 L11,18 L11,16 Z M15,12 L17,12 L17,18 L15,18 L15,12 Z" id="Shape" fill="#8585F6" fill-rule="nonzero"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
