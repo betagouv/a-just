@@ -45,16 +45,13 @@ export class PopupComponent implements OnInit, OnDestroy {
     constructor() {}
 
     ngOnInit() {
-        console.log('1')
         const element = document.getElementById(
             'hubspot-messages-iframe-container'
         )
-        console.log('2')
 
         if (element) {
             element.style.visibility = 'hidden'
         }
-        console.log('3')
     }
 
     ngOnDestroy() {
@@ -64,7 +61,6 @@ export class PopupComponent implements OnInit, OnDestroy {
         if (element) {
             element.style.visibility = 'visible'
         }
-        console.log('destroy')
     }
 
     onSelectAction(action: any) {
@@ -79,8 +75,6 @@ export class PopupComponent implements OnInit, OnDestroy {
     }
 
     getInternetExplorerVersion() {
-        console.log('4')
-
         var rv = -1
         if (navigator.appName == 'Microsoft Internet Explorer') {
             var ua = navigator.userAgent
@@ -91,7 +85,6 @@ export class PopupComponent implements OnInit, OnDestroy {
             var re = new RegExp('Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})')
             if (re.exec(ua) != null) rv = parseFloat(RegExp.$1)
         }
-        console.log('5')
 
         return rv
     }
