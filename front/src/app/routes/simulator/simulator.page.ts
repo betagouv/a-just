@@ -64,8 +64,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             button: { value: '' },
         },
     }
-
+    pickersParamsToLock = []
+    paramsToLock = {
+        param1: { label: '', value: '' },
+        param2: { label: '', value: '' },
+    }
     decisionTree = tree
+
+    toSimulate: boolean = false
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -276,6 +282,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
         if (this.paramsToAjust.param1.input === 0) this.currentNode = find
         this.openPopup = true
+        console.log(this.currentNode)
     }
 
     setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
@@ -516,6 +523,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 button: { value: '' },
             },
         }
+
+        this.pickersParamsToLock = []
+        this.paramsToLock = {
+            param1: { label: '', value: '' },
+            param2: { label: '', value: '' },
+        }
     }
 
     getText(label: string): string {
@@ -572,5 +585,70 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     parseFloat(value: string): number {
         if (value !== '') return parseFloat(value)
         else return 0
+    }
+
+    simulate(): void {
+        if (
+            this.paramsToAjust.param1.input !== 0 &&
+            this.paramsToAjust.param2.input !== 0
+        ) {
+            const find = this.currentNode.toAjust.find(
+                (x: any) => x.label === this.paramsToAjust.param2.label
+            ).toSimulate
+
+            if (find.length > 1) {
+                this.pickersParamsToLock = find.map((obj: any) => obj.locked)
+                this.toSimulate = true
+            } else this.toSimulate = false
+        } else if (
+            this.paramsToAjust.param1.input !== 0 &&
+            this.paramsToAjust.param2.input === 0
+        ) {
+            if (this.currentNode.toSimulate.length > 1) {
+                this.pickersParamsToLock = this.currentNode.toSimulate.map(
+                    (obj: any) => obj.locked
+                )
+                this.toSimulate = true
+            } else this.toSimulate = false
+        }
+    }
+
+    getLockedParamLabel(paramNumber: number): string {
+        if (this.pickersParamsToLock.length > 0)
+            return this.pickersParamsToLock[paramNumber]
+        return ''
+    }
+
+    selectParamToLock(paramNumber: number) {
+        console.log('param', this.paramsToLock)
+
+        if (this.paramsToLock.param1.label === '') {
+            this.paramsToLock.param1.label =
+                this.pickersParamsToLock[paramNumber]
+
+            console.log(
+                'this.paramsToLock.param1.label',
+                this.paramsToLock.param1.label
+            )
+            if (this.paramsToAjust.param2.input === 0) {
+                const find = this.currentNode.toSimulate.find(
+                    (x: any) => x.locked === this.paramsToLock.param1.label
+                )
+                console.log('1seconde', find)
+                const objSecond =
+                    find && find.secondLocked
+                        ? find.secondLocked.map((obj: any) => obj.locked)
+                        : null
+
+                if (objSecond !== null) {
+                    this.pickersParamsToLock = objSecond
+                    console.log('3seconde', objSecond)
+                } else this.toSimulate = false
+            }
+        } else {
+            this.paramsToLock.param2.label =
+                this.pickersParamsToLock[paramNumber]
+            this.toSimulate = false
+        }
     }
 }

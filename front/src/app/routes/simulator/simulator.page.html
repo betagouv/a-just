@@ -205,7 +205,7 @@
             >
                 <p class="title">Réinitialiser</p>
             </div>
-            <div class="simulate-button">
+            <div class="simulate-button" (click)="simulate()">
                 <p class="title">Simuler</p>
             </div>
         </div>
@@ -215,6 +215,26 @@
                 des paramètres
             </p>
         </div>
+        <aj-popup
+            *ngIf="toSimulate===true"
+            [closeIcon]="true"
+            (onClose)="toSimulate = false"
+            [removeShadow]="'noShadow'"
+        >
+            <div id="circle">
+                <img src="/assets/icons/calculatrice.svg" />
+            </div>
+            <p>Je souhaite lancer la simulation...</p>
+            <div class="choices">
+                <div class="choice" (click)="selectParamToLock(0)">
+                    à {{getLockedParamLabel(0)}} <br />constant
+                </div>
+                <div class="choice" (click)="selectParamToLock(1)">
+                    à {{getLockedParamLabel(1)}} <br />constant
+                </div>
+            </div>
+        </aj-popup>
+
         <aj-popup
             *ngIf="openPopup===true"
             [actions]="[
