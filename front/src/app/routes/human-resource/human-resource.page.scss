@@ -1,72 +1,91 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 .title {
-  margin-right: 16px;
+    margin-right: 16px;
 
-  .page-name {
-    font-size: 16px;
-    color: fColor(titleSelect);
-    font-weight: bold;
-  }
-
-  .user-name {
-    font-size: 22px;
-    color: fColor(primary);
-    font-weight: bold;
-
-    mat-icon {
-      position: relative;
-      top: 4px;
-      margin-left: 8px;
+    .page-name {
+        font-size: 16px;
+        color: fColor(titleSelect);
+        font-weight: bold;
     }
-  }
+
+    .user-name {
+        font-size: 22px;
+        color: fColor(primary);
+        font-weight: bold;
+
+        mat-icon {
+            position: relative;
+            top: 4px;
+            margin-left: 8px;
+        }
+    }
 }
 
 .user-updated-at {
-  font-size: 12px;
+    font-size: 12px;
+}
+
+.new-action {
+  margin-top: 32px;
 }
 
 .actions {
-  display: flex;
-  
-  aj-date-select {
-    margin-left: 16px;
-  }
+    display: flex;
+
+    aj-date-select {
+        margin-left: 16px;
+    }
 }
 
-
-
 .actions {
-  button {
-    display: block;
-    margin: 16px 0;
-  }
+    button {
+        display: block;
+        margin: 16px 0;
+    }
 }
 
 .profil {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 16px;
 }
 
 .activities {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 16px;
 }
 
 panel-history-ventilation {
-  margin: 16px auto;
+    margin: 16px auto;
 }
 
 .title-history {
-  margin: 16px auto;
-  font-size: 16px;
-  font-weight: bold;
-  color: fColor(cblack);
-  text-align: center;
+    margin: 16px auto;
+    font-size: 16px;
+    font-weight: bold;
+    color: fColor(cblack);
+    text-align: center;
 }
 
 add-ventilation {
-  margin: 0 auto 32px auto;
+    margin: 24px auto;
+}
+
+.sticky-action-footer {
+    height: 80px;
+    padding: 16px;
+    box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 -20px 25px -5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    bottom: 0;
+
+    button:first-child {
+        margin-right: 16px;
+    }
 }

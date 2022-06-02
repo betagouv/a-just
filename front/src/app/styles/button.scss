@@ -43,6 +43,10 @@ button {
     }
   }
 
+  &.strict-border {
+    border-radius: 0;
+  }
+
   mat-icon {
     margin-right: 8px;
     position: relative;

@@ -1,158 +1,161 @@
-@import "../../../styles/utils.scss";
+@import '../../../styles/utils.scss';
 
 :host {
-  display: block;
-  max-width: 894px;
-  width: 95%;
-}
-
-.new-action {
-  text-align: center;
+    display: block;
+    max-width: 894px;
+    width: 95%;
 }
 
 .new-ventilation {
-  border: solid 1px fColor(cgrayDefault);
-  background-color: white;
-  border-radius: 8px;
+    border: solid 1px fColor(cgrayDefault);
+    background-color: white;
+    border-radius: 8px;
 
-  > .header {
-    padding: 13px 40px;
-    display: flex;
-    align-items: center;
-    background-color: fColor(bgSelect);
-    border-bottom: solid 1px fColor(cgrayDefault);
+    > .administration {
+        padding: 25px 40px 40px 40px;
+        border-bottom: solid 1px fColor(cgrayDefault);
 
-    p {
-      font-weight: bold;
-      font-size: 20px;
-      color: fColor(cblackdark);
+        > div {
+            display: flex;
+
+            > div {
+                flex: 1;
+
+                .label-aj {
+                    white-space: nowrap;
+                }
+            }
+        }
+
+        > p {
+            font-weight: bold;
+            color: fColor(titleSelect);
+            margin-bottom: 16px;
+        }
     }
 
-    aj-date-select {
-      background-color: fColor(cgrayDefault);
-    }
-  }
+    > .activities {
+        padding: 16px 24px 24px 24px;
+        border-bottom: solid 1px fColor(cgrayDefault);
 
-  > .administration {
-    padding: 25px 0 40px 0;
-    border-bottom: solid 1px fColor(cgrayDefault);
-
-    > * {
-      width: 438px;
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 24px;
+        > p {
+            font-weight: bold;
+            color: fColor(cblack);
+            margin-bottom: 16px;
+            margin-left: 16px;
+        }
     }
 
-    > p {
-      font-weight: bold;
-      color: fColor(titleSelect);
-      margin-bottom: 16px;
-    }
-  }
-
-  > .indisponibilities {
-    border-bottom: solid 1px fColor(cgrayDefault);
-
-    > div {
-      padding: 32px 0;
-      width: 438px;
-      margin: auto;
-
-      .indispo-header {
+    > .date-start {
+        padding: 13px 40px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 24px;
+        border-bottom: solid 1px fColor(cgrayDefault);
 
         p {
-          font-weight: bold;
-          color: fColor(cblack);
+            font-weight: bold;
+            color: fColor(cblackdark);
         }
-      }
 
-      .indispo-content {
-        > div {
-          height: 57px;
-          padding: 8px 16px;
-          border-radius: 4px;
-          border: solid 1px fColor(cred);
-          background-color: fColor(credlight);
-          margin-bottom: 8px;
-          display: flex;
+        aj-date-select {
+            background-color: fColor(cgrayDefault);
+            margin-left: 36px;
+        }
+    }
 
-          div.icon {
-            margin-right: 16px;
+    > .indisponibilities {
+        padding: 16px 24px 24px 24px;
+
+        .indispo-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-
-            mat-icon {
-              font-size: 16px;
-              width: 16px;
-              height: 16px;
-              color: fColor(cred);
-            }
-          }
-
-          div.text {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
 
             p {
-              font-size: 12px;
-              color: fColor(cgray);
-
-              &:last-child {
+                margin-left: 16px;
                 font-weight: bold;
-              }
+                color: fColor(cblackdark);
             }
-          }
+
+            button {
+                margin-left: 16px;
+            }
         }
-      }
 
-      .indispo-error {
-        color: fColor(cred);
-        font-weight: bold;
-      }
+        .indispo-content {
+            margin-top: 24px;
+
+            > div {
+                height: 57px;
+                border-radius: 4px;
+                border: solid 1px fColor(cred);
+                background-color: fColor(credlight);
+                margin-bottom: 8px;
+                display: flex;
+
+                div.icon {
+                    margin-right: 16px;
+                    margin-left: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                        color: fColor(cgray);
+                    }
+                }
+
+                div.text {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    p {
+                        font-size: 12px;
+                        color: fColor(cgray);
+
+                        &:last-child {
+                            font-weight: bold;
+                        }
+                    }
+                }
+
+                div.action {
+                    border-left: 1px solid fColor(cred);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 48px;
+
+                    mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                        color: fColor(cred);
+                    }
+                }
+            }
+        }
+
+        .indispo-error {
+            color: fColor(cred);
+            font-weight: bold;
+        }
     }
-  }
-
-  > .activities {
-    padding: 32px 24px 24px 24px;
-
-    > p {
-      width: 438px;
-      font-weight: bold;
-      color: fColor(cblack);
-      margin: 0 auto 2px auto;
-    }
-  }
-
-  > .actions {
-    padding: 16px;
-    background-color: fColor(bgSelect);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    button:first-child {
-      margin-right: 16px;
-    }
-  }
 }
 
 aj-popup {
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    color: fColor(black);
-    margin-bottom: 32px;
-  }
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        color: fColor(black);
+        margin-bottom: 32px;
+    }
 
-  .form > div {
-    margin-bottom: 24px;
-  }
+    .form > div {
+        margin-bottom: 24px;
+    }
 }

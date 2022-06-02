@@ -6,12 +6,17 @@
     [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="editVentilation = h">
   </actual-panel-situation>
 
+  <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
+    <button class="fill primary small" (click)="onEditIndex = -1">
+      Renseigner une nouvelle situation
+    </button>
+  </div>
+
   <add-ventilation [human]="currentHR"
     [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
     [indisponibilities]="allIndisponibilities"
     [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
-    [onEdit]="editVentilation || histories.length === 0 ? true : false" (close)="editVentilation = null"
-    (ventilationChange)="onNewVentilation()">
+    [onEdit]="onEditIndex !== null" (close)="editVentilation = null" (ventilationChange)="onNewVentilation()">
   </add-ventilation>
 
   <p *ngIf="histories.length > 1" class="title-history">
@@ -23,8 +28,13 @@
     (editVentilation)="editVentilation = h">
   </panel-history-ventilation>
 
-  <div *ngIf="isAdmin()" class="text-center">
-    <mat-icon (click)="onDelete()">delete</mat-icon>
+  <div *ngIf="currentHR && onEditIndex === null && histories.length === 0" class="text-center">
+    <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>
+  </div>
+
+  <div class="sticky-action-footer" *ngIf="onEditIndex !== null">
+    <button class="small outline blue strict-border" (click)="onCancel()">Annuler</button>
+    <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
   </div>
 </aj-wrapper>
 
@@ -44,18 +54,16 @@
     <p class="page-name">Fiche individuelle de</p>
     <p class="user-name">
       <span contenteditable data-placeholder="Prénom"
-        (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '')">{{
-        (currentHR &&
-        currentHR.firstName)
-        }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
+        (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '')">{{ (currentHR &&
+        currentHR.firstName) }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
         (blur)="updateHuman('lastName', $event && $event.target ? $event.target : '')">{{ (currentHR &&
         currentHR.lastName) }}</span>
       <mat-icon>drive_file_rename_outline</mat-icon>
     </p>
   </div>
-  <p class="user-updated-at">
+  <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
     {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-    getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt) +
-    ' ' + getFullYear(currentHR.updatedAt) : '' }}
+    getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
+    + ' ' + getFullYear(currentHR.updatedAt) : '' }}
   </p>
 </ng-template>
