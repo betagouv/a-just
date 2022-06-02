@@ -14,4 +14,5 @@ module.exports = {
   consoleLog: true,
   sendinblue: process.env.SENDINBLUE,
   logsPassword: process.env.LOGS_PASSWORD,
+  contactEmail: process.env.CONTACT_EMAIL,
 }

@@ -81,6 +81,8 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
 }
 
 export function nbOfDays(startDate: Date, endDate: Date) {
+    startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(0, 0, 0, 0)
     const start = new Date(startDate)
     let nbOfDay = 0
     do {
