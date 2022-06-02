@@ -32,6 +32,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   histories: HistoryInterface[] = [];
   allIndisponibilities: RHActivityInterface[] = [];
   editVentilation: HistoryInterface | null = null;
+  onEditIndex: number | null = null; // null (no edition), -1 (new edition), x (x'eme edition)
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -141,6 +142,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     ]);
 
     if(!situations.length) {
+      this.onEditIndex = -1;
       return;
     }
 
@@ -232,10 +234,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.onLoad();
   }
 
-  isAdmin() {
-    return this.userService.isAdmin();
-  }
-
   async onDelete() {
     if (this.currentHR) {
       if (await this.humanResourceService.removeHrById(this.currentHR.id)) {
@@ -254,5 +252,22 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         [nodeName]: value
       })
     }
+  }
+
+  onCancel() {
+    this.onEditIndex = null;
+
+    /*
+    const findElement = document.getElementById('content');
+    if (findElement) {
+      findElement.scrollTo({
+        behavior: 'smooth',
+        top: 0,
+      });
+    }*/
+  }
+
+  onSave() {
+    
   }
 }
