@@ -50,7 +50,7 @@
           <mat-icon>calendar_today</mat-icon>Depuis le {{ dateStart | date: "dd" }}
           {{ getShortMonthString(dateStart) }} {{ dateStart.getFullYear() }}
         </p>
-        <p *ngIf="dateStop && !isToday(dateStop)" class="date">
+        <p *ngIf="dateStop && !isToday(dateStop) && dateStop.getTime() !== dateStart.getTime()" class="date">
           <mat-icon>calendar_today</mat-icon>Jusqu'au {{ dateStop | date: "dd" }}
           {{ getShortMonthString(dateStop) }} {{ dateStop.getFullYear() }}
         </p>

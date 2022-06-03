@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <div class="new-ventilation" *ngIf="onEdit">
+  <div class="new-ventilation">
     <div class="administration">
       <p>Situation administrative</p>
       <div class="grid-triple">
@@ -34,8 +34,8 @@
     </div>
 
     <div class="date-start">
-      <p *ngIf="onEdit">Modification de la situation au :</p>
-      <p *ngIf="!onEdit">Situation à prendre en compte :</p>
+      <!-- <p *ngIf="onEdit">Modification de la situation au :</p> -->
+      <p>Situation à prendre en compte :</p>
       <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
         (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
       </aj-date-select>
@@ -45,7 +45,7 @@
     <div class="indisponibilities">
       <div class="indispo-header">
         <p>Indisponibilités : </p>
-        <button class="outline blue small" (click)="onAddIndispiniblity()">
+        <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
           Ajouter une indisponibilité
         </button>
         <div class="flex-1"></div>
@@ -74,7 +74,7 @@
                 {{ getFullYear(indisp.dateStop) }}</ng-template>
             </p>
           </div>
-          <div class="action" (click)="updateIndisponiblity = indisp">
+          <div class="action" (click)="addIndispiniblity.emit(indisp)">
             <mat-icon>drive_file_rename_outline</mat-icon>
           </div>
         </div>
@@ -83,39 +83,3 @@
     </div>
   </div>
 </form>
-
-<aj-popup *ngIf="updateIndisponiblity" [actions]="[
-    { id: 'close', content: 'Annuler' },
-    { id: 'modify', content: 'Enregister', fill: true }
-  ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
-  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
-  <p class="title">
-    {{
-    updateIndisponiblity.id > 0
-    ? "Modification de l'indisponibilité"
-    : "Nouvelle indisponibilité"
-    }}
-  </p>
-  <div class="form">
-    <div>
-      <div class="label-aj">Motif d'indisponibilité</div>
-      <select [(ngModel)]="updateIndisponiblity.contentieux.id">
-        <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
-          {{ cat.label }}
-        </option>
-      </select>
-    </div>
-    <div class="grid-double">
-      <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
-        (valueChange)="updateIndisponiblity.dateStart = $event">
-      </aj-date-select>
-      <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = $event">
-      </aj-date-select>
-    </div>
-    <div>
-      <div class="label-aj">Indisponibilité (en % d'un plein temps) :</div>
-      <input type="number" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />
-    </div>
-  </div>
-</aj-popup>

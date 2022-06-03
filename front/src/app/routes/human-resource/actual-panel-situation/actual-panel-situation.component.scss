@@ -202,6 +202,9 @@
 .actions-panel {
   padding: 8px 4px;
   background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   > button {
     margin-right: 8px;
