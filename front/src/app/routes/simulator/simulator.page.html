@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="items">
+    <div class="items before-after">
         <div class="item blue-bg">
             <p>Entrées mensuelles</p>
         </div>
@@ -420,7 +420,7 @@
                 *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
                 [@fadeInOut]
             >
-                {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',firstSituationData))}}%
+                {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',firstSituationData))}}pts
                 <div class="triangle"></div>
             </div>
         </div>
@@ -462,6 +462,110 @@
                 {{percentageModifiedInputText(realTimePerCase.id,getFieldValue('realTimePerCase',firstSituationData,true))}}%
 
                 <div class="triangle"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="simulation-bottom" *ngIf="toDisplaySimulation">
+        <p class="simulation-title">Résultat de la simulation</p>
+        <div class="simulation-table">
+            <div class="items">
+                <div class="item blue-bg">
+                    <p>Entrées mensuelles</p>
+                </div>
+                <div class="item">
+                    <p>Sorties mensuelles</p>
+                </div>
+                <div class="item blue-bg">
+                    <p>Stock</p>
+                </div>
+                <div class="item">
+                    <p>ETPT magistrat</p>
+                </div>
+                <div class="item blue-bg">
+                    <p>ETPT greffe</p>
+                </div>
+                <div class="item">
+                    <p>ETPT contractuels</p>
+                </div>
+                <div class="item blue-bg">
+                    <p>Taux de couverture</p>
+                </div>
+                <div class="item">
+                    <p>DTES</p>
+                </div>
+                <div class="item blue-bg">
+                    <p>Temps moyen / dossier</p>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="simulation-situation"
+            *ngIf="subList.length!==0 || this.getElementById(this.contentieuId)?.childrens?.length===0"
+            [@fadeInOut]
+        >
+            <div class="line-title">
+                <p>
+                    Situation simulée<br />
+                    au {{stopRealValue}}
+                </p>
+            </div>
+            <div class="item-container">
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('totalIn',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('totalOut',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('lastStock',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('etpMag',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('ETPTGreffe',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('etpFon',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('realCoverage',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('realDTESInMonths',firstSituationData)"
+                        disabled
+                    />
+                </div>
+                <div class="line-item">
+                    <input
+                        [value]="getFieldValue('realTimePerCase',firstSituationData)"
+                        disabled
+                    />
+                </div>
             </div>
         </div>
     </div>
