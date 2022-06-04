@@ -53,198 +53,104 @@ const tree = [
                 label: totalIn,
                 popupTitle: totalInTitle,
                 toDefine: totalInToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, etpMag, realTimePerCase],
-                    toCalculate: [
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: lastStock,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realCoverage,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realDTESInMonths,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        locked: '',
+                        toDisplay: [totalIn, etpMag, realTimePerCase],
+                        toCalculate: [
+                            totalOut,
+                            lastStock,
+                            realCoverage,
+                            realDTESInMonths,
+                        ],
+                    },
+                ],
             },
 
             {
                 label: totalOut,
                 popupTitle: totalOutTitle,
                 toDefine: totalOutToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, totalOut, etpMag],
-                    toCalculate: [
-                        {
-                            label: totalIn,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: etpMag,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        locked: '',
+                        toDisplay: [totalIn, totalOut, etpMag],
+                        toCalculate: [
+                            lastStock,
+                            realCoverage,
+                            realDTESInMonths,
+                            realTimePerCase,
+                        ],
+                    },
+                ],
             },
 
             {
                 label: realTimePerCase,
                 popupTitle: realTimePerCaseTitle,
                 toDefine: realTimePerCaseToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, etpMag, realTimePerCase],
-                    toCalculate: [
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: lastStock,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realCoverage,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realDTESInMonths,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        toDisplay: [totalIn, etpMag, realTimePerCase],
+                        toCalculate: [
+                            totalOut,
+                            lastStock,
+                            realCoverage,
+                            realDTESInMonths,
+                        ],
+                    },
+                ],
             },
 
             {
                 label: realDTESInMonths,
                 popupTitle: realDTESInMonthsTitle,
                 toDefine: realDTESInMonthsToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, etpMag, realDTESInMonths],
-                    toCalculate: [
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: lastStock,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realCoverage,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realTimePerCase,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        toDisplay: [totalIn, etpMag, realDTESInMonths],
+                        toCalculate: [
+                            totalOut,
+                            lastStock,
+                            realCoverage,
+                            realTimePerCase,
+                        ],
+                    },
+                ],
             },
 
             {
                 label: lastStock,
                 popupTitle: lastStockTitle,
                 toDefine: lastStockToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, lastStock, etpMag, realTimePerCase],
-                    toCalculate: [
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realCoverage,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realDTESInMonths,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        toDisplay: [
+                            totalIn,
+                            lastStock,
+                            etpMag,
+                            realTimePerCase,
+                        ],
+                        toCalculate: [totalOut, realCoverage, realDTESInMonths],
+                    },
+                ],
             },
 
             {
                 label: realCoverage,
                 popupTitle: realCoverageTitle,
                 toDefine: realCoverageToDefine,
-                toSimulate: {
-                    toDisplay: [totalIn, etpMag, realCoverage],
-                    toCalculate: [
-                        {
-                            label: totalOut,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: lastStock,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realDTESInMonths,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                        {
-                            label: realTimePerCase,
-                            fct: (param: number) => {
-                                return param
-                            },
-                        },
-                    ],
-                },
+                toSimulate: [
+                    {
+                        toDisplay: [totalIn, etpMag, realCoverage],
+                        toCalculate: [
+                            totalOut,
+                            lastStock,
+                            realDTESInMonths,
+                            realTimePerCase,
+                        ],
+                    },
+                ],
             },
         ],
     },
@@ -791,7 +697,7 @@ const tree = [
         toSimulate: [
             {
                 toDisplay: [totalIn, totalOut, etpMag, realTimePerCase],
-                toCalculate: [lastStock, realCoverage, realDTESInMonths, ,],
+                toCalculate: [lastStock, realCoverage, realDTESInMonths],
             },
         ],
         toAjust: [

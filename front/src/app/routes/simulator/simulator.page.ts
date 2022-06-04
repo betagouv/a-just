@@ -16,6 +16,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { forEach, result } from 'lodash'
+import { ThisReceiver } from '@angular/compiler'
 @Component({
     templateUrl: './simulator.page.html',
     styleUrls: ['./simulator.page.scss'],
@@ -72,6 +73,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     decisionTree = tree
 
     toSimulate: boolean = false
+    toDisplaySimulation: boolean = false
+    toDisplay = []
+    toCalculate = []
 
     constructor(
         private humanResourceService: HumanResourceService,
@@ -251,6 +255,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.mooveClass = ''
         document.getElementById('init-button')?.click()
         this.disabled = 'disabled'
+        this.toDisplaySimulation = false
+        this.toDisplay = []
+        this.toCalculate = []
     }
 
     // get minimum date you can select on the date picker
@@ -291,12 +298,23 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.paramsToAjust.param1.input === 0 && this.currentNode
                 ? this.currentNode.toAjust.map((x: any) => x.label)
                 : null
-
+        console.log(
+            'volume',
+            volumeInput,
+            'percent',
+            this.valueToAjust.percentage,
+            'parse',
+            this.valueToAjust.value,
+            parseInt(this.valueToAjust.value)
+        )
         // if param comming from input type volume
         if (
             volumeInput &&
-            !(inputField.id === 'realTimePerCase' && volumeInput === '0')
+            (parseFloat(volumeInput) !== 0 ||
+                (this.buttonSelected.id === 'lastStock' &&
+                    parseFloat(volumeInput) === 0))
         ) {
+            console.log('first if')
             // if param 1 not filled yet or if param 1 selected to be edited
             if (
                 !this.paramsToAjust.param1.value ||
@@ -327,12 +345,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 })
             }
             // if param comming from input type %
-        } else if (parseInt(this.valueToAjust.value)) {
+        } else if (this.valueToAjust.percentage) {
+            console.log('second if', this.paramsToAjust.param1.value)
+
             // if param 1 not filled yet or if param 1 selected to be edited
             if (
-                !this.paramsToAjust.param1.value ||
+                this.paramsToAjust.param1.input === 0 ||
                 this.paramsToAjust.param1.label === inputField.id
             ) {
+                console.log('third if')
+
                 this.paramsToAjust.param1.value = this.valueToAjust.value
                 this.paramsToAjust.param1.label = inputField.id
                 this.paramsToAjust.param1.input = 2
@@ -342,6 +364,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.disabled = 'disabled-only-date'
                 //else edit param 2
             } else {
+                console.log('fourth if')
+
                 this.paramsToAjust.param2.value = this.valueToAjust.value
                 this.paramsToAjust.param2.label = inputField.id
                 this.paramsToAjust.param2.input = 2
@@ -395,8 +419,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         }
 
         // get 1 result from inputs
-        let result = 0
-        if (volumeInput !== '') result = parseFloat(volumeInput)
+        let result = -1
+        if (volumeInput !== '')
+            result =
+                parseFloat(volumeInput) === 0
+                    ? this.buttonSelected.id === 'lastStock'
+                        ? 0
+                        : -1
+                    : parseFloat(volumeInput)
         else if (
             this.valueToAjust.value !== '' &&
             String(this.valueToAjust.value) !== 'NaN'
@@ -404,7 +434,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             result = parseInt(this.valueToAjust.value)
 
         // if result
-        if (result !== 0) {
+        if (result !== -1) {
             // affect the value to the editable input
             if (inputField.id === 'realTimePerCase' && result)
                 inputField.value = this.decimalToStringDate(result)
@@ -429,10 +459,19 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         } else inputField.value = 'Ajuster'
         //close the popup
         this.openPopup = false
+
+        console.log('this.paramsToAjust', this.paramsToAjust)
+        this.valueToAjust = { value: '', percentage: null }
     }
 
     onUpdateValueToAjust(event: any) {
-        this.valueToAjust = event
+        //only if percentage filled
+        if (event.value === 0) {
+            if (this.buttonSelected.id === 'lastStock')
+                this.valueToAjust = event
+            else this.valueToAjust = { value: '', percentage: null }
+        } else this.valueToAjust = event
+        console.log('vevent', event)
     }
 
     valueSaved(input: number): string {
@@ -467,7 +506,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         projectedValue: string | number | undefined
     ) {
         if (id === 'realTimePerCase' && projectedValue === -100) return ''
-
+        if (id === 'realCoverage')
+            return this.percantageWithSign(
+                parseFloat(this.paramsToAjust.param1.value) -
+                    parseFloat(projectedValue as string)
+            )
         return this.paramsToAjust.param1.label === id
             ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
                 ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -503,6 +546,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     initParams(buttons: any) {
         this.disabled = 'disabled-date'
+        this.toDisplaySimulation = false
         buttons.forEach((x: any) => {
             x.value = 'Ajuster'
             x.classList.remove('disable')
@@ -524,6 +568,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             },
         }
 
+        this.toDisplay = []
+        this.toCalculate = []
         this.pickersParamsToLock = []
         this.paramsToLock = {
             param1: { label: '', value: '' },
@@ -579,7 +625,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     valueChange(button: any, event: any) {
-        button.value = event
+        if (this.buttonSelected.id === 'realTimePerCase' && event === 0)
+            button.value = 'Ajuster'
+        else button.value = event
     }
 
     parseFloat(value: string): number {
@@ -599,7 +647,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             if (find.length > 1) {
                 this.pickersParamsToLock = find.map((obj: any) => obj.locked)
                 this.toSimulate = true
-            } else this.toSimulate = false
+            } else {
+                this.toSimulate = false
+                this.toDisplaySimulation = true
+                this.toDisplay = find[0].toDisplay
+                this.toCalculate = find[0].toCalculate
+                //console.log('1 compute', this.toDisplay, this.toCalculate) //done
+
+                //compute ! no popup
+                this.computeSimulation()
+            }
         } else if (
             this.paramsToAjust.param1.input !== 0 &&
             this.paramsToAjust.param2.input === 0
@@ -609,7 +666,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     (obj: any) => obj.locked
                 )
                 this.toSimulate = true
-            } else this.toSimulate = false
+            } else {
+                this.toSimulate = false
+                this.toDisplaySimulation = true
+                this.toDisplay = this.currentNode.toSimulate[0].toDisplay
+                this.toCalculate = this.currentNode.toSimulate[0].toCalculate
+                //console.log('2 compute', this.toDisplay, this.toCalculate) //done
+
+                //compute ! no popup
+                this.computeSimulation()
+            }
         }
     }
 
@@ -620,21 +686,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     selectParamToLock(paramNumber: number) {
-        console.log('param', this.paramsToLock)
-
         if (this.paramsToLock.param1.label === '') {
             this.paramsToLock.param1.label =
                 this.pickersParamsToLock[paramNumber]
+            this.paramsToLock.param1.value = this.firstSituationData
+                ? this.firstSituationData[this.pickersParamsToLock[paramNumber]]
+                : ''
 
-            console.log(
-                'this.paramsToLock.param1.label',
-                this.paramsToLock.param1.label
-            )
             if (this.paramsToAjust.param2.input === 0) {
                 const find = this.currentNode.toSimulate.find(
                     (x: any) => x.locked === this.paramsToLock.param1.label
                 )
-                console.log('1seconde', find)
+
                 const objSecond =
                     find && find.secondLocked
                         ? find.secondLocked.map((obj: any) => obj.locked)
@@ -642,13 +705,126 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
                 if (objSecond !== null) {
                     this.pickersParamsToLock = objSecond
-                    console.log('3seconde', objSecond)
-                } else this.toSimulate = false
+                } else {
+                    this.toSimulate = false
+                    this.toDisplaySimulation = true
+                    this.toDisplay = find.toDisplay
+                    this.toCalculate = find.toCalculate
+                    //console.log('3 compute', this.toDisplay, this.toCalculate) //done
+
+                    //compute !
+                    this.computeSimulation()
+                }
+            } else {
+                const find = this.currentNode.toAjust.find(
+                    (x: any) => x.label === this.paramsToAjust.param2.label
+                )
+                const objSecond =
+                    find && find.secondLocked
+                        ? find.secondLocked.map((obj: any) => obj.locked)
+                        : null
+
+                if (objSecond !== null) {
+                    this.pickersParamsToLock = objSecond
+                } else {
+                    const lastObj = find.toSimulate.find(
+                        (x: any) =>
+                            x.locked === this.pickersParamsToLock[paramNumber]
+                    )
+                    this.toSimulate = false
+                    this.toDisplaySimulation = true
+                    this.toDisplay = lastObj.toDisplay
+                    this.toCalculate = lastObj.toCalculate
+                    //console.log('4 compute', this.toDisplay, this.toCalculate)
+                    //compute !
+                    this.computeSimulation()
+                }
             }
-        } else {
+        } else if (this.paramsToLock.param2.label === '') {
             this.paramsToLock.param2.label =
                 this.pickersParamsToLock[paramNumber]
+
+            this.paramsToLock.param2.value = this.firstSituationData
+                ? this.firstSituationData[this.pickersParamsToLock[paramNumber]]
+                : ''
+
             this.toSimulate = false
+            this.toDisplaySimulation = true
+            if (
+                this.paramsToAjust.param1.input !== 0 &&
+                this.paramsToAjust.param2.input === 0
+            ) {
+                const find = this.currentNode.toSimulate.find(
+                    (x: any) => x.locked === this.paramsToLock.param1.label
+                )
+                const objSecond =
+                    find && find.secondLocked
+                        ? find.secondLocked.find(
+                              (obj: any) =>
+                                  obj.locked ===
+                                  this.pickersParamsToLock[paramNumber]
+                          )
+                        : null
+                if (objSecond) {
+                    this.toDisplay = objSecond.toDisplay
+                    this.toCalculate = objSecond.toCalculate
+                    //console.log('5 compute', this.toDisplay, this.toCalculate) // done
+                    //compute !
+                    this.computeSimulation()
+                } else {
+                    this.toDisplay = find.toDisplay
+                    this.toCalculate = find.toCalculate
+                    //console.log('6 compute', this.toDisplay, this.toCalculate)
+                    //compute !
+                    this.computeSimulation()
+                }
+            } else if (
+                this.paramsToAjust.param1.input !== 0 &&
+                this.paramsToAjust.param2.input !== 0
+            ) {
+                const find = this.currentNode.toAjust.find(
+                    (x: any) => x.label === this.paramsToAjust.param2.label
+                )
+                if (find && find.secondLocked) {
+                    const objSecond = find.secondLocked.find(
+                        (obj: any) =>
+                            obj.locked === this.pickersParamsToLock[paramNumber]
+                    )
+                    this.toDisplay = objSecond.toDisplay
+                    this.toCalculate = objSecond.toCalculate
+                    console.log('7 compute', this.toDisplay, this.toCalculate)
+                    //compute !
+                    this.computeSimulation()
+                } else {
+                    this.toSimulate = false
+                    this.toDisplaySimulation = true
+                    this.toDisplay = find.toDisplay
+                    this.toCalculate = find.toCalculate
+                    console.log('8 compute', this.toDisplay, this.toCalculate)
+                    //compute !
+                    this.computeSimulation()
+                }
+            }
         }
+    }
+
+    computeSimulation() {
+        const params = {
+            beginSituation: this.firstSituationData,
+            endSituation: this.projectedSituationData,
+            lockedParams: this.paramsToLock,
+            modifiedParams: this.paramsToAjust,
+        }
+        const simulation = {
+            totalIn: null,
+            totalOut: null,
+            lastStock: null,
+            etpMag: null,
+            realTimePerCase: null,
+            realDTESInMonths: null,
+            realCoverage: null,
+        }
+
+        console.log('big P', params)
     }
 }
