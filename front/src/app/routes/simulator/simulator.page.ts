@@ -1,4 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
+import { nbOfDays } from 'src/app/utils/dates'
 import {
     Component,
     ElementRef,
@@ -17,6 +18,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { forEach, result } from 'lodash'
 import { ThisReceiver } from '@angular/compiler'
+import { SimulationInterface } from 'src/app/interfaces/simulation'
 @Component({
     templateUrl: './simulator.page.html',
     styleUrls: ['./simulator.page.scss'],
@@ -39,6 +41,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     formReferentiel: dataInterface[] = []
     firstSituationData: SimulatorInterface | null = null
     projectedSituationData: SimulatorInterface | null = null
+    simulatedSationData: SimulationInterface | null = null
     referentiel: ContentieuReferentielInterface[] = []
     dateStart: Date = new Date()
     dateStop: Date | null = null
@@ -203,7 +206,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
     getFieldValue(
         param: string,
-        data: SimulatorInterface | null,
+        data: SimulatorInterface | SimulationInterface | null,
         initialValue = false
     ): any {
         if (
@@ -832,26 +835,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         }
     }
 
-    computeSimulation() {
-        const params = {
-            beginSituation: this.firstSituationData,
-            endSituation: this.projectedSituationData,
-            lockedParams: this.paramsToLock,
-            modifiedParams: this.paramsToAjust,
-        }
-        const simulation = {
-            totalIn: null,
-            totalOut: null,
-            lastStock: null,
-            etpMag: null,
-            realTimePerCase: null,
-            realDTESInMonths: null,
-            realCoverage: null,
-        }
-
-        console.log('big P', params)
-    }
-
     getLabelTranslation(value: string): string {
         switch (value) {
             case 'etpMag':
@@ -870,5 +853,140 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 return 'temps moyen par dossier'
         }
         return ''
+    }
+
+    computeSimulation() {
+        const params = {
+            beginSituation: this.firstSituationData,
+            endSituation: this.projectedSituationData,
+            lockedParams: this.paramsToLock,
+            modifiedParams: this.paramsToAjust,
+            toDisplay: this.toDisplay,
+            toCalculate: this.toCalculate,
+        }
+        const simulation: SimulationInterface = {
+            totalIn: null,
+            totalOut: null,
+            lastStock: null,
+            etpMag: null,
+            realTimePerCase: null,
+            realDTESInMonths: null,
+            realCoverage: null,
+        }
+
+        console.log('big P', params)
+
+        this.toDisplay.map((x) => {
+            if (params.beginSituation !== null)
+                simulation[x] = params.beginSituation[x]
+        })
+
+        if (
+            params.lockedParams.param1.label !== '' &&
+            simulation.hasOwnProperty(params.lockedParams.param1.label)
+        )
+            //@ts-ignore
+            simulation[params.lockedParams.param1.label] = parseFloat(
+                params.lockedParams.param1.value
+            )
+        if (
+            params.lockedParams.param2.label !== '' &&
+            simulation.hasOwnProperty(params.lockedParams.param2.label)
+        )
+            //@ts-ignore
+            simulation[params.lockedParams.param2.label] = parseFloat(
+                params.lockedParams.param2.value
+            )
+
+        if (params.modifiedParams.param1.input !== 0)
+            //@ts-ignore
+            simulation[params.modifiedParams.param1.label] = parseFloat(
+                params.modifiedParams.param1.value
+            )
+
+        if (params.modifiedParams.param2.input !== 0)
+            //@ts-ignore
+            simulation[params.modifiedParams.param2.label] = parseFloat(
+                params.modifiedParams.param2.value
+            )
+
+        this.toCalculate.map((x) => {
+            if (x === 'totalOut') {
+                if (simulation.etpMag && simulation.realTimePerCase)
+                    simulation.totalOut =
+                        Math.floor(simulation.etpMag * 8 * 17.3333) /
+                        simulation.realTimePerCase
+                if (simulation.totalIn && simulation.lastStock)
+                    simulation.totalOut =
+                        Math.floor(params.beginSituation?.lastStock as number) -
+                        Math.floor(params.endSituation?.lastStock as number) /
+                            Math.floor(
+                                nbOfDays(
+                                    this.simulatorService.dateStart.value,
+                                    this.simulatorService.dateStop.value
+                                ) /
+                                    (365 / 12)
+                            ) +
+                        simulation.totalIn
+            }
+            if (x === 'lastStock') {
+                simulation.lastStock =
+                    Math.floor(params.beginSituation?.lastStock as number) +
+                    Math.floor(
+                        simulation.totalIn
+                            ? simulation.totalIn
+                            : (params.beginSituation?.totalIn as number)
+                    ) *
+                        Math.floor(
+                            nbOfDays(
+                                this.simulatorService.dateStart.value,
+                                this.simulatorService.dateStop.value
+                            ) /
+                                (365 / 12)
+                        ) -
+                    Math.floor(
+                        simulation.totalOut
+                            ? simulation.totalOut
+                            : (params.beginSituation?.totalOut as number)
+                    ) *
+                        Math.floor(
+                            nbOfDays(
+                                this.simulatorService.dateStart.value,
+                                this.simulatorService.dateStop.value
+                            ) /
+                                (365 / 12)
+                        )
+            }
+            if (x === 'realCoverage') {
+                simulation.realCoverage = Math.floor(
+                    (simulation.totalOut as number) /
+                        (simulation.totalIn as number)
+                )
+            }
+            if (x === 'realDTESInMonths') {
+                simulation.realDTESInMonths = Math.floor(
+                    (simulation.lastStock as number) /
+                        (simulation.totalOut as number)
+                )
+            }
+            if (x === 'realTimePerCase') {
+                simulation.realTimePerCase =
+                    Math.floor(
+                        (simulation.lastStock as number) |
+                            (params.endSituation?.lastStock as number)
+                    ) / (simulation.totalOut as number)
+            }
+            if (x === 'etpMag') {
+                simulation.etpMag = Math.floor(
+                    Math.floor(
+                        ((simulation.realTimePerCase as number) |
+                            (params.endSituation?.lastStock as number)) *
+                            (simulation.totalOut as number)
+                    ) / Math.floor(17.333 * 8)
+                )
+            }
+        })
+        console.log('big R', simulation)
+        this.simulatedSationData = simulation
     }
 }
