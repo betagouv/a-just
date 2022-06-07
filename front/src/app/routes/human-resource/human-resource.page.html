@@ -20,7 +20,7 @@
     [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
     [indisponibilities]="allIndisponibilities"
     [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
-    (close)="editVentilation = null" (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity()"
+    (close)="editVentilation = null" (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)"
     [indisponibilityError]="indisponibilityError">
   </add-ventilation>
 
@@ -51,7 +51,7 @@
       (valueChange)="updateHuman('dateStart', $event)">
     </aj-date-select>
     <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
-      (valueChange)="updateHuman('dateEnd', $event)">
+      (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true">
     </aj-date-select>
   </div>
 </ng-template>
@@ -101,7 +101,7 @@
         (valueChange)="updateIndisponiblity.dateStart = $event">
       </aj-date-select>
       <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = $event">
+        (valueChange)="updateIndisponiblity.dateStop = $event" [clearable]="true">
       </aj-date-select>
     </div>
     <div>

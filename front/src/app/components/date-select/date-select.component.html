@@ -1,7 +1,10 @@
-<p (click)="readOnly === false ? picker.open() : null" class="title-select">{{ title }}</p>
-<div (click)="readOnly === false ? picker.open() : null">
-    <p>{{ realValue }}</p>
-    <mat-icon>{{ icon }}</mat-icon>
+<p (click)="onClick()" class="title-select">{{ title }}</p>
+<div>
+    <p (click)="onClick()">{{ realValue }}</p>
+    <mat-icon *ngIf="value && clearable && !readOnly"
+        (click)="onDateChanged(null); $event.preventDefault(); $event.stopPropagation();" class="cursor-pointer">
+        highlight_off</mat-icon>
+    <mat-icon *ngIf="!(value && clearable && !readOnly)">{{ icon }}</mat-icon>
 </div>
 <input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)">
 <mat-datepicker #picker></mat-datepicker>

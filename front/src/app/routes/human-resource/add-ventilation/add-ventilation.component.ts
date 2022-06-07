@@ -7,7 +7,6 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { maxBy, minBy, sumBy } from 'lodash'
-import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -34,7 +33,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Output() onSaveConfirm = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
   @Output() close = new EventEmitter()
-  indisponibilitiesVisibles: RHActivityInterface[] = []
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   categories: HRCategoryInterface[] = []
   fonctions: HRFonctionInterface[] = []
