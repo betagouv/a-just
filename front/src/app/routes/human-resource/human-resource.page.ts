@@ -12,6 +12,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { copy } from 'src/app/utils'
 import { today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 
@@ -280,7 +281,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   onAddIndispiniblity(indispo: RHActivityInterface | null = null) {
     this.updateIndisponiblity = indispo
-      ? indispo
+      ? copy(indispo)
       : {
           id: this.allIndisponibilities.length * -1 - 1,
           percent: 0,
@@ -309,16 +310,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           if (
             this.updateIndisponiblity &&
+            this.updateIndisponiblity.percent &&
+            this.updateIndisponiblity.percent > 100
+          ) {
+            alert("Vous ne pouvez pas saisir plus de 100% d'indisponibilité !")
+            return false
+          }
+
+          if (
+            this.updateIndisponiblity &&
             !this.updateIndisponiblity.dateStart
           ) {
             alert("Vous devez saisir une date de départ d'indisponibilité !")
             return false
           }
 
-          console.log(
-            this.updateIndisponiblity,
-            this.allIndisponibilityReferentiel
-          )
           if (
             this.updateIndisponiblity &&
             !this.allIndisponibilityReferentiel.find(
@@ -327,6 +333,86 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           ) {
             alert("Vous devez saisir un type d'indisponibilité !")
             return false
+          }
+
+          // control date start
+          if (this.currentHR && this.currentHR.dateStart) {
+            const hrDateStart = new Date(this.currentHR.dateStart)
+
+            if (
+              this.updateIndisponiblity &&
+              this.updateIndisponiblity.dateStart
+            ) {
+              const indispDateStart = new Date(
+                this.updateIndisponiblity.dateStart
+              )
+              if (hrDateStart.getTime() > indispDateStart.getTime()) {
+                alert("Vous ne pouvez pas saisir une date de début d'indisponibilité antérieure à la date d'arrivée !")
+                return false
+              }
+            }
+
+            if (
+              this.updateIndisponiblity &&
+              this.updateIndisponiblity.dateStop
+            ) {
+              const indispDateStop = new Date(
+                this.updateIndisponiblity.dateStop
+              )
+              if (hrDateStart.getTime() > indispDateStop.getTime()) {
+                alert("Vous ne pouvez pas saisir une date de fin d'indisponibilités antérieure à la date d'arrivée !")
+                return false
+              }
+            }
+          }
+
+          // control date stop
+          if (this.currentHR && this.currentHR.dateEnd) {
+            const hrDateStop = new Date(this.currentHR.dateEnd)
+
+            if (
+              this.updateIndisponiblity &&
+              this.updateIndisponiblity.dateStart
+            ) {
+              const indispDateStart = new Date(
+                this.updateIndisponiblity.dateStart
+              )
+              if (hrDateStop.getTime() < indispDateStart.getTime()) {
+                alert("Vous ne pouvez pas saisir une date de début d'indisponibilité postérieure à la date de départ !")
+                return false
+              }
+            }
+
+            if (
+              this.updateIndisponiblity &&
+              this.updateIndisponiblity.dateStop
+            ) {
+              const indispDateStop = new Date(
+                this.updateIndisponiblity.dateStop
+              )
+              if (hrDateStop.getTime() < indispDateStop.getTime()) {
+                alert("Vous ne pouvez pas saisir une date de fin d'indisponibilité postérieure à la date de départ !")
+                return false
+              }
+            }
+          }
+
+          // control date start and date stop
+          if (
+            this.updateIndisponiblity &&
+            this.updateIndisponiblity.dateStart && 
+            this.updateIndisponiblity.dateStop
+          ) {
+            const indispDateStart = new Date(
+              this.updateIndisponiblity.dateStart
+            )
+            const indispDateStop = new Date(
+              this.updateIndisponiblity.dateStop
+            )
+            if (indispDateStart.getTime() > indispDateStop.getTime()) {
+              alert("Vous ne pouvez pas saisir une date de début postérieure à la date de fin !")
+              return false
+            }
           }
 
           if (this.updateIndisponiblity) {

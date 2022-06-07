@@ -181,28 +181,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         )
         return
       }
-
-      // check indisponibilities dates
-      if (
-        maxIndispoDateStart &&
-        maxIndispoDateStart.getTime() > dateEnd.getTime()
-      ) {
-        alert(
-          "Vous ne pouvez pas saisir une date de début d'indisponibilités postérieure à la date de départ !"
-        )
-        return
-      }
-
-      // check indisponibilities dates
-      if (
-        maxIndispoDateStop &&
-        maxIndispoDateStop.getTime() > dateEnd.getTime()
-      ) {
-        alert(
-          "Vous ne pouvez pas saisir une date de fin d'indisponibilités postérieure à la date de départ !"
-        )
-        return
-      }
     }
 
     if (this.human && this.human.dateStart && activitiesStartDate) {
@@ -212,28 +190,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       if (activitiesStartDate.getTime() < dateStart.getTime()) {
         alert(
           "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
-        )
-        return
-      }
-
-      // check indisponibilities dates
-      if (
-        minIndispoDateStart &&
-        minIndispoDateStart.getTime() < dateStart.getTime()
-      ) {
-        alert(
-          "Vous ne pouvez pas saisir une date de début d'indisponibilités postérieure à la date d'arrivée !"
-        )
-        return
-      }
-
-      // check indisponibilities dates
-      if (
-        minIndispoDateStop &&
-        minIndispoDateStop.getTime() < dateStart.getTime()
-      ) {
-        alert(
-          "Vous ne pouvez pas saisir une date de fin d'indisponibilités postérieure à la date d'arrivée !"
         )
         return
       }
