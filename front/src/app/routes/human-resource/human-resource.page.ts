@@ -415,4 +415,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     return true
   }
+
+  onSelectSituationToEdit(situation: HistoryInterface | null = null) {
+    if (this.onEditIndex === null) {
+      if (!situation) {
+        // add situation
+        this.onEditIndex = -1
+      } else {
+        // edit situation
+        // TODO ICI POUR EDITER
+      }
+    } else {
+      alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
+    }
+  }
 }

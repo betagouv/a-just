@@ -61,16 +61,24 @@
   grid-gap: 16px;
 }
 
-panel-history-ventilation {
+.panel-hsitory-group {
   margin: 16px auto;
-}
+  background-color: white;
+  border-radius: 8px;
 
-.title-history {
-  margin: 16px auto;
-  font-size: 16px;
-  font-weight: bold;
-  color: fColor(cblack);
-  text-align: center;
+  .title-history {
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    color: fColor(cblack);
+    background-color: fColor(cgrayDefault);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  panel-history-ventilation {
+    margin: 16px;
+  }
 }
 
 add-ventilation {
