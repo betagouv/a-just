@@ -14,7 +14,7 @@
   <div class="indisponibilities" *ngIf="indisponibilities.length">
     <img src="/assets/images/a-just-fleche.svg" />
     <p>Indisponibilités :</p>
-    <div>
+    <div class="indispo-content">
       <div *ngFor="let indisp of indisponibilities">
         <div class="icon">
           <mat-icon>event_busy</mat-icon>
@@ -35,6 +35,9 @@
               {{ getShortMonthString(indisp.dateStop) }}
               {{ getFullYear(indisp.dateStop) }}</ng-template>
           </p>
+        </div>
+        <div class="action" (click)="addIndispiniblity.emit(indisp)">
+          <mat-icon>drive_file_rename_outline</mat-icon>
         </div>
       </div>
     </div>

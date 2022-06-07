@@ -3,7 +3,8 @@
   <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
     [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
-    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="editVentilation = h">
+    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="editVentilation = h"
+    (addIndispiniblity)="onAddIndispiniblity($event)">
   </actual-panel-situation>
 
   <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
@@ -30,7 +31,7 @@
   <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
     [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-    (editVentilation)="editVentilation = h">
+    (editVentilation)="editVentilation = h" (addIndispiniblity)="onAddIndispiniblity($event)">
   </panel-history-ventilation>
 
   <div *ngIf="currentHR && onEditIndex === null && histories.length === 0" class="text-center">

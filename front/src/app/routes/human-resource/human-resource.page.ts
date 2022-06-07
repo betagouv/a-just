@@ -279,17 +279,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onAddIndispiniblity(indispo: RHActivityInterface | null = null) {
-    this.updateIndisponiblity = indispo ? indispo : {
-      id: this.allIndisponibilities.length * -1 - 1,
-      percent: 0,
-      contentieux: {
-        ...this.allIndisponibilityReferentiel[0],
-      },
-      dateStart: new Date(),
-    }
+    this.updateIndisponiblity = indispo
+      ? indispo
+      : {
+          id: this.allIndisponibilities.length * -1 - 1,
+          percent: 0,
+          contentieux: {
+            ...this.allIndisponibilityReferentiel[0],
+          },
+          dateStart: new Date(),
+        }
   }
 
   async onEditIndisponibility(action: ActionsInterface) {
+    const controlIndisponibilitiesError = this.onEditIndex === null // if panel ediction do not control error
+
     switch (action.id) {
       case 'close':
         {
@@ -354,18 +358,28 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 contentieux,
               })
             }
-            this.updateIndisponiblity = null
             if (this.currentHR) {
-              this.indisponibilityError = this.humanResourceService.controlIndisponibilities(
-                this.currentHR,
-                this.allIndisponibilities
-              )
+              this.indisponibilityError =
+                this.humanResourceService.controlIndisponibilities(
+                  this.currentHR,
+                  this.allIndisponibilities
+                )
+              if (controlIndisponibilitiesError && this.indisponibilityError) {
+                alert(this.indisponibilityError)
+                this.onAddIndispiniblity(this.updateIndisponiblity)
+                return false
+              } else {
+                this.updateIndisponiblity = null
+              }
+
               if (!this.indisponibilityError) {
                 await this.updateHuman(
                   'indisponibilities',
                   this.allIndisponibilities
                 )
               }
+            } else {
+              this.updateIndisponiblity = null
             }
           }
         }
@@ -381,10 +395,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           if (index !== -1) {
             this.allIndisponibilities.splice(index, 1)
             if (this.currentHR) {
-              this.indisponibilityError = this.humanResourceService.controlIndisponibilities(
-                this.currentHR,
-                this.allIndisponibilities
-              )
+              this.indisponibilityError =
+                this.humanResourceService.controlIndisponibilities(
+                  this.currentHR,
+                  this.allIndisponibilities
+                )
               if (!this.indisponibilityError) {
                 await this.updateHuman(
                   'indisponibilities',
