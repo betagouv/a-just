@@ -303,18 +303,22 @@ export default class App {
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
           const newRules = rule.filtres[node]
-          let lines = monthValues
 
-          // EXCLUDES INCLUDES QUERIES
-          Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
-            lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
-          })
+          // control il node exist
+          if(newRules) {
+            let lines = monthValues
 
-          // save values
-          list[rule['Code nomenclature']][node] = sumBy(
-            lines,
-            (newRules.TOTAL || '').toLowerCase()
-          )
+            // EXCLUDES INCLUDES QUERIES
+            Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
+              lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
+            })
+
+            // save values
+            list[rule['Code nomenclature']][node] = sumBy(
+              lines,
+              (newRules.TOTAL || '').toLowerCase()
+            )
+          }
         }
       }
     })
