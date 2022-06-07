@@ -24,7 +24,14 @@
             </div>
             <div class="Rectangle">
                 <div class="dot {{mooveClass}}"></div>
-                <div class="blue-line {{mooveClass}}"></div>
+                <div class="blue-line {{mooveClass}}">
+                    <div
+                        *ngFor="let d of nbOfMonthWithinPeriod"
+                        class="dot-generated-container"
+                    >
+                        <div class="dot-generated"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -227,10 +234,16 @@
             <p>Je souhaite lancer la simulation...</p>
             <div class="choices">
                 <div class="choice" (click)="selectParamToLock(0)">
-                    à {{getLockedParamLabel(0)}} <br />constant
+                    à {{getLockedParamLabel(0)}}
+                    <br />constant{{getLockedParamLabel(0)!=='entrées
+                    mensuelles'&&getLockedParamLabel(0)!=='sorties
+                    mensuelles'?'':'es'}}
                 </div>
                 <div class="choice" (click)="selectParamToLock(1)">
-                    à {{getLockedParamLabel(1)}} <br />constant
+                    à {{getLockedParamLabel(1)}}
+                    <br />constant{{getLockedParamLabel(1)!=='entrées
+                    mensuelles'&&getLockedParamLabel(1)!=='sorties
+                    mensuelles'?'':'es'}}
                 </div>
             </div>
         </aj-popup>
@@ -251,9 +264,25 @@
             <p>Ajustement {{getText('title')}}</p>
 
             <div class="rectangle">
-                <div class="title">
+                <div
+                    class="title"
+                    *ngIf="buttonSelected.id !== 'etpMag' && buttonSelected.id !== 'totalOut' && buttonSelected.id !== 'totalIn'&& buttonSelected.id !== 'realTimePerCase'"
+                >
                     Atteindre au {{stopRealValue}} <br />
                     {{getText('firstInput')}} :
+                </div>
+                <div
+                    class="title"
+                    *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'realTimePerCase'"
+                >
+                    Appliquer sur la période du {{stopRealValue}}
+                    {{startRealValue? 'au':'à'}}
+                    {{startRealValue||"aujourd'hui"}}
+                    {{buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT
+                    magistrat": buttonSelected.id === 'totalOut'?"un volume
+                    moyen des sorties mensuelles": buttonSelected.id ===
+                    'totalIn'? "un volume moyen des entrées mensuelles":"un
+                    temps moyen par dossier"}} de :
                 </div>
                 <input
                     [class.displayNone]="buttonSelected.id === 'realTimePerCase'"
