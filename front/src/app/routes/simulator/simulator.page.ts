@@ -45,6 +45,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     today: Date = new Date()
     startRealValue: string = ''
     stopRealValue: string = ''
+    nbOfMonthWithinPeriod: number[] = []
     buttonSelected: any = undefined
     resetPercentage: boolean = false
     valueToAjust = { value: '', percentage: null }
@@ -157,6 +158,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             else this.disabled = ''
         } else if (type === 'dateStart') {
             this.dateStart = new Date(event)
+            this.nbOfMonthWithinPeriod = this.monthDiff(
+                this.dateStart,
+                this.dateStop
+            )
             if (
                 this.dateStart.getDate() !== this.today.getDate() ||
                 this.dateStart.getMonth() !== this.today.getMonth() ||
@@ -173,7 +178,24 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.dateStop = new Date(event)
             this.simulatorService.dateStop.next(this.dateStop)
             this.stopRealValue = this.findRealValue(this.dateStop)
+            this.nbOfMonthWithinPeriod = this.monthDiff(
+                this.dateStart,
+                this.dateStop
+            )
         }
+    }
+
+    monthDiff(dateFrom: Date, dateTo: Date | null): number[] {
+        console.log(this.nbOfMonthWithinPeriod, dateFrom, dateTo === null)
+        if (dateTo)
+            return [
+                ...Array(
+                    dateTo.getMonth() -
+                        dateFrom.getMonth() +
+                        12 * (dateTo.getFullYear() - dateFrom.getFullYear())
+                ).keys(),
+            ]
+        else return []
     }
 
     getElementById(id: number | null) {
@@ -681,7 +703,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     getLockedParamLabel(paramNumber: number): string {
         if (this.pickersParamsToLock.length > 0)
-            return this.pickersParamsToLock[paramNumber]
+            return this.getLabelTranslation(
+                this.pickersParamsToLock[paramNumber]
+            )
         return ''
     }
 
@@ -826,5 +850,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         }
 
         console.log('big P', params)
+    }
+
+    getLabelTranslation(value: string): string {
+        switch (value) {
+            case 'etpMag':
+                return 'ETPT magistrat'
+            case 'totalIn':
+                return 'entrées mensuelles'
+            case 'totalOut':
+                return 'sorties mensuelles'
+            case 'lastStock':
+                return 'stock'
+            case 'realDTESInMonths':
+                return 'DTES'
+            case 'realCoverage':
+                return 'taux de couverture'
+            case 'realTimePerCase':
+                return 'temps moyen par dossier'
+        }
+        return ''
     }
 }
