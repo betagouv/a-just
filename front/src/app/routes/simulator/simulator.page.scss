@@ -198,7 +198,7 @@
 
         .rectangle {
             width: 496px;
-            height: 84px;
+            //height: 84px;
             padding: 12px 24px;
             border-radius: 8px;
             background-color: #f6f6f6;
@@ -797,10 +797,28 @@
             left: -3px;
             right: 0px;
 
-
             &.future {
-                display: block;
-                left: 155.5px
+                display: flex;
+                left: 155.5px;
+
+                .dot-generated-container {
+                    display: flex;
+                    justify-content: flex-end;
+                    flex: 1;
+                    position: relative;
+
+                    .dot-generated {
+                        display: inline-block;
+                        position: absolute;
+                        right: -6.5px;
+                        bottom: -2px;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 7.5px;
+                        background-color: #6a6af4;
+
+                    }
+                }
             }
 
             &.disabled {
