@@ -1,10 +1,10 @@
 const etpMag = 'etpMag'
-const etpMagTitle = 'des etpMag'
-const etpMagToDefine = ['un volume de', 'une variation de']
+const etpMagTitle = 'des ETPT magistrat'
+const etpMagToDefine = ['un volume moyen de']
 
 const realTimePerCase = 'realTimePerCase'
 const realTimePerCaseTitle = 'du Temps moyen / Dossier'
-const realTimePerCaseToDefine = ['un temps moyen par dossier de (en H:MM)']
+const realTimePerCaseToDefine = ['un temps moyen par dossier de']
 
 const totalIn = 'totalIn'
 const totalInTitle = 'des Entrées mensuelles moyennes'
@@ -24,7 +24,7 @@ const realCoverageToDefine = ['une valeur de (en %)']
 
 const realDTESInMonths = 'realDTESInMonths'
 const realDTESInMonthsTitle = 'du DTES'
-const realDTESInMonthsToDefine = ['une valeur de (en mois)', 'une variation de']
+const realDTESInMonthsToDefine = ['une valeur de (en mois)']
 
 const tree = [
     {
@@ -459,7 +459,7 @@ const tree = [
         toDefine: realTimePerCaseToDefine,
         toSimulate: [
             {
-                locked: totalIn,
+                locked: etpMag,
                 toDisplay: [totalIn, etpMag, realTimePerCase],
                 toCalculate: [
                     totalOut,
@@ -470,29 +470,8 @@ const tree = [
             },
             {
                 locked: totalOut,
-                secondLocked: [
-                    {
-                        locked: totalIn,
-                        toDisplay: [
-                            totalIn,
-                            totalOut,
-                            realCoverage,
-                            realTimePerCase,
-                        ],
-                        toCalculate: [lastStock, etpMag, realDTESInMonths],
-                    },
-
-                    {
-                        locked: lastStock,
-                        toDisplay: [totalOut, lastStock, realTimePerCase],
-                        toCalculate: [
-                            totalIn,
-                            etpMag,
-                            realCoverage,
-                            realDTESInMonths,
-                        ],
-                    },
-                ],
+                toDisplay: [totalIn, totalOut, realCoverage, realTimePerCase],
+                toCalculate: [lastStock, etpMag, realDTESInMonths],
             },
         ],
         toAjust: [
