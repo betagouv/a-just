@@ -7,15 +7,15 @@ const realTimePerCaseTitle = 'du Temps moyen / Dossier'
 const realTimePerCaseToDefine = ['un temps moyen par dossier de']
 
 const totalIn = 'totalIn'
-const totalInTitle = 'des Entrées mensuelles moyennes'
+const totalInTitle = 'des entrées moyennes mensuelles'
 const totalInToDefine = ['une valeur de', 'une variation de']
 
 const totalOut = 'totalOut'
-const totalOutTitle = 'des Sorties mensuelles moyennes'
+const totalOutTitle = 'des sorties moyennes mensuelles'
 const totalOutToDefine = ['une valeur de', 'une variation de']
 
 const lastStock = 'lastStock'
-const lastStockTitle = 'des Stocks'
+const lastStockTitle = 'du stock'
 const lastStockToDefine = ['une valeur de', 'une variation de']
 
 const realCoverage = 'realCoverage'

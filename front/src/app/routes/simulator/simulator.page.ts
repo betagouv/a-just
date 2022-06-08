@@ -609,7 +609,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             else
                 return this.currentNode.toAjust.find(
                     (x: any) => x.label === this.buttonSelected.id
-                ).label
+                ).popupTitle
         } else if (label === 'firstInput') {
             if (
                 this.buttonSelected.id === this.paramsToAjust.param1.label ||
