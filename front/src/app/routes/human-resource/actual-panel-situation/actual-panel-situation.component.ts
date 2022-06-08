@@ -65,7 +65,7 @@ export class ActualPanelSituationComponent
         this.dateStart &&
         this.dateStart.getTime() > this.getToday().getTime()
       ) {
-        this.timeWorked = `Prochainement, il sera ${this.timeWorked}`
+        this.timeWorked = 'Va prochainement partir'
       }
     } else {
       this.isLeft = false
