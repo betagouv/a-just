@@ -275,14 +275,13 @@
                     class="title"
                     *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'realTimePerCase'"
                 >
-                    Appliquer sur la période du {{stopRealValue}}
-                    {{startRealValue? 'au':'à'}}
-                    {{startRealValue||"aujourd'hui"}}
+                    Appliquer sur la période {{startRealValue? "du":"d'"}}
+                    {{startRealValue||"aujourd'hui"}} au {{stopRealValue}}
                     {{buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT
                     magistrat": buttonSelected.id === 'totalOut'?"un volume
-                    moyen des sorties mensuelles": buttonSelected.id ===
-                    'totalIn'? "un volume moyen des entrées mensuelles":"un
-                    temps moyen par dossier"}} de :
+                    moyen de sorties mensuelles": buttonSelected.id ===
+                    'totalIn'? "un volume moyen d'entrées mensuelles":"un temps
+                    moyen par dossier"}} de :
                 </div>
                 <input
                     [class.displayNone]="buttonSelected.id === 'realTimePerCase'"
