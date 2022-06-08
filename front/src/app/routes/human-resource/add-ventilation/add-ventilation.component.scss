@@ -11,6 +11,22 @@
   background-color: white;
   border-radius: 8px;
 
+  > .header {
+    padding: 0 40px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    background-color: fColor(cgrayDefault);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    p {
+      font-weight: bold;
+      font-size: 20px;
+      color: fColor(cblackdark);
+    }
+  }
+
   > .administration {
     padding: 25px 40px 40px 40px;
     border-bottom: solid 1px fColor(cgrayDefault);
@@ -84,6 +100,20 @@
     .indispo-error {
       color: fColor(cred);
       font-weight: bold;
+    }
+  }
+
+  > .actions {
+    background-color: fColor(cgrayDefault);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+
+    > button {
+      margin: 0 8px;
     }
   }
 }

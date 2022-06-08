@@ -83,6 +83,7 @@
 
 add-ventilation {
   margin: 24px auto;
+  z-index: 101;
 }
 
 .sticky-action-footer {
@@ -96,8 +97,20 @@ add-ventilation {
   justify-content: center;
   position: sticky;
   bottom: 0;
+  z-index: 102;
 
   button:first-child {
     margin-right: 16px;
   }
+}
+
+.black-screen {
+  position: absolute;
+  background-color: rgba(fColor(cblackdark), 0.37);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  pointer-events: none;
 }

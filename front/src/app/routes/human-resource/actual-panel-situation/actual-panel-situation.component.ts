@@ -34,6 +34,7 @@ export class ActualPanelSituationComponent
   @Input() id: number | null = null
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
+  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
   comment: string = ''
@@ -96,12 +97,6 @@ export class ActualPanelSituationComponent
           })
       }
     }, 1000)
-  }
-
-  onRemoveSituation() {
-    if (this.id) {
-      this.humanResourceService.removeSituation(this.id)
-    }
   }
 
   onEditSituation() {

@@ -1,5 +1,11 @@
 <form [formGroup]="form">
   <div class="new-ventilation">
+    <div *ngIf="saveActions" class="header">
+      <!-- <p *ngIf="onEdit">Modification de la situation du</p>
+        <p *ngIf="!onEdit">Renseigner une nouvelle situation</p> -->
+      <p>Renseigner une nouvelle situation</p>
+    </div>
+
     <div class="administration">
       <p>Situation administrative</p>
       <div class="grid-triple">
@@ -80,6 +86,13 @@
         </div>
       </div>
       <div class="indispo-error" *ngIf="indisponibilityError">{{ indisponibilityError }}</div>
+    </div>
+
+    <div class="actions" *ngIf="saveActions">
+      <button class="outline blue strict-border" (click)="close.emit()">Annuler</button>
+      <button class="primary strict-border" (click)="onSave()">Enregistrer
+        <!-- {{ onEdit ? 'Modification de la situation' : 'Enregistrer la nouvelle situation' }} -->
+      </button>
     </div>
   </div>
 </form>

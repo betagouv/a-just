@@ -32,6 +32,7 @@ export class PanelHistoryVentilationComponent
   @Input() id: number | null = null
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
+  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
 
@@ -53,12 +54,6 @@ export class PanelHistoryVentilationComponent
       this.timeWorked = 'Sortie'
     } else {
       this.timeWorked = etpLabel(this.etp)
-    }
-  }
-
-  onRemoveSituation() {
-    if (this.id) {
-      this.humanResourceService.removeSituation(this.id)
     }
   }
 

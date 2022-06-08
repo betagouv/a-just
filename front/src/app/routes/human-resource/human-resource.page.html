@@ -4,7 +4,7 @@
     [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
     [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
     [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="onSelectSituationToEdit(h)"
-    (addIndispiniblity)="onAddIndispiniblity($event)">
+    (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
   </actual-panel-situation>
 
   <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
@@ -21,8 +21,8 @@
     [activities]="editVentilation ? editVentilation.activities : (histories.length ? histories[0].activities : [])"
     [indisponibilities]="allIndisponibilities"
     [lastDateStart]="editVentilation ? editVentilation.dateStart : (histories.length ? histories[0].dateStart : null)"
-    (close)="editVentilation = null" (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)"
-    [indisponibilityError]="indisponibilityError">
+    (close)="onCancel()" (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)"
+    [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0">
   </add-ventilation>
 
   <div class="panel-hsitory-group">
@@ -32,7 +32,8 @@
     <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate" [id]="h.id"
       [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
       [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-      (editVentilation)="onSelectSituationToEdit(h)" (addIndispiniblity)="onAddIndispiniblity($event)">
+      (editVentilation)="onSelectSituationToEdit(h)" (addIndispiniblity)="onAddIndispiniblity($event)"
+      (onRemove)="onRemoveSituation(h.id)">
     </panel-history-ventilation>
   </div>
 
@@ -42,7 +43,7 @@
 
   <div class="flex-1"></div>
 
-  <div class="sticky-action-footer" *ngIf="onEditIndex !== null">
+  <div class="sticky-action-footer" *ngIf="onEditIndex !== null && histories.length === 0">
     <button class="small outline blue strict-border" (click)="onCancel()">Annuler</button>
     <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
   </div>
@@ -113,3 +114,5 @@
     </div>
   </div>
 </aj-popup>
+
+<div class="black-screen" *ngIf="histories.length && onEditIndex !== null"></div>

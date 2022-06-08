@@ -259,14 +259,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   onCancel() {
     this.onEditIndex = null
 
-    /*
-    const findElement = document.getElementById('content');
+    const findElement = document.getElementById('content')
     if (findElement) {
       findElement.scrollTo({
         behavior: 'smooth',
         top: 0,
-      });
-    }*/
+      })
+    }
   }
 
   onSave() {
@@ -348,7 +347,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 this.updateIndisponiblity.dateStart
               )
               if (hrDateStart.getTime() > indispDateStart.getTime()) {
-                alert("Vous ne pouvez pas saisir une date de début d'indisponibilité antérieure à la date d'arrivée !")
+                alert(
+                  "Vous ne pouvez pas saisir une date de début d'indisponibilité antérieure à la date d'arrivée !"
+                )
                 return false
               }
             }
@@ -361,7 +362,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 this.updateIndisponiblity.dateStop
               )
               if (hrDateStart.getTime() > indispDateStop.getTime()) {
-                alert("Vous ne pouvez pas saisir une date de fin d'indisponibilités antérieure à la date d'arrivée !")
+                alert(
+                  "Vous ne pouvez pas saisir une date de fin d'indisponibilités antérieure à la date d'arrivée !"
+                )
                 return false
               }
             }
@@ -379,7 +382,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 this.updateIndisponiblity.dateStart
               )
               if (hrDateStop.getTime() < indispDateStart.getTime()) {
-                alert("Vous ne pouvez pas saisir une date de début d'indisponibilité postérieure à la date de départ !")
+                alert(
+                  "Vous ne pouvez pas saisir une date de début d'indisponibilité postérieure à la date de départ !"
+                )
                 return false
               }
             }
@@ -392,7 +397,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 this.updateIndisponiblity.dateStop
               )
               if (hrDateStop.getTime() < indispDateStop.getTime()) {
-                alert("Vous ne pouvez pas saisir une date de fin d'indisponibilité postérieure à la date de départ !")
+                alert(
+                  "Vous ne pouvez pas saisir une date de fin d'indisponibilité postérieure à la date de départ !"
+                )
                 return false
               }
             }
@@ -401,17 +408,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           // control date start and date stop
           if (
             this.updateIndisponiblity &&
-            this.updateIndisponiblity.dateStart && 
+            this.updateIndisponiblity.dateStart &&
             this.updateIndisponiblity.dateStop
           ) {
             const indispDateStart = new Date(
               this.updateIndisponiblity.dateStart
             )
-            const indispDateStop = new Date(
-              this.updateIndisponiblity.dateStop
-            )
+            const indispDateStop = new Date(this.updateIndisponiblity.dateStop)
             if (indispDateStart.getTime() > indispDateStop.getTime()) {
-              alert("Vous ne pouvez pas saisir une date de début postérieure à la date de fin !")
+              alert(
+                'Vous ne pouvez pas saisir une date de début postérieure à la date de fin !'
+              )
               return false
             }
           }
@@ -512,8 +519,30 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // edit situation
         // TODO ICI POUR EDITER
       }
+
+      setTimeout(() => {
+        const findContent = document.getElementById('content')
+        if (findContent) {
+          const findElements =
+            findContent.getElementsByTagName('add-ventilation')
+          if (findElements && findElements.length) {
+            findContent.scrollTo({
+              behavior: 'smooth',
+              top: findElements[0].getBoundingClientRect().top - 87,
+            })
+          }
+        }
+      }, 200)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
+    }
+  }
+
+  async onRemoveSituation(id: number) {
+    const returnValue = await this.humanResourceService.removeSituation(id)
+    if(returnValue === true && this.histories.length === 0 && this.onEditIndex !== null) {
+      // force to not show on boarding after delete last situation
+      this.onEditIndex = null
     }
   }
 }
