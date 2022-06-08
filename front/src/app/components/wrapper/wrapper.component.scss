@@ -113,6 +113,8 @@
     padding: 24px;
     height: 100%;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
     background-color: fColor(bgColor);
   }
 }

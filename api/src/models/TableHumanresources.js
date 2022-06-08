@@ -247,7 +247,15 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
     if(hrFromDB) {
+      // control if have existing situations
+      const situations = await Model.models.HRSituations.getListByHumanId(hrId)
+      if(situations.length) {
+        return false
+      }
+
       await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+    } else {
+      return false
     }
 
     await Model.destroy({
@@ -271,6 +279,8 @@ export default (sequelizeInstance, Model) => {
       },
       force: true,
     })
+
+    return true
   }
 
   return Model
