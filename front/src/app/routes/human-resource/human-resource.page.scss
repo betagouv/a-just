@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 .title {
   margin-right: 16px;
@@ -13,6 +13,12 @@
     font-size: 22px;
     color: fColor(primary);
     font-weight: bold;
+
+    mat-icon {
+      position: relative;
+      top: 4px;
+      margin-left: 8px;
+    }
   }
 }
 
@@ -20,15 +26,21 @@
   font-size: 12px;
 }
 
+.new-action {
+  margin: 32px 0;
+
+  > button:first-child {
+    margin-right: 16px;
+  }
+}
+
 .actions {
   display: flex;
-  
+
   aj-date-select {
     margin-left: 16px;
   }
 }
-
-
 
 .actions {
   button {
@@ -40,27 +52,65 @@
 .profil {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+  grid-gap: 16px;
 }
 
 .activities {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+  grid-gap: 16px;
 }
 
-panel-history-ventilation {
+.panel-hsitory-group {
   margin: 16px auto;
-}
+  background-color: white;
+  border-radius: 8px;
 
-.title-history {
-  margin: 16px auto;
-  font-size: 16px;
-  font-weight: bold;
-  color: fColor(cblack);
-  text-align: center;
+  .title-history {
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    color: fColor(cblack);
+    background-color: fColor(cgrayDefault);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  panel-history-ventilation {
+    margin: 16px;
+  }
 }
 
 add-ventilation {
-  margin: 0 auto 32px auto;
+  margin: 24px auto;
+  z-index: 101;
+}
+
+.sticky-action-footer {
+  height: 80px;
+  padding: 16px;
+  box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 -20px 25px -5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 102;
+
+  button:first-child {
+    margin-right: 16px;
+  }
+}
+
+.black-screen {
+  position: absolute;
+  background-color: rgba(fColor(cblackdark), 0.37);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  pointer-events: none;
 }
