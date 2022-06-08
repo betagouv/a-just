@@ -179,25 +179,23 @@ export default class App {
         } else if (`</${secondTag}>` === lineFormated) {
           // create file if not exist and only for authorizes jurdiction
           const codeJuridiction = dataLines[0]
-          if (authorizateIELST.indexOf(codeJuridiction) !== -1) {
-            if (
-              !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
-            ) {
-              // create file
-              writeFileSync(
-                this.getCsvOutputPath(tmpFolder, codeJuridiction),
-                `${headerMap.join(',')},\n`
-              )
-            }
-
-            dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
-
-            appendFileSync(
+          if (
+            !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
+          ) {
+            // create file
+            writeFileSync(
               this.getCsvOutputPath(tmpFolder, codeJuridiction),
-              `${dataLines.join(',')},\n`
+              `${headerMap.join(',')},\n`
             )
-            totalLine++
           }
+
+          dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
+
+          appendFileSync(
+            this.getCsvOutputPath(tmpFolder, codeJuridiction),
+            `${dataLines.join(',')},\n`
+          )
+          totalLine++
         } else if (nbLine > 2) {
           const index = headerMap.indexOf(tag)
           if (index !== -1) {
@@ -303,18 +301,22 @@ export default class App {
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
           const newRules = rule.filtres[node]
-          let lines = monthValues
 
-          // EXCLUDES INCLUDES QUERIES
-          Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
-            lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
-          })
+          // control il node exist
+          if(newRules) {
+            let lines = monthValues
 
-          // save values
-          list[rule['Code nomenclature']][node] = sumBy(
-            lines,
-            (newRules.TOTAL || '').toLowerCase()
-          )
+            // EXCLUDES INCLUDES QUERIES
+            Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
+              lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
+            })
+
+            // save values
+            list[rule['Code nomenclature']][node] = sumBy(
+              lines,
+              (newRules.TOTAL || '').toLowerCase()
+            )
+          }
         }
       }
     })

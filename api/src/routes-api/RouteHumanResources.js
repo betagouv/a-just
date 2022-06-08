@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { ADMIN_REMOVE_HR } from '../constants/log-codes'
+import { USER_REMOVE_HR } from '../constants/log-codes'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
@@ -92,14 +92,18 @@ export default class RouteHumanResources extends Route {
 
   @Route.Delete({
     path: 'remove-hr/:hrId',
-    accesses: [Access.isAdmin],
+    accesses: [Access.canVewHR],
   })
   async removeHR (ctx) {
     const { hrId } = ctx.params   
 
     if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      await this.models.Logs.addLog(ADMIN_REMOVE_HR, ctx.state.user.id, { hrId })
-      this.sendOk(ctx, await this.model.removeHR(hrId))
+      if(await this.model.removeHR(hrId)) {
+        this.sendOk(ctx, 'Ok')
+        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, { hrId })
+      } else {
+        ctx.throw(401, 'Cette personne n\'est pas supprimable !')
+      }
     } else {
       this.sendOk(ctx, null)
     }
