@@ -170,6 +170,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     const currentDate = new Date(maxDate)
     let idsDetected: number[] = []
+    console.log(minDate, maxDate)
     while (currentDate.getTime() >= minDate.getTime()) {
       let delta: number[] = []
       const findIndispos = this.humanResourceService.findAllIndisponibilities(

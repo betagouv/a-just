@@ -57,6 +57,13 @@ export class ActualPanelSituationComponent
       this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
     ) {
       this.timeWorked = 'Parti'
+
+      if (
+        this.dateStart &&
+        this.dateStart.getTime() > this.getToday().getTime()
+      ) {
+        this.timeWorked = `Prochainement, il sera ${this.timeWorked}`
+      }
     } else {
       this.timeWorked = etpLabel(this.etp)
     }

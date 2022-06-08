@@ -2,7 +2,8 @@
   <div class="situation">
     <p>Situation administrative :</p>
     <div class="tags">
-      <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
+      <p *ngIf="fonction" class="fonction">
+        {{ fonction.code }} </p>
       <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
     </div>
   </div>
@@ -20,9 +21,14 @@
           <mat-icon>event_busy</mat-icon>
         </div>
         <div class="text">
-          <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
           <p>
-            <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+            {{
+            indisp.contentieux ? indisp.contentieux.label : indisp.label
+            }}
+            ({{ indisp.percent || 0 }}%)
+          </p>
+          <p>
+            <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: 'dd' }}
               {{ getShortMonthString(indisp.dateStart) }}
               {{ getFullYear(indisp.dateStart) }}</ng-template>
             <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
@@ -31,7 +37,7 @@
             <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
               jusqu'au
             </ng-template>
-            <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+            <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: 'dd' }}
               {{ getShortMonthString(indisp.dateStop) }}
               {{ getFullYear(indisp.dateStop) }}</ng-template>
           </p>
@@ -50,12 +56,22 @@
       <p>Répartition actuelle du temps disponible par activité</p>
       <div class="tags">
         <p *ngIf="dateStart" class="date">
-          <mat-icon>calendar_today</mat-icon>Depuis le {{ dateStart | date: "dd" }}
-          {{ getShortMonthString(dateStart) }} {{ dateStart.getFullYear() }}
+          <mat-icon>calendar_today</mat-icon>{{
+          dateStart && dateStart.getTime() > getToday().getTime()
+          ? 'À partir du'
+          : 'Depuis le'
+          }}
+          {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+          {{ dateStart.getFullYear() }}
         </p>
-        <p *ngIf="dateStop && !isToday(dateStop) && dateStop.getTime() !== dateStart.getTime()" class="date">
-          <mat-icon>calendar_today</mat-icon>Jusqu'au {{ dateStop | date: "dd" }}
-          {{ getShortMonthString(dateStop) }} {{ dateStop.getFullYear() }}
+        <p *ngIf="
+            dateStop &&
+            !isToday(dateStop) &&
+            dateStop.getTime() !== dateStart.getTime()
+          " class="date">
+          <mat-icon>calendar_today</mat-icon>Jusqu'au
+          {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+          {{ dateStop.getFullYear() }}
         </p>
       </div>
     </div>
@@ -65,17 +81,21 @@
   <div class="comment">
     <div class="header-comment">
       <mat-icon>message</mat-icon>
-      <p><b>Commentaire</b><br />
+      <p>
+        <b>Commentaire</b><br />
         <ng-template [ngIf]="commentUpdatedAt">Enregistré {{ formatDate(commentUpdatedAt) }}</ng-template>
       </p>
     </div>
 
     <textarea placeholder="Commentaire" [ngModel]="comment" (ngModelChange)="updateComment($event)"></textarea>
-
   </div>
 </div>
 
 <div class="actions-panel">
-  <button (click)="onEditSituation()" class="outline small primary">Modifier</button>
-  <button (click)="onRemoveSituation()" class="outline small red">Supprimer</button>
+  <button (click)="onEditSituation()" class="outline small primary">
+    Modifier
+  </button>
+  <button (click)="onRemoveSituation()" class="outline small red">
+    Supprimer
+  </button>
 </div>
