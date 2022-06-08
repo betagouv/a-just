@@ -1,9 +1,23 @@
 <form [formGroup]="form">
   <div class="new-ventilation">
     <div *ngIf="saveActions" class="header">
-      <!-- <p *ngIf="onEdit">Modification de la situation du</p>
-        <p *ngIf="!onEdit">Renseigner une nouvelle situation</p> -->
-      <p>Renseigner une nouvelle situation</p>
+      <ng-template [ngIf]="isEdit">
+        <p>Modification de la situation</p>
+
+        <div class="tags">
+          <p *ngIf="lastDateStart">
+            {{ lastDateStart | date: 'dd' }}
+            {{ getShortMonthString(lastDateStart) }}
+            {{ lastDateStart.getFullYear() }}
+          </p>
+          <p *ngIf="dateStop && lastDateStart && lastDateStart.getTime() !== dateStop.getTime()">
+            {{ dateStop | date: 'dd' }}
+            {{ getShortMonthString(dateStop) }}
+            {{ dateStop.getFullYear() }}
+          </p>
+        </div>
+      </ng-template>
+      <p *ngIf="!isEdit">Renseigner une nouvelle situation</p>
     </div>
 
     <div class="administration">
@@ -40,8 +54,8 @@
     </div>
 
     <div class="date-start">
-      <!-- <p *ngIf="onEdit">Modification de la situation au :</p> -->
-      <p>Situation à prendre en compte :</p>
+      <p *ngIf="isEdit">Modification de la situation au :</p>
+      <p *ngIf="!isEdit">Situation à prendre en compte :</p>
       <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
         (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
       </aj-date-select>
@@ -50,7 +64,7 @@
 
     <div class="indisponibilities">
       <div class="indispo-header">
-        <p>Indisponibilités : </p>
+        <p>Indisponibilités :</p>
         <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
           Ajouter une indisponibilité
         </button>
@@ -63,10 +77,11 @@
           </div>
           <div class="text">
             <p>
-              {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)
+              {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
+              ({{ indisp.percent || 0 }}%)
             </p>
             <p>
-              <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+              <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: 'dd' }}
                 {{ getShortMonthString(indisp.dateStart) }}
                 {{ getFullYear(indisp.dateStart) }}</ng-template>
               <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
@@ -75,7 +90,7 @@
               <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
                 jusqu'au
               </ng-template>
-              <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+              <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: 'dd' }}
                 {{ getShortMonthString(indisp.dateStop) }}
                 {{ getFullYear(indisp.dateStop) }}</ng-template>
             </p>
@@ -85,13 +100,17 @@
           </div>
         </div>
       </div>
-      <div class="indispo-error" *ngIf="indisponibilityError">{{ indisponibilityError }}</div>
+      <div class="indispo-error" *ngIf="indisponibilityError">
+        {{ indisponibilityError }}
+      </div>
     </div>
 
     <div class="actions" *ngIf="saveActions">
-      <button class="outline blue strict-border" (click)="close.emit()">Annuler</button>
-      <button class="primary strict-border" (click)="onSave()">Enregistrer
-        <!-- {{ onEdit ? 'Modification de la situation' : 'Enregistrer la nouvelle situation' }} -->
+      <button class="outline blue strict-border" (click)="close.emit()">
+        Annuler
+      </button>
+      <button class="primary strict-border" (click)="onSave()">
+        {{ isEdit ? 'Modifier' : 'Enregistrer' }}
       </button>
     </div>
   </div>

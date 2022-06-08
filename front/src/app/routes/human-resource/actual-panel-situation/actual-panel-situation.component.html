@@ -91,7 +91,7 @@
   </div>
 </div>
 
-<div class="actions-panel">
+<div class="actions-panel" *ngIf="!isLeft">
   <button (click)="onEditSituation()" class="outline small primary">
     Modifier
   </button>

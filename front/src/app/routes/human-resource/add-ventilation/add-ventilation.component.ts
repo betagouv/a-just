@@ -29,8 +29,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() indisponibilities: RHActivityInterface[] = []
   @Input() activities: RHActivityInterface[] = []
   @Input() lastDateStart: Date | null = null
+  @Input() dateStop: Date | null = null
   @Input() indisponibilityError: string | null = null
   @Input() saveActions: boolean = false
+  @Input() isEdit: boolean = false
   @Output() onSaveConfirm = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
   @Output() close = new EventEmitter()

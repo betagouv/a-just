@@ -110,8 +110,8 @@ export class MainClass {
     )
   }
 
-  public getToday(): Date {
-    return today()
+  public getToday(date: Date | null | undefined = new Date()): Date {
+    return today(date)
   }
 
   public getFullYear(date: Date | string) {

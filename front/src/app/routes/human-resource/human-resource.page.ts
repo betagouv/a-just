@@ -35,7 +35,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   categoryName: string = ''
   histories: HistoryInterface[] = []
   allIndisponibilities: RHActivityInterface[] = []
-  editVentilation: HistoryInterface | null = null
   onEditIndex: number | null = null // null (no edition), -1 (new edition), x (x'eme edition)
   updateIndisponiblity: RHActivityInterface | null = null
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
@@ -510,14 +509,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     return true
   }
 
-  onSelectSituationToEdit(situation: HistoryInterface | null = null) {
+  onSelectSituationToEdit(index: number | null = null) {
     if (this.onEditIndex === null) {
-      if (!situation) {
+      if (index === null) {
         // add situation
         this.onEditIndex = -1
       } else {
         // edit situation
-        // TODO ICI POUR EDITER
+        this.onEditIndex = index
       }
 
       setTimeout(() => {
@@ -528,11 +527,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           if (findElements && findElements.length) {
             findContent.scrollTo({
               behavior: 'smooth',
-              top: findElements[0].getBoundingClientRect().top - 87,
+              top: findElements[0].getBoundingClientRect().top - 87 + findContent.scrollTop,
             })
           }
         }
-      }, 200)
+      }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
     }

@@ -37,6 +37,7 @@ export class ActualPanelSituationComponent
   @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
+  isLeft: boolean = false
   comment: string = ''
   commentUpdatedAt: Date | null = null
   timeoutUpdateComment: any = null
@@ -57,6 +58,7 @@ export class ActualPanelSituationComponent
       this.dateEndToJuridiction &&
       this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
     ) {
+      this.isLeft = true
       this.timeWorked = 'Parti'
 
       if (
@@ -66,6 +68,7 @@ export class ActualPanelSituationComponent
         this.timeWorked = `Prochainement, il sera ${this.timeWorked}`
       }
     } else {
+      this.isLeft = false
       this.timeWorked = etpLabel(this.etp)
     }
 
