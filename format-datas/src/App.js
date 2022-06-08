@@ -11,7 +11,6 @@ import {
 } from 'fs'
 import { csvToArrayJson } from '../utils/csv'
 import {
-  authorizateIELST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
@@ -179,25 +178,23 @@ export default class App {
         } else if (`</${secondTag}>` === lineFormated) {
           // create file if not exist and only for authorizes jurdiction
           const codeJuridiction = dataLines[0]
-          if (authorizateIELST.indexOf(codeJuridiction) !== -1) {
-            if (
-              !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
-            ) {
-              // create file
-              writeFileSync(
-                this.getCsvOutputPath(tmpFolder, codeJuridiction),
-                `${headerMap.join(',')},\n`
-              )
-            }
-
-            dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
-
-            appendFileSync(
+          if (
+            !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
+          ) {
+            // create file
+            writeFileSync(
               this.getCsvOutputPath(tmpFolder, codeJuridiction),
-              `${dataLines.join(',')},\n`
+              `${headerMap.join(',')},\n`
             )
-            totalLine++
           }
+
+          dataLines[dataLines.length - 1] = getTypeOfJuridiction // add type of juridiction
+
+          appendFileSync(
+            this.getCsvOutputPath(tmpFolder, codeJuridiction),
+            `${dataLines.join(',')},\n`
+          )
+          totalLine++
         } else if (nbLine > 2) {
           const index = headerMap.indexOf(tag)
           if (index !== -1) {

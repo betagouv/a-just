@@ -11,7 +11,10 @@ src/models/TableOrders.js
 uploads/
 output.pdf
 tmp
+tmp-old
 inputs/*
 outputs/*
+outputs-old
 inputs copy/*
 inputs-test
+*.zip
