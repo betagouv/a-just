@@ -3,6 +3,7 @@
 @import "./form.scss";
 @import "./material.scss";
 @import "./button.scss";
+@import "./popup.scss";
 
 html,
 body {
@@ -34,6 +35,12 @@ body { margin: 0; font-family: Marianne; }
 .grid-double {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 8px;
+}
+
+.grid-triple {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 8px;
 }
 

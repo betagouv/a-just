@@ -1,13 +1,9 @@
-@import "../../../styles/utils.scss";
+@import '../../../styles/utils.scss';
 
 :host {
   display: block;
   max-width: 894px;
   width: 95%;
-}
-
-.new-action {
-  text-align: center;
 }
 
 .new-ventilation {
@@ -16,11 +12,13 @@
   border-radius: 8px;
 
   > .header {
-    padding: 13px 40px;
+    padding: 0 40px;
+    height: 68px;
     display: flex;
     align-items: center;
     background-color: fColor(bgSelect);
-    border-bottom: solid 1px fColor(cgrayDefault);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 
     p {
       font-weight: bold;
@@ -28,20 +26,37 @@
       color: fColor(cblackdark);
     }
 
-    aj-date-select {
-      background-color: fColor(cgrayDefault);
+    .tags {
+      display: flex;
+      justify-content: flex-end;
+
+      p {
+        font-size: 14px;
+        padding: 4px 14px;
+        border-radius: 29px;
+        color: fColor(cgray);
+        font-weight: normal;
+        background-color: fColor(cgrayDefault);
+        margin-right: 0;
+        margin-left: 8px;
+      }
     }
   }
 
   > .administration {
-    padding: 25px 0 40px 0;
+    padding: 25px 40px 40px 40px;
     border-bottom: solid 1px fColor(cgrayDefault);
 
-    > * {
-      width: 438px;
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 24px;
+    > div {
+      display: flex;
+
+      > div {
+        flex: 1;
+
+        .label-aj {
+          white-space: nowrap;
+        }
+      }
     }
 
     > p {
@@ -51,108 +66,70 @@
     }
   }
 
-  > .indisponibilities {
+  > .activities {
+    padding: 16px 24px 24px 24px;
     border-bottom: solid 1px fColor(cgrayDefault);
 
-    > div {
-      padding: 32px 0;
-      width: 438px;
-      margin: auto;
-
-      .indispo-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 24px;
-
-        p {
-          font-weight: bold;
-          color: fColor(cblack);
-        }
-      }
-
-      .indispo-content {
-        > div {
-          height: 57px;
-          padding: 8px 16px;
-          border-radius: 4px;
-          border: solid 1px fColor(cred);
-          background-color: fColor(credlight);
-          margin-bottom: 8px;
-          display: flex;
-
-          div.icon {
-            margin-right: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            mat-icon {
-              font-size: 16px;
-              width: 16px;
-              height: 16px;
-              color: fColor(cred);
-            }
-          }
-
-          div.text {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
-            p {
-              font-size: 12px;
-              color: fColor(cgray);
-
-              &:last-child {
-                font-weight: bold;
-              }
-            }
-          }
-        }
-      }
-
-      .indispo-error {
-        color: fColor(cred);
-        font-weight: bold;
-      }
+    > p {
+      font-weight: bold;
+      color: fColor(cblack);
+      margin-bottom: 16px;
+      margin-left: 16px;
     }
   }
 
-  > .activities {
-    padding: 32px 24px 24px 24px;
+  > .date-start {
+    padding: 13px 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: solid 1px fColor(cgrayDefault);
 
-    > p {
-      width: 438px;
+    p {
       font-weight: bold;
-      color: fColor(cblack);
-      margin: 0 auto 2px auto;
+      color: fColor(cblackdark);
+    }
+
+    aj-date-select {
+      background-color: fColor(cgrayDefault);
+      margin-left: 36px;
+    }
+  }
+
+  > .indisponibilities {
+    padding: 16px 24px 24px 24px;
+
+    .indispo-header {
+      display: flex;
+      align-items: center;
+
+      p {
+        margin-left: 16px;
+        font-weight: bold;
+        color: fColor(cblackdark);
+      }
+
+      button {
+        margin-left: 16px;
+      }
+    }
+
+    .indispo-error {
+      color: fColor(cred);
+      font-weight: bold;
     }
   }
 
   > .actions {
-    padding: 16px;
-    background-color: fColor(bgSelect);
+    background-color: fColor(cgrayDefault);
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
-    button:first-child {
-      margin-right: 16px;
+    > button {
+      margin: 0 8px;
     }
-  }
-}
-
-aj-popup {
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    color: fColor(black);
-    margin-bottom: 32px;
-  }
-
-  .form > div {
-    margin-bottom: 24px;
   }
 }
