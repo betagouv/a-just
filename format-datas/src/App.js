@@ -11,6 +11,7 @@ import {
 } from 'fs'
 import { csvToArrayJson } from '../utils/csv'
 import {
+  authorizateIELST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
