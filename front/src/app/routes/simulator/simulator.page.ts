@@ -173,7 +173,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.dateStart.getFullYear() !== this.today.getFullYear()
             )
                 this.mooveClass = 'future'
-            else this.mooveClass = ''
+            else this.mooveClass = 'present'
             this.disabled = 'disabled-date'
             this.simulatorService.dateStart.next(this.dateStart)
             this.startRealValue = this.findRealValue(this.dateStart)
@@ -181,6 +181,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.disabled = 'disabled-date'
 
             this.dateStop = new Date(event)
+            this.mooveClass = 'present'
             this.simulatorService.dateStop.next(this.dateStop)
             this.stopRealValue = this.findRealValue(this.dateStop)
             this.nbOfMonthWithinPeriod = this.monthDiff(
