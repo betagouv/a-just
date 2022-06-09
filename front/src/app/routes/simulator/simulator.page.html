@@ -212,7 +212,10 @@
             >
                 <p class="title">Réinitialiser</p>
             </div>
-            <div class="simulate-button" (click)="simulate()">
+            <div
+                class="simulate-button"
+                (click)="simulate([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, realTimePerCase])"
+            >
                 <p class="title">Simuler</p>
             </div>
         </div>
@@ -233,13 +236,19 @@
             </div>
             <p>Je souhaite lancer la simulation...</p>
             <div class="choices">
-                <div class="choice" (click)="selectParamToLock(0)">
+                <div
+                    class="choice"
+                    (click)="selectParamToLock(0,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, realTimePerCase])"
+                >
                     à {{getLockedParamLabel(0)}}
                     <br />constant{{getLockedParamLabel(0)!=='entrées
                     mensuelles'&&getLockedParamLabel(0)!=='sorties
                     mensuelles'?'':'es'}}
                 </div>
-                <div class="choice" (click)="selectParamToLock(1)">
+                <div
+                    class="choice"
+                    (click)="selectParamToLock(1,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, realTimePerCase])"
+                >
                     à {{getLockedParamLabel(1)}}
                     <br />constant{{getLockedParamLabel(1)!=='entrées
                     mensuelles'&&getLockedParamLabel(1)!=='sorties
@@ -545,24 +554,96 @@
                         [value]="getFieldValue('totalIn',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('totalIn',getFieldValue('totalIn',firstSituationData))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn') && getFieldValue('totalIn',simulatedSationData)!==getFieldValue('totalIn',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('totalIn',simulatedSationData),getFieldValue('totalIn',projectedSituationData))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
                         [value]="getFieldValue('totalOut',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('totalOut',getFieldValue('totalOut',firstSituationData))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut') && getFieldValue('totalOut',simulatedSationData)!==getFieldValue('totalOut',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('totalOut',simulatedSationData),getFieldValue('totalOut',projectedSituationData))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
                         [value]="getFieldValue('lastStock',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('lastStock',getFieldValue('lastStock',firstSituationData))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock') && getFieldValue('lastStock',simulatedSationData)!==getFieldValue('lastStock',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('lastStock',simulatedSationData),getFieldValue('lastStock',projectedSituationData))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
                         [value]="getFieldValue('etpMag',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('etpMag',getFieldValue('etpMag',firstSituationData))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag') && getFieldValue('etpMag',simulatedSationData)!==getFieldValue('etpMag',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('etpMag',simulatedSationData),getFieldValue('etpMag',projectedSituationData))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
@@ -581,20 +662,77 @@
                         [value]="getFieldValue('realCoverage',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('realCoverage',getFieldValue('realCoverage',firstSituationData))}}pts
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{parseFloat(getFieldValue('realCoverage',projectedSituationData))-parseFloat(getFieldValue('realCoverage',simulatedSationData))}}pts
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
                         [value]="getFieldValue('realDTESInMonths',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('realDTESInMonths',getFieldValue('realDTESInMonths',firstSituationData))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths') && getFieldValue('realDTESInMonths',simulatedSationData)!==getFieldValue('realDTESInMonths',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('realDTESInMonths',simulatedSationData),getFieldValue('realDTESInMonths',projectedSituationData))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
                 <div class="line-item">
                     <input
                         [value]="getFieldValue('realTimePerCase',simulatedSationData)"
                         disabled
                     />
+                    <div
+                        class="modified-label simulated"
+                        *ngIf="paramsToAjust.param1.label==='realTimePerCase'  || paramsToAjust.param2.label==='realTimePerCase'"
+                        [@fadeInOut]
+                    >
+                        {{percentageModifiedInputText('realTimePerCase',getFieldValue('realTimePerCase',firstSituationData,true))}}%
+
+                        <div class="triangle simulated"></div>
+                    </div>
+                    <div
+                        class="modified-label simulated blue"
+                        *ngIf="!(paramsToAjust.param1.label==='realTimePerCase'  || paramsToAjust.param2.label==='realTimePerCase') && getFieldValue('realTimePerCase',simulatedSationData)!==getFieldValue('realTimePerCase',projectedSituationData)"
+                        [@fadeInOut]
+                    >
+                        {{ratio(getFieldValue('realTimePerCase',simulatedSationData),getFieldValue('realTimePerCase',projectedSituationData,true))}}%
+
+                        <div class="triangle simulated blue"></div>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="logger">
+            <div><p *ngFor="let i of logger">{{i}}</p></div>
         </div>
     </div>
 </aj-wrapper>
