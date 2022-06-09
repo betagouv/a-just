@@ -81,6 +81,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     toDisplay = []
     toCalculate = []
 
+    logger: string[] = []
+
     constructor(
         private humanResourceService: HumanResourceService,
         private referentielService: ReferentielService,
@@ -226,7 +228,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 case 'etpFon':
                     return ''
                 case 'realCoverage': {
-                    if (data?.realCoverage)
+                    if (data?.realCoverage && initialValue === true)
+                        return Math.trunc(data?.realCoverage) + '%' || '0'
+                    else if (data?.realCoverage)
                         return Math.trunc(data?.realCoverage * 100) + '%' || '0'
                     else return '0'
                 }
@@ -283,6 +287,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.toDisplaySimulation = false
         this.toDisplay = []
         this.toCalculate = []
+        this.logger = []
     }
 
     // get minimum date you can select on the date picker
@@ -410,7 +415,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             }
             //else (no value filled in popup)
         } else {
-            // if param1 reset => reset all params
+            // if param1 reset =>  reset all params
             if (inputField.id === this.paramsToAjust.param1.label) {
                 this.paramsToAjust.param1.value = ''
                 this.paramsToAjust.param1.label = ''
@@ -426,7 +431,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 this.paramsToAjust.param2.button.value = 'Ajuster'
                 this.currentNode = undefined
                 this.disabled = 'disabled-date'
-                // else if param2 reset => reset only param2
+                // else if param2 reset =>  reset only param2
             } else if (inputField.id === this.paramsToAjust.param2.label) {
                 this.paramsToAjust.param2.value = ''
                 this.paramsToAjust.param2.label = ''
@@ -592,6 +597,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 button: { value: '' },
             },
         }
+        this.logger = []
 
         this.toDisplay = []
         this.toCalculate = []
@@ -660,7 +666,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         else return 0
     }
 
-    simulate(): void {
+    simulate(allButton: any): void {
         if (
             this.paramsToAjust.param1.input !== 0 &&
             this.paramsToAjust.param2.input !== 0
@@ -681,6 +687,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
                 //compute ! no popup
                 this.computeSimulation()
+                allButton.map((x: any) => {
+                    x.classList.add('disable')
+                })
             }
         } else if (
             this.paramsToAjust.param1.input !== 0 &&
@@ -700,6 +709,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
                 //compute ! no popup
                 this.computeSimulation()
+                allButton.map((x: any) => {
+                    x.classList.add('disable')
+                })
             }
         }
     }
@@ -712,7 +724,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         return ''
     }
 
-    selectParamToLock(paramNumber: number) {
+    selectParamToLock(paramNumber: number, allButton: any) {
         if (this.paramsToLock.param1.label === '') {
             this.paramsToLock.param1.label =
                 this.pickersParamsToLock[paramNumber]
@@ -741,6 +753,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 }
             } else {
                 const find = this.currentNode.toAjust.find(
@@ -765,6 +780,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     //console.log('4 compute', this.toDisplay, this.toCalculate)
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 }
             }
         } else if (this.paramsToLock.param2.label === '') {
@@ -798,12 +816,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     //console.log('5 compute', this.toDisplay, this.toCalculate) // done
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 } else {
                     this.toDisplay = find.toDisplay
                     this.toCalculate = find.toCalculate
                     //console.log('6 compute', this.toDisplay, this.toCalculate)
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 }
             } else if (
                 this.paramsToAjust.param1.input !== 0 &&
@@ -822,6 +846,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     console.log('7 compute', this.toDisplay, this.toCalculate)
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 } else {
                     this.toSimulate = false
                     this.toDisplaySimulation = true
@@ -830,6 +857,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                     console.log('8 compute', this.toDisplay, this.toCalculate)
                     //compute !
                     this.computeSimulation()
+                    allButton.map((x: any) => {
+                        x.classList.add('disable')
+                    })
                 }
             }
         }
@@ -886,106 +916,327 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             simulation.hasOwnProperty(params.lockedParams.param1.label)
         )
             //@ts-ignore
-            simulation[params.lockedParams.param1.label] = parseFloat(
-                params.lockedParams.param1.value
-            )
+            simulation[params.lockedParams.param1.label] =
+                params.lockedParams.param1.label === 'realCoverage'
+                    ? parseFloat(params.lockedParams.param1.value) / 100
+                    : parseFloat(params.lockedParams.param1.value)
         if (
             params.lockedParams.param2.label !== '' &&
             simulation.hasOwnProperty(params.lockedParams.param2.label)
         )
             //@ts-ignore
-            simulation[params.lockedParams.param2.label] = parseFloat(
-                params.lockedParams.param2.value
-            )
+            simulation[params.lockedParams.param2.label] =
+                params.lockedParams.param2.label === 'realCoverage'
+                    ? parseFloat(params.lockedParams.param2.value) / 100
+                    : parseFloat(params.lockedParams.param2.value)
 
         if (params.modifiedParams.param1.input !== 0)
             //@ts-ignore
-            simulation[params.modifiedParams.param1.label] = parseFloat(
-                params.modifiedParams.param1.value
-            )
+            simulation[params.modifiedParams.param1.label] =
+                params.modifiedParams.param1.label === 'realCoverage'
+                    ? parseFloat(params.modifiedParams.param1.value) / 100
+                    : parseFloat(params.modifiedParams.param1.value)
 
         if (params.modifiedParams.param2.input !== 0)
             //@ts-ignore
-            simulation[params.modifiedParams.param2.label] = parseFloat(
-                params.modifiedParams.param2.value
-            )
+            simulation[params.modifiedParams.param2.label] =
+                params.modifiedParams.param2.label === 'realCoverage'
+                    ? parseFloat(params.modifiedParams.param2.value) / 100
+                    : parseFloat(params.modifiedParams.param2.value)
 
-        this.toCalculate.map((x) => {
-            if (x === 'totalOut') {
-                if (simulation.etpMag && simulation.realTimePerCase)
-                    simulation.totalOut =
-                        Math.floor(simulation.etpMag * 8 * 17.3333) /
-                        simulation.realTimePerCase
-                if (simulation.totalIn && simulation.lastStock)
-                    simulation.totalOut =
-                        Math.floor(params.beginSituation?.lastStock as number) -
-                        Math.floor(params.endSituation?.lastStock as number) /
-                            Math.floor(
-                                nbOfDays(
-                                    this.simulatorService.dateStart.value,
-                                    this.simulatorService.dateStop.value
-                                ) /
-                                    (365 / 12)
-                            ) +
-                        simulation.totalIn
-            }
-            if (x === 'lastStock') {
-                simulation.lastStock =
-                    Math.floor(params.beginSituation?.lastStock as number) +
-                    Math.floor(
-                        simulation.totalIn
-                            ? simulation.totalIn
-                            : (params.beginSituation?.totalIn as number)
-                    ) *
-                        Math.floor(
-                            nbOfDays(
-                                this.simulatorService.dateStart.value,
-                                this.simulatorService.dateStop.value
-                            ) /
-                                (365 / 12)
-                        ) -
-                    Math.floor(
-                        simulation.totalOut
-                            ? simulation.totalOut
-                            : (params.beginSituation?.totalOut as number)
-                    ) *
-                        Math.floor(
-                            nbOfDays(
-                                this.simulatorService.dateStart.value,
-                                this.simulatorService.dateStop.value
-                            ) /
-                                (365 / 12)
+        if (params.modifiedParams.param1.label)
+            this.logger.push(
+                'Paramètre modifié 1:  ' +
+                    params.modifiedParams.param1.label +
+                    ' => ' +
+                    params.modifiedParams.param1.value
+            )
+        if (params.modifiedParams.param2.label)
+            this.logger.push(
+                'Paramètre modifié 2:  ' +
+                    params.modifiedParams.param2.label +
+                    ' => ' +
+                    params.modifiedParams.param2.value
+            )
+        if (params.lockedParams.param1.label)
+            this.logger.push(
+                'Paramètre bloqué 1:  ' +
+                    params.lockedParams.param1.label +
+                    ' => ' +
+                    params.lockedParams.param1.value
+            )
+        if (params.lockedParams.param2.label)
+            this.logger.push(
+                'Paramètre bloqué 2:  ' +
+                    params.lockedParams.param2.label +
+                    ' => ' +
+                    params.lockedParams.param2.value
+            )
+        this.logger.push('Valeur à afficher:  ' + String(params.toDisplay))
+        this.logger.push('Valeur à calculer:  ' + String(params.toCalculate))
+        this.logger.push('_')
+        this.logger.push(' ')
+        this.logger.push('Début du calcul par étape: ')
+        this.logger.push('_')
+
+        let counter = 0
+        do {
+            counter++
+            this.toCalculate.map((x) => {
+                if (x === 'totalIn') {
+                    if (simulation.totalOut && simulation.lastStock) {
+                        this.logger.push(
+                            'step =>  (totalIn) | totalOut => ' +
+                                String(simulation.totalOut) +
+                                ' && lastStock => ' +
+                                String(simulation.lastStock)
                         )
-            }
-            if (x === 'realCoverage') {
-                simulation.realCoverage = Math.floor(
-                    (simulation.totalOut as number) /
-                        (simulation.totalIn as number)
-                )
-            }
-            if (x === 'realDTESInMonths') {
-                simulation.realDTESInMonths = Math.floor(
-                    (simulation.lastStock as number) /
-                        (simulation.totalOut as number)
-                )
-            }
-            if (x === 'realTimePerCase') {
-                simulation.realTimePerCase =
-                    Math.floor(
-                        (simulation.lastStock as number) |
-                            (params.endSituation?.lastStock as number)
-                    ) / (simulation.totalOut as number)
-            }
-            if (x === 'etpMag') {
-                simulation.etpMag = Math.floor(
-                    Math.floor(
-                        ((simulation.realTimePerCase as number) |
-                            (params.endSituation?.lastStock as number)) *
-                            (simulation.totalOut as number)
-                    ) / Math.floor(17.333 * 8)
-                )
-            }
-        })
+                        simulation.totalIn =
+                            Math.floor(simulation.lastStock) -
+                            Math.floor(
+                                params.beginSituation?.lastStock as number
+                            ) +
+                            Math.floor(simulation.totalOut)
+                    } else if (simulation.totalOut && simulation.realCoverage) {
+                        this.logger.push(
+                            'step =>  (totalIn) |  totalOut => ' +
+                                String(Math.floor(simulation.totalOut)) +
+                                ' && realCoverage => ' +
+                                String(Math.floor(simulation.realCoverage))
+                        )
+                        simulation.totalIn = Math.floor(
+                            Math.floor(simulation.totalOut) /
+                                simulation.realCoverage
+                        )
+                    }
+                }
+                if (x === 'totalOut') {
+                    if (simulation.etpMag && simulation.realTimePerCase) {
+                        this.logger.push(
+                            'step =>  (totalOut) | etpMag => ' +
+                                String(simulation.etpMag) +
+                                ' && realTimePerCase => ',
+                            String(simulation.realTimePerCase)
+                        )
+                        simulation.totalOut = Math.floor(
+                            Math.floor(simulation.etpMag * 8 * 17.3333) /
+                                simulation.realTimePerCase
+                        )
+                    } else if (simulation.totalIn && simulation.lastStock) {
+                        this.logger.push(
+                            'step =>  (totalOut) | totalIn => ' +
+                                String(simulation.totalIn) +
+                                ' && lastStock => ' +
+                                String(simulation.lastStock)
+                        )
+
+                        simulation.totalOut = Math.floor(
+                            Math.floor(
+                                params.beginSituation?.lastStock as number
+                            ) -
+                                Math.floor(simulation.lastStock) /
+                                    nbOfDays(
+                                        this.simulatorService.dateStart.value,
+                                        this.simulatorService.dateStop.value
+                                    ) /
+                                    (365 / 12) +
+                                simulation.totalIn
+                        )
+                    } else if (
+                        simulation.lastStock &&
+                        simulation.realDTESInMonths
+                    ) {
+                        this.logger.push(
+                            'step =>  (totalOut) | lastStock => ' +
+                                String(simulation.lastStock) +
+                                ' && realDTESInMonths => ' +
+                                String(simulation.realDTESInMonths)
+                        )
+
+                        simulation.totalOut = Math.floor(
+                            simulation.lastStock / simulation.realDTESInMonths
+                        )
+                    } else if (simulation.realCoverage && simulation.totalIn) {
+                        this.logger.push(
+                            'step =>  (totalOut) | realCoverage => ' +
+                                String(simulation.realCoverage) +
+                                ' && totalIn => ' +
+                                String(simulation.totalIn)
+                        )
+
+                        simulation.totalOut = Math.floor(
+                            simulation.realCoverage * simulation.totalIn
+                        )
+                    }
+                }
+                if (x === 'lastStock') {
+                    if (simulation.totalIn && simulation.totalOut) {
+                        this.logger.push(
+                            'step =>  (lastStock) | totalIn => ' +
+                                String(simulation.totalIn) +
+                                ' && totalOut => ' +
+                                String(simulation.totalOut)
+                        )
+                        simulation.lastStock = Math.floor(
+                            Math.floor(
+                                params.beginSituation?.lastStock as number
+                            ) +
+                                Math.floor(
+                                    (Math.floor(simulation.totalIn) *
+                                        nbOfDays(
+                                            this.simulatorService.dateStart
+                                                .value,
+                                            this.simulatorService.dateStop.value
+                                        )) /
+                                        (365 / 12)
+                                ) -
+                                Math.floor(
+                                    (Math.floor(simulation.totalOut) *
+                                        nbOfDays(
+                                            this.simulatorService.dateStart
+                                                .value,
+                                            this.simulatorService.dateStop.value
+                                        )) /
+                                        (365 / 12)
+                                )
+                        )
+                    } else if (
+                        simulation.realDTESInMonths &&
+                        simulation.totalOut
+                    ) {
+                        this.logger.push(
+                            'step =>  (lastStock) | realDTESInMonths => ' +
+                                String(simulation.realDTESInMonths) +
+                                ' && totalOut => ' +
+                                String(simulation.totalOut)
+                        )
+                        simulation.lastStock = Math.floor(
+                            simulation.realDTESInMonths *
+                                Math.floor(simulation.totalOut)
+                        )
+                    }
+                    if (simulation.lastStock && simulation.lastStock < 0) {
+                        simulation.lastStock = 0
+                    }
+                }
+                if (x === 'realCoverage') {
+                    if (simulation.totalOut && simulation.totalIn) {
+                        this.logger.push(
+                            'step =>  (realCoverage) | totalOut => ' +
+                                String(simulation.totalOut) +
+                                (simulation.totalOut
+                                    ? ' calculated '
+                                    : ' endSituation '),
+                            ' && totalIn | => ' +
+                                String(simulation.totalIn) +
+                                (simulation.totalIn
+                                    ? ' calculated ' + simulation.totalIn
+                                    : ' endSituation ' + simulation.totalIn)
+                        )
+
+                        simulation.realCoverage =
+                            (simulation.totalOut ||
+                                (params.endSituation?.totalOut as number)) /
+                            (simulation.totalIn ||
+                                (params.endSituation?.totalIn as number))
+                    }
+                }
+                if (x === 'realDTESInMonths') {
+                    this.logger.push(
+                        'step =>  (realDTESInMonths) | lastStock => ' +
+                            String(simulation.lastStock) +
+                            (simulation.lastStock
+                                ? ' calculated '
+                                : ' endSituation ') +
+                            ' && totalOut => ' +
+                            String(simulation.totalOut) +
+                            (simulation.totalOut
+                                ? ' calculated '
+                                : ' endSituation ')
+                    )
+                    simulation.realDTESInMonths =
+                        Math.round(
+                            (Math.floor(
+                                simulation.lastStock ||
+                                    (params.endSituation?.lastStock as number)
+                            ) /
+                                Math.floor(
+                                    simulation.totalOut ||
+                                        (params.endSituation
+                                            ?.totalOut as number)
+                                )) *
+                                100
+                        ) / 100
+                }
+
+                if (x === 'realTimePerCase') {
+                    this.logger.push(
+                        'step =>  (realTimePerCase) | etpPeriod => ' +
+                            String(
+                                params.endSituation?.etpToCompute as number
+                            ) +
+                            ' && totalOut => ' +
+                            String(simulation.totalOut) +
+                            (simulation.totalOut
+                                ? ' calculated '
+                                : ' endSituation ')
+                    )
+                    simulation.realTimePerCase =
+                        Math.round(
+                            ((17.333 *
+                                8 *
+                                (params.endSituation?.etpToCompute as number)) /
+                                Math.floor(
+                                    simulation.totalOut ||
+                                        (params.endSituation
+                                            ?.totalOut as number)
+                                )) *
+                                100
+                        ) / 100
+                }
+
+                if (x === 'etpMag') {
+                    this.logger.push(
+                        'step =>  (etpMag) | etpPeriod => ' +
+                            String(simulation.realTimePerCase) +
+                            (simulation.realTimePerCase
+                                ? ' calculated '
+                                : ' endSituation ') +
+                            ' && totalOut => ' +
+                            String(simulation.totalOut) +
+                            (simulation.totalOut
+                                ? ' calculated '
+                                : ' endSituation ')
+                    )
+
+                    simulation.etpMag =
+                        Math.round(
+                            (((simulation.realTimePerCase ||
+                                (params.endSituation
+                                    ?.realTimePerCase as number)) *
+                                Math.floor(
+                                    simulation.totalOut ||
+                                        (params.endSituation
+                                            ?.totalOut as number)
+                                )) /
+                                (17.333 * 8)) *
+                                100
+                        ) / 100
+                }
+            })
+        } while (
+            !(
+                simulation.totalIn !== null &&
+                simulation.totalOut !== null &&
+                simulation.lastStock !== null &&
+                simulation.etpMag !== null &&
+                simulation.realTimePerCase !== null &&
+                simulation.realDTESInMonths !== null &&
+                simulation.realCoverage !== null
+            )
+        )
+        this.logger.push('_')
+        if (counter > 1) this.logger.push('WRONG order')
         console.log('big R', simulation)
         this.simulatedSationData = simulation
     }

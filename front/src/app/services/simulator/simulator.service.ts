@@ -190,12 +190,13 @@ export class SimulatorService extends MainClass {
                 true,
                 new Date(month(this.endCurrentSituation, counter, 'lastday'))
             )
+            let etpToCompute = sumBy(etpAffectedToCompute, 'totalEtp')
 
             // Compute realTimePerCase to display using the etpAffected 12 last months available
             let realTimePerCase = fixDecimal(
                 ((environment.nbDaysByMagistrat / 12) *
                     environment.nbHoursPerDay) /
-                    (totalOut / sumBy(etpAffectedToCompute, 'totalEtp'))
+                    (totalOut / etpToCompute)
             )
 
             // Compute totalOut with etp at dateStart (specific date) to display
@@ -339,6 +340,7 @@ export class SimulatorService extends MainClass {
                     calculateDTESInMonths: null,
                     calculateTimePerCase: null,
                     nbMonth,
+                    etpToCompute: futurEtpToCompute,
                 }
                 this.situationProjected.next(list)
             }
@@ -352,6 +354,7 @@ export class SimulatorService extends MainClass {
                 realTimePerCase,
                 etpMag,
                 etpAffected,
+                etpToCompute: etpToCompute,
             }
         } else
             return {
@@ -363,6 +366,7 @@ export class SimulatorService extends MainClass {
                 realTimePerCase: null,
                 etpMag: null,
                 etpAffected: null,
+                etpToCompute: null,
             }
     }
 
