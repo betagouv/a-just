@@ -15,7 +15,7 @@ import { BackupInterface } from 'src/app/interfaces/backup';
 import { dataInterface } from 'src/app/components/select/select.component';
 import { copyArray } from 'src/app/utils/array';
 import { etpLabel } from 'src/app/utils/referentiel';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation';
 import { WorkforceService } from 'src/app/services/workforce/workforce.service';
@@ -67,6 +67,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
+    private router: Router,
     private workforceService: WorkforceService
   ) {
     super();
@@ -187,8 +188,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.dateSelected
     );
     this.route.snapshot.fragment = newId + '';
-    this.isFirstLoad = true;
-    this.onFilterList();
+    this.router.navigate(['/resource-humaine', newId])
   }
 
   trackById(index: number, item: any) {
