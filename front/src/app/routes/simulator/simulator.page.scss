@@ -849,6 +849,29 @@
             left: -3px;
             right: 0px;
 
+            &.present {
+                display: flex;
+
+                .dot-generated-container {
+                    display: flex;
+                    justify-content: flex-end;
+                    flex: 1;
+                    position: relative;
+
+                    .dot-generated {
+                        display: inline-block;
+                        position: absolute;
+                        right: -6.5px;
+                        bottom: -2px;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 7.5px;
+                        background-color: #6a6af4;
+
+                    }
+                }
+            }
+
             &.future {
                 display: flex;
                 left: 155.5px;
@@ -873,6 +896,10 @@
                 }
             }
 
+            &.present {
+                left: 0px;
+            }
+
             &.disabled {
                 pointer-events: none;
                 cursor: auto;
@@ -892,6 +919,10 @@
 
             &.future {
                 left: 155.5px
+            }
+
+            &.present {
+                left: 0px
             }
 
         }
