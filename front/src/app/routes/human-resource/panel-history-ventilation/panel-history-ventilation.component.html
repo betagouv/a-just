@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div *ngIf="indisponibilities.length" class="indisponibility-panel">
+<div *ngIf="indisponibilities.length" class="indisponibility-panel indispo-content">
   <div *ngFor="let indisp of indisponibilities">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
@@ -31,6 +31,9 @@
           {{ getFullYear(indisp.dateStop) }}</ng-template>
       </p>
     </div>
+    <div class="action" (click)="addIndispiniblity.emit(indisp)">
+      <mat-icon>drive_file_rename_outline</mat-icon>
+    </div>
   </div>
 </div>
 
@@ -40,5 +43,5 @@
 
 <div class="actions-panel">
   <button (click)="onEditSituation()" class="outline small primary">Modifier</button>
-  <button (click)="onRemoveSituation()" class="outline small red">Supprimer</button>
+  <button (click)="onRemove.emit()" class="outline small red">Supprimer</button>
 </div>
