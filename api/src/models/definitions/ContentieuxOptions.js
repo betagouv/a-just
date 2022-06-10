@@ -49,6 +49,8 @@ export default sequelizeInstance => {
 
   Model.associate = function (models) {    
     Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
+    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'backup_id' }) 
+
     
     return models
   }
