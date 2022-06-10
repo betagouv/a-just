@@ -1071,30 +1071,30 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             simulation.totalOut = Math.floor(
               simulation.realCoverage * simulation.totalIn
             )
-          }
-        } else if (simulation.realDTESInMonths && simulation.totalIn) {
-          this.logger.push(
-            'step =>  (totalOut) | realDTESInMonths => ' +
-              String(simulation.realDTESInMonths) +
-              ' && totalIn => ' +
-              String(simulation.totalIn)
-          )
+          } else if (simulation.realDTESInMonths && simulation.totalIn) {
+            this.logger.push(
+              'step =>  (totalOut) | realDTESInMonths => ' +
+                String(simulation.realDTESInMonths) +
+                ' && totalIn => ' +
+                String(simulation.totalIn)
+            )
 
-          simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation?.lastStock as number) +
-              simulation.totalIn *
-                (nbOfDays(
-                  this.simulatorService.dateStart.value,
-                  this.simulatorService.dateStop.value
-                ) /
-                  (365 / 12))) /
-              (simulation.realDTESInMonths +
-                nbOfDays(
-                  this.simulatorService.dateStart.value,
-                  this.simulatorService.dateStop.value
-                ) /
-                  (365 / 12))
-          )
+            simulation.totalOut = Math.floor(
+              (Math.floor(params.beginSituation?.lastStock as number) +
+                simulation.totalIn *
+                  (nbOfDays(
+                    this.simulatorService.dateStart.value,
+                    this.simulatorService.dateStop.value
+                  ) /
+                    (365 / 12))) /
+                (simulation.realDTESInMonths +
+                  nbOfDays(
+                    this.simulatorService.dateStart.value,
+                    this.simulatorService.dateStop.value
+                  ) /
+                    (365 / 12))
+            )
+          }
         }
         if (x === 'lastStock') {
           if (simulation.totalIn && simulation.totalOut) {
