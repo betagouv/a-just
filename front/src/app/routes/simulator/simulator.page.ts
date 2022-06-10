@@ -1010,20 +1010,30 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
               'step =>  (totalOut) | totalIn => ' +
                 String(simulation.totalIn) +
                 ' && lastStock => ' +
-                String(simulation.lastStock)
+                String(simulation.lastStock) +
+                ' Calcul différence de stock' +
+                String(
+                  Math.floor(
+                    Math.floor(params.beginSituation?.lastStock as number) -
+                      Math.floor(simulation.lastStock)
+                  )
+                ) +
+                ' Begin situation: ' +
+                String(Math.floor(params.beginSituation?.lastStock as number))
             )
 
-            simulation.totalOut =
+            simulation.totalOut = Math.floor(
               Math.floor(
                 Math.floor(params.beginSituation?.lastStock as number) -
                   Math.floor(simulation.lastStock)
               ) /
-                nbOfDays(
+                (nbOfDays(
                   this.simulatorService.dateStart.value,
                   this.simulatorService.dateStop.value
                 ) /
-                (365 / 12) +
-              simulation.totalIn
+                  (365 / 12)) +
+                simulation.totalIn
+            )
           } else if (simulation.lastStock && simulation.realDTESInMonths) {
             this.logger.push(
               'step =>  (totalOut) | lastStock => ' +
@@ -1059,20 +1069,20 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             simulation.lastStock = Math.floor(
               Math.floor(params.beginSituation?.lastStock as number) +
                 Math.floor(
-                  (Math.floor(simulation.totalIn) *
-                    nbOfDays(
+                  Math.floor(simulation.totalIn) *
+                    (nbOfDays(
                       this.simulatorService.dateStart.value,
                       this.simulatorService.dateStop.value
-                    )) /
-                    (365 / 12)
+                    ) /
+                      (365 / 12))
                 ) -
                 Math.floor(
-                  (Math.floor(simulation.totalOut) *
-                    nbOfDays(
+                  Math.floor(simulation.totalOut) *
+                    (nbOfDays(
                       this.simulatorService.dateStart.value,
                       this.simulatorService.dateStop.value
-                    )) /
-                    (365 / 12)
+                    ) /
+                      (365 / 12))
                 )
             )
           } else if (simulation.realDTESInMonths && simulation.totalOut) {
