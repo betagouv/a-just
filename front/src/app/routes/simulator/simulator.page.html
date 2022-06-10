@@ -648,7 +648,12 @@
             *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',projectedSituationData)"
             [@fadeInOut]
           >
-            {{parseFloat(getFieldValue('realCoverage',simulatedSationData))-parseFloat(getFieldValue('realCoverage',firstSituationData))}}pts
+            {{calculCoverage(parseFloat(getFieldValue('realCoverage',simulatedSationData)),parseFloat(getFieldValue('realCoverage',firstSituationData)))>=
+            0 ? '+' +
+            calculCoverage(parseFloat(getFieldValue('realCoverage',simulatedSationData)),parseFloat(getFieldValue('realCoverage',firstSituationData)))
+            :
+            calculCoverage(parseFloat(getFieldValue('realCoverage',simulatedSationData)),parseFloat(getFieldValue('realCoverage',firstSituationData)))
+            }}pts
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -696,7 +701,7 @@
             *ngIf="!(paramsToAjust.param1.label==='realTimePerCase'  || paramsToAjust.param2.label==='realTimePerCase') && getFieldValue('realTimePerCase',simulatedSationData)!==getFieldValue('realTimePerCase',projectedSituationData)"
             [@fadeInOut]
           >
-            {{ratio(getFieldValue('realTimePerCase',simulatedSationData),getFieldValue('realTimePerCase',firstSituationData,true))}}%
+            {{ratio(getFieldValue('realTimePerCase',simulatedSationData,true,true),getFieldValue('realTimePerCase',firstSituationData,true,true))}}%
 
             <div class="triangle simulated blue"></div>
           </div>
