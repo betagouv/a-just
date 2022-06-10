@@ -374,6 +374,12 @@
             padding: 8px 16px;
             background-color: #000091;
 
+            &.disabled {
+                pointer-events: none;
+                cursor: auto;
+                opacity: 0.5;
+            }
+
             p {
                 color: white;
             }
@@ -712,7 +718,7 @@
             pointer-events: none;
             cursor: auto;
             opacity: 0.5;
-            ;
+
         }
 
         &.disabled-only-date {

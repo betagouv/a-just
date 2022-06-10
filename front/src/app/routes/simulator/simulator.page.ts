@@ -80,7 +80,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   toDisplaySimulation: boolean = false
   toDisplay = []
   toCalculate = []
-
+  simulateButton = 'disabled'
   logger: string[] = []
 
   constructor(
@@ -290,6 +290,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.toDisplay = []
     this.toCalculate = []
     this.logger = []
+    this.simulateButton = 'disabled'
   }
 
   // get minimum date you can select on the date picker
@@ -490,6 +491,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     console.log('this.paramsToAjust', this.paramsToAjust)
     this.valueToAjust = { value: '', percentage: null }
+    if (
+      this.paramsToAjust.param1.input !== 0 ||
+      this.paramsToAjust.param2.input !== 0
+    )
+      this.simulateButton = ''
   }
 
   onUpdateValueToAjust(event: any) {
@@ -591,6 +597,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       },
     }
     this.logger = []
+    this.simulateButton = 'disabled'
 
     this.toDisplay = []
     this.toCalculate = []
@@ -683,6 +690,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         allButton.map((x: any) => {
           x.classList.add('disable')
         })
+        this.simulateButton = 'disabled'
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -705,6 +713,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         allButton.map((x: any) => {
           x.classList.add('disable')
         })
+        this.simulateButton = 'disabled'
       }
     }
   }
@@ -746,6 +755,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         }
       } else {
         const find = this.currentNode.toAjust.find(
@@ -772,6 +782,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         }
       }
     } else if (this.paramsToLock.param2.label === '') {
@@ -806,6 +817,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         } else {
           this.toDisplay = find.toDisplay
           this.toCalculate = find.toCalculate
@@ -815,6 +827,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         }
       } else if (
         this.paramsToAjust.param1.input !== 0 &&
@@ -835,6 +848,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         } else {
           this.toSimulate = false
           this.toDisplaySimulation = true
@@ -846,6 +860,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           allButton.map((x: any) => {
             x.classList.add('disable')
           })
+          this.simulateButton = 'disabled'
         }
       }
     }
@@ -1057,6 +1072,29 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
               simulation.realCoverage * simulation.totalIn
             )
           }
+        } else if (simulation.realDTESInMonths && simulation.totalIn) {
+          this.logger.push(
+            'step =>  (totalOut) | realDTESInMonths => ' +
+              String(simulation.realDTESInMonths) +
+              ' && totalIn => ' +
+              String(simulation.totalIn)
+          )
+
+          simulation.totalOut = Math.floor(
+            (Math.floor(params.beginSituation?.lastStock as number) +
+              simulation.totalIn *
+                (nbOfDays(
+                  this.simulatorService.dateStart.value,
+                  this.simulatorService.dateStop.value
+                ) /
+                  (365 / 12))) /
+              (simulation.realDTESInMonths +
+                nbOfDays(
+                  this.simulatorService.dateStart.value,
+                  this.simulatorService.dateStop.value
+                ) /
+                  (365 / 12))
+          )
         }
         if (x === 'lastStock') {
           if (simulation.totalIn && simulation.totalOut) {
@@ -1152,7 +1190,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
               ((17.333 *
                 8 *
                 (simulation.etpMag ||
-                  (params.endSituation?.etpToCompute as number))) /
+                  (params.beginSituation?.etpMag as number))) /
                 Math.floor(
                   simulation.totalOut ||
                     (params.endSituation?.totalOut as number)
