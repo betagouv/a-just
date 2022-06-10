@@ -594,7 +594,7 @@
 
 
     .items {
-        height: 64px;
+        //height: 64px !important;
         background-color: #fff;
         display: flex;
         position: relative;
@@ -644,6 +644,8 @@
                 font-size: 12px;
                 font-weight: bold;
                 color: #161616;
+                margin-bottom: 24px;
+                margin-top: 24px;
             }
         }
 
@@ -655,7 +657,7 @@
     }
 
     .top-bar-container {
-        height: 99px;
+        height: 99px !important;
         display: flex;
         align-items: flex-start;
         position: relative;
@@ -665,6 +667,7 @@
         p {
             white-space: nowrap;
             padding-top: 24px;
+            z-index: 1;
         }
 
         &::before {
@@ -837,6 +840,7 @@
         margin-left: 74px;
         margin-right: 74px;
         margin-top: 18px;
+        margin-bottom: 100px;
 
         .blue-line {
             display: none;
@@ -849,28 +853,7 @@
             left: -3px;
             right: 0px;
 
-            &.present {
-                display: flex;
 
-                .dot-generated-container {
-                    display: flex;
-                    justify-content: flex-end;
-                    flex: 1;
-                    position: relative;
-
-                    .dot-generated {
-                        display: inline-block;
-                        position: absolute;
-                        right: -6.5px;
-                        bottom: -2px;
-                        width: 8px;
-                        height: 8px;
-                        border-radius: 7.5px;
-                        background-color: #6a6af4;
-
-                    }
-                }
-            }
 
             &.future {
                 display: flex;
@@ -898,6 +881,27 @@
 
             &.present {
                 left: 0px;
+                display: flex;
+
+                .dot-generated-container {
+                    display: flex;
+                    justify-content: flex-end;
+                    flex: 1;
+                    position: relative;
+
+                    .dot-generated {
+                        display: inline-block;
+                        position: absolute;
+                        right: -6.5px;
+                        bottom: -2px;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 7.5px;
+                        background-color: #6a6af4;
+
+                    }
+                }
+
             }
 
             &.disabled {
@@ -922,7 +926,7 @@
             }
 
             &.present {
-                left: 0px
+                left: -3px;
             }
 
         }
