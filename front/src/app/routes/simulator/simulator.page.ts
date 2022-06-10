@@ -210,7 +210,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   getFieldValue(
     param: string,
     data: SimulatorInterface | SimulationInterface | null,
-    initialValue = false
+    initialValue = false,
+    toCompute = false
   ): any {
     if (
       (this.simulatorService.situationActuelle.getValue() !== null &&
@@ -229,7 +230,14 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         case 'etpFon':
           return ''
         case 'realCoverage': {
-          if (data?.realCoverage && initialValue === true)
+          if (data?.realCoverage && toCompute === true) {
+            console.log(
+              'DATPIF:',
+              data?.realCoverage,
+              Math.trunc(data?.realCoverage)
+            )
+            return Math.trunc(data?.realCoverage) || '0'
+          } else if (data?.realCoverage && initialValue === true)
             return Math.trunc(data?.realCoverage) + '%' || '0'
           else if (data?.realCoverage)
             return Math.trunc(data?.realCoverage * 100) + '%' || '0'
@@ -552,7 +560,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       ) / 100
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
-
+  calculCoverage(value1: number, value2: number) {
+    return value1 - value2
+  }
   getReferenceValue(value: any) {
     return parseInt(value)
   }
@@ -1003,16 +1013,17 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 String(simulation.lastStock)
             )
 
-            simulation.totalOut = Math.floor(
-              Math.floor(params.beginSituation?.lastStock as number) -
-                Math.floor(simulation.lastStock) /
-                  nbOfDays(
-                    this.simulatorService.dateStart.value,
-                    this.simulatorService.dateStop.value
-                  ) /
-                  (365 / 12) +
-                simulation.totalIn
-            )
+            simulation.totalOut =
+              Math.floor(
+                Math.floor(params.beginSituation?.lastStock as number) -
+                  Math.floor(simulation.lastStock)
+              ) /
+                nbOfDays(
+                  this.simulatorService.dateStart.value,
+                  this.simulatorService.dateStop.value
+                ) /
+                (365 / 12) +
+              simulation.totalIn
           } else if (simulation.lastStock && simulation.realDTESInMonths) {
             this.logger.push(
               'step =>  (totalOut) | lastStock => ' +
@@ -1109,10 +1120,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           )
           simulation.realDTESInMonths =
             Math.round(
-              (Math.floor(
-                simulation.lastStock ||
-                  (params.endSituation?.lastStock as number)
-              ) /
+              (Math.floor(simulation.lastStock || 0) /
                 Math.floor(
                   simulation.totalOut ||
                     (params.endSituation?.totalOut as number)
@@ -1131,7 +1139,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           )
           simulation.realTimePerCase =
             Math.round(
-              ((17.333 * 8 * (params.endSituation?.etpToCompute as number)) /
+              ((17.333 *
+                8 *
+                (simulation.etpMag ||
+                  (params.endSituation?.etpToCompute as number))) /
                 Math.floor(
                   simulation.totalOut ||
                     (params.endSituation?.totalOut as number)
