@@ -993,8 +993,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 String(simulation.lastStock)
             )
             simulation.totalIn =
-              Math.floor(simulation.lastStock) -
-              Math.floor(params.beginSituation?.lastStock as number) +
+              (Math.floor(simulation.lastStock) -
+                Math.floor(params.beginSituation?.lastStock as number)) /
+                (nbOfDays(
+                  this.simulatorService.dateStart.value,
+                  this.simulatorService.dateStop.value
+                ) /
+                  (365 / 12)) +
               Math.floor(simulation.totalOut)
           } else if (simulation.totalOut && simulation.realCoverage) {
             this.logger.push(
