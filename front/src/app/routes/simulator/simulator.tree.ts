@@ -313,7 +313,7 @@ const tree = [
       {
         locked: totalOut,
         toDisplay: [totalOut, etpMag, realDTESInMonths, realTimePerCase],
-        toCalculate: [totalIn, lastStock, realCoverage],
+        toCalculate: [lastStock, totalIn, realCoverage],
       },
     ],
     toAjust: [
