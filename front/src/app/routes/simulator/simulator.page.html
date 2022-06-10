@@ -194,7 +194,7 @@
         <p class="title">Réinitialiser</p>
       </div>
       <div
-        class="simulate-button"
+        class="simulate-button {{simulateButton}}"
         (click)="simulate([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, realTimePerCase])"
       >
         <p class="title">Simuler</p>
@@ -543,7 +543,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn') && getFieldValue('totalIn',simulatedSationData)!==getFieldValue('totalIn',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn') && getFieldValue('totalIn',simulatedSationData)!==getFieldValue('totalIn',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('totalIn',simulatedSationData),getFieldValue('totalIn',firstSituationData))}}%
@@ -567,7 +567,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut') && getFieldValue('totalOut',simulatedSationData)!==getFieldValue('totalOut',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut') && getFieldValue('totalOut',simulatedSationData)!==getFieldValue('totalOut',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('totalOut',simulatedSationData),getFieldValue('totalOut',firstSituationData))}}%
@@ -591,7 +591,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock') && getFieldValue('lastStock',simulatedSationData)!==getFieldValue('lastStock',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock') && getFieldValue('lastStock',simulatedSationData)!==getFieldValue('lastStock',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('lastStock',simulatedSationData),getFieldValue('lastStock',firstSituationData))}}%
@@ -615,7 +615,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag') && getFieldValue('etpMag',simulatedSationData)!==getFieldValue('etpMag',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag') && getFieldValue('etpMag',simulatedSationData)!==getFieldValue('etpMag',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('etpMag',simulatedSationData),getFieldValue('etpMag',firstSituationData))}}%
@@ -645,7 +645,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',firstSituationData)"
             [@fadeInOut]
           >
             {{calculCoverage(parseFloat(getFieldValue('realCoverage',simulatedSationData)),parseFloat(getFieldValue('realCoverage',firstSituationData)))>=
@@ -674,7 +674,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths') && getFieldValue('realDTESInMonths',simulatedSationData)!==getFieldValue('realDTESInMonths',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths') && getFieldValue('realDTESInMonths',simulatedSationData)!==getFieldValue('realDTESInMonths',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('realDTESInMonths',simulatedSationData),getFieldValue('realDTESInMonths',firstSituationData))}}%
@@ -698,7 +698,7 @@
           </div>
           <div
             class="modified-label simulated blue"
-            *ngIf="!(paramsToAjust.param1.label==='realTimePerCase'  || paramsToAjust.param2.label==='realTimePerCase') && getFieldValue('realTimePerCase',simulatedSationData)!==getFieldValue('realTimePerCase',projectedSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='realTimePerCase'  || paramsToAjust.param2.label==='realTimePerCase') && getFieldValue('realTimePerCase',simulatedSationData)!==getFieldValue('realTimePerCase',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('realTimePerCase',simulatedSationData,true,true),getFieldValue('realTimePerCase',firstSituationData,true,true))}}%
