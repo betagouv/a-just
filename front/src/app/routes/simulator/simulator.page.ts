@@ -992,7 +992,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 ' && lastStock => ' +
                 String(simulation.lastStock)
             )
-            simulation.totalIn =
+            simulation.totalIn = Math.floor(
               (Math.floor(simulation.lastStock) -
                 Math.floor(params.beginSituation?.lastStock as number)) /
                 (nbOfDays(
@@ -1000,7 +1000,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                   this.simulatorService.dateStop.value
                 ) /
                   (365 / 12)) +
-              Math.floor(simulation.totalOut)
+                Math.floor(simulation.totalOut)
+            )
           } else if (simulation.totalOut && simulation.realCoverage) {
             this.logger.push(
               'step =>  (totalIn) |  totalOut => ' +
