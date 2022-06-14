@@ -244,6 +244,7 @@
       [closeIcon]="true"
       (onClose)="openPopup = false"
       [removeShadow]="'noShadow'"
+      (keypress)="onKeypressEvent($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,realTimePerCase])"
       (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,realTimePerCase])"
     >
       <div id="circle">

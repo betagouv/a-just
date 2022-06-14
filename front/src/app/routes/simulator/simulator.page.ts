@@ -192,7 +192,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   monthDiff(dateFrom: Date, dateTo: Date | null): number[] {
-    console.log(this.nbOfMonthWithinPeriod, dateFrom, dateTo === null)
     if (dateTo)
       return [
         ...Array(
@@ -231,11 +230,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           return ''
         case 'realCoverage': {
           if (data?.realCoverage && toCompute === true) {
-            console.log(
-              'DATPIF:',
-              data?.realCoverage,
-              Math.trunc(data?.realCoverage)
-            )
             return Math.trunc(data?.realCoverage) || '0'
           } else if (data?.realCoverage && initialValue === true)
             return Math.trunc(data?.realCoverage) + '%' || '0'
@@ -322,7 +316,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     if (this.paramsToAjust.param1.input === 0) this.currentNode = find
     this.openPopup = true
-    console.log(this.currentNode)
   }
 
   setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
@@ -331,15 +324,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.paramsToAjust.param1.input === 0 && this.currentNode
         ? this.currentNode.toAjust.map((x: any) => x.label)
         : null
-    console.log(
-      'volume',
-      volumeInput,
-      'percent',
-      this.valueToAjust.percentage,
-      'parse',
-      this.valueToAjust.value,
-      parseInt(this.valueToAjust.value)
-    )
+
     // if param comming from input type volume
     if (
       volumeInput &&
@@ -347,7 +332,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         (this.buttonSelected.id === 'lastStock' &&
           parseFloat(volumeInput) === 0))
     ) {
-      console.log('first if')
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         !this.paramsToAjust.param1.value ||
@@ -379,15 +363,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage) {
-      console.log('second if', this.paramsToAjust.param1.value)
-
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
         this.paramsToAjust.param1.label === inputField.id
       ) {
-        console.log('third if')
-
         this.paramsToAjust.param1.value = this.valueToAjust.value
         this.paramsToAjust.param1.label = inputField.id
         this.paramsToAjust.param1.input = 2
@@ -396,8 +376,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.disabled = 'disabled-only-date'
         //else edit param 2
       } else {
-        console.log('fourth if')
-
         this.paramsToAjust.param2.value = this.valueToAjust.value
         this.paramsToAjust.param2.label = inputField.id
         this.paramsToAjust.param2.input = 2
@@ -489,7 +467,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     //close the popup
     this.openPopup = false
 
-    console.log('this.paramsToAjust', this.paramsToAjust)
     this.valueToAjust = { value: '', percentage: null }
     if (
       this.paramsToAjust.param1.input !== 0 ||
@@ -504,7 +481,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       if (this.buttonSelected.id === 'lastStock') this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null }
     } else this.valueToAjust = event
-    console.log('vevent', event)
   }
 
   valueSaved(input: number): string {
@@ -842,7 +818,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           )
           this.toDisplay = objSecond.toDisplay
           this.toCalculate = objSecond.toCalculate
-          console.log('7 compute', this.toDisplay, this.toCalculate)
+          //console.log('7 compute', this.toDisplay, this.toCalculate)
           //compute !
           this.computeSimulation()
           allButton.map((x: any) => {
@@ -854,7 +830,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
           this.toCalculate = find.toCalculate
-          console.log('8 compute', this.toDisplay, this.toCalculate)
+          //console.log('8 compute', this.toDisplay, this.toCalculate)
           //compute !
           this.computeSimulation()
           allButton.map((x: any) => {
@@ -1243,5 +1219,16 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     if (counter > 1) this.logger.push('WRONG order')
     console.log('big R', simulation)
     this.simulatedSationData = simulation
+  }
+
+  onKeypressEvent(
+    event: any,
+    volumeInput: any,
+    inputField: any,
+    allButton: any
+  ) {
+    if (event.which === 13) {
+      this.setParamsToAjust(volumeInput, inputField, allButton)
+    }
   }
 }
