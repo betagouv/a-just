@@ -203,5 +203,26 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  Model.haveAccess = async (id, userId) => {
+    const hr = await Model.findOne({
+      where: {
+        id,
+      },
+      attributes: ['id'],
+      model: Model.models.HRBackups,
+      include: [{
+        attributes: ['id'],
+        model: Model.models.UserVentilations,
+        required: true,
+        where: {
+          user_id: userId,
+        },
+      }],
+      raw: true,
+    })
+
+    return hr ? true : false
+  }
+
   return Model
 }
