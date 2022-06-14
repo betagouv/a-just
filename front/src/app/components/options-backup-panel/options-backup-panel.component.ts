@@ -47,7 +47,10 @@ export class OptionsBackupPanelComponent
   }
 
   formatDatas() {
-    this.formDatas = []
+    if(this.selectedIds && this.selectedIds.length && !this.backups.find(b => b.id === this.selectedIds[0])) {
+      this.selectedIds = []
+    }
+
     this.formDatas = this.backups.map((back) => {
       const date = new Date(back.date)
 
@@ -62,6 +65,7 @@ export class OptionsBackupPanelComponent
   }
 
   onChangeBackup(id: any[]) {
+    console.log(id)
     if (
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
       !confirm('Vous avez des modifications en cours. Supprimer ?')
