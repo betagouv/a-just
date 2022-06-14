@@ -137,6 +137,7 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
+          this.autoReloadData = true
           this.backupId.next(r.data)
         })
     }
@@ -158,7 +159,7 @@ export class ContentieuxOptionsService extends MainClass {
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
       .then((r) => {
-        alert('Enregistrement OK !')
+        this.autoReloadData = true
         this.backupId.next(r.data)
       })
   }
@@ -174,6 +175,7 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
+          this.autoReloadData = true
           this.backupId.next(r.data)
         })
     }
