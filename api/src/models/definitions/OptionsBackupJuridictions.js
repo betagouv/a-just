@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'OptionsBackups'
+const tableName = 'OptionsBackupJuridictions'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,8 +13,12 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      option_backup_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      juridiction_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {
@@ -39,8 +43,9 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {
-    Model.hasMany(models.OptionsBackupJuridictions, { foreignKey: 'option_backup_id', sourceKey: 'id' }) 
+  Model.associate = function (models) {   
+    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'option_backup_id' }) 
+    Model.hasMany(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'juridiction_id' })  
 
     return models
   }

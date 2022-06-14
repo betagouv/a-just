@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { BackupInterface } from 'src/app/interfaces/backup';
-import { MainClass } from 'src/app/libs/main-class';
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service';
-import { dataInterface } from '../select/select.component';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { BackupInterface } from 'src/app/interfaces/backup'
+import { MainClass } from 'src/app/libs/main-class'
+import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+import { dataInterface } from '../select/select.component'
 
 @Component({
   selector: 'aj-options-backup-panel',
@@ -13,42 +13,46 @@ export class OptionsBackupPanelComponent
   extends MainClass
   implements OnInit, OnDestroy
 {
-  @Input() readOnly: boolean = false;
-  backups: BackupInterface[] = [];
-  optionsIsModify: boolean = false;
-  selectedIds: any[] = [];
-  formDatas: dataInterface[] = [];
+  @Input() readOnly: boolean = false
+  backups: BackupInterface[] = []
+  optionsIsModify: boolean = false
+  selectedIds: any[] = []
+  formDatas: dataInterface[] = []
 
   constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
-    super();
+    super()
 
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = b;
-        this.formatDatas();
+        this.backups = b
+        this.formatDatas()
       })
-    );
+    )
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(
         (b) => (this.selectedIds = [b])
       )
-    );
+    )
     this.watch(
       this.contentieuxOptionsService.optionsIsModify.subscribe(
         (b) => (this.optionsIsModify = b)
       )
-    );
+    )
   }
 
   ngOnInit() {}
 
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   formatDatas() {
+    if(this.selectedIds && this.selectedIds.length && !this.backups.find(b => b.id === this.selectedIds[0])) {
+      this.selectedIds = []
+    }
+
     this.formDatas = this.backups.map((back) => {
-      const date = new Date(back.date);
+      const date = new Date(back.date)
 
       return {
         id: back.id,
@@ -56,41 +60,46 @@ export class OptionsBackupPanelComponent
           2,
           '0'
         )} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
-      };
-    });
+      }
+    })
   }
 
   onChangeBackup(id: any[]) {
+    console.log(id)
     if (
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
       !confirm('Vous avez des modifications en cours. Supprimer ?')
     ) {
-      this.selectedIds = [this.contentieuxOptionsService.backupId.getValue()];
-      return;
+      this.selectedIds = [this.contentieuxOptionsService.backupId.getValue()]
+      return
     }
 
     if (id.length) {
-      this.contentieuxOptionsService.backupId.next(id[0]);
+      this.contentieuxOptionsService.backupId.next(id[0])
     }
   }
 
   onRemoveBackup() {
-    this.contentieuxOptionsService.removeBackup();
+    this.contentieuxOptionsService.removeBackup()
   }
 
   onDuplicateBackup() {
-    this.contentieuxOptionsService.duplicateBackup();
+    this.contentieuxOptionsService.duplicateBackup()
   }
 
   onSaveHR(isCopy: boolean = false) {
-    this.contentieuxOptionsService.onSaveDatas(isCopy);
+    this.contentieuxOptionsService.onSaveDatas(isCopy)
   }
 
   trackBy(index: number, item: any) {
-    return item.id;
+    return item.id
   }
 
   onCreateEmptyBackup() {
-    this.contentieuxOptionsService.createEmpy();
+    this.contentieuxOptionsService.createEmpy()
+  }
+
+  onRenameBackup() {
+    this.contentieuxOptionsService.renameBackup()
   }
 }
