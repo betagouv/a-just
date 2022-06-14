@@ -94,21 +94,27 @@ export default class RouteContentieuxOptions extends Route {
   })
   async saveBackup (ctx) {
     const { backupId, list, backupName, juridictionId } = this.body(ctx)
-
+    
     if (
-      await this.models.OptionsBackups.haveAccess(
-        backupId,
-        juridictionId,
-        ctx.state.user.id
-      )
+      (backupId &&
+        (await this.models.OptionsBackups.haveAccess(
+          backupId,
+          juridictionId,
+          ctx.state.user.id
+        ))) ||
+      (!backupId &&
+        (await this.models.HRBackups.haveAccess(
+          juridictionId,
+          ctx.state.user.id
+        )))
     ) {
       const newId = await this.model.models.OptionsBackups.saveBackup(
         list,
         backupId,
         backupName,
-        juridictionId,
+        juridictionId
       )
-  
+
       this.sendOk(ctx, newId)
     } else {
       this.sendOk(ctx, null)
@@ -133,11 +139,8 @@ export default class RouteContentieuxOptions extends Route {
         ctx.state.user.id
       )
     ) {
-      await this.model.models.OptionsBackups.renameBackup(
-        backupId,
-        backupName,
-      )
-  
+      await this.model.models.OptionsBackups.renameBackup(backupId, backupName)
+
       this.sendOk(ctx, 'Ok')
     } else {
       this.sendOk(ctx, null)
