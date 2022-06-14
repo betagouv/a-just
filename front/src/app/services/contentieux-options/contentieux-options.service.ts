@@ -115,6 +115,7 @@ export class ContentieuxOptionsService extends MainClass {
       return this.serverService
         .delete(`contentieux-options/remove-backup/${this.backupId.getValue()}`)
         .then(() => {
+          this.autoReloadData = true
           this.backupId.next(null)
         })
     }
