@@ -33,33 +33,40 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   initDatas() {
+    this.humanResourceService.backupId.subscribe((juridictionId) => {
+      if (juridictionId) {
+        this.watchDatas()
+      }
+    })
+  }
+
+  watchDatas() {
     this.watcherDestroy()
     this.watch(
-      this.humanResourceService.backupId.subscribe((juridictionId) => {
-        if (juridictionId) {
-          this.watch(
-            this.backupId.subscribe((backupId) => {
-              if (!this.isLoading) {
-                this.isLoading = true
+      this.backupId.subscribe((backupId) => {
+        const juridictionId = this.humanResourceService.backupId.getValue()
+        if (!juridictionId) {
+          return
+        }
 
-                if (this.autoReloadData) {
-                  this.getAllContentieuxOptions(backupId, juridictionId).then(
-                    (result) => {
-                      this.contentieuxOptions.next(result.list)
-                      this.backups.next(result.backups)
-                      this.backupId.next(result.backupId)
-                      this.optionsIsModify.next(false)
-                      this.autoReloadData = false
-                      this.isLoading = false
-                    }
-                  )
-                } else {
-                  this.autoReloadData = true
-                  this.isLoading = false
-                }
+        if (!this.isLoading) {
+          this.isLoading = true
+
+          if (this.autoReloadData) {
+            this.getAllContentieuxOptions(backupId, juridictionId).then(
+              (result) => {
+                this.contentieuxOptions.next(result.list)
+                this.backups.next(result.backups)
+                this.backupId.next(result.backupId)
+                this.optionsIsModify.next(false)
+                this.autoReloadData = false
+                this.isLoading = false
               }
-            })
-          )
+            )
+          } else {
+            this.autoReloadData = true
+            this.isLoading = false
+          }
         }
       })
     )
@@ -174,7 +181,9 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   renameBackup() {
-    const getBackup = this.backups.getValue().find(b => b.id === this.backupId.getValue())
+    const getBackup = this.backups
+      .getValue()
+      .find((b) => b.id === this.backupId.getValue())
     let backupName = prompt('Sous quel nom ?', getBackup ? getBackup.label : '')
 
     if (backupName) {
@@ -186,8 +195,8 @@ export class ContentieuxOptionsService extends MainClass {
         })
         .then(() => {
           const list = this.backups.getValue()
-          const index = list.findIndex(b => b.id === this.backupId.getValue())
-          if(index !== -1) {
+          const index = list.findIndex((b) => b.id === this.backupId.getValue())
+          if (index !== -1) {
             list[index].label = '' + backupName
             this.backups.next(list)
           }

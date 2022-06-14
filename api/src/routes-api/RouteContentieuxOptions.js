@@ -28,6 +28,9 @@ export default class RouteContentieuxOptions extends Route {
       list = await this.model.getAll(backupId, juridictionId)
     } else if (backups.length) {
       list = await this.model.getAll(backups[0].id, juridictionId)
+      backupId = backups[0].id
+    } else {
+      backupId = null
     }
 
     this.sendOk(ctx, {
