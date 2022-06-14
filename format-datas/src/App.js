@@ -311,10 +311,10 @@ export default class App {
             })
 
             // save values
-            list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + sumBy(
+            list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + (sumBy(
               lines,
               (newRules.TOTAL || '').toLowerCase()
-            )
+            ) || 0)
           }
         }
       }
