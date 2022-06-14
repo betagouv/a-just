@@ -55,6 +55,7 @@ export class ContentieuxOptionsService extends MainClass {
                   )
                 } else {
                   this.autoReloadData = true
+                  this.isLoading = false
                 }
               }
             })
@@ -146,6 +147,7 @@ export class ContentieuxOptionsService extends MainClass {
         list: this.contentieuxOptions.getValue(),
         backupId: this.backupId.getValue(),
         backupName: backupName ? backupName : null,
+        juridictionId: this.humanResourceService.backupId.getValue(),
       })
       .then((r) => {
         alert('Enregistrement OK !')
@@ -161,9 +163,34 @@ export class ContentieuxOptionsService extends MainClass {
         .post(`contentieux-options/save-backup`, {
           list: [],
           backupName: backupName,
+          juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
           this.backupId.next(r.data)
+        })
+    }
+
+    return Promise.resolve()
+  }
+
+  renameBackup() {
+    const getBackup = this.backups.getValue().find(b => b.id === this.backupId.getValue())
+    let backupName = prompt('Sous quel nom ?', getBackup ? getBackup.label : '')
+
+    if (backupName) {
+      return this.serverService
+        .post(`contentieux-options/rename-backup`, {
+          backupId: this.backupId.getValue(),
+          backupName: backupName,
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then(() => {
+          const list = this.backups.getValue()
+          const index = list.findIndex(b => b.id === this.backupId.getValue())
+          if(index !== -1) {
+            list[index].label = '' + backupName
+            this.backups.next(list)
+          }
         })
     }
 

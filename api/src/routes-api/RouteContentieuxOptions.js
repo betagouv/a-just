@@ -85,19 +85,60 @@ export default class RouteContentieuxOptions extends Route {
       list: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
+      juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName } = this.body(ctx)
+    const { backupId, list, backupName, juridictionId } = this.body(ctx)
 
-    const newId = await this.model.models.OptionsBackups.saveBackup(
-      list,
-      backupId,
-      backupName
-    )
+    if (
+      await this.models.OptionsBackups.haveAccess(
+        backupId,
+        juridictionId,
+        ctx.state.user.id
+      )
+    ) {
+      const newId = await this.model.models.OptionsBackups.saveBackup(
+        list,
+        backupId,
+        backupName,
+        juridictionId,
+      )
+  
+      this.sendOk(ctx, newId)
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 
-    this.sendOk(ctx, newId)
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      backupName: Types.string().required(),
+      juridictionId: Types.number().required(),
+    }),
+    accesses: [Access.canVewContentieuxOptions],
+  })
+  async renameBackup (ctx) {
+    const { backupId, backupName, juridictionId } = this.body(ctx)
+
+    if (
+      await this.models.OptionsBackups.haveAccess(
+        backupId,
+        juridictionId,
+        ctx.state.user.id
+      )
+    ) {
+      await this.model.models.OptionsBackups.renameBackup(
+        backupId,
+        backupName,
+      )
+  
+      this.sendOk(ctx, 'Ok')
+    } else {
+      this.sendOk(ctx, null)
+    }
   }
 
   @Route.Get({

@@ -42,6 +42,12 @@ export default (sequelizeInstance, Model) => {
         backup_id: backupId,
       },
     })
+
+    await Model.models.OptionsBackupJuridictions.destroy({
+      where: {
+        option_backup_id: backupId,
+      },
+    })
   }
 
   Model.duplicateBackup = async (backupId, backupName, juridictionId) => {
@@ -82,7 +88,7 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName) => {
+  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
@@ -91,6 +97,10 @@ export default (sequelizeInstance, Model) => {
         label: backupName,
       })
       newBackupId = newBackup.dataValues.id
+      await Model.models.OptionsBackupJuridictions.create({
+        option_backup_id: newBackupId,
+        juridiction_id: juridictionId,
+      })
     }
 
     for(let x = 0; x < list.length; x++) {
@@ -129,6 +139,20 @@ export default (sequelizeInstance, Model) => {
     }
 
     return newBackupId
+  }
+
+  Model.renameBackup = async (backupId, backupName) => {
+    const backup = await Model.findOne({
+      where: {
+        id: backupId,
+      },
+    })
+      
+    if(backup) {
+      await backup.update({
+        label: backupName,
+      })
+    }
   }
 
   Model.haveAccess = async (optionBackupId, juridictionId, userId) => {
