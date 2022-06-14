@@ -13,6 +13,7 @@ output.pdf
 tmp
 tmp-old
 inputs/*
+inputs-old
 outputs/*
 outputs-old
 inputs copy/*
