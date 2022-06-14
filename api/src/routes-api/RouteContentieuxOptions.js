@@ -9,14 +9,26 @@ export default class RouteContentieuxOptions extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.any(),
+      juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async getAll (ctx) {
-    let { backupId } = this.body(ctx)
-    const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id)
-    backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
-    const list = await this.model.getAll(backupId)
+    let { backupId, juridictionId } = this.body(ctx)
+    const backups = await this.model.models.OptionsBackups.getBackup(
+      ctx.state.user.id,
+      juridictionId
+    )
+    backupId =
+      backupId || (backups.length ? backups[backups.length - 1].id : null)
+    let list = []
+
+    //checkIfBackupIdExist
+    if (backups.find((b) => b.id === backupId)) {
+      list = await this.model.getAll(backupId, juridictionId)
+    } else if (backups.length) {
+      list = await this.model.getAll(backups[0].id, juridictionId)
+    }
 
     this.sendOk(ctx, {
       list,
@@ -30,7 +42,7 @@ export default class RouteContentieuxOptions extends Route {
     accesses: [Access.canVewContentieuxOptions],
   })
   async removeBackup (ctx) {
-    const { backupId } = ctx.params   
+    const { backupId } = ctx.params
 
     await this.model.models.OptionsBackups.removeBackup(backupId)
 
@@ -41,13 +53,31 @@ export default class RouteContentieuxOptions extends Route {
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
       backupName: Types.string().required(),
+      juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async duplicateBackup (ctx) {
-    const { backupId, backupName } = this.body(ctx)
+    const { backupId, backupName, juridictionId } = this.body(ctx)
 
-    this.sendOk(ctx, await this.model.models.OptionsBackups.duplicateBackup(backupId, backupName))
+    if (
+      await this.models.OptionsBackups.haveAccess(
+        backupId,
+        juridictionId,
+        ctx.state.user.id
+      )
+    ) {
+      this.sendOk(
+        ctx,
+        await this.model.models.OptionsBackups.duplicateBackup(
+          backupId,
+          backupName,
+          juridictionId
+        )
+      )
+    } else {
+      this.sendOk(ctx, null)
+    }
   }
 
   @Route.Post({
@@ -55,14 +85,94 @@ export default class RouteContentieuxOptions extends Route {
       list: Types.any(),
       backupId: Types.number(),
       backupName: Types.string(),
+      juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName } = this.body(ctx)
+    const { backupId, list, backupName, juridictionId } = this.body(ctx)
 
-    const newId = await this.model.models.OptionsBackups.saveBackup(list, backupId, backupName)
+    if (
+      await this.models.OptionsBackups.haveAccess(
+        backupId,
+        juridictionId,
+        ctx.state.user.id
+      )
+    ) {
+      const newId = await this.model.models.OptionsBackups.saveBackup(
+        list,
+        backupId,
+        backupName,
+        juridictionId,
+      )
+  
+      this.sendOk(ctx, newId)
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 
-    this.sendOk(ctx, newId)
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      backupName: Types.string().required(),
+      juridictionId: Types.number().required(),
+    }),
+    accesses: [Access.canVewContentieuxOptions],
+  })
+  async renameBackup (ctx) {
+    const { backupId, backupName, juridictionId } = this.body(ctx)
+
+    if (
+      await this.models.OptionsBackups.haveAccess(
+        backupId,
+        juridictionId,
+        ctx.state.user.id
+      )
+    ) {
+      await this.model.models.OptionsBackups.renameBackup(
+        backupId,
+        backupName,
+      )
+  
+      this.sendOk(ctx, 'Ok')
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAllAdmin (ctx) {
+    const list = await this.models.OptionsBackups.adminGetAll()
+
+    const juridictions = await this.models.HRBackups.findAll({
+      attributes: ['id', 'label'],
+      raw: true,
+    })
+
+    this.sendOk(ctx, {
+      list,
+      juridictions,
+    })
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      id: Types.number().required(),
+      juridictions: Types.array().required(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async updateBackup (ctx) {
+    const { id, juridictions } = this.body(ctx)
+
+    await this.model.models.OptionsBackupJuridictions.changeRules(
+      id,
+      juridictions
+    )
+
+    this.sendOk(ctx, 'Ok')
   }
 }
