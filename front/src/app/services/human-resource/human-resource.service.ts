@@ -596,7 +596,10 @@ export class HumanResourceService {
     }
   }
 
-  controlIndisponibilities(human: HumanResourceInterface, indisponibilities: RHActivityInterface[]) {
+  controlIndisponibilities(
+    human: HumanResourceInterface,
+    indisponibilities: RHActivityInterface[]
+  ) {
     const indispos = indisponibilities
     const max = maxBy(
       indispos.filter((a) => a.dateStop),

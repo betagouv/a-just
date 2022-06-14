@@ -1,5 +1,5 @@
 export default (sequelizeInstance, Model) => {
-  Model.getAll = async (backupId) => {
+  Model.getAll = async (backupId, juridictionId) => {
     const list = await Model.findAll({
       attributes: ['id', 'average_processing_time'],
       where: {
@@ -8,6 +8,16 @@ export default (sequelizeInstance, Model) => {
       include: [{
         attributes: ['id', 'label'],
         model: Model.models.ContentieuxReferentiels,
+      }, { 
+        model: Model.models.OptionsBackups,
+        required: true,
+        include: [{ 
+          model: Model.models.OptionsBackupJuridictions,
+          required: true,
+          where: {
+            juridiction_id: juridictionId,
+          },
+        }],
       }],
       raw: true,
     })

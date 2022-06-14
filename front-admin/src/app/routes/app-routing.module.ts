@@ -20,6 +20,12 @@ const routes: Routes = [
     canActivate: [AdminAuthGuard],
   },
   {
+    path: 'backup-options',
+    loadChildren: () =>
+      import('./backup-options/backup-options.module').then((mod) => mod.BackupOptionsModule),
+    canActivate: [AdminAuthGuard],
+  },
+  {
     path: 'imports',
     loadChildren: () =>
       import('./imports/imports.module').then((mod) => mod.ImportsModule),
