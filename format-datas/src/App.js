@@ -11,7 +11,6 @@ import {
 } from 'fs'
 import { csvToArrayJson } from '../utils/csv'
 import {
-  authorizateIELST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
@@ -312,7 +311,7 @@ export default class App {
             })
 
             // save values
-            list[rule['Code nomenclature']][node] = sumBy(
+            list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + sumBy(
               lines,
               (newRules.TOTAL || '').toLowerCase()
             )
@@ -326,7 +325,6 @@ export default class App {
 
   filterDatasByNomenc (rules, lines, node, referentiel) {
     let nodeValues = rules[node]
-    const regexIfDifferent = new RegExp('<>(.*?)"(.*)"', 'g')
     let include = true
     let listCodeToFind = []
     if(typeof nodeValues === 'undefined') {
@@ -341,13 +339,12 @@ export default class App {
     nodeValues.map(value => {
       value = value.trim() // clean string
       let label = value
-      let testRegex
 
-      if((testRegex = regexIfDifferent.exec(value)) !== null) {
-        label = testRegex[2]
+      if(label.startsWith('<>') === true) {
+        label = label.replace('<>', '').trim().slice(1, -1)
         include = false // warning need to be alway same
       }
-      
+
       const findRefList = referentiel.filter(
         (r) => r.LIBELLE === label && r.TYPE_NOMENC === node
       )

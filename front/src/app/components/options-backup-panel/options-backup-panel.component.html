@@ -3,15 +3,22 @@
 </aj-select>
 
 <ng-template [ngIf]="readOnly === false">
-    <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">Enregistrer
-        sous</button>
+    <button [disabled]="!optionsIsModify" mat-stroked-button class="left-margin" (click)="onSaveHR(true)">
+        Enregistrer sous
+    </button>
     <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" mat-stroked-button class="left-margin"
-        (click)="onSaveHR(false)">Enregister</button>
+        (click)="onSaveHR(false)">
+        Enregister
+    </button>
 
     <button mat-icon-button class="left-margin" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
         <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onRenameBackup()">
+            <mat-icon>edit</mat-icon>
+            <span>Renommer</span>
+        </button>
         <button mat-menu-item (click)="onRemoveBackup()">
             <mat-icon>delete_outline</mat-icon>
             <span>Supprimer</span>
