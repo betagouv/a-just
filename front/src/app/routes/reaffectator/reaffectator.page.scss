@@ -1,0 +1,494 @@
+@import "../../styles/utils.scss";
+
+.header-list {
+  display: flex;
+  width: 100%;
+  height: 96px;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1;
+  position: sticky;
+  top: 0;
+
+  .profil {
+    display: flex;
+    align-items: center;
+    padding-left: 24px;
+    width: 416px;
+
+    > .label-container {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      align-self: stretch;
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+
+      > .label {
+        flex: 1;
+      }
+
+    
+    }
+
+    > .contentieux-label {
+      align-self: stretch;
+      display: flex;
+      background-color: fColor(bgSelect);
+      width: 125px!important;
+
+      > .text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        margin-bottom: 8px;
+        margin-right: 8px;
+
+        p {
+          text-align: center;
+          font-size: 12px;
+          color: fColor(colorTag);
+        }
+        .etp-header {
+          color: fColor(cgraylightv2);
+        }
+
+        > .label {
+          flex: 1;
+          display: flex;
+          align-items: flex-end;
+        }
+        > .etp {
+          display: flex;
+          align-items: center;
+          flex: 1;
+        }
+        > .filter {
+          display: flex;
+          align-items: center;
+          flex: 1;
+       
+        }
+      }
+    }
+  }
+
+  .activities {
+    > .sub-item {
+      cursor: pointer;
+
+      &.selected {
+        background-color: fColor(bgHeaderSelected);
+
+        > div.text .filter mat-icon {
+          color: fColor(sortIconHeaderSelected);
+        }
+      }
+
+      > div.text {
+        flex: 1;
+
+        .label {
+          flex: 1;
+          align-items: flex-end;
+          //height: 40px;
+          p {
+            text-transform: uppercase;
+          }
+        }
+
+        .etp {
+          flex: 1;
+         
+          p {
+            color: fColor(headerNumberColor);
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: -0.53px;
+          }
+        }
+
+        .filter {
+          flex: 1;
+
+          p {
+            color: #161616;
+          }
+          mat-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+            color: fColor(headerColor);
+          }
+        }
+      }
+    }
+  }
+}
+
+.item-list {
+  display: flex;
+  width: calc(100% - 32px);
+  margin-left: 16px;
+  border-radius: 4px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .content-list {
+    flex: 1;
+    overflow: auto;
+
+    .sub-content-list {
+      display: inline-block;
+      width: 100%;
+    }
+  }
+}
+
+.item-list {
+  margin-top: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: white;
+
+  &:last-child {
+    margin-bottom: 16px;
+  }
+
+  .activities {
+    flex-direction: column;
+  }
+
+  .actions {
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    a {
+      padding: 16px;
+      color: fColor(titleEtpGraph);
+      cursor: pointer;
+    }
+  }
+}
+
+.profil {
+  width: 400px;
+
+  &.item {
+    display: flex;
+
+    .text {
+      flex: 1;
+      padding: 24px 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+
+      .name {
+        margin-bottom: 8px;
+        display: flex;
+
+        p {
+          font-weight: bold;
+          color: fColor(titleSelect);
+          flex: 1;
+        }
+
+        .tooltip {
+          margin-left: 8px;
+          position: relative;
+
+          &:hover .tooltiptext {
+            visibility: visible;
+          }
+
+          mat-icon {
+            color: fColor(borderProgressBar);
+          }
+
+          .tooltiptext {
+            visibility: hidden;
+            background-color: fColor(borderProgressBar);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            top: -5px;
+            left: 105%;
+          }
+        }
+      }
+
+      .tags {
+        margin-bottom: 8px;
+
+        > p {
+          display: inline-block;
+          height: 24px;
+          padding: 2px 8px;
+          border-radius: 40px;
+          font-size: 12px;
+          margin-right: 8px;
+          margin-bottom: 4px;
+
+          &.function {
+            color: white;
+            background-color: fColor(cbluelight);
+
+            mat-icon {
+              color: fColor(white);
+            }
+          }
+
+          &.etp {
+            color: fColor(cblack);
+            background-color: fColor(cgrayDefault);
+
+            mat-icon {
+              color: fColor(cblack);
+            }
+          }
+
+          mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            position: relative;
+            top: 3px;
+          }
+        }
+      }
+    }
+
+    .read-etp {
+      padding: 0 14px;
+      width: 125px!important;
+      background-color: fColor(bgSelect);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+
+      .label {
+        font-size: 14px;
+        color: fColor(cgreen);
+      }
+    }
+  }
+}
+
+.unavailable {
+  color: fColor(titleIndisponibilitiesPanel);
+
+  mat-icon {
+    color: fColor(titleIndisponibilitiesPanel);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    position: relative;
+    top: 5px;
+  }
+}
+
+.work-time {
+  width: 80px;
+  margin-right: 16px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activities {
+  display: flex;
+  flex: 1;
+  .sub-item {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+
+    &:first-child div.text {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    div.text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+      div {
+        display: flex;
+        align-items: center;
+
+        &.label {
+          //flex: 2;
+        }
+
+        &.etp {
+          flex: 1;
+        }
+      }
+
+      p {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 2px;
+      }
+    }
+
+    div.color {
+      height: 8px;
+      opacity: 0.2;
+    }
+  }
+}
+
+.actions {
+  width: 52px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid fColor(cbrownlight);
+  padding: 0 32px 24px 32px;
+  background-color: white;
+
+  aj-select,
+  aj-date-select {
+    margin-right: 8px;
+  }
+}
+
+.tag-etp {
+  border-radius: 10px;
+  font-size: 12px;
+  color: white;
+  background-color: #2e7d32;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.or {
+  text-align: center;
+}
+
+.search-next {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.checkbox-button {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  height: 55px;
+  padding: 4px 16px;
+  border-width: 1px;
+  border-style: solid;
+  margin-left: 8px;
+  cursor: pointer;
+
+  &.blue {
+    border-color: fColor(cbluedark);
+    background-color: rgba(fColor(cbluedark), 0.2);
+
+    p.label {
+      color: fColor(cbluedark);
+    }
+
+    input {
+      border-color: fColor(cbluedark);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cbluedark);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
+    }
+  }
+
+  &.pink {
+    border-color: fColor(cpink);
+    background-color: rgba(fColor(cpink), 0.2);
+
+    p.label {
+      color: fColor(cpink);
+    }
+
+    input {
+      border-color: fColor(cpink);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cpink);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
+    }
+  }
+
+  &.yellow {
+    border-color: fColor(cyellow);
+    background-color: rgba(fColor(cyellow), 0.2);
+
+    p.label {
+      color: fColor(cyellowdark);
+    }
+
+    input {
+      border-color: fColor(cyellowdark);
+
+      &:checked {
+        border-color: none;
+        background-color: fColor(cyellowdark);
+        background-image: url("/assets/icons/checkbox.svg");
+      }
+    }
+  }
+
+  input {
+    margin-right: 16px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    background-color: #fafafa;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    display: inline-block;
+    position: relative;
+    width: 13px;
+    height: 13px;
+  }
+
+  p.etp {
+    font-weight: bold;
+  }
+}
+
+aj-input-button {
+  margin-left: 16px;
+}
+
+progression-bar {
+  cursor: pointer;
+}

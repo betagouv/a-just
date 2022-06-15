@@ -82,6 +82,14 @@ const routes: Routes = [
       import('./simulator/simulator.module').then((mod) => mod.SimulatorModule),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'reaffectateur',
+    loadChildren: () =>
+      import('./reaffectator/reaffectator.module').then(
+        (mod) => mod.ReaffectatorModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
