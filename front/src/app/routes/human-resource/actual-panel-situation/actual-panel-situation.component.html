@@ -16,7 +16,7 @@
     <img src="/assets/images/a-just-fleche.svg" />
     <p>Indisponibilités :</p>
     <div class="indispo-content">
-      <div *ngFor="let indisp of indisponibilities">
+      <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
         <div class="icon">
           <mat-icon>event_busy</mat-icon>
         </div>
@@ -42,7 +42,7 @@
               {{ getFullYear(indisp.dateStop) }}</ng-template>
           </p>
         </div>
-        <div class="action" (click)="addIndispiniblity.emit(indisp)">
+        <div class="action">
           <mat-icon>drive_file_rename_outline</mat-icon>
         </div>
       </div>
@@ -56,11 +56,7 @@
       <p>Répartition actuelle du temps disponible par activité</p>
       <div class="tags">
         <p *ngIf="dateStart" class="date">
-          <mat-icon>calendar_today</mat-icon>{{
-          dateStart && dateStart.getTime() > getToday().getTime()
-          ? 'À partir du'
-          : 'Depuis le'
-          }}
+          <mat-icon>calendar_today</mat-icon>À partir du
           {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
           {{ dateStart.getFullYear() }}
         </p>
@@ -93,9 +89,6 @@
 
 <div class="actions-panel" *ngIf="!isLeft">
   <button (click)="onEditSituation()" class="outline small primary">
-    Modifier
-  </button>
-  <button (click)="onRemove.emit()" class="outline small red">
-    Supprimer
+    Modifier la ventilation
   </button>
 </div>

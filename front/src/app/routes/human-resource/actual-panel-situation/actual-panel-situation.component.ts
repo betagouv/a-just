@@ -10,7 +10,6 @@ import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
 
@@ -34,7 +33,6 @@ export class ActualPanelSituationComponent
   @Input() id: number | null = null
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
-  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
   isLeft: boolean = false
@@ -43,7 +41,6 @@ export class ActualPanelSituationComponent
   timeoutUpdateComment: any = null
 
   constructor(
-    private humanResourceService: HumanResourceService,
     private hRCommentService: HRCommentService
   ) {
     super()
@@ -53,20 +50,16 @@ export class ActualPanelSituationComponent
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )
-
+    if(this.indisponibility > 1) {
+      this.indisponibility = 1
+    }
+    
     if (
       this.dateEndToJuridiction &&
       this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
     ) {
       this.isLeft = true
       this.timeWorked = 'Parti'
-
-      if (
-        this.dateStart &&
-        this.dateStart.getTime() > this.getToday().getTime()
-      ) {
-        this.timeWorked = 'Va prochainement partir'
-      }
     } else {
       this.isLeft = false
       this.timeWorked = etpLabel(this.etp)

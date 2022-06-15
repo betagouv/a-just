@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { orderBy, sumBy } from 'lodash'
+import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -18,7 +18,8 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
 
 export interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[]
-  dateStop: Date
+  dateStop: Date,
+  situationForTheFirstTime: boolean,
 }
 
 @Component({
@@ -146,30 +147,41 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       },
     ])
 
-    if (!situations.length) {
-      this.onEditIndex = -1
-      return
+    let listAllDates = []
+    let currentDateEnd
+    if (this.currentHR.dateStart) {
+      listAllDates.push(today(this.currentHR.dateStart))
     }
+    if (this.currentHR.dateEnd) {
+      currentDateEnd = today(this.currentHR.dateEnd)
+      listAllDates.push(currentDateEnd)
+    }
+    listAllDates = listAllDates.concat(
+      situations.filter((s) => s.dateStart).map((s) => today(s.dateStart))
+    )
+    listAllDates = listAllDates.concat(
+      this.allIndisponibilities
+        .filter((i) => i.dateStart)
+        .map((s) => today(s.dateStart))
+    )
+    listAllDates = listAllDates.concat(
+      this.allIndisponibilities
+        .filter((i) => i.dateStop)
+        .map((s) => today(s.dateStop))
+    )
 
-    const minSituation = situations[0]
-    const maxSituation = situations[situations.length - 1]
-    const minDate = today(minSituation.dateStart)
-    let maxDate = today(maxSituation.dateStart)
-    let currentDateEnd = null
-    if (this.currentHR && this.currentHR.dateEnd) {
-      currentDateEnd = new Date(this.currentHR.dateEnd)
-      currentDateEnd.setDate(currentDateEnd.getDate() + 1)
-    }
-    if (currentDateEnd && currentDateEnd.getTime() > maxDate.getTime()) {
-      maxDate = new Date(currentDateEnd)
-    }
-    if (getToday.getTime() > maxDate.getTime()) {
-      maxDate = new Date(getToday)
+    const minDate = minBy(listAllDates, (d) => d.getTime())
+    const maxDate = maxBy(listAllDates, (d) => d.getTime())
+
+    if (!minDate || !maxDate) {
+      return
     }
 
     const currentDate = new Date(maxDate)
     let idsDetected: number[] = []
+    let lastSituationId = null
     console.log(minDate, maxDate)
+    
     while (currentDate.getTime() >= minDate.getTime()) {
       let delta: number[] = []
       const findIndispos = this.humanResourceService.findAllIndisponibilities(
@@ -187,6 +199,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
 
       if (JSON.stringify(idsDetected) !== JSON.stringify(delta)) {
+        console.log(lastSituationId, delta)
+        if(lastSituationId && delta.indexOf(lastSituationId) === -1 && this.histories.length) {
+          this.histories[this.histories.length - 1].situationForTheFirstTime = true
+        }
+
+        lastSituationId = (findSituation && findSituation.id) || null
         idsDetected = delta
         const dateStop = new Date(currentDate)
         let etp = (findSituation && findSituation.etp) || 0
@@ -205,10 +223,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           activities: (findSituation && findSituation.activities) || [],
           dateStart: new Date(),
           dateStop,
+          situationForTheFirstTime: false,
         })
       }
 
       currentDate.setDate(currentDate.getDate() - 1)
+    }
+
+    // last situation can remove situation
+    if(this.histories.length) {
+      this.histories[this.histories.length - 1].situationForTheFirstTime = true
     }
 
     // place date start
@@ -229,6 +253,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       return h
     })
+
+    console.log(this.histories)
   }
 
   trackByDate(index: number, item: any) {
@@ -255,7 +281,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  onCancel() {
+  async onCancel(removeIndispo: boolean = false) {
+    if (removeIndispo) {
+      await this.updateHuman('indisponibilities', [])
+    }
+
     this.onEditIndex = null
 
     const findElement = document.getElementById('content')
@@ -527,7 +557,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           if (findElements && findElements.length) {
             findContent.scrollTo({
               behavior: 'smooth',
-              top: findElements[0].getBoundingClientRect().top - 87 + findContent.scrollTop,
+              top:
+                findElements[0].getBoundingClientRect().top -
+                87 +
+                findContent.scrollTop,
             })
           }
         }
@@ -539,7 +572,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
-    if(returnValue === true && this.histories.length === 0 && this.onEditIndex !== null) {
+    if (
+      returnValue === true &&
+      this.histories.length === 0 &&
+      this.onEditIndex !== null
+    ) {
       // force to not show on boarding after delete last situation
       this.onEditIndex = null
     }
