@@ -74,16 +74,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   updateMenu(user: UserInterface | null) {
     const menu = [];
-
-    // Onglet Panorama retiré temporairement
-    /*
-    if (user && user.access && user.access.indexOf(1) !== -1) {
-      menu.push({
-        label: 'Panorama',
-        path: 'dashboard',
-      });
-    }
-    */
+    
     if (user && user.access && user.access.indexOf(2) !== -1) {
       menu.push({
         label: 'Ventilateur',
@@ -117,6 +108,14 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
         path: 'simulateur',
       });
     }
+
+    if (user && user.access && user.access.indexOf(7) !== -1) {
+      menu.push({
+        label: 'Reaffectateur',
+        path: 'reaffectateur',
+      });
+    }
+
     this.menu = menu;
   }
 
