@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
   display: flex;
@@ -39,6 +39,45 @@
       border-bottom: none;
     }
   }
+
+  &.dark-screen {
+    .menu {
+      background-color: fColor(darkModeBgMenu);
+      border-right: 1px solid fColor(darkModeBgMenu);
+      margin-right: 0px;
+
+      .menu-item {
+        &.disconnect,
+        a,
+        p {
+          color: white;
+        }
+
+        &.selected {
+          background-color: fColor(darkModeBgMenuSelected);
+
+          a,
+          p {
+            color: white;
+          }
+        }
+      }
+    }
+
+    .header {
+      background-color: fColor(darkModeBgMenuSelected);
+
+      h3 {
+        color: fColor(darkModeTitle);
+      }
+    }
+
+    .contener {
+      .content {
+        background-color: black;
+      }
+    }
+  }
 }
 
 .menu {
@@ -54,7 +93,7 @@
     margin-bottom: 29px;
     margin-top: 29px;
 
-    >img {
+    > img {
       width: 45%;
     }
   }
@@ -95,7 +134,6 @@
     }
 
     &.selected {
-
       a,
       p {
         color: fColor(cbluedark);
