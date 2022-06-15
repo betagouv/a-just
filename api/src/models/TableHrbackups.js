@@ -224,5 +224,24 @@ export default (sequelizeInstance, Model) => {
     return hr ? true : false
   }
 
+  Model.findOrCreateLabel = async (juridictionName) => {
+    const find = await Model.findOne({
+      attributes: ['id'],
+      where: {
+        label: juridictionName,
+      },
+      raw: true,
+    })
+
+    if(!find) {
+      const newElement = await Model.create({
+        label: juridictionName,
+      })
+      return newElement.dataValues.id
+    }
+
+    return find.id
+  }
+
   return Model
 }
