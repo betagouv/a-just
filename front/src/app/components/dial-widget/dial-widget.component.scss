@@ -1,0 +1,254 @@
+@import "../../styles/utils.scss";
+
+:host {
+    background-color: white;
+    position: relative;
+    z-index: 1;
+
+    .title {
+        height: 96px;
+        padding: 24px 24px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        background-color: #fff;
+        position: relative;
+        z-index: 3;
+
+        p {
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+        }
+
+        label {
+            font-size: 14px;
+            line-height: 1.71;
+            color: #929292;
+        }
+    }
+
+    .button-container {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        background-color: #fff;
+        position: relative;
+        padding: 8px;
+        align-items: center;
+
+        .buttons {
+            position: relative;
+            width: 337px;
+            height: 40px;
+            margin: 16px auto;
+            border-radius: 20px;
+            background-color: #f6f6f6;
+            padding: 4px;
+            display: flex;
+
+            .button {
+                pointer-events: all;
+                cursor: pointer;
+                flex: 1;
+                border-radius: 20px;
+                line-height: 30px;
+                text-align: center;
+                font-size: 16px;
+                color: #3a3a3a;
+
+                &.selected {
+                    background-color: #2d46e0;
+                    color: white;
+                }
+            }
+        }
+
+    }
+
+    //test
+    $color-black: hsl(0, 0%, 5%);
+    $color-color: hsl(0, 0%, 100%);
+
+    $color-js: #eeeeee;
+
+    $porcent-ts: 70;
+
+    $porcent-js: 80;
+    $porcent-xs: 19;
+    $porcent-m: 40;
+    $porcent-l: 60;
+    $porcent-xl: 65;
+
+    @function strokeDashoffset($num) {
+        @return 440 - (440 * $num) / 100;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        background-color: white;
+    }
+
+    .container__progressbars {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 100%;
+    }
+
+    .progressbar {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: rotate(-180deg);
+    }
+
+    .progressbar__svg {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .progressbar__svg-circle {
+        fill: none;
+        stroke-width: 10;
+        stroke-dasharray: 440;
+        stroke-dashoffset: 300;
+        stroke: #eeeeee;
+        stroke-linecap: round;
+        transform: translate(5px, 5px); // stroke-width / 2
+
+        &-second {
+            fill: none;
+            stroke-width: 10;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 100;
+            stroke: #ce0500;
+            stroke-linecap: round;
+            transform: translate(5px, 5px); // stroke-width / 2
+        }
+
+        &-third {
+            fill: none;
+            stroke-width: 10;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 100;
+            stroke: #ffe552;
+            stroke-linecap: round;
+            transform: translate(5px, 5px); // stroke-width / 2
+        }
+
+        &-fourth {
+            fill: none;
+            stroke-width: 10;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 100;
+            stroke: #2fc368;
+            stroke-linecap: round;
+            transform: translate(5px, 5px); // stroke-width / 2
+        }
+
+        &-fifth {
+            fill: none;
+            stroke-width: 10;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 100;
+            stroke: #45a96b;
+            stroke-linecap: round;
+            transform: translate(5px, 5px); // stroke-width / 2
+        }
+    }
+
+
+    .shadow {
+        &-js {
+            filter: drop-shadow(0 0 5px $color-js);
+        }
+    }
+
+    .circle {
+        &-js {
+            animation: anim_circle-js 2s ease-in-out forwards;
+        }
+
+        &-ts {
+            animation: anim_circle-ts 1s ease-in-out infinite;
+        }
+
+        &-xs {
+            animation: anim_circle-xs 2s ease-in-out forwards;
+        }
+
+        &-m {
+            animation: anim_circle-m 2s ease-in-out forwards;
+        }
+
+        &-l {
+            animation: anim_circle-l 2s ease-in-out forwards;
+        }
+
+        &-xl {
+            animation: anim_circle-xl 2s ease-in-out forwards;
+        }
+    }
+
+    .progressbar__text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        color: hsl(0, 0%, 100%);
+        border-radius: 0.25em;
+        transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-js {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-js);
+        }
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-xs {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-xs);
+        }
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-ts {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-ts);
+        }
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-m {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-m);
+        }
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-l {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-l);
+        }
+    }
+
+    //  @keyframes
+    @keyframes anim_circle-xl {
+        to {
+            stroke-dashoffset: strokeDashoffset($porcent-xl);
+        }
+    }
+}
