@@ -22,38 +22,44 @@ import { TooltipsComponent } from './tooltips/tooltips.component'
 import { PipesModule } from '../pipes/pipes.module'
 import { TimeSelectorComponent } from './time-selector/time-selector.component'
 import { InputPercentageComponent } from './input-percent/input-percentage.component'
+import { LoadersWidgetComponent } from './loaders-widget/loaders-widget.component'
+import { FiguresWidgetComponent } from './figures-widget/figures-widget.component'
+import { DialWidgetComponent } from './dial-widget/dial-widget.component'
 
 const list = [
-    WrapperComponent,
-    SpeedometerComponent,
-    PopupComponent,
-    ListSelectionComponent,
-    RhBackupPanelComponent,
-    OptionsBackupPanelComponent,
-    ReferentielCalculatorComponent,
-    SelectCheckAllComponent,
-    SelectComponent,
-    DateSelectComponent,
-    InputButtonComponent,
-    EtpPreviewComponent,
-    ProgressionBarComponent,
-    PanelActivitiesComponent,
-    DateSelectBlueComponent,
-    TooltipsComponent,
-    TimeSelectorComponent,
-    InputPercentageComponent,
+  WrapperComponent,
+  SpeedometerComponent,
+  PopupComponent,
+  ListSelectionComponent,
+  RhBackupPanelComponent,
+  OptionsBackupPanelComponent,
+  ReferentielCalculatorComponent,
+  SelectCheckAllComponent,
+  SelectComponent,
+  DateSelectComponent,
+  InputButtonComponent,
+  EtpPreviewComponent,
+  ProgressionBarComponent,
+  PanelActivitiesComponent,
+  DateSelectBlueComponent,
+  TooltipsComponent,
+  TimeSelectorComponent,
+  InputPercentageComponent,
+  LoadersWidgetComponent,
+  FiguresWidgetComponent,
+  DialWidgetComponent,
 ]
 
 @NgModule({
-    declarations: [...list],
-    imports: [
-        CommonModule,
-        RouterModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MaterialModule,
-        PipesModule,
-    ],
-    exports: list,
+  declarations: [...list],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    PipesModule,
+  ],
+  exports: list,
 })
 export class ComponentsModule {}
