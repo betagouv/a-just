@@ -18,8 +18,8 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
 
 export interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[]
-  dateStop: Date,
-  situationForTheFirstTime: boolean,
+  dateStop: Date
+  situationForTheFirstTime: boolean
 }
 
 @Component({
@@ -40,6 +40,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   updateIndisponiblity: RHActivityInterface | null = null
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   indisponibilityError: string | null = null
+  actualHistoryIndex: number | null = null
+  actualHistoryDateStart: Date | null = null
+  actualHistoryDateStop: Date | null = null
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -138,7 +141,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.histories = []
-    const getToday = today()
     this.allIndisponibilities = this.currentHR.indisponibilities || []
     const situations = orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
@@ -171,17 +173,23 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     )
 
     const minDate = minBy(listAllDates, (d) => d.getTime())
-    const maxDate = maxBy(listAllDates, (d) => d.getTime())
+    let maxDate = maxBy(listAllDates, (d) => d.getTime())
 
     if (!minDate || !maxDate) {
+      this.onEditIndex = -1
       return
+    }
+
+    if (maxDate.getTime() < today().getTime() && !this.currentHR.dateEnd) {
+      maxDate = today()
     }
 
     const currentDate = new Date(maxDate)
     let idsDetected: number[] = []
     let lastSituationId = null
+    this.actualHistoryIndex = null
     console.log(minDate, maxDate)
-    
+
     while (currentDate.getTime() >= minDate.getTime()) {
       let delta: number[] = []
       const findIndispos = this.humanResourceService.findAllIndisponibilities(
@@ -199,9 +207,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
 
       if (JSON.stringify(idsDetected) !== JSON.stringify(delta)) {
-        console.log(lastSituationId, delta)
-        if(lastSituationId && delta.indexOf(lastSituationId) === -1 && this.histories.length) {
-          this.histories[this.histories.length - 1].situationForTheFirstTime = true
+        if (
+          lastSituationId &&
+          delta.indexOf(lastSituationId) === -1 &&
+          this.histories.length
+        ) {
+          this.histories[this.histories.length - 1].situationForTheFirstTime =
+            true
         }
 
         lastSituationId = (findSituation && findSituation.id) || null
@@ -231,7 +243,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     // last situation can remove situation
-    if(this.histories.length) {
+    if (this.histories.length) {
       this.histories[this.histories.length - 1].situationForTheFirstTime = true
     }
 
@@ -239,8 +251,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.histories = this.histories.map((h, index) => {
       const dateStop =
         index + 1 < this.histories.length
-          ? new Date(this.histories[index + 1].dateStop)
-          : new Date(minDate)
+          ? today(this.histories[index + 1].dateStop)
+          : today(minDate)
       h.dateStart = new Date(dateStop)
       dateStop.setDate(dateStop.getDate() + 1)
 
@@ -251,10 +263,45 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         h.dateStart.setDate(h.dateStart.getDate() + 1)
       }
 
+      if (
+        h.dateStart.getTime() <= today().getTime() &&
+        today().getTime() <= h.dateStop.getTime() &&
+        this.actualHistoryIndex === null
+      ) {
+        this.actualHistoryIndex = index
+      }
+
       return h
     })
 
-    console.log(this.histories)
+    this.actualHistoryDateStart = null
+    this.actualHistoryDateStop = null
+    if (this.actualHistoryIndex === null) {
+      // check if past or the future
+      if (this.histories.length) {
+        if (this.histories[0].dateStart.getTime() > today().getTime()) {
+          this.actualHistoryDateStop = this.histories[0].dateStart
+        } else if (
+          this.histories[this.histories.length - 1].dateStop.getTime() <
+          today().getTime()
+        ) {
+          const dateStop = new Date(this.histories[this.histories.length - 1].dateStop)
+          dateStop.setDate(dateStop.getDate() + 1)
+          this.actualHistoryDateStart = dateStop
+        }
+      }
+    } else {
+      this.actualHistoryDateStart =
+        this.histories[this.actualHistoryIndex].dateStart
+      this.actualHistoryDateStop =
+        this.histories[this.actualHistoryIndex].dateStop
+    }
+
+    console.log(
+      this.histories,
+      this.actualHistoryDateStart,
+      this.actualHistoryDateStop
+    )
   }
 
   trackByDate(index: number, item: any) {

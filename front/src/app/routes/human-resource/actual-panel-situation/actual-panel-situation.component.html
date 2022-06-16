@@ -3,7 +3,8 @@
     <p>Situation administrative :</p>
     <div class="tags">
       <p *ngIf="fonction" class="fonction">
-        {{ fonction.code }} </p>
+        {{ fonction.code }}
+      </p>
       <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
     </div>
   </div>
@@ -22,9 +23,7 @@
         </div>
         <div class="text">
           <p>
-            {{
-            indisp.contentieux ? indisp.contentieux.label : indisp.label
-            }}
+            {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
             ({{ indisp.percent || 0 }}%)
           </p>
           <p>
@@ -56,18 +55,33 @@
       <p>Répartition actuelle du temps disponible par activité</p>
       <div class="tags">
         <p *ngIf="dateStart" class="date">
-          <mat-icon>calendar_today</mat-icon>À partir du
-          {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-          {{ dateStart.getFullYear() }}
+          <mat-icon>calendar_today</mat-icon>
+          <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
+            {{
+            dateStart && dateStart.getTime() > getToday().getTime()
+            ? 'À partir du'
+            : 'Depuis le'
+            }}
+            {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+            {{ dateStart.getFullYear() }}
+          </ng-template>
+          <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
+            {{
+            dateStart && dateStart.getTime() > getToday().getTime()
+            ? 'À partir d\'Aujourd\'hui'
+            : 'Depuis Aujourd\'hui'
+            }}
+          </ng-template>
+
         </p>
-        <p *ngIf="
-            dateStop &&
-            !isToday(dateStop) &&
-            dateStop.getTime() !== dateStart.getTime()
-          " class="date">
-          <mat-icon>calendar_today</mat-icon>Jusqu'au
-          {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
-          {{ dateStop.getFullYear() }}
+        <p *ngIf="dateStop" class="date">
+          <mat-icon>calendar_today</mat-icon>
+          <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au
+            {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+            {{ dateStop.getFullYear() }}
+          </ng-template>
+          <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
+          </ng-template>
         </p>
       </div>
     </div>
@@ -87,7 +101,7 @@
   </div>
 </div>
 
-<div class="actions-panel" *ngIf="!isLeft">
+<div class="actions-panel" *ngIf="canEdit">
   <button (click)="onEditSituation()" class="outline small primary">
     Modifier la ventilation
   </button>

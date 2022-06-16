@@ -1,10 +1,8 @@
 <aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
   [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
-  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
-    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
-    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="onSelectSituationToEdit(0)"
-    (addIndispiniblity)="onAddIndispiniblity($event)">
+  <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
+    [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop" [canEdit]="actualHistoryIndex !== null"
+    (editVentilation)="onSelectSituationToEdit(actualHistoryIndex)" (addIndispiniblity)="onAddIndispiniblity($event)">
   </actual-panel-situation>
 
   <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
@@ -33,7 +31,7 @@
     <panel-history-ventilation *ngFor="let h of histories; trackBy: trackByDate; let index = index" [id]="h.id"
       [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
       [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(index + 1)"
+      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(index)"
       (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
     </panel-history-ventilation>
   </div>
