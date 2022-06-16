@@ -1,12 +1,7 @@
 <aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
   <div class="top-bar-container">
-    <aj-dial-widget
-      [dateStart]="startRealValue"
-      [dateStop]="stopRealValue"
-      [valueProjected]="getFieldValue('realCoverage',projectedSituationData)"
-      [valueSimulated]="getFieldValue('realCoverage',simulatedSationData)"
-    ></aj-dial-widget>
     <p>Période choisie :</p>
+
     <div class="container-timeline">
       <div class="container-timeline-button">
         <aj-date-select-blue
@@ -41,6 +36,7 @@
       </div>
     </div>
   </div>
+
   <div class="items before-after">
     <div class="item blue-bg">
       <p>Entrées mensuelles</p>
@@ -715,9 +711,7 @@
         </div>
       </div>
     </div>
-    <div class="logger">
-      <div><p *ngFor="let i of logger">{{i}}</p></div>
-    </div>
+
     <div class="widgets">
       <aj-loaders-widget
         [dateStart]="startRealValue"

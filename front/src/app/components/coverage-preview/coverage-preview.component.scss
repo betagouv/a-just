@@ -1,0 +1,42 @@
+:host {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .zero-percent {
+        position: absolute;
+        left: -10px;
+    }
+
+
+    .cent-percent {
+        position: absolute;
+        top: -5px;
+    }
+
+    .deux-cent-percent {
+        position: absolute;
+        right: -30px;
+    }
+
+    .trois-cent-percent {
+        position: absolute;
+        bottom: -5px;
+    }
+
+    .main-label {
+        font-family: Marianne;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 1.2;
+        text-align: center;
+        color: #18753c;
+        position: absolute;
+        left: 15px;
+        bottom: 55px;
+    }
+
+}
