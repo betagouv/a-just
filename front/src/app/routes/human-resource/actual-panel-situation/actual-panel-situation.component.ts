@@ -25,7 +25,7 @@ export class ActualPanelSituationComponent
   extends MainClass
   implements OnChanges
 {
-  @Input() currentHR: HumanResourceInterface | null = null;
+  @Input() currentHR: HumanResourceInterface | null = null
   @Input() dateStart: Date | null = null
   @Input() dateStop: Date | null = null
   @Input() canEdit: boolean = false
@@ -50,21 +50,25 @@ export class ActualPanelSituationComponent
   }
 
   ngOnChanges() {
-    this.indisponibilities = this.humanResourceService.findAllIndisponibilities(this.currentHR, today())
-    const findSituation = this.humanResourceService.findSituation(this.currentHR, today())
-    if(findSituation) {
-      this.etp = findSituation.etp
-      this.fonction = findSituation.fonction
-      this.activities = findSituation.activities
-    }
+    this.indisponibilities = this.humanResourceService.findAllIndisponibilities(
+      this.currentHR,
+      today()
+    )
+    const findSituation = this.humanResourceService.findSituation(
+      this.currentHR,
+      today()
+    )
+    this.etp = (findSituation && findSituation.etp) || 0
+    this.fonction = (findSituation && findSituation.fonction) || null
+    this.activities = (findSituation && findSituation.activities) || []
 
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )
-    if(this.indisponibility > 1) {
+    if (this.indisponibility > 1) {
       this.indisponibility = 1
     }
-    
+
     if (
       this.dateEndToJuridiction &&
       this.dateStop &&
