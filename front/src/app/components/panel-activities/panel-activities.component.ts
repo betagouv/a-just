@@ -47,6 +47,10 @@ export class PanelActivitiesComponent
   }
 
   ngOnChanges() {
+    if (this.etp < 0) {
+      this.etp = 0
+    }
+
     // copy list of activities
     this.activities = JSON.parse(
       JSON.stringify(this.activities)
@@ -139,15 +143,17 @@ export class PanelActivitiesComponent
 
     // memorise list
     const activity = this.activities.find((a) =>
-      a.contentieux ? a.contentieux.id === referentiel.id : a.referentielId === referentiel.id
+      a.contentieux
+        ? a.contentieux.id === referentiel.id
+        : a.referentielId === referentiel.id
     )
-    if(activity) {
+    if (activity) {
       activity.percent = percent
     } else {
       this.activities.push({
         id: -1,
         contentieux: {
-          id: referentiel.id, 
+          id: referentiel.id,
           label: '',
           averageProcessingTime: 0,
         },
