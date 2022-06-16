@@ -38,10 +38,14 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.importList = async (list) => {
-    console.log(list)
-
     for(let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
+      
+      if(!list[i].hmatricule || list[i].hmatricule === '0') {
+        // dont save this profil
+        console.log(list[i].nom_usage + ' no add by matricule')
+        continue
+      }
 
       let findHRToDB = await Model.findOne({
         where: {
@@ -49,6 +53,7 @@ export default (sequelizeInstance, Model) => {
           registration_number: list[i].hmatricule,
         },
       })
+
 
       if(!findHRToDB) {
         // prepare ventilation
@@ -77,15 +82,17 @@ export default (sequelizeInstance, Model) => {
           situation.fonction_id = findFonction.id
         } else if(list[i].statut === 'Magistrat') {
           // dont save this profil
+          console.log(list[i].nom_usage + ' no add by fonction')
           continue
         }
 
-        // TODO trouver tout les cas
-        const posadNumber = parseInt(list[i].posad)
-        if(!isNaN(posadNumber)) {
-          situation.etp = posadNumber / 100
+        const etp = posad[list[i].posad.toLowerCase()]
+        if(etp) {
+          situation.etp = etp
         } else {
-          situation.etp = posad[list[i].posad.toLowerCase()] || 1 
+          // dont save this profil
+          console.log(list[i].nom_usage + ' no add by etp')
+          continue
         }
 
         // prepare person
@@ -111,6 +118,8 @@ export default (sequelizeInstance, Model) => {
           ...situation,
           human_id: findHRToDB.dataValues.id,
         })
+      } else {
+        console.log(list[i].nom_usage + ' no add by exist')
       }
     }
   } 

@@ -7,6 +7,7 @@ module.exports = {
   port: process.env.PORT || 8080,
   database: {
     url: process.env.DATABASE_URL,
+    //logging: false,
   },
   jsonwebtoken: {
     private_key: process.env.JSON_WEB_TOKEN,
