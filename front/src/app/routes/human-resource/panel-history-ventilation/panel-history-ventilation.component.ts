@@ -9,7 +9,6 @@ import { sumBy } from 'lodash'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
 
@@ -30,22 +29,24 @@ export class PanelHistoryVentilationComponent
   @Input() indisponibilities: RHActivityInterface[] = []
   @Input() activities: RHActivityInterface[] = []
   @Input() id: number | null = null
+  @Input() canRemoveSituation: boolean = false
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
   @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
 
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor() {
     super()
   }
 
   ngOnChanges() {
-    const referentiel = this.humanResourceService.allContentieuxReferentiel
-
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )
+    if(this.indisponibility > 1) {
+      this.indisponibility = 1
+    }
 
     if (
       this.dateEndToJuridiction &&
