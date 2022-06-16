@@ -8,94 +8,32 @@
 <div class="button-container">
   <div class="buttons">
     <div
-      [class.selected]="selectedSituation === 'simulated'"
+      [class.selected]="selectedSituation === 'projected'"
       class="button"
-      (click)="selectedSituation = 'simulated'"
+      (click)="selectedSituation = 'projected'"
     >
       Situation projetée
     </div>
     <div
-      [class.selected]="selectedSituation === 'projected'"
+      [class.selected]="selectedSituation === 'simulated'"
       class="button"
-      (click)="selectedSituation = 'projected'"
+      (click)="selectedSituation = 'simulated'"
     >
       Situation simulée
     </div>
   </div>
 
-  <div class="container" *ngIf="selectedSituation === 'simulated'">
-    <div class="container__progressbars">
-      <div class="progressbar">
-        <svg class="progressbar__svg" style="z-index: 1">
-          <circle
-            cx="160"
-            cy="140"
-            r="80"
-            class="progressbar__svg-circle circle-js shadow-js"
-          ></circle>
-        </svg>
-        <svg
-          class="progressbar__svg"
-          style="position: absolute; top: 0px; z-index: 5"
-        >
-          <circle
-            cx="160"
-            cy="140"
-            r="80"
-            class="progressbar__svg-circle-second circle-xs shadow-js"
-          ></circle>
-        </svg>
-        <svg
-          class="progressbar__svg"
-          style="position: absolute; top: 0px; z-index: 4"
-        >
-          <circle
-            cx="160"
-            cy="140"
-            r="80"
-            class="progressbar__svg-circle-third circle-m shadow-js"
-          ></circle>
-        </svg>
-        <svg
-          class="progressbar__svg"
-          style="position: absolute; top: 0px; z-index: 3"
-        >
-          <circle
-            cx="160"
-            cy="140"
-            r="80"
-            class="progressbar__svg-circle-fourth circle-l shadow-js"
-          ></circle>
-        </svg>
-        <svg
-          class="progressbar__svg"
-          style="position: absolute; top: 0px; z-index: 2"
-        >
-          <circle
-            cx="160"
-            cy="140"
-            r="80"
-            class="progressbar__svg-circle-fifth circle-xl shadow-js"
-          ></circle>
-        </svg>
-
-        <span class="progressbar__text shadow-js"></span>
-      </div>
-    </div>
-  </div>
   <div class="container" *ngIf="selectedSituation === 'projected'">
-    <div class="container__progressbars">
-      <div class="progressbar">
-        <svg class="progressbar__svg">
-          <circle
-            cx="80"
-            cy="80"
-            r="70"
-            class="progressbar__svg-circle circle-ts shadow-js"
-          ></circle>
-        </svg>
-        <span class="progressbar__text shadow-js"></span>
-      </div>
-    </div>
+    <aj-coverage-preview
+      [@fadeInOut]
+      [coverageRate]="toNumber(valueProjected)"
+    ></aj-coverage-preview>
+  </div>
+  <div class="container" *ngIf="selectedSituation === 'simulated'">
+    <aj-coverage-preview
+      [@fadeInOut]
+      [oldCoverageRate]="toNumber(valueProjected)"
+      [coverageRate]="toNumber(valueSimulated)"
+    ></aj-coverage-preview>
   </div>
 </div>

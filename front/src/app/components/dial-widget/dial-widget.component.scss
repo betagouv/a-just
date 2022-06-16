@@ -32,12 +32,13 @@
         position: relative;
         padding: 8px;
         align-items: center;
+        height: 356px;
 
         .buttons {
             position: relative;
             width: 337px;
             height: 40px;
-            margin: 16px auto;
+            margin: 14px auto 0px auto;
             border-radius: 20px;
             background-color: #f6f6f6;
             padding: 4px;
@@ -88,7 +89,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 300px;
+        padding: 22px;
         background-color: white;
     }
 

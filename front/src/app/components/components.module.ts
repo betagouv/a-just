@@ -25,6 +25,7 @@ import { InputPercentageComponent } from './input-percent/input-percentage.compo
 import { LoadersWidgetComponent } from './loaders-widget/loaders-widget.component'
 import { FiguresWidgetComponent } from './figures-widget/figures-widget.component'
 import { DialWidgetComponent } from './dial-widget/dial-widget.component'
+import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.component'
 
 const list = [
   WrapperComponent,
@@ -48,6 +49,7 @@ const list = [
   LoadersWidgetComponent,
   FiguresWidgetComponent,
   DialWidgetComponent,
+  CoveragePreviewComponent,
 ]
 
 @NgModule({
