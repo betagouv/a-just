@@ -1,9 +1,13 @@
 <div class="header-panel">
   <div class="tags">
-    <p *ngIf="dateStart" class="date">Du {{ dateStart | date:"dd" }} {{ getShortMonthString(dateStart) }} {{
-      getFullYear(dateStart) }}</p>
-    <p *ngIf="dateStop" class="date">Au {{ dateStop | date:"dd" }} {{ getShortMonthString(dateStop) }} {{
-      getFullYear(dateStop) }}</p>
+    <p *ngIf="dateStart" class="date">
+      Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+      {{ getFullYear(dateStart) }}
+    </p>
+    <p *ngIf="dateStop" class="date">
+      Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+      {{ getFullYear(dateStop) }}
+    </p>
     <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
     <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
   </div>
@@ -19,16 +23,30 @@
       <mat-icon>event_busy</mat-icon>
     </div>
     <div class="text">
-      <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
       <p>
-        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+        {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{
+        indisp.percent || 0
+        }}%)
+      </p>
+      <p>
+        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: 'dd' }}
           {{ getShortMonthString(indisp.dateStart) }}
           {{ getFullYear(indisp.dateStart) }}</ng-template>
-        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop"> au </ng-template>
-        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop"> jusqu'au </ng-template>
-        <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
-          {{ getShortMonthString(indisp.dateStop) }}
-          {{ getFullYear(indisp.dateStop) }}</ng-template>
+        <ng-template [ngIf]="
+            !indisp.dateStart ||
+            (indisp.dateStop &&
+              indisp.dateStart.getTime() === indisp.dateStop.getTime())
+          ">
+          <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
+            au
+          </ng-template>
+          <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
+            jusqu'au
+          </ng-template>
+          <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: 'dd' }}
+            {{ getShortMonthString(indisp.dateStop) }}
+            {{ getFullYear(indisp.dateStop) }}</ng-template>
+        </ng-template>
       </p>
     </div>
     <div class="action">
@@ -42,7 +60,10 @@
 </div>
 
 <div class="actions-panel">
-  <button (click)="onEditSituation()" class="outline small primary">Modifier la ventilation</button>
-  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">Supprimer la
-    ventilation</button>
+  <button (click)="onEditSituation()" class="outline small primary">
+    Modifier la ventilation
+  </button>
+  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">
+    Supprimer la ventilation
+  </button>
 </div>
