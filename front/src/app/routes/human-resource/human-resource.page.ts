@@ -149,6 +149,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       },
     ])
 
+    if(situations.length === 0) {
+      this.onEditIndex = -1
+      return
+    }
+
     let listAllDates = []
     let currentDateEnd
     if (this.currentHR.dateStart) {

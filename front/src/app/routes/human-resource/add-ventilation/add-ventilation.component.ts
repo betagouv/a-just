@@ -4,6 +4,7 @@ import {
   OnChanges,
   Output,
   EventEmitter,
+  SimpleChanges,
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { maxBy, minBy, sumBy } from 'lodash'
@@ -72,8 +73,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     )
   }
 
-  ngOnChanges() {
-    this.onStart()
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.lastDateStart) {
+      this.onStart()
+    }
   }
 
   onStart() {
