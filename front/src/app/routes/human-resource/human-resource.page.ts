@@ -279,13 +279,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (this.actualHistoryIndex === null) {
       // check if past or the future
       if (this.histories.length) {
-        if (this.histories[0].dateStart.getTime() > today().getTime()) {
-          this.actualHistoryDateStop = this.histories[0].dateStart
-        } else if (
-          this.histories[this.histories.length - 1].dateStop.getTime() <
+        if (
+          this.histories[this.histories.length - 1].dateStart.getTime() >
           today().getTime()
         ) {
-          const dateStop = new Date(this.histories[this.histories.length - 1].dateStop)
+          this.actualHistoryDateStop =
+            this.histories[this.histories.length - 1].dateStart
+        } else if (this.histories[0].dateStop.getTime() < today().getTime()) {
+          const dateStop = new Date(this.histories[0].dateStop)
           dateStop.setDate(dateStop.getDate() + 1)
           this.actualHistoryDateStart = dateStop
         }
@@ -297,11 +298,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.histories[this.actualHistoryIndex].dateStop
     }
 
-    console.log(
-      this.histories,
-      this.actualHistoryDateStart,
-      this.actualHistoryDateStop
-    )
+    console.log({
+      histories: this.histories,
+      actualHistoryDateStart: this.actualHistoryDateStart,
+      actualHistoryDateStop: this.actualHistoryDateStop,
+    })
   }
 
   trackByDate(index: number, item: any) {
