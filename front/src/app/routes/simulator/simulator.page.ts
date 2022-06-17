@@ -1274,4 +1274,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.setParamsToAjust(volumeInput, inputField, allButton)
     }
   }
+
+  print() {
+    window.print()
+  }
 }

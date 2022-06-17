@@ -1,12 +1,6 @@
 <aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
   <div class="top-bar-container">
     <p>Période choisie :</p>
-    <div class="comment">
-      <div class="header-comment">
-        <p><b>Note et commentaire</b><br /></p>
-      </div>
-      <textarea placeholder="Commentaire"></textarea>
-    </div>
     <div class="container-timeline">
       <div class="container-timeline-button">
         <aj-date-select-blue
@@ -777,7 +771,7 @@
   <div class="reset-button {{disabled}}" (click)="resetParams()">
     <p class="title">Reset</p>
   </div>
-  <div class="export-button">
+  <div class="export-button" (click)="print()">
     <div class="shape">D</div>
     <p class="title">Exporter en PDF</p>
   </div>
