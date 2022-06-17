@@ -904,7 +904,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       realCoverage: null,
     }
 
-    console.log('big P', params)
+    //console.log('big P', params)
 
     this.toDisplay.map((x) => {
       if (params.beginSituation !== null)
@@ -987,7 +987,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       counter++
       this.toCalculate.map((x) => {
         if (x === 'totalIn') {
-          console.log('calcul totalIn')
           if (
             simulation.totalOut &&
             (simulation.lastStock || simulation.lastStock === 0)
@@ -1119,14 +1118,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           }
         }
         if (x === 'lastStock') {
-          console.log(
-            'simu',
-            simulation.realDTESInMonths,
-            simulation.realDTESInMonths &&
-              simulation.realDTESInMonths >= 0 &&
-              simulation.totalOut,
-            simulation
-          )
           if (simulation.realDTESInMonths === 0) {
             simulation.lastStock = 0
           } else if (simulation.totalIn && simulation.totalOut) {
@@ -1164,7 +1155,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
                 ' && totalOut => ' +
                 String(simulation.totalOut)
             )
-            console.log('calcul LastStock', simulation.realDTESInMonths)
             simulation.lastStock = Math.floor(
               simulation.realDTESInMonths * Math.floor(simulation.totalOut)
             )
@@ -1270,7 +1260,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     )
     this.logger.push('_')
     if (counter > 1) this.logger.push('WRONG order')
-    console.log('big R', simulation)
+    //console.log('big R', simulation)
     this.simulatedSationData = simulation
   }
 
