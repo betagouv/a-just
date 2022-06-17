@@ -1,7 +1,12 @@
 <aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
   <div class="top-bar-container">
     <p>Période choisie :</p>
-
+    <div class="comment">
+      <div class="header-comment">
+        <p><b>Note et commentaire</b><br /></p>
+      </div>
+      <textarea placeholder="Commentaire"></textarea>
+    </div>
     <div class="container-timeline">
       <div class="container-timeline-button">
         <aj-date-select-blue
@@ -734,6 +739,16 @@
         [valueProjected]="getFieldValue('realCoverage',projectedSituationData)"
         [valueSimulated]="getFieldValue('realCoverage',simulatedSationData)"
       ></aj-dial-widget>
+    </div>
+    <div class="comment-row">
+      <div class="space"></div>
+      <div class="comment">
+        <div class="header-comment">
+          <p><b>Notes et commentaires</b><br /></p>
+        </div>
+        <textarea placeholder="Commentaire"></textarea>
+      </div>
+      <div class="space"></div>
     </div>
   </div>
 </aj-wrapper>
