@@ -180,18 +180,16 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
       this.draw_aiguille(
         ctx,
         55,
-        10,
-        10,
         needleColor,
         needleBorderColor,
         this.coverageRate
       )
     } else if (this.coverageRate <= 0) {
       ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
-      this.draw_aiguille(ctx, 55, 10, 10, needleColor, needleBorderColor, 0)
+      this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 0)
     } else {
       ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
-      this.draw_aiguille(ctx, 55, 10, 10, needleColor, needleBorderColor, 300)
+      this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 300)
     }
   }
 
@@ -202,8 +200,6 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
   draw_aiguille(
     ctx: CanvasRenderingContext2D,
     lgd: number,
-    lpd: number,
-    ldd: number,
     cl_int: string,
     cl_bord: string,
     angle: number
@@ -225,12 +221,9 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     ctx.lineTo(-3, -lgd)
     ctx.bezierCurveTo(-2, -lgd - 3, 2, -lgd - 3, 3, -lgd)
     ctx.lineTo(7, 0)
-
     ctx.fill()
     ctx.stroke()
-
     ctx.closePath()
-
     ctx.rotate(-angle)
   }
 
