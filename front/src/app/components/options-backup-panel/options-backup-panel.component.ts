@@ -65,7 +65,6 @@ export class OptionsBackupPanelComponent
   }
 
   onChangeBackup(id: any[]) {
-    console.log(id)
     if (
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
       !confirm('Vous avez des modifications en cours. Supprimer ?')

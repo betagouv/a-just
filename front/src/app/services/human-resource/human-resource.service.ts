@@ -657,7 +657,7 @@ export class HumanResourceService {
                 '0'
               )} ${getShortMonthString(
                 r.date
-              )} ${r.date.getFullYear()} vous êtes à ${
+              )} ${r.date.getFullYear()} vous seriez à ${
                 r.percent
               }% d'indisponibilité.`
           )

@@ -12,18 +12,16 @@ export default class RouteImports extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupName: Types.string(),
-      backupId: Types.number(),
       file: Types.string(),
     }),
     accesses: [Access.isAdmin],
   })
   async importHr (ctx) {  
-    const { backupName, backupId, file } = this.body(ctx)
+    const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
-      delimiter: ',',
+      delimiter: ';',
     })
-    await this.model.importList(arrayOfHR, backupName, backupId)
+    await this.model.importList(arrayOfHR)
     this.sendOk(ctx, 'OK')
   }
 

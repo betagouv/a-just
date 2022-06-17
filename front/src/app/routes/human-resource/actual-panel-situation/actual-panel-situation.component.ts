@@ -7,10 +7,12 @@ import {
 } from '@angular/core'
 import { sumBy } from 'lodash'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
+import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
 
@@ -23,52 +25,57 @@ export class ActualPanelSituationComponent
   extends MainClass
   implements OnChanges
 {
-  @Input() dateStart: Date = new Date()
-  @Input() dateStop: Date = new Date()
-  @Input() dateEndToJuridiction: Date | null | undefined = null
-  @Input() fonction: HRFonctionInterface | null = null
-  @Input() etp: number = 1
-  @Input() indisponibilities: RHActivityInterface[] = []
-  @Input() activities: RHActivityInterface[] = []
-  @Input() RHId: number | null = null
-  @Input() id: number | null = null
+  @Input() currentHR: HumanResourceInterface | null = null
+  @Input() dateStart: Date | null = null
+  @Input() dateStop: Date | null = null
+  @Input() canEdit: boolean = false
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
-  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
-  isLeft: boolean = false
   comment: string = ''
   commentUpdatedAt: Date | null = null
   timeoutUpdateComment: any = null
+  dateEndToJuridiction: Date | null | undefined = null
+  fonction: HRFonctionInterface | null = null
+  etp: number = 0
+  indisponibilities: RHActivityInterface[] = []
+  activities: RHActivityInterface[] = []
 
   constructor(
-    private humanResourceService: HumanResourceService,
-    private hRCommentService: HRCommentService
+    private hRCommentService: HRCommentService,
+    private humanResourceService: HumanResourceService
   ) {
     super()
   }
 
   ngOnChanges() {
+    this.indisponibilities = this.humanResourceService.findAllIndisponibilities(
+      this.currentHR,
+      today()
+    )
+    const findSituation = this.humanResourceService.findSituation(
+      this.currentHR,
+      today()
+    )
+    this.etp = (findSituation && findSituation.etp) || 0
+    this.fonction = (findSituation && findSituation.fonction) || null
+    this.activities = (findSituation && findSituation.activities) || []
+
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )
+    if (this.indisponibility > 1) {
+      this.indisponibility = 1
+    }
 
     if (
       this.dateEndToJuridiction &&
+      this.dateStop &&
       this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
     ) {
-      this.isLeft = true
       this.timeWorked = 'Parti'
-
-      if (
-        this.dateStart &&
-        this.dateStart.getTime() > this.getToday().getTime()
-      ) {
-        this.timeWorked = 'Va prochainement partir'
-      }
     } else {
-      this.isLeft = false
       this.timeWorked = etpLabel(this.etp)
     }
 
@@ -76,8 +83,8 @@ export class ActualPanelSituationComponent
   }
 
   onLoadComment() {
-    if (this.RHId) {
-      this.hRCommentService.getHRComment(this.RHId).then((result) => {
+    if (this.currentHR) {
+      this.hRCommentService.getHRComment(this.currentHR.id).then((result) => {
         this.comment = (result && result.comment) || ''
         this.commentUpdatedAt =
           result && result.updatedAt ? new Date(result.updatedAt) : null
@@ -92,9 +99,9 @@ export class ActualPanelSituationComponent
     }
 
     this.timeoutUpdateComment = setTimeout(() => {
-      if (this.RHId) {
+      if (this.currentHR) {
         this.hRCommentService
-          .updateHRComment(this.RHId, comment)
+          .updateHRComment(this.currentHR.id, comment)
           .then((result) => {
             this.commentUpdatedAt = result ? new Date(result) : null
           })
