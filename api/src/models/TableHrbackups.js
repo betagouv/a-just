@@ -203,5 +203,45 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  Model.haveAccess = async (id, userId) => {
+    const hr = await Model.findOne({
+      where: {
+        id,
+      },
+      attributes: ['id'],
+      model: Model.models.HRBackups,
+      include: [{
+        attributes: ['id'],
+        model: Model.models.UserVentilations,
+        required: true,
+        where: {
+          user_id: userId,
+        },
+      }],
+      raw: true,
+    })
+
+    return hr ? true : false
+  }
+
+  Model.findOrCreateLabel = async (juridictionName) => {
+    const find = await Model.findOne({
+      attributes: ['id'],
+      where: {
+        label: juridictionName,
+      },
+      raw: true,
+    })
+
+    if(!find) {
+      const newElement = await Model.create({
+        label: juridictionName,
+      })
+      return newElement.dataValues.id
+    }
+
+    return find.id
+  }
+
   return Model
 }

@@ -1,6 +1,4 @@
-import slugify from 'slugify'
 import { posad } from '../constants/hr'
-import { ucFirst } from '../utils/utils'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -39,122 +37,90 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
-  Model.importList = async (list, title, id) => {
-    const referentielMapping = {}
-    const backupId = !title ? id : await Model.models.HRBackups.createWithLabel(title, list[0].codejur || list[0].juridiction)
-
-    // delete old base
-    await Model.destroy({
-      where: {
-        backup_id: id,
-      },
-    })
-
-    const referentielMappingList = await Model.models.ContentieuxReferentiels.cacheReferentielMap
-    referentielMappingList.map(ref => {
-      referentielMapping[slugify(ref.label).toLowerCase().replace(/'/g, '_').replace(/-/g, '_')] = ref.label
-    })
-
+  Model.importList = async (list) => {
     for(let i = 0; i < list.length; i++) {
-      const HRFromList = list[i]
-      const options = {
-        first_name: '',
-        last_name: '',
-        date_entree: today,
-        backup_id: backupId,
+      const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
+      
+      if(!list[i].hmatricule || list[i].hmatricule === '0') {
+        // dont save this profil
+        console.log(list[i].nom_usage + ' no add by matricule')
+        continue
       }
 
-      if(HRFromList.prenom && HRFromList.prenom) {
-        options.first_name = ucFirst(HRFromList.prenom)
-        options.last_name = ucFirst(HRFromList.nom)
-        if(HRFromList.nom_marital) {
-          options.last_name += ' ep. ' + ucFirst(HRFromList.nom_marital)
+      let findHRToDB = await Model.findOne({
+        where: {
+          backup_id: backupId,
+          registration_number: list[i].hmatricule,
+        },
+      })
+
+
+      if(!findHRToDB) {
+        // prepare ventilation
+        const situation = {
+          fonction_id: null,
+          category_id: null,
+          etp: 1,
+          date_start: today,
         }
-      } else if(HRFromList.nom_affichage) {        
-        const splitName = HRFromList.nom_affichage.split(' ')
-        options.first_name = splitName[0]
-        options.last_name = splitName[1]
-      }
 
-      if(HRFromList.date_affectation) {
-        HRFromList.date_affectation = HRFromList.date_affectation.replace(/#/, '')
-        const dateSplited = HRFromList.date_affectation.split('/')
+        const findCategory = await Model.models.HRCategories.findOne({
+          where: {
+            label: list[i].statut,
+          },
+        })
+        if(findCategory) {
+          situation.category_id = findCategory.id
+        }
+
+        const findFonction = await Model.models.HRFonctions.findOne({
+          where: {
+            code: list[i].fonction,
+          },
+        })
+        if(findFonction) {
+          situation.fonction_id = findFonction.id
+        } else if(list[i].statut === 'Magistrat') {
+          // dont save this profil
+          console.log(list[i].nom_usage + ' no add by fonction')
+          continue
+        }
+
+        const etp = posad[list[i].posad.toLowerCase()]
+        if(etp) {
+          situation.etp = etp
+        } else {
+          // dont save this profil
+          console.log(list[i].nom_usage + ' no add by etp')
+          continue
+        }
+
+        // prepare person
+        const options = {
+          first_name: list[i].prenom || '',
+          last_name: (list[i].nom_usage || list[i].nom_marital) || '',
+          backup_id: backupId,
+          registration_number: list[i].hmatricule,
+        }
+
+        list[i].date_aff = list[i].date_aff.replace(/#/, '')
+        const dateSplited = list[i].date_aff.split('/')
         if(dateSplited.length === 3) {
           options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0]) 
+          situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0]) 
         }
+        
+        // create person
+        findHRToDB = await Model.create(options)
+
+        // create
+        await Model.models.HRSituations.create({
+          ...situation,
+          human_id: findHRToDB.dataValues.id,
+        })
+      } else {
+        console.log(list[i].nom_usage + ' no add by exist')
       }
-
-      // create
-      const findHRToDB = await Model.create({
-        registration_number: HRFromList.num_fonc,
-        ...options,
-      })
-
-      // add ventilations
-      const objectList = Object.entries(HRFromList)
-      for(let x = 0; x < objectList.length; x++) {
-        let [key, value] = objectList[x]
-        key = key.replace(/'/g, '_')
-        if(referentielMapping[key]) {
-          const contentieuxId = await Model.models.ContentieuxReferentiels.getContentieuxId(referentielMapping[key])
-          const percent = Math.floor(parseFloat(value) * 100) / 100
-          if(key && percent && contentieuxId) {
-            await Model.models.HRVentilations.create({
-              rh_id: findHRToDB.dataValues.id,
-              nac_id: contentieuxId,
-              percent,
-              date_start: today,
-              backup_id: backupId,
-            })        
-          }
-        }
-      }
-
-      // add ventilation
-      const situation = {
-        fonction_id: 1,
-        category_id: 1,
-        etp: 1,
-        date_start: today,
-      }
-
-      // corps: 'MAG',
-      const findCategory = await Model.models.HRCategories.findOne({
-        where: {
-          label: 'Magistrat',
-        },
-      })
-      if(findCategory) {
-        situation.category_id = findCategory.id
-      }
-
-      const findFonction = await Model.models.HRFonctions.findOne({
-        where: {
-          code: HRFromList.fonction,
-        },
-      })
-      if(findFonction) {
-        situation.fonction_id = findFonction.id
-      }
-
-      if(HRFromList.posad) {
-        const posadNumber = parseInt(HRFromList.posad)
-        if(!isNaN(posadNumber)) {
-          situation.etp = posadNumber / 100
-        } else {
-          situation.etp = posad[HRFromList.posad.toLowerCase()] || 1 
-        }
-      }
-
-      if(HRFromList["%_d'activite"]) {
-        situation.etp = HRFromList["%_d'activite"]
-      }
-
-      // create
-      await Model.models.HRSituations.create({
-        ...situation,
-        human_id: findHRToDB.dataValues.id,
-      })
     }
   } 
 
