@@ -7,7 +7,6 @@ import {
   ViewChild,
 } from '@angular/core'
 import { degreesToRadians } from 'src/app/utils/geometry'
-import { fixDecimal } from 'src/app/utils/numbers'
 import { animate, style, transition, trigger } from '@angular/animations'
 
 @Component({
@@ -165,29 +164,6 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
       this.getRadiusPosition(redValue)
     )
     ctx.stroke()
-    /**
-    ctx.beginPath() //rond blanc
-    ctx.fillStyle = '#ffffff'
-    ctx.arc(
-      this.margin,
-      this.height / 2 + this.margin,
-      this.borderWidth / 4,
-      0,
-      2 * Math.PI
-    )
-    ctx.fill()
- */
-
-    /**
-    this.drawPoint(
-      ctx,
-      this.coverageRate,
-      '',
-      this.width / 2 + this.margin,
-      this.height / 2 + this.margin,
-      endDotColor
-    )
- */
 
     if (this.oldCoverageRate)
       this.drawPoint(
@@ -196,10 +172,10 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
         this.oldCoverageRate + '%',
         this.width / 2 + this.margin,
         this.height / 2 + this.margin,
-        'grey' //'#5741afbd'
+        'grey'
       )
 
-    if (this.coverageRate <= 300) {
+    if (this.coverageRate <= 300 && this.coverageRate >= 0) {
       ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
       this.draw_aiguille(
         ctx,
@@ -210,6 +186,9 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
         needleBorderColor,
         this.coverageRate
       )
+    } else if (this.coverageRate <= 0) {
+      ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
+      this.draw_aiguille(ctx, 55, 10, 10, needleColor, needleBorderColor, 0)
     } else {
       ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
       this.draw_aiguille(ctx, 55, 10, 10, needleColor, needleBorderColor, 300)
@@ -235,17 +214,6 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     ctx.fillStyle = cl_int
     ctx.lineWidth = 2
     ctx.strokeStyle = cl_bord
-
-    /**
-    ctx.moveTo(ldd, 0)
-    ctx.lineTo(0, -lgd)
-    ctx.lineTo(-ldd, 0)
-    ctx.lineTo(0, lpd)
-    ctx.lineTo(ldd, 0)
-    ctx.fill()
-    ctx.stroke()
-    ctx.closePath()
-    */
 
     const cp1x = 8
     const cp1y = 12
@@ -282,15 +250,15 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
 
     if (label === '') {
       ctx.beginPath()
-      ctx.fillStyle = color //'#5741afbd'
+      ctx.fillStyle = color
       ctx.lineWidth = 2
-      ctx.strokeStyle = color // '#5741afbd'
+      ctx.strokeStyle = color
       ctx.arc(x, y, point_size, 0, 2 * Math.PI)
 
       ctx.fill()
     }
-    if (label) {
-      ctx.fillStyle = color //'#5741afbd'
+    if (label && coverageRatio <= 300 && coverageRatio >= 0) {
+      ctx.fillStyle = color
       ctx.font = font_size
       if (coverageRatio <= 50) ctx.fillText(label, x - 30, y)
       else if (coverageRatio > 50 && coverageRatio <= 100)
