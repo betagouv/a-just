@@ -3,6 +3,11 @@
 <p class="deux-cent-percent">200%</p>
 <p class="trois-cent-percent">&nbsp;300%</p>
 
-<p class="main-label">{{ coverageRate }}%</p>
+<div class="label-container">
+  <div class="first-child">
+    <p class="main-label">{{ coverageRate }}%</p>
+  </div>
+  <div class="second-child"></div>
+</div>
 
 <canvas [@fadeInOut] #canvas [width]="width" [height]="height"></canvas>

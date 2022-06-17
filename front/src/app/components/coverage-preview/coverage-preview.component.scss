@@ -27,6 +27,27 @@
         bottom: -5px;
     }
 
+    .label-container {
+        position: absolute;
+        bottom: 55px;
+        display: flex;
+        left: -15px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        .first-child {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%
+        }
+
+        .second-child {
+            flex: 1
+        }
+    }
+
     .main-label {
         font-family: Marianne;
         font-size: 40px;
@@ -34,9 +55,7 @@
         line-height: 1.2;
         text-align: center;
         color: #18753c;
-        position: absolute;
-        left: 15px;
-        bottom: 55px;
+
     }
 
 }
