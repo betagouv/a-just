@@ -19,6 +19,10 @@ import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { forEach, result } from 'lodash'
 import { ThisReceiver } from '@angular/compiler'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import * as es6printJS from 'print-js'
+
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -1274,8 +1278,43 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.setParamsToAjust(volumeInput, inputField, allButton)
     }
   }
+  /**
+  print() {
+    //title = "Print.js example with Angular";
+    es6printJS('content', 'html')
+  }
+  */
 
   print() {
-    window.print()
+    var currentPosition = document.getElementById('content')!.scrollTop
+    document.getElementById('content')!.style.height = 'auto'
+
+    const filename = 'ThisIsYourPDFFilename.pdf'
+    const element = document.getElementById('content')!
+    console.log('overflow value', element.style.overflow)
+
+    //element.style.overflow = 'auto'
+    html2canvas(element!, {
+      scale: 2,
+    }).then((canvas) => {
+      var width = element.offsetWidth
+      var height = element.offsetHeight
+      console.log('width', width)
+      console.log('height', height)
+      console.log('scroll', element.scrollHeight)
+
+      var doc = new jsPDF('l', 'px', [height, width / 2])
+
+      doc.addImage(
+        canvas.toDataURL('image/png', 1),
+        'png',
+        0,
+        0,
+        width / 2,
+        height / 2
+      )
+      doc.save(filename)
+      //element.style.overflow = 'hidden'
+    })
   }
 }
