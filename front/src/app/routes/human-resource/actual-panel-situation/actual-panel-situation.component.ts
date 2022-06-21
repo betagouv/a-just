@@ -29,8 +29,10 @@ export class ActualPanelSituationComponent
   @Input() dateStart: Date | null = null
   @Input() dateStop: Date | null = null
   @Input() canEdit: boolean = false
+  @Input() canRemoveSituation: boolean = false
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
+  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
   comment: string = ''
