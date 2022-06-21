@@ -22,7 +22,7 @@ export class PanelHistoryVentilationComponent
   implements OnChanges
 {
   @Input() dateStart: Date = new Date()
-  @Input() dateStop: Date = new Date()
+  @Input() dateStop: Date | null = null
   @Input() dateEndToJuridiction: Date | null | undefined = null
   @Input() fonction: HRFonctionInterface | null = null
   @Input() etp: number = 0
@@ -50,6 +50,7 @@ export class PanelHistoryVentilationComponent
 
     if (
       this.dateEndToJuridiction &&
+      this.dateStop &&
       this.dateEndToJuridiction.getTime() < this.dateStop.getTime()
     ) {
       this.timeWorked = 'Sortie'

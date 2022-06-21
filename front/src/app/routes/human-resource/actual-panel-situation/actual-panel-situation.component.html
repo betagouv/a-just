@@ -105,4 +105,6 @@
   <button (click)="onEditSituation()" class="outline small primary">
     Modifier la ventilation
   </button>
+  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">Supprimer la
+    ventilation</button>
 </div>
