@@ -33,6 +33,7 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
   @Input() height: number = 180
   margin: number = 35
   borderWidth: number = 12
+  // counter: number = 1
 
   ngOnInit(): void {
     this.onDraw()
@@ -191,6 +192,8 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
       ctx.translate(this.width / 2 + this.margin, this.height / 2 + this.margin)
       this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 300)
     }
+
+    // window.requestAnimationFrame(() => this.generateBackground())
   }
 
   getRadiusPosition(degree: number) {
@@ -204,8 +207,8 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     cl_bord: string,
     angle: number
   ) {
-    ctx.rotate(degreesToRadians(270 + (angle * 9) / 10))
-
+    ctx.rotate(degreesToRadians(270 + (angle * 9) / 10)) // + this.counter
+    //this.counter++
     ctx.beginPath()
     ctx.fillStyle = cl_int
     ctx.lineWidth = 2
