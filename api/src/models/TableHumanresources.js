@@ -42,9 +42,7 @@ export default (sequelizeInstance, Model) => {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
       
       if(!list[i].hmatricule || list[i].hmatricule === '0') {
-        // dont save this profil
-        console.log(list[i].nom_usage + ' no add by matricule')
-        continue
+        list[i].hmatricule = list[i].nom_usage
       }
 
       let findHRToDB = await Model.findOne({
