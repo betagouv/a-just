@@ -87,19 +87,19 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
       endDotColor = '#60efaf'
     } else lightGreenValue = 210
 
-    if (this.coverageRate <= 120) {
+    if (this.coverageRate <= 110) {
       yellowValue = this.coverageRate
       needleBorderColor = '#fdd90ab7'
       needleColor = '#f8df4fee'
       endDotColor = '#f0dd63ef'
-    } else yellowValue = 120
+    } else yellowValue = 110
 
-    if (this.coverageRate <= 50) {
+    if (this.coverageRate <= 80) {
       redValue = this.coverageRate
       needleBorderColor = '#ce0300b7'
       needleColor = '#ce0300b7'
       endDotColor = '#f13a3787'
-    } else redValue = 50
+    } else redValue = 80
 
     // fix resolution of arc
     canvas.style.width = this.width + this.margin * 2 + 'px'
