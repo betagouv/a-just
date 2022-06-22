@@ -104,7 +104,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
-      console.log(findUser)
+      console.log(findUser, { indisponibilityError: this.indisponibilityError })
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
@@ -662,6 +662,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
+      console.log({ indisponibilityError: this.indisponibilityError })
     }
   }
 
