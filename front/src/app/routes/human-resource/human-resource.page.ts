@@ -97,6 +97,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id)
     if (findUser) {
       this.currentHR = findUser
+
+      // control indisponibilities
+      this.indisponibilityError =
+        this.humanResourceService.controlIndisponibilities(
+          this.currentHR,
+          this.currentHR.indisponibilities
+        )
       console.log(findUser)
 
       const currentSituation = this.humanResourceService.findSituation(
@@ -224,15 +231,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         idsDetected = delta
         let etp = (findSituation && findSituation.etp) || 0
 
-        if (currentDateEnd && currentDateEnd.getTime() <= currentDate.getTime()) {
+        if (
+          currentDateEnd &&
+          currentDateEnd.getTime() <= currentDate.getTime()
+        ) {
           etp = 0
         }
 
         const id = (findSituation && findSituation.id) || -1
 
         // add stop date
-        if(this.histories.length) {
-          this.histories[this.histories.length - 1].dateStop = dateAddDays(currentDate, -1)
+        if (this.histories.length) {
+          this.histories[this.histories.length - 1].dateStop = dateAddDays(
+            currentDate,
+            -1
+          )
         }
 
         // new list
@@ -246,22 +259,34 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           dateStart: today(currentDate),
           dateStop: null,
           situationForTheFirstTime:
-            ((id !== -1 && this.histories.length === 0) ||
+            (id !== -1 && this.histories.length === 0) ||
             (this.histories.length &&
-              this.histories[this.histories.length - 1].id !== id)) ? true : false,
+              this.histories[this.histories.length - 1].id !== id)
+              ? true
+              : false,
         })
       }
 
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    if(this.histories.length && currentDateEnd && !this.histories[this.histories.length - 1].dateStop && this.histories[this.histories.length - 1].dateStart.getTime() < currentDateEnd.getTime()) {
+    if (
+      this.histories.length &&
+      currentDateEnd &&
+      !this.histories[this.histories.length - 1].dateStop &&
+      this.histories[this.histories.length - 1].dateStart.getTime() <
+        currentDateEnd.getTime()
+    ) {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
 
     this.histories = this.histories.reverse() // reverse array to html render
-    this.historiesOfThePast = this.histories.filter(a => a.dateStop && a.dateStop.getTime() <= today().getTime())
-    this.historiesOfTheFutur = this.histories.filter(a => a.dateStart && a.dateStart.getTime() >= today().getTime())
+    this.historiesOfThePast = this.histories.filter(
+      (a) => a.dateStop && a.dateStop.getTime() <= today().getTime()
+    )
+    this.historiesOfTheFutur = this.histories.filter(
+      (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
+    )
 
     // find the actuel index of situation
     this.indexOfTheFuture = null
@@ -304,7 +329,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.actualHistoryDateStop =
         this.histories[this.indexOfTheFuture].dateStop
     }
-
 
     console.log({
       indexOfTheFuture: this.indexOfTheFuture,
@@ -597,7 +621,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
-    const index = history ? this.histories.findIndex(h => h.id === history.id && h.dateStart === history.dateStart) : -1
+    const index = history
+      ? this.histories.findIndex(
+          (h) => h.id === history.id && h.dateStart === history.dateStart
+        )
+      : -1
     if (this.onEditIndex === null) {
       if (index === -1) {
         // add situation
@@ -625,6 +653,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
+    }
+
+    if (this.currentHR) {
+      // force to control indisponibilities
+      this.indisponibilityError =
+        this.humanResourceService.controlIndisponibilities(
+          this.currentHR,
+          this.currentHR.indisponibilities
+        )
     }
   }
 
