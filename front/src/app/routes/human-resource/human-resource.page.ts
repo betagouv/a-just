@@ -178,6 +178,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         .filter((i) => i.dateStop)
         .map((s) => today(s.dateStop))
     )
+    console.log(listAllDates)
 
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
@@ -186,6 +187,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.onEditIndex = -1
       return
     }
+
+    console.log(minDate, maxDate)
 
     const currentDate = new Date(minDate)
     let idsDetected: number[] = []
@@ -252,8 +255,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    if(this.histories.length && currentDateEnd && this.histories[0].dateStart.getTime() < currentDateEnd.getTime()) {
-      this.histories[0].dateStop = currentDateEnd
+    if(this.histories.length && currentDateEnd && !this.histories[this.histories.length - 1].dateStop && this.histories[this.histories.length - 1].dateStart.getTime() < currentDateEnd.getTime()) {
+      this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
 
     this.histories = this.histories.reverse() // reverse array to html render
