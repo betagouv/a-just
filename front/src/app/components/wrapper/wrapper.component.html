@@ -35,8 +35,10 @@
         </button>
       </a>
     </div>
-    <h3 [innerHTML]="title"></h3>
-    <p class="subtitle">{{ subtitle }}</p>
+    <div>
+      <h3 [innerHTML]="title"></h3>
+      <p class="subtitle">{{ subtitle }}</p>
+    </div>
     <ng-template [ngIf]="titleTemplate">
       <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
     </ng-template>
