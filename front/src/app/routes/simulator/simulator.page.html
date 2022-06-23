@@ -1,4 +1,9 @@
-<aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
+<aj-wrapper
+  id="simu-wrapper"
+  title="Simulateur"
+  [actionTemplate]="actions"
+  [alignLeft]="true"
+>
   <div class="top-bar-container">
     <p>Période choisie :</p>
     <div class="container-timeline">
@@ -768,10 +773,15 @@
     (valueChange)="updateReferentielSelected('subList', $event)"
   >
   </aj-select>
-  <div class="reset-button {{disabled}}" (click)="resetParams()">
+  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
     <p class="title">Reset</p>
   </div>
-  <div class="export-button" (click)="print()">
+  <div
+    id="export-button"
+    class="export-button"
+    [class.enable]="toDisplaySimulation"
+    (click)="print()"
+  >
     <div class="shape">D</div>
     <p class="title">Exporter en PDF</p>
   </div>
