@@ -29,14 +29,15 @@ export class ActualPanelSituationComponent
   @Input() dateStart: Date | null = null
   @Input() dateStop: Date | null = null
   @Input() canEdit: boolean = false
+  @Input() canRemoveSituation: boolean = false
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
+  @Output() onRemove = new EventEmitter()
   indisponibility: number = 0
   timeWorked: string = ''
   comment: string = ''
   commentUpdatedAt: Date | null = null
   timeoutUpdateComment: any = null
-  dateEndToJuridiction: Date | null | undefined = null
   fonction: HRFonctionInterface | null = null
   etp: number = 0
   indisponibilities: RHActivityInterface[] = []
@@ -69,10 +70,11 @@ export class ActualPanelSituationComponent
       this.indisponibility = 1
     }
 
+    const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
     if (
-      this.dateEndToJuridiction &&
-      this.dateStop &&
-      this.dateEndToJuridiction.getTime() <= this.dateStop.getTime()
+      dateEndToJuridiction &&
+      this.dateStart &&
+      dateEndToJuridiction.getTime() <= this.dateStart.getTime()
     ) {
       this.timeWorked = 'Parti'
     } else {

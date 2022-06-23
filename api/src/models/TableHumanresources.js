@@ -38,13 +38,13 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.importList = async (list) => {
+    const importSituation = []
     for(let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
+
       
       if(!list[i].hmatricule || list[i].hmatricule === '0') {
-        // dont save this profil
-        console.log(list[i].nom_usage + ' no add by matricule')
-        continue
+        list[i].hmatricule = list[i].nom_usage
       }
 
       let findHRToDB = await Model.findOne({
@@ -52,6 +52,7 @@ export default (sequelizeInstance, Model) => {
           backup_id: backupId,
           registration_number: list[i].hmatricule,
         },
+        logging: false,
       })
 
 
@@ -68,6 +69,7 @@ export default (sequelizeInstance, Model) => {
           where: {
             label: list[i].statut,
           },
+          logging: false,
         })
         if(findCategory) {
           situation.category_id = findCategory.id
@@ -77,12 +79,13 @@ export default (sequelizeInstance, Model) => {
           where: {
             code: list[i].fonction,
           },
+          logging: false,
         })
         if(findFonction) {
           situation.fonction_id = findFonction.id
         } else if(list[i].statut === 'Magistrat') {
           // dont save this profil
-          console.log(list[i].nom_usage + ' no add by fonction')
+          importSituation.push(list[i].nom_usage + ' no add by fonction')
           continue
         }
 
@@ -91,7 +94,7 @@ export default (sequelizeInstance, Model) => {
           situation.etp = etp
         } else {
           // dont save this profil
-          console.log(list[i].nom_usage + ' no add by etp')
+          importSituation.push(list[i].nom_usage + ' no add by etp')
           continue
         }
 
@@ -118,10 +121,14 @@ export default (sequelizeInstance, Model) => {
           ...situation,
           human_id: findHRToDB.dataValues.id,
         })
+
+        importSituation.push(list[i].nom_usage + ' ADDED')
       } else {
-        console.log(list[i].nom_usage + ' no add by exist')
+        importSituation.push(list[i].nom_usage + ' no add by exist')
       }
     }
+
+    console.log(importSituation)
   } 
 
   Model.haveAccess = async (HRId, userId) => {

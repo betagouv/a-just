@@ -96,3 +96,9 @@ export function nbOfDays(startDate: Date, endDate: Date) {
 }
 
 export function decimalToDateString(decimal: number | null | undefined) {}
+
+export function dateAddDays(date: Date, nbDays: number = 0) {
+  date = new Date(date)
+  date.setDate(date.getDate() + nbDays)
+  return date
+}

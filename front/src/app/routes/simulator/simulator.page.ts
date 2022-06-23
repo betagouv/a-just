@@ -1263,7 +1263,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       )
     )
     this.logger.push('_')
-    if (counter > 1) this.logger.push('WRONG order')
+    //if (counter > 1) this.logger.push('WRONG order')
     //console.log('big R', simulation)
     this.simulatedSationData = simulation
   }
