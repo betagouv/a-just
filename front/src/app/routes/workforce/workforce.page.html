@@ -1,4 +1,4 @@
-<aj-wrapper [title]="'Visualisation <b>instantanée</b> des effectifs'"
+<aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null header-border-none">
   <div class="container">
@@ -23,6 +23,16 @@
           </p>
           <p class="etp">{{ category.etpt | number:".2-2" }} ETPT</p>
         </div>
+      </div>
+      <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
+        (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
+      </aj-input-button>
+      <div class="search-next" *ngIf="valuesFinded !== null">
+        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
+        </mat-icon>
+        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
+          expand_more
+        </mat-icon>
       </div>
     </div>
 
@@ -88,10 +98,12 @@
                     {{ hr.fonction && hr.fonction.code}}
                   </p>
                   <p class="etp">{{ hr.etpLabel }}</p>
+                  <p class="unavailable" *ngIf="hr.hasIndisponibility">
+                    <mat-icon>error</mat-icon> Indispo
+                  </p>
                 </div>
-                <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                  <mat-icon>error</mat-icon> indisponibilité
-                </p>
+                <div class="updated-at">Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
+                  getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY" }}</div>
               </a>
               <div class="read-etp">
                 <p class="label">
@@ -121,15 +133,5 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
-    (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
-  </aj-input-button>
-  <div class="search-next" *ngIf="valuesFinded !== null">
-    <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
-    </mat-icon>
-    <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
-      expand_more
-    </mat-icon>
-  </div>
   <button class="primary add-collaborator" (click)="addHR()">Ajouter un collaborateur</button>
 </ng-template>
