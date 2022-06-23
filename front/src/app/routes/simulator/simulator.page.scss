@@ -820,7 +820,9 @@
     }
 
     .export-button {
-        cursor: pointer;
+        pointer-events: none;
+        cursor: auto;
+        opacity: 0.5;
         position: absolute;
         right: 80px;
         display: flex;
@@ -830,6 +832,32 @@
         border: 1px solid fColor(borderSelect);
         padding: 4px 8px;
         height: 55px;
+
+        &.enable {
+            pointer-events: all;
+            cursor: pointer;
+            background-color: #000091;
+            color: white;
+            opacity: 1;
+
+            p.title {
+                color: white;
+            }
+
+            .shape {
+                background-color: white;
+                color: #000091;
+            }
+
+            .shape::before {
+                content: '';
+                border-bottom: 6px solid transparent;
+                border-right: 6px solid #000091;
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+        }
 
         p.title {
             color: fColor(titleSelect);
