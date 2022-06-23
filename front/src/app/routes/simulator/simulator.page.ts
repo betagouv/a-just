@@ -1278,34 +1278,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.setParamsToAjust(volumeInput, inputField, allButton)
     }
   }
+
   /**
-  print() {
-    //title = "Print.js example with Angular";
-    es6printJS('content', 'html')
-  }
-  */
-
-  print() {
-    var currentPosition = document.getElementById('content')!.scrollTop
-    document.getElementById('content')!.style.height = 'auto'
-
-    const filename = 'ThisIsYourPDFFilename.pdf'
-    const element = document.getElementById('content')!
-    console.log('overflow value', element.style.overflow)
-
-    //element.style.overflow = 'auto'
     html2canvas(element!, {
       scale: 2,
-    }).then((canvas) => {
+      scrollY: -window.scrollY,
+    }).then(async (canvas) => {
       var width = element.offsetWidth
       var height = element.offsetHeight
-      console.log('width', width)
-      console.log('height', height)
-      console.log('scroll', element.scrollHeight)
 
-      var doc = new jsPDF('l', 'px', [height, width / 2])
+      var pdf = new jsPDF('l', 'px', [height, width / 2])
 
-      doc.addImage(
+      pdf.addImage(
         canvas.toDataURL('image/png', 1),
         'png',
         0,
@@ -1313,8 +1297,84 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         width / 2,
         height / 2
       )
-      doc.save(filename)
-      //element.style.overflow = 'hidden'
+      pdf.save('fichier.pdf', { returnPromise: true })
     })
+ */
+
+  async print() {
+    const filename = 'ThisIsYourPDFFilename.pdf'
+    let element: any = document.getElementById('content')!
+    //element = element.cloneNode(true)
+    const currentScroll = element.scrollTop
+
+    console.log(element)
+    element.scrollTo(0, 0)
+
+    //window.print()
+    //return
+    html2canvas(element!, {
+      scale: 2,
+    })
+      .then((canvas) => {
+        var width = element.offsetWidth
+        var height = element.offsetHeight
+
+        var doc = new jsPDF(
+          'p',
+          'px',
+          [width / 2, element.scrollHeight / 2],
+          true
+        )
+
+        element.scrollTo(0, 0)
+
+        doc.addImage(
+          canvas.toDataURL('image/png', 1),
+          'png',
+          0,
+          0,
+          width / 2,
+          height / 2
+        )
+
+        element.scrollTo(0, height)
+
+        html2canvas(element!, {
+          scale: 2,
+        }).then((canvas2) => {
+          doc.addImage(
+            canvas2.toDataURL('image/png', 1),
+            'png',
+            0,
+            height / 2,
+            width / 2,
+            height / 2
+          )
+
+          element.scrollTo(0, height * 2)
+
+          html2canvas(element!, {
+            scale: 2,
+          }).then((canvas3) => {
+            doc.addImage(
+              canvas3.toDataURL('image/png', 1),
+              'png',
+              0,
+              height / 2 + (element.scrollHeight - 2 * height) / 2,
+              width / 2,
+              height / 2
+            )
+
+            doc.save(filename)
+          })
+
+          //doc.save(filename)
+        })
+
+        //element.scrollTo(0, currentScroll)
+        return doc
+        //element.style.overflow = 'hidden'
+      })
+      .then((doc) => {})
   }
 }
