@@ -53,7 +53,10 @@ export default (sequelizeInstance, Model) => {
       }
 
       if (contentieuxIds[code]) {
-        const periode = new Date(csv[i].periode)
+        const year = csv[i].periode.slice(0,4)
+        const month = (+csv[i].periode.slice(-2)) - 1
+        const periode = new Date(year, month)
+        
         const periodeStart = new Date(
           periode.getFullYear(),
           periode.getMonth()
