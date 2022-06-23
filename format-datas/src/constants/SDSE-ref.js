@@ -3,6 +3,7 @@ export const HEADER_COLUMN_NAMES = ['I_ELST', 'C_TUS', 'COPRO', 'NATAFF', 'MODSA
 export const TAG_JURIDICTION_ID_COLUMN_NAME = 'I_ELST'
 export const TAG_JURIDICTION_VALUE_COLUMN_NAME = 'NOM_COMPTEUR'
 
-export const TJ_LYON_IELST = '00100167'
-
-export const authorizateIELST = [TJ_LYON_IELST]
+export const I_ELST_LIST = {
+  '00100167': 'TJ_LYON',
+  '00963077': 'TJ_LYON',
+}

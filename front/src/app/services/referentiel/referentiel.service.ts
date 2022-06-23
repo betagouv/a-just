@@ -87,17 +87,17 @@ export class ReferentielService {
     // todo set in, out, stock for each
     const list = referentiels.map((ref) => {
       const getActivity = activities.find((a) => a.contentieux.id === ref.id);
-      ref.in = (getActivity && getActivity.entrees) || 0;
-      ref.out = (getActivity && getActivity.sorties) || 0;
-      ref.stock = (getActivity && getActivity.stock) || 0;
+      ref.in = (getActivity && getActivity.entrees) || null;
+      ref.out = (getActivity && getActivity.sorties) || null;
+      ref.stock = (getActivity && getActivity.stock) || null;
 
       ref.childrens = (ref.childrens || []).map((c) => {
         const getChildrenActivity = activities.find(
           (a) => a.contentieux.id === c.id
         );
-        c.in = (getChildrenActivity && getChildrenActivity.entrees) || 0;
-        c.out = (getChildrenActivity && getChildrenActivity.sorties) || 0;
-        c.stock = (getChildrenActivity && getChildrenActivity.stock) || 0;
+        c.in = (getChildrenActivity && getChildrenActivity.entrees) || null;
+        c.out = (getChildrenActivity && getChildrenActivity.sorties) || null;
+        c.stock = (getChildrenActivity && getChildrenActivity.stock) || null;
 
         return c;
       });
