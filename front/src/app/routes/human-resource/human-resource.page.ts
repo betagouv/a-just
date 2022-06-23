@@ -13,12 +13,12 @@ import { HRCategoryService } from 'src/app/services/hr-category/hr-category.serv
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copy } from 'src/app/utils'
-import { today } from 'src/app/utils/dates'
+import { dateAddDays, today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 
 export interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[]
-  dateStop: Date
+  dateStop: Date | null
   situationForTheFirstTime: boolean
 }
 
@@ -35,14 +35,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   currentHR: HumanResourceInterface | null = null
   categoryName: string = ''
   histories: HistoryInterface[] = []
+  historiesOfThePast: HistoryInterface[] = []
+  historiesOfTheFutur: HistoryInterface[] = []
   allIndisponibilities: RHActivityInterface[] = []
   onEditIndex: number | null = null // null (no edition), -1 (new edition), x (x'eme edition)
   updateIndisponiblity: RHActivityInterface | null = null
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   indisponibilityError: string | null = null
-  actualHistoryIndex: number | null = null
   actualHistoryDateStart: Date | null = null
   actualHistoryDateStop: Date | null = null
+  indexOfTheFuture: number | null = null
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -95,7 +97,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const findUser = allHuman.find((h) => h.id === id)
     if (findUser) {
       this.currentHR = findUser
-      console.log(findUser)
+
+      // control indisponibilities
+      this.indisponibilityError =
+        this.humanResourceService.controlIndisponibilities(
+          this.currentHR,
+          this.currentHR.indisponibilities
+        )
+      console.log(findUser, { indisponibilityError: this.indisponibilityError })
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
@@ -149,7 +158,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       },
     ])
 
-    if(situations.length === 0) {
+    if (situations.length === 0) {
       this.onEditIndex = -1
       return
     }
@@ -176,6 +185,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         .filter((i) => i.dateStop)
         .map((s) => today(s.dateStop))
     )
+    console.log(listAllDates)
 
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
@@ -185,17 +195,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    if (maxDate.getTime() < today().getTime() && !this.currentHR.dateEnd) {
-      maxDate = today()
-    }
-
-    const currentDate = new Date(maxDate)
-    let idsDetected: number[] = []
-    let lastSituationId = null
-    this.actualHistoryIndex = null
     console.log(minDate, maxDate)
 
-    while (currentDate.getTime() >= minDate.getTime()) {
+    const currentDate = new Date(minDate)
+    let idsDetected: number[] = []
+    let lastSituationId = null
+
+    while (currentDate.getTime() <= maxDate.getTime()) {
       let delta: number[] = []
       const findIndispos = this.humanResourceService.findAllIndisponibilities(
         this.currentHR,
@@ -223,65 +229,83 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         lastSituationId = (findSituation && findSituation.id) || null
         idsDetected = delta
-        const dateStop = new Date(currentDate)
         let etp = (findSituation && findSituation.etp) || 0
 
-        if (currentDateEnd && currentDateEnd.getTime() <= dateStop.getTime()) {
+        if (
+          currentDateEnd &&
+          currentDateEnd.getTime() <= currentDate.getTime()
+        ) {
           etp = 0
+        }
+
+        const id = (findSituation && findSituation.id) || -1
+
+        // add stop date
+        if (this.histories.length) {
+          this.histories[this.histories.length - 1].dateStop = dateAddDays(
+            currentDate,
+            -1
+          )
         }
 
         // new list
         this.histories.push({
-          id: (findSituation && findSituation.id) || -1,
+          id,
           category: (findSituation && findSituation.category) || null,
           fonction: (findSituation && findSituation.fonction) || null,
           etp,
           indisponibilities: findIndispos,
           activities: (findSituation && findSituation.activities) || [],
-          dateStart: new Date(),
-          dateStop,
-          situationForTheFirstTime: false,
+          dateStart: today(currentDate),
+          dateStop: null,
+          situationForTheFirstTime:
+            (id !== -1 && this.histories.length === 0) ||
+            (this.histories.length &&
+              this.histories[this.histories.length - 1].id !== id)
+              ? true
+              : false,
         })
       }
 
-      currentDate.setDate(currentDate.getDate() - 1)
+      currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    // last situation can remove situation
-    if (this.histories.length) {
-      this.histories[this.histories.length - 1].situationForTheFirstTime = true
+    if (
+      this.histories.length &&
+      currentDateEnd &&
+      !this.histories[this.histories.length - 1].dateStop &&
+      this.histories[this.histories.length - 1].dateStart.getTime() <
+        currentDateEnd.getTime()
+    ) {
+      this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
 
-    // place date start
-    this.histories = this.histories.map((h, index) => {
-      const dateStop =
-        index + 1 < this.histories.length
-          ? today(this.histories[index + 1].dateStop)
-          : today(minDate)
-      h.dateStart = new Date(dateStop)
-      dateStop.setDate(dateStop.getDate() + 1)
+    this.histories = this.histories.reverse() // reverse array to html render
+    this.historiesOfThePast = this.histories.filter(
+      (a) => a.dateStop && a.dateStop.getTime() <= today().getTime()
+    )
+    this.historiesOfTheFutur = this.histories.filter(
+      (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
+    )
+
+    // find the actuel index of situation
+    this.indexOfTheFuture = null
+    this.histories.map((h, index) => {
+      const dateStart = h.dateStart ? h.dateStart : null
+      const dateStop = h.dateStop ? h.dateStop : null
 
       if (
-        (index === 0 && this.histories.length > 1) ||
-        (index > 0 && index < this.histories.length - 1)
+        ((dateStart && dateStart.getTime() <= today().getTime()) ||
+          !dateStart) &&
+        ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)
       ) {
-        h.dateStart.setDate(h.dateStart.getDate() + 1)
+        this.indexOfTheFuture = index
       }
-
-      if (
-        h.dateStart.getTime() <= today().getTime() &&
-        today().getTime() <= h.dateStop.getTime() &&
-        this.actualHistoryIndex === null
-      ) {
-        this.actualHistoryIndex = index
-      }
-
-      return h
     })
 
     this.actualHistoryDateStart = null
     this.actualHistoryDateStop = null
-    if (this.actualHistoryIndex === null) {
+    if (this.indexOfTheFuture === null) {
       // check if past or the future
       if (this.histories.length) {
         if (
@@ -290,7 +314,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ) {
           this.actualHistoryDateStop =
             this.histories[this.histories.length - 1].dateStart
-        } else if (this.histories[0].dateStop.getTime() < today().getTime()) {
+        } else if (
+          this.histories[0].dateStop &&
+          this.histories[0].dateStop.getTime() < today().getTime()
+        ) {
           const dateStop = new Date(this.histories[0].dateStop)
           dateStop.setDate(dateStop.getDate() + 1)
           this.actualHistoryDateStart = dateStop
@@ -298,12 +325,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
     } else {
       this.actualHistoryDateStart =
-        this.histories[this.actualHistoryIndex].dateStart
+        this.histories[this.indexOfTheFuture].dateStart
       this.actualHistoryDateStop =
-        this.histories[this.actualHistoryIndex].dateStop
+        this.histories[this.indexOfTheFuture].dateStop
     }
 
     console.log({
+      indexOfTheFuture: this.indexOfTheFuture,
       histories: this.histories,
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
@@ -592,9 +620,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     return true
   }
 
-  onSelectSituationToEdit(index: number | null = null) {
+  onSelectSituationToEdit(history: HistoryInterface | null = null) {
+    const index = history
+      ? this.histories.findIndex(
+          (h) => h.id === history.id && h.dateStart === history.dateStart
+        )
+      : -1
     if (this.onEditIndex === null) {
-      if (index === null) {
+      if (index === -1) {
         // add situation
         this.onEditIndex = -1
       } else {
@@ -620,6 +653,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
+    }
+
+    if (this.currentHR) {
+      // force to control indisponibilities
+      this.indisponibilityError =
+        this.humanResourceService.controlIndisponibilities(
+          this.currentHR,
+          this.currentHR.indisponibilities
+        )
+      console.log({ indisponibilityError: this.indisponibilityError })
     }
   }
 
