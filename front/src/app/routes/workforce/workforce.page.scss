@@ -189,7 +189,7 @@
 
     .text {
       flex: 1;
-      padding: 24px 24px 20px 24px;
+      padding: 16px 24px 16px 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -263,6 +263,16 @@
             }
           }
 
+          &.unavailable {
+            font-size: 14px;
+
+            mat-icon {
+              font-size: 17px;
+              height: 17px;
+              width: 17px;
+            }
+          }
+
           mat-icon {
             font-size: 14px;
             width: 14px;
@@ -271,6 +281,13 @@
             top: 3px;
           }
         }
+      }
+
+      .updated-at {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 20px;
+        color: fColor(grayRow);
       }
     }
 
@@ -376,6 +393,8 @@
   aj-select,
   aj-date-select {
     margin-right: 8px;
+    flex: 1;
+    max-width: 170px;
   }
 }
 
@@ -482,6 +501,10 @@
     position: relative;
     width: 13px;
     height: 13px;
+  }
+
+  p.label {
+    font-size: 14px;
   }
 
   p.etp {
