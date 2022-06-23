@@ -1304,7 +1304,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     const element = document.getElementById('conteneur-main')!
 
     html2canvas(element!, {
-      scale: 2.5,
+      scale: 1.5,
     })
       .then((canvas) => {
         var width = element.offsetWidth
