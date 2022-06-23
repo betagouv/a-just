@@ -22,6 +22,7 @@ import { SimulationInterface } from 'src/app/interfaces/simulation'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import * as es6printJS from 'print-js'
+import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 
 @Component({
   templateUrl: './simulator.page.html',
@@ -1279,41 +1280,31 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
-  /**
+  print() {
+    let contentieuLabel = this.referentiel
+      .find((v) => v.id === this.contentieuId)
+      ?.label.replace(' ', '_')
+
+    const filename = `Simulation_${contentieuLabel}_${new Date()
+      .toJSON()
+      .slice(0, 10)}.pdf`
+
+    const content: any = document.getElementById('content')!
+    content.style.overflow = 'inherit'
+
+    const initButton = document.getElementById('main-init')!
+    initButton.style.display = 'none'
+
+    const exportButton = document.getElementById('export-button')!
+    exportButton.style.display = 'none'
+
+    const ajWrapper = document.getElementById('simu-wrapper')
+    ajWrapper?.classList.add('full-screen')
+
+    const element = document.getElementById('conteneur-main')!
+
     html2canvas(element!, {
-      scale: 2,
-      scrollY: -window.scrollY,
-    }).then(async (canvas) => {
-      var width = element.offsetWidth
-      var height = element.offsetHeight
-
-      var pdf = new jsPDF('l', 'px', [height, width / 2])
-
-      pdf.addImage(
-        canvas.toDataURL('image/png', 1),
-        'png',
-        0,
-        0,
-        width / 2,
-        height / 2
-      )
-      pdf.save('fichier.pdf', { returnPromise: true })
-    })
- */
-
-  async print() {
-    const filename = 'ThisIsYourPDFFilename.pdf'
-    let element: any = document.getElementById('content')!
-    //element = element.cloneNode(true)
-    const currentScroll = element.scrollTop
-
-    console.log(element)
-    element.scrollTo(0, 0)
-
-    //window.print()
-    //return
-    html2canvas(element!, {
-      scale: 2,
+      scale: 2.5,
     })
       .then((canvas) => {
         var width = element.offsetWidth
@@ -1325,9 +1316,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           [width / 2, element.scrollHeight / 2],
           true
         )
-
-        element.scrollTo(0, 0)
-
         doc.addImage(
           canvas.toDataURL('image/png', 1),
           'png',
@@ -1336,45 +1324,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           width / 2,
           height / 2
         )
-
-        element.scrollTo(0, height)
-
-        html2canvas(element!, {
-          scale: 2,
-        }).then((canvas2) => {
-          doc.addImage(
-            canvas2.toDataURL('image/png', 1),
-            'png',
-            0,
-            height / 2,
-            width / 2,
-            height / 2
-          )
-
-          element.scrollTo(0, height * 2)
-
-          html2canvas(element!, {
-            scale: 2,
-          }).then((canvas3) => {
-            doc.addImage(
-              canvas3.toDataURL('image/png', 1),
-              'png',
-              0,
-              height / 2 + (element.scrollHeight - 2 * height) / 2,
-              width / 2,
-              height / 2
-            )
-
-            doc.save(filename)
-          })
-
-          //doc.save(filename)
-        })
-
-        //element.scrollTo(0, currentScroll)
-        return doc
-        //element.style.overflow = 'hidden'
+        doc.save(filename)
       })
-      .then((doc) => {})
+      .then(() => {
+        ajWrapper?.classList.remove('full-screen')
+        element.style.overflow = 'auto'
+        exportButton.style.display = 'flex'
+        initButton.style.display = 'flex'
+      })
   }
 }
