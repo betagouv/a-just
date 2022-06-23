@@ -1,5 +1,4 @@
 import { Op } from 'sequelize'
-import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
@@ -37,63 +36,62 @@ export default (sequelizeInstance, Model) => {
     const contentieuxIds = {}
 
     for (let i = 0; i < csv.length; i++) {
-      const contentieuxCSVLabel = extractCodeFromLabelImported(csv[i].niveau_4)
-      if(contentieuxCSVLabel && contentieuxCSVLabel.code) {
-        if(!contentieuxIds[contentieuxCSVLabel.code]) {
-          const contentieux = await Model.models.ContentieuxReferentiels.findOne({
-            attributes: ['id'],
-            where: {
-              code_import: contentieuxCSVLabel.code,
-            },
-            raw: true,
-          })
+      const code = csv[i].code_import
 
-          if (contentieux) {
-            contentieuxIds[contentieuxCSVLabel.code] = contentieux.id
-          }
+      if(!contentieuxIds[code]) {
+        const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+          attributes: ['id'],
+          where: {
+            code_import: code,
+          },
+          raw: true,
+        })
+
+        if (contentieux) {
+          contentieuxIds[code] = contentieux.id
         }
+      }
 
-        if (contentieuxIds[contentieuxCSVLabel.code]) {
-          const periode = new Date(csv[i].periode)
-          const periodeStart = new Date(
-            periode.getFullYear(),
-            periode.getMonth()
-          )
-          const periodeEnd = new Date(periodeStart)
-          periodeEnd.setMonth(periodeEnd.getMonth() + 1)
+      if (contentieuxIds[code]) {
+        const periode = new Date(csv[i].periode)
+        const periodeStart = new Date(
+          periode.getFullYear(),
+          periode.getMonth()
+        )
+        const periodeEnd = new Date(periodeStart)
+        periodeEnd.setMonth(periodeEnd.getMonth() + 1)
 
-          const findExist = await Model.findOne({
-            where: {
-              hr_backup_id: HRBackupId,
-              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
-              periode: {
-                [Op.gte]: periodeStart,
-                [Op.lte]: periodeEnd,
-              },
+        const findExist = await Model.findOne({
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: contentieuxIds[code],
+            periode: {
+              [Op.gte]: periodeStart,
+              [Op.lte]: periodeEnd,
             },
+          },
+        })
+        // if existe update content
+        if (findExist && 
+            (parseInt(csv[i].entrees) !== findExist.dataValues.entrees || 
+            parseInt(csv[i].sorties) !== findExist.dataValues.sorties || 
+            parseInt(csv[i].stock) !== findExist.dataValues.stock)
+        ) {
+          await findExist.update({
+            entrees: parseInt(csv[i].entrees) || 0,
+            sorties: parseInt(csv[i].sorties) || 0,
+            stock: parseInt(csv[i].stock) || 0,
           })
-          // if existe update content
-          if (findExist && 
-            (parseInt(csv[i].value_entrees) !== findExist.dataValues.entrees || 
-            parseInt(csv[i].value_sorties) !== findExist.dataValues.sorties || 
-            parseInt(csv[i].value_stock) !== findExist.dataValues.stock)
-          ) {
-            await findExist.update({
-              entrees: parseInt(csv[i].value_entrees) || 0,
-              sorties: parseInt(csv[i].value_sorties) || 0,
-              stock: parseInt(csv[i].value_stock) || 0,
-            })
-          } else {
+        } else {
           // else create
-            await Model.create({
-              hr_backup_id: HRBackupId,
-              periode,
-              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
-              entrees: parseInt(csv[i].value_entrees) || 0,
-              sorties: parseInt(csv[i].value_sorties) || 0,
-              stock: parseInt(csv[i].value_stock) || 0,
-            })
-          }
+          await Model.create({
+            hr_backup_id: HRBackupId,
+            periode,
+            contentieux_id: contentieuxIds[code],
+            entrees: parseInt(csv[i].entrees) || 0,
+            sorties: parseInt(csv[i].sorties) || 0,
+            stock: parseInt(csv[i].stock) || 0,
+          })
         }
       }
     }
