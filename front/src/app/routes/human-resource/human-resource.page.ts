@@ -280,9 +280,55 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
 
+    // add stituation if date start if lower than first situation
+    if (
+      this.histories.length &&
+      this.histories[0].id !== -1 &&
+      this.currentHR.dateStart &&
+      this.histories[0].dateStart.getTime() >
+        today(this.currentHR.dateStart).getTime()
+    ) {
+      this.histories.splice(0, 0, {
+        id: -1,
+        category: null,
+        fonction: null,
+        etp: 0,
+        indisponibilities: [],
+        activities: [],
+        dateStart: today(this.currentHR.dateStart),
+        dateStop: dateAddDays(this.histories[0].dateStart, -1),
+        situationForTheFirstTime: false,
+      })
+    }
+
+    // add situation if last situation if finish and not the magistrat
+    if (this.histories.length && !currentDateEnd) {
+      const date = dateAddDays(maxDate, 1)
+      const findIndispos = this.humanResourceService.findAllIndisponibilities(
+        this.currentHR,
+        date
+      )
+      const findSituation = this.humanResourceService.findSituation(
+        this.currentHR,
+        date
+      )
+      this.histories[this.histories.length - 1].dateStop = maxDate
+      this.histories.push({
+        id: (findSituation && findSituation.id) || -1,
+        category: (findSituation && findSituation.category) || null,
+        fonction: (findSituation && findSituation.fonction) || null,
+        etp: (findSituation && findSituation.etp) || 0,
+        indisponibilities: findIndispos,
+        activities: (findSituation && findSituation.activities) || [],
+        dateStart: today(currentDate),
+        dateStop: null,
+        situationForTheFirstTime: false,
+      })
+    }
+
     this.histories = this.histories.reverse() // reverse array to html render
     this.historiesOfThePast = this.histories.filter(
-      (a) => a.dateStop && a.dateStop.getTime() <= today().getTime()
+      (a) => a.dateStop && a.dateStop.getTime() < today().getTime()
     )
     this.historiesOfTheFutur = this.histories.filter(
       (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
