@@ -26,6 +26,9 @@ import { LoadersWidgetComponent } from './loaders-widget/loaders-widget.componen
 import { FiguresWidgetComponent } from './figures-widget/figures-widget.component'
 import { DialWidgetComponent } from './dial-widget/dial-widget.component'
 import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.component'
+import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
+import { RadioButtonComponent } from './radio-button/radio-button.component'
+import { LegendLabelComponent } from './legend-label/legend-label.component'
 
 const list = [
   WrapperComponent,
@@ -50,6 +53,9 @@ const list = [
   FiguresWidgetComponent,
   DialWidgetComponent,
   CoveragePreviewComponent,
+  DtesChartComponent,
+  RadioButtonComponent,
+  LegendLabelComponent,
 ]
 
 @NgModule({
