@@ -174,8 +174,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             this.selectedReferentielIds.indexOf(a.contentieux.id) !== -1
         )
         if (activities.length) {
+          let realETP = (h.etp || 0) - h.hasIndisponibility
+          if(realETP < 0) {
+            realETP = 0
+          }
           etpt +=
-            (((h.etp || 0) - h.hasIndisponibility) *
+            (realETP *
               sumBy(activities, 'percent')) /
             100
         }
@@ -341,9 +345,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             )
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
             if (timeAffected) {
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+              if(realETP < 0) {
+                realETP = 0
+              }
               ref.totalAffected =
                 (ref.totalAffected || 0) +
-                (timeAffected / 100) * ((hr.etp || 0) - hr.hasIndisponibility)
+                (timeAffected / 100) * realETP
             }
 
             return ref
