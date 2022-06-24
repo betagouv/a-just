@@ -20,7 +20,6 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   elementRef: HTMLElement | undefined
   constructor(element: ElementRef<HTMLElement>) {
     this.elementRef = element.nativeElement
-    console.log(this.elementRef)
   }
 
   ngOnInit(): void {}
