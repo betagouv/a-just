@@ -1,5 +1,5 @@
 <aj-wrapper
-#wrapper
+  #wrapper
   id="simu-wrapper"
   title="Simulateur"
   [actionTemplate]="actions"
@@ -776,6 +776,16 @@
   </aj-select>
   <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
     <p class="title">Reset</p>
+  </div>
+  <div id="print-title">
+    <img
+      width="60px"
+      height="46px"
+      src="/assets/images/logo-ajust.png"
+      class="logo-ajust"
+    />
+
+    <p class="title">{{printTitle}}</p>
   </div>
   <div
     id="export-button"
