@@ -27,6 +27,9 @@ import { FiguresWidgetComponent } from './figures-widget/figures-widget.componen
 import { DialWidgetComponent } from './dial-widget/dial-widget.component'
 import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.component'
 import { NgSelectModule } from '@ng-select/ng-select'
+import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
+import { RadioButtonComponent } from './radio-button/radio-button.component'
+import { LegendLabelComponent } from './legend-label/legend-label.component'
 
 const list = [
   WrapperComponent,
@@ -51,6 +54,9 @@ const list = [
   FiguresWidgetComponent,
   DialWidgetComponent,
   CoveragePreviewComponent,
+  DtesChartComponent,
+  RadioButtonComponent,
+  LegendLabelComponent,
 ]
 
 @NgModule({
