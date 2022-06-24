@@ -1,38 +1,22 @@
 <div class="menu no-print" title="">
   <div class="images">
-    <img
-      src="/assets/images/Logo-Ministere_de_la_justice_2020.png"
-      class="logo"
-    />
+    <img src="/assets/images/Logo-Ministere_de_la_justice_2020.png" class="logo" />
     <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
   </div>
 
   <div class="juridiction" *ngIf="hrBackups.length">
     <div class="juridiction-title">
       <h6>{{ hrBackup && hrBackup.label }}</h6>
-      <mat-icon
-        *ngIf="hrBackups && hrBackups.length > 1"
-        [matMenuTriggerFor]="menu"
-        >expand_more</mat-icon
-      >
+      <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
       <mat-menu #menu="matMenu">
-        <button
-          mat-menu-item
-          *ngFor="let bu of hrBackups"
-          (click)="onChangeHRBackup(bu.id)"
-          [title]="bu.id"
-        >
+        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
           {{ bu.label }}
         </button>
       </mat-menu>
     </div>
   </div>
 
-  <div
-    class="menu-item"
-    *ngFor="let item of menu"
-    [class.selected]="isSelected(item)"
-  >
+  <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
     <a [routerLink]="['/' + item.path]">
       {{ item.label }}
     </a>
@@ -51,16 +35,16 @@
         </button>
       </a>
     </div>
-    <h3 [innerHTML]="title"></h3>
-    <p class="subtitle">{{ subtitle }}</p>
+    <div>
+      <h3 [innerHTML]="title"></h3>
+      <p class="subtitle">{{ subtitle }}</p>
+    </div>
     <ng-template [ngIf]="titleTemplate">
       <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
     </ng-template>
     <div *ngIf="!alignLeft" class="space"></div>
     <div class="actions">
-      <ng-container
-        *ngTemplateOutlet="actionTemplate || defaultActionTemplate"
-      ></ng-container>
+      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>
   </div>
   <div class="content" id="content">
