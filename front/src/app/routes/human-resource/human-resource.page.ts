@@ -302,7 +302,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     // add situation if last situation if finish and not the magistrat
-    if (this.histories.length && !currentDateEnd) {
+    if (this.histories.length && !currentDateEnd && maxDate.getTime() > today().getTime()) {
       const date = dateAddDays(maxDate, 1)
       const findIndispos = this.humanResourceService.findAllIndisponibilities(
         this.currentHR,
