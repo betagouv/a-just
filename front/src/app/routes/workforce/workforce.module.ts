@@ -6,9 +6,10 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/libs/material.module';
+import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 
 @NgModule({
-	declarations: [ WorkforcePage ],
+	declarations: [ WorkforcePage, FilterPanelComponent ],
 	imports: [ WorkforcePageModule, RouterModule, ComponentsModule, CommonModule, FormsModule, ReactiveFormsModule, MaterialModule ]
 })
 export class WorkforceModule {}

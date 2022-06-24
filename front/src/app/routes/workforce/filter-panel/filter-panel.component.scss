@@ -1,7 +1,29 @@
 @import "../../../styles/utils.scss";
 
 :host {
+  position: fixed;
+  background-color: rgba(fColor(cblackdark), 0.37);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.popin {
+  position: absolute;
   display: block;
   background-color: white;
   border-radius: 8px;
+  position: absolute;
+  top: 200px;
+  left: 300px;
+  width: 290px;
+  padding: 16px;
+}
+
+.panel-title {
+  margin-top: 8px;
+  font-weight: bold;
+  font-size: 20px;
 }
