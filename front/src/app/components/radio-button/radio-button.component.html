@@ -1,0 +1,11 @@
+<div class="check" (click)="clicked()">
+  <input
+    (onChange)="clicked()"
+    type="checkbox"
+    class="check__check"
+    checked="{o.checked}"
+    value="{o.label}"
+    id="{o.label}"
+  />
+  <div class="check__indicator"></div>
+</div>
