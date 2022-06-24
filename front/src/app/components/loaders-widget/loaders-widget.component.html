@@ -11,11 +11,13 @@
       Situation <br />{{ dateStart === '' ? "à aujourd'hui" : 'au' }}
       {{ dateStart }}
     </p>
+    <div class="space"></div>
     <label class="loader-value">{{ valueAt }}</label>
     <div class="loader-bar"></div>
   </div>
   <div class="loader">
     <p class="loader-title">Situation projetée <br />au {{ dateStop }}</p>
+    <div class="space"></div>
     <label class="loader-value medium">{{ valueProjected }}</label>
     <div class="loader-bar medium">
       <div class="bar" [style.height]="valueBar1 + '%'"></div>
@@ -23,6 +25,7 @@
   </div>
   <div class="loader">
     <p class="loader-title">Situation simulée <br />au {{ dateStop }}</p>
+    <div class="space"></div>
     <label class="loader-value hard">{{ valueSimulated }}</label>
     <div class="loader-bar hard">
       <div class="bar" [style.height]="valueBar2 + '%'"></div>
