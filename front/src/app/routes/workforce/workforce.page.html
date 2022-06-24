@@ -1,6 +1,7 @@
 <aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
-  [actionTemplate]="actions" class="content-margin-null header-border-none">
+  [actionTemplate]="actions" class="content-margin-null header-border-none"
+  [ngClass]="{removeMenuZindex: showFilterPanel}">
   <div class="container">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
@@ -46,7 +47,8 @@
                 {{ list.label }}
               </div>
               <div class="filter-button">
-                <mat-icon>more_vert</mat-icon>
+                <mat-icon (click)="showFilterPanel = true">more_vert</mat-icon>
+                <filter-panel *ngIf="showFilterPanel"></filter-panel>
               </div>
             </div>
             <div class="contentieux-label">

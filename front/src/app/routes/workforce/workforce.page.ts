@@ -62,6 +62,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   filterSelected: ContentieuReferentielInterface | null = null
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
+  showFilterPanel: boolean = true
 
   constructor(
     private humanResourceService: HumanResourceService,
