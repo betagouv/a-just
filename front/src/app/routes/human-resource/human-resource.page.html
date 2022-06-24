@@ -3,6 +3,8 @@
   <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
     [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop" [canEdit]="indexOfTheFuture !== null"
     [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
+    [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
+    [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
     (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
     (addIndispiniblity)="onAddIndispiniblity($event)"
     (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">
