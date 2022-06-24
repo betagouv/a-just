@@ -38,6 +38,7 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
   ],
 })
 export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
+  @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   openPopup: boolean = false
   mooveClass: string = ''
   disabled: string = 'disabled'
@@ -1303,34 +1304,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     const element = document.getElementById('conteneur-main')!
 
-    html2canvas(element!, {
-      scale: 1.5,
+    this.wrapper?.exportAsPdf(element, filename).then(() => {
+      ajWrapper?.classList.remove('full-screen')
+      element.style.overflow = 'auto'
+      exportButton.style.display = 'flex'
+      initButton.style.display = 'flex'
     })
-      .then((canvas) => {
-        var width = element.offsetWidth
-        var height = element.offsetHeight
-
-        var doc = new jsPDF(
-          'p',
-          'px',
-          [width / 2, element.scrollHeight / 2],
-          true
-        )
-        doc.addImage(
-          canvas.toDataURL('image/png', 1),
-          'png',
-          0,
-          0,
-          width / 2,
-          height / 2
-        )
-        doc.save(filename)
-      })
-      .then(() => {
-        ajWrapper?.classList.remove('full-screen')
-        element.style.overflow = 'auto'
-        exportButton.style.display = 'flex'
-        initButton.style.display = 'flex'
-      })
   }
 }

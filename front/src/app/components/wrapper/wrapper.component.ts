@@ -1,5 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core'
 import { Router } from '@angular/router'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
@@ -123,5 +125,30 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
       return
     }
     this.humanResourceService.backupId.next(id)
+  }
+
+  async exportAsPdf(element: HTMLElement, filename: string): Promise<any> {
+    return html2canvas(element!, {
+      scale: 1.5,
+    }).then((canvas) => {
+      var width = element.offsetWidth
+      var height = element.offsetHeight
+
+      var doc = new jsPDF(
+        'p',
+        'px',
+        [width / 2, element.scrollHeight / 2],
+        true
+      )
+      doc.addImage(
+        canvas.toDataURL('image/png', 1),
+        'png',
+        0,
+        0,
+        width / 2,
+        height / 2
+      )
+      doc.save(filename)
+    })
   }
 }
