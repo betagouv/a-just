@@ -1,9 +1,11 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core'
 
@@ -13,11 +15,13 @@ import {
   styleUrls: ['./radio-button.component.scss'],
 })
 export class RadioButtonComponent implements OnChanges, OnInit {
+  @Input() title: string = ''
   @Input() switchColor: string = ''
   @Input() bgColor: string = 'white'
+  @Output() valueChange = new EventEmitter()
 
   o = {
-    label: 'Cheap',
+    label: '',
     checked: true,
   }
 
@@ -28,6 +32,7 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
+    this.o.label = this.title
     const checkElement = (
       this.elementRef!.getElementsByClassName(
         'check'
@@ -44,4 +49,8 @@ export class RadioButtonComponent implements OnChanges, OnInit {
     dotElement.style.setProperty('--boxAfterBackColor', this.switchColor)
   }
   ngOnChanges(changes: SimpleChanges): void {}
+
+  clicked() {
+    this.valueChange.emit(this.o)
+  }
 }

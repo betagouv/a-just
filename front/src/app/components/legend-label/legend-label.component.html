@@ -2,5 +2,10 @@
   <div class="circle"></div>
   <p class="label"></p>
   <div class="space"></div>
-  <aj-radio-button [switchColor]="bgColor"></aj-radio-button>
+  <aj-radio-button
+    [title]="title"
+    [switchColor]="bgColor"
+    (valueChange)="updateValue($event)"
+    #radio
+  ></aj-radio-button>
 </div>
