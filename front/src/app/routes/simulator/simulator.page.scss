@@ -3,6 +3,22 @@
 
 
 :host {
+
+    #print-title {
+        margin: 8px;
+        align-items: center;
+        display: none;
+
+        p {
+            //font-size: 14px;
+            //line-height: 1.71;
+            //color: #929292;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3a3a3a;
+        }
+    }
+
     .comment-row {
         display: flex;
 

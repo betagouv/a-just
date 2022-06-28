@@ -1,12 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { nbOfDays } from 'src/app/utils/dates'
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -16,14 +10,9 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { tree } from 'src/app/routes/simulator/simulator.tree'
-import { forEach, result } from 'lodash'
-import { ThisReceiver } from '@angular/compiler'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
-import * as es6printJS from 'print-js'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
-
+import { BackupInterface } from 'src/app/interfaces/backup'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -42,6 +31,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   openPopup: boolean = false
   mooveClass: string = ''
   disabled: string = 'disabled'
+  printTitle: string = ''
   contentieuId: number | null = null
   subList: number[] = []
   formReferentiel: dataInterface[] = []
@@ -89,12 +79,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   simulateButton = 'disabled'
   logger: string[] = []
 
+  hrBackup: BackupInterface | undefined
+  hrBackups: BackupInterface[] = []
+
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService
   ) {
     super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        this.hrBackups = this.humanResourceService.backups.getValue()
+        this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
+        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
+          .toJSON()
+          .slice(0, 10)}`
+      })
+    )
   }
 
   ngOnInit(): void {
@@ -212,6 +215,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   getElementById(id: number | null) {
     return this.referentiel?.find((v) => v.id === id)
   }
+
   getFieldValue(
     param: string,
     data: SimulatorInterface | SimulationInterface | null,
@@ -226,12 +230,21 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       switch (param) {
         case 'etpMag':
           return data?.etpMag || '0'
-        case 'totalOut':
-          return data?.totalOut || '0'
-        case 'totalIn':
-          return data?.totalIn || '0'
-        case 'lastStock':
-          return data?.lastStock || '0'
+        case 'totalOut': {
+          if (data?.totalOut && data?.totalOut >= 0) {
+            return data?.totalOut
+          } else return '0'
+        }
+        case 'totalIn': {
+          if (data?.totalIn && data?.totalIn >= 0) {
+            return data?.totalIn
+          } else return '0'
+        }
+        case 'lastStock': {
+          if (data?.lastStock && data?.lastStock >= 0) {
+            return data?.lastStock
+          } else return '0'
+        }
         case 'etpFon':
           return ''
         case 'realCoverage': {
@@ -1290,6 +1303,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       .toJSON()
       .slice(0, 10)}.pdf`
 
+    const title: any = document.getElementById('print-title')!
+    title.style.display = 'flex'
+
     const content: any = document.getElementById('content')!
     content.style.overflow = 'inherit'
 
@@ -1309,6 +1325,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       element.style.overflow = 'auto'
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
+      title.style.display = 'none'
     })
   }
 }
