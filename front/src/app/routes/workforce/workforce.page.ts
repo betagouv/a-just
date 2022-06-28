@@ -138,6 +138,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etp = 0
         }
 
+        let firstSituation = currentSituation
+        //console.log(h, currentSituation)
+        if (!firstSituation) {
+          firstSituation = this.humanResourceService.findSituation(h, undefined, 'asc')
+          etp = 1
+        }
+
         return {
           ...h,
           currentActivities:
@@ -148,12 +155,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           hasIndisponibility,
           currentSituation,
           etp,
-          category: currentSituation && currentSituation.category,
-          fonction: currentSituation && currentSituation.fonction,
+          category: firstSituation && firstSituation.category,
+          fonction: firstSituation && firstSituation.fonction,
         }
       }),
       ['fonction.rank', 'lastName'],
       ['asc', 'asc']
+    )
+
+    console.log(
+      'this.preformatedAllHumanResource',
+      this.preformatedAllHumanResource
     )
 
     this.updateCategoryValues()
@@ -174,10 +186,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             this.selectedReferentielIds.indexOf(a.contentieux.id) !== -1
         )
         if (activities.length) {
-          etpt +=
-            (((h.etp || 0) - h.hasIndisponibility) *
-              sumBy(activities, 'percent')) /
-            100
+          let realETP = (h.etp || 0) - h.hasIndisponibility
+          if (realETP < 0) {
+            realETP = 0
+          }
+          etpt += (realETP * sumBy(activities, 'percent')) / 100
         }
       })
 
@@ -321,10 +334,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.listFormated = Object.values(groupByCategory).map(
       (group: HumanResourceSelectedInterface[]) => {
-        const label =
-          group[0].currentSituation && group[0].currentSituation.category
-            ? group[0].currentSituation.category.label
-            : 'Autre'
+        const label = group[0].category ? group[0].category.label : 'Autre'
         let referentiel = (
           copyArray(this.referentiel) as ContentieuReferentielInterface[]
         ).map((ref) => {
@@ -341,9 +351,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             )
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
             if (timeAffected) {
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP < 0) {
+                realETP = 0
+              }
               ref.totalAffected =
-                (ref.totalAffected || 0) +
-                (timeAffected / 100) * ((hr.etp || 0) - hr.hasIndisponibility)
+                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
             }
 
             return ref

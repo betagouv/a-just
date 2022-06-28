@@ -280,9 +280,30 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
 
+    // add stituation if date start if lower than first situation
+    if (
+      this.histories.length &&
+      this.currentHR.dateStart &&
+      this.histories[0].dateStart.getTime() >
+        today(this.currentHR.dateStart).getTime()
+    ) {
+      const firstSituationExistant = this.histories.find(h => h.category)
+      this.histories.splice(0, 0, {
+        id: -1,
+        category: firstSituationExistant ? firstSituationExistant.category : null,
+        fonction: firstSituationExistant ? firstSituationExistant.fonction : null,
+        etp: 1,
+        indisponibilities: [],
+        activities: [],
+        dateStart: today(this.currentHR.dateStart),
+        dateStop: dateAddDays(this.histories[0].dateStart, -1),
+        situationForTheFirstTime: false,
+      })
+    }
+
     this.histories = this.histories.reverse() // reverse array to html render
     this.historiesOfThePast = this.histories.filter(
-      (a) => a.dateStop && a.dateStop.getTime() <= today().getTime()
+      (a) => a.dateStop && a.dateStop.getTime() < today().getTime()
     )
     this.historiesOfTheFutur = this.histories.filter(
       (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()

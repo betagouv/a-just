@@ -16,7 +16,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
-
+import { BackupInterface } from 'src/app/interfaces/backup'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -35,6 +35,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   openPopup: boolean = false
   mooveClass: string = ''
   disabled: string = 'disabled'
+  printTitle: string = ''
   contentieuId: number | null = null
   subList: number[] = []
   formReferentiel: dataInterface[] = []
@@ -81,12 +82,25 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   toCalculate = []
   simulateButton = 'disabled'
 
+  hrBackup: BackupInterface | undefined
+  hrBackups: BackupInterface[] = []
+
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService
   ) {
     super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        this.hrBackups = this.humanResourceService.backups.getValue()
+        this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
+        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
+          .toJSON()
+          .slice(0, 10)}`
+      })
+    )
   }
 
   ngOnInit(): void {
@@ -204,7 +218,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.subList.length) ||
       !this.getElementById(this.contentieuId)?.childrens?.length
     ) {
-      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
+      return this.simulatorService.getFieldValue(
+        param,
+        data,
+        initialValue,
+        toCompute
+      )
     }
     return ''
   }
@@ -819,6 +838,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       .toJSON()
       .slice(0, 10)}.pdf`
 
+    const title: any = document.getElementById('print-title')!
+    title.style.display = 'flex'
+
     const content: any = document.getElementById('content')!
     content.style.overflow = 'inherit'
 
@@ -838,6 +860,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       element.style.overflow = 'auto'
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
+      title.style.display = 'none'
     })
   }
 }
