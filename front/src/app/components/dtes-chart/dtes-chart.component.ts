@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core'
-import { getShortMonthString } from 'src/app/utils/dates'
+import { getRangeOfMonths, getShortMonthString } from 'src/app/utils/dates'
 import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
@@ -50,7 +50,7 @@ export class DtesChartComponent implements AfterViewInit {
       console.log('new dateStop', value)
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
-      this.labels = this.getRangeOfMonths(
+      this.labels = getRangeOfMonths(
         new Date(this.dateStart),
         new Date(this.dateStop)
       )
@@ -61,7 +61,7 @@ export class DtesChartComponent implements AfterViewInit {
       this.startRealValue = findRealValue(value)
       this.dateStart = value
       if (this.dateStop !== null) {
-        this.labels = this.getRangeOfMonths(
+        this.labels = getRangeOfMonths(
           new Date(this.dateStart),
           new Date(this.dateStop)
         )
@@ -171,64 +171,39 @@ export class DtesChartComponent implements AfterViewInit {
     return v
   }
 
-  getRangeOfMonths(startDate: Date, endDate: Date) {
-    const dates = new Array<string>()
-    const dateCounter = new Date(startDate)
-    // avoids edge case where last month is skipped
-    dateCounter.setDate(1)
-    const modulo = dateCounter.getMonth()
-    while (dateCounter < endDate) {
-      if (dateCounter.getMonth() === modulo)
-        dates.push(
-          `${
-            getShortMonthString(dateCounter) +
-            ' ' +
-            dateCounter.getFullYear().toString().slice(-2)
-          }`
-        )
-      else dates.push(`${getShortMonthString(dateCounter)}`)
-
-      dateCounter.setMonth(dateCounter.getMonth() + 1)
-    }
-    if (dates.length === 1) return [dates[0], dates[0]]
-    return dates
-  }
-
-  ngOnChanges() {}
   ngAfterViewInit(): void {
-    // a générer
     const labels = this.labels
 
     const data = {
       labels: labels,
       datasets: [
         {
-          label: 'projectedStock', // a supprimer
+          label: 'projectedStock',
           yAxisID: 'A',
-          backgroundColor: '#c3fad5', //'rgb(255, 99, 132)',
-          borderColor: '#c3fad5', //'rgb(255, 99, 132)',
-          data: this.data.projectedStock.values, // a générer
+          backgroundColor: '#c3fad5',
+          borderColor: '#c3fad5',
+          data: this.data.projectedStock.values,
         },
         {
-          label: 'simulatedStock', // a supprimer
+          label: 'simulatedStock',
           yAxisID: 'A',
-          backgroundColor: '#6fe49d', //'rgb(255, 99, 132)',
-          borderColor: '#6fe49d', //'rgb(255, 99, 132)',
-          data: this.data.simulatedStock.values, // a générer
+          backgroundColor: '#6fe49d',
+          borderColor: '#6fe49d',
+          data: this.data.simulatedStock.values,
         },
         {
-          label: 'projectedDTES', // a supprimer
+          label: 'projectedDTES',
           yAxisID: 'B',
-          backgroundColor: '#bfcdff', //'rgb(255, 99, 132)',
-          borderColor: '#bfcdff', //'rgb(255, 99, 132)',
-          data: this.data.projectedDTES.values, // a générer
+          backgroundColor: '#bfcdff',
+          borderColor: '#bfcdff',
+          data: this.data.projectedDTES.values,
         },
         {
           yAxisID: 'B',
-          label: 'simulatedDTES', // a supprimer
-          backgroundColor: '#7b99e4', //'rgb(255, 99, 132)',
-          borderColor: '#7b99e4', //'rgb(255, 99, 132)',
-          data: this.data.simulatedDTES.values, // a générer
+          label: 'simulatedDTES',
+          backgroundColor: '#7b99e4',
+          borderColor: '#7b99e4',
+          data: this.data.simulatedDTES.values,
         },
       ],
     }
@@ -292,7 +267,6 @@ export class DtesChartComponent implements AfterViewInit {
     const config: any = {
       type: 'line',
       data: data,
-
       options: {
         tooltips: {
           callbacks: {
@@ -414,7 +388,6 @@ export class DtesChartComponent implements AfterViewInit {
     if (event.label === 'simulatedStock') index = 1
     if (event.label === 'projectedDTES') index = 2
     if (event.label === 'simulatedDTES') index = 3
-
     const isDataShown = this.myChart.isDatasetVisible(index)
     if (isDataShown === true) this.myChart.hide(index)
     else this.myChart.show(index)
