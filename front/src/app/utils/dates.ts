@@ -145,3 +145,26 @@ export function decimalToStringDate(decimal: number | null | undefined) {
   }
   return
 }
+
+export function getRangeOfMonths(startDate: Date, endDate: Date) {
+  const dates = new Array<string>()
+  const dateCounter = new Date(startDate)
+  // avoids edge case where last month is skipped
+  dateCounter.setDate(1)
+  const modulo = dateCounter.getMonth()
+  while (dateCounter < endDate) {
+    if (dateCounter.getMonth() === modulo)
+      dates.push(
+        `${
+          getShortMonthString(dateCounter) +
+          ' ' +
+          dateCounter.getFullYear().toString().slice(-2)
+        }`
+      )
+    else dates.push(`${getShortMonthString(dateCounter)}`)
+
+    dateCounter.setMonth(dateCounter.getMonth() + 1)
+  }
+  if (dates.length === 1) return [dates[0], dates[0]]
+  return dates
+}
