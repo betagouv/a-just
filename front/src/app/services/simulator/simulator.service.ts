@@ -713,12 +713,21 @@ export class SimulatorService extends MainClass {
     switch (param) {
       case 'etpMag':
         return data?.etpMag || '0'
-      case 'totalOut':
-        return data?.totalOut || '0'
-      case 'totalIn':
-        return data?.totalIn || '0'
-      case 'lastStock':
-        return data?.lastStock || '0'
+      case 'totalOut': {
+        if (data?.totalOut && data?.totalOut >= 0) {
+          return data?.totalOut
+        } else return '0'
+      }
+      case 'totalIn': {
+        if (data?.totalIn && data?.totalIn >= 0) {
+          return data?.totalIn
+        } else return '0'
+      }
+      case 'lastStock': {
+        if (data?.lastStock && data?.lastStock >= 0) {
+          return data?.lastStock
+        } else return '0'
+      }
       case 'etpFon':
         return ''
       case 'realCoverage': {
@@ -732,7 +741,9 @@ export class SimulatorService extends MainClass {
       }
       case 'realDTESInMonths':
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
-          return data?.realDTESInMonths + ' mois' || '0'
+          if (data?.realDTESInMonths <= 0) {
+            return '0'
+          } else return data?.realDTESInMonths + ' mois' || '0'
         }
         return '0'
       case 'realTimePerCase':
@@ -744,7 +755,21 @@ export class SimulatorService extends MainClass {
     return ''
   }
 
+  range(start: number, end: number, length: number, offset?: number) {
+    const step = (end - start) / (length - 1)
+    return Array(length)
+      .fill(0)
+      .map((_, index) => {
+        if (index === 0) return start
+        else if (index === length) return end
+        else return start + step * index
+      })
+  }
+
   generateLinearData(value1: number, value2: number, step: number) {
+    if (value1 < 0) value1 = 0
+    if (value2 < 0) value2 = 0
+
     let v = null
     if (step === 1 || step === 2) {
       v = [value1, value2]
@@ -753,12 +778,9 @@ export class SimulatorService extends MainClass {
     } else if (value1 === value2) {
       return Array(step).fill(value1)
     } else {
-      v = _.range(value1, value2, (value2 - value1) / step)
-      v.push(value2)
+      v = this.range(value1, value2, step)
     }
-    v = v.map((x) => {
-      return Math.floor(x)
-    })
+
     return v
   }
 }
