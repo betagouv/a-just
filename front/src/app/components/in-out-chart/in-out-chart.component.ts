@@ -177,7 +177,8 @@ export class InOutChartComponent implements OnInit {
           sufix = 'entrées (projeté)'
           break
       }
-      let lbl = '  ' + context.formattedValue + ' ' + sufix
+      let lbl =
+        '  ' + Math.floor(parseFloat(context.formattedValue)) + ' ' + sufix
       return lbl
     }
 

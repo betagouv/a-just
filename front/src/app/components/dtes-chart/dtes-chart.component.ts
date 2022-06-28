@@ -207,7 +207,13 @@ export class DtesChartComponent implements AfterViewInit {
           sufix = 'mois (projeté)'
           break
       }
-      let lbl = '  ' + context.formattedValue + ' ' + sufix //context.label +
+      let lbl = ''
+
+      if (sufix.slice(0, 4) === 'mois')
+        lbl = '  ' + context.formattedValue + ' ' + sufix //context.label +
+      else
+        lbl =
+          '  ' + Math.floor(parseFloat(context.formattedValue)) + ' ' + sufix
       return lbl
     }
 
