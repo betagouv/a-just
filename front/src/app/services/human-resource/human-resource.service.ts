@@ -334,7 +334,7 @@ export class HumanResourceService {
     )
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date) {
+  findSituation(hr: HumanResourceInterface | null, date?: Date, order = 'desc') {
     if (date) {
       date = today(date)
     }
@@ -353,11 +353,11 @@ export class HumanResourceService {
         }
       }
     }
-    let situations = this.findAllSituations(hr, date)
+    let situations = this.findAllSituations(hr, date, order)
     return situations.length ? situations[0] : null
   }
 
-  findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
+  findAllSituations(hr: HumanResourceInterface | null, date?: Date, order: string | boolean = 'desc') {
     let situations = orderBy(
       hr?.situations || [],
       [
@@ -366,7 +366,8 @@ export class HumanResourceService {
           return date.getTime()
         },
       ],
-      ['desc']
+      // @ts-ignore
+      [order]
     )
 
     if (date) {
