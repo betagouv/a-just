@@ -3,7 +3,7 @@
 <div class="left-side">
   <div class="title">
     <p>
-      Evolution du stock et DTES &nbsp;
+      Evolution des entrées et sorties &nbsp;
       <label
         >{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
         {{ startRealValue }} au {{ stopRealValue }}</label
@@ -13,7 +13,7 @@
   <div class="container">
     <div style="width: 100%">
       <canvas
-        id="dtes-chart"
+        id="in-out-chart"
         style="height: 250px; width: content-box"
       ></canvas>
     </div>
@@ -21,34 +21,34 @@
 </div>
 <div class="right-side">
   <aj-legend-label
-    [title]="'projectedStock'"
-    [label]="'Stock (projeté)'"
-    [dotColor]="'#62dda7'"
-    [bgColor]="'#c3fad5'"
+    [title]="'projectedIn'"
+    [label]="'Entrées (projeté)'"
+    [dotColor]="'#fcc63a'"
+    [bgColor]="'#feebd0'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
-    [title]="'simulatedStock'"
-    [label]="'Stock (simulé)'"
-    [dotColor]="'#00a95f'"
-    [bgColor]="'#6fe49d'"
+    [title]="'simulatedIn'"
+    [label]="'Entrées (simulé)'"
+    [dotColor]="'#feebd0'"
+    [bgColor]="'#fcc63a'"
     (value)="display($event)"
   ></aj-legend-label>
   <div class="space"></div>
   <aj-legend-label
-    [title]="'projectedDTES'"
-    [label]="'DTES (projeté)'"
-    [dotColor]="'#869ece'"
-    [bgColor]="'#bfcdff'"
+    [title]="'projectedOut'"
+    [label]="'Sorties (projeté)'"
+    [dotColor]="'#60e0eb'"
+    [bgColor]="'#c7f6fc'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
-    [title]="'simulatedDTES'"
-    [label]="'DTES (simulé)'"
-    [dotColor]="'#dee5fd'"
-    [bgColor]="'#7b99e4'"
+    [title]="'simulatedOut'"
+    [label]="'Sorties (simulé)'"
+    [dotColor]="'#c7f6fc'"
+    [bgColor]="'#60e0eb'"
     (value)="display($event)"
   ></aj-legend-label>
 </div>
