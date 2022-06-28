@@ -30,6 +30,8 @@ export class ActualPanelSituationComponent
   @Input() dateStop: Date | null = null
   @Input() canEdit: boolean = false
   @Input() canRemoveSituation: boolean = false
+  @Input() etp: number = 0
+  @Input() fonction: HRFonctionInterface | null = null
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
   @Output() onRemove = new EventEmitter()
@@ -38,8 +40,6 @@ export class ActualPanelSituationComponent
   comment: string = ''
   commentUpdatedAt: Date | null = null
   timeoutUpdateComment: any = null
-  fonction: HRFonctionInterface | null = null
-  etp: number = 0
   indisponibilities: RHActivityInterface[] = []
   activities: RHActivityInterface[] = []
 
@@ -59,8 +59,6 @@ export class ActualPanelSituationComponent
       this.currentHR,
       today()
     )
-    this.etp = (findSituation && findSituation.etp) || 0
-    this.fonction = (findSituation && findSituation.fonction) || null
     this.activities = (findSituation && findSituation.activities) || []
 
     this.indisponibility = fixDecimal(
