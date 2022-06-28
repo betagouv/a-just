@@ -74,6 +74,7 @@ export default (sequelizeInstance, Model) => {
             },
           },
         })
+        
         // if existe update content
         if (findExist && 
             (parseInt(csv[i].entrees) !== findExist.dataValues.entrees || 
@@ -85,7 +86,7 @@ export default (sequelizeInstance, Model) => {
             sorties: parseInt(csv[i].sorties) || 0,
             stock: parseInt(csv[i].stock) || 0,
           })
-        } else {
+        } else if(!findExist) {
           // else create
           await Model.create({
             hr_backup_id: HRBackupId,
