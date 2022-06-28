@@ -39,10 +39,10 @@ export function getShortMonthString(date: Date | string) {
     'Févr.',
     'Mars',
     'Avr.',
-    'Mai',
-    'Juin',
+    'Mai.',
+    'Juin.',
     'Juil.',
-    'Août',
+    'Août.',
     'Sept.',
     'Oct.',
     'Nov.',
@@ -101,4 +101,47 @@ export function dateAddDays(date: Date, nbDays: number = 0) {
   date = new Date(date)
   date.setDate(date.getDate() + nbDays)
   return date
+}
+
+export function findRealValue(date: Date) {
+  const today = new Date()
+  if (
+    today.getDate() === date.getDate() &&
+    today.getMonth() === date.getMonth() &&
+    today.getFullYear() === date.getFullYear()
+  )
+    return ''
+  else if (date && typeof date.getMonth === 'function') {
+    return `${(date.getDate() + '').padStart(2, '0')} ${getShortMonthString(
+      date
+    )} ${date.getFullYear()}`
+  } else return ''
+}
+
+export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
+  if (dateTo)
+    return [
+      ...Array(
+        dateTo.getMonth() -
+          dateFrom.getMonth() +
+          12 * (dateTo.getFullYear() - dateFrom.getFullYear())
+      ).keys(),
+    ]
+  else return []
+}
+
+export function decimalToStringDate(decimal: number | null | undefined) {
+  if (decimal != null) {
+    const strArray = String(decimal).split('.')
+    const decimalMinute =
+      strArray[1] && +strArray[1].length === 1
+        ? +strArray[1] * 10
+        : +strArray[1]
+    let minute = strArray[1]
+      ? String(Math.ceil((1 / 100) * decimalMinute * 60))
+      : '00'
+    minute = minute.length === 1 ? '0' + minute : minute
+    return strArray[0] + 'h' + minute
+  }
+  return
 }

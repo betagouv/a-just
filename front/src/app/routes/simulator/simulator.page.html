@@ -5,10 +5,6 @@
   [actionTemplate]="actions"
   [alignLeft]="true"
 >
-  <aj-dtes-chart
-    [dateStart]="startRealValue"
-    [dateStop]="stopRealValue"
-  ></aj-dtes-chart>
   <div class="top-bar-container">
     <p>Période choisie :</p>
 
@@ -721,10 +717,7 @@
         </div>
       </div>
     </div>
-    <aj-dtes-chart
-      [dateStart]="startRealValue"
-      [dateStop]="stopRealValue"
-    ></aj-dtes-chart>
+    <aj-dtes-chart></aj-dtes-chart>
     <div class="widgets">
       <aj-loaders-widget
         [dateStart]="startRealValue"
