@@ -17,6 +17,7 @@ import { ActivitiesService } from '../activities/activities.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { environment } from 'src/environments/environment'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
+import * as _ from 'lodash'
 
 const start = new Date()
 const end = new Date()
@@ -741,5 +742,23 @@ export class SimulatorService extends MainClass {
         return ''
     }
     return ''
+  }
+
+  generateLinearData(value1: number, value2: number, step: number) {
+    let v = null
+    if (step === 1 || step === 2) {
+      v = [value1, value2]
+    } else if (step === 3) {
+      v = [value1, (value1 + value2) / 2, value2]
+    } else if (value1 === value2) {
+      return Array(step).fill(value1)
+    } else {
+      v = _.range(value1, value2, (value2 - value1) / step)
+      v.push(value2)
+    }
+    v = v.map((x) => {
+      return Math.floor(x)
+    })
+    return v
   }
 }
