@@ -29,6 +29,7 @@ import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.co
 import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
 import { RadioButtonComponent } from './radio-button/radio-button.component'
 import { LegendLabelComponent } from './legend-label/legend-label.component'
+import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
 
 const list = [
   WrapperComponent,
@@ -56,6 +57,7 @@ const list = [
   DtesChartComponent,
   RadioButtonComponent,
   LegendLabelComponent,
+  InOutChartComponent,
 ]
 
 @NgModule({
