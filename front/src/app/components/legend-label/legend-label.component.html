@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="circle"></div>
+  <p class="label"></p>
+  <div class="space"></div>
+  <aj-radio-button
+    [title]="title"
+    [switchColor]="bgColor"
+    (valueChange)="updateValue($event)"
+    #radio
+  ></aj-radio-button>
+</div>
