@@ -61,12 +61,7 @@ export class LegendLabelComponent implements OnInit, OnChanges {
     this.value.emit(event)
   }
 
-  /**
-   *
-   *
-   */
   clicked() {
-    console.log('jeclick label')
     this.toogle.checked = !this.toogle.checked
     this.value.emit(this.toogle)
   }
