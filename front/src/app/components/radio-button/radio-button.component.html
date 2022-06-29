@@ -5,7 +5,7 @@
     [(ngModel)]="o.checked"
     checked="o.checked"
     value="{o.label}"
-    (click)="clicked()"
+    (click)="$event.stopPropagation(); clicked()"
   />
   <div class="check__indicator"></div>
 </div>
