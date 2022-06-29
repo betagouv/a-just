@@ -178,7 +178,10 @@ export class InOutChartComponent implements OnInit {
           break
       }
       let lbl =
-        '  ' + Math.floor(parseFloat(context.formattedValue)) + ' ' + sufix
+        '  ' +
+        Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
+        ' ' +
+        sufix
       return lbl
     }
 
@@ -245,6 +248,11 @@ export class InOutChartComponent implements OnInit {
           },
         },
         plugins: {
+          corsair: {
+            dash: [4, 4],
+            color: '#1b1b35',
+            width: 1,
+          },
           filler: {
             propagate: true,
           },
@@ -279,7 +287,67 @@ export class InOutChartComponent implements OnInit {
           },
         },
       },
-      plugins: [yScaleTextInOut],
+      plugins: [
+        yScaleTextInOut,
+        {
+          id: 'corsair',
+          afterInit: (chart: any) => {
+            chart.corsair = {
+              x: 0,
+              y: 0,
+            }
+          },
+          afterEvent: (chart: any, evt: any) => {
+            const {
+              chartArea: { top, bottom, left, right },
+            } = chart
+            const {
+              event: { x, y },
+            } = evt
+            if (x < left || x > right || y < top || y > bottom) {
+              chart.corsair = {
+                x,
+                y,
+                draw: false,
+              }
+              chart.draw()
+              return
+            }
+
+            chart.corsair = {
+              x,
+              y,
+              draw: true,
+            }
+
+            chart.draw()
+          },
+          afterDatasetsDraw: (chart: any, _: any, opts: any) => {
+            const {
+              ctx,
+              chartArea: { top, bottom, left, right },
+            } = chart
+            const { x, y, draw } = chart.corsair
+
+            if (!draw) {
+              return
+            }
+
+            ctx.lineWidth = opts.width || 0
+            ctx.setLineDash(opts.dash || [])
+            ctx.strokeStyle = opts.color || 'black'
+
+            ctx.save()
+            ctx.beginPath()
+            ctx.moveTo(x, bottom)
+            ctx.lineTo(x, top)
+            ctx.moveTo(left, y)
+            ctx.lineTo(right, y)
+            ctx.stroke()
+            ctx.restore()
+          },
+        },
+      ],
     }
     this.myChart = new Chart(
       document.getElementById('in-out-chart') as ChartItem,
