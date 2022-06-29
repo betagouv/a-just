@@ -19,6 +19,7 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   @Input() switchColor: string = ''
   @Input() bgColor: string = 'white'
   @Output() valueChange = new EventEmitter()
+  @Input() value: boolean = true
 
   o = {
     label: '',
@@ -47,10 +48,17 @@ export class RadioButtonComponent implements OnChanges, OnInit {
       ) as HTMLCollectionOf<HTMLElement>
     )[0]
     dotElement.style.setProperty('--boxAfterBackColor', this.switchColor)
+
+    this.valueChange.emit(this.o)
   }
-  ngOnChanges(changes: SimpleChanges): void {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.o.checked = changes.value.currentValue
+  }
 
   clicked() {
+    console.log('jeclick radio')
+
     this.valueChange.emit(this.o)
   }
 }
