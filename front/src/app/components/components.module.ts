@@ -30,6 +30,7 @@ import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
 import { RadioButtonComponent } from './radio-button/radio-button.component'
 import { LegendLabelComponent } from './legend-label/legend-label.component'
 import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
+import { EtpChartComponent } from './etp-chart/etp-chart.component'
 
 const list = [
   WrapperComponent,
@@ -58,6 +59,7 @@ const list = [
   RadioButtonComponent,
   LegendLabelComponent,
   InOutChartComponent,
+  EtpChartComponent,
 ]
 
 @NgModule({
