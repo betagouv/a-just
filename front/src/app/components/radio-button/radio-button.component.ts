@@ -57,8 +57,6 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   }
 
   clicked() {
-    console.log('jeclick radio')
-
     this.valueChange.emit(this.o)
   }
 }
