@@ -153,7 +153,8 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
   dateCounter.setDate(1)
   const modulo = dateCounter.getMonth()
   while (dateCounter < endDate) {
-    if (dateCounter.getMonth() === modulo)
+    //if (dateCounter.getMonth() === modulo)
+    if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
         `${
           getShortMonthString(dateCounter) +

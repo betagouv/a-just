@@ -293,8 +293,10 @@ export class InOutChartComponent implements OnInit {
     if (event.label === 'simulatedIn') index = 1
     if (event.label === 'projectedOut') index = 2
     if (event.label === 'simulatedOut') index = 3
-    const isDataShown = this.myChart.isDatasetVisible(index)
-    if (isDataShown === true) this.myChart.hide(index)
-    else this.myChart.show(index)
+    if (this.myChart !== null) {
+      const isDataShown = this.myChart.isDatasetVisible(index)
+      if (isDataShown === true) this.myChart.hide(index)
+      else this.myChart.show(index)
+    }
   }
 }
