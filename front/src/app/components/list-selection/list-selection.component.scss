@@ -20,23 +20,28 @@
     .title-list {
       font-size: 16px;
       color: fColor(cblack);
+      flex: 1;
     }
 
     .value-selected {
       font-size: 16px;
-      color: fColor(titleEtpGraph);
-      text-align: right;
-      flex: 1;
       margin-left: 8px;
       margin-right: 4px;
       display: flex;
       align-items: center;
 
+      > p, i {
+        color: fColor(titleEtpGraph);
+      }
+
       &.normal {
-        color: fColor(cblack);
-        text-align: left;
         margin-left: 0;
         cursor: pointer;
+        flex: 1;
+
+        > p, i {
+          color: fColor(cblack);
+        }
       }
 
       i {
@@ -55,6 +60,15 @@
   margin-top: 4px;
   background-color: fColor(bgSelect);
   border-radius: 4px;
+
+  &.right {
+    left: 100%;
+    margin-top: 0;
+    margin-left: 4px;
+    right: inherit;
+    top: 0;
+    width: 260px;
+  }
 
   > div {
     display: flex;

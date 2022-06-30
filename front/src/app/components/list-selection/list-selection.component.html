@@ -14,7 +14,7 @@
     <mat-icon class="arrow-list">expand_more</mat-icon>
 </div>
 
-<div class="select-area" *ngIf="onOpenDropdown">
+<div class="select-area" [ngClass]="{right: title}" *ngIf="onOpenDropdown">
     <div *ngFor="let item of list" [ngClass]="{selected: item.id === value }"
         (click)="$event.stopPropagation(); onSelect(item.id)">
         <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item }"></ng-container>

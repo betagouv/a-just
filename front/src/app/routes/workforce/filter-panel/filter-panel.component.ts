@@ -1,5 +1,7 @@
 import { Output, EventEmitter, Component, Input, HostListener } from '@angular/core'
+import { sortBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 
 export interface FilterPanelInterface {
@@ -20,18 +22,29 @@ export class FilterPanelComponent extends MainClass {
     {
       id: 'name',
       label: 'Nom',
+      sortFunction: (list: HumanResourceSelectedInterface[]) => {
+        return sortBy(list, [(h: HumanResourceSelectedInterface) => (`${h.lastName} ${h.firstName}`).toLowerCase()])
+      },
     },
     {
       id: 'function',
       label: 'Fonction',
+      sortFunction: (list: HumanResourceSelectedInterface[]) => (sortBy(list, ['fonction.rank'])),
     },
     {
       id: 'updateAt',
       label: 'Date de mise à jour',
+      sortFunction: (list: HumanResourceSelectedInterface[]) => (sortBy(list, [(h: HumanResourceSelectedInterface) => (h.updatedAt.getTime())])),
     },
     {
       id: 'affected',
       label: "Taux d'affectation",
+      sortFunction: (list: HumanResourceSelectedInterface[]) => {
+        return sortBy(list, [(h: HumanResourceSelectedInterface) => {
+          const allMainActivities = h.currentActivities.filter(c => this.referentielService.mainActivitiesId.indexOf(c.contentieux.id) !== -1)
+          return sumBy(allMainActivities, 'percent')
+        }])
+      },
     },
   ]
   orderList = [
@@ -54,7 +67,7 @@ export class FilterPanelComponent extends MainClass {
     this.close.emit()
   }
 
-  constructor() {
+  constructor(private referentielService: ReferentielService) {
     super()
   }
 
@@ -68,13 +81,11 @@ export class FilterPanelComponent extends MainClass {
   }
 
   updateParams() {
+    const sortItem = this.sortList.find((o) => o.id === this.sortValue)
+
     this.update.next({
       sort: this.sortValue,
-      sortFunction: (list: HumanResourceSelectedInterface) => {
-        console.log('test')
-
-        return list
-      },
+      sortFunction: (sortItem && sortItem.sortFunction) || ((l: HumanResourceSelectedInterface) => (l)),
       order: this.orderValue,
     })
   }
