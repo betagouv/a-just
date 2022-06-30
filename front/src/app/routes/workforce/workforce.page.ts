@@ -64,7 +64,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   filterSelected: ContentieuReferentielInterface | null = null
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
-  showFilterPanel: boolean = true
+  showFilterPanel: number = -1
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
 
   constructor(

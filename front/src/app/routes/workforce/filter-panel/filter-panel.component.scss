@@ -2,12 +2,20 @@
 
 :host {
   position: fixed;
-  background-color: rgba(fColor(cblackdark), 0.37);
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 100;
+}
+
+.background {
+  position: absolute;
+  background-color: rgba(fColor(cblackdark), 0.37);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .popin {
@@ -16,8 +24,6 @@
   background-color: white;
   border-radius: 8px;
   position: absolute;
-  top: 200px;
-  left: 300px;
   width: 315px;
   padding: 16px;
 }
