@@ -218,7 +218,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.subList.length) ||
       !this.getElementById(this.contentieuId)?.childrens?.length
     ) {
-      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
+      return this.simulatorService.getFieldValue(
+        param,
+        data,
+        initialValue,
+        toCompute
+      )
     }
     return ''
   }
