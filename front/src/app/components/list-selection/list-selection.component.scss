@@ -1,34 +1,99 @@
 @import '../../styles/utils.scss';
 
 :host {
-  display: flex;
+  display: block;
   padding: 8px 12px 8px 16px;
   border-radius: 4px;
   background-color: fColor(bgSelect);
-  align-items: center;
   margin-bottom: 4px;
+  position: relative;
 
-  > .title-icon {
-    margin-right: 4px;
-  }
+  > .list-selection {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 
-  .title-list {
-    font-size: 16px;
-    color: fColor(cblack);
-  }
+    > .title-icon {
+      margin-right: 4px;
+    }
 
-  .value-selected {
-    font-size: 16px;
-    color: fColor(titleEtpGraph);
-    text-align: right;
-    flex: 1;
-    margin-left: 8px;
-    margin-right: 4px;
-
-    &.normal {
+    .title-list {
+      font-size: 16px;
       color: fColor(cblack);
-      text-align: left;
-      margin-left: 0;
+    }
+
+    .value-selected {
+      font-size: 16px;
+      color: fColor(titleEtpGraph);
+      text-align: right;
+      flex: 1;
+      margin-left: 8px;
+      margin-right: 4px;
+      display: flex;
+      align-items: center;
+
+      &.normal {
+        color: fColor(cblack);
+        text-align: left;
+        margin-left: 0;
+        cursor: pointer;
+      }
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.select-area {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: fColor(bgSelect);
+  border-radius: 4px;
+
+  > div {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    color: fColor(cblack);
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(fColor(bgSelectSelected), 0.6);
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+
+    &.selected {
+      background-color: fColor(bgSelectSelected);
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+
+    &:first-child {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    i {
+      margin-right: 4px;
     }
   }
 }

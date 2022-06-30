@@ -1,6 +1,8 @@
-<div class="popin">
+<div class="popin" (click)="$event.stopPropagation()">
   <p class="panel-title">Options d'affichage</p>
   <p class="filter-group">Trier par :</p>
-  <aj-list-selection title="Critère"></aj-list-selection>
-  <aj-list-selection [list]="orderList" [value]="'asc'"></aj-list-selection>
+  <aj-list-selection title="Critère" [list]="sortList" [value]="sortValue"
+    (valueChanged)="sortValue = $event; updateParams()"></aj-list-selection>
+  <aj-list-selection [list]="orderList" [value]="orderValue" (valueChanged)="orderValue = $event; updateParams()">
+  </aj-list-selection>
 </div>
