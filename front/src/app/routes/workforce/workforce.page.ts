@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { groupBy, orderBy, sortBy, sumBy } from 'lodash'
+import { orderBy, sortBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
@@ -65,7 +65,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
   showFilterPanel: boolean = true
-  filterParams: FilterPanelInterface | null = null
+  filterParams: FilterPanelInterface | null = this.workforceService.filterParams
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -349,9 +349,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   formatListToShow() {
-    console.log(this.categoriesFilterList)
-    const groupByCategory = groupBy(this.humanResourcesFilters, 'category.id')
-
     this.listFormated = [...this.categoriesFilterList].map(
       (category: HRCategorySelectedInterface) => {
         const label = category.label
@@ -512,5 +509,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.onFilterList()
+  }
+
+  updateFilterParams(event: FilterPanelInterface) {
+    this.workforceService.filterParams = event // memorize in cache
+    this.filterParams = event
+    
+    this.orderListWithFiltersParams()
   }
 }

@@ -48,8 +48,7 @@
               </div>
               <div class="filter-button">
                 <mat-icon (click)="showFilterPanel = true">more_vert</mat-icon>
-                <filter-panel *ngIf="showFilterPanel && i === 0"
-                  (update)="filterParams = $event; orderListWithFiltersParams();"
+                <filter-panel *ngIf="showFilterPanel && i === 0" (update)="updateFilterParams($event)"
                   [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
                   (close)="showFilterPanel = false"></filter-panel>
               </div>
