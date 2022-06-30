@@ -87,20 +87,22 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
     )
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref: ContentieuReferentielInterface[]) => {
-        this.referentiel = ref
-          .filter(
-            (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
-          )
-          .map((r) => ({ ...r, selected: true }))
-        this.formReferentiel = this.referentiel.map((r) => ({
-          id: r.id,
-          value: this.referentielMappingName(r.label),
-        }))
-        this.selectedReferentielIds =
-          this.humanResourceService.selectedReferentielIds
-        this.onFilterList()
-      })
+      this.humanResourceService.contentieuxReferentiel.subscribe(
+        (ref: ContentieuReferentielInterface[]) => {
+          this.referentiel = ref
+            .filter(
+              (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
+            )
+            .map((r) => ({ ...r, selected: true }))
+          this.formReferentiel = this.referentiel.map((r) => ({
+            id: r.id,
+            value: this.referentielMappingName(r.label),
+          }))
+          this.selectedReferentielIds =
+            this.humanResourceService.selectedReferentielIds
+          this.onFilterList()
+        }
+      )
     )
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
@@ -108,10 +110,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
     )
     this.watch(
-      this.humanResourceService.backupId.subscribe((backupId: number | null) => {
-        const hrBackups = this.humanResourceService.backups.getValue()
-        this.hrBackup = hrBackups.find((b: BackupInterface) => b.id === backupId)
-      })
+      this.humanResourceService.backupId.subscribe(
+        (backupId: number | null) => {
+          const hrBackups = this.humanResourceService.backups.getValue()
+          this.hrBackup = hrBackups.find(
+            (b: BackupInterface) => b.id === backupId
+          )
+        }
+      )
     )
   }
 
@@ -145,7 +151,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         let firstSituation = currentSituation
         //console.log(h, currentSituation)
         if (!firstSituation) {
-          firstSituation = this.humanResourceService.findSituation(h, undefined, 'asc')
+          firstSituation = this.humanResourceService.findSituation(
+            h,
+            undefined,
+            'asc'
+          )
           etp = 1
         }
 
@@ -333,12 +343,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   orderListWithFiltersParams() {
     let listFiltered = [...this.humanResources]
-    if(this.filterParams) {
-      if(this.filterParams.sortFunction) {
+    if (this.filterParams) {
+      if (this.filterParams.sortFunction) {
         listFiltered = this.filterParams.sortFunction(listFiltered)
       }
 
-      if(this.filterParams.order && this.filterParams.order === 'desc') {
+      if (this.filterParams.order && this.filterParams.order === 'desc') {
         listFiltered = listFiltered.reverse()
       }
     }
@@ -359,28 +369,30 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           return ref
         })
 
-        let group = this.humanResourcesFilters.filter(h => h.category && h.category.id === category.id).map((hr) => {
-          hr.tmpActivities = {}
+        let group = this.humanResourcesFilters
+          .filter((h) => h.category && h.category.id === category.id)
+          .map((hr) => {
+            hr.tmpActivities = {}
 
-          referentiel = referentiel.map((ref) => {
-            hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-              (r) => r.contentieux && r.contentieux.id === ref.id
-            )
-            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-            if (timeAffected) {
-              let realETP = (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP < 0) {
-                realETP = 0
+            referentiel = referentiel.map((ref) => {
+              hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+                (r) => r.contentieux && r.contentieux.id === ref.id
+              )
+              const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+              if (timeAffected) {
+                let realETP = (hr.etp || 0) - hr.hasIndisponibility
+                if (realETP < 0) {
+                  realETP = 0
+                }
+                ref.totalAffected =
+                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
               }
-              ref.totalAffected =
-                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-            }
 
-            return ref
+              return ref
+            })
+
+            return hr
           })
-
-          return hr
-        })
 
         if (this.filterSelected) {
           group = orderBy(
@@ -514,7 +526,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   updateFilterParams(event: FilterPanelInterface) {
     this.workforceService.filterParams = event // memorize in cache
     this.filterParams = event
-    
+
+    this.orderListWithFiltersParams()
+  }
+
+  clearFilterSort() {
+    if (this.filterParams) {
+      this.filterParams.sort = null
+      this.filterParams.sortName = null
+      this.filterParams.sortFunction = null
+      this.filterParams.order = null
+      this.filterParams.orderIcon = null
+    }
+
     this.orderListWithFiltersParams()
   }
 }

@@ -16,8 +16,10 @@ import { HumanResourceSelectedInterface } from '../workforce.page'
 
 export interface FilterPanelInterface {
   sort: string | null
-  sortFunction: Function
+  sortName: string | null
+  sortFunction: Function | null
   order: string | null
+  orderIcon: string | null
 }
 
 @Component({
@@ -135,13 +137,16 @@ export class FilterPanelComponent
 
   updateParams() {
     const sortItem = this.sortList.find((o) => o.id === this.sortValue)
+    const orderItem = this.orderList.find((o) => o.id === this.orderValue)
 
     this.update.next({
       sort: this.sortValue,
+      sortName: sortItem && sortItem.label ? sortItem.label : null,
       sortFunction:
         (sortItem && sortItem.sortFunction) ||
         ((l: HumanResourceSelectedInterface) => l),
       order: this.orderValue,
+      orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
     })
   }
 }
