@@ -58,6 +58,7 @@ export class MainClass {
   public getCategoryColor(label: string, opacity: number = 1) {
     switch (label) {
       case 'Magistrat':
+      case 'Magistrat du siège':
         return `rgba(0, 0, 145, ${opacity})`
       case 'Fonctionnaire':
         return `rgba(165, 88, 160, ${opacity})`

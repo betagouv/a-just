@@ -1,4 +1,29 @@
-<p class="header-selection">{{title}}</p>
-<div class="list">
-    <p *ngFor="let i of list" (click)="onSelect(i.id)" [class.selected]="i.id === item">{{i.label}}</p>
+<div class="list-selection" (click)="$event.stopPropagation(); onOpenDropdown = !onOpenDropdown">
+    <ng-template [ngIf]="title">
+        <div *ngIf="icon" class="title-icon"><i class="ri-{{icon}}"></i></div>
+        <p class="title-list">{{ title }}</p>
+        <div class="value-selected">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemSelected }"></ng-container>
+        </div>
+    </ng-template>
+    <ng-template [ngIf]="!title">
+        <div class="value-selected normal">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemSelected }"></ng-container>
+        </div>
+    </ng-template>
+    <mat-icon class="arrow-list">expand_more</mat-icon>
 </div>
+
+<div class="select-area" [ngClass]="{right: title}" *ngIf="onOpenDropdown">
+    <div *ngFor="let item of list" [ngClass]="{selected: item.id === value }"
+        (click)="$event.stopPropagation(); onSelect(item.id)">
+        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item }"></ng-container>
+    </div>
+</div>
+
+<ng-template #itemTemplate let-item>
+    <ng-template [ngIf]="item">
+        <i *ngIf="item.icon" class="ri-{{item.icon}}"></i>
+        <p *ngIf="item.label">{{item.label}}</p>
+    </ng-template>
+</ng-template>

@@ -1,6 +1,7 @@
 <aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
-  [actionTemplate]="actions" class="content-margin-null header-border-none">
+  [actionTemplate]="actions" class="content-margin-null header-border-none"
+  [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
   <div class="container">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
@@ -38,12 +39,27 @@
 
     <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
-        <div class="header-list">
+        <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
-            <div class="label-container ">
-              <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
-              <div class="label" [style.color]="list.textColor">
-                {{ list.label }}
+            <div class="label-container">
+              <div class="category-name">
+                <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
+                <div class="label" [style.color]="list.textColor">
+                  {{ list.label }}
+                </div>
+                <div class="filter-button">
+                  <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
+                  <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
+                    [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+                    (close)="showFilterPanel = -1"></filter-panel>
+                </div>
+              </div>
+              <div class="filters">
+                <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
+                  <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
+                  <p>{{filterParams.sortName}}</p>
+                  <i class="ri-close-line"></i>
+                </div>
               </div>
             </div>
             <div class="contentieux-label">
