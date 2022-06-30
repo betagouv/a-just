@@ -41,16 +41,25 @@
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
-            <div class="label-container ">
-              <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
-              <div class="label" [style.color]="list.textColor">
-                {{ list.label }}
+            <div class="label-container">
+              <div class="category-name">
+                <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
+                <div class="label" [style.color]="list.textColor">
+                  {{ list.label }}
+                </div>
+                <div class="filter-button">
+                  <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
+                  <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
+                    [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+                    (close)="showFilterPanel = -1"></filter-panel>
+                </div>
               </div>
-              <div class="filter-button">
-                <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
-                <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
-                  [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
-                  (close)="showFilterPanel = -1"></filter-panel>
+              <div class="filters">
+                <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
+                  <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
+                  <p>{{filterParams.sortName}}</p>
+                  <i class="ri-close-line"></i>
+                </div>
               </div>
             </div>
             <div class="contentieux-label">
