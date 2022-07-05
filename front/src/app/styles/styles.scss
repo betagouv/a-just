@@ -50,3 +50,9 @@ body { margin: 0; font-family: Marianne; }
 .text-center {
 	text-align: center;
 }
+
+.ellipis {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}

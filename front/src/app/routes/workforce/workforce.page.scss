@@ -3,7 +3,7 @@
 .header-list {
   display: flex;
   width: 100%;
-  height: 96px;
+  min-height: 96px;
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -58,6 +58,7 @@
       > .filters {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         
         > .tag {
           border-radius: 12px;
@@ -68,17 +69,19 @@
           padding: 0 8px;
           margin-right: 8px;
           cursor: pointer;
+          margin-bottom: 4px;
 
           i {
             font-size: 12px;
           }
 
           p {
-            color: fColof(tagText);
+            color: fColor(tagText);
             font-size: 12px;
             margin: 0 4px;
             position: relative;
             top: -2px;
+            white-space: nowrap;
           }
         }
       }

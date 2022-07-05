@@ -344,6 +344,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   orderListWithFiltersParams() {
     let listFiltered = [...this.humanResources]
     if (this.filterParams) {
+      if (this.filterParams.filterFunction) {
+        listFiltered = this.filterParams.filterFunction(listFiltered)
+      }
+
       if (this.filterParams.sortFunction) {
         listFiltered = this.filterParams.sortFunction(listFiltered)
       }
@@ -537,6 +541,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterParams.sortFunction = null
       this.filterParams.order = null
       this.filterParams.orderIcon = null
+    }
+
+    this.orderListWithFiltersParams()
+  }
+
+  clearFilterFilter() {
+    if (this.filterParams) {
+      this.filterParams.filterNames = null
+      this.filterParams.filterValues = null
+      this.filterParams.filterFunction = null
     }
 
     this.orderListWithFiltersParams()
