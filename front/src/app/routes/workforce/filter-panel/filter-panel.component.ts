@@ -8,18 +8,24 @@ import {
   AfterViewInit,
   OnChanges,
   ViewChild,
+  OnInit,
 } from '@angular/core'
-import { sortBy, sumBy } from 'lodash'
+import { orderBy, sortBy, sumBy } from 'lodash'
+import { ItemInterface } from 'src/app/interfaces/item'
 import { MainClass } from 'src/app/libs/main-class'
+import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 
 export interface FilterPanelInterface {
-  sort: string | null
+  sort: string | number | null
   sortName: string | null
   sortFunction: Function | null
-  order: string | null
+  order: string | number | null
   orderIcon: string | null
+  filterFunction: Function | null
+  filterValues: (string | number)[] | null
+  filterNames: string | null
 }
 
 @Component({
@@ -29,7 +35,7 @@ export interface FilterPanelInterface {
 })
 export class FilterPanelComponent
   extends MainClass
-  implements AfterViewInit, OnChanges
+  implements AfterViewInit, OnChanges, OnInit
 {
   @Output() update: EventEmitter<FilterPanelInterface> = new EventEmitter()
   @Output() close: EventEmitter<any> = new EventEmitter()
@@ -88,11 +94,16 @@ export class FilterPanelComponent
       label: 'Ordre descendant',
     },
   ]
-  @Input() sortValue: string | null = null
-  @Input() orderValue: string | null = null
+  @Input() filterValues: (string | number)[] | null = null
+  @Input() sortValue: string | number | null = null
+  @Input() orderValue: string | number | null = null
   @ViewChild('popin') popin: ElementRef<HTMLElement> | null = null
   leftPosition: number = 0
   topPosition: number = 0
+  filterList: ItemInterface[] = []
+  defaultFilterValues: (string | number)[] | null = null
+  defaultSortValue: string | number | null = this.sortList[1].id
+  defaultOrderValue: string | number | null = this.orderList[0].id
 
   @HostListener('click', ['$event'])
   onClick() {
@@ -101,17 +112,22 @@ export class FilterPanelComponent
 
   constructor(
     private referentielService: ReferentielService,
+    private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef
   ) {
     super()
   }
 
+  ngOnInit() {
+    this.loadFonctions()
+  }
+
   ngOnChanges() {
-    if (!this.orderList.find((o) => o.id === this.orderValue)) {
-      this.orderValue = this.orderList[0].id
-    }
     if (!this.sortList.find((o) => o.id === this.sortValue)) {
       this.sortValue = this.sortList[1].id
+    }
+    if (!this.orderList.find((o) => o.id === this.orderValue)) {
+      this.orderValue = this.orderList[0].id
     }
   }
 
@@ -135,18 +151,55 @@ export class FilterPanelComponent
     }, 0)
   }
 
+  async loadFonctions() {
+    const fonctions = await this.hrFonctionService.getAll()
+    // tempory fix to load only Magistrat fonctions
+
+    this.filterList = orderBy([...fonctions], ['categoryId', 'rank']).filter(f => f.categoryId === 1).map(f => ({id: f.id, label: f.code || ''}))
+    this.filterValues = this.filterValues === null ? [...fonctions].map(f => (f.id)) : this.filterValues
+    this.defaultFilterValues = [...fonctions].map(f => (f.id))
+  }
+
   updateParams() {
     const sortItem = this.sortList.find((o) => o.id === this.sortValue)
     const orderItem = this.orderList.find((o) => o.id === this.orderValue)
+    let filterNames = '';
+    if(this.filterValues && this.filterValues.length !== this.defaultFilterValues?.length) {
+      const nbStringToAdd = 3
+      let stringAdd = 0
+      filterNames += this.filterList.reduce((acc, cur) => {
+        if(this.filterValues && this.filterValues.indexOf(cur.id) !== -1 && stringAdd < nbStringToAdd) {
+          if(stringAdd > 0) {
+            acc += ', '
+          }
+          acc += cur.label
+          stringAdd++
+        }
+        return acc
+      }, '')
+
+      if(this.filterValues.length > nbStringToAdd) {
+        filterNames += ' ...'
+      }
+    }
 
     this.update.next({
       sort: this.sortValue,
-      sortName: sortItem && sortItem.label ? sortItem.label : null,
+      sortName: sortItem && sortItem.label && this.sortValue !== this.defaultSortValue ? sortItem.label : null,
       sortFunction:
         (sortItem && sortItem.sortFunction) ||
         ((l: HumanResourceSelectedInterface) => l),
       order: this.orderValue,
       orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
+      filterValues: this.filterValues,
+      filterFunction: (list: HumanResourceSelectedInterface[]) => {
+        if(this.filterValues === null || this.filterValues.length === this.filterList.length) {
+          return list
+        } else {
+          return list.filter(h => h.fonction && this.filterValues && this.filterValues.indexOf(h.fonction.id) !== -1)
+        }
+      },
+      filterNames,
     })
   }
 }

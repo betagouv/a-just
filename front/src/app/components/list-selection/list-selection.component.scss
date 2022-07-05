@@ -8,6 +8,12 @@
   margin-bottom: 4px;
   position: relative;
 
+  &.large-drop {
+    .select-area {
+      width: 400px;
+    }
+  }
+
   > .list-selection {
     display: flex;
     align-items: center;
@@ -20,7 +26,7 @@
     .title-list {
       font-size: 16px;
       color: fColor(cblack);
-      flex: 1;
+      margin-right: 8px;
     }
 
     .value-selected {
@@ -28,24 +34,58 @@
       margin-left: 8px;
       margin-right: 4px;
       display: flex;
-      align-items: center;
 
-      > p, i {
-        color: fColor(titleEtpGraph);
+      &.stretched {
+        flex: 1;
+        position: relative;
+        align-self: stretch;
+
+        > p {
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          color: fColor(titleEtpGraph);
+        }
+
+        p {
+          width: 100%;
+        }
       }
 
       &.normal {
-        margin-left: 0;
-        cursor: pointer;
         flex: 1;
 
-        > p, i {
-          color: fColor(cblack);
+        > div {
+          margin-left: 0;
+          cursor: pointer;
+          flex: 1;
+
+          > p,
+          i {
+            color: fColor(cblack);
+          }
         }
       }
 
       i {
         margin-right: 4px;
+      }
+
+      p {
+        text-align: right;
+      }
+
+      > div {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        > p,
+        i {
+          color: fColor(titleEtpGraph);
+        }
       }
     }
   }
@@ -60,6 +100,7 @@
   margin-top: 4px;
   background-color: fColor(bgSelect);
   border-radius: 4px;
+  overflow: auto;
 
   &.right {
     left: 100%;
@@ -78,8 +119,13 @@
     color: fColor(cblack);
     cursor: pointer;
 
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
     &:hover {
-      background-color: rgba(fColor(bgSelectSelected), 0.6);
+      background-color: rgba(fColor(bgSelectSelected), 0.2);
       color: white;
 
       p {

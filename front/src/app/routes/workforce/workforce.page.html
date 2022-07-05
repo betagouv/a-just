@@ -51,13 +51,19 @@
                   <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
                   <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
                     [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
-                    (close)="showFilterPanel = -1"></filter-panel>
+                    [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = -1">
+                  </filter-panel>
                 </div>
               </div>
               <div class="filters">
                 <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
                   <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
                   <p>{{filterParams.sortName}}</p>
+                  <i class="ri-close-line"></i>
+                </div>
+                <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
+                  <i class="ri-filter-3-line"></i>
+                  <p>{{filterParams.filterNames}}</p>
                   <i class="ri-close-line"></i>
                 </div>
               </div>
