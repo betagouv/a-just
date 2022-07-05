@@ -20,7 +20,7 @@
     "fs": "0.0.1-security",
     "lodash": "^4.17.20",
     "mime": "^2.5.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "momentjs": "^2.0.0",
     "n-readlines": "^1.0.1",
     "node-sass": "^6.0.1",
