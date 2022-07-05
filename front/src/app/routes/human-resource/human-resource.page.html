@@ -5,6 +5,7 @@
     [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
     [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
     [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
+    [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
     (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
     (addIndispiniblity)="onAddIndispiniblity($event)"
     (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">
