@@ -1,0 +1,12 @@
+<div class="container" (click)="clicked()">
+  <div class="circle"></div>
+  <p class="label"></p>
+  <div class="space"></div>
+  <aj-radio-button
+    [title]="title"
+    [switchColor]="bgColor"
+    (valueChange)="updateValue($event)"
+    [value]="this.toogle.checked"
+    #radio
+  ></aj-radio-button>
+</div>

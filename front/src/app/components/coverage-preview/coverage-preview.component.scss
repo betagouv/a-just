@@ -1,0 +1,61 @@
+:host {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .zero-percent {
+        position: absolute;
+        left: -10px;
+    }
+
+
+    .cent-percent {
+        position: absolute;
+        top: -5px;
+    }
+
+    .deux-cent-percent {
+        position: absolute;
+        right: -30px;
+    }
+
+    .trois-cent-percent {
+        position: absolute;
+        bottom: -5px;
+    }
+
+    .label-container {
+        position: absolute;
+        bottom: 55px;
+        display: flex;
+        left: -15px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        .first-child {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%
+        }
+
+        .second-child {
+            flex: 1
+        }
+    }
+
+    .main-label {
+        font-family: Marianne;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 1.2;
+        text-align: center;
+        color: #18753c;
+
+    }
+
+}

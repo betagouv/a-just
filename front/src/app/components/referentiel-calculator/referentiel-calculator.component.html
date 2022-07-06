@@ -55,7 +55,7 @@
         </div>
         <div [ngClass]="{ selected: sortBy === 'realTimePerCase' }">
             <div class="block">
-                <ng-template [ngIf]="calculator.calculateTimePerCase !== null" [ngIfElse]="nr">
+                <ng-template [ngIf]="calculator.realTimePerCase !== null" [ngIfElse]="nr">
                     <p>
                         {{
                         this.decimalToStringDate(

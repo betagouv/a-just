@@ -4,6 +4,74 @@
 
 :host {
 
+    #print-title {
+        margin: 8px;
+        align-items: center;
+        display: none;
+
+        p {
+            //font-size: 14px;
+            //line-height: 1.71;
+            //color: #929292;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3a3a3a;
+        }
+    }
+
+    .comment-row {
+        display: flex;
+
+        .space {
+            flex: 1;
+        }
+
+        .comment {
+            background-color: white;
+            flex: 3;
+            margin: 8px 0px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+            >.header-comment {
+                display: flex;
+                align-items: center;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+                p {
+                    padding: 24px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #3a3a3a;
+
+                    b {
+                        font-size: 16px;
+                    }
+                }
+            }
+
+            >textarea {
+                margin: 24px;
+                height: 200px;
+                flex: 1;
+            }
+        }
+    }
+
+    .widgets {
+        display: flex;
+        margin-top: 24px;
+
+        aj-loaders-widget,
+        aj-figures-widget,
+        aj-dial-widget {
+            flex: 1;
+            height: 100%;
+        }
+    }
+
     .logger {
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
             0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -58,6 +126,7 @@
             display: flex;
             align-items: flex-start;
             background-color: white;
+            border-bottom: solid 1px #e5e5e580;
 
             .line-item {
                 padding-top: 6px;
@@ -768,7 +837,9 @@
     }
 
     .export-button {
-        cursor: pointer;
+        pointer-events: none;
+        cursor: auto;
+        opacity: 0.5;
         position: absolute;
         right: 80px;
         display: flex;
@@ -778,6 +849,32 @@
         border: 1px solid fColor(borderSelect);
         padding: 4px 8px;
         height: 55px;
+
+        &.enable {
+            pointer-events: all;
+            cursor: pointer;
+            background-color: #000091;
+            color: white;
+            opacity: 1;
+
+            p.title {
+                color: white;
+            }
+
+            .shape {
+                background-color: white;
+                color: #000091;
+            }
+
+            .shape::before {
+                content: '';
+                border-bottom: 6px solid transparent;
+                border-right: 6px solid #000091;
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+        }
 
         p.title {
             color: fColor(titleSelect);

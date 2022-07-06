@@ -105,8 +105,13 @@ const tree = [
         toDefine: lastStockToDefine,
         toSimulate: [
           {
-            toDisplay: [totalIn, lastStock, etpMag, realTimePerCase],
-            toCalculate: [totalOut, realCoverage, realDTESInMonths],
+            toDisplay: [totalIn, lastStock, etpMag],
+            toCalculate: [
+              totalOut,
+              realCoverage,
+              realDTESInMonths,
+              realTimePerCase,
+            ],
           },
         ],
       },
@@ -181,8 +186,13 @@ const tree = [
         toSimulate: [
           {
             locked: '',
-            toDisplay: [totalIn, lastStock, etpMag, realTimePerCase],
-            toCalculate: [totalOut, realDTESInMonths, realCoverage],
+            toDisplay: [totalIn, lastStock, etpMag],
+            toCalculate: [
+              totalOut,
+              realCoverage,
+              realDTESInMonths,
+              realTimePerCase,
+            ],
           },
         ],
       },
@@ -194,8 +204,8 @@ const tree = [
         toSimulate: [
           {
             locked: '',
-            toDisplay: [totalIn, lastStock, etpMag, realTimePerCase],
-            toCalculate: [totalOut, realDTESInMonths, realCoverage],
+            toDisplay: [totalIn, lastStock, realTimePerCase],
+            toCalculate: [totalOut, realCoverage, realDTESInMonths, etpMag],
           },
         ],
       },
