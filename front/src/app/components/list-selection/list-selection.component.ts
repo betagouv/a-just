@@ -109,4 +109,13 @@ export class ListSelectionComponent implements OnInit, OnChanges {
     this.onOpenDropdown = false
     this.maxHeightDropdown = null
   }
+
+  onSelectAll() {
+    if(this.values.length === this.list.length) {
+      this.values = []
+    } else {
+      this.values = this.list.map(i => i.id)
+    }
+    this.valuesChanged.next(this.values)
+  }
 }

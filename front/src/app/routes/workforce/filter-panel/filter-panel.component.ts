@@ -154,10 +154,11 @@ export class FilterPanelComponent
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
     // tempory fix to load only Magistrat fonctions
+    const listUsedFunctions = orderBy([...fonctions], ['categoryId', 'rank']).filter(f => f.categoryId === 1)
 
-    this.filterList = orderBy([...fonctions], ['categoryId', 'rank']).filter(f => f.categoryId === 1).map(f => ({id: f.id, label: f.code || ''}))
-    this.filterValues = this.filterValues === null ? [...fonctions].map(f => (f.id)) : this.filterValues
-    this.defaultFilterValues = [...fonctions].map(f => (f.id))
+    this.filterList = listUsedFunctions.map(f => ({id: f.id, label: f.code || ''}))
+    this.filterValues = this.filterValues === null ? listUsedFunctions.map(f => (f.id)) : this.filterValues
+    this.defaultFilterValues = listUsedFunctions.map(f => (f.id))
   }
 
   updateParams() {

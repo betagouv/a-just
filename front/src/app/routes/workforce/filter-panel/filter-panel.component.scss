@@ -37,4 +37,13 @@
 .filter-group {
   margin-top: 16px;
   color: fColor(cblack);
+  font-weight: bold;
+}
+
+.close {
+  position: absolute;
+  top: 29px;
+  right: 17px;
+  font-size: 24px;
+  cursor: pointer;
 }

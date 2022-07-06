@@ -59,8 +59,10 @@ export class MainClass {
     switch (label) {
       case 'Magistrat':
       case 'Magistrat du siège':
+      case 'Magistrats du siège':
         return `rgba(0, 0, 145, ${opacity})`
       case 'Fonctionnaire':
+      case 'Fonctionnaires':
         return `rgba(165, 88, 160, ${opacity})`
     }
 

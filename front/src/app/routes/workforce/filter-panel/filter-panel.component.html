@@ -3,6 +3,7 @@
 <div class="popin animate__animated animate__fadeIn" #popin
   (click)="$event.stopPropagation(); filterSelection.close(); sortSelection.close(); orderSelection.close()"
   [ngStyle]="{left: leftPosition+'px',top: topPosition+'px', opacity: leftPosition === 0 ? 0 : 1}">
+  <i class="ri-close-fill close" (click)="close.emit()"></i>
   <p class="panel-title">Options d'affichage</p>
   <p class="filter-group">Filtrer par :</p>
   <aj-list-selection #filterSelection icon="filter-2-line" title="Fonction" [multiple]="true" [list]="filterList"
