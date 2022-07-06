@@ -1,0 +1,3720 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">a-just-front documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Injectables</li>
+  <li >SimulatorService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/services/simulator/simulator.service.ts</code>
+        </p>
+
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+            </p>
+
+
+            <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#contentieuOrSubContentieuId" >contentieuOrSubContentieuId</a>
+                            </li>
+                            <li>
+                                <a href="#dateStart" >dateStart</a>
+                            </li>
+                            <li>
+                                <a href="#dateStop" >dateStop</a>
+                            </li>
+                            <li>
+                                <a href="#endCurrentSituation" >endCurrentSituation</a>
+                            </li>
+                            <li>
+                                <a href="#situationActuelle" >situationActuelle</a>
+                            </li>
+                            <li>
+                                <a href="#situationProjected" >situationProjected</a>
+                            </li>
+                            <li>
+                                <a href="#situationSimulated" >situationSimulated</a>
+                            </li>
+                            <li>
+                                <a href="#startCurrentSituation" >startCurrentSituation</a>
+                            </li>
+                            <li>
+                                <a href="#environment" >environment</a>
+                            </li>
+                            <li>
+                                <a href="#watcherList" >watcherList</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#generateLinearData" >generateLinearData</a>
+                            </li>
+                            <li>
+                                <a href="#getActivityValues" >getActivityValues</a>
+                            </li>
+                            <li>
+                                <a href="#getFieldValue" >getFieldValue</a>
+                            </li>
+                            <li>
+                                <a href="#getHRPositions" >getHRPositions</a>
+                            </li>
+                            <li>
+                                <a href="#getHRVentilation" >getHRVentilation</a>
+                            </li>
+                            <li>
+                                <a href="#getHRVentilationOnPeriod" >getHRVentilationOnPeriod</a>
+                            </li>
+                            <li>
+                                <a href="#getLabelTranslation" >getLabelTranslation</a>
+                            </li>
+                            <li>
+                                <a href="#range" >range</a>
+                            </li>
+                            <li>
+                                <a href="#syncDatas" >syncDatas</a>
+                            </li>
+                            <li>
+                                <a href="#toSimulate" >toSimulate</a>
+                            </li>
+                            <li>
+                                <a href="#fixDecimal" >fixDecimal</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#formatDate" >formatDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getCategoryColor" >getCategoryColor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getDate" >getDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getFullYear" >getFullYear</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getMonthString" >getMonthString</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getShortMonthString" >getShortMonthString</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getToday" >getToday</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#isNotOS" >isNotOS</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#isOS" >isOS</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#isSameMonthAndYear" >isSameMonthAndYear</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#isToday" >isToday</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingColor" >referentielMappingColor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingName" >referentielMappingName</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#trackBy" >trackBy</a>
+                            </li>
+                            <li>
+                                <a href="#watch" >watch</a>
+                            </li>
+                            <li>
+                                <a href="#watcherDestroy" >watcherDestroy</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, activitiesService: <a href="../injectables/ActivitiesService.html" target="_self">ActivitiesService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/services/simulator/simulator.service.ts:40</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>humanResourceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/HumanResourceService.html" target="_self" >HumanResourceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>activitiesService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ActivitiesService.html" target="_self" >ActivitiesService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateLinearData"></a>
+                    <span class="name">
+                        <span ><b>generateLinearData</b></span>
+                        <a href="#generateLinearData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateLinearData(value1: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, value2: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, step: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="769"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:769</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>value1</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>value2</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>step</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActivityValues"></a>
+                    <span class="name">
+                        <span ><b>getActivityValues</b></span>
+                        <a href="#getActivityValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getActivityValues(referentielId: number | null, nbMonth: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, dateStart?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, dateStop?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="95"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:95</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>referentielId</td>
+                                    <td>
+                                            <code>number | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>nbMonth</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStart</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStop</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>{ totalIn: any; totalOut: any; lastStock: any; realCoverage: any; realDTESInMonths: any; realTimePerCase: any; etpMag: any; etpAffected: any; etpToCompute: any; }</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFieldValue"></a>
+                    <span class="name">
+                        <span ><b>getFieldValue</b></span>
+                        <a href="#getFieldValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getFieldValue(param: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, data: SimulatorInterface | SimulationInterface | null, initialValue, toCompute)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="707"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:707</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>param</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>data</td>
+                                    <td>
+                                            <code>SimulatorInterface | SimulationInterface | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>initialValue</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>false</code>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>toCompute</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>false</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getHRPositions"></a>
+                    <span class="name">
+                        <span ><b>getHRPositions</b></span>
+                        <a href="#getHRPositions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getHRPositions(referentiel: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, onPeriod?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, dateStop?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="359"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:359</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>referentiel</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>onPeriod</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStop</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getHRVentilation"></a>
+                    <span class="name">
+                        <span ><b>getHRVentilation</b></span>
+                        <a href="#getHRVentilation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getHRVentilation(hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>, referentielId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, categories: <a href="../interfaces/HRCategoryInterface.html" target="_self">HRCategoryInterface[]</a>, date?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="410"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:410</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>hr</td>
+                                    <td>
+                                                <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>referentielId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>categories</td>
+                                    <td>
+                                                <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >HRCategoryInterface[]</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getHRVentilationOnPeriod"></a>
+                    <span class="name">
+                        <span ><b>getHRVentilationOnPeriod</b></span>
+                        <a href="#getHRVentilationOnPeriod"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getHRVentilationOnPeriod(hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>, referentielId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, categories: <a href="../interfaces/HRCategoryInterface.html" target="_self">HRCategoryInterface[]</a>, dateStart: Date | undefined, dateStop: Date | undefined)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="444"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:444</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>hr</td>
+                                    <td>
+                                                <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>referentielId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>categories</td>
+                                    <td>
+                                                <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >HRCategoryInterface[]</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStart</td>
+                                    <td>
+                                            <code>Date | undefined</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStop</td>
+                                    <td>
+                                            <code>Date | undefined</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getLabelTranslation"></a>
+                    <span class="name">
+                        <span ><b>getLabelTranslation</b></span>
+                        <a href="#getLabelTranslation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getLabelTranslation(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="687"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:687</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>value</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="range"></a>
+                    <span class="name">
+                        <span ><b>range</b></span>
+                        <a href="#range"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>range(start: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, end: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, length: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, offset?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="758"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:758</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>start</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>end</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>length</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>offset</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="syncDatas"></a>
+                    <span class="name">
+                        <span ><b>syncDatas</b></span>
+                        <a href="#syncDatas"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>syncDatas(referentielId: number | null, dateStart?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, dateStop?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="79"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:79</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>referentielId</td>
+                                    <td>
+                                            <code>number | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStart</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>dateStop</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toSimulate"></a>
+                    <span class="name">
+                        <span ><b>toSimulate</b></span>
+                        <a href="#toSimulate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toSimulate(params: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, simulation: <a href="../interfaces/SimulationInterface.html" target="_self">SimulationInterface</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="489"
+                            class="link-to-prism">src/app/services/simulator/simulator.service.ts:489</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>params</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>simulation</td>
+                                    <td>
+                                                <code><a href="../interfaces/SimulationInterface.html" target="_self" >SimulationInterface</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="../interfaces/SimulationInterface.html" target="_self" >SimulationInterface</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fixDecimal"></a>
+                    <span class="name">
+                        <span ><b>fixDecimal</b></span>
+                        <a href="#fixDecimal"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>n</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatDate"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>formatDate</b></span>
+                        <a href="#formatDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>formatDate(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCategoryColor"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getCategoryColor</b></span>
+                        <a href="#getCategoryColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCategoryColor(label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>label</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>opacity</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>1</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getDate"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getDate</b></span>
+                        <a href="#getDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getDate(date: Date | string)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:125</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                            <code>Date | string</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFullYear"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getFullYear</b></span>
+                        <a href="#getFullYear"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getFullYear(date: Date | string)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                            <code>Date | string</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMonthString"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getMonthString</b></span>
+                        <a href="#getMonthString"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMonthString(date: Date | undefined)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                            <code>Date | undefined</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getShortMonthString"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getShortMonthString</b></span>
+                        <a href="#getShortMonthString"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getShortMonthString(date: Date | undefined)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                            <code>Date | undefined</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getToday"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>getToday</b></span>
+                        <a href="#getToday"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getToday(date: Date | null | undefined)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:113</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                            <code>Date | null | undefined</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>new Date()</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isNotOS"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>isNotOS</b></span>
+                        <a href="#isNotOS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isNotOS()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isOS"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>isOS</b></span>
+                        <a href="#isOS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isOS()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSameMonthAndYear"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>isSameMonthAndYear</b></span>
+                        <a href="#isSameMonthAndYear"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isSameMonthAndYear(date1: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, date2: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:133</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date1</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>date2</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isToday"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>isToday</b></span>
+                        <a href="#isToday"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isToday(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:103</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColor"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>referentielMappingColor</b></span>
+                        <a href="#referentielMappingColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingColor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:34</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingName"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>referentielMappingName</b></span>
+                        <a href="#referentielMappingName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingName(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="trackBy"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>trackBy</b></span>
+                        <a href="#trackBy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>trackBy(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, item: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>index</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="watch"></a>
+                    <span class="name">
+                        <span ><b>watch</b></span>
+                        <a href="#watch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>watch(sub: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>sub</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="watcherDestroy"></a>
+                    <span class="name">
+                        <span ><b>watcherDestroy</b></span>
+                        <a href="#watcherDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>watcherDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section>
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="contentieuOrSubContentieuId"></a>
+                    <span class="name">
+                        <span ><b>contentieuOrSubContentieuId</b></span>
+                        <a href="#contentieuOrSubContentieuId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;number | null&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;number | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/services/simulator/simulator.service.ts:35</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dateStart"></a>
+                    <span class="name">
+                        <span ><b>dateStart</b></span>
+                        <a href="#dateStart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;Date&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(start)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/simulator/simulator.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dateStop"></a>
+                    <span class="name">
+                        <span ><b>dateStop</b></span>
+                        <a href="#dateStop"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;Date&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(end)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/services/simulator/simulator.service.ts:38</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="endCurrentSituation"></a>
+                    <span class="name">
+                        <span ><b>endCurrentSituation</b></span>
+                        <a href="#endCurrentSituation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>month(new Date(), -1, &#x27;lastday&#x27;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/services/simulator/simulator.service.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="situationActuelle"></a>
+                    <span class="name">
+                        <span ><b>situationActuelle</b></span>
+                        <a href="#situationActuelle"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/SimulatorInterface.html" target="_self" >BehaviorSubject&lt;SimulatorInterface | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;SimulatorInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/services/simulator/simulator.service.ts:29</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="situationProjected"></a>
+                    <span class="name">
+                        <span ><b>situationProjected</b></span>
+                        <a href="#situationProjected"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/SimulatorInterface.html" target="_self" >BehaviorSubject&lt;SimulatorInterface | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;SimulatorInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/simulator/simulator.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="situationSimulated"></a>
+                    <span class="name">
+                        <span ><b>situationSimulated</b></span>
+                        <a href="#situationSimulated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/SimulationInterface.html" target="_self" >BehaviorSubject&lt;SimulationInterface | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;SimulationInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/services/simulator/simulator.service.ts:33</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startCurrentSituation"></a>
+                    <span class="name">
+                        <span ><b>startCurrentSituation</b></span>
+                        <a href="#startCurrentSituation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>month(new Date(), -12)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/simulator/simulator.service.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="environment"></a>
+                    <span class="name">
+                        <span ><b>environment</b></span>
+                        <a href="#environment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>environment</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="watcherList"></a>
+                    <span class="name">
+                        <span ><b>watcherList</b></span>
+                        <a href="#watcherList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Subscription[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
+import { groupBy, last, sortBy, sumBy } from &#x27;lodash&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { SimulatorInterface } from &#x27;src/app/interfaces/simulator&#x27;
+import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
+import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
+import { MainClass } from &#x27;src/app/libs/main-class&#x27;
+import {
+  month,
+  nbOfDays,
+  workingDay,
+  nbOfWorkingDays,
+  decimalToStringDate,
+} from &#x27;src/app/utils/dates&#x27;
+import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
+import { ActivitiesService } from &#x27;../activities/activities.service&#x27;
+import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
+import { environment } from &#x27;src/environments/environment&#x27;
+import { SimulationInterface } from &#x27;src/app/interfaces/simulation&#x27;
+import * as _ from &#x27;lodash&#x27;
+
+const start &#x3D; new Date()
+const end &#x3D; new Date()
+
+@Injectable({
+  providedIn: &#x27;root&#x27;,
+})
+export class SimulatorService extends MainClass {
+  situationActuelle: BehaviorSubject&lt;SimulatorInterface | null&gt; &#x3D;
+    new BehaviorSubject&lt;SimulatorInterface | null&gt;(null)
+  situationProjected: BehaviorSubject&lt;SimulatorInterface | null&gt; &#x3D;
+    new BehaviorSubject&lt;SimulatorInterface | null&gt;(null)
+  situationSimulated: BehaviorSubject&lt;SimulationInterface | null&gt; &#x3D;
+    new BehaviorSubject&lt;SimulationInterface | null&gt;(null)
+  contentieuOrSubContentieuId: BehaviorSubject&lt;number | null&gt; &#x3D;
+    new BehaviorSubject&lt;number | null&gt;(null)
+  dateStart: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(start)
+  dateStop: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(end)
+  startCurrentSituation &#x3D; month(new Date(), -12)
+  endCurrentSituation &#x3D; month(new Date(), -1, &#x27;lastday&#x27;)
+  constructor(
+    private humanResourceService: HumanResourceService,
+    private activitiesService: ActivitiesService
+  ) {
+    super()
+
+    this.watch(
+      this.contentieuOrSubContentieuId.subscribe(() &#x3D;&gt; {
+        if (this.contentieuOrSubContentieuId.getValue()) {
+          this.syncDatas(this.contentieuOrSubContentieuId.getValue())
+        }
+      })
+    )
+
+    this.watch(
+      this.dateStart.subscribe(() &#x3D;&gt; {
+        if (this.contentieuOrSubContentieuId.getValue()) {
+          this.syncDatas(
+            this.contentieuOrSubContentieuId.getValue(),
+            this.dateStart.getValue()
+          )
+        }
+      })
+    )
+
+    this.watch(
+      this.dateStop.subscribe(() &#x3D;&gt; {
+        if (this.contentieuOrSubContentieuId.getValue()) {
+          this.syncDatas(
+            this.contentieuOrSubContentieuId.getValue(),
+            this.dateStart.getValue(),
+            this.dateStop.getValue()
+          )
+        }
+      })
+    )
+  }
+
+  syncDatas(referentielId: number | null, dateStart?: Date, dateStop?: Date) {
+    if (referentielId !&#x3D;&#x3D; null) {
+      const nbMonth &#x3D; 12
+      const list: SimulatorInterface | null &#x3D; {
+        ...this.getActivityValues(referentielId, nbMonth, dateStart, dateStop),
+        etpFon: null,
+        etpCont: null,
+        calculateCoverage: null,
+        calculateDTESInMonths: null,
+        calculateTimePerCase: null,
+        nbMonth,
+      }
+      if (!dateStop) this.situationActuelle.next(list)
+    }
+  }
+
+  getActivityValues(
+    referentielId: number | null,
+    nbMonth: number,
+    dateStart?: Date,
+    dateStop?: Date
+  ) {
+    // get 12 last months starting from now
+    let activities &#x3D; sortBy(
+      this.activitiesService.activities
+        .getValue()
+        .filter(
+          (a) &#x3D;&gt;
+            a.contentieux.id &#x3D;&#x3D;&#x3D; referentielId &amp;&amp;
+            month(a.periode).getTime() &gt;&#x3D;
+              month(this.startCurrentSituation).getTime() &amp;&amp;
+            month(a.periode).getTime() &lt;&#x3D;
+              month(this.endCurrentSituation).getTime()
+        ),
+      &#x27;periode&#x27;
+    )
+
+    // check when is the last month available on this periode with in and out flows
+    let counter &#x3D; 1
+    let lastActivitiesEntreesSorties: any &#x3D; []
+    do {
+      counter--
+      lastActivitiesEntreesSorties &#x3D; activities.filter((a) &#x3D;&gt;
+        this.isSameMonthAndYear(
+          a.periode,
+          month(this.endCurrentSituation, counter, &#x27;lastday&#x27;)
+        )
+      )
+      if (
+        lastActivitiesEntreesSorties.length !&#x3D;&#x3D; 0 &amp;&amp;
+        (lastActivitiesEntreesSorties[0].entrees ||
+          lastActivitiesEntreesSorties[0].sorties)
+      )
+        break
+    } while (lastActivitiesEntreesSorties.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp; counter !&#x3D; -12)
+
+    // if last month not available, then get the 12 last months starting from the last available
+    if (counter !&#x3D;&#x3D; -12 &amp;&amp; counter !&#x3D;&#x3D; 0) {
+      activities &#x3D; sortBy(
+        this.activitiesService.activities
+          .getValue()
+          .filter(
+            (a) &#x3D;&gt;
+              a.contentieux.id &#x3D;&#x3D;&#x3D; referentielId &amp;&amp;
+              month(a.periode).getTime() &gt;&#x3D;
+                month(this.startCurrentSituation, counter).getTime() &amp;&amp;
+              month(a.periode).getTime() &lt;&#x3D;
+                month(this.endCurrentSituation, counter, &#x27;lastday&#x27;).getTime()
+          ),
+        &#x27;periode&#x27;
+      )
+    }
+
+    let totalIn &#x3D; Math.floor(sumBy(activities, &#x27;entrees&#x27;) / nbMonth)
+    let totalOut &#x3D; Math.floor(sumBy(activities, &#x27;sorties&#x27;) / nbMonth)
+    let lastStock &#x3D; null
+
+    if (activities.length) {
+      let lastActivities: any &#x3D; []
+      let nbOfMonth &#x3D; 1
+      // compute number of months without stock starting from today
+      do {
+        nbOfMonth--
+        lastActivities &#x3D; activities.filter((a) &#x3D;&gt;
+          this.isSameMonthAndYear(
+            a.periode,
+            month(this.endCurrentSituation, nbOfMonth, &#x27;lastday&#x27;)
+          )
+        )
+        if (lastActivities.length !&#x3D;&#x3D; 0 &amp;&amp; lastActivities[0].stock) break
+      } while (lastActivities.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp; nbOfMonth !&#x3D; -12)
+
+      // last available stock
+      lastStock &#x3D; sumBy(lastActivities, &#x27;stock&#x27;)
+
+      // Compute etpAffected &amp; etpMag today (on specific date) to display &amp; output
+      let etpAffected &#x3D; this.getHRPositions(referentielId as number)
+      let etpMag &#x3D; etpAffected.length &gt;&#x3D; 0 ? etpAffected[0].totalEtp : 0
+
+      // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
+      let etpAffectedToCompute &#x3D; this.getHRPositions(
+        referentielId as number,
+        new Date(month(this.startCurrentSituation, counter)),
+        true,
+        new Date(month(this.endCurrentSituation, counter, &#x27;lastday&#x27;))
+      )
+      let etpToCompute &#x3D; sumBy(etpAffectedToCompute, &#x27;totalEtp&#x27;)
+
+      // Compute realTimePerCase to display using the etpAffected 12 last months available
+      let realTimePerCase &#x3D; fixDecimal(
+        ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
+          (totalOut / etpToCompute)
+      )
+
+      // Compute totalOut with etp at dateStart (specific date) to display
+      totalOut &#x3D; Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+
+      // Projection of etpAffected between the last month available and today to compute stock
+      let fururEtpAffectedToCompute &#x3D; this.getHRPositions(
+        referentielId as number,
+        month(this.endCurrentSituation, counter, &#x27;lastday&#x27;),
+        true,
+        new Date()
+      )
+      let futurEtpToCompute &#x3D; sumBy(fururEtpAffectedToCompute, &#x27;totalEtp&#x27;)
+
+      const countOfCalandarDays &#x3D; nbOfDays(
+        month(this.endCurrentSituation, counter, &#x27;lastday&#x27;),
+        new Date()
+      )
+
+      // Compute stock projection until today
+      lastStock &#x3D;
+        Math.floor(lastStock) -
+        Math.floor(
+          (countOfCalandarDays / (365 / 12)) *
+            17.33 *
+            ((futurEtpToCompute * 8) / realTimePerCase)
+        ) +
+        Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+
+      // Compute realCoverage &amp; realDTESInMonths using last available stock
+      let realCoverage &#x3D; fixDecimal(totalOut / totalIn)
+      let realDTESInMonths &#x3D;
+        lastStock !&#x3D;&#x3D; null &amp;&amp; totalOut !&#x3D;&#x3D; null
+          ? fixDecimal(lastStock / totalOut)
+          : null
+
+      const today &#x3D; new Date()
+      if (
+        dateStart &amp;&amp;
+        (dateStart?.getDate() !&#x3D;&#x3D; today.getDate() ||
+          dateStart?.getMonth() !&#x3D;&#x3D; today.getMonth() ||
+          dateStart?.getFullYear() !&#x3D;&#x3D; today.getFullYear())
+      ) {
+        const nbDayCalendar &#x3D; nbOfDays(
+          new Date(),
+          new Date(this.dateStart.getValue())
+        )
+
+        // Compute etpAffected &amp; etpMag at dateStart (specific date) to display
+        etpAffected &#x3D; this.getHRPositions(referentielId as number, dateStart)
+        etpMag &#x3D; etpAffected.length &gt;&#x3D; 0 ? etpAffected[0].totalEtp : 0
+
+        // Compute totalOut with etp at dateStart (specific date) to display
+        totalOut &#x3D; Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+
+        // Projection of etpAffected between the last month available and today to compute stock
+        fururEtpAffectedToCompute &#x3D; this.getHRPositions(
+          referentielId as number,
+          new Date(),
+          true,
+          dateStart
+        )
+        futurEtpToCompute &#x3D; sumBy(fururEtpAffectedToCompute, &#x27;totalEtp&#x27;)
+
+        // Compute projectedStock with etp at dateStart
+        lastStock &#x3D;
+          Math.floor(lastStock) -
+          Math.floor(
+            (nbDayCalendar / (365 / 12)) *
+              17.33 *
+              ((futurEtpToCompute * 8) / realTimePerCase)
+          ) +
+          Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
+
+        realCoverage &#x3D; fixDecimal(totalOut / totalIn)
+        realDTESInMonths &#x3D;
+          lastStock !&#x3D;&#x3D; null &amp;&amp; totalOut !&#x3D;&#x3D; null
+            ? fixDecimal(lastStock / totalOut)
+            : null
+      }
+      if (dateStop) {
+        const nbDayCalendarProjected &#x3D; nbOfDays(
+          new Date(this.dateStart.getValue()),
+          new Date(this.dateStop.getValue())
+        )
+
+        // Compute projected etp at stop date (specific date) to display
+        const projectedEtpAffected &#x3D; this.getHRPositions(
+          referentielId as number,
+          dateStop
+        )
+        const projectedEtp &#x3D; sumBy(projectedEtpAffected, &#x27;totalEtp&#x27;)
+
+        // Compute projected out flow with projected etp at stop date (specific date)
+        const projectedTotalOut &#x3D; Math.floor(
+          (projectedEtp * 8 * 17.33) / realTimePerCase
+        )
+
+        // Projection of etpAffected between start and stop date to compute stock
+        fururEtpAffectedToCompute &#x3D; this.getHRPositions(
+          referentielId as number,
+          dateStart,
+          true,
+          dateStop
+        )
+        futurEtpToCompute &#x3D; sumBy(fururEtpAffectedToCompute, &#x27;totalEtp&#x27;)
+
+        // Compute projectedStock with etp at datestop
+        const projectedLastStock &#x3D;
+          Math.floor(lastStock) -
+          Math.floor(
+            (nbDayCalendarProjected / (365 / 12)) *
+              17.33 *
+              ((futurEtpToCompute * 8) / realTimePerCase)
+          ) +
+          Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
+
+        const projectedRealCoverage &#x3D; fixDecimal(projectedTotalOut / totalIn)
+        const projectedRealDTESInMonths &#x3D;
+          projectedLastStock !&#x3D;&#x3D; null &amp;&amp; projectedTotalOut !&#x3D;&#x3D; null
+            ? fixDecimal(projectedLastStock / projectedTotalOut)
+            : null
+
+        const list &#x3D; {
+          totalIn,
+          totalOut: projectedTotalOut,
+          lastStock: projectedLastStock,
+          realCoverage: projectedRealCoverage,
+          realDTESInMonths: projectedRealDTESInMonths,
+          realTimePerCase,
+          etpMag: projectedEtp,
+          etpAffected: projectedEtpAffected,
+          etpFon: null,
+          etpCont: null,
+          calculateCoverage: null,
+          calculateDTESInMonths: null,
+          calculateTimePerCase: null,
+          nbMonth,
+          etpToCompute: futurEtpToCompute,
+        }
+        this.situationProjected.next(list)
+      }
+
+      return {
+        totalIn,
+        totalOut,
+        lastStock,
+        realCoverage,
+        realDTESInMonths,
+        realTimePerCase,
+        etpMag,
+        etpAffected,
+        etpToCompute: etpToCompute,
+      }
+    } else
+      return {
+        totalIn: null,
+        totalOut: null,
+        lastStock: null,
+        realCoverage: null,
+        realDTESInMonths: null,
+        realTimePerCase: null,
+        etpMag: null,
+        etpAffected: null,
+        etpToCompute: null,
+      }
+  }
+
+  getHRPositions(
+    referentiel: number,
+    date?: Date,
+    onPeriod?: boolean,
+    dateStop?: Date
+  ) {
+    const hr &#x3D; this.humanResourceService.hr.getValue()
+    const categories &#x3D; this.humanResourceService.categories.getValue()
+    const hrCategories: any &#x3D; {}
+
+    categories.map((c) &#x3D;&gt; {
+      hrCategories[c.label] &#x3D; hrCategories[c.label] || {
+        totalEtp: 0,
+        list: [],
+        rank: c.rank,
+      }
+    })
+
+    for (let i &#x3D; 0; i &lt; hr.length; i++) {
+      const etptAll &#x3D;
+        onPeriod &#x3D;&#x3D;&#x3D; true
+          ? this.getHRVentilationOnPeriod(
+              hr[i],
+              referentiel,
+              categories,
+              date instanceof Date ? date : undefined,
+              dateStop instanceof Date ? dateStop : undefined
+            )
+          : this.getHRVentilation(hr[i], referentiel, categories, date)
+
+      Object.values(etptAll).map((c) &#x3D;&gt; {
+        if (c.etpt) {
+          hrCategories[c.label].list.push(hr[i])
+          hrCategories[c.label].totalEtp +&#x3D; c.etpt
+        }
+      })
+    }
+
+    const list &#x3D; []
+    for (const [key, value] of Object.entries(hrCategories)) {
+      list.push({
+        name: key,
+        // @ts-ignore
+        totalEtp: fixDecimal(value.totalEtp || 0),
+        // @ts-ignore
+        rank: value.rank,
+      })
+    }
+    return sortBy(list, &#x27;rank&#x27;)
+  }
+
+  getHRVentilation(
+    hr: HumanResourceInterface,
+    referentielId: number,
+    categories: HRCategoryInterface[],
+    date?: Date
+  ): number {
+    const list: any &#x3D; {}
+    categories.map((c) &#x3D;&gt; {
+      list[c.id] &#x3D; {
+        etpt: 0,
+        ...c,
+      }
+    })
+
+    const now &#x3D; date ? date : new Date()
+    const { etp, situation } &#x3D; this.humanResourceService.getEtpByDateAndPerson(
+      referentielId,
+      now,
+      hr
+    )
+
+    if (etp !&#x3D;&#x3D; null) {
+      // @ts-ignore
+      list[situation.category.id].etpt +&#x3D; etp
+    }
+
+    // format render
+    for (const property in list) {
+      list[property].etpt &#x3D; list[property].etpt / 1
+    }
+
+    return list
+  }
+
+  getHRVentilationOnPeriod(
+    hr: HumanResourceInterface,
+    referentielId: number,
+    categories: HRCategoryInterface[],
+    dateStart: Date | undefined,
+    dateStop: Date | undefined
+  ): number {
+    const list: any &#x3D; {}
+    categories.map((c) &#x3D;&gt; {
+      list[c.id] &#x3D; {
+        etpt: 0,
+        ...c,
+      }
+    })
+    const now &#x3D; dateStart instanceof Date ? new Date(dateStart) : new Date()
+    const stop &#x3D; dateStop instanceof Date ? new Date(dateStop) : new Date()
+
+    let nbDay &#x3D; 0
+    do {
+      // only working day
+      if (workingDay(now)) {
+        nbDay++
+        const { etp, situation } &#x3D;
+          this.humanResourceService.getEtpByDateAndPerson(
+            referentielId,
+            now,
+            hr
+          )
+
+        if (etp !&#x3D;&#x3D; null) {
+          // @ts-ignore
+          list[situation.category.id].etpt +&#x3D; etp
+        }
+      }
+      now.setDate(now.getDate() + 1)
+    } while (now.getTime() &lt;&#x3D; stop.getTime())
+
+    // format render
+    for (const property in list) {
+      list[property].etpt &#x3D; list[property].etpt / nbDay
+    }
+
+    return list
+  }
+
+  toSimulate(params: any, simulation: SimulationInterface) {
+    params.toDisplay.map((x: any) &#x3D;&gt; {
+      if (params.beginSituation !&#x3D;&#x3D; null)
+        //@ts-ignore
+        simulation[x] &#x3D; params.beginSituation[x]
+    })
+
+    if (
+      params.lockedParams.param1.label !&#x3D;&#x3D; &#x27;&#x27; &amp;&amp;
+      simulation.hasOwnProperty(params.lockedParams.param1.label)
+    )
+      //@ts-ignore
+      simulation[params.lockedParams.param1.label] &#x3D;
+        params.lockedParams.param1.label &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27;
+          ? parseFloat(params.lockedParams.param1.value) / 100
+          : parseFloat(params.lockedParams.param1.value)
+    if (
+      params.lockedParams.param2.label !&#x3D;&#x3D; &#x27;&#x27; &amp;&amp;
+      simulation.hasOwnProperty(params.lockedParams.param2.label)
+    )
+      //@ts-ignore
+      simulation[params.lockedParams.param2.label] &#x3D;
+        params.lockedParams.param2.label &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27;
+          ? parseFloat(params.lockedParams.param2.value) / 100
+          : parseFloat(params.lockedParams.param2.value)
+
+    if (params.modifiedParams.param1.input !&#x3D;&#x3D; 0)
+      //@ts-ignore
+      simulation[params.modifiedParams.param1.label] &#x3D;
+        params.modifiedParams.param1.label &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27;
+          ? parseFloat(params.modifiedParams.param1.value) / 100
+          : parseFloat(params.modifiedParams.param1.value)
+
+    if (params.modifiedParams.param2.input !&#x3D;&#x3D; 0)
+      //@ts-ignore
+      simulation[params.modifiedParams.param2.label] &#x3D;
+        params.modifiedParams.param2.label &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27;
+          ? parseFloat(params.modifiedParams.param2.value) / 100
+          : parseFloat(params.modifiedParams.param2.value)
+
+    do {
+      params.toCalculate.map((x: any) &#x3D;&gt; {
+        if (x &#x3D;&#x3D;&#x3D; &#x27;totalIn&#x27;) {
+          if (
+            simulation.totalOut &amp;&amp;
+            (simulation.lastStock || simulation.lastStock &#x3D;&#x3D;&#x3D; 0)
+          ) {
+            simulation.totalIn &#x3D; Math.floor(
+              (Math.floor(simulation.lastStock) -
+                Math.floor(params.beginSituation?.lastStock as number)) /
+                (nbOfDays(this.dateStart.value, this.dateStop.value) /
+                  (365 / 12)) +
+                Math.floor(simulation.totalOut)
+            )
+          } else if (simulation.totalOut &amp;&amp; simulation.realCoverage) {
+            simulation.totalIn &#x3D; Math.floor(
+              Math.floor(simulation.totalOut) / simulation.realCoverage
+            )
+          }
+        }
+        if (x &#x3D;&#x3D;&#x3D; &#x27;totalOut&#x27;) {
+          if (simulation.etpMag &amp;&amp; simulation.realTimePerCase) {
+            simulation.totalOut &#x3D; Math.floor(
+              Math.floor(simulation.etpMag * 8 * 17.3333) /
+                simulation.realTimePerCase
+            )
+          } else if (
+            simulation.totalIn &amp;&amp;
+            (simulation.lastStock || simulation.lastStock &#x3D;&#x3D;&#x3D; 0)
+          ) {
+            simulation.totalOut &#x3D; Math.floor(
+              Math.floor(
+                Math.floor(params.beginSituation?.lastStock as number) -
+                  Math.floor(simulation.lastStock)
+              ) /
+                (nbOfDays(this.dateStart.value, this.dateStop.value) /
+                  (365 / 12)) +
+                simulation.totalIn
+            )
+          } else if (
+            simulation.lastStock &amp;&amp;
+            (simulation.realDTESInMonths || simulation.realDTESInMonths &#x3D;&#x3D;&#x3D; 0)
+          ) {
+            simulation.totalOut &#x3D; Math.floor(
+              simulation.lastStock / simulation.realDTESInMonths
+            )
+          } else if (simulation.realCoverage &amp;&amp; simulation.totalIn) {
+            simulation.totalOut &#x3D; Math.floor(
+              simulation.realCoverage * simulation.totalIn
+            )
+          } else if (
+            (simulation.realDTESInMonths ||
+              simulation.realDTESInMonths &#x3D;&#x3D;&#x3D; 0) &amp;&amp;
+            simulation.totalIn
+          ) {
+            simulation.totalOut &#x3D; Math.floor(
+              (Math.floor(params.beginSituation?.lastStock as number) +
+                simulation.totalIn *
+                  (nbOfDays(this.dateStart.value, this.dateStop.value) /
+                    (365 / 12))) /
+                (simulation.realDTESInMonths +
+                  nbOfDays(this.dateStart.value, this.dateStop.value) /
+                    (365 / 12))
+            )
+          }
+        }
+        if (x &#x3D;&#x3D;&#x3D; &#x27;lastStock&#x27;) {
+          if (simulation.realDTESInMonths &#x3D;&#x3D;&#x3D; 0) {
+            simulation.lastStock &#x3D; 0
+          } else if (simulation.totalIn &amp;&amp; simulation.totalOut) {
+            simulation.lastStock &#x3D; Math.floor(
+              Math.floor(
+                Math.floor(params.beginSituation?.lastStock as number) +
+                  Math.floor(simulation.totalIn) *
+                    (nbOfDays(this.dateStart.value, this.dateStop.value) /
+                      (365 / 12)) -
+                  Math.floor(simulation.totalOut) *
+                    (nbOfDays(this.dateStart.value, this.dateStop.value) /
+                      (365 / 12))
+              )
+            )
+          } else if (
+            (simulation.realDTESInMonths ||
+              simulation.realDTESInMonths &#x3D;&#x3D;&#x3D; 0) &amp;&amp;
+            simulation.totalOut
+          ) {
+            simulation.lastStock &#x3D; Math.floor(
+              simulation.realDTESInMonths * Math.floor(simulation.totalOut)
+            )
+          }
+          if (simulation.lastStock &amp;&amp; simulation.lastStock &lt; 0) {
+            simulation.lastStock &#x3D; 0
+          }
+        }
+        if (x &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27;) {
+          if (simulation.totalOut &amp;&amp; simulation.totalIn) {
+            simulation.realCoverage &#x3D;
+              (simulation.totalOut ||
+                (params.endSituation?.totalOut as number)) /
+              (simulation.totalIn || (params.endSituation?.totalIn as number))
+          }
+        }
+        if (x &#x3D;&#x3D;&#x3D; &#x27;realDTESInMonths&#x27;) {
+          simulation.realDTESInMonths &#x3D;
+            Math.round(
+              (Math.floor(simulation.lastStock || 0) /
+                Math.floor(
+                  simulation.totalOut ||
+                    (params.endSituation?.totalOut as number)
+                )) *
+                100
+            ) / 100
+        }
+
+        if (x &#x3D;&#x3D;&#x3D; &#x27;realTimePerCase&#x27;) {
+          simulation.realTimePerCase &#x3D;
+            Math.round(
+              ((17.333 *
+                8 *
+                (simulation.etpMag ||
+                  (params.beginSituation?.etpMag as number))) /
+                Math.floor(
+                  simulation.totalOut ||
+                    (params.endSituation?.totalOut as number)
+                )) *
+                100
+            ) / 100
+        }
+
+        if (x &#x3D;&#x3D;&#x3D; &#x27;etpMag&#x27;) {
+          simulation.etpMag &#x3D;
+            Math.round(
+              (((simulation.realTimePerCase ||
+                (params.endSituation?.realTimePerCase as number)) *
+                Math.floor(
+                  simulation.totalOut ||
+                    (params.endSituation?.totalOut as number)
+                )) /
+                (17.333 * 8)) *
+                100
+            ) / 100
+        }
+      })
+    } while (
+      !(
+        simulation.totalIn !&#x3D;&#x3D; null &amp;&amp;
+        simulation.totalOut !&#x3D;&#x3D; null &amp;&amp;
+        simulation.lastStock !&#x3D;&#x3D; null &amp;&amp;
+        simulation.etpMag !&#x3D;&#x3D; null &amp;&amp;
+        simulation.realTimePerCase !&#x3D;&#x3D; null &amp;&amp;
+        simulation.realDTESInMonths !&#x3D;&#x3D; null &amp;&amp;
+        simulation.realCoverage !&#x3D;&#x3D; null
+      )
+    )
+    this.situationSimulated.next(simulation)
+    return simulation
+  }
+
+  getLabelTranslation(value: string): string {
+    switch (value) {
+      case &#x27;etpMag&#x27;:
+        return &#x27;ETPT magistrat&#x27;
+      case &#x27;totalIn&#x27;:
+        return &#x27;entrées mensuelles&#x27;
+      case &#x27;totalOut&#x27;:
+        return &#x27;sorties mensuelles&#x27;
+      case &#x27;lastStock&#x27;:
+        return &#x27;stock&#x27;
+      case &#x27;realDTESInMonths&#x27;:
+        return &#x27;DTES&#x27;
+      case &#x27;realCoverage&#x27;:
+        return &#x27;taux de couverture&#x27;
+      case &#x27;realTimePerCase&#x27;:
+        return &#x27;temps moyen par dossier&#x27;
+    }
+    return &#x27;&#x27;
+  }
+
+  getFieldValue(
+    param: string,
+    data: SimulatorInterface | SimulationInterface | null,
+    initialValue &#x3D; false,
+    toCompute &#x3D; false
+  ): any {
+    switch (param) {
+      case &#x27;etpMag&#x27;:
+        return data?.etpMag || &#x27;0&#x27;
+      case &#x27;totalOut&#x27;: {
+        if (data?.totalOut &amp;&amp; data?.totalOut &gt;&#x3D; 0) {
+          return data?.totalOut
+        } else return &#x27;0&#x27;
+      }
+      case &#x27;totalIn&#x27;: {
+        if (data?.totalIn &amp;&amp; data?.totalIn &gt;&#x3D; 0) {
+          return data?.totalIn
+        } else return &#x27;0&#x27;
+      }
+      case &#x27;lastStock&#x27;: {
+        if (data?.lastStock &amp;&amp; data?.lastStock &gt;&#x3D; 0) {
+          return data?.lastStock
+        } else return &#x27;0&#x27;
+      }
+      case &#x27;etpFon&#x27;:
+        return &#x27;&#x27;
+      case &#x27;realCoverage&#x27;: {
+        if (data?.realCoverage &amp;&amp; toCompute &#x3D;&#x3D;&#x3D; true) {
+          return Math.round(data?.realCoverage) || &#x27;0&#x27;
+        } else if (data?.realCoverage &amp;&amp; initialValue &#x3D;&#x3D;&#x3D; true)
+          return Math.round(data?.realCoverage) + &#x27;%&#x27; || &#x27;0&#x27;
+        else if (data?.realCoverage)
+          return Math.round(data?.realCoverage * 100) + &#x27;%&#x27; || &#x27;0&#x27;
+        else return &#x27;0&#x27;
+      }
+      case &#x27;realDTESInMonths&#x27;:
+        if (data?.realDTESInMonths &amp;&amp; data?.realDTESInMonths !&#x3D;&#x3D; Infinity) {
+          if (data?.realDTESInMonths &lt;&#x3D; 0) {
+            return &#x27;0&#x27;
+          } else return data?.realDTESInMonths + &#x27; mois&#x27; || &#x27;0&#x27;
+        }
+        return &#x27;0&#x27;
+      case &#x27;realTimePerCase&#x27;:
+        if (initialValue) return data?.realTimePerCase || &#x27;0&#x27;
+        else return decimalToStringDate(data?.realTimePerCase) || &#x27;0&#x27;
+      case &#x27;ETPTGreffe&#x27;:
+        return &#x27;&#x27;
+    }
+    return &#x27;&#x27;
+  }
+
+  range(start: number, end: number, length: number, offset?: number) {
+    const step &#x3D; (end - start) / (length - 1)
+    return Array(length)
+      .fill(0)
+      .map((_, index) &#x3D;&gt; {
+        if (index &#x3D;&#x3D;&#x3D; 0) return start
+        else if (index &#x3D;&#x3D;&#x3D; length) return end
+        else return start + step * index
+      })
+  }
+
+  generateLinearData(value1: number, value2: number, step: number) {
+    if (value1 &lt; 0) value1 &#x3D; 0
+    if (value2 &lt; 0) value2 &#x3D; 0
+
+    let v &#x3D; null
+    if (step &#x3D;&#x3D;&#x3D; 1 || step &#x3D;&#x3D;&#x3D; 2) {
+      v &#x3D; [value1, value2]
+    } else if (step &#x3D;&#x3D;&#x3D; 3) {
+      v &#x3D; [value1, (value1 + value2) / 2, value2]
+    } else if (value1 &#x3D;&#x3D;&#x3D; value2) {
+      return Array(step).fill(value1)
+    } else {
+      v &#x3D; this.range(value1, value2, step)
+    }
+
+    return v
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SimulatorService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

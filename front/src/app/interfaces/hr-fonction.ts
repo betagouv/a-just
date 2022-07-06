@@ -1,7 +1,7 @@
 export interface HRFonctionInterface {
-	id?: number;
+	id: number;
 	code?: string;
-	label?: string;
+	label: string;
 	rank?: number;
 	categoryId: number;
 }

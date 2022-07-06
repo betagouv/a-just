@@ -1,6 +1,13 @@
-<aj-wrapper title="Simulateur" [actionTemplate]="actions" [alignLeft]="true">
+<aj-wrapper
+  #wrapper
+  id="simu-wrapper"
+  title="Simulateur"
+  [actionTemplate]="actions"
+  [alignLeft]="true"
+>
   <div class="top-bar-container">
     <p>Période choisie :</p>
+
     <div class="container-timeline">
       <div class="container-timeline-button">
         <aj-date-select-blue
@@ -35,6 +42,7 @@
       </div>
     </div>
   </div>
+
   <div class="items before-after">
     <div class="item blue-bg">
       <p>Entrées mensuelles</p>
@@ -709,8 +717,41 @@
         </div>
       </div>
     </div>
-    <div class="logger">
-      <div><p *ngFor="let i of logger">{{i}}</p></div>
+    <aj-dtes-chart></aj-dtes-chart>
+    <aj-in-out-chart></aj-in-out-chart>
+
+    <div class="widgets">
+      <aj-loaders-widget
+        [dateStart]="startRealValue"
+        [dateStop]="stopRealValue"
+        [valueAt]="getFieldValue('realDTESInMonths',firstSituationData)"
+        [valueProjected]="getFieldValue('realDTESInMonths',projectedSituationData)"
+        [valueSimulated]="getFieldValue('realDTESInMonths',simulatedSationData)"
+      ></aj-loaders-widget>
+      <aj-figures-widget
+        style="margin: 0 8px"
+        [dateStart]="startRealValue"
+        [dateStop]="stopRealValue"
+        [valueAt]="getFieldValue('realTimePerCase',firstSituationData)"
+        [valueProjected]="getFieldValue('realTimePerCase',projectedSituationData)"
+        [valueSimulated]="getFieldValue('realTimePerCase',simulatedSationData)"
+      ></aj-figures-widget>
+      <aj-dial-widget
+        [dateStart]="startRealValue"
+        [dateStop]="stopRealValue"
+        [valueProjected]="getFieldValue('realCoverage',projectedSituationData)"
+        [valueSimulated]="getFieldValue('realCoverage',simulatedSationData)"
+      ></aj-dial-widget>
+    </div>
+    <div class="comment-row">
+      <div class="space"></div>
+      <div class="comment">
+        <div class="header-comment">
+          <p><b>Notes et commentaires</b><br /></p>
+        </div>
+        <textarea placeholder="Commentaire"></textarea>
+      </div>
+      <div class="space"></div>
     </div>
   </div>
 </aj-wrapper>
@@ -736,10 +777,25 @@
     (valueChange)="updateReferentielSelected('subList', $event)"
   >
   </aj-select>
-  <div class="reset-button {{disabled}}" (click)="resetParams()">
+  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
     <p class="title">Reset</p>
   </div>
-  <div class="export-button">
+  <div id="print-title">
+    <img
+      width="60px"
+      height="46px"
+      src="/assets/images/logo-ajust.png"
+      class="logo-ajust"
+    />
+
+    <p class="title">{{printTitle}}</p>
+  </div>
+  <div
+    id="export-button"
+    class="export-button"
+    [class.enable]="toDisplaySimulation"
+    (click)="print()"
+  >
     <div class="shape">D</div>
     <p class="title">Exporter en PDF</p>
   </div>

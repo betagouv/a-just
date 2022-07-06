@@ -1,5 +1,5 @@
+import { sumBy } from 'lodash'
 import { Op } from 'sequelize'
-import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
@@ -37,63 +37,66 @@ export default (sequelizeInstance, Model) => {
     const contentieuxIds = {}
 
     for (let i = 0; i < csv.length; i++) {
-      const contentieuxCSVLabel = extractCodeFromLabelImported(csv[i].niveau_4)
-      if(contentieuxCSVLabel && contentieuxCSVLabel.code) {
-        if(!contentieuxIds[contentieuxCSVLabel.code]) {
-          const contentieux = await Model.models.ContentieuxReferentiels.findOne({
-            attributes: ['id'],
-            where: {
-              code_import: contentieuxCSVLabel.code,
-            },
-            raw: true,
-          })
+      const code = csv[i].code_import
 
-          if (contentieux) {
-            contentieuxIds[contentieuxCSVLabel.code] = contentieux.id
-          }
+      if(!contentieuxIds[code]) {
+        const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+          attributes: ['id'],
+          where: {
+            code_import: code,
+          },
+          raw: true,
+        })
+
+        if (contentieux) {
+          contentieuxIds[code] = contentieux.id
         }
+      }
 
-        if (contentieuxIds[contentieuxCSVLabel.code]) {
-          const periode = new Date(csv[i].periode)
-          const periodeStart = new Date(
-            periode.getFullYear(),
-            periode.getMonth()
-          )
-          const periodeEnd = new Date(periodeStart)
-          periodeEnd.setMonth(periodeEnd.getMonth() + 1)
+      if (contentieuxIds[code]) {
+        const year = csv[i].periode.slice(0,4)
+        const month = (+csv[i].periode.slice(-2)) - 1
+        const periode = new Date(year, month)
+        
+        const periodeStart = new Date(
+          periode.getFullYear(),
+          periode.getMonth()
+        )
+        const periodeEnd = new Date(periodeStart)
+        periodeEnd.setMonth(periodeEnd.getMonth() + 1)
 
-          const findExist = await Model.findOne({
-            where: {
-              hr_backup_id: HRBackupId,
-              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
-              periode: {
-                [Op.gte]: periodeStart,
-                [Op.lte]: periodeEnd,
-              },
+        const findExist = await Model.findOne({
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: contentieuxIds[code],
+            periode: {
+              [Op.gte]: periodeStart,
+              [Op.lte]: periodeEnd,
             },
+          },
+        })
+        
+        // if existe update content
+        if (findExist && 
+            (parseInt(csv[i].entrees) !== findExist.dataValues.entrees || 
+            parseInt(csv[i].sorties) !== findExist.dataValues.sorties || 
+            parseInt(csv[i].stock) !== findExist.dataValues.stock)
+        ) {
+          await findExist.update({
+            entrees: parseInt(csv[i].entrees) || 0,
+            sorties: parseInt(csv[i].sorties) || 0,
+            stock: parseInt(csv[i].stock) || 0,
           })
-          // if existe update content
-          if (findExist && 
-            (parseInt(csv[i].value_entrees) !== findExist.dataValues.entrees || 
-            parseInt(csv[i].value_sorties) !== findExist.dataValues.sorties || 
-            parseInt(csv[i].value_stock) !== findExist.dataValues.stock)
-          ) {
-            await findExist.update({
-              entrees: parseInt(csv[i].value_entrees) || 0,
-              sorties: parseInt(csv[i].value_sorties) || 0,
-              stock: parseInt(csv[i].value_stock) || 0,
-            })
-          } else {
+        } else if(!findExist) {
           // else create
-            await Model.create({
-              hr_backup_id: HRBackupId,
-              periode,
-              contentieux_id: contentieuxIds[contentieuxCSVLabel.code],
-              entrees: parseInt(csv[i].value_entrees) || 0,
-              sorties: parseInt(csv[i].value_sorties) || 0,
-              stock: parseInt(csv[i].value_stock) || 0,
-            })
-          }
+          await Model.create({
+            hr_backup_id: HRBackupId,
+            periode,
+            contentieux_id: contentieuxIds[code],
+            entrees: parseInt(csv[i].entrees) || 0,
+            sorties: parseInt(csv[i].sorties) || 0,
+            stock: parseInt(csv[i].stock) || 0,
+          })
         }
       }
     }
@@ -103,110 +106,61 @@ export default (sequelizeInstance, Model) => {
 
   Model.cleanActivities = async (HRBackupId) => {
     const ref = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const activitiesPeriodes = (await Model.findAll({
+      attributes: ['periode'],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      group: ['periode'],
+      raw: true,
+    })).map(d => d.periode)
+
+    console.log(activitiesPeriodes)
 
     for (let i = 0; i < ref.length; i++) {
-      const activities = await Model.findAll({
-        attributes: ['periode', 'contentieux_id'],
-        where: {
-          hr_backup_id: HRBackupId,
-        },
-        raw: true,
-      })
+      const referentiel = ref[i]
 
-      for (let x = 0; x < activities.length; x++) {
-        // if main activity find populate with child
-        if (ref.find((r) => r.id === activities[x].contentieux_id)) {
-          await Model.populateMainActivity({
-            HRBackupId,
-            contentieuxId: activities[x].contentieux_id,
-            periode: activities[x].periode,
+      if(referentiel.childrens && referentiel.childrens.length) {
+        
+        for(let p = 0; p < activitiesPeriodes.length; p++) {
+          const periode = activitiesPeriodes[p]
+
+          const activities = await Model.findAll({
+            attributes: ['entrees', 'sorties', 'stock', 'periode', 'contentieux_id'],
+            where: {
+              periode,
+              hr_backup_id: HRBackupId,
+              contentieux_id: referentiel.childrens.map(r => r.id),
+            },
+            raw: true,
           })
-        } else {
-          // if childreen, create parent en populate
-          for (let y = 0; y < ref.length; y++) {
-            const findChild = (ref[y].childrens || []).find(
-              (c) => c.id === activities[x].contentieux_id
-            )
-            if (findChild) {
-              await Model.populateMainActivity({
-                HRBackupId,
-                contentieuxId: ref[y].id,
-                periode: activities[x].periode,
-              })
-              break
-            }
+
+          const findMainActivity = await Model.findOne({
+            where: {
+              periode,
+              hr_backup_id: HRBackupId,
+              contentieux_id: referentiel.id,
+            },
+          })
+
+          const options = {
+            entrees: sumBy(activities, 'entrees') || 0,
+            sorties: sumBy(activities, 'sorties') || 0,
+            stock: sumBy(activities, 'stock') || 0,
+          }
+
+          if(findMainActivity) {
+            await findMainActivity.update(options)
+          } else {
+            await Model.create({
+              ...options,
+              periode,
+              hr_backup_id: HRBackupId,
+              contentieux_id: referentiel.id,
+            })
           }
         }
       }
-    }
-  }
-
-  Model.populateMainActivity = async ({
-    HRBackupId,
-    contentieuxId,
-    periode,
-  }) => {
-    console.log('populateMainActivity', HRBackupId, contentieuxId, periode)
-    const refDb = (
-      await Model.models.ContentieuxReferentiels.getReferentiels()
-    ).find((r) => r.id === contentieuxId)
-    if (!refDb) {
-      return false
-    }
-
-    const periodeStart = new Date(periode.getFullYear(), periode.getMonth())
-    const periodeEnd = new Date(periodeStart)
-    periodeEnd.setMonth(periodeEnd.getMonth() + 1)
-    let childrensIds =
-      refDb.childrens && refDb.childrens.length
-        ? refDb.childrens.map((rd) => rd.id)
-        : refDb.id
-
-    const optionsWhere = {
-      hr_backup_id: HRBackupId,
-      contentieux_id: childrensIds,
-      periode: {
-        [Op.gte]: periodeStart,
-        [Op.lte]: periodeEnd,
-      },
-    }
-
-    // find all
-    const options = {
-      entrees:
-        (await Model.sum('entrees', {
-          where: optionsWhere,
-        })) || 0,
-      sorties:
-        (await Model.sum('sorties', {
-          where: optionsWhere,
-        })) || 0,
-      stock:
-        (await Model.sum('stock', {
-          where: optionsWhere,
-        })) || 0,
-    }
-
-    // if main activity find populate with child
-    const findExist = await Model.findOne({
-      where: {
-        hr_backup_id: HRBackupId,
-        contentieux_id: contentieuxId,
-        periode: {
-          [Op.gte]: periodeStart,
-          [Op.lte]: periodeEnd,
-        },
-      },
-    })
-    if (findExist) {
-      await findExist.update(options)
-    } else {
-      await Model.create({
-        hr_backup_id: HRBackupId,
-        contentieux_id: contentieuxId,
-        periode,
-        ...options,
-      })
     }
   }
 

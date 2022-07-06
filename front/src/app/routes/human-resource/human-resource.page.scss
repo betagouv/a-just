@@ -66,6 +66,19 @@
   background-color: white;
   border-radius: 8px;
 
+  &.futur {
+    background-color: fColor(cgrayDefault);
+
+    .title-history {
+      color: fColor(grayRow);
+    }
+
+    panel-history-ventilation {
+      background-color: fColor(bgProgressBar);
+      box-shadow: none;
+    }
+  }
+
   .title-history {
     padding: 20px 40px;
     font-size: 20px;

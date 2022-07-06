@@ -334,7 +334,7 @@ export class HumanResourceService {
     )
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date) {
+  findSituation(hr: HumanResourceInterface | null, date?: Date, order = 'desc') {
     if (date) {
       date = today(date)
     }
@@ -353,12 +353,22 @@ export class HumanResourceService {
         }
       }
     }
-    let situations = this.findAllSituations(hr, date)
+    let situations = this.findAllSituations(hr, date, order)
     return situations.length ? situations[0] : null
   }
 
-  findAllSituations(hr: HumanResourceInterface | null, date?: Date) {
-    let situations = (hr && hr.situations) || []
+  findAllSituations(hr: HumanResourceInterface | null, date?: Date, order: string | boolean = 'desc') {
+    let situations = orderBy(
+      hr?.situations || [],
+      [
+        function (o: HRSituationInterface) {
+          const date = new Date(o.dateStart)
+          return date.getTime()
+        },
+      ],
+      // @ts-ignore
+      [order]
+    )
 
     if (date) {
       situations = situations.filter((hra) => {
@@ -371,7 +381,16 @@ export class HumanResourceService {
   }
 
   findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
-    let indisponibilities = (hr && hr.indisponibilities) || []
+    let indisponibilities = orderBy(
+      hr?.indisponibilities || [],
+      [
+        function (o: RHActivityInterface) {
+          const date = o.dateStart ? new Date(o.dateStart) : new Date()
+          return date.getTime()
+        },
+      ],
+      ['desc']
+    )
 
     if (date) {
       date = today(date)
@@ -600,24 +619,23 @@ export class HumanResourceService {
     human: HumanResourceInterface,
     indisponibilities: RHActivityInterface[]
   ) {
-    const indispos = indisponibilities
-    const max = maxBy(
-      indispos.filter((a) => a.dateStop),
-      function (o) {
-        const dateStop = new Date(o.dateStop ? o.dateStop : '')
-        return dateStop.getTime()
-      }
+    let listAllDates: Date[] = []
+    listAllDates = listAllDates.concat(
+      indisponibilities
+        .filter((i) => i.dateStart)
+        .map((s) => today(s.dateStart))
     )
-    let maxDate = max && max.dateStop ? today(max.dateStop) : new Date(today())
-    const min = minBy(
-      indispos.filter((a) => a.dateStart),
-      function (o) {
-        const dateStart = new Date(o.dateStart ? o.dateStart : '')
-        return dateStart.getTime()
-      }
+    listAllDates = listAllDates.concat(
+      indisponibilities
+        .filter((i) => i.dateStop)
+        .map((s) => today(s.dateStop))
     )
-    const minDate =
-      min && min.dateStart ? today(min.dateStart) : new Date(today())
+    const minDate = minBy(listAllDates, (d) => d.getTime())
+    let maxDate = maxBy(listAllDates, (d) => d.getTime())
+
+    if (!minDate || !maxDate) {
+      return null
+    }
 
     const currentDate = new Date(minDate)
     let idOfIndisponibilities: number[] = []
@@ -625,7 +643,7 @@ export class HumanResourceService {
     while (currentDate.getTime() <= maxDate.getTime()) {
       const findedIndispo = human
         ? this.findAllIndisponibilities(
-            { ...human, indisponibilities: indispos },
+            { ...human, indisponibilities },
             currentDate
           )
         : []
@@ -657,7 +675,7 @@ export class HumanResourceService {
                 '0'
               )} ${getShortMonthString(
                 r.date
-              )} ${r.date.getFullYear()} vous êtes à ${
+              )} ${r.date.getFullYear()} vous seriez à ${
                 r.percent
               }% d'indisponibilité.`
           )

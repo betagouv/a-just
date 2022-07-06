@@ -4,6 +4,16 @@
   display: flex;
   height: 100%;
 
+  &.full-screen {
+    height: inherit;
+  }
+
+  &.removeMenuZindex {
+    .menu {
+      z-index: 0;
+    }
+  }
+
   &.content-margin-top-null {
     .contener .content {
       padding-top: 0px;
@@ -178,6 +188,7 @@
 
   .subtitle {
     font-size: 12px;
+    margin-top: -4px;
   }
 }
 

@@ -11,6 +11,7 @@ import {
 } from 'fs'
 import { csvToArrayJson } from '../utils/csv'
 import {
+  I_ELST_LIST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from './constants/SDSE-ref'
@@ -232,13 +233,23 @@ export default class App {
     referentiel
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
+    const JURIDICTIONS_EXPORTS = {}
 
     // id, code_import, periode, stock, entrees, sorties
     // .....
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
-      console.log(fileName)
+      const ielst = fileName.replace('export-activities-','').replace('.csv', '')
+      if(!I_ELST_LIST[ielst]) {
+        continue
+      }
+
+      if(!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
+      }
+
+      console.log(fileName, fileName.replace('export-activities-','').replace('.csv', ''), I_ELST_LIST[ielst])
 
       const arrayOfCsv = await csvToArrayJson(
         readFileSync(`${tmpFolder}/${fileName}`, 'utf8'),
@@ -264,11 +275,30 @@ export default class App {
         list = list.concat(formatMonthDataFromRules)
       })
 
+      // merge to existing list
+      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
+        const index = acc.findIndex(a => a.code_import === cur.code_import && a.periode === cur.periode)
+        if(index === -1) {
+          acc.push(cur)
+        } else {
+          acc[index] = {
+            ...acc[index],
+            entrees: (acc[index].entrees || 0) + (cur.entrees || 0),
+            sorties: (acc[index].sorties || 0) + (cur.sorties || 0),
+            stock: (acc[index].stock || 0) + (cur.stock || 0),
+          }
+        }
+
+        return acc
+      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]])
+    }
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       writeFileSync(
-        `${outputFolder}/${fileName}`,
+        `${outputFolder}/${key}.csv`,
         `${['code_import,periode,entrees,sorties,stock,']
           .concat(
-            list.map(
+            value.map(
               (l) =>
                 `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`
             )

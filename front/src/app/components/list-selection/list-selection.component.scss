@@ -1,20 +1,159 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
   display: block;
-  margin-bottom: 32px;
+  padding: 8px 12px 8px 16px;
+  border-radius: 4px;
+  background-color: fColor(bgSelect);
+  margin-bottom: 4px;
+  position: relative;
 
-  .header-selection {
-    font-weight: bold;
+  &.large-drop {
+    .select-area {
+      width: 400px;
+    }
   }
 
-  .list {
-    > p {
-      cursor: pointer;
+  > .list-selection {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 
-      &.selected {
-        font-weight: bold;
+    > .title-icon {
+      margin-right: 4px;
+    }
+
+    .title-list {
+      font-size: 16px;
+      color: fColor(cblack);
+      margin-right: 8px;
+    }
+
+    .value-selected {
+      font-size: 16px;
+      margin-left: 8px;
+      margin-right: 4px;
+      display: flex;
+
+      &.stretched {
+        flex: 1;
+        position: relative;
+        align-self: stretch;
+
+        > p {
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          color: fColor(titleEtpGraph);
+        }
+
+        p {
+          width: 100%;
+        }
       }
+
+      &.normal {
+        flex: 1;
+
+        > div {
+          margin-left: 0;
+          cursor: pointer;
+          flex: 1;
+
+          > p,
+          i {
+            color: fColor(cblack);
+          }
+        }
+      }
+
+      i {
+        margin-right: 4px;
+      }
+
+      p {
+        text-align: right;
+      }
+
+      > div {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        > p,
+        i {
+          color: fColor(titleEtpGraph);
+        }
+      }
+    }
+  }
+}
+
+.select-area {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: fColor(bgSelect);
+  border-radius: 4px;
+  overflow: auto;
+
+  &.right {
+    left: 100%;
+    margin-top: 0;
+    margin-left: 4px;
+    right: inherit;
+    top: 0;
+    width: 260px;
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    color: fColor(cblack);
+    cursor: pointer;
+
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
+    &:hover {
+      background-color: rgba(fColor(bgSelectSelected), 0.2);
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+
+    &.selected {
+      background-color: fColor(bgSelectSelected);
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+
+    &:first-child {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    i {
+      margin-right: 4px;
     }
   }
 }

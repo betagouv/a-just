@@ -50,17 +50,7 @@ export class ImportsPage {
   }
 
   async onSendHR(form: any) {
-    const backupId = form.backupId.value;
-    const backupName = form.backupName.value;
     const file = form.file.files[0];
-
-    if (backupName && !confirm('Créer une ventilation ?')) {
-      return;
-    }
-
-    if (!backupName && !confirm('Modifier la ventilation ?')) {
-      return;
-    }
 
     if (!file) {
       alert('Vous devez saisir une fichier !');
@@ -69,14 +59,7 @@ export class ImportsPage {
 
     const options = {
       file: await exportFileToString(file),
-      backupName: null,
-      backupId: null,
     };
-    if (backupName) {
-      options.backupName = backupName;
-    } else {
-      options.backupId = backupId;
-    }
 
     this.importService.importHR(options).then(() => {
       alert('OK !');

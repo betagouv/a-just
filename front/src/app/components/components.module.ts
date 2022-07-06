@@ -22,38 +22,56 @@ import { TooltipsComponent } from './tooltips/tooltips.component'
 import { PipesModule } from '../pipes/pipes.module'
 import { TimeSelectorComponent } from './time-selector/time-selector.component'
 import { InputPercentageComponent } from './input-percent/input-percentage.component'
+import { LoadersWidgetComponent } from './loaders-widget/loaders-widget.component'
+import { FiguresWidgetComponent } from './figures-widget/figures-widget.component'
+import { DialWidgetComponent } from './dial-widget/dial-widget.component'
+import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.component'
+import { NgSelectModule } from '@ng-select/ng-select'
+import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
+import { RadioButtonComponent } from './radio-button/radio-button.component'
+import { LegendLabelComponent } from './legend-label/legend-label.component'
+import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
 
 const list = [
-    WrapperComponent,
-    SpeedometerComponent,
-    PopupComponent,
-    ListSelectionComponent,
-    RhBackupPanelComponent,
-    OptionsBackupPanelComponent,
-    ReferentielCalculatorComponent,
-    SelectCheckAllComponent,
-    SelectComponent,
-    DateSelectComponent,
-    InputButtonComponent,
-    EtpPreviewComponent,
-    ProgressionBarComponent,
-    PanelActivitiesComponent,
-    DateSelectBlueComponent,
-    TooltipsComponent,
-    TimeSelectorComponent,
-    InputPercentageComponent,
+  WrapperComponent,
+  SpeedometerComponent,
+  PopupComponent,
+  ListSelectionComponent,
+  RhBackupPanelComponent,
+  OptionsBackupPanelComponent,
+  ReferentielCalculatorComponent,
+  SelectCheckAllComponent,
+  SelectComponent,
+  DateSelectComponent,
+  InputButtonComponent,
+  EtpPreviewComponent,
+  ProgressionBarComponent,
+  PanelActivitiesComponent,
+  DateSelectBlueComponent,
+  TooltipsComponent,
+  TimeSelectorComponent,
+  InputPercentageComponent,
+  LoadersWidgetComponent,
+  FiguresWidgetComponent,
+  DialWidgetComponent,
+  CoveragePreviewComponent,
+  DtesChartComponent,
+  RadioButtonComponent,
+  LegendLabelComponent,
+  InOutChartComponent,
 ]
 
 @NgModule({
-    declarations: [...list],
-    imports: [
-        CommonModule,
-        RouterModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MaterialModule,
-        PipesModule,
-    ],
-    exports: list,
+  declarations: [...list],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    PipesModule,
+    NgSelectModule,
+  ],
+  exports: list,
 })
 export class ComponentsModule {}

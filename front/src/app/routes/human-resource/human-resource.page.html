@@ -1,15 +1,19 @@
 <aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
   [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
-  <actual-panel-situation *ngFor="let h of histories.slice(0, 1); trackBy: trackByDate" [id]="h.id"
-    [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-    [dateStart]="h.dateStart" [dateStop]="h.dateStop" [RHId]="currentHR && currentHR.id"
-    [dateEndToJuridiction]="currentHR && currentHR.dateEnd" (editVentilation)="onSelectSituationToEdit(0)"
-    (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
+  <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
+    [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop" [canEdit]="indexOfTheFuture !== null"
+    [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
+    [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
+    [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
+    [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
+    (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
+    (addIndispiniblity)="onAddIndispiniblity($event)"
+    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">
   </actual-panel-situation>
 
   <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
     <button class="outline primary small" (click)="onAddIndispiniblity()">
-      Ajouter une indisponibilitié
+      Ajouter une indisponibilité
     </button>
 
     <button class="fill primary small" (click)="onSelectSituationToEdit()">
@@ -26,15 +30,30 @@
     [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0">
   </add-ventilation>
 
-  <div class="panel-hsitory-group">
-    <p *ngIf="histories.length > 1" class="title-history">
-      Situations antérieures du {{ categoryName }}
+
+  <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
+    <p class="title-history">
+      Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir pré-renseignée{{historiesOfTheFutur.length >= 1 ?
+      's' : ''}}
     </p>
-    <panel-history-ventilation *ngFor="let h of histories.slice(1); trackBy: trackByDate; let index = index" [id]="h.id"
-      [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-      [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-      (editVentilation)="onSelectSituationToEdit(index + 1)" (addIndispiniblity)="onAddIndispiniblity($event)"
-      (onRemove)="onRemoveSituation(h.id)">
+    <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
+      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
+      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
+    </panel-history-ventilation>
+  </div>
+
+  <div class="panel-hsitory-group">
+    <p *ngIf="historiesOfThePast.length" class="title-history">
+      Situation{{historiesOfThePast.length > 1 ? 's' : ''}} antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
+      categoryName }}
+    </p>
+    <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
+      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
+      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
     </panel-history-ventilation>
   </div>
 
@@ -45,7 +64,7 @@
   <div class="flex-1"></div>
 
   <div class="sticky-action-footer" *ngIf="onEditIndex !== null && histories.length === 0">
-    <button class="small outline blue strict-border" (click)="onCancel()">Annuler</button>
+    <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>
     <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
   </div>
 </aj-wrapper>
