@@ -50,6 +50,12 @@ button {
       border: 1px solid fColor(cred);
       background-color: white;
     }
+
+    &.blue-light {
+      color: fColor(darkModeTitle);
+      border: 1px solid fColor(darkModeTitle);
+      background-color: transparent;
+    }
   }
 
   &.strict-border {

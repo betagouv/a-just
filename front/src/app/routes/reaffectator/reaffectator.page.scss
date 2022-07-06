@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 .header-list {
   display: flex;
@@ -22,7 +22,7 @@
       align-items: center;
       flex: 1;
       align-self: stretch;
-      
+
       mat-icon {
         margin-right: 8px;
       }
@@ -30,15 +30,13 @@
       > .label {
         flex: 1;
       }
-
-    
     }
 
     > .contentieux-label {
       align-self: stretch;
       display: flex;
       background-color: fColor(bgSelect);
-      width: 125px!important;
+      width: 125px !important;
 
       > .text {
         flex: 1;
@@ -72,7 +70,6 @@
           display: flex;
           align-items: center;
           flex: 1;
-       
         }
       }
     }
@@ -104,7 +101,7 @@
 
         .etp {
           flex: 1;
-         
+
           p {
             color: fColor(headerNumberColor);
             font-size: 16px;
@@ -286,7 +283,7 @@
 
     .read-etp {
       padding: 0 14px;
-      width: 125px!important;
+      width: 125px !important;
       background-color: fColor(bgSelect);
       display: flex;
       flex-direction: column;
@@ -433,7 +430,7 @@
       &:checked {
         border-color: none;
         background-color: fColor(cbluedark);
-        background-image: url("/assets/icons/checkbox.svg");
+        background-image: url('/assets/icons/checkbox.svg');
       }
     }
   }
@@ -452,7 +449,7 @@
       &:checked {
         border-color: none;
         background-color: fColor(cpink);
-        background-image: url("/assets/icons/checkbox.svg");
+        background-image: url('/assets/icons/checkbox.svg');
       }
     }
   }
@@ -471,7 +468,7 @@
       &:checked {
         border-color: none;
         background-color: fColor(cyellowdark);
-        background-image: url("/assets/icons/checkbox.svg");
+        background-image: url('/assets/icons/checkbox.svg');
       }
     }
   }
@@ -501,4 +498,21 @@ aj-input-button {
 
 progression-bar {
   cursor: pointer;
+}
+
+.reaffectator-page {
+  margin-right: 8px;
+  text-decoration: none;
+
+  > button {
+    display: flex;
+    align-items: center;
+
+    aj-radio-button {
+      margin-left: 16px;
+      width: 40px;
+      height: 24px;
+      border-radius: 40px;
+    }
+  }
 }
