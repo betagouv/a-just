@@ -143,6 +143,16 @@
   flex-direction: column;
   height: 100%;
 
+  &.print {
+    .content-list {
+      overflow: inherit;
+    }
+
+    .header-list {
+      position: inherit;
+    }
+  }
+
   .content-list {
     flex: 1;
     overflow: auto;
