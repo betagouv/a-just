@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build --configuration=${NODE_ENV}",
+    "start": "ng serve --port=4300",
+    "build": "ng build --configuration=${NODE_ENV} --base-href /admin/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc": "npx compodoc -p tsconfig.doc.json"
