@@ -115,7 +115,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   async loadCategories() {
     if (this.form.value) {
       this.fonctions = (await this.hrFonctionService.getAll()).filter(
-        (c) => this.form.value?.categoryId === c.categoryId
+        (c) => this.form.value?.categoryId == c.categoryId
       )
     }
   }
