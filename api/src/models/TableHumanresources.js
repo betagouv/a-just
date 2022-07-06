@@ -44,7 +44,7 @@ export default (sequelizeInstance, Model) => {
 
       
       if(!list[i].hmatricule || list[i].hmatricule === '0') {
-        list[i].hmatricule = list[i].nom_usage
+        list[i].hmatricule = (list[i].nom_usage || '') + (list[i].nom_marital || '') + (list[i].prenom || '')
       }
 
       let findHRToDB = await Model.findOne({
