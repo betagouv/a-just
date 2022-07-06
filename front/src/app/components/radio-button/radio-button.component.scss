@@ -1,19 +1,35 @@
 :host {
+  display: inline;
+  width: 25px;
+  height: 15px;
+  border-radius: 50%;
 
-    display: inline;
-
-    * *:after *:before {
-        box-sizing: border-box
+  &.fit {
+    .indicator {
+      margin: 1px 1px;
+      width: 50%;
+      height: calc(100% - 2px);
     }
+  }
+
+  .indicator {
+    border-radius: 100%;
+    width: 50%;
+    height: 100%;
+    transition: margin-left 0.25s ease;
+
+    &.selected {
+      margin-left: 50%;
+    }
+  }
+
+  /*
 
     .check {
         background-color: white;
         display: inline-block;
-        height: 15px;
-        width: 25px;
         position: relative;
         overflow: hidden;
-        border-radius: 7.5px;
         cursor: pointer;
 
         &__check {
@@ -63,5 +79,5 @@
             }
         }
 
-    }
+    } */
 }

@@ -1,5 +1,2 @@
-<div class="check" [ngClass]="{'background-color': bgColor}">
-  <input type="checkbox" class="check__check" [(ngModel)]="o.checked" checked="o.checked" value="{o.label}"
-    (click)="$event.stopPropagation(); clicked()" />
-  <div class="check__indicator"></div>
+<div class="indicator" [ngStyle]="{'background-color': switchColor}" [ngClass]="{'selected': o.checked}">
 </div>
