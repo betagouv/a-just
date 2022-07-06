@@ -365,7 +365,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   formatListToShow() {
     this.listFormated = [...this.categoriesFilterList].map(
       (category: HRCategorySelectedInterface) => {
-        const label = category.label
+        let label = category.label
         let referentiel = (
           copyArray(this.referentiel) as ContentieuReferentielInterface[]
         ).map((ref) => {
@@ -411,18 +411,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           )
         }
 
+        if(group.length > 1) {
+          if(label.indexOf('agistrat') !== -1) {
+            label = label.replace('agistrat', 'agistrats')
+          } else {
+            label += 's'
+          }
+        }
+
         return {
           textColor: this.getCategoryColor(label),
           bgColor: this.getCategoryColor(label, 0.2),
           referentiel,
-          label:
-            group.length <= 1
-              ? label && label === 'Magistrat'
-                ? 'Magistrat du siège'
-                : label
-              : label && label === 'Magistrat'
-              ? 'Magistrats du siège'
-              : `${label}s`,
+          label,
           hr: group,
         }
       }

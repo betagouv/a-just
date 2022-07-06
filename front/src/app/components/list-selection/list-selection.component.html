@@ -33,6 +33,13 @@
         </div>
     </ng-template>
     <ng-template [ngIf]="multiple">
+        <div [ngClass]="{selected: values.length === list.length}" (click)="$event.stopPropagation(); onSelectAll()">
+            <i *ngIf="values.length === list.length" class="ri-checkbox-line"></i>
+            <i *ngIf="values.length !== list.length" class="ri-checkbox-blank-line"></i>
+            <div>
+                <p>Tous</p>
+            </div>
+        </div>
         <div *ngFor="let item of list" [ngClass]="{selected: values.indexOf(item.id) !== -1}"
             (click)="$event.stopPropagation(); onSelectMultiple(item.id)">
 
