@@ -4,7 +4,7 @@
     <mat-icon *ngIf="value && clearable && !readOnly"
         (click)="onDateChanged(null); $event.preventDefault(); $event.stopPropagation();" class="cursor-pointer">
         highlight_off</mat-icon>
-    <mat-icon *ngIf="!(value && clearable && !readOnly)">{{ icon }}</mat-icon>
+    <mat-icon *ngIf="!(value && clearable && !readOnly)" (click)="onClick()">{{ icon }}</mat-icon>
 </div>
 <input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)">
 <mat-datepicker #picker></mat-datepicker>
