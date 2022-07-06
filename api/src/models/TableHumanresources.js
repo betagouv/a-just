@@ -77,7 +77,7 @@ export default (sequelizeInstance, Model) => {
 
         const findFonction = await Model.models.HRFonctions.findOne({
           where: {
-            code: list[i].fonction,
+            code: list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie'],
           },
           logging: false,
         })
