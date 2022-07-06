@@ -34,13 +34,6 @@ export class RadioButtonComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.o.label = this.title
-    const checkElement = (
-      this.elementRef!.getElementsByClassName(
-        'check'
-      ) as HTMLCollectionOf<HTMLElement>
-    )[0]
-
-    checkElement.style.setProperty('--boxBackColor', this.bgColor)
 
     const dotElement = (
       this.elementRef!.getElementsByClassName(
