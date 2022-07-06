@@ -841,9 +841,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     const title: any = document.getElementById('print-title')!
     title.style.display = 'flex'
 
-    const content: any = document.getElementById('content')!
-    content.style.overflow = 'inherit'
-
     const initButton = document.getElementById('main-init')!
     initButton.style.display = 'none'
 
@@ -853,11 +850,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     const ajWrapper = document.getElementById('simu-wrapper')
     ajWrapper?.classList.add('full-screen')
 
-    const element = document.getElementById('conteneur-main')!
-
-    this.wrapper?.exportAsPdf(element, filename).then(() => {
+    this.wrapper?.exportAsPdf(filename).then(() => {
       ajWrapper?.classList.remove('full-screen')
-      element.style.overflow = 'auto'
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
       title.style.display = 'none'

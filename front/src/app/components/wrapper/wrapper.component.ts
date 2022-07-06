@@ -1,4 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core'
 import { Router } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -15,6 +24,9 @@ import { UserService } from 'src/app/services/user/user.service'
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
+  @ViewChild('contener') contener: ElementRef<HTMLElement> | null = null
+  @ViewChild('content') content: ElementRef<HTMLElement> | null = null
+  @HostBinding('class.print') duringPrint: boolean = false
   @Input() actionTemplate: TemplateRef<any> | undefined
   @Input() titleTemplate: TemplateRef<any> | undefined
   @Input() title: string = ''
@@ -127,28 +139,42 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     this.humanResourceService.backupId.next(id)
   }
 
-  async exportAsPdf(element: HTMLElement, filename: string): Promise<any> {
-    return html2canvas(element!, {
-      scale: 1.5,
-    }).then((canvas) => {
-      var width = element.offsetWidth
-      var height = element.offsetHeight
+  async exportAsPdf(filename: string, header: boolean = true): Promise<any> {
+    this.duringPrint = true
+    const element = this[header ? 'contener' : 'content']?.nativeElement
 
-      var doc = new jsPDF(
-        'p',
-        'px',
-        [width / 2, element.scrollHeight / 2],
-        true
-      )
-      doc.addImage(
-        canvas.toDataURL('image/png', 1),
-        'png',
-        0,
-        0,
-        width / 2,
-        height / 2
-      )
-      doc.save(filename)
+    if (!element) {
+      return new Promise((resolve) => { resolve(true) })
+    }
+    document.body.classList.add('remove-height')
+
+    return new Promise((resolve) => {
+      html2canvas(element, {
+        scale: 1.5,
+      }).then((canvas) => {
+        var width = element.offsetWidth
+        var height = element.offsetHeight
+
+        var doc = new jsPDF(
+          'p',
+          'px',
+          [width / 2, element.scrollHeight / 2],
+          true
+        )
+        doc.addImage(
+          canvas.toDataURL('image/png', 1),
+          'png',
+          0,
+          0,
+          width / 2,
+          height / 2
+        )
+        doc.save(filename)
+
+        this.duringPrint = false
+        document.body.classList.remove('remove-height')
+        resolve(true)
+      })
     })
   }
 }
