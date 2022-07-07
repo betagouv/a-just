@@ -27,6 +27,7 @@
     "@ng-select/ng-select": "^9.0.1",
     "animate.css": "^4.1.1",
     "chart.js": "^3.5.1",
+    "chartjs-plugin-annotation": "^1.4.0",
     "form-data": "^4.0.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
