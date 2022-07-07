@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
+import { findRealValue, getRangeOfMonths } from 'src/app/utils/dates'
 
 @Component({
   selector: 'aj-in-out-chart',
@@ -16,19 +17,20 @@ export class InOutChartComponent implements OnInit {
   elementRef: HTMLElement | undefined
   myChart: any = null
   labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  tooltip: any = { display: false }
 
   data = {
     projectedIn: {
-      values: [40, 30, 5],
+      values: [0], //[40, 30, 5],
     },
     simulatedIn: {
-      values: [10, 20, 30],
+      values: [0], //[10, 20, 30],
     },
     projectedOut: {
-      values: [0, 10, 20],
+      values: [0], //[0, 10, 20],
     },
     simulatedOut: {
-      values: [9, 10, 11],
+      values: [0], //[9, 10, 11],
     },
   }
 
@@ -36,7 +38,6 @@ export class InOutChartComponent implements OnInit {
     element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
-    /**
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -101,7 +102,7 @@ export class InOutChartComponent implements OnInit {
         }
       }
     })
-*/
+
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
     Chart.register(annotationPlugin)
@@ -190,12 +191,71 @@ export class InOutChartComponent implements OnInit {
 
     let $this = this
 
+    const externalTooltipHandler = (context: any) => {
+      // Tooltip Element
+      const { chart, tooltip } = context
+
+      const { offsetLeft: positionX, offsetTop: positionY } =
+        $this.myChart.canvas
+
+      $this.tooltip = {
+        offsetLeft: positionX,
+        offsetTop: positionY,
+        ...$this.tooltip,
+        ...tooltip,
+      }
+    }
+
     const config: any = {
       type: 'line',
       data: data,
       options: {
         onClick: function (e: any, items: any) {
           if (items.length == 0) return
+
+          var firstPoint = items[0].index
+          const projectedIn = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedIn'
+            }
+          )
+          const simulatedIn = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedIn'
+            }
+          )
+          const projectedOut = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedOut'
+            }
+          )
+          const simulatedOut = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedOut'
+            }
+          )
+
+          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+
+          const yValues = items.map((object: any) => {
+            return object.element.y
+          })
+
+          const min = Math.min(...yValues)
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = items[0].element.x + 'px'
+          tooltipEl.style.top = min - 130 + 'px'
+
+          $this.affectTooltipValues({
+            projectedIn: projectedIn.data[firstPoint],
+            simulatedIn: simulatedIn.data[firstPoint],
+            projectedOut: projectedOut.data[firstPoint],
+            simulatedOut: simulatedOut.data[firstPoint],
+            x: items[0].element.x + 'px',
+            y: min - 130 + 'px',
+          })
+
+          const colorArray = []
 
           if (
             e.chart.options.plugins.annotation.annotations.box1.content ===
@@ -208,7 +268,6 @@ export class InOutChartComponent implements OnInit {
               e.chart.options.plugins.annotation.annotations.box1.display = true
               $this.updateAnnotationBox(true, 0, 0)
             }
-            var firstPoint = items[0].index
             if (firstPoint === 0) {
               e.chart.options.plugins.annotation.annotations.box1.xMin = 0
               e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
@@ -236,15 +295,37 @@ export class InOutChartComponent implements OnInit {
             }
             e.chart.options.plugins.annotation.annotations.box1.yMax =
               e.chart.scales.A.max
+            for (
+              let i = 0;
+              i < e.chart.data.datasets[firstPoint].borderColor.length;
+              i++
+            ) {
+              if (firstPoint === i) {
+                colorArray.push('#0a76f6')
+              } else {
+                colorArray.push('rgb(109, 109, 109)')
+              }
+            }
           } else {
+            for (
+              let i = 0;
+              i < e.chart.data.datasets[firstPoint].borderColor.length;
+              i++
+            ) {
+              colorArray.push('rgb(109, 109, 109)')
+            }
             e.chart.options.plugins.annotation.annotations.box1.content =
               undefined
             $this.updateAnnotationBox(false, 0, 0, undefined)
+            tooltipEl.style.opacity = 0
           }
+          e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
-        events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
+          events: ['click'],
+
           callbacks: {
             title: function (tooltipItem: any, data: any) {
               return data['labels'][tooltipItem[0]['index']]
@@ -279,6 +360,9 @@ export class InOutChartComponent implements OnInit {
         },
         scales: {
           x: {
+            ticks: {
+              color: 'rgb(109, 109, 109)',
+            },
             grid: {
               drawTicks: true,
               tickColor: 'white',
@@ -339,6 +423,8 @@ export class InOutChartComponent implements OnInit {
             display: false,
           },
           tooltip: {
+            external: externalTooltipHandler,
+
             usePointStyle: true,
             boxWidth: 15,
             position: 'nearest',
@@ -442,6 +528,62 @@ export class InOutChartComponent implements OnInit {
       this.myChart.options.plugins.annotation.annotations.box1.xMax = value.xMax
       this.myChart.options.plugins.annotation.annotations.box1.content =
         value.content
+
+      this.tooltip.projectedIn = value.projectedIn
+      this.tooltip.simulatedIn = value.simulatedIn
+      this.tooltip.projectedOut = value.projectedOut
+      this.tooltip.simulatedOut = value.simulatedOut
+
+      const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+      const colorArray = []
+
+      if (
+        value.x &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.left = value.x
+        tooltipEl.style.top = value.y
+        this.tooltip.projectedIn =
+          this.myChart.data.datasets[0].data[value.pointIndex as number]
+        this.tooltip.simulatedIn =
+          this.myChart.data.datasets[1].data[value.pointIndex as number]
+        this.tooltip.projectedOut =
+          this.myChart.data.datasets[2].data[value.pointIndex as number]
+        this.tooltip.simulatedOut =
+          this.myChart.data.datasets[3].data[value.pointIndex as number]
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          if ((value.pointIndex as number) === i) {
+            colorArray.push('#0a76f6')
+          } else {
+            colorArray.push('rgb(109, 109, 109)')
+          }
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
+      }
+      if (
+        value.display === false &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
+        tooltipEl.style.opacity = 0
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          colorArray.push('rgb(109, 109, 109)')
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
+      }
+
       this.myChart.update()
     })
   }
@@ -459,18 +601,29 @@ export class InOutChartComponent implements OnInit {
     }
   }
 
+  affectTooltipValues(obj: any) {
+    this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
+      ...obj,
+    })
+  }
+
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
     xMax?: number,
     content?: any
   ) {
-    console.log('EMINCAN YES WE CAN')
     this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
       display,
       xMin,
       xMax,
       content,
     })
+  }
+
+  getDeltaInPercent(value1: number, value2: number): number {
+    return Number((((value1 - value2) / value2) * 100).toFixed(2))
   }
 }

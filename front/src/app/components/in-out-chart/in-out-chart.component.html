@@ -14,6 +14,63 @@
         id="in-out-chart"
         style="height: 250px; width: content-box"
       ></canvas>
+      <div id="chartjs-tooltip">
+        <div class="popin-title-content">
+          <p class="popin-title">
+            <b>Effectifs</b> <br />
+            à Janvier 2023
+          </p>
+          <div class="low">Projetés</div>
+          <p class="hard">Simulés</p>
+          <p class="white">Variation</p>
+        </div>
+        <div class="popin-raw" style="display: flex">
+          <div class="popin-title">
+            <div
+              _ngcontent-vmx-c83=""
+              class="circle"
+              style="background-color: #fcc63a"
+            ></div>
+            <b style="align-self: center"> Entrées</b>
+          </div>
+          <p class="low-value first">{{ tooltip.projectedIn }}</p>
+          <p class="hard-value first">{{ tooltip.simulatedIn }}</p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) ||
+                    0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="popin-raw" style="display: flex">
+          <div class="popin-title">
+            <div
+              _ngcontent-vmx-c83=""
+              class="circle"
+              style="background-color: #60e0eb"
+            ></div>
+            <b>Sorties</b> &nbsp;
+          </div>
+          <p class="low-value">{{ tooltip.projectedOut }}</p>
+          <p class="hard-value">{{ tooltip.simulatedOut }}</p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) ||
+                    0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

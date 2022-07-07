@@ -30,16 +30,16 @@ export class DtesChartComponent implements AfterViewInit {
 
   data = {
     projectedStock: {
-      values: [20, 90, 5],
+      values: [0], //[20, 90, 5],
     },
     simulatedStock: {
-      values: [0, 10, 20],
+      values: [0], //[0, 10, 20],
     },
     projectedDTES: {
-      values: [20, 50, 3],
+      values: [0], //[20, 50, 3],
     },
     simulatedDTES: {
-      values: [1, 10, 100],
+      values: [0], //[1, 10, 100],
     },
   }
 
@@ -47,7 +47,6 @@ export class DtesChartComponent implements AfterViewInit {
     element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
-    /**
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -117,7 +116,7 @@ export class DtesChartComponent implements AfterViewInit {
         }
       }
     })
-*/
+
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
     Chart.register(annotationPlugin)
@@ -206,7 +205,12 @@ export class DtesChartComponent implements AfterViewInit {
       let lbl = ''
 
       if (sufix.slice(0, 4) === 'mois')
-        lbl = '  ' + context.formattedValue + ' ' + sufix //context.label +
+        lbl =
+          '  ' +
+          Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
+          ' ' +
+          sufix
+      //context.label +
       else
         lbl =
           '  ' +
@@ -508,8 +512,12 @@ export class DtesChartComponent implements AfterViewInit {
       this.tooltip.simulatedStock = value.simulatedStock
 
       const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+      const colorArray = []
 
-      if (value.x) {
+      if (
+        value.x &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
         tooltipEl.style.opacity = 1
         tooltipEl.style.left = value.x
         tooltipEl.style.top = value.y
@@ -521,8 +529,40 @@ export class DtesChartComponent implements AfterViewInit {
           this.myChart.data.datasets[2].data[value.pointIndex as number]
         this.tooltip.simulatedDTES =
           this.myChart.data.datasets[3].data[value.pointIndex as number]
+        console.log(this.myChart.data.datasets[value.pointIndex as number])
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          if ((value.pointIndex as number) === i) {
+            colorArray.push('#0a76f6')
+          } else {
+            colorArray.push('rgb(109, 109, 109)')
+          }
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
       }
-      if (value.display === false) tooltipEl.style.opacity = 0
+      if (
+        value.display === false &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
+        tooltipEl.style.opacity = 0
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          colorArray.push('rgb(109, 109, 109)')
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
+      }
+
+      this.myChart.update()
     })
   }
 
