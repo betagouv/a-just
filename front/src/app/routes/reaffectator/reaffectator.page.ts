@@ -283,8 +283,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onFilterList() {
     if (
       !this.categoriesFilterList.length ||
-      !this.referentiel.length ||
-      !this.categoriesFilterList.length
+      !this.referentiel.length
     ) {
       return
     }

@@ -14,6 +14,18 @@
       <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"
         [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
+      <div class="flex-1"></div>
+      <aj-input-button class="dark-mode" title="Rechercher un collaborateur" placeholder="Indiquer le nom"
+        [ngModel]="searchValue" (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()"
+        ngDefaultControl icon="">
+      </aj-input-button>
+      <div class="search-next" *ngIf="valuesFinded !== null">
+        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
+        </mat-icon>
+        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
+          expand_more
+        </mat-icon>
+      </div>
     </div>
 
     <div class="content-list" id="container-list">
@@ -111,17 +123,6 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <!-- <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
-    (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
-  </aj-input-button>
-  <div class="search-next" *ngIf="valuesFinded !== null">
-    <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
-    </mat-icon>
-    <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
-      expand_more
-    </mat-icon>
-  </div> -->
-
   <a routerLink="/ventilations" class="reaffectator-page">
     <button class="blue-light light outline">
       Simuler des affectations

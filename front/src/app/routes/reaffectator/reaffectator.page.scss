@@ -394,14 +394,14 @@
   display: inline-block;
 }
 
-.or {
-  text-align: center;
-}
-
 .search-next {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  mat-icon {
+    color: white;
+  }
 }
 
 aj-input-button {
