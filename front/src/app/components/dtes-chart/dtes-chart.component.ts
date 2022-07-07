@@ -207,7 +207,10 @@ export class DtesChartComponent implements AfterViewInit {
         lbl = '  ' + context.formattedValue + ' ' + sufix //context.label +
       else
         lbl =
-          '  ' + Math.floor(parseFloat(context.formattedValue)) + ' ' + sufix
+          '  ' +
+          Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
+          ' ' +
+          sufix
       return lbl
     }
 

@@ -1,4 +1,5 @@
 export interface ItemInterface {
-	id: string | null;
+	id: string | number;
 	label: string;
+	icon?: string;
 }

@@ -8,6 +8,12 @@
     height: inherit;
   }
 
+  &.removeMenuZindex {
+    .menu {
+      z-index: 0;
+    }
+  }
+
   &.content-margin-top-null {
     .contener .content {
       padding-top: 0px;
