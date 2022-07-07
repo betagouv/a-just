@@ -26,6 +26,8 @@ export class DtesChartComponent implements AfterViewInit {
   elementRef: HTMLElement | undefined
   myChart: any = null
   labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  tooltip: any = { display: false }
+
   data = {
     projectedStock: {
       values: [20, 90, 5],
@@ -208,7 +210,7 @@ export class DtesChartComponent implements AfterViewInit {
       else
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
+          Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
           ' ' +
           sufix
       return lbl
@@ -216,12 +218,72 @@ export class DtesChartComponent implements AfterViewInit {
 
     let $this = this
 
+    const externalTooltipHandler = (context: any) => {
+      // Tooltip Element
+      const { chart, tooltip } = context
+
+      const { offsetLeft: positionX, offsetTop: positionY } =
+        $this.myChart.canvas
+
+      $this.tooltip = {
+        offsetLeft: positionX,
+        offsetTop: positionY,
+        ...$this.tooltip,
+        ...tooltip,
+      }
+    }
+
     const config: any = {
       type: 'line',
       data: data,
       options: {
         onClick: function (e: any, items: any) {
           if (items.length == 0) return
+
+          var firstPoint = items[0].index
+          const projectedStock = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedStock'
+            }
+          )
+          const simulatedStock = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedStock'
+            }
+          )
+
+          const projectedDTES = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedDTES'
+            }
+          )
+          const simulatedDTES = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedDTES'
+            }
+          )
+
+          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+
+          const yValues = items.map((object: any) => {
+            return object.element.y
+          })
+
+          const min = Math.min(...yValues)
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = items[0].element.x + 'px'
+          tooltipEl.style.top = min - 130 + 'px'
+
+          $this.affectTooltipValues({
+            projectedStock: projectedStock.data[firstPoint],
+            simulatedStock: simulatedStock.data[firstPoint],
+            projectedDTES: projectedDTES.data[firstPoint],
+            simulatedDTES: simulatedDTES.data[firstPoint],
+            x: items[0].element.x + 'px',
+            y: min - 130 + 'px',
+          })
+
+          const colorArray = []
 
           if (
             e.chart.options.plugins.annotation.annotations.box1.content ===
@@ -262,15 +324,37 @@ export class DtesChartComponent implements AfterViewInit {
             }
             e.chart.options.plugins.annotation.annotations.box1.yMax =
               e.chart.scales.A.max
+            for (
+              let i = 0;
+              i < e.chart.data.datasets[firstPoint].borderColor.length;
+              i++
+            ) {
+              if (firstPoint === i) {
+                colorArray.push('#0a76f6')
+              } else {
+                colorArray.push('rgb(109, 109, 109)')
+              }
+            }
           } else {
+            for (
+              let i = 0;
+              i < e.chart.data.datasets[firstPoint].borderColor.length;
+              i++
+            ) {
+              colorArray.push('rgb(109, 109, 109)')
+            }
             e.chart.options.plugins.annotation.annotations.box1.content =
               undefined
             $this.updateAnnotationBox(false, 0, 0, undefined)
+            tooltipEl.style.opacity = 0
           }
+          e.chart.config.options.scales.x.ticks.color = colorArray
+          console.log(e.chart.config.options.scales.x.ticks)
           e.chart.update()
         },
-        events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
+          events: ['click'],
           callbacks: {
             title: function (tooltipItem: any, data: any) {
               return data['labels'][tooltipItem[0]['index']]
@@ -305,6 +389,9 @@ export class DtesChartComponent implements AfterViewInit {
         },
         scales: {
           x: {
+            ticks: {
+              color: 'rgb(109, 109, 109)',
+            },
             grid: {
               drawTicks: true,
               tickColor: 'white',
@@ -317,9 +404,6 @@ export class DtesChartComponent implements AfterViewInit {
             position: 'left',
             ticks: {
               display: true,
-              min: 0,
-              max: 100,
-              stepSize: 10,
               callback: (value: any, index: any, values: any) =>
                 index == values.length - 1 ? '' : value,
             },
@@ -374,6 +458,7 @@ export class DtesChartComponent implements AfterViewInit {
             display: false,
           },
           tooltip: {
+            external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
             position: 'nearest',
@@ -418,6 +503,26 @@ export class DtesChartComponent implements AfterViewInit {
       this.myChart.options.plugins.annotation.annotations.box1.content =
         value.content
       this.myChart.update()
+
+      this.tooltip.projectedStock = value.projectedStock
+      this.tooltip.simulatedStock = value.simulatedStock
+
+      const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+
+      if (value.x) {
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.left = value.x
+        tooltipEl.style.top = value.y
+        this.tooltip.projectedStock =
+          this.myChart.data.datasets[0].data[value.pointIndex as number]
+        this.tooltip.simulatedStock =
+          this.myChart.data.datasets[1].data[value.pointIndex as number]
+        this.tooltip.projectedDTES =
+          this.myChart.data.datasets[2].data[value.pointIndex as number]
+        this.tooltip.simulatedDTES =
+          this.myChart.data.datasets[3].data[value.pointIndex as number]
+      }
+      if (value.display === false) tooltipEl.style.opacity = 0
     })
   }
 
@@ -434,18 +539,29 @@ export class DtesChartComponent implements AfterViewInit {
     }
   }
 
+  affectTooltipValues(obj: any) {
+    this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
+      ...obj,
+    })
+  }
+
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
     xMax?: number,
     content?: any
   ) {
-    console.log('EMINCAN YES WE CAN')
     this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
       display,
       xMin,
       xMax,
       content,
     })
+  }
+
+  getDeltaInPercent(value1: number, value2: number): number {
+    return Number((((value1 - value2) / value2) * 100).toFixed(2))
   }
 }
