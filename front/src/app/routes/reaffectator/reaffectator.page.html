@@ -131,17 +131,14 @@
     </mat-icon>
   </div> -->
 
-  <!-- <a routerLink="/ventilations" class="reaffectator-page"> -->
-  <div class="reaffectator-page"> <button class="blue-light light outline">
+  <a routerLink="/ventilations" class="reaffectator-page">
+    <button class="blue-light light outline">
       Simuler des affectations
       <aj-radio-button [title]="'title'" width="40px" height="20px" bgColor="#8585f6" switchColor="white"
         [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line">
       </aj-radio-button>
     </button>
-  </div>
-  <aj-radio-button [title]="'title'">
-  </aj-radio-button>
-  <!-- </a> -->
+  </a>
 
   <button class="primary light" (click)="onExport()">
     <mat-icon>save</mat-icon>
