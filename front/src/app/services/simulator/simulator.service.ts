@@ -12,6 +12,8 @@ import {
   nbOfWorkingDays,
   decimalToStringDate,
   getRangeOfMonthsAsObject,
+  getRangeOfMonths,
+  isFirstDayOfMonth,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { ActivitiesService } from '../activities/activities.service'
@@ -19,6 +21,8 @@ import { HumanResourceService } from '../human-resource/human-resource.service'
 import { environment } from 'src/environments/environment'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
+import { etpAffectedInterface } from 'src/app/interfaces/calculator'
+import { ChartAnnotationBoxInterface } from 'src/app/interfaces/chart-annotation-box'
 
 const start = new Date()
 const end = new Date()
@@ -37,6 +41,14 @@ export class SimulatorService extends MainClass {
     new BehaviorSubject<number | null>(null)
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  chartAnnotationBox: BehaviorSubject<ChartAnnotationBoxInterface> =
+    new BehaviorSubject<ChartAnnotationBoxInterface>({
+      display: false,
+      xMin: null,
+      xMax: null,
+      content: undefined,
+    })
+
   startCurrentSituation = month(new Date(), -12)
   endCurrentSituation = month(new Date(), -1, 'lastday')
   constructor(
@@ -44,6 +56,15 @@ export class SimulatorService extends MainClass {
     private activitiesService: ActivitiesService
   ) {
     super()
+
+    this.watch(
+      this.chartAnnotationBox.subscribe(() => {
+        if (this.chartAnnotationBox.getValue()) {
+          console.log('leService', this.chartAnnotationBox.getValue())
+          //this.syncDatas(this.contentieuOrSubContentieuId.getValue())
+        }
+      })
+    )
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
@@ -182,7 +203,9 @@ export class SimulatorService extends MainClass {
       lastStock = sumBy(lastActivities, 'stock')
 
       // Compute etpAffected & etpMag today (on specific date) to display & output
-      let etpAffected = this.getHRPositions(referentielId as number)
+      let etpAffected = this.getHRPositions(
+        referentielId as number
+      ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
@@ -192,7 +215,10 @@ export class SimulatorService extends MainClass {
         true,
         new Date(month(this.endCurrentSituation, counter, 'lastday'))
       )
-      let etpToCompute = sumBy(etpAffectedToCompute, 'totalEtp')
+      let etpToCompute = sumBy(
+        etpAffectedToCompute as Array<etpAffectedInterface>,
+        'totalEtp'
+      )
 
       // Compute realTimePerCase to display using the etpAffected 12 last months available
       let realTimePerCase = fixDecimal(
@@ -210,7 +236,10 @@ export class SimulatorService extends MainClass {
         true,
         new Date()
       )
-      let futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
+      let futurEtpToCompute = sumBy(
+        fururEtpAffectedToCompute as Array<etpAffectedInterface>,
+        'totalEtp'
+      )
 
       const countOfCalandarDays = nbOfDays(
         month(this.endCurrentSituation, counter, 'lastday'),
@@ -247,7 +276,10 @@ export class SimulatorService extends MainClass {
         )
 
         // Compute etpAffected & etpMag at dateStart (specific date) to display
-        etpAffected = this.getHRPositions(referentielId as number, dateStart)
+        etpAffected = this.getHRPositions(
+          referentielId as number,
+          dateStart
+        ) as Array<etpAffectedInterface>
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
         // Compute totalOut with etp at dateStart (specific date) to display
@@ -260,7 +292,10 @@ export class SimulatorService extends MainClass {
           true,
           dateStart
         )
-        futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
+        futurEtpToCompute = sumBy(
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
+          'totalEtp'
+        )
 
         // Compute projectedStock with etp at dateStart
         lastStock =
@@ -289,22 +324,32 @@ export class SimulatorService extends MainClass {
           referentielId as number,
           dateStop
         )
-        const projectedEtp = sumBy(projectedEtpAffected, 'totalEtp')
+        const projectedEtp = sumBy(
+          projectedEtpAffected as Array<etpAffectedInterface>,
+          'totalEtp'
+        )
 
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
           (projectedEtp * 8 * 17.33) / realTimePerCase
         )
 
+        let monthlyReport: Array<any> = []
         // Projection of etpAffected between start and stop date to compute stock
-        fururEtpAffectedToCompute = this.getHRPositions(
+        //@ts-ignore
+        ;({ fururEtpAffectedToCompute, monthlyReport } = this.getHRPositions(
           referentielId as number,
           dateStart,
           true,
-          dateStop
+          dateStop,
+          true
+        ))
+
+        //console.log('etpFUFU', fururEtpAffectedToCompute, monthlyReport)
+        futurEtpToCompute = sumBy(
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
+          'totalEtp'
         )
-        console.log('etpFUFU', fururEtpAffectedToCompute)
-        futurEtpToCompute = sumBy(fururEtpAffectedToCompute, 'totalEtp')
 
         // Compute projectedStock with etp at datestop
         const projectedLastStock =
@@ -330,7 +375,7 @@ export class SimulatorService extends MainClass {
           realDTESInMonths: projectedRealDTESInMonths,
           realTimePerCase,
           etpMag: projectedEtp,
-          etpAffected: projectedEtpAffected,
+          etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
           etpFon: null,
           etpCont: null,
           calculateCoverage: null,
@@ -338,6 +383,7 @@ export class SimulatorService extends MainClass {
           calculateTimePerCase: null,
           nbMonth,
           etpToCompute: futurEtpToCompute,
+          monthlyReport: monthlyReport,
         }
         this.situationProjected.next(list)
       }
@@ -371,18 +417,21 @@ export class SimulatorService extends MainClass {
     referentiel: number,
     date?: Date,
     onPeriod?: boolean,
-    dateStop?: Date
+    dateStop?: Date,
+    monthlyReport = false
   ) {
     const hr = this.humanResourceService.hr.getValue()
     const categories = this.humanResourceService.categories.getValue()
     const hrCategories: any = {}
-    const hrCategoriesMonthly: any = {}
+    let hrCategoriesMonthly: any = {}
+    let emptyList: { [key: string]: any } = new Object({})
+    emptyList = { ...getRangeOfMonthsAsObject(date!, dateStop!, true) }
 
-    let { dates, monthlyList } = getRangeOfMonthsAsObject(
-      date as Date,
-      dateStop as Date
-    )
-    const emptyList = new Object(monthlyList)
+    Object.keys(emptyList).map((x: any) => {
+      emptyList[x] = {
+        etpt: 0,
+      }
+    })
 
     categories.map((c) => {
       hrCategories[c.label] = hrCategories[c.label] || {
@@ -390,58 +439,42 @@ export class SimulatorService extends MainClass {
         list: [],
         rank: c.rank,
       }
-    })
 
-    categories.map((c) => {
-      hrCategoriesMonthly[c.label] = hrCategoriesMonthly[c.label] || emptyList
+      hrCategoriesMonthly[c.label] = { ...emptyList }
     })
 
     for (let i = 0; i < hr.length; i++) {
-      let etpAll = null
-      let list = null
-
+      let etptAll,
+        monthlyList: any = null
       if (onPeriod === true) {
-        ;({ list, monthlyList } = this.getHRVentilationOnPeriod(
-          hr[i],
-          referentiel,
-          categories,
-          date instanceof Date ? date : undefined,
-          dateStop instanceof Date ? dateStop : undefined
-        ))
-        etpAll = list
-        console.log('by person in Global', monthlyList, hrCategoriesMonthly)
+        ;({ etptAll, monthlyList } = {
+          ...this.getHRVentilationOnPeriod(
+            hr[i],
+            referentiel,
+            categories,
+            date instanceof Date ? date : undefined,
+            dateStop instanceof Date ? dateStop : undefined
+          ),
+        })
+      } else
+        etptAll = this.getHRVentilation(hr[i], referentiel, categories, date)
 
-        Object.values(etpAll).map((c: any) => {
-          Object.keys(monthlyList).map((key: any, index: number) => {
-            console.log(
-              [c.label],
-              [key],
-              typeof hrCategoriesMonthly[c.label][key].etpt,
-              hrCategoriesMonthly[c.label][key].etpt
-            )
-            if (hrCategoriesMonthly[c.label][key].etpt === NaN) {
-              hrCategoriesMonthly[c.label][key].etpt = 0
-              console.log('after', hrCategoriesMonthly[c.label][key].etpt)
-            }
-            hrCategoriesMonthly[c.label][key].etpt +=
-              monthlyList[key][c.id].etpt
+      Object.values(etptAll).map((c: any) => {
+        if (c.etpt) {
+          hrCategories[c.label].list.push(hr[i])
+          hrCategories[c.label].totalEtp += c.etpt
+        }
+
+        if (onPeriod === true && dateStop) {
+          Object.keys(monthlyList).map((x: any) => {
+            hrCategoriesMonthly[c.label][x].etpt += monthlyList[x][c.id].etpt
           })
-        })
-      } else {
-        etpAll = this.getHRVentilation(hr[i], referentiel, categories, date)
-        Object.values(etpAll).map((c: any) => {
-          if (c.etpt) {
-            hrCategories[c.label].list.push(hr[i])
-            hrCategories[c.label].totalEtp += c.etpt
-          }
-        })
-      }
+        }
+      })
     }
 
-    console.log('Global', hrCategoriesMonthly)
-
     const list = []
-    const monthList = []
+    const listMonthly = []
     for (const [key, value] of Object.entries(hrCategories)) {
       list.push({
         name: key,
@@ -450,11 +483,36 @@ export class SimulatorService extends MainClass {
         // @ts-ignore
         rank: value.rank,
       })
+
+      let tmpObj: any = []
+
+      Object.keys(hrCategoriesMonthly[key]).map((x) => {
+        hrCategoriesMonthly[key][x].etpt = fixDecimal(
+          hrCategoriesMonthly[key][x].etpt || 0
+        )
+
+        tmpObj.push({
+          ...{
+            name: x,
+            // @ts-ignore
+            etpt: fixDecimal(hrCategoriesMonthly[key][x].etpt || 0),
+          },
+        })
+      })
+
+      listMonthly.push({
+        name: key,
+        // @ts-ignore
+        values: { ...tmpObj },
+      })
     }
 
-    console.log('Global list', list)
-
-    return sortBy(list, 'rank')
+    if (monthlyReport)
+      return {
+        fururEtpAffectedToCompute: sortBy(list, 'rank'),
+        monthlyReport: listMonthly,
+      }
+    else return sortBy(list, 'rank')
   }
 
   getHRVentilation(
@@ -497,24 +555,20 @@ export class SimulatorService extends MainClass {
     categories: HRCategoryInterface[],
     dateStart: Date | undefined,
     dateStop: Date | undefined
-  ): any {
+  ) {
     const list: any = {}
-    const { dates, monthlyList } = getRangeOfMonthsAsObject(
-      dateStart as Date,
-      dateStop as Date
-    )
+
+    let monthlyList: { [key: string]: any } = {
+      ...getRangeOfMonthsAsObject(dateStart!, dateStop!, true),
+    }
 
     categories.map((c) => {
       list[c.id] = {
         etpt: 0,
         ...c,
       }
-    })
-
-    Object.keys(monthlyList).map((key: any, index: number) => {
-      categories.map((c) => {
-        monthlyList[key][c.id] = {
-          ...c,
+      Object.keys(monthlyList).map((x: any) => {
+        monthlyList[x][c.id] = {
           etpt: 0,
           nbOfDays: 0,
         }
@@ -525,10 +579,14 @@ export class SimulatorService extends MainClass {
     const stop = dateStop instanceof Date ? new Date(dateStop) : new Date()
 
     let nbDay = 0
+    let monthDaysCounter = 0
     do {
-      // only working day
+      if (isFirstDayOfMonth(now)) monthDaysCounter = 0
+
       if (workingDay(now)) {
+        // only working day
         nbDay++
+        monthDaysCounter++
         const { etp, situation } =
           this.humanResourceService.getEtpByDateAndPerson(
             referentielId,
@@ -537,17 +595,19 @@ export class SimulatorService extends MainClass {
           )
 
         if (etp !== null) {
+          // @ts-ignore
+          list[situation.category.id].etpt += etp
+
           const str: string =
             this.getShortMonthString(now) +
             now.getFullYear().toString().slice(-2)
-          // @ts-ignore
-          list[situation.category.id].etpt += etp
+
           // @ts-ignore
           monthlyList[str][situation.category.id].etpt += etp
           // @ts-ignore
-          monthlyList[str][situation.category.id].nbOfDays =
-            // @ts-ignore
-            monthlyList[str][situation.category.id].nbOfDays + 1
+          monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
+          // @ts-ignore
+          //console.log('katcha', monthlyList[str][situation.category.id].etpt)
         }
       }
       now.setDate(now.getDate() + 1)
@@ -556,20 +616,14 @@ export class SimulatorService extends MainClass {
     // format render
     for (const property in list) {
       list[property].etpt = list[property].etpt / nbDay
+      Object.keys(monthlyList).map((x: any) => {
+        if (monthlyList[x][property].nbOfDays !== 0)
+          monthlyList[x][property].etpt =
+            monthlyList[x][property].etpt / monthlyList[x][property].nbOfDays
+      })
     }
 
-    for (const property in monthlyList) {
-      console.log('lalist', monthlyList)
-      for (const prop in monthlyList[property]) {
-        console.log(property, prop)
-        monthlyList[property][prop].etpt =
-          monthlyList[property][prop].etpt /
-          monthlyList[property][prop].nbOfDays
-      }
-    }
-    console.log('by ressource', monthlyList)
-
-    return { list, monthlyList }
+    return { etptAll: list, monthlyList: { ...monthlyList } }
   }
 
   toSimulate(params: any, simulation: SimulationInterface) {
