@@ -42,10 +42,7 @@ export default (sequelizeInstance, Model) => {
     for(let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
 
-      
-      if(!list[i].hmatricule || list[i].hmatricule === '0') {
-        list[i].hmatricule = list[i].nom_usage
-      }
+      list[i].hmatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
 
       let findHRToDB = await Model.findOne({
         where: {
@@ -77,7 +74,7 @@ export default (sequelizeInstance, Model) => {
 
         const findFonction = await Model.models.HRFonctions.findOne({
           where: {
-            code: list[i].fonction,
+            code: list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie'],
           },
           logging: false,
         })

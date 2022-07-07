@@ -1,0 +1,20 @@
+<div class="background animate__animated animate__fadeIn"></div>
+
+<div class="popin animate__animated animate__fadeIn" #popin
+  (click)="$event.stopPropagation(); filterSelection.close(); sortSelection.close(); orderSelection.close()"
+  [ngStyle]="{left: leftPosition+'px',top: topPosition+'px', opacity: leftPosition === 0 ? 0 : 1}">
+  <i class="ri-close-fill close" (click)="close.emit()"></i>
+  <p class="panel-title">Options d'affichage</p>
+  <p class="filter-group">Filtrer par :</p>
+  <aj-list-selection #filterSelection icon="filter-2-line" title="Fonction" [multiple]="true" [list]="filterList"
+    [values]="filterValues === null ? [] : filterValues" (valuesChanged)="filterValues = $event; updateParams()"
+    (onOpen)="sortSelection.close(); orderSelection.close()"></aj-list-selection>
+
+  <p class="filter-group">Trier par :</p>
+  <aj-list-selection #sortSelection title="Critère" [list]="sortList" [value]="sortValue"
+    (valueChanged)="sortValue = $event; updateParams()" (onOpen)="filterSelection.close(); orderSelection.close()">
+  </aj-list-selection>
+  <aj-list-selection #orderSelection [list]="orderList" [value]="orderValue"
+    (valueChanged)="orderValue = $event; updateParams()" (onOpen)="filterSelection.close(); sortSelection.close()">
+  </aj-list-selection>
+</div>
