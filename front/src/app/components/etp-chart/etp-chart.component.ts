@@ -227,6 +227,7 @@ export class EtpChartComponent implements AfterViewInit {
       options: {
         onClick: function (e: any, items: any) {
           if (items.length == 0) return
+
           var firstPoint = items[0].index
           const projectedMag = e.chart.config._config.data.datasets.find(
             (x: any) => {
