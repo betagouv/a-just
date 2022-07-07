@@ -1,2 +1,6 @@
-<div class="indicator" [ngStyle]="{'background-color': switchColor}" [ngClass]="{'selected': o.checked}">
+<div class="panel" [ngClass]="{'selected': o.checked}">
+  <div class="indicator"
+    [ngStyle]="{'background-color': switchColor, width: indicatorWidth+'px', height: indicatorHeight+'px'}">
+    <i *ngIf="icon" class="ri-{{icon}}" [ngStyle]="{color: bgColor}"></i>
+  </div>
 </div>

@@ -20,8 +20,12 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   @Input() title: string = ''
   @Input() switchColor: string = '#7befb2'
   @Input() @HostBinding('style.background-color') bgColor: string = 'white'
-  @Input() width: number = 25
-  @Input() height: number = 15
+  @HostBinding('style.width') @Input() width: string = '25px'
+  @HostBinding('style.height') @Input() height: string = '15px'
+  @HostBinding('style.border-radius') @Input() borderRadius: string = '7.5px'
+  @Input() indicatorWidth: number = 15 / 2
+  @Input() indicatorHeight: number = 15 / 2
+  @Input() icon: string = ''
   @Output() valueChange = new EventEmitter()
   @Input() value: boolean = true
   @HostListener('click') 
