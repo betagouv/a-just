@@ -22,6 +22,10 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   @Input() bgColor: string = ''
   @Input() label: string = ''
   @Output() value = new EventEmitter()
+  toogle = {
+    label: '',
+    checked: true,
+  }
 
   elementRef: HTMLElement | undefined
   constructor(element: ElementRef<HTMLElement>) {
@@ -29,6 +33,7 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {}
+
   ngOnChanges(): void {
     const circleElement = (
       this.elementRef!.getElementsByClassName(
@@ -52,6 +57,12 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   }
 
   updateValue(event: any) {
+    this.toogle = event
     this.value.emit(event)
+  }
+
+  clicked() {
+    this.toogle.checked = !this.toogle.checked
+    this.value.emit(this.toogle)
   }
 }

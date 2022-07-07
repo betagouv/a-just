@@ -24,11 +24,11 @@ export class TimeSelectorComponent implements OnChanges {
 
     constructor() {
         this.timeForm.controls.minute.valueChanges.subscribe((value) => {
-            if (parseInt(value) <= 59 && this.toChange === true)
+            if (value && parseInt(value) <= 59 && this.toChange === true)
                 this.onChangeHour(this.getFormString())
-            else if (parseInt(value) > 59 && this.toChange === true) {
+            else if (value && parseInt(value) > 59 && this.toChange === true) {
                 this.toChange = false
-                this.timeForm.controls['minute'].setValue(59)
+                this.timeForm.controls['minute'].setValue('59')
                 this.onChangeHour(this.getFormString('59'))
             } else this.toChange = true
         })
@@ -52,11 +52,7 @@ export class TimeSelectorComponent implements OnChanges {
     }
 
     getFormString(minute?: string) {
-        return ''.concat(
-            this.timeForm.controls['hour'].value,
-            ':',
-            minute ? minute : this.timeForm.controls['minute'].value
-        )
+        return `${this.timeForm.controls['hour'].value}:${minute ? minute : this.timeForm.controls['minute'].value}`
     }
 
     decimalToStringDate(decimal: number) {
