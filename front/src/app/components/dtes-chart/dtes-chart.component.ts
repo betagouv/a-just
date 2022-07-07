@@ -11,6 +11,7 @@ import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
+import annotationPlugin from 'chartjs-plugin-annotation'
 
 @Component({
   selector: 'aj-dtes-chart',
@@ -24,26 +25,27 @@ export class DtesChartComponent implements AfterViewInit {
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = null
+  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
   data = {
     projectedStock: {
-      values: [0],
+      values: [20, 90, 5],
     },
     simulatedStock: {
-      values: [0],
+      values: [0, 10, 20],
     },
     projectedDTES: {
-      values: [0],
+      values: [20, 50, 3],
     },
     simulatedDTES: {
-      values: [0],
+      values: [1, 10, 100],
     },
   }
 
   constructor(
     element: ElementRef<HTMLElement>,
-    simulatorService: SimulatorService
+    private simulatorService: SimulatorService
   ) {
+    /**
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -113,9 +115,10 @@ export class DtesChartComponent implements AfterViewInit {
         }
       }
     })
-
+*/
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
+    Chart.register(annotationPlugin)
   }
 
   ngAfterViewInit(): void {
@@ -182,15 +185,6 @@ export class DtesChartComponent implements AfterViewInit {
       },
     }
 
-    const footer = (tooltipItems: any) => {
-      let sum = 0
-
-      tooltipItems.forEach(function (tooltipItem: any) {
-        sum += tooltipItem.parsed.y
-      })
-      return 'Sum: ' + sum
-    }
-
     const label = (context: any) => {
       let sufix = ''
       switch (context.dataset.label) {
@@ -217,10 +211,62 @@ export class DtesChartComponent implements AfterViewInit {
       return lbl
     }
 
+    let $this = this
+
     const config: any = {
       type: 'line',
       data: data,
       options: {
+        onClick: function (e: any, items: any) {
+          if (items.length == 0) return
+
+          if (
+            e.chart.options.plugins.annotation.annotations.box1.content ===
+            undefined
+          ) {
+            if (
+              e.chart.options.plugins.annotation.annotations.box1.display ===
+              false
+            ) {
+              e.chart.options.plugins.annotation.annotations.box1.display = true
+              $this.updateAnnotationBox(true, 0, 0)
+            }
+            var firstPoint = items[0].index
+            if (firstPoint === 0) {
+              e.chart.options.plugins.annotation.annotations.box1.xMin = 0
+              e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
+              $this.updateAnnotationBox(true, 0, 0.5)
+            } else if (firstPoint === e.chart.scales.x.max) {
+              e.chart.options.plugins.annotation.annotations.box1.xMin =
+                e.chart.scales.x.max - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax =
+                e.chart.scales.x.max
+              $this.updateAnnotationBox(
+                true,
+                e.chart.scales.x.max - 0.5,
+                e.chart.scales.x.max
+              )
+            } else {
+              e.chart.options.plugins.annotation.annotations.box1.xMin =
+                firstPoint - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax =
+                firstPoint + 0.5
+              $this.updateAnnotationBox(
+                true,
+                firstPoint - 0.5,
+                firstPoint + 0.5
+              )
+            }
+            e.chart.options.plugins.annotation.annotations.box1.yMax =
+              e.chart.scales.A.max
+          } else {
+            e.chart.options.plugins.annotation.annotations.box1.content =
+              undefined
+            $this.updateAnnotationBox(false, 0, 0, undefined)
+          }
+          e.chart.update()
+        },
+        events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
           callbacks: {
             title: function (tooltipItem: any, data: any) {
@@ -259,6 +305,7 @@ export class DtesChartComponent implements AfterViewInit {
             grid: {
               drawTicks: true,
               tickColor: 'white',
+              offset: true, // middle labels
             },
           },
           A: {
@@ -296,6 +343,30 @@ export class DtesChartComponent implements AfterViewInit {
           },
         },
         plugins: {
+          autocolors: false,
+          annotation: {
+            click: function (e: any, items: any) {
+              if (items.length == 0) return
+              items.chart.options.plugins.annotation.annotations.box1.display =
+                false
+              e.chart.options.plugins.annotation.annotations.box1.content = ''
+              items.chart.update()
+              $this.updateAnnotationBox(false, undefined, undefined, '')
+            },
+            annotations: {
+              box1: {
+                display: false,
+                type: 'box',
+                yScaleID: 'A',
+                xMin: 0,
+                xMax: 1,
+                yMin: 0,
+                yMax: 5,
+                backgroundColor: 'rgba(255, 99, 132, 0.25)',
+              },
+            },
+          },
+
           legend: {
             display: false,
           },
@@ -333,6 +404,18 @@ export class DtesChartComponent implements AfterViewInit {
       document.getElementById('dtes-chart') as ChartItem,
       config
     )
+
+    this.simulatorService.chartAnnotationBox.subscribe((value) => {
+      this.myChart.options.plugins.annotation.annotations.box1.yMax =
+        this.myChart.scales.A.max
+      this.myChart.options.plugins.annotation.annotations.box1.display =
+        value.display
+      this.myChart.options.plugins.annotation.annotations.box1.xMin = value.xMin
+      this.myChart.options.plugins.annotation.annotations.box1.xMax = value.xMax
+      this.myChart.options.plugins.annotation.annotations.box1.content =
+        value.content
+      this.myChart.update()
+    })
   }
 
   display(event: any) {
@@ -346,5 +429,20 @@ export class DtesChartComponent implements AfterViewInit {
       if (isDataShown === true) this.myChart.hide(index)
       else this.myChart.show(index)
     }
+  }
+
+  updateAnnotationBox(
+    display?: boolean,
+    xMin?: number | undefined,
+    xMax?: number,
+    content?: any
+  ) {
+    console.log('EMINCAN YES WE CAN')
+    this.simulatorService.chartAnnotationBox.next({
+      display,
+      xMin,
+      xMax,
+      content,
+    })
   }
 }

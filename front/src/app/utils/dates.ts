@@ -151,11 +151,10 @@ export function decimalToStringDate(decimal: number | null | undefined) {
 export function getRangeOfMonths(startDate: Date, endDate: Date) {
   const dates = new Array<string>()
   const dateCounter = new Date(startDate)
+
   // avoids edge case where last month is skipped
   dateCounter.setDate(1)
-  const modulo = dateCounter.getMonth()
   while (dateCounter < endDate) {
-    //if (dateCounter.getMonth() === modulo)
     if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
         `${
@@ -168,16 +167,23 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
 
     dateCounter.setMonth(dateCounter.getMonth() + 1)
   }
+
   if (dates.length === 1) return [dates[0], dates[0]]
+
   return dates
 }
 
-export function getRangeOfMonthsAsObject(startDate: Date, endDate: Date) {
+export function getRangeOfMonthsAsObject(
+  startDate: Date,
+  endDate: Date,
+  asObject = false
+) {
   const dates = new Array<string>()
-  let monthlyDates: { [k: string]: any } = {}
   const dateCounter = new Date(startDate)
-  // avoids edge case where last month is skipped
+  let monthlyL: { [key: string]: any } = {}
+
   dateCounter.setDate(1)
+
   while (dateCounter < endDate) {
     if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
@@ -192,12 +198,19 @@ export function getRangeOfMonthsAsObject(startDate: Date, endDate: Date) {
     const str: string =
       getShortMonthString(dateCounter) +
       dateCounter.getFullYear().toString().slice(-2)
-    monthlyDates[str] = {}
-
+    if (asObject) {
+      monthlyL[str] = {}
+    }
     dateCounter.setMonth(dateCounter.getMonth() + 1)
   }
 
-  if (dates.length === 1)
-    return { dates: [dates[0], dates[0]], monthlyList: monthlyDates }
-  return { dates, monthlyList: monthlyDates }
+  if (asObject) return { ...monthlyL }
+
+  if (dates.length === 1) return [dates[0], dates[0]]
+
+  return dates
+}
+
+export function isFirstDayOfMonth(date = new Date()) {
+  return date.getDate() === 1
 }
