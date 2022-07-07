@@ -28,8 +28,9 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   @Input() icon: string = ''
   @Output() valueChange = new EventEmitter()
   @Input() value: boolean = true
-  @HostListener('click') 
-  onClick() {
+  @HostListener('click', ['$event'])
+  onClick(event: MouseEvent) {
+    event.stopPropagation()
     this.o.checked = !this.o.checked
     this.valueChange.emit(this.o)
   }
