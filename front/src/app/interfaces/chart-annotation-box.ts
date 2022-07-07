@@ -12,4 +12,8 @@ export interface ChartAnnotationBoxInterface {
   pointIndex?: number | null
   projectedDTES?: number | null
   simulatedDTES?: number | null
+  projectedIn?: number | null
+  simulatedIn?: number | null
+  projectedOut?: number | null
+  simulatedOut?: number | null
 }

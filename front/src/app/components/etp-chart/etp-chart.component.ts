@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
+import { findRealValue, getRangeOfMonths } from 'src/app/utils/dates'
 
 @Component({
   selector: 'aj-etp-chart',
@@ -20,12 +21,12 @@ export class EtpChartComponent implements AfterViewInit {
 
   data = {
     projectedMag: {
-      values: [0, 10, 5],
+      values: [0], //[0, 10, 5],
       dotColor: '#e07dd8',
       bgColor: '#fdc0f8',
     },
     simulatedMag: {
-      values: [0, 8, 18],
+      values: [0], //[0, 8, 18],
       dotColor: '#fdc0f8',
       bgColor: '#e07dd8',
     },
@@ -55,7 +56,6 @@ export class EtpChartComponent implements AfterViewInit {
     private element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
-    /**
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -106,7 +106,6 @@ export class EtpChartComponent implements AfterViewInit {
         }
       }
     })
- */
 
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
@@ -327,9 +326,7 @@ export class EtpChartComponent implements AfterViewInit {
             tooltipEl.style.opacity = 0
           }
 
-          console.log(e.chart.data.datasets[firstPoint].borderColor)
           e.chart.config.options.scales.x.ticks.color = colorArray
-          console.log(e.chart.config.options.scales.x.ticks)
           e.chart.update()
         },
         //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
@@ -467,10 +464,58 @@ export class EtpChartComponent implements AfterViewInit {
       this.myChart.options.plugins.annotation.annotations.box1.xMax = value.xMax
       this.myChart.options.plugins.annotation.annotations.box1.content =
         value.content
-      this.myChart.update()
 
       this.tooltip.projectedMag = value.projectedMag
       this.tooltip.simulatedMag = value.simulatedMag
+
+      const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+      const colorArray = []
+
+      if (
+        value.x &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
+        tooltipEl.style.opacity = 1
+        tooltipEl.style.left = value.x
+        tooltipEl.style.top = value.y
+        this.tooltip.projectedMag =
+          this.myChart.data.datasets[0].data[value.pointIndex as number]
+        this.tooltip.simulatedMag =
+          this.myChart.data.datasets[1].data[value.pointIndex as number]
+
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          if ((value.pointIndex as number) === i) {
+            colorArray.push('#0a76f6')
+          } else {
+            colorArray.push('rgb(109, 109, 109)')
+          }
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
+      }
+      if (
+        value.display === false &&
+        this.myChart.data.datasets[value.pointIndex as number] !== undefined
+      ) {
+        tooltipEl.style.opacity = 0
+        for (
+          let i = 0;
+          i <
+          this.myChart.data.datasets[value.pointIndex as number].borderColor
+            .length;
+          i++
+        ) {
+          colorArray.push('rgb(109, 109, 109)')
+        }
+        this.myChart.config.options.scales.x.ticks.color = colorArray
+      }
+
+      this.myChart.update()
     })
   }
 
@@ -508,5 +553,9 @@ export class EtpChartComponent implements AfterViewInit {
       xMax,
       content,
     })
+  }
+
+  getDeltaInPercent(value1: number, value2: number): number {
+    return Number((((value1 - value2) / value2) * 100).toFixed(2))
   }
 }
