@@ -32,6 +32,7 @@ export class ActualPanelSituationComponent
   @Input() canRemoveSituation: boolean = false
   @Input() etp: number = 0
   @Input() fonction: HRFonctionInterface | null = null
+  @Input() indisponibilities: RHActivityInterface[] = []
   @Output() editVentilation = new EventEmitter()
   @Output() addIndispiniblity = new EventEmitter()
   @Output() onRemove = new EventEmitter()
@@ -40,7 +41,6 @@ export class ActualPanelSituationComponent
   comment: string = ''
   commentUpdatedAt: Date | null = null
   timeoutUpdateComment: any = null
-  indisponibilities: RHActivityInterface[] = []
   activities: RHActivityInterface[] = []
 
   constructor(
@@ -51,10 +51,6 @@ export class ActualPanelSituationComponent
   }
 
   ngOnChanges() {
-    this.indisponibilities = this.humanResourceService.findAllIndisponibilities(
-      this.currentHR,
-      today()
-    )
     const findSituation = this.humanResourceService.findSituation(
       this.currentHR,
       today()

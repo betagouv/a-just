@@ -44,9 +44,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   etp: number = 1
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
-    etp: new FormControl(null, [Validators.required]),
-    fonctionId: new FormControl(null, [Validators.required]),
-    categoryId: new FormControl(null, [Validators.required]),
+    etp: new FormControl<number|null>(null, [Validators.required]),
+    fonctionId: new FormControl<number|null>(null, [Validators.required]),
+    categoryId: new FormControl<number|null>(null, [Validators.required]),
   })
 
   constructor(
@@ -115,7 +115,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   async loadCategories() {
     if (this.form.value) {
       this.fonctions = (await this.hrFonctionService.getAll()).filter(
-        (c) => c.categoryId == this.form.value.categoryId
+        (c) => this.form.value?.categoryId == c.categoryId
       )
     }
   }
@@ -203,7 +203,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     const categories = this.humanResourceService.categories.getValue()
     const fonctions = this.humanResourceService.fonctions.getValue()
-    const cat = categories.find((c) => c.id == categoryId)
+    const cat = categories.find((c) => categoryId && c.id == categoryId)
     const fonct = fonctions.find((c) => c.id == fonctionId)
 
     if (!cat) {

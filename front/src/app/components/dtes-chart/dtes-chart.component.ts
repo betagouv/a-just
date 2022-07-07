@@ -210,10 +210,15 @@ export class DtesChartComponent implements AfterViewInit {
       let lbl = ''
 
       if (sufix.slice(0, 4) === 'mois')
-        lbl = '  ' + context.formattedValue + ' ' + sufix //context.label +
-      else
+        lbl = '  ' + Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) + ' ' + sufix //context.label +
+      else {
+        // TODO WARNING TO TEST WITH US LANGAGE
         lbl =
-          '  ' + Math.floor(parseFloat(context.formattedValue)) + ' ' + sufix
+          '  ' +
+          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+          ' ' +
+          sufix
+      }
       return lbl
     }
 
@@ -341,8 +346,10 @@ export class DtesChartComponent implements AfterViewInit {
     if (event.label === 'simulatedStock') index = 1
     if (event.label === 'projectedDTES') index = 2
     if (event.label === 'simulatedDTES') index = 3
-    const isDataShown = this.myChart.isDatasetVisible(index)
-    if (isDataShown === true) this.myChart.hide(index)
-    else this.myChart.show(index)
+    if (this.myChart !== null) {
+      const isDataShown = this.myChart.isDatasetVisible(index)
+      if (isDataShown === true) this.myChart.hide(index)
+      else this.myChart.show(index)
+    }
   }
 }

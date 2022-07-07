@@ -195,6 +195,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
+    // if not date end force to create a situation after the last one
+    if(!currentDateEnd && this.currentHR && this.currentHR.indisponibilities && this.currentHR.indisponibilities.length) {
+      maxDate.setDate(maxDate.getDate() + 1)
+    }
+
     console.log(minDate, maxDate)
 
     const currentDate = new Date(minDate)

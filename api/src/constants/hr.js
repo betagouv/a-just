@@ -1,4 +1,7 @@
 export const posad = {
+  'rec': 0,
+  'fde': 0,
+  'fmadps': 0,
   'citis-v': 0,
   'cfn': 0,
   'cst': 0,
