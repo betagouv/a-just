@@ -210,18 +210,15 @@ export class DtesChartComponent implements AfterViewInit {
       let lbl = ''
 
       if (sufix.slice(0, 4) === 'mois')
+        lbl = '  ' + Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) + ' ' + sufix //context.label +
+      else {
+        // TODO WARNING TO TEST WITH US LANGAGE
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
+          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
           ' ' +
           sufix
-      //context.label +
-      else
-        lbl =
-          '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
-          ' ' +
-          sufix
+      }
       return lbl
     }
 
