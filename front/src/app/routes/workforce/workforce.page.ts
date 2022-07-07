@@ -194,18 +194,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       let etpt = 0
 
       personal.map((h) => {
-        const activities = h.currentActivities.filter(
-          (a) =>
-            a.contentieux &&
-            this.selectedReferentielIds.indexOf(a.contentieux.id) !== -1
-        )
-        if (activities.length) {
-          let realETP = (h.etp || 0) - h.hasIndisponibility
-          if (realETP < 0) {
-            realETP = 0
-          }
-          etpt += (realETP * sumBy(activities, 'percent')) / 100
+        let realETP = (h.etp || 0) - h.hasIndisponibility
+        if (realETP < 0) {
+          realETP = 0
         }
+        etpt += realETP
       })
 
       return {
@@ -411,8 +404,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           )
         }
 
-        if(group.length > 1) {
-          if(label.indexOf('agistrat') !== -1) {
+        if (group.length > 1) {
+          if (label.indexOf('agistrat') !== -1) {
             label = label.replace('agistrat', 'agistrats')
           } else {
             label += 's'
