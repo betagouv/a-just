@@ -1,3 +1,5 @@
+import { ObjectType } from 'typescript'
+
 export function monthDiff(d1: Date, d2: Date) {
   var months
   months = (d2.getFullYear() - d1.getFullYear()) * 12
@@ -37,7 +39,7 @@ export function getShortMonthString(date: Date | string) {
   return [
     'Janv.',
     'Févr.',
-    'Mars',
+    'Mars.',
     'Avr.',
     'Mai.',
     'Juin.',
@@ -168,4 +170,34 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
   }
   if (dates.length === 1) return [dates[0], dates[0]]
   return dates
+}
+
+export function getRangeOfMonthsAsObject(startDate: Date, endDate: Date) {
+  const dates = new Array<string>()
+  let monthlyDates: { [k: string]: any } = {}
+  const dateCounter = new Date(startDate)
+  // avoids edge case where last month is skipped
+  dateCounter.setDate(1)
+  while (dateCounter < endDate) {
+    if (getShortMonthString(dateCounter) === 'Janv.')
+      dates.push(
+        `${
+          getShortMonthString(dateCounter) +
+          ' ' +
+          dateCounter.getFullYear().toString().slice(-2)
+        }`
+      )
+    else dates.push(`${getShortMonthString(dateCounter)}`)
+
+    const str: string =
+      getShortMonthString(dateCounter) +
+      dateCounter.getFullYear().toString().slice(-2)
+    monthlyDates[str] = {}
+
+    dateCounter.setMonth(dateCounter.getMonth() + 1)
+  }
+
+  if (dates.length === 1)
+    return { dates: [dates[0], dates[0]], monthlyList: monthlyDates }
+  return { dates, monthlyList: monthlyDates }
 }
