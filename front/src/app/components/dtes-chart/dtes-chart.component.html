@@ -14,6 +14,67 @@
         id="dtes-chart"
         style="height: 250px; width: content-box"
       ></canvas>
+      <div id="chartjs-tooltip">
+        <div class="popin-title-content">
+          <p class="popin-title">
+            <b>Effectifs</b> <br />
+            à Janvier 2023
+          </p>
+          <div class="low">Projetés</div>
+          <p class="hard">Simulés</p>
+          <p class="white">Variation</p>
+        </div>
+        <div class="popin-raw" style="display: flex">
+          <div class="popin-title">
+            <div
+              _ngcontent-vmx-c83=""
+              class="circle"
+              style="background-color: #6fe49d"
+            ></div>
+            <b style="align-self: center"> Affaires</b>
+          </div>
+          <p class="low-value first">{{ tooltip.projectedStock }}</p>
+          <p class="hard-value first">{{ tooltip.simulatedStock }}</p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(
+                    tooltip.simulatedStock,
+                    tooltip.projectedStock
+                  ) || 0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="popin-raw" style="display: flex">
+          <div class="popin-title">
+            <div
+              _ngcontent-vmx-c83=""
+              class="circle"
+              style="background-color: #b8c5e2"
+            ></div>
+            <b>DTES</b> &nbsp; en mois
+          </div>
+          <p class="low-value">{{ tooltip.projectedDTES }}</p>
+          <p class="hard-value">{{ tooltip.simulatedDTES }}</p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(
+                    tooltip.simulatedDTES,
+                    tooltip.projectedDTES
+                  ) || 0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

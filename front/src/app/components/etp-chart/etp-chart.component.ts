@@ -16,7 +16,6 @@ export class EtpChartComponent implements AfterViewInit {
   elementRef: HTMLElement | undefined
   myChart: any = null
   labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
-  eventRank = 0
   tooltip: any = { display: false }
 
   data = {
@@ -200,7 +199,11 @@ export class EtpChartComponent implements AfterViewInit {
           sufix = 'agents (projeté)'
           break
       }
-      let lbl = '  ' + context.formattedValue + ' ' + sufix
+      let lbl =
+        '  ' +
+        Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
+        ' ' +
+        sufix
       return lbl
     }
 
@@ -240,11 +243,6 @@ export class EtpChartComponent implements AfterViewInit {
             }
           )
 
-          $this.affectTooltipValues(
-            projectedMag.data[firstPoint],
-            simulatedMag.data[firstPoint]
-          )
-
           const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
 
           const yValues = items.map((object: any) => {
@@ -255,6 +253,14 @@ export class EtpChartComponent implements AfterViewInit {
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = items[0].element.x + 'px'
           tooltipEl.style.top = min - 130 + 'px'
+
+          $this.affectTooltipValues({
+            projectedMag: projectedMag.data[firstPoint],
+            simulatedMag: simulatedMag.data[firstPoint],
+            x: items[0].element.x + 'px',
+            y: min - 130 + 'px',
+            pointIndex: firstPoint,
+          })
 
           const colorArray = []
 
@@ -483,11 +489,10 @@ export class EtpChartComponent implements AfterViewInit {
     }
   }
 
-  affectTooltipValues(value1: number, value2: number) {
+  affectTooltipValues(obj: any) {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
-      projectedMag: value1,
-      simulatedMag: value2,
+      ...obj,
     })
   }
   updateAnnotationBox(
