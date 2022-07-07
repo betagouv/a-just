@@ -443,6 +443,10 @@ export class SimulatorService extends MainClass {
       hrCategoriesMonthly[c.label] = { ...emptyList }
     })
 
+    categories.map((c) => {
+      hrCategoriesMonthly[c.label] = hrCategoriesMonthly[c.label] || emptyList
+    })
+
     for (let i = 0; i < hr.length; i++) {
       let etptAll,
         monthlyList: any = null
@@ -472,6 +476,8 @@ export class SimulatorService extends MainClass {
         }
       })
     }
+
+    console.log('Global', hrCategoriesMonthly)
 
     const list = []
     const listMonthly = []
