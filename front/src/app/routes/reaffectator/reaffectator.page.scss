@@ -376,9 +376,8 @@
 .title {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid fColor(cbrownlight);
+  background-color: fColor(darkModeBgMenu);
   padding: 0 32px 24px 32px;
-  background-color: white;
 
   aj-select,
   aj-date-select {
@@ -403,93 +402,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.checkbox-button {
-  display: flex;
-  align-items: center;
-  border-radius: 4px;
-  height: 55px;
-  padding: 4px 16px;
-  border-width: 1px;
-  border-style: solid;
-  margin-left: 8px;
-  cursor: pointer;
-
-  &.blue {
-    border-color: fColor(cbluedark);
-    background-color: rgba(fColor(cbluedark), 0.2);
-
-    p.label {
-      color: fColor(cbluedark);
-    }
-
-    input {
-      border-color: fColor(cbluedark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cbluedark);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
-  }
-
-  &.pink {
-    border-color: fColor(cpink);
-    background-color: rgba(fColor(cpink), 0.2);
-
-    p.label {
-      color: fColor(cpink);
-    }
-
-    input {
-      border-color: fColor(cpink);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cpink);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
-  }
-
-  &.yellow {
-    border-color: fColor(cyellow);
-    background-color: rgba(fColor(cyellow), 0.2);
-
-    p.label {
-      color: fColor(cyellowdark);
-    }
-
-    input {
-      border-color: fColor(cyellowdark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cyellowdark);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
-  }
-
-  input {
-    margin-right: 16px;
-    cursor: pointer;
-    -webkit-appearance: none;
-    background-color: #fafafa;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 2px;
-    display: inline-block;
-    position: relative;
-    width: 13px;
-    height: 13px;
-  }
-
-  p.etp {
-    font-weight: bold;
-  }
 }
 
 aj-input-button {

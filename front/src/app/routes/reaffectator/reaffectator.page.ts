@@ -1,4 +1,10 @@
-import { Component, HostBinding, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import {
+  Component,
+  HostBinding,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -20,6 +26,8 @@ import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
+import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
+import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -47,14 +55,15 @@ interface listFormatedInterface {
 })
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
-  duringPrint: boolean = false;
+  duringPrint: boolean = false
   allHumanResources: HumanResourceInterface[] = []
   preformatedAllHumanResource: HumanResourceSelectedInterface[] = []
   humanResources: HumanResourceSelectedInterface[] = []
   referentiel: ContentieuReferentielInterface[] = []
   formReferentiel: dataInterface[] = []
+  formFilterSelect: dataInterface[] = []
+  formFilterFonctionsSelect: dataInterface[] = []
   categoriesFilterList: HRCategorySelectedInterface[] = []
-  selectedReferentielIds: any[] = []
   searchValue: string = ''
   valuesFinded: HumanResourceInterface[] | null = null
   indexValuesFinded: number = 0
@@ -71,7 +80,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
-    private workforceService: WorkforceService
+    private workforceService: WorkforceService,
+    public reaffectatorService: ReaffectatorService
   ) {
     super()
   }
@@ -96,15 +106,40 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           id: r.id,
           value: this.referentielMappingName(r.label),
         }))
-        this.selectedReferentielIds =
-          this.humanResourceService.selectedReferentielIds
+        this.reaffectatorService.selectedReferentielIds = this
+          .reaffectatorService.selectedReferentielIds.length
+          ? this.reaffectatorService.selectedReferentielIds
+          : this.formReferentiel.map((c) => c.id)
+
         this.onFilterList()
       })
     )
     this.watch(
-      this.humanResourceService.categories.subscribe(() => {
-        this.onFilterList()
-      })
+      this.humanResourceService.categories.subscribe(
+        (categories: HRCategoryInterface[]) => {
+          this.reaffectatorService.selectedCategoriesIds = this
+            .reaffectatorService.selectedCategoriesIds.length
+            ? this.reaffectatorService.selectedCategoriesIds
+            : categories.map((c) => c.id)
+          this.onFilterList()
+        }
+      )
+    )
+    this.watch(
+      this.humanResourceService.fonctions.subscribe(
+        (fonctions: HRFonctionInterface[]) => {
+          this.reaffectatorService.selectedFonctionsIds = this
+            .reaffectatorService.selectedFonctionsIds.length
+            ? this.reaffectatorService.selectedFonctionsIds
+            : fonctions.map((c) => c.id)
+
+          this.formFilterFonctionsSelect = fonctions.map((f) => ({
+            id: f.id,
+            value: f.label,
+          }))
+          this.onFilterList()
+        }
+      )
     )
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -168,7 +203,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const activities = h.currentActivities.filter(
           (a) =>
             a.contentieux &&
-            this.selectedReferentielIds.indexOf(a.contentieux.id) !== -1
+            this.reaffectatorService.selectedReferentielIds.indexOf(
+              a.contentieux.id
+            ) !== -1
         )
         if (activities.length) {
           etpt +=
@@ -182,6 +219,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ...c,
         etpt,
         nbPersonal: personal.length,
+      }
+    })
+
+    this.formFilterSelect = this.categoriesFilterList.map((c) => {
+      let value = `${c.nbPersonal} ${
+        c.nbPersonal > 1 ? c.labelPlural : c.label
+      }`
+
+      return {
+        id: c.id,
+        value,
       }
     })
   }
@@ -243,16 +291,24 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResourceService.categoriesFilterList = this.categoriesFilterList // copy to memoryse selection
 
-    const selectedCategoryIds = this.categoriesFilterList
-      .filter((c) => c.selected)
-      .map((c) => c.id)
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
         .filter((hr) => {
           let isOk = true
           if (
             hr.category &&
-            selectedCategoryIds.indexOf(hr.category.id) === -1
+            this.reaffectatorService.selectedCategoriesIds.indexOf(
+              hr.category.id
+            ) === -1
+          ) {
+            isOk = false
+          }
+
+          if (
+            hr.fonction &&
+            this.reaffectatorService.selectedFonctionsIds.indexOf(
+              hr.fonction.id
+            ) === -1
           ) {
             isOk = false
           }
@@ -283,13 +339,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       valuesFinded.length === list.length ? null : valuesFinded
     this.indexValuesFinded = 0
 
-    if (this.selectedReferentielIds.length !== this.referentiel.length) {
+    if (
+      this.reaffectatorService.selectedReferentielIds.length !==
+      this.referentiel.length
+    ) {
       list = list.filter((h) => {
         const idsOfactivities = h.currentActivities.map(
           (a) => (a.contentieux && a.contentieux.id) || 0
         )
         for (let i = 0; i < idsOfactivities.length; i++) {
-          if (this.selectedReferentielIds.indexOf(idsOfactivities[i]) !== -1) {
+          if (
+            this.reaffectatorService.selectedReferentielIds.indexOf(
+              idsOfactivities[i]
+            ) !== -1
+          ) {
             return true
           }
         }
@@ -439,9 +502,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onSelectedReferentielIdsChanged(list: any) {
-    this.selectedReferentielIds = list
-    this.humanResourceService.selectedReferentielIds =
-      this.selectedReferentielIds
+    this.reaffectatorService.selectedReferentielIds = list
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1
 
@@ -480,9 +541,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   onExport() {
     this.duringPrint = true
+    this.wrapper
+      ?.exportAsPdf('simulation-d-affectation.pdf', false)
+      .then(() => {
+        this.duringPrint = false
+      })
+  }
 
-    this.wrapper?.exportAsPdf('test.pdf', false).then(() => {
-      this.duringPrint = false
-    })
+  onSelectedCategoriesIdsChanged(list: any) {
+    this.reaffectatorService.selectedCategoriesIds = list
+    this.onFilterList()
+  }
+
+  onSelectedFonctionsIdsChanged(list: any) {
+    this.reaffectatorService.selectedFonctionsIds = list
+    this.onFilterList()
   }
 }
