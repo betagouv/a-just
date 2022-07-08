@@ -1,6 +1,5 @@
 import {
   Component,
-  HostBinding,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -27,7 +26,6 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -46,7 +44,12 @@ interface listFormatedInterface {
   bgColor: string
   label: string
   hr: HumanResourceSelectedInterface[]
-  referentiel: ContentieuReferentielInterface[]
+  referentiel: ContentieuReferentielCalculateInterface[]
+}
+
+interface ContentieuReferentielCalculateInterface extends ContentieuReferentielInterface {
+  dtes: number;
+  coverage: number;
 }
 
 @Component({
@@ -59,7 +62,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   allHumanResources: HumanResourceInterface[] = []
   preformatedAllHumanResource: HumanResourceSelectedInterface[] = []
   humanResources: HumanResourceSelectedInterface[] = []
-  referentiel: ContentieuReferentielInterface[] = []
+  referentiel: ContentieuReferentielCalculateInterface[] = []
   formReferentiel: dataInterface[] = []
   formFilterSelect: dataInterface[] = []
   formFilterFonctionsSelect: dataInterface[] = []
@@ -71,9 +74,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   hrBackup: BackupInterface | undefined
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] = []
-  filterSelected: ContentieuReferentielInterface | null = null
+  filterSelected: ContentieuReferentielCalculateInterface | null = null
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
+  showIndicatorPanel: boolean = true
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -101,7 +105,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           .filter(
             (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
           )
-          .map((r) => ({ ...r, selected: true }))
+          .map((r) => ({ ...r, selected: true, dtes: 0, coverage: 0 }))
         this.formReferentiel = this.referentiel.map((r) => ({
           id: r.id,
           value: this.referentielMappingName(r.label),
@@ -188,7 +192,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       ['asc', 'asc']
     )
 
-    this.updateCategoryValues()
     this.onFilterList()
   }
 
@@ -200,19 +203,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       let etpt = 0
 
       personal.map((h) => {
-        const activities = h.currentActivities.filter(
-          (a) =>
-            a.contentieux &&
-            this.reaffectatorService.selectedReferentielIds.indexOf(
-              a.contentieux.id
-            ) !== -1
-        )
-        if (activities.length) {
-          etpt +=
-            (((h.etp || 0) - h.hasIndisponibility) *
-              sumBy(activities, 'percent')) /
-            100
+        let realETP = (h.etp || 0) - h.hasIndisponibility
+        if (realETP < 0) {
+          realETP = 0
         }
+        etpt += realETP
       })
 
       return {
@@ -364,6 +359,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.formatListToShow()
     this.updateCategoryValues()
+    this.calculateReferentielValues()
 
     if (this.isFirstLoad && this.route.snapshot.fragment) {
       this.isFirstLoad = false
@@ -385,7 +381,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             ? group[0].currentSituation.category.label
             : 'Autre'
         let referentiel = (
-          copyArray(this.referentiel) as ContentieuReferentielInterface[]
+          copyArray(this.referentiel) as ContentieuReferentielCalculateInterface[]
         ).map((ref) => {
           ref.totalAffected = 0
           return ref
@@ -400,9 +396,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             )
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
             if (timeAffected) {
-              ref.totalAffected =
-                (ref.totalAffected || 0) +
-                (timeAffected / 100) * ((hr.etp || 0) - hr.hasIndisponibility)
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+                if (realETP < 0) {
+                  realETP = 0
+                }
+                ref.totalAffected =
+                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
             }
 
             return ref
@@ -528,7 +527,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.preformatHumanResources()
   }
 
-  onFilterBy(ref: ContentieuReferentielInterface) {
+  onFilterBy(ref: ContentieuReferentielCalculateInterface) {
     if (!this.filterSelected || this.filterSelected.id !== ref.id) {
       this.filterSelected = ref
     } else {
@@ -555,5 +554,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onSelectedFonctionsIdsChanged(list: any) {
     this.reaffectatorService.selectedFonctionsIds = list
     this.onFilterList()
+  }
+
+  calculateReferentielValues() {
+    this.referentiel = this.referentiel.map(ref => {
+      // TODO ici calculter DTES et couverture
+
+
+      return {...ref}
+    })
   }
 }

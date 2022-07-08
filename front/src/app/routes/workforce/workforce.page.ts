@@ -182,7 +182,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.preformatedAllHumanResource
     )
 
-    this.updateCategoryValues()
     this.onFilterList()
   }
 

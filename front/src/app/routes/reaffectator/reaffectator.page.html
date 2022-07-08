@@ -31,33 +31,39 @@
     <div class="indicators">
       <div class="profil">
         <div class="label-container">
-          <i class="ri-eye-line"></i>
-          <i class="ri-eye-off-line"></i>
+          <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
+          <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
           <p>Indicateurs</p>
         </div>
-        <div class="contentieux-label">
-          <div class="text">
-            <div class="label">
-              <p>Contentieux :</p>
+        <ng-template [ngIf]="showIndicatorPanel">
+          <div class="contentieux-label">
+            <div class="text">
+              <div>
+                <p>Taux de<br />couverture ajusté :</p>
+              </div>
+              <div>
+                <p class="etp-header">DTES (en mois) :</p>
+              </div>
             </div>
-            <div class="filter">
-              <p class="etp-header">Trier par :</p>
+          </div>
+        </ng-template>
+      </div>
+      <ng-template [ngIf]="showIndicatorPanel">
+        <div class="activities">
+          <div class="sub-item" *ngFor="let ref of referentiel">
+            <div>
+              <div class="taux">
+                <aj-speedometer class="with-auto" [percent]="ref.coverage"></aj-speedometer>
+              </div>
+            </div>
+            <div>
+              <div class="dtes">
+                <p>{{ref.dtes}}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="activities">
-        <div class="sub-item" *ngFor="let ref of referentiel">
-          <div class="text">
-            <div class="label">
-              Taux
-            </div>
-            <div class="dtes">
-              <p>DTES</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      </ng-template>
       <div class="actions"></div>
     </div>
 
@@ -65,7 +71,7 @@
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list">
           <div class="profil">
-            <div class="label-container ">
+            <div class="label-container">
               <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
               <div class="label" [style.color]="list.textColor">
                 {{ list.label }}
@@ -96,7 +102,8 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <mat-icon>{{ filterSelected && filterSelected.id === ref.id ? 'filter_list' : 'filter_list_off' }}
+                  <mat-icon>{{ filterSelected && filterSelected.id === ref.id ?
+                    'filter_list' : 'filter_list_off' }}
                   </mat-icon>
                 </div>
               </div>
@@ -129,9 +136,7 @@
                 </p>
               </a>
               <div class="read-etp">
-                <p class="label">
-                  ETP Travaillé :
-                </p>
+                <p class="label">ETP Travaillé :</p>
                 <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
                   [indisponibility]="hr.hasIndisponibility">
                 </etp-preview>
