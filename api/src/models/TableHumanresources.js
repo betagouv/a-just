@@ -94,6 +94,12 @@ export default (sequelizeInstance, Model) => {
           importSituation.push(list[i].nom_usage + ' no add by etp')
           continue
         }
+        
+        let updatedAt = new Date()
+        const dateUpdatedSplited = (list[i].date_modif || '').split('/')
+        if(dateUpdatedSplited.length === 3) {
+          updatedAt = new Date(dateUpdatedSplited[2], +dateUpdatedSplited[1] - 1, dateUpdatedSplited[0]) 
+        }
 
         // prepare person
         const options = {
@@ -101,6 +107,7 @@ export default (sequelizeInstance, Model) => {
           last_name: (list[i].nom_usage || list[i].nom_marital) || '',
           backup_id: backupId,
           registration_number: list[i].hmatricule,
+          updated_at: updatedAt,
         }
 
         list[i].date_aff = list[i].date_aff.replace(/#/, '')
