@@ -297,11 +297,11 @@ export class CalculatorService extends MainClass {
     // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
     const realTimePerCase = fixDecimal(
       ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
-        (totalOut / sumBy(etpAffected, 'totalEtp'))
+        (totalOut / etpMag)
     )
 
     return {
-      ...this.calculateActivities(referentiel, totalIn, lastStock, etpAffected),
+      ...this.calculateActivities(referentiel, totalIn, lastStock, etpMag),
       totalIn,
       totalOut,
       lastStock,
@@ -335,7 +335,7 @@ export class CalculatorService extends MainClass {
     referentiel: ContentieuReferentielInterface,
     totalIn: number,
     lastStock: number | null,
-    etpAffected: etpAffectedInterface[]
+    etpAffected: number
   ) {
     let calculateTimePerCase = null
     let calculateOut = null
@@ -354,7 +354,7 @@ export class CalculatorService extends MainClass {
 
     if (calculateTimePerCase) {
       calculateOut = Math.floor(
-        (((sumBy(etpAffected, 'totalEtp') * environment.nbHoursPerDay) /
+        (((etpAffected * environment.nbHoursPerDay) /
           calculateTimePerCase) *
           environment.nbDaysByMagistrat) /
           12
