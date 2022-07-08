@@ -45,6 +45,7 @@ interface listFormatedInterface {
   label: string
   hr: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
+  headerPanel: boolean
 }
 
 interface ContentieuReferentielCalculateInterface extends ContentieuReferentielInterface {
@@ -436,6 +437,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               ? 'Magistrats du siège'
               : `${label}s`,
           hr: group,
+          headerPanel: true,
         }
       }
     )

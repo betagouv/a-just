@@ -72,48 +72,56 @@
         <div class="header-list">
           <div class="profil">
             <div class="label-container">
-              <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
-              <div class="label" [style.color]="list.textColor">
-                {{ list.label }}
-              </div>
+              <i *ngIf="!list.headerPanel" class="ri-eye-line" (click)="list.headerPanel = true"></i>
+              <i *ngIf="list.headerPanel" class="ri-eye-off-line" (click)="list.headerPanel = false"></i>
+              <p>{{ list.label }}</p>
             </div>
             <div class="contentieux-label">
-              <div class="text">
-                <div class="label">
-                  <p>Contentieux :</p>
-                </div>
-                <div class="etp">
-                  <p>ETP affectés :</p>
-                </div>
-                <div class="filter">
-                  <p class="etp-header">Trier par :</p>
-                </div>
+              <div class="label">
+                <p>Contentieux :</p>
+              </div>
+              <div class="etp-target">
+                <p>ETPT cible :</p>
+              </div>
+              <div class="etp">
+                <p>ETP affectés :</p>
+              </div>
+              <div class="filter">
+                <p class="etp-header">Trier par :</p>
               </div>
             </div>
           </div>
           <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel" (click)="onFilterBy(ref)"
+            <div class="sub-item" *ngFor="let ref of list.referentiel"
               [class.selected]="filterSelected && filterSelected.id === ref.id">
-              <div class="text">
-                <div class="label">
-                  <p><b>{{ referentielMappingName(ref.label) }}</b></p>
-                </div>
-                <div class="etp">
-                  <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
-                </div>
-                <div class="filter">
-                  <mat-icon>{{ filterSelected && filterSelected.id === ref.id ?
-                    'filter_list' : 'filter_list_off' }}
-                  </mat-icon>
-                </div>
+              <div class="label">
+                <p>{{ referentielMappingName(ref.label) }}</p>
               </div>
-              <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
+              <div class="etp-target">
+                <input [value]="ref.totalAffected | number:'0.2-2'" />
+              </div>
+              <div class="etp">
+                <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
+              </div>
+              <div class="filter" (click)="onFilterBy(ref)">
+                <mat-icon>{{ filterSelected && filterSelected.id === ref.id ?
+                  'filter_list' : 'filter_list_off' }}
+                </mat-icon>
+              </div>
             </div>
           </div>
           <div class="actions"></div>
         </div>
 
-        <div class="sub-content-list" [style.background-color]="list.bgColor">
+        <div class="sub-content-list">
+
+          <div class="header-item">
+            <div class="check-item"></div>
+            <p class="label">Tout sélectionner</p>
+            <p class="btn">Retour à la ventilation actuelle des fiches sélectionnées</p>
+          </div>
+
+
           <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">
             <div class="profil item">

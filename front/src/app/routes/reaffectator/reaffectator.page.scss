@@ -3,80 +3,92 @@
 .header-list {
   display: flex;
   width: 100%;
-  height: 96px;
-  background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: fColor(darkModeBgLight);
   z-index: 1;
   position: sticky;
   top: 0;
 
   .profil {
     display: flex;
-    align-items: center;
-    padding-left: 24px;
     width: 416px;
 
     > .label-container {
       display: flex;
-      align-items: center;
+      padding: 8px 32px;
       flex: 1;
-      align-self: stretch;
 
-      mat-icon {
+      i {
+        width: 32px;
+        height: 32px;
         margin-right: 8px;
+        border: 1px solid fColor(darkModeTitle);
+        color: white;
+        text-align: center;
+        line-height: 32px;
+        cursor: pointer;
       }
 
-      > .label {
-        flex: 1;
+      p {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
       }
     }
 
     > .contentieux-label {
-      align-self: stretch;
-      display: flex;
-      background-color: fColor(bgSelect);
-      width: 125px !important;
+      width: 125px;
+      padding-right: 8px;
 
-      > .text {
+      p {
+        text-align: right;
+        font-size: 12px;
+        color: fColor(grayRow);
+      }
+
+      > div {
         flex: 1;
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: center;
-        margin-bottom: 8px;
-        margin-right: 8px;
+        width: 100%;
 
-        p {
-          text-align: center;
-          font-size: 12px;
-          color: fColor(colorTag);
-        }
-        .etp-header {
-          color: fColor(cgraylightv2);
-        }
-
-        > .label {
-          flex: 1;
-          display: flex;
+        &.label {
+          height: 53px;
+          margin-top: 3px;
           align-items: flex-end;
         }
-        > .etp {
-          display: flex;
+
+        &.etp-target {
+          margin-top: 17px;
+          height: 38px;
           align-items: center;
-          flex: 1;
         }
-        > .filter {
-          display: flex;
+
+        &.etp {
+          height: 38px;
+          align-items: flex-end;
+        }
+
+        &.filter {
+          height: 39px;
+          margin-bottom: 11px;
           align-items: center;
-          flex: 1;
+        }
+
+        p {
+          text-align: right;
+          width: 100%;
         }
       }
     }
   }
 
   .activities {
+    display: flex;
+    flex: 1;
+    margin-top: 3px;
+
     > .sub-item {
+      flex: 1;
+      margin-right: 3px;
       cursor: pointer;
 
       &.selected {
@@ -87,41 +99,63 @@
         }
       }
 
-      > div.text {
+      > .label {
         flex: 1;
+        display: flex;
+        align-items: flex-end;
+        height: 53px;
 
-        .label {
-          flex: 1;
-          align-items: flex-end;
-          //height: 40px;
-          p {
-            text-transform: uppercase;
-          }
+        p {
+          text-transform: uppercase;
+          font-size: 14px;
+          font-weight: bold;
+          color: white;
+          text-align: center;
+          width: 100%;
         }
+      }
 
-        .etp {
-          flex: 1;
+      > .etp-target {
+        margin-top: 17px;
+        height: 38px;
 
-          p {
-            color: fColor(headerNumberColor);
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: -0.53px;
-          }
+        input {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          border: none;
+          border-top-left-radius: 4px;
+          border-top-right-radius: 4px;
         }
+      }
 
-        .filter {
-          flex: 1;
+      > .etp {
+        height: 38px;
+        display: flex;
+        align-items: flex-end;
 
-          p {
-            color: #161616;
-          }
-          mat-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-            color: fColor(headerColor);
-          }
+        p {
+          color: fColor(headerNumberColor);
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      .filter {
+        height: 39px;
+        margin-bottom: 11px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+
+        p {
+          color: #161616;
+        }
+        mat-icon {
+          width: 16px;
+          height: 16px;
+          font-size: 16px;
+          color: fColor(headerColor);
         }
       }
     }
@@ -132,6 +166,7 @@
   display: flex;
   width: 100%;
   background-color: fColor(darkModeBgLight);
+  margin-bottom: 1px;
 
   .profil {
     display: flex;
@@ -164,7 +199,7 @@
     > .contentieux-label {
       align-self: stretch;
       display: flex;
-      width: 125px !important;
+      width: 125px;
       height: 123px;
 
       > .text {
@@ -191,9 +226,15 @@
   }
 
   .activities {
+    display: flex;
+    flex: 1;
+
     > .sub-item {
       margin: 4px 0;
+      flex: 1;
+      align-self: stretch;
       display: flex;
+      flex-direction: column;
 
       > div {
         margin-right: 3px;
@@ -243,6 +284,10 @@
   width: calc(100% - 32px);
   margin-left: 16px;
   border-radius: 4px;
+
+  .activities {
+    flex: 1;
+  }
 }
 
 .container {
@@ -267,6 +312,31 @@
     .sub-content-list {
       display: inline-block;
       width: 100%;
+      padding: 4px 18px;
+
+      .header-item {
+        height: 65px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        background-color: fColor(darkModeBgLight);
+        border-radius: 8px;
+
+        .check-item {
+          margin-right: 10px;
+        }
+
+        p.label {
+          margin-right: 56px;
+          color: fColor(darkModeTitle);
+        }
+
+        p.btn {
+          border: 1px solid fColor(darkModeTitle);
+          color: fColor(darkModeTitle);
+          padding: 4px 12px;
+        }
+      }
     }
   }
 }
@@ -430,55 +500,6 @@
   justify-content: center;
 }
 
-.activities {
-  display: flex;
-  flex: 1;
-  .sub-item {
-    flex: 1;
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-
-    &:first-child div.text {
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    div.text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
-
-      div {
-        display: flex;
-        align-items: center;
-
-        &.label {
-          //flex: 2;
-        }
-
-        &.etp {
-          flex: 1;
-        }
-      }
-
-      p {
-        text-align: center;
-        font-size: 14px;
-        font-weight: bold;
-        margin: 0 2px;
-      }
-    }
-
-    div.color {
-      height: 8px;
-      opacity: 0.2;
-    }
-  }
-}
-
 .actions {
   width: 52px;
 }
@@ -534,4 +555,11 @@ progression-bar {
       margin-left: 16px;
     }
   }
+}
+
+.check-item {
+  width: 24px;
+  height: 24px;
+  border: 1px solid fColor(darkModeTitle);
+  border-radius: 4px;
 }
