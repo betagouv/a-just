@@ -3,6 +3,7 @@
     margin-top: 1px;
 
     #chartjs-tooltip {
+        text-align: center;
         position: relative;
         z-index: 5;
         opacity: 0;
@@ -126,7 +127,7 @@
                     justify-content: center;
                     display: flex;
                     align-items: center;
-                    width: 51px;
+                    width: 64px;
                     height: 24px;
                     border-radius: 12px;
                     background-color: #f7ecdb;
@@ -148,6 +149,7 @@
             align-items: center;
 
             .popin-title {
+                text-align: left;
                 width: 150px;
                 height: 32px;
                 line-height: 100%;

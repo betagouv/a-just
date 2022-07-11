@@ -16,4 +16,5 @@ export interface ChartAnnotationBoxInterface {
   simulatedIn?: number | null
   projectedOut?: number | null
   simulatedOut?: number | null
+  selectedLabelValue?: string | null
 }

@@ -6,19 +6,24 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core'
-import { getRangeOfMonths, getShortMonthString } from 'src/app/utils/dates'
+import {
+  getLongMonthString,
+  getRangeOfMonths,
+  getShortMonthString,
+} from 'src/app/utils/dates'
 import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
   selector: 'aj-dtes-chart',
   templateUrl: './dtes-chart.component.html',
   styleUrls: ['./dtes-chart.component.scss'],
 })
-export class DtesChartComponent implements AfterViewInit {
+export class DtesChartComponent {
   dateStart: Date = new Date()
   dateStop: Date | null = null
   startRealValue = ''
@@ -27,6 +32,7 @@ export class DtesChartComponent implements AfterViewInit {
   myChart: any = null
   labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
   tooltip: any = { display: false }
+  realSelectedMonth = ''
 
   data = {
     projectedStock: {
@@ -120,6 +126,31 @@ export class DtesChartComponent implements AfterViewInit {
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
     Chart.register(annotationPlugin)
+  }
+
+  ngOnDestroy(): void {
+    this.simulatorService.chartAnnotationBox.next({ display: false })
+    this.myChart.destroy()
+    this.dateStart = new Date()
+    this.dateStop = null
+    this.myChart = null
+    this.labels = null
+    this.tooltip = { display: false }
+
+    this.data = {
+      projectedStock: {
+        values: [0], //[20, 90, 5],
+      },
+      simulatedStock: {
+        values: [0], //[0, 10, 20],
+      },
+      projectedDTES: {
+        values: [0], //[20, 50, 3],
+      },
+      simulatedDTES: {
+        values: [0], //[1, 10, 100],
+      },
+    }
   }
 
   ngAfterViewInit(): void {
@@ -285,6 +316,8 @@ export class DtesChartComponent implements AfterViewInit {
             simulatedDTES: simulatedDTES.data[firstPoint],
             x: items[0].element.x + 'px',
             y: min - 130 + 'px',
+            pointIndex: firstPoint,
+            selectedLabelValue: e.chart.data.labels[firstPoint],
           })
 
           const colorArray = []
@@ -328,23 +361,19 @@ export class DtesChartComponent implements AfterViewInit {
             }
             e.chart.options.plugins.annotation.annotations.box1.yMax =
               e.chart.scales.A.max
-            for (
-              let i = 0;
-              i < e.chart.data.datasets[firstPoint].borderColor.length;
-              i++
-            ) {
+            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
+                $this.realSelectedMonth = $this.labels![i]
                 colorArray.push('#0a76f6')
               } else {
                 colorArray.push('rgb(109, 109, 109)')
               }
             }
           } else {
-            for (
-              let i = 0;
-              i < e.chart.data.datasets[firstPoint].borderColor.length;
-              i++
-            ) {
+            $this.affectTooltipValues({
+              pointIndex: null,
+            })
+            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               colorArray.push('rgb(109, 109, 109)')
             }
             e.chart.options.plugins.annotation.annotations.box1.content =
@@ -353,7 +382,6 @@ export class DtesChartComponent implements AfterViewInit {
             tooltipEl.style.opacity = 0
           }
           e.chart.config.options.scales.x.ticks.color = colorArray
-          console.log(e.chart.config.options.scales.x.ticks)
           e.chart.update()
         },
         //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
@@ -492,77 +520,64 @@ export class DtesChartComponent implements AfterViewInit {
       },
       plugins: [yScaleTextStock, yScaleTextDTES],
     }
+
     this.myChart = new Chart(
       document.getElementById('dtes-chart') as ChartItem,
       config
     )
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
-      this.myChart.options.plugins.annotation.annotations.box1.yMax =
-        this.myChart.scales.A.max
-      this.myChart.options.plugins.annotation.annotations.box1.display =
-        value.display
-      this.myChart.options.plugins.annotation.annotations.box1.xMin = value.xMin
-      this.myChart.options.plugins.annotation.annotations.box1.xMax = value.xMax
-      this.myChart.options.plugins.annotation.annotations.box1.content =
-        value.content
-      this.myChart.update()
+      if (this.myChart !== null) {
+        this.myChart.options.plugins.annotation.annotations.box1.yMax =
+          this.myChart.scales.A.max
+        this.myChart.options.plugins.annotation.annotations.box1.display =
+          value.display
+        this.myChart.options.plugins.annotation.annotations.box1.xMin =
+          value.xMin
+        this.myChart.options.plugins.annotation.annotations.box1.xMax =
+          value.xMax
+        this.myChart.options.plugins.annotation.annotations.box1.content =
+          value.content
 
-      this.tooltip.projectedStock = value.projectedStock
-      this.tooltip.simulatedStock = value.simulatedStock
+        this.tooltip.projectedStock = value.projectedStock
+        this.tooltip.simulatedStock = value.simulatedStock
 
-      const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
-      const colorArray = []
+        const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+        const colorArray = []
 
-      if (
-        value.x &&
-        this.myChart.data.datasets[value.pointIndex as number] !== undefined
-      ) {
-        tooltipEl.style.opacity = 1
-        tooltipEl.style.left = value.x
-        tooltipEl.style.top = value.y
-        this.tooltip.projectedStock =
-          this.myChart.data.datasets[0].data[value.pointIndex as number]
-        this.tooltip.simulatedStock =
-          this.myChart.data.datasets[1].data[value.pointIndex as number]
-        this.tooltip.projectedDTES =
-          this.myChart.data.datasets[2].data[value.pointIndex as number]
-        this.tooltip.simulatedDTES =
-          this.myChart.data.datasets[3].data[value.pointIndex as number]
-        console.log(this.myChart.data.datasets[value.pointIndex as number])
-        for (
-          let i = 0;
-          i <
-          this.myChart.data.datasets[value.pointIndex as number].borderColor
-            .length;
-          i++
-        ) {
-          if ((value.pointIndex as number) === i) {
-            colorArray.push('#0a76f6')
-          } else {
+        if (value.x) {
+          this.realSelectedMonth = value.selectedLabelValue as string
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = value.x
+          tooltipEl.style.top = value.y
+          this.tooltip.projectedStock =
+            this.myChart.data.datasets[0].data[value.pointIndex as number]
+          this.tooltip.simulatedStock =
+            this.myChart.data.datasets[1].data[value.pointIndex as number]
+          this.tooltip.projectedDTES =
+            this.myChart.data.datasets[2].data[value.pointIndex as number]
+          this.tooltip.simulatedDTES =
+            this.myChart.data.datasets[3].data[value.pointIndex as number]
+
+          for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
+            if ((value.pointIndex as number) === i) {
+              colorArray.push('#0a76f6')
+            } else {
+              colorArray.push('rgb(109, 109, 109)')
+            }
+          }
+          this.myChart.config.options.scales.x.ticks.color = colorArray
+        }
+        if (value.display === false) {
+          tooltipEl.style.opacity = 0
+          for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             colorArray.push('rgb(109, 109, 109)')
           }
+          this.myChart.config.options.scales.x.ticks.color = colorArray
         }
-        this.myChart.config.options.scales.x.ticks.color = colorArray
-      }
-      if (
-        value.display === false &&
-        this.myChart.data.datasets[value.pointIndex as number] !== undefined
-      ) {
-        tooltipEl.style.opacity = 0
-        for (
-          let i = 0;
-          i <
-          this.myChart.data.datasets[value.pointIndex as number].borderColor
-            .length;
-          i++
-        ) {
-          colorArray.push('rgb(109, 109, 109)')
-        }
-        this.myChart.config.options.scales.x.ticks.color = colorArray
-      }
 
-      this.myChart.update()
+        this.myChart.update()
+      }
     })
   }
 
@@ -602,6 +617,17 @@ export class DtesChartComponent implements AfterViewInit {
   }
 
   getDeltaInPercent(value1: number, value2: number): number {
-    return Number((((value1 - value2) / value2) * 100).toFixed(2))
+    if (value1 !== undefined && value2 !== undefined) {
+      return fixDecimal(((value1 - value2) / value2) * 100) as number
+    }
+    return 0
+  }
+
+  getRounded(value: number, integer = false): number {
+    if (integer) return Math.floor(value)
+    return fixDecimal(value)
+  }
+  getRealMonth(month: string) {
+    return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }

@@ -52,6 +52,35 @@ export function getShortMonthString(date: Date | string) {
   ][date.getMonth()]
 }
 
+export function getLongMonthString(shortString: string) {
+  switch (shortString) {
+    case 'Janv.':
+      return 'Janvier'
+    case 'Févr.':
+      return 'Février'
+    case 'Mars.':
+      return 'Mars'
+    case 'Avr.':
+      return 'Avril'
+    case 'Mai.':
+      return 'Mai'
+    case 'Juin.':
+      return 'Juin'
+    case 'Juil.':
+      return 'Juillet'
+    case 'Août.':
+      return 'Août'
+    case 'Sept.':
+      return 'Septembre'
+    case 'Oct.':
+      return 'Octobre'
+    case 'Nov.':
+      return 'Novembre'
+    case 'Déc.':
+      return 'Décembre'
+  }
+  return
+}
 export function today(date: Date | null | undefined = new Date()): Date {
   let now = new Date()
   if (date) {
@@ -155,15 +184,15 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
   // avoids edge case where last month is skipped
   dateCounter.setDate(1)
   while (dateCounter < endDate) {
-    if (getShortMonthString(dateCounter) === 'Janv.')
-      dates.push(
-        `${
-          getShortMonthString(dateCounter) +
-          ' ' +
-          dateCounter.getFullYear().toString().slice(-2)
-        }`
-      )
-    else dates.push(`${getShortMonthString(dateCounter)}`)
+    //if (getShortMonthString(dateCounter) === 'Janv.')
+    dates.push(
+      `${
+        getShortMonthString(dateCounter) +
+        ' ' +
+        dateCounter.getFullYear().toString().slice(-2)
+      }`
+    )
+    //else dates.push(`${getShortMonthString(dateCounter)}`)
 
     dateCounter.setMonth(dateCounter.getMonth() + 1)
   }

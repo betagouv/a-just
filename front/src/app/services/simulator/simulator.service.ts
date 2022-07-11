@@ -60,8 +60,6 @@ export class SimulatorService extends MainClass {
     this.watch(
       this.chartAnnotationBox.subscribe(() => {
         if (this.chartAnnotationBox.getValue()) {
-          console.log('leService', this.chartAnnotationBox.getValue())
-          //this.syncDatas(this.contentieuOrSubContentieuId.getValue())
         }
       })
     )
@@ -345,7 +343,6 @@ export class SimulatorService extends MainClass {
           true
         ))
 
-        //console.log('etpFUFU', fururEtpAffectedToCompute, monthlyReport)
         futurEtpToCompute = sumBy(
           fururEtpAffectedToCompute as Array<etpAffectedInterface>,
           'totalEtp'
@@ -476,8 +473,6 @@ export class SimulatorService extends MainClass {
         }
       })
     }
-
-    console.log('Global', hrCategoriesMonthly)
 
     const list = []
     const listMonthly = []
@@ -613,7 +608,6 @@ export class SimulatorService extends MainClass {
           // @ts-ignore
           monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
           // @ts-ignore
-          //console.log('katcha', monthlyList[str][situation.category.id].etpt)
         }
       }
       now.setDate(now.getDate() + 1)
@@ -928,5 +922,11 @@ export class SimulatorService extends MainClass {
     }
 
     return v
+  }
+
+  generateData(value1: number, size: number) {
+    if (value1 < 0) value1 = 0
+
+    return Array(size).fill(value1)
   }
 }
