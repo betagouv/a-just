@@ -18,7 +18,7 @@
         <div class="popin-title-content">
           <p class="popin-title">
             <b>Effectifs</b> <br />
-            à Janvier 2023
+            à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
           <p class="hard">Simulés</p>
@@ -33,8 +33,12 @@
             ></div>
             <b style="align-self: center"> Entrées</b>
           </div>
-          <p class="low-value first">{{ tooltip.projectedIn }}</p>
-          <p class="hard-value first">{{ tooltip.simulatedIn }}</p>
+          <p class="low-value first">
+            {{ getRounded(tooltip.projectedIn) || 0 }}
+          </p>
+          <p class="hard-value first">
+            {{ getRounded(tooltip.simulatedIn) || 0 }}
+          </p>
           <div class="white-value">
             <div class="rounded-label">
               <label
@@ -56,14 +60,16 @@
             ></div>
             <b>Sorties</b> &nbsp;
           </div>
-          <p class="low-value">{{ tooltip.projectedOut }}</p>
-          <p class="hard-value">{{ tooltip.simulatedOut }}</p>
+          <p class="low-value">{{ getRounded(tooltip.projectedOut) || 0 }}</p>
+          <p class="hard-value">{{ getRounded(tooltip.simulatedOut) || 0 }}</p>
           <div class="white-value">
             <div class="rounded-label">
               <label
                 >{{
-                  getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) ||
-                    0
+                  getDeltaInPercent(
+                    tooltip.simulatedOut,
+                    tooltip.projectedOut
+                  ) || 0
                 }}
                 %</label
               >

@@ -15,7 +15,7 @@
         <div class="popin-title-content">
           <p class="popin-title">
             <b>Effectifs</b> <br />
-            à Janvier 2023
+            à {{ getRealMonth(realSelectedMonth) }} 
           </p>
           <div class="low">Projetés</div>
           <p class="hard">Simulés</p>
@@ -30,21 +30,27 @@
             ></div>
             <b style="align-self: center"> Magistrats</b>
           </div>
-          <p class="low-value first">{{ tooltip.projectedMag }}</p>
-          <p class="hard-value first">{{ tooltip.simulatedMag }}</p>
+          <p class="low-value first">
+            {{ getRounded(tooltip.projectedMag) || '' }}
+          </p>
+          <p class="hard-value first">
+            {{ getRounded(tooltip.simulatedMag) || '' }}
+          </p>
           <div class="white-value">
             <div class="rounded-label">
-              <label
-                >{{
-                  ((tooltip.simulatedMag - tooltip.projectedMag) /
-                    tooltip.projectedMag) *
-                    100 || 0
+              <label>
+                {{
+                  getDeltaInPercent(
+                    tooltip.simulatedMag,
+                    tooltip.projectedMag
+                  ) || 0
                 }}
                 %</label
               >
             </div>
           </div>
         </div>
+        <!--
         <div class="popin-raw" style="display: flex">
           <div class="popin-title">
             <div
@@ -78,7 +84,7 @@
               <label></label>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
