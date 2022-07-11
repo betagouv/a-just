@@ -238,16 +238,17 @@ export class DtesChartComponent {
       if (sufix.slice(0, 4) === 'mois')
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
+          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
           ' ' +
-          sufix
-      //context.label +
-      else
+          sufix //context.label +
+      else {
+        // TODO WARNING TO TEST WITH US LANGAGE
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
+          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
           ' ' +
           sufix
+      }
       return lbl
     }
 
