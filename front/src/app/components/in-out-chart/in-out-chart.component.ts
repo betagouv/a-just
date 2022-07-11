@@ -199,9 +199,11 @@ export class InOutChartComponent implements OnDestroy {
           sufix = 'entrées (projeté)'
           break
       }
+
+        // TODO WARNING TO TEST WITH US LANGAGE
       let lbl =
         '  ' +
-        Math.floor(parseFloat(context.formattedValue.replace(',', ''))) +
+        Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
         ' ' +
         sufix
       return lbl
