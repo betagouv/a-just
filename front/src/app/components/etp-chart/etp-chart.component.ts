@@ -211,7 +211,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       }
       let lbl =
         '  ' +
-        Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+        fixDecimal(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
         ' ' +
         sufix
       return lbl
