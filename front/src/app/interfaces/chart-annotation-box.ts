@@ -17,4 +17,5 @@ export interface ChartAnnotationBoxInterface {
   projectedOut?: number | null
   simulatedOut?: number | null
   selectedLabelValue?: string | null
+  enableTooltip?: boolean | null
 }
