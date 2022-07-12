@@ -2,28 +2,25 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Input,
+  OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core'
+import { Chart, ChartItem, registerables } from 'chart.js'
+import annotationPlugin from 'chartjs-plugin-annotation'
+import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import {
+  findRealValue,
   getLongMonthString,
   getRangeOfMonths,
-  getShortMonthString,
 } from 'src/app/utils/dates'
-import * as _ from 'lodash'
-import { Chart, ChartItem, registerables } from 'chart.js'
-import { findRealValue } from 'src/app/utils/dates'
-import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import annotationPlugin from 'chartjs-plugin-annotation'
 import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
-  selector: 'aj-dtes-chart',
-  templateUrl: './dtes-chart.component.html',
-  styleUrls: ['./dtes-chart.component.scss'],
+  selector: 'aj-etp-chart',
+  templateUrl: './etp-chart.component.html',
+  styleUrls: ['./etp-chart.component.scss'],
 })
-export class DtesChartComponent {
+export class EtpChartComponent implements AfterViewInit, OnDestroy {
   dateStart: Date = new Date()
   dateStop: Date | null = null
   startRealValue = ''
@@ -35,22 +32,40 @@ export class DtesChartComponent {
   realSelectedMonth = ''
 
   data = {
-    projectedStock: {
-      values: [0], //[20, 90, 5],
+    projectedMag: {
+      values: [0], //[0, 10, 5],
+      dotColor: '#e07dd8',
+      bgColor: '#fdc0f8',
     },
-    simulatedStock: {
-      values: [0], //[0, 10, 20],
+    simulatedMag: {
+      values: [0], //[0, 8, 18],
+      dotColor: '#fdc0f8',
+      bgColor: '#e07dd8',
     },
-    projectedDTES: {
-      values: [0], //[20, 50, 3],
+    projectedGref: {
+      values: [],
+      dotColor: '#f083a0',
+      bgColor: '#ffcade',
     },
-    simulatedDTES: {
-      values: [0], //[1, 10, 100],
+    simulatedGref: {
+      values: [],
+      dotColor: '#ffcade',
+      bgColor: '#f083a0',
+    },
+    projectedCont: {
+      values: [],
+      dotColor: '#fdbfb7',
+      bgColor: '#fcd7d3',
+    },
+    simulatedCont: {
+      values: [],
+      dotColor: '#fcd7d3',
+      bgColor: '#eba89f',
     },
   }
 
   constructor(
-    element: ElementRef<HTMLElement>,
+    private element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
     simulatorService.dateStop.subscribe((value) => {
@@ -73,51 +88,31 @@ export class DtesChartComponent {
     })
     simulatorService.situationSimulated.subscribe((value) => {
       if (this.labels !== null) {
-        this.data.projectedStock.values = simulatorService.generateLinearData(
-          simulatorService.getFieldValue(
-            'lastStock',
-            simulatorService.situationActuelle.getValue()
-          ),
-          simulatorService.getFieldValue(
-            'lastStock',
-            simulatorService.situationProjected.getValue()
-          ),
-          this.labels.length
-        )
-        this.data.simulatedStock.values = simulatorService.generateLinearData(
-          simulatorService.getFieldValue(
-            'lastStock',
-            simulatorService.situationActuelle.getValue()
-          ),
-          value?.lastStock as number,
+        this.data.simulatedMag.values = simulatorService.generateLinearData(
+          value?.etpMag as number,
+          value?.etpMag as number,
           this.labels.length
         )
 
-        this.data.simulatedDTES.values = simulatorService.generateLinearData(
-          simulatorService.situationActuelle.getValue()!
-            .realDTESInMonths as number,
-          value?.realDTESInMonths as number,
-          this.labels.length
-        )
+        let tmpValue: any = undefined
+        simulatorService.situationProjected
+          .getValue()!
+          .monthlyReport!.forEach((x) => {
+            if (x.name === 'Magistrat') tmpValue = x.values
+          })
 
-        this.data.projectedDTES.values = simulatorService.generateLinearData(
-          simulatorService.situationActuelle.getValue()!
-            .realDTESInMonths as number,
-          simulatorService.situationProjected.getValue()!
-            .realDTESInMonths as number,
-          this.labels.length
-        )
+        this.data.projectedMag.values = new Array()
+
+        Object.keys(tmpValue).forEach((x: any) => {
+          this.data.projectedMag.values.push(tmpValue[x].etpt)
+        })
 
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data =
-            this.data.projectedStock.values
+            this.data.simulatedMag.values
           this.myChart._metasets[1]._dataset.data =
-            this.data.simulatedStock.values
-          this.myChart._metasets[2]._dataset.data =
-            this.data.projectedDTES.values
-          this.myChart._metasets[3]._dataset.data =
-            this.data.simulatedDTES.values
+            this.data.projectedMag.values
           this.myChart.update()
         }
       }
@@ -128,31 +123,6 @@ export class DtesChartComponent {
     Chart.register(annotationPlugin)
   }
 
-  ngOnDestroy(): void {
-    this.simulatorService.chartAnnotationBox.next({ display: false })
-    this.myChart.destroy()
-    this.dateStart = new Date()
-    this.dateStop = null
-    this.myChart = null
-    this.labels = null
-    this.tooltip = { display: false }
-
-    this.data = {
-      projectedStock: {
-        values: [0], //[20, 90, 5],
-      },
-      simulatedStock: {
-        values: [0], //[0, 10, 20],
-      },
-      projectedDTES: {
-        values: [0], //[20, 50, 3],
-      },
-      simulatedDTES: {
-        values: [0], //[1, 10, 100],
-      },
-    }
-  }
-
   ngAfterViewInit(): void {
     const labels = this.labels
 
@@ -160,32 +130,46 @@ export class DtesChartComponent {
       labels: labels,
       datasets: [
         {
-          label: 'projectedStock',
+          label: 'projectedMag',
           yAxisID: 'A',
-          backgroundColor: '#c3fad5',
-          borderColor: '#c3fad5',
-          data: this.data.projectedStock.values,
+          backgroundColor: this.data.projectedMag.bgColor,
+          borderColor: this.data.projectedMag.bgColor,
+          data: this.data.projectedMag.values,
         },
         {
-          label: 'simulatedStock',
+          label: 'simulatedMag',
           yAxisID: 'A',
-          backgroundColor: '#6fe49d',
-          borderColor: '#6fe49d',
-          data: this.data.simulatedStock.values,
+          backgroundColor: this.data.simulatedMag.bgColor,
+          borderColor: this.data.simulatedMag.bgColor,
+          data: this.data.simulatedMag.values,
         },
         {
-          label: 'projectedDTES',
-          yAxisID: 'B',
-          backgroundColor: '#bfcdff',
-          borderColor: '#bfcdff',
-          data: this.data.projectedDTES.values,
+          label: 'projectedGref',
+          yAxisID: 'A',
+          backgroundColor: this.data.projectedGref.bgColor,
+          borderColor: this.data.projectedGref.bgColor,
+          data: this.data.projectedGref.values,
         },
         {
-          yAxisID: 'B',
-          label: 'simulatedDTES',
-          backgroundColor: '#7b99e4',
-          borderColor: '#7b99e4',
-          data: this.data.simulatedDTES.values,
+          yAxisID: 'A',
+          label: 'simulatedGref',
+          backgroundColor: this.data.simulatedGref.bgColor,
+          borderColor: this.data.simulatedGref.bgColor,
+          data: this.data.simulatedGref.values,
+        },
+        {
+          label: 'projectedCont',
+          yAxisID: 'A',
+          backgroundColor: this.data.projectedCont.bgColor,
+          borderColor: this.data.projectedCont.bgColor,
+          data: this.data.projectedCont.values,
+        },
+        {
+          yAxisID: 'A',
+          label: 'simulatedCont',
+          backgroundColor: this.data.simulatedCont.bgColor,
+          borderColor: this.data.simulatedCont.bgColor,
+          data: this.data.simulatedCont.values,
         },
       ],
     }
@@ -198,21 +182,7 @@ export class DtesChartComponent {
         ctx.save()
         ctx.font = '14px Arial'
         ctx.fillStyle = '#666'
-        ctx.fillText('Stock', 1, top - 2)
-        ctx.restore()
-      },
-    }
-
-    const yScaleTextDTES = {
-      id: 'yScaleTextDTES',
-      afterDraw(chart: any, args: any, options: any) {
-        const ctx = chart.ctx
-        const top = chart.chartArea.top
-        const right = chart.chartArea.right
-        ctx.save()
-        ctx.font = '14px Arial'
-        ctx.fillStyle = '#666'
-        ctx.fillText('DTES', right - 40, top - 2)
+        ctx.fillText('ETPT', -1, top - 2)
         ctx.restore()
       },
     }
@@ -220,36 +190,30 @@ export class DtesChartComponent {
     const label = (context: any) => {
       let sufix = ''
       switch (context.dataset.label) {
-        case 'simulatedStock':
-          sufix = 'affaires (simulé)'
+        case 'projectedMag':
+          sufix = 'agents (projeté)'
           break
-        case 'projectedStock':
-          sufix = 'affaires (projeté)'
+        case 'simulatedMag':
+          sufix = 'agents (simulé)'
           break
-        case 'simulatedDTES':
-          sufix = 'mois (simulé)'
+        case 'projectedGref':
+          sufix = 'agents (projeté)'
           break
-        case 'projectedDTES':
-          sufix = 'mois (projeté)'
+        case 'simulatedGref':
+          sufix = 'agents (simulé)'
+          break
+        case 'projectedCont':
+          sufix = 'agents (projeté)'
+          break
+        case 'simulatedCont':
+          sufix = 'agents (simulé)'
           break
       }
-      let lbl = ''
-
-      if (sufix.slice(0, 4) === 'mois')
-        lbl =
-          '  ' +
-          fixDecimal(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
-          ' ' +
-          sufix
-      //context.label +
-      else {
-        // TODO WARNING TO TEST WITH US LANGAGE
-        lbl =
-          '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
-          ' ' +
-          sufix
-      }
+      let lbl =
+        '  ' +
+        fixDecimal(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+        ' ' +
+        sufix
       return lbl
     }
 
@@ -278,25 +242,14 @@ export class DtesChartComponent {
           if (items.length == 0) return
 
           var firstPoint = items[0].index
-          const projectedStock = e.chart.config._config.data.datasets.find(
+          const projectedMag = e.chart.config._config.data.datasets.find(
             (x: any) => {
-              return x.label === 'projectedStock'
+              return x.label === 'projectedMag'
             }
           )
-          const simulatedStock = e.chart.config._config.data.datasets.find(
+          const simulatedMag = e.chart.config._config.data.datasets.find(
             (x: any) => {
-              return x.label === 'simulatedStock'
-            }
-          )
-
-          const projectedDTES = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedDTES'
-            }
-          )
-          const simulatedDTES = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'simulatedDTES'
+              return x.label === 'simulatedMag'
             }
           )
 
@@ -312,10 +265,8 @@ export class DtesChartComponent {
           tooltipEl.style.top = min - 130 + 'px'
 
           $this.affectTooltipValues({
-            projectedStock: projectedStock.data[firstPoint],
-            simulatedStock: simulatedStock.data[firstPoint],
-            projectedDTES: projectedDTES.data[firstPoint],
-            simulatedDTES: simulatedDTES.data[firstPoint],
+            projectedMag: projectedMag.data[firstPoint],
+            simulatedMag: simulatedMag.data[firstPoint],
             x: items[0].element.x + 'px',
             y: min - 130 + 'px',
             pointIndex: firstPoint,
@@ -336,7 +287,6 @@ export class DtesChartComponent {
               e.chart.options.plugins.annotation.annotations.box1.display = true
               $this.updateAnnotationBox(true, 0, 0)
             }
-            var firstPoint = items[0].index
             if (firstPoint === 0) {
               e.chart.options.plugins.annotation.annotations.box1.xMin = 0
               e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
@@ -364,9 +314,9 @@ export class DtesChartComponent {
             }
             e.chart.options.plugins.annotation.annotations.box1.yMax =
               e.chart.scales.A.max
+
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
-                $this.realSelectedMonth = $this.labels![i]
                 colorArray.push('#0a76f6')
               } else {
                 colorArray.push('rgb(109, 109, 109)')
@@ -387,6 +337,7 @@ export class DtesChartComponent {
             $this.updateAnnotationBox(false, 0, 0, undefined)
             tooltipEl.style.opacity = 0
           }
+
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
@@ -423,7 +374,7 @@ export class DtesChartComponent {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 20, left: 20, right: 20 },
+          padding: { top: 20, left: 30, right: 20 },
         },
         scales: {
           x: {
@@ -437,33 +388,20 @@ export class DtesChartComponent {
             },
           },
           A: {
+            padding: -3,
             beginAtZero: true,
             type: 'linear',
             position: 'left',
             ticks: {
               display: true,
+              min: 0,
+              max: 100,
               callback: (value: any, index: any, values: any) =>
                 index == values.length - 1 ? '' : value,
             },
             grid: {
               drawTicks: false,
               display: true,
-            },
-          },
-          B: {
-            beginAtZero: true,
-            type: 'linear',
-            position: 'right',
-            grid: { display: false },
-            ticks: {
-              showLabelBackdrop: false,
-              z: 1,
-              display: true,
-              mirror: true,
-              labelOffset: -15,
-              padding: -3,
-              callback: (value: any, index: any, values: any) =>
-                index == values.length - 1 ? '' : value,
             },
           },
         },
@@ -491,11 +429,11 @@ export class DtesChartComponent {
               },
             },
           },
-
           legend: {
             display: false,
           },
           tooltip: {
+            //events: ['click'],
             external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
@@ -524,11 +462,10 @@ export class DtesChartComponent {
           },
         },
       },
-      plugins: [yScaleTextStock, yScaleTextDTES],
+      plugins: [yScaleTextStock], //custom_canvas_background_color
     }
-
     this.myChart = new Chart(
-      document.getElementById('dtes-chart') as ChartItem,
+      document.getElementById('etp-chart') as ChartItem,
       config
     )
 
@@ -547,8 +484,8 @@ export class DtesChartComponent {
 
         this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
 
-        this.tooltip.projectedStock = value.projectedStock
-        this.tooltip.simulatedStock = value.simulatedStock
+        this.tooltip.projectedMag = value.projectedMag
+        this.tooltip.simulatedMag = value.simulatedMag
 
         const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
         const colorArray = []
@@ -557,15 +494,12 @@ export class DtesChartComponent {
           this.realSelectedMonth = value.selectedLabelValue as string
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
-          tooltipEl.style.top = value.y
-          this.tooltip.projectedStock =
+          tooltipEl.style.top =
+            Number(String(value.y).replace('px', '')) + 66 + 'px'
+          this.tooltip.projectedMag =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
-          this.tooltip.simulatedStock =
+          this.tooltip.simulatedMag =
             this.myChart.data.datasets[1].data[value.pointIndex as number]
-          this.tooltip.projectedDTES =
-            this.myChart.data.datasets[2].data[value.pointIndex as number]
-          this.tooltip.simulatedDTES =
-            this.myChart.data.datasets[3].data[value.pointIndex as number]
 
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             if ((value.pointIndex as number) === i) {
@@ -591,10 +525,12 @@ export class DtesChartComponent {
 
   display(event: any) {
     let index: number | undefined = undefined
-    if (event.label === 'projectedStock') index = 0
-    if (event.label === 'simulatedStock') index = 1
-    if (event.label === 'projectedDTES') index = 2
-    if (event.label === 'simulatedDTES') index = 3
+    if (event.label === 'projectedMag') index = 0
+    if (event.label === 'simulatedMag') index = 1
+    if (event.label === 'projectedGref') index = 2
+    if (event.label === 'simulatedGref') index = 3
+    if (event.label === 'projectedCont') index = 4
+    if (event.label === 'simulatedCont') index = 5
     if (this.myChart !== null) {
       const isDataShown = this.myChart.isDatasetVisible(index)
       if (isDataShown === true) this.myChart.hide(index)
@@ -608,7 +544,6 @@ export class DtesChartComponent {
       ...obj,
     })
   }
-
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
@@ -631,9 +566,50 @@ export class DtesChartComponent {
     return 0
   }
 
-  getRounded(value: number, integer = false): number {
-    if (integer) return Math.floor(value)
+  getRounded(value: number): number {
     return fixDecimal(value)
+  }
+
+  ngOnDestroy(): void {
+    this.myChart.destroy()
+    this.dateStart = new Date()
+    this.dateStop = null
+    this.myChart = null
+    this.labels = null
+    this.tooltip = { display: false }
+
+    this.data = {
+      projectedMag: {
+        values: [0], //[0, 10, 5],
+        dotColor: '#e07dd8',
+        bgColor: '#fdc0f8',
+      },
+      simulatedMag: {
+        values: [0], //[0, 8, 18],
+        dotColor: '#fdc0f8',
+        bgColor: '#e07dd8',
+      },
+      projectedGref: {
+        values: [],
+        dotColor: '#f083a0',
+        bgColor: '#ffcade',
+      },
+      simulatedGref: {
+        values: [],
+        dotColor: '#ffcade',
+        bgColor: '#f083a0',
+      },
+      projectedCont: {
+        values: [],
+        dotColor: '#fdbfb7',
+        bgColor: '#fcd7d3',
+      },
+      simulatedCont: {
+        values: [],
+        dotColor: '#fcd7d3',
+        bgColor: '#eba89f',
+      },
+    }
   }
   getRealMonth(month: string) {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]

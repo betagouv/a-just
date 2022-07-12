@@ -105,6 +105,8 @@
                         width: 100%;
                         top: -50%;
                         left: 0px;
+
+
                     }
                 }
             }
@@ -181,7 +183,7 @@
                 font-size: 12px;
                 line-height: 100%;
                 font-weight: bold;
-                z-index: 6;
+                z-index: 5;
             }
 
             .white {
@@ -242,6 +244,7 @@
         padding: 24px;
         background-color: #f5f5fe;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        //z-index: 3;
         align-items: center;
 
         .space {
