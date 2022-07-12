@@ -235,8 +235,6 @@ export class DtesChartComponent {
       }
       let lbl = ''
 
-      console.log('leP', parseFloat(context.formattedValue))
-
       if (sufix.slice(0, 4) === 'mois')
         lbl =
           '  ' +
