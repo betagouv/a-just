@@ -2,7 +2,11 @@ import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
-import { findRealValue, getLongMonthString, getRangeOfMonths } from 'src/app/utils/dates'
+import {
+  findRealValue,
+  getLongMonthString,
+  getRangeOfMonths,
+} from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
@@ -138,8 +142,8 @@ export class InOutChartComponent implements OnDestroy {
           label: 'projectedIn',
           yAxisID: 'A',
 
-          backgroundColor: 'rgba(254, 235, 208, 0.5)', //claire
-          borderColor: 'rgba(254, 235, 208, 0.5)', //'#feebd0',
+          backgroundColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //claire
+          borderColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //'#feebd0',
           data: this.data.projectedIn.values,
           fill: false,
         },
@@ -162,8 +166,8 @@ export class InOutChartComponent implements OnDestroy {
         {
           yAxisID: 'A',
           label: 'simulatedOut',
-          backgroundColor: 'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
-          borderColor: 'rgba(96, 224, 235, 0.7)',
+          backgroundColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
+          borderColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)',
           data: this.data.simulatedOut.values,
           fill: false, //'-1',
         },
@@ -200,7 +204,7 @@ export class InOutChartComponent implements OnDestroy {
           break
       }
 
-        // TODO WARNING TO TEST WITH US LANGAGE
+      // TODO WARNING TO TEST WITH US LANGAGE
       let lbl =
         '  ' +
         Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
@@ -275,6 +279,7 @@ export class InOutChartComponent implements OnDestroy {
             y: min - 130 + 'px',
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
+            enableTooltip: false,
           })
 
           const colorArray = []
@@ -327,6 +332,7 @@ export class InOutChartComponent implements OnDestroy {
           } else {
             $this.affectTooltipValues({
               pointIndex: null,
+              enableTooltip: true,
             })
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               colorArray.push('rgb(109, 109, 109)')
@@ -341,8 +347,8 @@ export class InOutChartComponent implements OnDestroy {
         },
         //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
-          events: ['click'],
-
+          //events: ['click'],
+          //events: ['click', 'mouseout'],
           callbacks: {
             title: function (tooltipItem: any, data: any) {
               return data['labels'][tooltipItem[0]['index']]
@@ -440,8 +446,9 @@ export class InOutChartComponent implements OnDestroy {
             display: false,
           },
           tooltip: {
-            external: externalTooltipHandler,
+            //events: ['click', 'mouseout'],
 
+            external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
             position: 'nearest',
@@ -471,6 +478,7 @@ export class InOutChartComponent implements OnDestroy {
       },
       plugins: [
         yScaleTextInOut,
+        /**
         {
           id: 'corsair',
           afterInit: (chart: any) => {
@@ -528,7 +536,7 @@ export class InOutChartComponent implements OnDestroy {
             ctx.stroke()
             ctx.restore()
           },
-        },
+        },*/
       ],
     }
     this.myChart = new Chart(
@@ -549,6 +557,8 @@ export class InOutChartComponent implements OnDestroy {
         this.myChart.options.plugins.annotation.annotations.box1.content =
           value.content
 
+        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
+
         this.tooltip.projectedIn = value.projectedIn
         this.tooltip.simulatedIn = value.simulatedIn
         this.tooltip.projectedOut = value.projectedOut
@@ -558,6 +568,7 @@ export class InOutChartComponent implements OnDestroy {
         const colorArray = []
 
         if (value.x) {
+          this.myChart.tooltip.active = false
           this.realSelectedMonth = value.selectedLabelValue as string
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
@@ -580,6 +591,7 @@ export class InOutChartComponent implements OnDestroy {
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
         if (value.display === false) {
+          this.myChart.tooltip.active = true
           tooltipEl.style.opacity = 0
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             colorArray.push('rgb(109, 109, 109)')

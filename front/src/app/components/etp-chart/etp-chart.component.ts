@@ -104,7 +104,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.data.projectedMag.values = new Array()
 
         Object.keys(tmpValue).forEach((x: any) => {
-          console.log(tmpValue[x])
           this.data.projectedMag.values.push(tmpValue[x].etpt)
         })
 
@@ -192,27 +191,27 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       let sufix = ''
       switch (context.dataset.label) {
         case 'projectedMag':
-          sufix = 'agents (simulé)'
+          sufix = 'agents (projeté)'
           break
         case 'simulatedMag':
-          sufix = 'agents (projeté)'
+          sufix = 'agents (simulé)'
           break
         case 'projectedGref':
-          sufix = 'agents (simulé)'
+          sufix = 'agents (projeté)'
           break
         case 'simulatedGref':
-          sufix = 'agents (projeté)'
-          break
-        case 'projectedCont':
           sufix = 'agents (simulé)'
           break
-        case 'simulatedCont':
+        case 'projectedCont':
           sufix = 'agents (projeté)'
+          break
+        case 'simulatedCont':
+          sufix = 'agents (simulé)'
           break
       }
       let lbl =
         '  ' +
-        Math.floor(parseFloat(context.formattedValue.replace(/,/g, ''))) +
+        Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
         ' ' +
         sufix
       return lbl
@@ -272,6 +271,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             y: min - 130 + 'px',
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
+            enableTooltip: false,
           })
 
           const colorArray = []
@@ -322,9 +322,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
                 colorArray.push('rgb(109, 109, 109)')
               }
             }
+            e.chart.options.plugins.tooltip.enabled = false
           } else {
+            e.chart.options.plugins.tooltip.enabled = true
             $this.affectTooltipValues({
               pointIndex: null,
+              enableTooltip: true,
             })
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               colorArray.push('rgb(109, 109, 109)')
@@ -478,6 +481,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           value.xMax
         this.myChart.options.plugins.annotation.annotations.box1.content =
           value.content
+
+        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
 
         this.tooltip.projectedMag = value.projectedMag
         this.tooltip.simulatedMag = value.simulatedMag

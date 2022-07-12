@@ -240,7 +240,8 @@ export class DtesChartComponent {
           '  ' +
           Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
           ' ' +
-          sufix //context.label +
+          sufix
+      //context.label +
       else {
         // TODO WARNING TO TEST WITH US LANGAGE
         lbl =
@@ -319,6 +320,7 @@ export class DtesChartComponent {
             y: min - 130 + 'px',
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
+            enableTooltip: false,
           })
 
           const colorArray = []
@@ -370,9 +372,12 @@ export class DtesChartComponent {
                 colorArray.push('rgb(109, 109, 109)')
               }
             }
+            e.chart.options.plugins.tooltip.enabled = false
           } else {
+            e.chart.options.plugins.tooltip.enabled = true
             $this.affectTooltipValues({
               pointIndex: null,
+              enableTooltip: true,
             })
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               colorArray.push('rgb(109, 109, 109)')
@@ -539,6 +544,8 @@ export class DtesChartComponent {
           value.xMax
         this.myChart.options.plugins.annotation.annotations.box1.content =
           value.content
+
+        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
 
         this.tooltip.projectedStock = value.projectedStock
         this.tooltip.simulatedStock = value.simulatedStock

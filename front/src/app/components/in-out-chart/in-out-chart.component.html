@@ -17,7 +17,7 @@
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
-            <b>Effectifs</b> <br />
+            <b>Affaires</b> <br />
             à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
@@ -85,14 +85,14 @@
     [title]="'projectedIn'"
     [label]="'Entrées (projeté)'"
     [dotColor]="'#fcc63a'"
-    [bgColor]="'#feebd0'"
+    [bgColor]="'#FBDFB8'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
     [title]="'simulatedIn'"
     [label]="'Entrées (simulé)'"
-    [dotColor]="'#feebd0'"
+    [dotColor]="'#FBDFB8'"
     [bgColor]="'#fcc63a'"
     (value)="display($event)"
   ></aj-legend-label>
@@ -101,14 +101,14 @@
     [title]="'projectedOut'"
     [label]="'Sorties (projeté)'"
     [dotColor]="'#60e0eb'"
-    [bgColor]="'#c7f6fc'"
+    [bgColor]="'#ACF1FA'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
     [title]="'simulatedOut'"
     [label]="'Sorties (simulé)'"
-    [dotColor]="'#c7f6fc'"
+    [dotColor]="'#ACF1FA'"
     [bgColor]="'#60e0eb'"
     (value)="display($event)"
   ></aj-legend-label>
