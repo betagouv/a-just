@@ -235,10 +235,12 @@ export class DtesChartComponent {
       }
       let lbl = ''
 
+      console.log('leP', parseFloat(context.formattedValue))
+
       if (sufix.slice(0, 4) === 'mois')
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+          fixDecimal(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
           ' ' +
           sufix
       //context.label +
