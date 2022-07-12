@@ -1,39 +1,47 @@
-import { Component, ElementRef, OnInit } from '@angular/core'
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import { findRealValue, getRangeOfMonths } from 'src/app/utils/dates'
+import annotationPlugin from 'chartjs-plugin-annotation'
+import {
+  findRealValue,
+  getLongMonthString,
+  getRangeOfMonths,
+} from 'src/app/utils/dates'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
   selector: 'aj-in-out-chart',
   templateUrl: './in-out-chart.component.html',
   styleUrls: ['./in-out-chart.component.scss'],
 })
-export class InOutChartComponent implements OnInit {
+export class InOutChartComponent implements OnDestroy {
   dateStart: Date = new Date()
   dateStop: Date | null = null
   startRealValue = ''
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = null
+  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  tooltip: any = { display: false }
+  realSelectedMonth = ''
   data = {
     projectedIn: {
-      values: [0],
+      values: [0], //[40, 30, 5],
     },
     simulatedIn: {
-      values: [0],
+      values: [0], //[10, 20, 30],
     },
     projectedOut: {
-      values: [0],
+      values: [0], //[0, 10, 20],
     },
     simulatedOut: {
-      values: [0],
+      values: [0], //[9, 10, 11],
     },
   }
 
   constructor(
     element: ElementRef<HTMLElement>,
-    simulatorService: SimulatorService
+    private simulatorService: SimulatorService
   ) {
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
@@ -66,23 +74,17 @@ export class InOutChartComponent implements OnInit {
           ),
           this.labels.length
         )
-        this.data.simulatedIn.values = simulatorService.generateLinearData(
-          simulatorService.getFieldValue(
-            'totalIn',
-            simulatorService.situationActuelle.getValue()
-          ),
+        this.data.simulatedIn.values = simulatorService.generateData(
           value?.totalIn as number,
           this.labels.length
         )
 
-        this.data.simulatedOut.values = simulatorService.generateLinearData(
-          simulatorService.situationActuelle.getValue()!.totalOut as number,
+        this.data.simulatedOut.values = simulatorService.generateData(
           value?.totalOut as number,
           this.labels.length
         )
 
-        this.data.projectedOut.values = simulatorService.generateLinearData(
-          simulatorService.situationActuelle.getValue()!.totalOut as number,
+        this.data.projectedOut.values = simulatorService.generateData(
           simulatorService.situationProjected.getValue()!.totalOut as number,
           this.labels.length
         )
@@ -102,10 +104,34 @@ export class InOutChartComponent implements OnInit {
 
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
+    Chart.register(annotationPlugin)
   }
 
   ngOnInit(): void {}
 
+  ngOnDestroy(): void {
+    this.myChart.destroy()
+    this.dateStart = new Date()
+    this.dateStop = null
+    this.myChart = null
+    this.labels = null
+    this.tooltip = { display: false }
+
+    this.data = {
+      projectedIn: {
+        values: [0], //[40, 30, 5],
+      },
+      simulatedIn: {
+        values: [0], //[10, 20, 30],
+      },
+      projectedOut: {
+        values: [0], //[0, 10, 20],
+      },
+      simulatedOut: {
+        values: [0], //[9, 10, 11],
+      },
+    }
+  }
   ngAfterViewInit(): void {
     const labels = this.labels
 
@@ -116,10 +142,10 @@ export class InOutChartComponent implements OnInit {
           label: 'projectedIn',
           yAxisID: 'A',
 
-          backgroundColor: 'rgba(254, 235, 208, 0.5)', //claire
-          borderColor: 'rgba(254, 235, 208, 0.5)', //'#feebd0',
+          backgroundColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //claire
+          borderColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //'#feebd0',
           data: this.data.projectedIn.values,
-          fill: true,
+          fill: false,
         },
         {
           label: 'simulatedIn',
@@ -127,7 +153,7 @@ export class InOutChartComponent implements OnInit {
           backgroundColor: 'rgba(252, 198, 58, 0.7)', //fonce
           borderColor: 'rgba(252, 198, 58, 0.7)', //'#fcc63a',
           data: this.data.simulatedIn.values,
-          fill: '-1',
+          fill: false, //'-1',
         },
         {
           label: 'projectedOut',
@@ -135,15 +161,15 @@ export class InOutChartComponent implements OnInit {
           backgroundColor: 'rgba(199, 246, 252, 0.5)',
           borderColor: 'rgba(199, 246, 252, 0.5)', //'#60e0eb', // fonce rgba(96, 224, 235, 1)
           data: this.data.projectedOut.values,
-          fill: '-1',
+          fill: false, //'-1',
         },
         {
           yAxisID: 'A',
           label: 'simulatedOut',
-          backgroundColor: 'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
-          borderColor: 'rgba(96, 224, 235, 0.7)',
+          backgroundColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
+          borderColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)',
           data: this.data.simulatedOut.values,
-          fill: '-1',
+          fill: false, //'-1',
         },
       ],
     }
@@ -178,7 +204,7 @@ export class InOutChartComponent implements OnInit {
           break
       }
 
-        // TODO WARNING TO TEST WITH US LANGAGE
+      // TODO WARNING TO TEST WITH US LANGAGE
       let lbl =
         '  ' +
         Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
@@ -187,11 +213,142 @@ export class InOutChartComponent implements OnInit {
       return lbl
     }
 
+    let $this = this
+
+    const externalTooltipHandler = (context: any) => {
+      // Tooltip Element
+      const { chart, tooltip } = context
+
+      const { offsetLeft: positionX, offsetTop: positionY } =
+        $this.myChart.canvas
+
+      $this.tooltip = {
+        offsetLeft: positionX,
+        offsetTop: positionY,
+        ...$this.tooltip,
+        ...tooltip,
+      }
+    }
+
     const config: any = {
       type: 'line',
       data: data,
       options: {
+        onClick: function (e: any, items: any) {
+          if (items.length == 0) return
+
+          var firstPoint = items[0].index
+          const projectedIn = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedIn'
+            }
+          )
+          const simulatedIn = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedIn'
+            }
+          )
+          const projectedOut = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedOut'
+            }
+          )
+          const simulatedOut = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'simulatedOut'
+            }
+          )
+
+          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+
+          const yValues = items.map((object: any) => {
+            return object.element.y
+          })
+
+          const min = Math.min(...yValues)
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = items[0].element.x + 'px'
+          tooltipEl.style.top = min - 130 + 'px'
+
+          $this.affectTooltipValues({
+            projectedIn: projectedIn.data[firstPoint],
+            simulatedIn: simulatedIn.data[firstPoint],
+            projectedOut: projectedOut.data[firstPoint],
+            simulatedOut: simulatedOut.data[firstPoint],
+            x: items[0].element.x + 'px',
+            y: min - 130 + 'px',
+            pointIndex: firstPoint,
+            selectedLabelValue: e.chart.data.labels[firstPoint],
+            enableTooltip: false,
+          })
+
+          const colorArray = []
+
+          if (
+            e.chart.options.plugins.annotation.annotations.box1.content ===
+            undefined
+          ) {
+            if (
+              e.chart.options.plugins.annotation.annotations.box1.display ===
+              false
+            ) {
+              e.chart.options.plugins.annotation.annotations.box1.display = true
+              $this.updateAnnotationBox(true, 0, 0)
+            }
+            if (firstPoint === 0) {
+              e.chart.options.plugins.annotation.annotations.box1.xMin = 0
+              e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
+              $this.updateAnnotationBox(true, 0, 0.5)
+            } else if (firstPoint === e.chart.scales.x.max) {
+              e.chart.options.plugins.annotation.annotations.box1.xMin =
+                e.chart.scales.x.max - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax =
+                e.chart.scales.x.max
+              $this.updateAnnotationBox(
+                true,
+                e.chart.scales.x.max - 0.5,
+                e.chart.scales.x.max
+              )
+            } else {
+              e.chart.options.plugins.annotation.annotations.box1.xMin =
+                firstPoint - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax =
+                firstPoint + 0.5
+              $this.updateAnnotationBox(
+                true,
+                firstPoint - 0.5,
+                firstPoint + 0.5
+              )
+            }
+            e.chart.options.plugins.annotation.annotations.box1.yMax =
+              e.chart.scales.A.max
+            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
+              if (firstPoint === i) {
+                colorArray.push('#0a76f6')
+              } else {
+                colorArray.push('rgb(109, 109, 109)')
+              }
+            }
+          } else {
+            $this.affectTooltipValues({
+              pointIndex: null,
+              enableTooltip: true,
+            })
+            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
+              colorArray.push('rgb(109, 109, 109)')
+            }
+            e.chart.options.plugins.annotation.annotations.box1.content =
+              undefined
+            $this.updateAnnotationBox(false, 0, 0, undefined)
+            tooltipEl.style.opacity = 0
+          }
+          e.chart.config.options.scales.x.ticks.color = colorArray
+          e.chart.update()
+        },
+        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
+          //events: ['click'],
+          //events: ['click', 'mouseout'],
           callbacks: {
             title: function (tooltipItem: any, data: any) {
               return data['labels'][tooltipItem[0]['index']]
@@ -226,9 +383,13 @@ export class InOutChartComponent implements OnInit {
         },
         scales: {
           x: {
+            ticks: {
+              color: 'rgb(109, 109, 109)',
+            },
             grid: {
               drawTicks: true,
               tickColor: 'white',
+              offset: true, // middle labels
             },
           },
           A: {
@@ -250,6 +411,29 @@ export class InOutChartComponent implements OnInit {
           },
         },
         plugins: {
+          autocolors: false,
+          annotation: {
+            click: function (e: any, items: any) {
+              if (items.length == 0) return
+              items.chart.options.plugins.annotation.annotations.box1.display =
+                false
+              e.chart.options.plugins.annotation.annotations.box1.content = ''
+              items.chart.update()
+              $this.updateAnnotationBox(false, undefined, undefined, '')
+            },
+            annotations: {
+              box1: {
+                display: false,
+                type: 'box',
+                yScaleID: 'A',
+                xMin: 0,
+                xMax: 1,
+                yMin: 0,
+                yMax: 5,
+                backgroundColor: 'rgba(255, 99, 132, 0.25)',
+              },
+            },
+          },
           corsair: {
             dash: [4, 4],
             color: '#1b1b35',
@@ -262,6 +446,9 @@ export class InOutChartComponent implements OnInit {
             display: false,
           },
           tooltip: {
+            //events: ['click', 'mouseout'],
+
+            external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
             position: 'nearest',
@@ -291,6 +478,7 @@ export class InOutChartComponent implements OnInit {
       },
       plugins: [
         yScaleTextInOut,
+        /**
         {
           id: 'corsair',
           afterInit: (chart: any) => {
@@ -348,13 +536,72 @@ export class InOutChartComponent implements OnInit {
             ctx.stroke()
             ctx.restore()
           },
-        },
+        },*/
       ],
     }
     this.myChart = new Chart(
       document.getElementById('in-out-chart') as ChartItem,
       config
     )
+
+    this.simulatorService.chartAnnotationBox.subscribe((value) => {
+      if (this.myChart !== null) {
+        this.myChart.options.plugins.annotation.annotations.box1.yMax =
+          this.myChart.scales.A.max
+        this.myChart.options.plugins.annotation.annotations.box1.display =
+          value.display
+        this.myChart.options.plugins.annotation.annotations.box1.xMin =
+          value.xMin
+        this.myChart.options.plugins.annotation.annotations.box1.xMax =
+          value.xMax
+        this.myChart.options.plugins.annotation.annotations.box1.content =
+          value.content
+
+        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
+
+        this.tooltip.projectedIn = value.projectedIn
+        this.tooltip.simulatedIn = value.simulatedIn
+        this.tooltip.projectedOut = value.projectedOut
+        this.tooltip.simulatedOut = value.simulatedOut
+
+        const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+        const colorArray = []
+
+        if (value.x) {
+          this.myChart.tooltip.active = false
+          this.realSelectedMonth = value.selectedLabelValue as string
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = value.x
+          tooltipEl.style.top = value.y
+          this.tooltip.projectedIn =
+            this.myChart.data.datasets[0].data[value.pointIndex as number]
+          this.tooltip.simulatedIn =
+            this.myChart.data.datasets[1].data[value.pointIndex as number]
+          this.tooltip.projectedOut =
+            this.myChart.data.datasets[2].data[value.pointIndex as number]
+          this.tooltip.simulatedOut =
+            this.myChart.data.datasets[3].data[value.pointIndex as number]
+          for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
+            if ((value.pointIndex as number) === i) {
+              colorArray.push('#0a76f6')
+            } else {
+              colorArray.push('rgb(109, 109, 109)')
+            }
+          }
+          this.myChart.config.options.scales.x.ticks.color = colorArray
+        }
+        if (value.display === false) {
+          this.myChart.tooltip.active = true
+          tooltipEl.style.opacity = 0
+          for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
+            colorArray.push('rgb(109, 109, 109)')
+          }
+          this.myChart.config.options.scales.x.ticks.color = colorArray
+        }
+
+        this.myChart.update()
+      }
+    })
   }
 
   display(event: any) {
@@ -368,5 +615,41 @@ export class InOutChartComponent implements OnInit {
       if (isDataShown === true) this.myChart.hide(index)
       else this.myChart.show(index)
     }
+  }
+
+  affectTooltipValues(obj: any) {
+    this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
+      ...obj,
+    })
+  }
+
+  updateAnnotationBox(
+    display?: boolean,
+    xMin?: number | undefined,
+    xMax?: number,
+    content?: any
+  ) {
+    this.simulatorService.chartAnnotationBox.next({
+      ...this.simulatorService.chartAnnotationBox.getValue(),
+      display,
+      xMin,
+      xMax,
+      content,
+    })
+  }
+
+  getDeltaInPercent(value1: number, value2: number): number {
+    if (value1 !== undefined && value2 !== undefined) {
+      return fixDecimal(((value1 - value2) / value2) * 100) as number
+    }
+    return 0
+  }
+
+  getRounded(value: number): number {
+    return fixDecimal(value)
+  }
+  getRealMonth(month: string) {
+    return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }

@@ -2,6 +2,204 @@
     display: flex;
     margin-top: 1px;
 
+    #chartjs-tooltip {
+        text-align: center;
+        position: relative;
+        z-index: 5;
+        opacity: 0;
+        width: 381px;
+        //height: 148px;
+        position: absolute;
+        background: white;
+        //color: white;
+        padding: 16px;
+        border-radius: 3px;
+        -webkit-transition: all .1s ease;
+        transition: all 1s ease;
+        pointer-events: none;
+        -webkit-transform: translate(-50%, 0);
+        transform: translate(-50%, 0);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        &::before {
+            content: "";
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            height: 0;
+            width: 0;
+            border-bottom: 4px solid white;
+            border-right: 4px solid transparent;
+            border-left: 4px solid transparent;
+            position: absolute;
+            bottom: -4px;
+            left: 195px;
+            transform: rotate(180deg);
+
+        }
+
+        .circle {
+            margin: 8px 8px 8px 0px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .popin-raw {
+            //padding: 0px 16px 0px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .popin-title {
+                width: 150px;
+                display: flex;
+                font-size: 12px;
+                line-height: 1.33;
+                color: #666;
+                align-items: center;
+            }
+
+            .low-value {
+                position: relative;
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                flex: 1;
+                background-color: #f6f6f6;
+                line-height: 100%;
+                font-size: 16px;
+                font-weight: bold;
+                color: #b51f58;
+
+                &.first {
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        background-color: #f6f6f6;
+                        height: 50%;
+                        width: 100%;
+                        top: -50%;
+                        left: 0px;
+                    }
+                }
+
+            }
+
+            .hard-value {
+                position: relative;
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                flex: 1;
+                background-color: #ededed;
+                line-height: 100%;
+                font-size: 16px;
+                font-weight: bold;
+                color: #b51f58;
+
+                &.first {
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        background-color: #ededed;
+                        height: 50%;
+                        width: 100%;
+                        top: -50%;
+                        left: 0px;
+
+
+                    }
+                }
+            }
+
+            .white-value {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                line-height: 100%;
+                flex: 1;
+                font-size: 12px;
+                font-weight: bold;
+
+                .rounded-label {
+                    justify-content: center;
+                    display: flex;
+                    align-items: center;
+                    width: 64px;
+                    height: 24px;
+                    border-radius: 12px;
+                    background-color: #f7ecdb;
+
+                    label {
+
+                        font-size: 12px;
+
+                        color: #d1b781;
+                    }
+                }
+            }
+        }
+
+        .popin-title-content {
+            //padding: 16px 16px 0px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .popin-title {
+                text-align: left;
+                width: 150px;
+                height: 32px;
+                line-height: 100%;
+                font-size: 12px;
+                line-height: 1.33;
+                color: #666;
+            }
+
+            .low {
+                /*******/
+                position: relative;
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                flex: 1;
+                border-radius: 8px;
+                background-color: #ededed;
+                font-size: 12px;
+                line-height: 100%;
+                font-weight: bold;
+                z-index: 5;
+            }
+
+            .hard {
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                flex: 1;
+                border-radius: 8px;
+                background-color: #dfdfdf;
+                font-size: 12px;
+                line-height: 100%;
+                font-weight: bold;
+                z-index: 5;
+            }
+
+            .white {
+                width: 64px;
+                padding: 8px;
+                height: 32px;
+                flex: 1;
+                font-size: 12px;
+                line-height: 100%;
+                font-weight: bold;
+            }
+        }
+
+
+    }
+
     .left-side {
         flex: 4;
         display: flex;
@@ -13,7 +211,6 @@
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             background-color: #fff;
             position: relative;
-            z-index: 3;
 
             p {
                 font-size: 16px;
@@ -47,7 +244,6 @@
         padding: 24px;
         background-color: #f5f5fe;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        z-index: 3;
         align-items: center;
 
         .space {
