@@ -141,33 +141,32 @@ export class InOutChartComponent implements OnDestroy {
         {
           label: 'projectedIn',
           yAxisID: 'A',
-
-          backgroundColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //claire
-          borderColor: '#FBDFB8', //'rgba(254, 235, 208, 0.5)', //'#feebd0',
+          backgroundColor: '#FCC63A', //'rgba(254, 235, 208, 0.5)', //claire
+          borderColor: '#FCC63A', //'rgba(254, 235, 208, 0.5)', //'#feebd0',
           data: this.data.projectedIn.values,
           fill: false,
         },
         {
           label: 'simulatedIn',
           yAxisID: 'A',
-          backgroundColor: 'rgba(252, 198, 58, 0.7)', //fonce
-          borderColor: 'rgba(252, 198, 58, 0.7)', //'#fcc63a',
+          backgroundColor: '#CB9F2D', //'rgba(252, 198, 58, 0.7)', //fonce
+          borderColor: '#CB9F2D', //'rgba(252, 198, 58, 0.7)', //'#fcc63a',
           data: this.data.simulatedIn.values,
           fill: false, //'-1',
         },
         {
           label: 'projectedOut',
           yAxisID: 'A',
-          backgroundColor: 'rgba(199, 246, 252, 0.5)',
-          borderColor: 'rgba(199, 246, 252, 0.5)', //'#60e0eb', // fonce rgba(96, 224, 235, 1)
+          backgroundColor: '#60E0EB', //'rgba(199, 246, 252, 0.5)',
+          borderColor: '#60E0EB', //'rgba(199, 246, 252, 0.5)', //'#60e0eb', // fonce rgba(96, 224, 235, 1)
           data: this.data.projectedOut.values,
           fill: false, //'-1',
         },
         {
           yAxisID: 'A',
           label: 'simulatedOut',
-          backgroundColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
-          borderColor: '#ACF1FA', //'rgba(96, 224, 235, 0.7)',
+          backgroundColor: '#49B6C0', //'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
+          borderColor: '#49B6C0', //'rgba(96, 224, 235, 0.7)',
           data: this.data.simulatedOut.values,
           fill: false, //'-1',
         },
