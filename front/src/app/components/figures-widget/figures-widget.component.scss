@@ -3,6 +3,10 @@
 :host {
     background-color: white;
     position: relative;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+
+    display: flex;
+    flex-direction: column;
 
     .title {
         height: 96px;
@@ -26,7 +30,7 @@
     }
 
     .items {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         background-color: #fff;
         position: relative;
 
