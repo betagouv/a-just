@@ -105,8 +105,6 @@
                         width: 100%;
                         top: -50%;
                         left: 0px;
-
-
                     }
                 }
             }
@@ -133,9 +131,7 @@
                     background-color: #f7ecdb;
 
                     label {
-
                         font-size: 12px;
-
                         color: #d1b781;
                     }
                 }
@@ -174,6 +170,7 @@
             }
 
             .hard {
+                position: relative;
                 width: 64px;
                 padding: 8px;
                 height: 32px;
