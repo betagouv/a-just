@@ -9,26 +9,22 @@
     </p>
   </div>
   <div class="container">
-    <div style="width: 100%">
-      <canvas id="etp-chart" style="height: 250px; width: content-box"></canvas>
+    <div class="canvas-container">
+      <canvas id="etp-chart"></canvas>
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
             <b>Effectifs</b> <br />
-            à {{ getRealMonth(realSelectedMonth) }} 
+            à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
           <p class="hard">Simulés</p>
           <p class="white">Variation</p>
         </div>
-        <div class="popin-raw" style="display: flex">
+        <div class="popin-raw">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #e07dd8"
-            ></div>
-            <b style="align-self: center"> Magistrats</b>
+            <div _ngcontent-vmx-c83="" class="circle pink"></div>
+            <b> Magistrats</b>
           </div>
           <p class="low-value first">
             {{ getRounded(tooltip.projectedMag) || '' }}
@@ -112,7 +108,7 @@
     [dotColor]="'#f083a0'"
     [bgColor]="'#ffcade'"
     (value)="display($event)"
-    style="pointer-events: none; opacity: 0.3"
+    class="disabled-label"
   ></aj-legend-label>
 
   <aj-legend-label
@@ -121,7 +117,7 @@
     [dotColor]="'#ffcade'"
     [bgColor]="'#f083a0'"
     (value)="display($event)"
-    style="pointer-events: none; opacity: 0.3"
+    class="disabled-label"
   ></aj-legend-label>
 
   <div class="space"></div>
@@ -131,7 +127,7 @@
     [dotColor]="'#fdbfb7'"
     [bgColor]="'#fcd7d3'"
     (value)="display($event)"
-    style="pointer-events: none; opacity: 0.3"
+    class="disabled-label"
   ></aj-legend-label>
 
   <aj-legend-label
@@ -140,6 +136,6 @@
     [dotColor]="'#fcd7d3'"
     [bgColor]="'#eba89f'"
     (value)="display($event)"
-    style="pointer-events: none; opacity: 0.3"
+    class="disabled-label"
   ></aj-legend-label>
 </div>

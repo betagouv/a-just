@@ -22,7 +22,7 @@
       Situation simulée
     </div>
   </div>
-  <div style="flex: 1"></div>
+  <div class="space-flex"></div>
   <div class="container" *ngIf="selectedSituation === 'projected'">
     <aj-coverage-preview
       [@fadeInOut]
@@ -36,5 +36,5 @@
       [coverageRate]="toNumber(valueSimulated)"
     ></aj-coverage-preview>
   </div>
-  <div style="flex: 1"></div>
+  <div class="space-flex"></div>
 </div>
