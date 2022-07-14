@@ -27,18 +27,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  labels: string[] | null = null
   tooltip: any = { display: false }
   realSelectedMonth = ''
 
   data = {
     projectedMag: {
-      values: [0], //[0, 10, 5],
+      values: [0],
       dotColor: '#e07dd8',
       bgColor: '#fdc0f8',
     },
     simulatedMag: {
-      values: [0], //[0, 8, 18],
+      values: [0],
       dotColor: '#fdc0f8',
       bgColor: '#e07dd8',
     },
@@ -234,7 +234,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     let $this = this
 
     const externalTooltipHandler = (context: any) => {
-      // Tooltip Element
       const { chart, tooltip } = context
 
       const { offsetLeft: positionX, offsetTop: positionY } =
@@ -355,7 +354,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
-        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
           events: ['click'],
           callbacks: {
@@ -447,7 +445,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             display: false,
           },
           tooltip: {
-            //events: ['click'],
             external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
@@ -476,7 +473,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           },
         },
       },
-      plugins: [yScaleTextStock], //custom_canvas_background_color
+      plugins: [yScaleTextStock],
     }
     this.myChart = new Chart(
       document.getElementById('etp-chart') as ChartItem,
@@ -594,12 +591,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
     this.data = {
       projectedMag: {
-        values: [0], //[0, 10, 5],
+        values: [0],
         dotColor: '#e07dd8',
         bgColor: '#fdc0f8',
       },
       simulatedMag: {
-        values: [0], //[0, 8, 18],
+        values: [0],
         dotColor: '#fdc0f8',
         bgColor: '#e07dd8',
       },

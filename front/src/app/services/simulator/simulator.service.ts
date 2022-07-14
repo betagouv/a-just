@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { groupBy, last, sortBy, sumBy } from 'lodash'
+import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -9,10 +9,8 @@ import {
   month,
   nbOfDays,
   workingDay,
-  nbOfWorkingDays,
   decimalToStringDate,
   getRangeOfMonthsAsObject,
-  getRangeOfMonths,
   isFirstDayOfMonth,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
@@ -48,21 +46,16 @@ export class SimulatorService extends MainClass {
       xMax: null,
       content: undefined,
     })
-
   startCurrentSituation = month(new Date(), -12)
   endCurrentSituation = month(new Date(), -1, 'lastday')
+
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService
   ) {
     super()
 
-    this.watch(
-      this.chartAnnotationBox.subscribe(() => {
-        if (this.chartAnnotationBox.getValue()) {
-        }
-      })
-    )
+    this.watch(this.chartAnnotationBox.subscribe(() => {}))
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {

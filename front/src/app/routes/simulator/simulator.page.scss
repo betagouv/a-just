@@ -10,9 +10,6 @@
         display: none;
 
         p {
-            //font-size: 14px;
-            //line-height: 1.71;
-            //color: #929292;
             font-size: 24px;
             font-weight: bold;
             color: #3a3a3a;
@@ -68,7 +65,10 @@
         aj-figures-widget,
         aj-dial-widget {
             flex: 1;
-            //height: 100%;
+        }
+
+        aj-figures-widget {
+            margin: 0 8px;
         }
     }
 
@@ -84,7 +84,6 @@
     .simulation-bottom {
         background-color: fColor(bgColor);
         position: relative;
-        // height: 100%;
         margin-top: 83px;
         padding-top: 48px;
 
@@ -313,7 +312,6 @@
 
         .rectangle {
             width: 496px;
-            //height: 84px;
             padding: 12px 24px;
             border-radius: 8px;
             background-color: #f6f6f6;
@@ -485,7 +483,6 @@
         &.color-white {
             background-color: white;
             border-bottom: solid 1px #e5e5e5;
-            //box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
             &::before {
                 background-color: white;
@@ -669,7 +666,6 @@
 
 
     .items {
-        //height: 64px !important;
         background-color: #fff;
         display: flex;
         position: relative;
@@ -910,7 +906,7 @@
     }
 
     aj-date-select-blue {
-        margin: 0 50px; //128px;
+        margin: 0 50px;
         transition-timing-function: linear;
         transition-property: margin-left;
         transition-duration: 0.1s;

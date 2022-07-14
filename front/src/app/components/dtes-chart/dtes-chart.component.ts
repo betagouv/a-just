@@ -30,22 +30,22 @@ export class DtesChartComponent {
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  labels: string[] | null = null
   tooltip: any = { display: false }
   realSelectedMonth = ''
 
   data = {
     projectedStock: {
-      values: [0], //[20, 90, 5],
+      values: [0],
     },
     simulatedStock: {
-      values: [0], //[0, 10, 20],
+      values: [0], 
     },
     projectedDTES: {
-      values: [0], //[20, 50, 3],
+      values: [0], 
     },
     simulatedDTES: {
-      values: [0], //[1, 10, 100],
+      values: [0],
     },
   }
 
@@ -139,16 +139,16 @@ export class DtesChartComponent {
 
     this.data = {
       projectedStock: {
-        values: [0], //[20, 90, 5],
+        values: [0], 
       },
       simulatedStock: {
-        values: [0], //[0, 10, 20],
+        values: [0], 
       },
       projectedDTES: {
-        values: [0], //[20, 50, 3],
+        values: [0], 
       },
       simulatedDTES: {
-        values: [0], //[1, 10, 100],
+        values: [0], 
       },
     }
   }
@@ -255,9 +255,7 @@ export class DtesChartComponent {
           ) +
           ' ' +
           sufix
-      //context.label +
       else {
-        // TODO WARNING TO TEST WITH US LANGAGE
         lbl =
           '  ' +
           Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
@@ -270,7 +268,6 @@ export class DtesChartComponent {
     let $this = this
 
     const externalTooltipHandler = (context: any) => {
-      // Tooltip Element
       const { chart, tooltip } = context
 
       const { offsetLeft: positionX, offsetTop: positionY } =
@@ -404,7 +401,6 @@ export class DtesChartComponent {
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
-        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
           events: ['click'],
           callbacks: {
