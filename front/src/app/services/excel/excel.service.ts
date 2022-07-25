@@ -35,6 +35,8 @@ export class ExcelService extends MainClass implements OnInit {
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(
     endCurrentSituation
   )
+  loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
   data: Array<any> = []
 
   constructor(
@@ -55,6 +57,7 @@ export class ExcelService extends MainClass implements OnInit {
 
   exportExcel(): void {
     this.referentielService.loadReferentiels().then((value) => {
+      this.loading.next(true)
       this.allReferentiels = value
 
       for (let i = 0; i < this.allReferentiels.length; i++) {
@@ -167,6 +170,7 @@ export class ExcelService extends MainClass implements OnInit {
 
             const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
             FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+            this.loading.next(false)
           })
         })
       })
