@@ -6,25 +6,6 @@ export default class RouteActivities extends Route {
     super({ ...params, model: 'Activities' })
   }
 
-   excel = require("excel4node");
-
- async createTestWorkbook() {
-    const workbook = new excel.Workbook();
-    const style = workbook.createStyle({
-        font: { color: "#0101FF", size: 11 }
-    });
-
-    const worksheet = workbook.addWorksheet("Sheet 1");
-
-    const arrayToWrite = Array.from({length: 10}, (v, k) => [`Row ${k+1}, Col 1`,`Row ${k+1}, Col 2`]);
-    arrayToWrite.forEach((row, rowIndex) => {
-        row.forEach((entry, colIndex) => { 
-            worksheet.cell(rowIndex + 1, colIndex + 1).string(entry).style(style); 
-        })
-    })
-
-    return workbook;
-}
 
 
   @Route.Post({
