@@ -118,16 +118,19 @@ export class ExcelService extends MainClass implements OnInit {
                 etpAffected = this.getHRVentilation(human, referentiel, [
                   ...this.categories,
                 ]) as Array<any>
-                let counter = 0
-                Object.keys(etpAffected).map((key: string) => {
-                  if (referentiel.childrens !== undefined)
-                    counter += etpAffected[key].etpt
 
-                  totalEtpt += etpAffected[key].etpt
+                let counter = 0
+
+                Object.keys(etpAffected).map((key: string) => {
+                  if (referentiel.childrens !== undefined) {
+                    counter += etpAffected[key].etpt
+                  }
                 })
-                if (referentiel.childrens !== undefined)
+
+                if (referentiel.childrens !== undefined) {
                   refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
-                else refObj[referentiel.label.toUpperCase()] = counter
+                  totalEtpt += counter
+                } else refObj[referentiel.label.toUpperCase()] = counter
               }
             )
 
