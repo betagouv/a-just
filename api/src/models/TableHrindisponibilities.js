@@ -36,7 +36,8 @@ export default (sequelizeInstance, Model) => {
     let reelHRIds = []
 
     for (let i = 0; i < indisponibilities.length; i++) {
-      const indispo = indisponibilities[i]
+      const indispo = indisponibilities[i] 
+      console.log(indispo)
 
       const options = {
         nac_id: indispo.contentieux.id,
@@ -45,15 +46,10 @@ export default (sequelizeInstance, Model) => {
         date_start: indispo.dateStart,
         date_stop: indispo.dateStop,
       }
-      let findToBdd = (findToBdd = await Model.findOne({
-        where: {
-          nac_id: indispo.contentieux.id,
-          hr_id: hRId,
-        },
-      }))
+      let findToBdd
 
-      if (findToBdd) {
-        await findToBdd.update(options)
+      if (indispo.id > 0) {
+        findToBdd = await Model.updateById(indispo.id, options)
       } else {
         findToBdd = await Model.create({
           ...options,
