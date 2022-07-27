@@ -51,7 +51,7 @@
 
       p {
         text-align: center;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: bold;
         margin: 0 2px;
       }
@@ -74,7 +74,7 @@
     justify-content: center;
 
     progression-bar {
-      width: 95%;
+      width: 75%;
       height: 80px;
       cursor: pointer;
     }
@@ -83,6 +83,7 @@
 
 .progress-bar {
   margin-top: 8px;
+  padding: 0px 8px;
   display: flex;
   align-items: center;
 
@@ -167,7 +168,7 @@
     }
 
     progression-bar {
-      width: 95%;
+      width: 88%;
       height: 80px;
     }
 
