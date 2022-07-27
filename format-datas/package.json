@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@wmfs/xml2csv": "^1.26.0",
-    "async": "^3.2.0",
+    "async": "^3.2.2",
     "aws-sdk": "^2.960.0",
     "base64-stream": "^1.0.0",
     "config": "^3.3.2",
