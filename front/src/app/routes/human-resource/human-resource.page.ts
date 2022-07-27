@@ -377,6 +377,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async updateHuman(nodeName: string, value: any) {
+    console.log('updateHuman', nodeName, value)
     if (this.currentHR) {
       if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
