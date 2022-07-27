@@ -252,10 +252,14 @@
           border-radius: 3.7px;
           height: calc(100% - 8px);
           margin: 4px 0;
+          position: relative;
 
           > aj-speedometer {
             width: 100%;
             top: 50%;
+            left: 0;
+            right: 0;
+            position: absolute;
             transform: translateY(-50%);
           }
         }
