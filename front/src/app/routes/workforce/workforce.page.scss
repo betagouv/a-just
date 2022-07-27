@@ -3,7 +3,7 @@
 .header-list {
   display: flex;
   width: 100%;
-  min-height: 96px;
+  height: 96px;
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -20,27 +20,27 @@
     display: flex;
     align-items: center;
     padding-left: 24px;
-    width: 416px;
+    width: 386px;
 
-    > .label-container {
+    >.label-container {
       flex: 1;
       align-self: stretch;
 
-      > .category-name {
+      >.category-name {
         display: flex;
         align-items: center;
         align-self: stretch;
-        margin-top: 29px;
+        margin-top: 18px;
 
         mat-icon {
           margin-right: 8px;
         }
 
-        > .label {
+        >.label {
           flex: 1;
         }
 
-        > .filter-button {
+        >.filter-button {
           mat-icon {
             margin-right: 16px;
             width: 34px;
@@ -55,12 +55,12 @@
         }
       }
 
-      > .filters {
+      >.filters {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        
-        > .tag {
+
+        >.tag {
           border-radius: 12px;
           height: 24px;
           display: inline-flex;
@@ -87,13 +87,13 @@
       }
     }
 
-    > .contentieux-label {
+    >.contentieux-label {
       align-self: stretch;
       display: flex;
       background-color: fColor(bgSelect);
-      width: 125px !important;
+      width: 100px !important;
 
-      > .text {
+      >.text {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -107,21 +107,24 @@
           font-size: 12px;
           color: fColor(colorTag);
         }
+
         .etp-header {
           color: fColor(cgraylightv2);
         }
 
-        > .label {
+        >.label {
           flex: 1;
           display: flex;
           align-items: flex-end;
         }
-        > .etp {
+
+        >.etp {
           display: flex;
           align-items: center;
           flex: 1;
         }
-        > .filter {
+
+        >.filter {
           display: flex;
           align-items: center;
           flex: 1;
@@ -131,23 +134,23 @@
   }
 
   .activities {
-    > .sub-item {
+    >.sub-item {
       cursor: pointer;
 
       &.selected {
         background-color: fColor(bgHeaderSelected);
 
-        > div.text .filter mat-icon {
+        >div.text .filter mat-icon {
           color: fColor(sortIconHeaderSelected);
         }
       }
 
-      > div.text {
-        flex: 1;
+      >div.text {
 
         .label {
           flex: 1;
           align-items: flex-end;
+
           //height: 40px;
           p {
             text-transform: uppercase;
@@ -155,7 +158,6 @@
         }
 
         .etp {
-          flex: 1;
 
           p {
             color: fColor(headerNumberColor);
@@ -166,15 +168,16 @@
         }
 
         .filter {
-          flex: 1;
 
           p {
-            color: #161616;
+            color: fColor(headerColor);
           }
-          mat-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
+
+          img {
+            margin: 4px 0px;
+            width: 14px;
+            height: 14px;
+            font-size: 14px;
             color: fColor(headerColor);
           }
         }
@@ -217,6 +220,10 @@
 
   .activities {
     flex-direction: column;
+
+    .space {
+      height: 16px;
+    }
   }
 
   .actions {
@@ -234,7 +241,7 @@
 }
 
 .profil {
-  width: 400px;
+  width: 370px;
 
   &.item {
     display: flex;
@@ -244,7 +251,7 @@
       padding: 16px 24px 16px 24px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      //justify-content: space-between;
       text-decoration: none;
 
       .name {
@@ -288,7 +295,7 @@
       .tags {
         margin-bottom: 8px;
 
-        > p {
+        >p {
           display: inline-block;
           height: 24px;
           padding: 2px 8px;
@@ -344,15 +351,15 @@
     }
 
     .read-etp {
-      padding: 0 14px;
-      width: 125px !important;
+      width: 100px !important;
       background-color: fColor(bgSelect);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: flex-start;
 
       .label {
+        margin: 16px 0px 8px 0px;
         font-size: 14px;
         color: fColor(cgreen);
       }
@@ -385,6 +392,7 @@
 .activities {
   display: flex;
   flex: 1;
+
   .sub-item {
     flex: 1;
     align-self: stretch;
@@ -412,13 +420,14 @@
         }
 
         &.etp {
-          flex: 1;
+          //flex: 1;
+          margin: 2px 0px;
         }
       }
 
       p {
         text-align: center;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: bold;
         margin: 0 2px;
       }
@@ -478,7 +487,7 @@
   align-items: center;
   border-radius: 4px;
   height: 55px;
-  padding: 4px 16px;
+  padding: 4px 5px 4px 16px;
   border-width: 1px;
   border-style: solid;
   margin-left: 8px;
