@@ -10,31 +10,25 @@
     <div
       [class.selected]="selectedSituation === 'projected'"
       class="button"
-      (click)="selectedSituation = 'projected'"
+      (click)="selectedSituation = 'projected'; permuteValues()"
     >
       Situation projetée
     </div>
     <div
       [class.selected]="selectedSituation === 'simulated'"
       class="button"
-      (click)="selectedSituation = 'simulated'"
+      (click)="selectedSituation = 'simulated'; permuteValues()"
     >
       Situation simulée
     </div>
   </div>
   <div class="space-flex"></div>
-  <div class="container" *ngIf="selectedSituation === 'projected'">
-    <aj-coverage-preview
-      [@fadeInOut]
-      [coverageRate]="toNumber(valueProjected)"
-    ></aj-coverage-preview>
-  </div>
-  <div class="container" *ngIf="selectedSituation === 'simulated'">
+  <div class="container">
     <aj-coverage-preview
       [@fadeInOut]
       [oldCoverageRate]="toNumber(valueProjected)"
       [coverageRate]="toNumber(valueSimulated)"
     ></aj-coverage-preview>
+    <div class="space-flex"></div>
   </div>
-  <div class="space-flex"></div>
 </div>

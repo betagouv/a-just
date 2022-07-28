@@ -29,4 +29,10 @@ export class DialWidgetComponent implements OnInit {
   toNumber(str: string): number {
     return parseInt(str)
   }
+
+  permuteValues() {
+    const tmpVal = String(this.valueProjected)
+    this.valueProjected = this.valueSimulated
+    this.valueSimulated = tmpVal
+  }
 }
