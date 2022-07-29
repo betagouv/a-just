@@ -1,5 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <div class="left-side">
   <div class="title">
     <p>
@@ -11,11 +9,63 @@
     </p>
   </div>
   <div class="container">
-    <div style="width: 100%">
-      <canvas
-        id="in-out-chart"
-        style="height: 250px; width: content-box"
-      ></canvas>
+    <div class="canvas-container">
+      <canvas id="in-out-chart"></canvas>
+      <div id="chartjs-tooltip">
+        <div class="popin-title-content">
+          <p class="popin-title">
+            <b>Affaires</b> <br />
+            à {{ getRealMonth(realSelectedMonth) }}
+          </p>
+          <div class="low">Projetés</div>
+          <p class="hard">Simulés</p>
+          <p class="white">Variation</p>
+        </div>
+        <div class="popin-raw">
+          <div class="popin-title">
+            <div _ngcontent-vmx-c83="" class="circle orange"></div>
+            <b> Entrées</b>
+          </div>
+          <p class="low-value first">
+            {{ getRounded(tooltip.projectedIn) || 0 }}
+          </p>
+          <p class="hard-value first">
+            {{ getRounded(tooltip.simulatedIn) || 0 }}
+          </p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) ||
+                    0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="popin-raw">
+          <div class="popin-title">
+            <div _ngcontent-vmx-c83="" class="circle turquoise"></div>
+            <b>Sorties</b> &nbsp;
+          </div>
+          <p class="low-value">{{ getRounded(tooltip.projectedOut) || 0 }}</p>
+          <p class="hard-value">{{ getRounded(tooltip.simulatedOut) || 0 }}</p>
+          <div class="white-value">
+            <div class="rounded-label">
+              <label
+                >{{
+                  getDeltaInPercent(
+                    tooltip.simulatedOut,
+                    tooltip.projectedOut
+                  ) || 0
+                }}
+                %</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -23,32 +73,32 @@
   <aj-legend-label
     [title]="'projectedIn'"
     [label]="'Entrées (projeté)'"
-    [dotColor]="'#fcc63a'"
-    [bgColor]="'#feebd0'"
+    [dotColor]="'#CB9F2D'"
+    [bgColor]="'#FCC63A'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
     [title]="'simulatedIn'"
     [label]="'Entrées (simulé)'"
-    [dotColor]="'#feebd0'"
-    [bgColor]="'#fcc63a'"
+    [dotColor]="'#FCC63A'"
+    [bgColor]="'#CB9F2D'"
     (value)="display($event)"
   ></aj-legend-label>
   <div class="space"></div>
   <aj-legend-label
     [title]="'projectedOut'"
     [label]="'Sorties (projeté)'"
-    [dotColor]="'#60e0eb'"
-    [bgColor]="'#c7f6fc'"
+    [dotColor]="'#49B6C0'"
+    [bgColor]="'#60E0EB'"
     (value)="display($event)"
   ></aj-legend-label>
 
   <aj-legend-label
     [title]="'simulatedOut'"
     [label]="'Sorties (simulé)'"
-    [dotColor]="'#c7f6fc'"
-    [bgColor]="'#60e0eb'"
+    [dotColor]="'#60E0EB'"
+    [bgColor]="'#49B6C0'"
     (value)="display($event)"
   ></aj-legend-label>
 </div>

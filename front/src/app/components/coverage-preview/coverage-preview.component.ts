@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   OnInit,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core'
 import { degreesToRadians } from 'src/app/utils/geometry'
@@ -39,7 +40,7 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     this.onDraw()
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(change: SimpleChanges): void {
     this.onDraw()
   }
 
@@ -47,7 +48,7 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
 
     if (ctx) {
-      ctx.clearRect(0, 0, this.width, this.height)
+      //ctx.clearRect(0, 0, this.width, this.height)
       this.generateBackground()
     } else {
       setTimeout(() => {
@@ -193,7 +194,17 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
       this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 300)
     }
 
-    // window.requestAnimationFrame(() => this.generateBackground())
+    let myReq: any = null
+
+    //window.requestAnimationFrame(() => this.generateBackground())
+    /**
+    if (this.counter < 1000) {
+      // it's important to update the requestId each time you're calling requestAnimationFrame
+      myReq = requestAnimationFrame(() => this.generateBackground())
+    } else {
+      cancelAnimationFrame(myReq)
+    }
+     */
   }
 
   getRadiusPosition(degree: number) {
@@ -207,7 +218,7 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     cl_bord: string,
     angle: number
   ) {
-    ctx.rotate(degreesToRadians(270 + (angle * 9) / 10)) // + this.counter
+    ctx.rotate(degreesToRadians(270 + (angle * 9) / 10)) //+ this.counter / 1000)
     //this.counter++
     ctx.beginPath()
     ctx.fillStyle = cl_int

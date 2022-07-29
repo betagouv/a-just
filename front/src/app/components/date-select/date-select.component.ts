@@ -21,6 +21,8 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   @Input() readOnly: boolean = false
   @Input() showToday: boolean = true
   @Input() clearable: boolean = false
+  @Input() min: Date | null = null
+  @Input() max: Date | null = null
   @Output() valueChange = new EventEmitter()
   @HostBinding('class.read-only') onReadOnly: boolean = false
   @ViewChild('picker') picker: any
