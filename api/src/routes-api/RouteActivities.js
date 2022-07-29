@@ -6,6 +6,8 @@ export default class RouteActivities extends Route {
     super({ ...params, model: 'Activities' })
   }
 
+
+
   @Route.Post({
     bodyType: Types.object().keys({
       list: Types.any(),
@@ -32,5 +34,16 @@ export default class RouteActivities extends Route {
     const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
     await this.model.updateBy(contentieuxId, date, values, hrBackupId)
     this.sendOk(ctx, 'Ok')
+  }
+
+@Route.Get({
+    path: '*',
+  })
+  async getAll (ctx) {
+    this.sendOk(ctx, (req, res) => {
+    let workbook = createTestWorkbook().then(()=>{
+    workbook.write('workbook.xlsx', res);
+    });
+})
   }
 }

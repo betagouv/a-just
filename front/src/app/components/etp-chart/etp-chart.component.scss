@@ -2,7 +2,12 @@
     display: flex;
     margin-top: 1px;
 
-    #in-out-chart {
+    .disabled-label {
+        pointer-events: none;
+        opacity: 0.3;
+    }
+
+    #etp-chart {
         height: 250px;
         width: content-box;
     }
@@ -45,12 +50,8 @@
             height: 8px;
             border-radius: 50%;
 
-            &.orange {
-                background-color: #fcc63a;
-            }
-
-            &.turquoise {
-                background-color: #60e0eb;
+            &.pink {
+                background-color: #e07dd8;
             }
         }
 
@@ -119,6 +120,8 @@
                         width: 100%;
                         top: -50%;
                         left: 0px;
+
+
                     }
                 }
             }
@@ -145,7 +148,9 @@
                     background-color: #f7ecdb;
 
                     label {
+
                         font-size: 12px;
+
                         color: #d1b781;
                     }
                 }
