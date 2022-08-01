@@ -2,6 +2,14 @@
 
 :host {
   display: block;
+
+  &.dark-mode {
+    .progress-bar {    
+      p {
+        color: fColor(headerColor);
+      }
+    }
+  }
 }
 
 .header-panel {
@@ -75,14 +83,13 @@
 
     progression-bar {
       width: 75%;
-      height: 80px;
       cursor: pointer;
     }
   }
 }
 
 .progress-bar {
-  margin-top: 8px;
+  margin-top: 16px;
   padding: 0px 8px;
   display: flex;
   align-items: center;
