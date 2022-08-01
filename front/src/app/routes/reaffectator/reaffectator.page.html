@@ -125,8 +125,9 @@
           <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">
             <div class="profil item">
-              <a [routerLink]="['/resource-humaine', hr.id]" class="text">
+              <div class="text">
                 <div class="name">
+                  <div class="check-item"></div>
                   <p>{{ hr.firstName}} {{ hr.lastName}}</p>
                   <div *ngIf="hr.comment" class="tooltip">
                     <mat-icon>message</mat-icon>
@@ -134,32 +135,33 @@
                   </div>
                 </div>
                 <div class="tags">
-                  <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="list.textColor">
+                  <p *ngIf="hr.fonction && hr.fonction.code" class="function">
                     {{ hr.fonction && hr.fonction.code}}
                   </p>
                   <p class="etp">{{ hr.etpLabel }}</p>
+                  <p class="unavailable" *ngIf="hr.hasIndisponibility">
+                    <mat-icon>error</mat-icon> Indispo
+                  </p>
                 </div>
-                <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                  <mat-icon>error</mat-icon> indisponibilité
-                </p>
-              </a>
+                <div class="updated-at">
+                  Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
+                  getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY"
+                  }}
+                </div>
+              </div>
               <div class="read-etp">
                 <p class="label">ETP Travaillé :</p>
                 <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-                  [indisponibility]="hr.hasIndisponibility">
+                  [indisponibility]="hr.hasIndisponibility" class="dark-mode">
                 </etp-preview>
               </div>
             </div>
             <div class="activities">
               <div class="flex-1"></div>
-              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
+              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false"
+                class="dark-mode">
               </panel-activities>
               <div class="flex-1"></div>
-            </div>
-            <div class="actions">
-              <a [routerLink]="['/resource-humaine', hr.id]">
-                <mat-icon>chevron_right</mat-icon>
-              </a>
             </div>
           </div>
         </div>

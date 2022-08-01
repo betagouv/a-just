@@ -283,17 +283,6 @@
   }
 }
 
-.item-list {
-  display: flex;
-  width: calc(100% - 32px);
-  margin-left: 16px;
-  border-radius: 4px;
-
-  .activities {
-    flex: 1;
-  }
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -346,9 +335,14 @@
 }
 
 .item-list {
-  margin-top: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  background-color: white;
+  margin-top: 4px;
+  background-color: fColor(darkModeBgLight);
+  display: flex;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: fColor(darkModeBgMenu);
+  }
 
   &:last-child {
     margin-bottom: 16px;
@@ -356,19 +350,8 @@
 
   .activities {
     flex-direction: column;
-  }
-
-  .actions {
-    width: 36px;
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-
-    a {
-      padding: 16px;
-      color: fColor(titleEtpGraph);
-      cursor: pointer;
-    }
   }
 }
 
@@ -380,7 +363,7 @@
 
     .text {
       flex: 1;
-      padding: 24px 24px 20px 24px;
+      padding: 24px 16px 20px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -392,8 +375,9 @@
 
         p {
           font-weight: bold;
-          color: fColor(titleSelect);
+          color: white;
           flex: 1;
+          padding-left: 12px;
         }
 
         .tooltip {
@@ -439,18 +423,22 @@
           &.function {
             color: white;
             background-color: fColor(cbluelight);
-
-            mat-icon {
-              color: fColor(white);
-            }
           }
 
           &.etp {
-            color: fColor(cblack);
-            background-color: fColor(cgrayDefault);
+            color: white;
+            background-color: fColor(darkModeBgMenu);
+          }
+
+          &.unavailable {
+            font-size: 14px;
+            color: fColor(titleIndisponibilitiesPanel);
 
             mat-icon {
-              color: fColor(cblack);
+              font-size: 17px;
+              color: fColor(titleIndisponibilitiesPanel);
+              height: 17px;
+              width: 17px;
             }
           }
 
@@ -463,35 +451,29 @@
           }
         }
       }
+
+      .updated-at {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 20px;
+        color: fColor(grayRow);
+      }
     }
 
     .read-etp {
       padding: 0 14px;
       width: 125px !important;
-      background-color: fColor(bgSelect);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-evenly;
 
       .label {
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: bold;
         color: fColor(cgreen);
       }
     }
-  }
-}
-
-.unavailable {
-  color: fColor(titleIndisponibilitiesPanel);
-
-  mat-icon {
-    color: fColor(titleIndisponibilitiesPanel);
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    position: relative;
-    top: 5px;
   }
 }
 
@@ -505,7 +487,7 @@
 }
 
 .actions {
-  width: 52px;
+  width: 16px;
 }
 
 .title {
