@@ -4,6 +4,10 @@
   display: block;
 
   &.dark-mode {
+    p {
+      color: white;
+    }
+    
     .progress-bar {    
       p {
         color: fColor(headerColor);
