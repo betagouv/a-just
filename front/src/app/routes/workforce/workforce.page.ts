@@ -72,7 +72,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
-    private workforceService: WorkforceService
+    private workforceService: WorkforceService,
   ) {
     super()
   }
@@ -181,7 +181,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       'this.preformatedAllHumanResource',
       this.preformatedAllHumanResource
     )
-
     this.onFilterList()
   }
 
