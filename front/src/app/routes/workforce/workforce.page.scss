@@ -120,14 +120,14 @@
 
         >.etp {
           display: flex;
-          align-items: center;
-          flex: 1;
+          align-items: flex-end;
+          height: 22px;
         }
 
         >.filter {
           display: flex;
           align-items: center;
-          flex: 1;
+          height: 26px;
         }
       }
     }
@@ -221,6 +221,7 @@
   .activities {
     flex-direction: column;
     display: flex;
+    padding: 8px 0px;
 
     .space {
       flex: 1;
