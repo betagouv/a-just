@@ -352,6 +352,10 @@
     flex-direction: column;
     flex: 1;
     display: flex;
+
+    > .flex-1 {
+      min-height: 16px;
+    }
   }
 }
 
