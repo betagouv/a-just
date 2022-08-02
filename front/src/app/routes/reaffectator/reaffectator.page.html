@@ -92,13 +92,14 @@
             </div>
           </div>
           <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel"
+            <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
               [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="label">
                 <p>{{ referentielMappingName(ref.label) }}</p>
               </div>
               <div class="etp-target">
-                <input [value]="ref.totalAffected | number:'0.2-2'" />
+                <input [ngModel]="list.firstETPTargetValue[index]"
+                  (ngModelChange)="updateETPTargetAfterDelay(list.firstETPTargetValue, index, parseFloat($event))" />
               </div>
               <div class="etp">
                 <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
@@ -158,8 +159,8 @@
             </div>
             <div class="activities">
               <div class="flex-1"></div>
-              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false"
-                class="dark-mode">
+              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"
+                (referentielChange)="updateHRReferentiel(hr, $event)" [updateRefentielOnLoad]="false">
               </panel-activities>
               <div class="flex-1"></div>
             </div>

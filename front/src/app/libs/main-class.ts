@@ -15,6 +15,14 @@ export class MainClass {
     return fixDecimal(n)
   }
 
+  parseInt(s: string): number {
+    return parseInt(s)
+  }
+
+  parseFloat(s: string): number {
+    return parseFloat(s.replace(/,/,'.'))
+  }
+
   watch(sub: any) {
     this.watcherList.push(sub)
   }

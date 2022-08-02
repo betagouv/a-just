@@ -162,12 +162,14 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
           true
         )
         doc.addImage(
-          canvas.toDataURL('image/png', 1),
-          'png',
+          canvas.toDataURL('image/jpeg', 1),
+          'JPEG',
           0,
           0,
           width / 2,
-          height / 2
+          height / 2,
+          '',
+          'FAST'
         )
         doc.save(filename)
 

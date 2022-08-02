@@ -27,6 +27,7 @@ export class PanelActivitiesComponent
   @Input() activities: RHActivityInterface[] = []
   @Input() selected: boolean = false
   @Input() header: boolean = true
+  @Input() updateRefentielOnLoad: boolean = true
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter()
   referentiel: ContentieuReferentielInterface[] = []
@@ -105,7 +106,9 @@ export class PanelActivitiesComponent
       return ref
     })
 
-    this.referentielChange.emit(this.referentiel)
+    if(this.updateRefentielOnLoad) {
+      this.referentielChange.emit(this.referentiel)
+    }
     this.onTotalAffected()
   }
 

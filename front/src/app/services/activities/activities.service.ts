@@ -91,4 +91,11 @@ export class ActivitiesService {
       hrBackupId: this.hrBackupId,
     });
   }
+
+  getActivitiesByDate(date: Date) {
+    let activities = this.activities.getValue()
+    activities = activities.filter(a => a.periode.getMonth() === date.getMonth() && a.periode.getFullYear() === date.getFullYear())
+    
+    return activities
+  }
 }

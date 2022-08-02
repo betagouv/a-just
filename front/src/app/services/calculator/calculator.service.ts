@@ -3,7 +3,6 @@ import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import {
   CalculatorInterface,
-  etpAffectedInterface,
 } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
