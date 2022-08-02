@@ -220,9 +220,10 @@
 
   .activities {
     flex-direction: column;
+    display: flex;
 
     .space {
-      height: 16px;
+      flex: 1;
     }
   }
 
