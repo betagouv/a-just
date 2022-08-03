@@ -9,6 +9,19 @@
   padding: 4px 8px;
   cursor: pointer;
 
+  &.dark-mode {
+    background-color: fColor(darkModeBgMenu);
+    border: 1px solid fColor(darkModeTitle);
+
+    p, mat-icon {
+      color: white;
+    }
+
+    p.title {
+      color: fColor(headerColor);
+    }
+  }
+
   p.title {
     color: fColor(titleSelect);
     white-space: nowrap;

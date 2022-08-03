@@ -18,7 +18,7 @@
 <div class="activities-panel">
   <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
     <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)"
-      (click)="onTogglePanel(index)">
+      (click)="onTogglePanel(index)" class="dark-mode">
     </progression-bar>
   </div>
 </div>
@@ -31,7 +31,7 @@
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
       [color]="referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
-      (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)">
+      (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
     <p>{{ referentielMappingName(referentiel[refIndexSelected].label) }}</p>
   </div>
@@ -41,7 +41,8 @@
   <div class="group-sub-item">
     <div class="sub-item" *ngFor="let ref of referentiel[refIndexSelected].childrens || []">
       <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(referentiel[refIndexSelected].label)"
-        [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])">
+        [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
+        class="dark-mode">
       </progression-bar>
       <p>{{ referentielMappingName(ref.label) }}</p>
     </div>

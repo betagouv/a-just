@@ -10,6 +10,19 @@
   display: flex;
   align-items: stretch;
 
+  &.dark-mode {
+    background-color: fColor(darkModeBgMenu);
+    border: 1px solid fColor(darkModeTitle);
+
+    p, mat-icon, input {
+      color: white;
+    }
+
+    p.title {
+      color: fColor(headerColor);
+    }
+  }
+
   div {
     &.input {
       padding: 2px 8px;

@@ -2,6 +2,26 @@
 
 :host {
   display: block;
+
+  &.dark-mode {
+    p {
+      color: white;
+    }
+    
+    .progress-bar {    
+      p {
+        color: fColor(headerColor);
+      }
+    }
+
+    .sub-panel-activites {
+      .arrow-block {
+        .arrow {
+          background-color: fColor(darkModeBgLight);
+        }
+      }
+    }
+  }
 }
 
 .header-panel {
@@ -43,7 +63,7 @@
         &.etp {
           flex: 1;
 
-          >p {
+          > p {
             color: fColor(headerNumberColor) !important;
           }
         }
@@ -67,7 +87,7 @@
 .activities-panel {
   display: flex;
 
-  >div {
+  > div {
     flex: 1;
     display: flex;
     align-items: center;
@@ -75,14 +95,13 @@
 
     progression-bar {
       width: 75%;
-      height: 80px;
       cursor: pointer;
     }
   }
 }
 
 .progress-bar {
-  margin-top: 8px;
+  margin-top: 16px;
   padding: 0px 8px;
   display: flex;
   align-items: center;
@@ -92,7 +111,7 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line>div {
+    .progress-bar-line > div {
       background-color: fColor(cred);
     }
   }
@@ -110,7 +129,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    >div {
+    > div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;

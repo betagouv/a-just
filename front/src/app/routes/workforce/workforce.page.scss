@@ -120,14 +120,14 @@
 
         >.etp {
           display: flex;
-          align-items: center;
-          flex: 1;
+          align-items: flex-end;
+          height: 22px;
         }
 
         >.filter {
           display: flex;
           align-items: center;
-          flex: 1;
+          height: 26px;
         }
       }
     }
@@ -220,9 +220,12 @@
 
   .activities {
     flex-direction: column;
+    display: flex;
+    padding: 8px 0px;
 
     .space {
-      height: 16px;
+      flex: 1;
+      min-height: 16px;
     }
   }
 
@@ -468,10 +471,6 @@
   display: inline-block;
 }
 
-.or {
-  text-align: center;
-}
-
 .search-next {
   display: flex;
   flex-direction: column;
@@ -579,4 +578,18 @@ aj-input-button {
 
 progression-bar {
   cursor: pointer;
+}
+
+.reaffectator-page {
+  margin-right: 8px;
+  text-decoration: none;
+
+  > button {
+    display: flex;
+    align-items: center;
+
+    aj-radio-button {
+      margin-left: 16px;
+    }
+  }
 }
