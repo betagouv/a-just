@@ -1,9 +1,8 @@
 <div class="background animate__animated animate__fadeIn"></div>
 
-<div class="popin animate__animated animate__fadeIn" #popin
+<div class="popin animate__animated animate__fadeIn" #popin *ngIf="leftPosition !== 0"
   (click)="$event.stopPropagation(); filterSelection.close(); sortSelection.close(); orderSelection.close()"
-  [ngStyle]="{left: leftPosition+'px',top: topPosition+'px', opacity: leftPosition === 0 ? 0 : 1}">
-  {{ leftPosition }}
+  [ngStyle]="{left: leftPosition+'px',top: topPosition+'px'}">
   <i class="ri-close-fill close" (click)="close.emit()"></i>
   <p class="panel-title">Options d'affichage</p>
   <p class="filter-group">Filtrer par :</p>
