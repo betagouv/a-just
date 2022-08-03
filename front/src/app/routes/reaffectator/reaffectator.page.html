@@ -76,7 +76,7 @@
               <i *ngIf="list.headerPanel" class="ri-eye-off-line" (click)="list.headerPanel = false"></i>
               <p>{{ list.label }}</p>
             </div>
-            <div class="contentieux-label">
+            <div class="contentieux-label" *ngIf="list.headerPanel">
               <div class="label">
                 <p>Contentieux :</p>
               </div>
@@ -91,7 +91,7 @@
               </div>
             </div>
           </div>
-          <div class="activities">
+          <div class="activities" *ngIf="list.headerPanel">
             <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
               [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="label">
