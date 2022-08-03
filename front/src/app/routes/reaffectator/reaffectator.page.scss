@@ -51,7 +51,7 @@
         width: 100%;
 
         &.label {
-          height: 53px;
+          height: 40px;
           margin-top: 3px;
           align-items: flex-end;
         }
@@ -92,7 +92,7 @@
       cursor: pointer;
 
       &.selected {
-        background-color: fColor(bgHeaderSelected);
+        background-color: fColor(darkModeBgMenu);
 
         > div.text .filter mat-icon {
           color: fColor(sortIconHeaderSelected);
@@ -103,7 +103,7 @@
         flex: 1;
         display: flex;
         align-items: flex-end;
-        height: 53px;
+        height: 40px;
 
         p {
           text-transform: uppercase;
@@ -331,6 +331,7 @@
           border: 1px solid fColor(darkModeTitle);
           color: fColor(darkModeTitle);
           padding: 4px 12px;
+          cursor: pointer;
         }
       }
     }
@@ -373,7 +374,6 @@
       padding: 24px 16px 20px 16px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       text-decoration: none;
 
       .name {
@@ -473,12 +473,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
 
       .label {
         font-size: 12px;
         font-weight: bold;
         color: fColor(cgreen);
+        margin: 12px 0 12px 0;
       }
     }
   }
@@ -555,4 +555,18 @@ progression-bar {
   height: 24px;
   border: 1px solid fColor(darkModeTitle);
   border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+
+  &.selected::before {
+    position: absolute;
+    content: '✓';
+    color: white;
+    text-align: center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: fColor(darkModeTitle);
+  }
 }

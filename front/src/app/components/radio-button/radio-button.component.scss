@@ -2,16 +2,40 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
+
+  &:not(.selected) {
+    background-color: white !important;
+  }
+
+  &.selected {
+    .indicator {
+      border-style: 0;
+    }
+  }
+
+  .border-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: 1px solid transparent;
+  }
 
   .panel {
-    transition: margin-left 0.25s ease;
+    transition: left 0.25s ease;
     width: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
 
     &.selected {
-      margin-left: 50%;
+      left: 50%;
     }
   }
 
@@ -20,5 +44,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid blue;
   }
 }

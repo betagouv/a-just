@@ -1,40 +1,21 @@
-<aj-wrapper
-  title="Visualisation instantanée des effectifs"
+<aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
-  [actionTemplate]="actions"
-  class="content-margin-null header-border-none"
-  [ngClass]="{removeMenuZindex: showFilterPanel !== -1}"
->
+  [actionTemplate]="actions" class="content-margin-null header-border-none"
+  [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
   <div class="container">
     <div class="title">
-      <aj-date-select
-        title="A la date d'"
-        [value]="dateSelected"
-        (valueChange)="onDateChanged($event)"
-      >
+      <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
       </aj-date-select>
-      <aj-select
-        title="Pour les contentieux"
-        [value]="selectedReferentielIds"
-        [datas]="formReferentiel"
-        (valueChange)="onSelectedReferentielIdsChanged($event)"
-      >
+      <aj-select title="Pour les contentieux" [value]="selectedReferentielIds" [datas]="formReferentiel"
+        (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
       <div class="flex-1"></div>
-      <div
-        *ngFor="let category of categoriesFilterList; let index = index;"
-        class="checkbox-button"
+      <div *ngFor="let category of categoriesFilterList; let index = index;" class="checkbox-button"
         [ngClass]="{'blue': index === 0, 'pink': index === 1, 'yellow': index === 2}"
-        (click)="checkboxCategory.click()"
-      >
+        (click)="checkboxCategory.click()">
         <div>
-          <input
-            type="checkbox"
-            #checkboxCategory
-            (click)="$event.stopPropagation()"
-            [(ngModel)]="category.selected"
-            (ngModelChange)="onFilterList()"
-          />
+          <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
+            (ngModelChange)="onFilterList()" />
         </div>
         <div>
           <p class="label">
@@ -45,73 +26,43 @@
         </div>
       </div>
 
+      <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
+        (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
+      </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">
-        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer"
-          >expand_less
+        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
         </mat-icon>
-        <mat-icon
-          matSuffix
-          *ngIf="valuesFinded !== null"
-          (click)="onFindNext()"
-          class="cursor-pointer"
-        >
+        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
           expand_more
         </mat-icon>
       </div>
     </div>
 
     <div class="content-list" id="container-list">
-      <ng-template
-        ngFor
-        let-list
-        let-i="index"
-        [ngForOf]="listFormated"
-        [ngForTrackBy]="trackById"
-      >
-        <div
-          class="header-list"
-          [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}"
-        >
+      <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
+        <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
             <div class="label-container">
               <div class="category-name">
-                <mat-icon [style.color]="list.textColor"
-                  >person_outline</mat-icon
-                >
+                <mat-icon [style.color]="list.textColor">person_outline</mat-icon>
                 <div class="label" [style.color]="list.textColor">
                   {{ list.label }}
                 </div>
                 <div class="filter-button">
                   <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
-                  <filter-panel
-                    *ngIf="showFilterPanel === i"
-                    (update)="updateFilterParams($event)"
-                    [orderValue]="filterParams && filterParams.order"
-                    [sortValue]="filterParams && filterParams.sort"
-                    [filterValues]="(filterParams && filterParams.filterValues) || null"
-                    (close)="showFilterPanel = -1"
-                  >
+                  <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
+                    [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+                    [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = -1">
                   </filter-panel>
                 </div>
               </div>
               <div class="filters">
-                <div
-                  class="tag"
-                  *ngIf="filterParams && filterParams.sortName"
-                  (click)="clearFilterSort()"
-                >
-                  <i
-                    *ngIf="filterParams.orderIcon"
-                    class="ri-{{filterParams.orderIcon}}"
-                  ></i>
+                <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
+                  <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
                   <p>{{filterParams.sortName}}</p>
                   <i class="ri-close-line"></i>
                 </div>
-                <div
-                  class="tag"
-                  *ngIf="filterParams && filterParams.filterNames"
-                  (click)="clearFilterFilter()"
-                >
+                <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
                   <i class="ri-filter-3-line"></i>
                   <p>{{filterParams.filterNames}}</p>
                   <i class="ri-close-line"></i>
@@ -133,12 +84,8 @@
             </div>
           </div>
           <div class="activities">
-            <div
-              class="sub-item"
-              *ngFor="let ref of list.referentiel"
-              (click)="onFilterBy(ref)"
-              [class.selected]="filterSelected && filterSelected.id === ref.id"
-            >
+            <div class="sub-item" *ngFor="let ref of list.referentiel" (click)="onFilterBy(ref)"
+              [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="text">
                 <div class="label">
                   <p><b>{{ referentielMappingName(ref.label) }}</b></p>
@@ -147,31 +94,20 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <img
-                    *ngIf="filterSelected && filterSelected.id === ref.id; else descIcon"
-                    src="/assets/icons/sort-asc.svg"
-                  />
-                  <ng-template #descIcon
-                    ><img src="/assets/icons/sort-desc.svg"
-                  /></ng-template>
+                  <img *ngIf="filterSelected && filterSelected.id === ref.id; else descIcon"
+                    src="/assets/icons/sort-asc.svg" />
+                  <ng-template #descIcon><img src="/assets/icons/sort-desc.svg" /></ng-template>
                 </div>
               </div>
-              <div
-                class="color"
-                [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"
-              ></div>
+              <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
             </div>
           </div>
           <div class="actions"></div>
         </div>
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
-          <div
-            class="item-list"
-            *ngFor="let hr of list.hr; trackBy: trackById"
-            [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id"
-          >
+          <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
+            [id]="'human-'+hr.id">
             <div class="profil item">
               <a [routerLink]="['/resource-humaine', hr.id]" class="text">
                 <div class="name">
@@ -182,11 +118,7 @@
                   </div>
                 </div>
                 <div class="tags">
-                  <p
-                    *ngIf="hr.fonction && hr.fonction.code"
-                    class="function"
-                    [style.background-color]="list.textColor"
-                  >
+                  <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="list.textColor">
                     {{ hr.fonction && hr.fonction.code}}
                   </p>
                   <p class="etp">{{ hr.etpLabel }}</p>
@@ -202,22 +134,14 @@
               </a>
               <div class="read-etp">
                 <p class="label">ETP Travaillé :</p>
-                <etp-preview
-                  [width]="56"
-                  [height]="56"
-                  [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-                  [indisponibility]="hr.hasIndisponibility"
-                >
+                <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
+                  [indisponibility]="hr.hasIndisponibility">
                 </etp-preview>
               </div>
             </div>
             <div class="activities">
               <div class="space"></div>
-              <panel-activities
-                [activities]="hr.currentActivities"
-                [header]="false"
-                [selected]="false"
-              >
+              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
               </panel-activities>
               <div class="space"></div>
             </div>
@@ -234,17 +158,17 @@
 </aj-wrapper>
 
 <ng-template #actions>
+  <a routerLink="/reaffectateur" class="reaffectator-page">
+    <button class="white outline">
+      Simuler des affectations
+      <aj-radio-button [title]="'title'" width="40px" height="20px" bgColor="#8585f6" borderColor="#8585f6"
+        switchColor="white" [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line"
+        [value]="false" [readOnly]="true">
+      </aj-radio-button>
+    </button>
+  </a>
+
   <button class="primary add-collaborator" (click)="addHR()">
     Ajouter un collaborateur
   </button>
-  <aj-input-button
-    title="Rechercher un collaborateur"
-    placeholder="Indiquer le nom"
-    [ngModel]="searchValue"
-    (valueChange)="searchValue = $event; updateSearch()"
-    (search)="updateSearch()"
-    ngDefaultControl
-    icon=""
-  >
-  </aj-input-button>
 </ng-template>

@@ -56,6 +56,12 @@ button {
       border: 1px solid fColor(darkModeTitle);
       background-color: transparent;
     }
+
+    &.white {
+      color: fColor(cbluedark);
+      border: 1px solid fColor(cbluedark);
+      background-color: white;
+    }
   }
 
   &.strict-border {
