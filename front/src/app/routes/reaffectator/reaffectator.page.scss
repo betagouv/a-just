@@ -1,44 +1,207 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 .header-list {
   display: flex;
   width: 100%;
-  height: 96px;
-  background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: fColor(darkModeBgLight);
   z-index: 1;
   position: sticky;
   top: 0;
 
   .profil {
     display: flex;
-    align-items: center;
-    padding-left: 24px;
     width: 416px;
 
     > .label-container {
       display: flex;
-      align-items: center;
+      padding: 8px 32px;
       flex: 1;
-      align-self: stretch;
-      
-      mat-icon {
+
+      i {
+        width: 32px;
+        height: 32px;
         margin-right: 8px;
+        border: 1px solid fColor(darkModeTitle);
+        color: white;
+        text-align: center;
+        line-height: 32px;
+        cursor: pointer;
+      }
+
+      p {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+
+    > .contentieux-label {
+      width: 125px;
+      padding-right: 8px;
+
+      p {
+        text-align: right;
+        font-size: 12px;
+        color: fColor(grayRow);
+      }
+
+      > div {
+        flex: 1;
+        display: flex;
+        width: 100%;
+
+        &.label {
+          height: 40px;
+          margin-top: 3px;
+          align-items: flex-end;
+        }
+
+        &.etp-target {
+          margin-top: 17px;
+          height: 38px;
+          align-items: center;
+        }
+
+        &.etp {
+          height: 38px;
+          align-items: flex-end;
+        }
+
+        &.filter {
+          height: 39px;
+          margin-bottom: 11px;
+          align-items: center;
+        }
+
+        p {
+          text-align: right;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .activities {
+    display: flex;
+    flex: 1;
+    margin-top: 3px;
+
+    > .sub-item {
+      flex: 1;
+      margin-right: 3px;
+      cursor: pointer;
+
+      &.selected {
+        background-color: fColor(darkModeBgMenu);
+
+        > div.text .filter mat-icon {
+          color: fColor(sortIconHeaderSelected);
+        }
       }
 
       > .label {
         flex: 1;
+        display: flex;
+        align-items: flex-end;
+        height: 40px;
+
+        p {
+          text-transform: uppercase;
+          font-size: 14px;
+          font-weight: bold;
+          color: white;
+          text-align: center;
+          width: 100%;
+        }
       }
 
-    
+      > .etp-target {
+        margin-top: 17px;
+        height: 38px;
+
+        input {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          border: none;
+          border-top-left-radius: 4px;
+          border-top-right-radius: 4px;
+        }
+      }
+
+      > .etp {
+        height: 38px;
+        display: flex;
+        align-items: flex-end;
+
+        p {
+          color: fColor(headerNumberColor);
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      .filter {
+        height: 39px;
+        margin-bottom: 11px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+
+        p {
+          color: #161616;
+        }
+        mat-icon {
+          width: 16px;
+          height: 16px;
+          font-size: 16px;
+          color: fColor(headerColor);
+        }
+      }
+    }
+  }
+}
+
+.indicators {
+  display: flex;
+  width: 100%;
+  background-color: fColor(darkModeBgLight);
+  margin-bottom: 1px;
+
+  .profil {
+    display: flex;
+    align-items: stretch;
+    width: 416px;
+
+    > .label-container {
+      flex: 1;
+      display: flex;
+      padding: 8px 32px;
+
+      i {
+        width: 32px;
+        height: 32px;
+        margin-right: 8px;
+        border: 1px solid fColor(darkModeTitle);
+        color: white;
+        text-align: center;
+        line-height: 32px;
+        cursor: pointer;
+      }
+
+      p {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+      }
     }
 
     > .contentieux-label {
       align-self: stretch;
       display: flex;
-      background-color: fColor(bgSelect);
-      width: 125px!important;
+      width: 125px;
+      height: calc(100% - 8px);
+      margin: 4px 0;
 
       > .text {
         flex: 1;
@@ -46,84 +209,76 @@
         flex-direction: column;
         align-items: flex-end;
         justify-content: center;
-        margin-bottom: 8px;
         margin-right: 8px;
 
         p {
-          text-align: center;
+          text-align: right;
           font-size: 12px;
-          color: fColor(colorTag);
-        }
-        .etp-header {
-          color: fColor(cgraylightv2);
+          color: fColor(grayRow);
         }
 
-        > .label {
-          flex: 1;
-          display: flex;
-          align-items: flex-end;
-        }
-        > .etp {
+        > div {
           display: flex;
           align-items: center;
-          flex: 1;
-        }
-        > .filter {
-          display: flex;
-          align-items: center;
-          flex: 1;
-       
+
+          &:first-child {
+            flex: 1;
+          }
+
+          &:last-child {
+            height: 50px;
+          }
         }
       }
     }
   }
 
   .activities {
+    display: flex;
+    flex: 1;
+
     > .sub-item {
-      cursor: pointer;
+      margin: 4px 0;
+      flex: 1;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
 
-      &.selected {
-        background-color: fColor(bgHeaderSelected);
+      > div {
+        margin-right: 3px;
 
-        > div.text .filter mat-icon {
-          color: fColor(sortIconHeaderSelected);
-        }
-      }
-
-      > div.text {
-        flex: 1;
-
-        .label {
+        &:first-child {
           flex: 1;
-          align-items: flex-end;
-          //height: 40px;
-          p {
-            text-transform: uppercase;
+        }
+
+        &:last-child {
+          height: 50px;
+        }
+
+        > div.taux {
+          background-color: fColor(darkModeBgMenuSelected);
+          border-radius: 3.7px;
+          height: calc(100% - 8px);
+          margin: 4px 0;
+          position: relative;
+
+          > aj-speedometer {
+            width: 100%;
           }
         }
 
-        .etp {
-          flex: 1;
-         
-          p {
-            color: fColor(headerNumberColor);
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: -0.53px;
-          }
-        }
-
-        .filter {
-          flex: 1;
+        > div.dtes {
+          background-color: fColor(darkModeBgMenu);
+          border-radius: 4px;
+          height: calc(100% - 8px);
+          margin: 4px 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           p {
-            color: #161616;
-          }
-          mat-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-            color: fColor(headerColor);
+            color: white;
+            font-size: 14px;
           }
         }
       }
@@ -131,17 +286,20 @@
   }
 }
 
-.item-list {
-  display: flex;
-  width: calc(100% - 32px);
-  margin-left: 16px;
-  border-radius: 4px;
-}
-
 .container {
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  &.print {
+    .content-list {
+      overflow: inherit;
+    }
+
+    .header-list {
+      position: inherit;
+    }
+  }
 
   .content-list {
     flex: 1;
@@ -150,14 +308,45 @@
     .sub-content-list {
       display: inline-block;
       width: 100%;
+      padding: 4px 18px;
+
+      .header-item {
+        height: 65px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        background-color: fColor(darkModeBgLight);
+        border-radius: 8px;
+
+        .check-item {
+          margin-right: 10px;
+        }
+
+        p.label {
+          margin-right: 56px;
+          color: fColor(darkModeTitle);
+        }
+
+        p.btn {
+          border: 1px solid fColor(darkModeTitle);
+          color: fColor(darkModeTitle);
+          padding: 4px 12px;
+          cursor: pointer;
+        }
+      }
     }
   }
 }
 
 .item-list {
-  margin-top: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  background-color: white;
+  margin-top: 4px;
+  background-color: fColor(darkModeBgLight);
+  display: flex;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: fColor(darkModeBgMenu);
+  }
 
   &:last-child {
     margin-bottom: 16px;
@@ -165,18 +354,11 @@
 
   .activities {
     flex-direction: column;
-  }
-
-  .actions {
-    width: 36px;
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    a {
-      padding: 16px;
-      color: fColor(titleEtpGraph);
-      cursor: pointer;
+    > .flex-1 {
+      min-height: 16px;
     }
   }
 }
@@ -189,10 +371,9 @@
 
     .text {
       flex: 1;
-      padding: 24px 24px 20px 24px;
+      padding: 24px 16px 20px 16px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       text-decoration: none;
 
       .name {
@@ -201,8 +382,9 @@
 
         p {
           font-weight: bold;
-          color: fColor(titleSelect);
+          color: white;
           flex: 1;
+          padding-left: 12px;
         }
 
         .tooltip {
@@ -248,18 +430,22 @@
           &.function {
             color: white;
             background-color: fColor(cbluelight);
-
-            mat-icon {
-              color: fColor(white);
-            }
           }
 
           &.etp {
-            color: fColor(cblack);
-            background-color: fColor(cgrayDefault);
+            color: white;
+            background-color: fColor(darkModeBgMenu);
+          }
+
+          &.unavailable {
+            font-size: 14px;
+            color: fColor(titleIndisponibilitiesPanel);
 
             mat-icon {
-              color: fColor(cblack);
+              font-size: 17px;
+              color: fColor(titleIndisponibilitiesPanel);
+              height: 17px;
+              width: 17px;
             }
           }
 
@@ -272,35 +458,29 @@
           }
         }
       }
+
+      .updated-at {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 20px;
+        color: fColor(grayRow);
+      }
     }
 
     .read-etp {
       padding: 0 14px;
-      width: 125px!important;
-      background-color: fColor(bgSelect);
+      width: 125px !important;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
 
       .label {
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: bold;
         color: fColor(cgreen);
+        margin: 12px 0 12px 0;
       }
     }
-  }
-}
-
-.unavailable {
-  color: fColor(titleIndisponibilitiesPanel);
-
-  mat-icon {
-    color: fColor(titleIndisponibilitiesPanel);
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    position: relative;
-    top: 5px;
   }
 }
 
@@ -313,65 +493,15 @@
   justify-content: center;
 }
 
-.activities {
-  display: flex;
-  flex: 1;
-  .sub-item {
-    flex: 1;
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-
-    &:first-child div.text {
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    div.text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
-
-      div {
-        display: flex;
-        align-items: center;
-
-        &.label {
-          //flex: 2;
-        }
-
-        &.etp {
-          flex: 1;
-        }
-      }
-
-      p {
-        text-align: center;
-        font-size: 14px;
-        font-weight: bold;
-        margin: 0 2px;
-      }
-    }
-
-    div.color {
-      height: 8px;
-      opacity: 0.2;
-    }
-  }
-}
-
 .actions {
-  width: 52px;
+  width: 16px;
 }
 
 .title {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid fColor(cbrownlight);
+  background-color: fColor(darkModeBgMenu);
   padding: 0 32px 24px 32px;
-  background-color: white;
 
   aj-select,
   aj-date-select {
@@ -388,100 +518,13 @@
   display: inline-block;
 }
 
-.or {
-  text-align: center;
-}
-
 .search-next {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
 
-.checkbox-button {
-  display: flex;
-  align-items: center;
-  border-radius: 4px;
-  height: 55px;
-  padding: 4px 16px;
-  border-width: 1px;
-  border-style: solid;
-  margin-left: 8px;
-  cursor: pointer;
-
-  &.blue {
-    border-color: fColor(cbluedark);
-    background-color: rgba(fColor(cbluedark), 0.2);
-
-    p.label {
-      color: fColor(cbluedark);
-    }
-
-    input {
-      border-color: fColor(cbluedark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cbluedark);
-        background-image: url("/assets/icons/checkbox.svg");
-      }
-    }
-  }
-
-  &.pink {
-    border-color: fColor(cpink);
-    background-color: rgba(fColor(cpink), 0.2);
-
-    p.label {
-      color: fColor(cpink);
-    }
-
-    input {
-      border-color: fColor(cpink);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cpink);
-        background-image: url("/assets/icons/checkbox.svg");
-      }
-    }
-  }
-
-  &.yellow {
-    border-color: fColor(cyellow);
-    background-color: rgba(fColor(cyellow), 0.2);
-
-    p.label {
-      color: fColor(cyellowdark);
-    }
-
-    input {
-      border-color: fColor(cyellowdark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cyellowdark);
-        background-image: url("/assets/icons/checkbox.svg");
-      }
-    }
-  }
-
-  input {
-    margin-right: 16px;
-    cursor: pointer;
-    -webkit-appearance: none;
-    background-color: #fafafa;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 2px;
-    display: inline-block;
-    position: relative;
-    width: 13px;
-    height: 13px;
-  }
-
-  p.etp {
-    font-weight: bold;
+  mat-icon {
+    color: white;
   }
 }
 
@@ -491,4 +534,39 @@ aj-input-button {
 
 progression-bar {
   cursor: pointer;
+}
+
+.reaffectator-page {
+  margin-right: 8px;
+  text-decoration: none;
+
+  > button {
+    display: flex;
+    align-items: center;
+
+    aj-radio-button {
+      margin-left: 16px;
+    }
+  }
+}
+
+.check-item {
+  width: 24px;
+  height: 24px;
+  border: 1px solid fColor(darkModeTitle);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+
+  &.selected::before {
+    position: absolute;
+    content: '✓';
+    color: white;
+    text-align: center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: fColor(darkModeTitle);
+  }
 }

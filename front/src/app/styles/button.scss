@@ -13,6 +13,10 @@ button {
   border-radius: 8px;
   white-space: nowrap;
 
+  &.light {
+    font-size: 16px;
+  }
+
   &.small {
     height: 40px;
     line-height: 37px;
@@ -44,6 +48,18 @@ button {
     &.red {
       color: fColor(cred);
       border: 1px solid fColor(cred);
+      background-color: white;
+    }
+
+    &.blue-light {
+      color: fColor(darkModeTitle);
+      border: 1px solid fColor(darkModeTitle);
+      background-color: transparent;
+    }
+
+    &.white {
+      color: fColor(cbluedark);
+      border: 1px solid fColor(cbluedark);
       background-color: white;
     }
   }

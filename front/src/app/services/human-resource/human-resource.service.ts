@@ -44,6 +44,7 @@ export class HumanResourceService {
   copyOfIdsIndispo: number[] = []
   categoriesFilterList: HRCategorySelectedInterface[] = []
   selectedReferentielIds: number[] = []
+  selectedCategoriesIds: number[] = []
 
   constructor(
     private serverService: ServerService,
@@ -88,7 +89,7 @@ export class HumanResourceService {
             etpt: 0,
             nbPersonal: 0,
           }))
-          this.fonctions.next(result.fonctions)
+          this.fonctions.next(orderBy(result.fonctions, ['categoryId', 'rank']))
           this.activitiesService.activities.next(
             result.activities.map((a: ActivityInterface) => ({
               ...a,
