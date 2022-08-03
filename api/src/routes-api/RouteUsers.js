@@ -4,7 +4,7 @@ import { accessList } from '../constants/access'
 import { validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
-import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN } from '../constants/email'
+import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ONBOARDING } from '../constants/email'
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 
@@ -42,6 +42,15 @@ export default class RouteUsers extends Route {
         TEMPLATE_NEW_USER_SIGNIN,
         {
           email,
+          serverUrl: config.frontUrl,
+        }
+      )
+      await sentEmail(
+        {
+          email,
+        },
+        TEMPLATE_USER_ONBOARDING,
+        {
           serverUrl: config.frontUrl,
         }
       )
