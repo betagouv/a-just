@@ -117,9 +117,10 @@
         <div class="sub-content-list">
 
           <div class="header-item">
-            <div class="check-item"></div>
+            <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hr.length}"
+              (click)="toogleCheckAllPerson(i)"></div>
             <p class="label">Tout sélectionner</p>
-            <p class="btn">Retour à la ventilation actuelle des fiches sélectionnées</p>
+            <p class="btn" (click)="onInitList(list)">Retour à la ventilation actuelle des fiches sélectionnées</p>
           </div>
 
 
@@ -128,7 +129,8 @@
             <div class="profil item">
               <div class="text">
                 <div class="name">
-                  <div class="check-item"></div>
+                  <div class="check-item" [ngClass]="{selected: list.personSelected.indexOf(hr.id) !== -1}"
+                    (click)="toogleCheckPerson(i, hr)"></div>
                   <p>{{ hr.firstName}} {{ hr.lastName}}</p>
                   <div *ngIf="hr.comment" class="tooltip">
                     <mat-icon>message</mat-icon>
@@ -176,7 +178,7 @@
     <button class="blue-light light outline">
       Simuler des affectations
       <aj-radio-button [title]="'title'" width="40px" height="20px" bgColor="#8585f6" switchColor="white"
-        [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line">
+        [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line" [readOnly]="true">
       </aj-radio-button>
     </button>
   </a>

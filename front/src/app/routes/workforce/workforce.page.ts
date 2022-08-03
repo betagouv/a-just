@@ -20,6 +20,7 @@ import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { FilterPanelInterface } from './filter-panel/filter-panel.component'
+import { UserService } from 'src/app/services/user/user.service'
 
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -66,6 +67,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   isFirstLoad: boolean = true
   showFilterPanel: number = -1
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
+  canViewReaffectator: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -73,6 +75,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
+    private userService: UserService,
   ) {
     super()
   }
@@ -119,6 +122,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       )
     )
+
+    const user = this.userService.user.getValue()
+    this.canViewReaffectator = user && user.access && user.access.indexOf(7) !== -1 ? true : false
   }
 
   ngOnDestroy() {

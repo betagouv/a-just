@@ -115,13 +115,6 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
       })
     }
 
-    if (user && user.access && user.access.indexOf(7) !== -1) {
-      menu.push({
-        label: 'Reaffectateur',
-        path: 'reaffectateur',
-      })
-    }
-
     this.menu = menu
   }
 

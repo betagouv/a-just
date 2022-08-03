@@ -20,19 +20,24 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   @Input() title: string = ''
   @Input() switchColor: string = '#7befb2'
   @Input() @HostBinding('style.background-color') bgColor: string = 'white'
+  @Input() @HostBinding('style.border-color') borderColor: string = 'white'
   @HostBinding('style.width') @Input() width: string = '25px'
   @HostBinding('style.height') @Input() height: string = '15px'
   @HostBinding('style.border-radius') @Input() borderRadius: string = '7.5px'
   @Input() indicatorWidth: number = 15 / 2
   @Input() indicatorHeight: number = 15 / 2
   @Input() icon: string = ''
+  @Input() readOnly: boolean = false
   @Output() valueChange = new EventEmitter()
-  @Input() value: boolean = true
+  @HostBinding('class.selected') @Input() value: boolean = true
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent) {
     event.stopPropagation()
-    this.o.checked = !this.o.checked
-    this.valueChange.emit(this.o)
+    if (!this.readOnly) {
+      this.o.checked = !this.o.checked
+      this.value = this.o.checked
+      this.valueChange.emit(this.o)
+    }
   }
   o = {
     label: '',

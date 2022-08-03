@@ -44,6 +44,7 @@ interface listFormatedInterface {
   referentiel: ContentieuReferentielCalculateInterface[]
   firstETPTargetValue: number[]
   headerPanel: boolean
+  personSelected: number[]
 }
 
 interface ContentieuReferentielCalculateInterface
@@ -84,7 +85,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   isFirstLoad: boolean = true
   showIndicatorPanel: boolean = true
   objectOfFirstETPTargetValue: FirstETPTargetValueInterface[] = []
-  timeoutUpdateETPTargetAfterDelay: any;
+  timeoutUpdateETPTargetAfterDelay: any
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -170,40 +171,39 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.objectOfFirstETPTargetValue = []
 
     this.preformatedAllHumanResource = orderBy(
-      this.allHumanResources.map((h) => {
-        const indisponibilities =
-          this.humanResourceService.findAllIndisponibilities(
-            h,
-            this.dateSelected
-          )
-        const hasIndisponibility = fixDecimal(
-          sumBy(indisponibilities, 'percent') / 100
-        )
-        const currentSituation = this.humanResourceService.findSituation(
-          h,
-          this.dateSelected
-        )
-        const etp = (currentSituation && currentSituation.etp) || 0
-
-        return {
-          ...h,
-          currentActivities:
-            (currentSituation && currentSituation.activities) || [],
-          indisponibilities,
-          opacity: 1,
-          etpLabel: etpLabel(etp),
-          hasIndisponibility,
-          currentSituation,
-          etp,
-          category: currentSituation && currentSituation.category,
-          fonction: currentSituation && currentSituation.fonction,
-        }
-      }),
+      this.allHumanResources.map((h) => this.formatHR(h)),
       ['fonction.rank', 'lastName'],
       ['asc', 'asc']
     )
 
     this.onFilterList()
+  }
+
+  formatHR(h: HumanResourceInterface) {
+    const indisponibilities =
+      this.humanResourceService.findAllIndisponibilities(h, this.dateSelected)
+    const hasIndisponibility = fixDecimal(
+      sumBy(indisponibilities, 'percent') / 100
+    )
+    const currentSituation = this.humanResourceService.findSituation(
+      h,
+      this.dateSelected
+    )
+    const etp = (currentSituation && currentSituation.etp) || 0
+
+    return {
+      ...h,
+      currentActivities:
+        (currentSituation && currentSituation.activities) || [],
+      indisponibilities,
+      opacity: 1,
+      etpLabel: etpLabel(etp),
+      hasIndisponibility,
+      currentSituation,
+      etp,
+      category: currentSituation && currentSituation.category,
+      fonction: currentSituation && currentSituation.fonction,
+    }
   }
 
   updateCategoryValues() {
@@ -438,15 +438,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           )
         }
 
-        let firstETPTargetValue = referentiel.map(r => fixDecimal(r.totalAffected || 0))
+        let firstETPTargetValue = referentiel.map((r) =>
+          fixDecimal(r.totalAffected || 0)
+        )
 
-        const findOldValues = this.objectOfFirstETPTargetValue.find(e => e.groupId === groupId)
-        if(findOldValues) {
+        const findOldValues = this.objectOfFirstETPTargetValue.find(
+          (e) => e.groupId === groupId
+        )
+        if (findOldValues) {
           firstETPTargetValue = findOldValues.list
         } else {
           this.objectOfFirstETPTargetValue.push({
             groupId,
-            list: firstETPTargetValue
+            list: firstETPTargetValue,
           })
         }
 
@@ -466,6 +470,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               : `${label}s`,
           hr: group,
           headerPanel: true,
+          personSelected: [],
         }
       }
     )
@@ -625,7 +630,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             averageProcessingTime: null,
           },
         })
-
         ;(r.childrens || [])
           .filter((rc: ContentieuReferentielInterface) => rc.percent)
           .map((rc: ContentieuReferentielInterface) => {
@@ -641,8 +645,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           })
       })
 
-    const indexOfHR = this.preformatedAllHumanResource.findIndex(p => p.id === hr.id)
-    if(indexOfHR !== -1) {
+    const indexOfHR = this.preformatedAllHumanResource.findIndex(
+      (p) => p.id === hr.id
+    )
+    if (indexOfHR !== -1) {
       this.preformatedAllHumanResource[indexOfHR].currentActivities = list
       this.onFilterList()
     }
@@ -650,12 +656,50 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   updateETPTargetAfterDelay(list: number[], index: number, value: number) {
     if (this.timeoutUpdateETPTargetAfterDelay) {
-      clearTimeout(this.timeoutUpdateETPTargetAfterDelay);
-      this.timeoutUpdateETPTargetAfterDelay = null;
+      clearTimeout(this.timeoutUpdateETPTargetAfterDelay)
+      this.timeoutUpdateETPTargetAfterDelay = null
     }
 
     this.timeoutUpdateETPTargetAfterDelay = setTimeout(() => {
       list[index] = value || 0
-    }, 500);
+    }, 500)
+  }
+
+  toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
+    const indexFinded = this.listFormated[index].personSelected.indexOf(hr.id)
+    if (indexFinded === -1) {
+      this.listFormated[index].personSelected.push(hr.id)
+    } else {
+      this.listFormated[index].personSelected.splice(indexFinded, 1)
+    }
+  }
+
+  toogleCheckAllPerson(index: number) {
+    if (
+      this.listFormated[index].personSelected.length ===
+      this.listFormated[index].hr.length
+    ) {
+      this.listFormated[index].personSelected = []
+    } else {
+      this.listFormated[index].personSelected = this.listFormated[index].hr.map(
+        (h) => h.id
+      )
+    }
+  }
+
+  onInitList(list: listFormatedInterface) {
+    if(list.personSelected.length) {
+      list.personSelected.map(id => {
+        const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(h => h.id === id)
+        const orginalPerson = this.allHumanResources.find(h => h.id === id)
+
+        if(orginalPerson && indexOfFormatedList !== -1) {
+          this.preformatedAllHumanResource[indexOfFormatedList] = this.formatHR(orginalPerson)
+        }
+      })
+
+      list.personSelected = []
+      this.onFilterList()
+    }
   }
 }

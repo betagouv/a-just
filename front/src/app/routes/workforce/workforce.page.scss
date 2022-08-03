@@ -579,3 +579,17 @@ aj-input-button {
 progression-bar {
   cursor: pointer;
 }
+
+.reaffectator-page {
+  margin-right: 8px;
+  text-decoration: none;
+
+  > button {
+    display: flex;
+    align-items: center;
+
+    aj-radio-button {
+      margin-left: 16px;
+    }
+  }
+}
