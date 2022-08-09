@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core'
 import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
-import { ActivityInterface } from 'src/app/interfaces/activity'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import {
-  HRCategoryInterface,
-  HRCategorySelectedInterface,
-} from 'src/app/interfaces/hr-category'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { getShortMonthString, today } from 'src/app/utils/dates'
-import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
 
 @Injectable({
@@ -31,87 +26,47 @@ export class HumanResourceService {
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
     null
   )
+  hrBackup: BehaviorSubject<BackupInterface | null> =
+    new BehaviorSubject<BackupInterface | null>(null)
   hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  autoReloadData: boolean = true
   categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<
     HRCategoryInterface[]
   >([])
   fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<
     HRFonctionInterface[]
   >([])
-  allContentieuxReferentiel: ContentieuReferentielInterface[] = []
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   copyOfIdsIndispo: number[] = []
-  categoriesFilterList: HRCategorySelectedInterface[] = []
+  categoriesFilterListIds: number[] = []
   selectedReferentielIds: number[] = []
   selectedCategoriesIds: number[] = []
 
-  constructor(
-    private serverService: ServerService,
-    private activitiesService: ActivitiesService
-  ) {
+  constructor(private serverService: ServerService) {
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0
       this.backupId.next(+backupId)
     }
 
-    this.contentieuxReferentiel.subscribe((c) => {
-      let list: ContentieuReferentielInterface[] = []
-      c.map((cont) => {
-        list.push(cont)
-        list = list.concat(cont.childrens || [])
-      })
-
-      this.allContentieuxReferentiel = list
-      this.selectedReferentielIds = c
-        .filter((a) => this.copyOfIdsIndispo.indexOf(a.id) === -1)
-        .map((r) => r.id)
-    })
-  }
-
-  initDatas() {
     this.backupId.subscribe((id) => {
-      if (this.autoReloadData) {
-        this.getCurrentHR(id).then((result) => {
-          localStorage.setItem('backupId', '' + result.backupId)
-          this.categories.next(result.categories)
-          this.categoriesFilterList = this.categories.getValue().map((c) => ({
-            ...c,
-            selected: true,
-            label:
-              c.label && c.label === 'Magistrat'
-                ? 'Magistrat du siège'
-                : c.label,
-            labelPlural:
-              c.label && c.label === 'Magistrat'
-                ? 'Magistrats du siège'
-                : `${c.label}s`,
-            etpt: 0,
-            nbPersonal: 0,
-          }))
-          this.fonctions.next(orderBy(result.fonctions, ['categoryId', 'rank']))
-          this.activitiesService.activities.next(
-            result.activities.map((a: ActivityInterface) => ({
-              ...a,
-              periode: new Date(a.periode),
-            }))
-          )
-
-          this.activitiesService.hrBackupId = result.backupId
-          this.hr.next(result.hr.map(this.formatHR))
-          this.backups.next(
-            result.backups.map((b: BackupInterface) => ({
-              ...b,
-              date: new Date(b.date),
-            }))
-          )
-          this.autoReloadData = false
-          this.backupId.next(result.backupId)
-          this.hrIsModify.next(false)
-        })
-      } else {
-        this.autoReloadData = true
+      if (id) {
+        localStorage.setItem('backupId', '' + id)
       }
+
+      const bk: BackupInterface | undefined = this.backups
+        .getValue()
+        .find((b) => b.id === id)
+      this.hrBackup.next(bk || null)
+    })
+
+    this.backups.subscribe((list) => {
+      if (list.length && !list.find((b) => b.id !== this.backupId.getValue())) {
+        this.backupId.next(list[0].id)
+      }
+
+      const bk: BackupInterface | undefined = list.find(
+        (b) => b.id === this.backupId.getValue()
+      )
+      this.hrBackup.next(bk || null)
     })
   }
 
@@ -134,7 +89,6 @@ export class HumanResourceService {
 
   async createHumanResource(date: Date) {
     const activities: RHActivityInterface[] = []
-    const categories = this.categories.getValue()
 
     const hr = {
       id: this.hr.getValue().length * -1,
@@ -335,7 +289,11 @@ export class HumanResourceService {
     )
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date, order = 'desc') {
+  findSituation(
+    hr: HumanResourceInterface | null,
+    date?: Date,
+    order = 'desc'
+  ) {
     if (date) {
       date = today(date)
     }
@@ -358,7 +316,11 @@ export class HumanResourceService {
     return situations.length ? situations[0] : null
   }
 
-  findAllSituations(hr: HumanResourceInterface | null, date?: Date, order: string | boolean = 'desc') {
+  findAllSituations(
+    hr: HumanResourceInterface | null,
+    date?: Date,
+    order: string | boolean = 'desc'
+  ) {
     let situations = orderBy(
       hr?.situations || [],
       [
@@ -627,9 +589,7 @@ export class HumanResourceService {
         .map((s) => today(s.dateStart))
     )
     listAllDates = listAllDates.concat(
-      indisponibilities
-        .filter((i) => i.dateStop)
-        .map((s) => today(s.dateStop))
+      indisponibilities.filter((i) => i.dateStop).map((s) => today(s.dateStop))
     )
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
@@ -682,5 +642,23 @@ export class HumanResourceService {
           )
           .join(', ')
       : null
+  }
+
+  onFilterList(
+    backupId: number,
+    date: Date,
+    contentieuxIds: number[],
+    categoriesIds: number[]
+  ) {
+    return this.serverService
+      .post(`human-resources/filter-list`, {
+        backupId,
+        date,
+        contentieuxIds,
+        categoriesIds,
+      })
+      .then((data) => {
+        return data.data.list
+      })
   }
 }

@@ -1,0 +1,14 @@
+export const getCategoryColor = (label, opacity) => {
+  switch (label) {
+  case 'Magistrat':
+  case 'Magistrats':
+  case 'Magistrat du siège':
+  case 'Magistrats du siège':
+    return `rgba(0, 0, 145, ${opacity})`
+  case 'Fonctionnaire':
+  case 'Fonctionnaires':
+    return `rgba(165, 88, 160, ${opacity})`
+  }
+
+  return `rgba(239, 203, 58, ${opacity})`
+}

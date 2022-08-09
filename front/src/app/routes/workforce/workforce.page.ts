@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { orderBy, sortBy, sumBy } from 'lodash'
+import { orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
@@ -10,11 +10,8 @@ import {
 } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { fixDecimal } from 'src/app/utils/numbers'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { dataInterface } from 'src/app/components/select/select.component'
-import { copyArray } from 'src/app/utils/array'
-import { etpLabel } from 'src/app/utils/referentiel'
 import { ActivatedRoute, Router } from '@angular/router'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
@@ -39,7 +36,9 @@ interface listFormatedInterface {
   bgColor: string
   label: string
   hr: HumanResourceSelectedInterface[]
+  hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielInterface[]
+  categoryId: number
 }
 
 @Component({
@@ -54,17 +53,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   referentiel: ContentieuReferentielInterface[] = []
   formReferentiel: dataInterface[] = []
   categoriesFilterList: HRCategorySelectedInterface[] = []
+  categoriesFilterListIds: number[] = []
   selectedReferentielIds: any[] = []
   searchValue: string = ''
   valuesFinded: HumanResourceInterface[] | null = null
   indexValuesFinded: number = 0
-  timeoutUpdateSearch: any = null
-  hrBackup: BackupInterface | undefined
+  hrBackup: BackupInterface | null = null
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] = []
   filterSelected: ContentieuReferentielInterface | null = null
   lastScrollTop: number = 0
-  isFirstLoad: boolean = true
   showFilterPanel: number = -1
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
   canViewReaffectator: boolean = false
@@ -75,20 +73,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     super()
   }
 
   ngOnInit() {
-    this.watch(
-      this.humanResourceService.hr.subscribe((hr: HumanResourceInterface[]) => {
-        this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank'])
-        this.categoriesFilterList =
-          this.humanResourceService.categoriesFilterList
-        this.preformatHumanResources()
-      })
-    )
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
         (ref: ContentieuReferentielInterface[]) => {
@@ -101,6 +91,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             value: this.referentielMappingName(r.label),
           }))
+
           this.selectedReferentielIds =
             this.humanResourceService.selectedReferentielIds
           this.onFilterList()
@@ -108,102 +99,60 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       )
     )
     this.watch(
-      this.humanResourceService.categories.subscribe(() => {
+      this.humanResourceService.categories.subscribe((categories) => {
+        this.categoriesFilterListIds =
+          this.humanResourceService.categoriesFilterListIds
+
+        this.categoriesFilterList = categories.map((c) => ({
+          ...c,
+          selected: this.categoriesFilterListIds.indexOf(c.id) !== -1,
+          label:
+            c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+          labelPlural:
+            c.label && c.label === 'Magistrat'
+              ? 'Magistrats du siège'
+              : `${c.label}s`,
+          etpt: 0,
+          nbPersonal: 0,
+        }))
+
         this.onFilterList()
       })
     )
     this.watch(
-      this.humanResourceService.backupId.subscribe(
-        (backupId: number | null) => {
-          const hrBackups = this.humanResourceService.backups.getValue()
-          this.hrBackup = hrBackups.find(
-            (b: BackupInterface) => b.id === backupId
-          )
+      this.humanResourceService.hrBackup.subscribe(
+        (hrBackup: BackupInterface | null) => {
+          this.hrBackup = hrBackup
+          this.onFilterList()
         }
       )
     )
 
     const user = this.userService.user.getValue()
-    this.canViewReaffectator = user && user.access && user.access.indexOf(7) !== -1 ? true : false
+    this.canViewReaffectator =
+      user && user.access && user.access.indexOf(7) !== -1 ? true : false
   }
 
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
-  preformatHumanResources() {
-    this.preformatedAllHumanResource = orderBy(
-      this.allHumanResources.map((h) => {
-        const indisponibilities =
-          this.humanResourceService.findAllIndisponibilities(
-            h,
-            this.dateSelected
-          )
-        let hasIndisponibility = fixDecimal(
-          sumBy(indisponibilities, 'percent') / 100
-        )
-        if (hasIndisponibility > 1) {
-          hasIndisponibility = 1
-        }
-        const currentSituation = this.humanResourceService.findSituation(
-          h,
-          this.dateSelected
-        )
-        let etp = (currentSituation && currentSituation.etp) || 0
-        if (etp < 0) {
-          etp = 0
-        }
-
-        let firstSituation = currentSituation
-        //console.log(h, currentSituation)
-        if (!firstSituation) {
-          firstSituation = this.humanResourceService.findSituation(
-            h,
-            undefined,
-            'asc'
-          )
-          etp = 1
-        }
-
-        return {
-          ...h,
-          currentActivities:
-            (currentSituation && currentSituation.activities) || [],
-          indisponibilities,
-          opacity: 1,
-          etpLabel: etpLabel(etp),
-          hasIndisponibility,
-          currentSituation,
-          etp,
-          category: firstSituation && firstSituation.category,
-          fonction: firstSituation && firstSituation.fonction,
-        }
-      }),
-      ['fonction.rank', 'lastName'],
-      ['asc', 'asc']
-    )
-
-    console.log(
-      'this.preformatedAllHumanResource',
-      this.preformatedAllHumanResource
-    )
-    this.onFilterList()
-  }
-
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const personal = this.humanResourcesFilters.filter(
-        (h) => h.category && h.category.id === c.id
-      )
+      const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
+      let personal = []
       let etpt = 0
 
-      personal.map((h) => {
-        let realETP = (h.etp || 0) - h.hasIndisponibility
-        if (realETP < 0) {
-          realETP = 0
-        }
-        etpt += realETP
-      })
+      if (formatedList) {
+        personal = formatedList.hrFiltered
+        personal.map((h) => {
+          let realETP = (h.etp || 0) - h.hasIndisponibility
+          if (realETP < 0) {
+            realETP = 0
+          }
+          etpt += realETP
+        })
+      }
 
       return {
         ...c,
@@ -248,10 +197,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
-      (hr.firstName || '')
+      ((hr.firstName || '') + (hr.lastName || ''))
         .toLowerCase()
-        .includes(this.searchValue.toLowerCase()) ||
-      (hr.lastName || '').toLowerCase().includes(this.searchValue.toLowerCase())
+        .includes(this.searchValue.toLowerCase())
     ) {
       return 1
     }
@@ -259,172 +207,103 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return 0.5
   }
 
-  onFilterList() {
-    if (
-      !this.categoriesFilterList.length ||
-      !this.referentiel.length ||
-      !this.categoriesFilterList.length
-    ) {
-      return
-    }
-
-    this.humanResourceService.categoriesFilterList = this.categoriesFilterList // copy to memoryse selection
-
-    const selectedCategoryIds = this.categoriesFilterList
-      .filter((c) => c.selected)
-      .map((c) => c.id)
-    let list: HumanResourceSelectedInterface[] =
-      this.preformatedAllHumanResource
-        .filter((hr) => {
-          let isOk = true
-          if (
-            hr.category &&
-            selectedCategoryIds.indexOf(hr.category.id) === -1
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateEnd &&
-            hr.dateEnd.getTime() < this.dateSelected.getTime()
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateStart &&
-            hr.dateStart.getTime() > this.dateSelected.getTime()
-          ) {
-            isOk = false
-          }
-
-          return isOk
-        })
-        .map((h) => ({
-          ...h,
-          opacity: this.checkHROpacity(h),
-        }))
-
-    const valuesFinded = list.filter((h) => h.opacity === 1)
-    this.valuesFinded =
-      valuesFinded.length === list.length ? null : valuesFinded
-    this.indexValuesFinded = 0
-
-    if (this.selectedReferentielIds.length !== this.referentiel.length) {
-      list = list.filter((h) => {
-        const idsOfactivities = h.currentActivities.map(
-          (a) => (a.contentieux && a.contentieux.id) || 0
-        )
-        for (let i = 0; i < idsOfactivities.length; i++) {
-          if (this.selectedReferentielIds.indexOf(idsOfactivities[i]) !== -1) {
-            return true
-          }
+  onSearchBy() {
+    const valuesFinded: HumanResourceInterface[] = []
+    let nbPerson = 0
+    this.listFormated = this.listFormated.map((l: listFormatedInterface) => ({
+      ...l,
+      hrFiltered: l.hrFiltered.map((h) => {
+        const opacity = this.checkHROpacity(h)
+        nbPerson ++
+        if (opacity === 1) {
+          valuesFinded.push(h)
         }
 
-        return false
-      })
-    }
+        return {
+          ...h,
+          opacity,
+        }
+      }),
+    }))
 
-    this.humanResources = list
-    this.orderListWithFiltersParams()
+    this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
+    this.indexValuesFinded = 0
 
-    if (this.isFirstLoad && this.route.snapshot.fragment) {
-      this.isFirstLoad = false
-      this.onGoTo(+this.route.snapshot.fragment)
-    } else if (this.valuesFinded && this.valuesFinded.length) {
+    if (this.valuesFinded && this.valuesFinded.length) {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
-    } else if (list.length) {
+    } else {
       this.onGoTo(null)
     }
   }
 
-  orderListWithFiltersParams() {
-    let listFiltered = [...this.humanResources]
-    if (this.filterParams) {
-      if (this.filterParams.filterFunction) {
-        listFiltered = this.filterParams.filterFunction(listFiltered)
-      }
-
-      if (this.filterParams.sortFunction) {
-        listFiltered = this.filterParams.sortFunction(listFiltered)
-      }
-
-      if (this.filterParams.order && this.filterParams.order === 'desc') {
-        listFiltered = listFiltered.reverse()
-      }
+  onFilterList() {
+    if (
+      !this.categoriesFilterList.length ||
+      !this.referentiel.length ||
+      !this.hrBackup
+    ) {
+      return
     }
 
-    this.humanResourcesFilters = listFiltered
-    this.formatListToShow()
-    this.updateCategoryValues()
+    this.humanResourceService.categoriesFilterListIds =
+      this.categoriesFilterList.filter((c) => c.selected).map((c) => c.id) // copy to memoryse selection
+
+    this.humanResourceService
+      .onFilterList(
+        this.humanResourceService.backupId.getValue() || 0,
+        this.dateSelected,
+        this.selectedReferentielIds,
+        this.categoriesFilterListIds
+      )
+      .then((list) => {
+        console.log(list)
+        this.listFormated = list
+
+        this.orderListWithFiltersParams()
+        this.onSearchBy()
+      })
+
+    if (this.route.snapshot.fragment) {
+      this.onGoTo(+this.route.snapshot.fragment)
+    }
   }
 
-  formatListToShow() {
-    this.listFormated = [...this.categoriesFilterList].map(
-      (category: HRCategorySelectedInterface) => {
-        let label = category.label
-        let referentiel = (
-          copyArray(this.referentiel) as ContentieuReferentielInterface[]
-        ).map((ref) => {
-          ref.totalAffected = 0
-          return ref
-        })
-
-        let group = this.humanResourcesFilters
-          .filter((h) => h.category && h.category.id === category.id)
-          .map((hr) => {
-            hr.tmpActivities = {}
-
-            referentiel = referentiel.map((ref) => {
-              hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-                (r) => r.contentieux && r.contentieux.id === ref.id
-              )
-              const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-              if (timeAffected) {
-                let realETP = (hr.etp || 0) - hr.hasIndisponibility
-                if (realETP < 0) {
-                  realETP = 0
-                }
-                ref.totalAffected =
-                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              }
-
-              return ref
-            })
-
-            return hr
-          })
-
-        if (this.filterSelected) {
-          group = orderBy(
-            group,
-            (h) => {
-              const acti = (h.currentActivities || []).find(
-                (a) => a.contentieux?.id === this.filterSelected?.id
-              )
-              return acti ? acti.percent || 0 : 0
-            },
-            ['desc']
-          )
+  orderListWithFiltersParams() {
+    this.listFormated = this.listFormated.map((list) => {
+      let listFiltered = [...list.hr]
+      if (this.filterParams) {
+        if (this.filterParams.filterFunction) {
+          listFiltered = this.filterParams.filterFunction(listFiltered)
         }
 
-        if (group.length > 1) {
-          if (label.indexOf('agistrat') !== -1) {
-            label = label.replace('agistrat', 'agistrats')
-          } else {
-            label += 's'
-          }
+        if (this.filterParams.sortFunction) {
+          listFiltered = this.filterParams.sortFunction(listFiltered)
         }
 
-        return {
-          textColor: this.getCategoryColor(label),
-          bgColor: this.getCategoryColor(label, 0.2),
-          referentiel,
-          label,
-          hr: group,
+        if (this.filterParams.order && this.filterParams.order === 'desc') {
+          listFiltered = listFiltered.reverse()
         }
       }
-    )
+
+      list.hrFiltered = listFiltered
+
+      if (this.filterSelected) {
+        list.hrFiltered = orderBy(
+          list.hrFiltered,
+          (h) => {
+            const acti = (h.currentActivities || []).find(
+              (a) => a.contentieux?.id === this.filterSelected?.id
+            )
+            return acti ? acti.percent || 0 : 0
+          },
+          ['desc']
+        )
+      }
+
+      return list
+    })
+
+    this.updateCategoryValues()
   }
 
   onGoTo(hrId: number | null) {
@@ -498,21 +377,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  updateSearch() {
-    if (this.timeoutUpdateSearch) {
-      clearTimeout(this.timeoutUpdateSearch)
-      this.timeoutUpdateSearch = null
-    }
-
-    this.timeoutUpdateSearch = setTimeout(() => {
-      this.onFilterList()
-    }, 500)
-  }
-
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
-    this.preformatHumanResources()
+    this.onFilterList()
   }
 
   onFilterBy(ref: ContentieuReferentielInterface) {
@@ -522,7 +390,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterSelected = null
     }
 
-    this.onFilterList()
+    this.orderListWithFiltersParams()
   }
 
   updateFilterParams(event: FilterPanelInterface) {

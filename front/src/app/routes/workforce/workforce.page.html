@@ -27,7 +27,7 @@
       </div>
 
       <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
-        (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
+        (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">
       </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">
         <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
@@ -106,7 +106,7 @@
         </div>
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
-          <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
+          <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">
             <div class="profil item">
               <a [routerLink]="['/resource-humaine', hr.id]" class="text">

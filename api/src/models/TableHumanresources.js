@@ -1,4 +1,5 @@
 import { posad } from '../constants/hr'
+import { snakeToCamelObject } from '../utils/utils'
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -218,6 +219,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.removeHR = async (hrId) => {
     const hrFromDB = await Model.findOne({ 
+      attributes: ['id', 'backup_id'],
       where: {
         id: hrId,
       },
@@ -257,7 +259,7 @@ export default (sequelizeInstance, Model) => {
       force: true,
     })
 
-    return true
+    return snakeToCamelObject(hrFromDB.dataValues)
   }
 
   return Model

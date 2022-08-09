@@ -56,122 +56,117 @@ export class ExcelService extends MainClass implements OnInit {
   ngOnInit(): void {}
 
   exportExcel(): void {
-    this.referentielService.loadReferentiels().then((value) => {
-      this.loading.next(true)
-      this.allReferentiels = value
+    this.loading.next(true)
+    this.allReferentiels =
+      this.humanResourceService.contentieuxReferentiel.getValue()
 
-      for (let i = 0; i < this.allReferentiels.length; i++) {
-        if (this.allReferentiels[i].childrens)
-          for (
-            let y = this.allReferentiels[i].childrens!.length - 1;
-            y >= 0;
-            y--
-          ) {
-            this.allReferentiels.splice(
-              i + 1,
-              0,
-              this.allReferentiels[i].childrens![y]
+    for (let i = 0; i < this.allReferentiels.length; i++) {
+      if (this.allReferentiels[i].childrens)
+        for (
+          let y = this.allReferentiels[i].childrens!.length - 1;
+          y >= 0;
+          y--
+        ) {
+          this.allReferentiels.splice(
+            i + 1,
+            0,
+            this.allReferentiels[i].childrens![y]
+          )
+        }
+    }
+
+    this.hrCategoryService.getAll().then((list) => {
+      this.categories = list
+      this.hrFonctionService.getAll().then((listfct) => {
+        this.fonctions = listfct
+        this.data = []
+        const allHuman = this.humanResourceService.hr.getValue()
+
+        allHuman.map((human) => {
+          let categoryName = ''
+          let fonctionName = ''
+
+          const currentSituation =
+            this.humanResourceService.findSituation(human)
+          if (currentSituation && currentSituation.category) {
+            const findCategory = this.categories.find(
+              // @ts-ignore
+              (c) => c.id === currentSituation.category.id
             )
+            categoryName = findCategory ? findCategory.label.toLowerCase() : ''
+          } else {
+            console.log({ error: human })
           }
-      }
 
-      this.hrCategoryService.getAll().then((list) => {
-        this.categories = list
-        this.hrFonctionService.getAll().then((listfct) => {
-          this.fonctions = listfct
-          this.data = []
-          const allHuman = this.humanResourceService.hr.getValue()
-
-          allHuman.map((human) => {
-            let categoryName = ''
-            let fonctionName = ''
-
-            const currentSituation =
-              this.humanResourceService.findSituation(human)
-            if (currentSituation && currentSituation.category) {
-              const findCategory = this.categories.find(
-                // @ts-ignore
-                (c) => c.id === currentSituation.category.id
-              )
-              categoryName = findCategory
-                ? findCategory.label.toLowerCase()
-                : ''
-            } else {
-              console.log({ error: human })
-            }
-
-            if (currentSituation && currentSituation.fonction) {
-              const findFonction = this.fonctions.find(
-                // @ts-ignore
-                (f) => f.id === currentSituation.fonction.id
-              )
-              fonctionName = findFonction
-                ? findFonction.label.toLowerCase()
-                : ''
-            } else {
-              console.log({ error: human })
-            }
-
-            let etpAffected: any = []
-            let refObj: { [key: string]: any } = {}
-            let totalEtpt = 0
-
-            this.allReferentiels.map(
-              (referentiel: ContentieuReferentielInterface) => {
-                etpAffected = this.getHRVentilation(human, referentiel, [
-                  ...this.categories,
-                ]) as Array<any>
-
-                let counter = 0
-
-                Object.keys(etpAffected).map((key: string) => {
-                  if (referentiel.childrens !== undefined) {
-                    counter += etpAffected[key].etpt
-                  }
-                })
-
-                if (referentiel.childrens !== undefined) {
-                  refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
-                  totalEtpt += counter
-                } else refObj[referentiel.label.toUpperCase()] = counter
-              }
+          if (currentSituation && currentSituation.fonction) {
+            const findFonction = this.fonctions.find(
+              // @ts-ignore
+              (f) => f.id === currentSituation.fonction.id
             )
+            fonctionName = findFonction ? findFonction.label.toLowerCase() : ''
+          } else {
+            console.log({ error: human })
+          }
 
-            this.data.push({
-              Matricule: human.id,
-              Prénom: human.firstName,
-              Nom: human.lastName,
-              Catégorie: categoryName,
-              Fonction: fonctionName,
-              ETPT: totalEtpt,
-              ...refObj,
-            })
-          })
+          let etpAffected: any = []
+          let refObj: { [key: string]: any } = {}
+          let totalEtpt = 0
 
-          import('xlsx').then((xlsx) => {
-            const worksheet = xlsx.utils.json_to_sheet(this.data, {})
-            const workbook = {
-              Sheets: { data: worksheet },
-              SheetNames: ['data'],
+          this.allReferentiels.map(
+            (referentiel: ContentieuReferentielInterface) => {
+              etpAffected = this.getHRVentilation(human, referentiel, [
+                ...this.categories,
+              ]) as Array<any>
+
+              let counter = 0
+
+              Object.keys(etpAffected).map((key: string) => {
+                if (referentiel.childrens !== undefined) {
+                  counter += etpAffected[key].etpt
+                }
+              })
+
+              if (referentiel.childrens !== undefined) {
+                refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
+                totalEtpt += counter
+              } else refObj[referentiel.label.toUpperCase()] = counter
             }
+          )
 
-            worksheet['!cols'] = this.autofitColumns(this.data)
-
-            const excelBuffer: any = xlsx.write(workbook, {
-              bookType: 'xlsx',
-              type: 'array',
-            })
-
-            const filename = `Extraction-${
-              this.userService.user.getValue()!.firstName
-            }_${this.userService.user.getValue()!.lastName!}_${new Date()
-              .toJSON()
-              .slice(0, 10)}`
-
-            const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
-            FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
-            this.loading.next(false)
+          this.data.push({
+            Matricule: human.id,
+            Prénom: human.firstName,
+            Nom: human.lastName,
+            Catégorie: categoryName,
+            Fonction: fonctionName,
+            ETPT: totalEtpt,
+            ...refObj,
           })
+        })
+
+        import('xlsx').then((xlsx) => {
+          const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+          const workbook = {
+            Sheets: { data: worksheet },
+            SheetNames: ['data'],
+          }
+
+          worksheet['!cols'] = this.autofitColumns(this.data)
+
+          const excelBuffer: any = xlsx.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          })
+
+          const filename = `Extraction-${
+            this.userService.user.getValue()!.firstName
+          }_${this.userService.user.getValue()!.lastName!}_${new Date()
+            .toJSON()
+            .slice(0, 10)}`
+
+          const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+          this.loading.next(false)
         })
       })
     })
