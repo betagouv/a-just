@@ -16,4 +16,5 @@ module.exports = {
   sendinblue: process.env.SENDINBLUE,
   logsPassword: process.env.LOGS_PASSWORD,
   contactEmail: process.env.CONTACT_EMAIL,
+  preloadHumanResourcesDatas: false,
 }
