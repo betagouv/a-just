@@ -4,12 +4,24 @@ import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
+import config from 'config'
 
 let cacheJuridictionPeoples = {}
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
+
+    this.onPreload()
+  }
+
+  async onPreload () {
+    if(config.preloadHumanResourcesDatas) {
+      const allBackups = await this.models.HRBackups.getAll()
+      for(let i = 0; i < allBackups.length; i++) {
+        cacheJuridictionPeoples[allBackups[i].id] = await this.model.getCurrentHr(allBackups[i].id)
+      }
+    }
   }
 
   @Route.Post({
