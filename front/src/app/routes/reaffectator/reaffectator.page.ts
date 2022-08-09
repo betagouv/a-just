@@ -103,8 +103,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hr.subscribe((hr) => {
         this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank'])
-        this.categoriesFilterList =
-          this.humanResourceService.categoriesFilterList
+        /* TODO this.categoriesFilterList =
+          this.humanResourceService.categoriesFilterList */
         this.preformatHumanResources()
       })
     )
@@ -291,7 +291,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    this.humanResourceService.categoriesFilterList = this.categoriesFilterList // copy to memoryse selection
+    // TODO this.humanResourceService.categoriesFilterList = this.categoriesFilterList // copy to memoryse selection
 
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource

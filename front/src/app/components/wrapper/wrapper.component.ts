@@ -36,6 +36,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() alignLeft: boolean | undefined
 
   hrBackup: BackupInterface | undefined
+  hrBackupId: number | null = null
   hrBackups: BackupInterface[] = []
   menu = [
     {
@@ -59,8 +60,15 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     )
 
     this.watch(
+      this.humanResourceService.backups.subscribe((backups) => {
+        this.hrBackups = backups
+        this.hrBackup = this.hrBackups.find((b) => b.id === this.hrBackupId)
+      })
+    )
+
+    this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
-        this.hrBackups = this.humanResourceService.backups.getValue()
+        this.hrBackupId = backupId
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
       })
     )

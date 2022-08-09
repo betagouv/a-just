@@ -161,4 +161,16 @@ export default class RouteUsers extends Route {
       msg: ctx.state.__('Information de contact non valide!'),
     })
   }
+
+  @Route.Get({
+    accesses: [Access.isLogin],
+  })
+  async getUserDatas (ctx) {    
+    this.sendOk(ctx, {
+      backups: await this.models.HRBackups.list(ctx.state.user.id),
+      categories: await this.models.HRCategories.getAll(),
+      fonctions: await this.models.HRFonctions.getAll(),
+      referentiel: await this.models.ContentieuxReferentiels.getReferentiels(),
+    })
+  }
 }
