@@ -16,73 +16,6 @@ export class ActivitiesService {
 
   constructor(private serverService: ServerService) {}
 
-  updateActivity(
-    referentiel: ContentieuReferentielInterface,
-    activities: ActivityInterface[] = this.activities.getValue(),
-    firstRow: boolean = true
-  ) {
-    const activityMonth = this.activityMonth.getValue();
-    const findIndexActivity = activities.findIndex(
-      (a) =>
-        a.contentieux.id === referentiel.id &&
-        a.periode.getFullYear() === activityMonth.getFullYear() &&
-        a.periode.getMonth() === activityMonth.getMonth()
-    );
-
-    if (referentiel.in || referentiel.out || referentiel.stock) {
-      if (findIndexActivity === -1) {
-        // add
-        activities.push({
-          periode: this.activityMonth.getValue(),
-          entrees: referentiel.in || 0,
-          sorties: referentiel.out || 0,
-          stock: referentiel.stock || 0,
-          contentieux: referentiel,
-        });
-      } else {
-        // update
-        activities[findIndexActivity] = {
-          ...activities[findIndexActivity],
-          entrees: referentiel.in || 0,
-          sorties: referentiel.out || 0,
-          stock: referentiel.stock || 0,
-        };
-      }
-    } else if (findIndexActivity !== -1) {
-      // remove activity
-      activities.splice(findIndexActivity, 1);
-    }
-
-    (referentiel.childrens || []).map((refChildren) => {
-      activities = this.updateActivity(refChildren, activities, false);
-    });
-
-    if (firstRow) {
-      this.activities.next(activities);
-    }
-
-    this.updateDatasAt(referentiel.id, activityMonth, {
-      entrees: referentiel.in || 0,
-      sorties: referentiel.out || 0,
-      stock: referentiel.stock || 0,
-    });
-
-    return activities;
-  }
-
-  changeMonth(deltaMonth: number) {
-    const cm = new Date(this.activityMonth.getValue());
-    cm.setMonth(cm.getMonth() + deltaMonth);
-    this.activityMonth.next(cm);
-  }
-
-  onSaveDatas() {
-    return this.serverService.post(`activities/save-backup`, {
-      list: this.activities.getValue(),
-      hrBackupId: this.hrBackupId,
-    });
-  }
-
   updateDatasAt(contentieuxId: number, date: Date, values: any) {
     return this.serverService.postWithoutError(`activities/update-by`, {
       contentieuxId,
@@ -97,5 +30,12 @@ export class ActivitiesService {
     activities = activities.filter(a => a.periode.getMonth() === date.getMonth() && a.periode.getFullYear() === date.getFullYear())
     
     return activities
+  }
+
+  loadMonthActivities(date: Date) {
+    return this.serverService.post(`activities/get-by-month`, {
+      date,
+      hrBackupId: this.hrBackupId,
+    }).then(data => data.data || null)
   }
 }
