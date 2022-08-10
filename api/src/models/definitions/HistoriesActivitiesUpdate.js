@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'Activities'
+const tableName = 'HistoriesActivitiesUpdate'
 
 export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
@@ -13,41 +13,13 @@ export default sequelizeInstance => {
         autoIncrement: true,
         unique: true,
       },
-      hr_backup_id: {
+      activity_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      periode: {
-        type: Sequelize.DATE,
         allowNull: false,
       },
-      contentieux_id: {
+      user_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      entrees: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      sorties: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      stock: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      original_entrees: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      original_sorties: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      original_stock: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,
@@ -72,7 +44,8 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {    
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
+    Model.hasOne(models.Activities, { foreignKey: 'id', sourceKey: 'activity_id' }) 
 
     return models
   }

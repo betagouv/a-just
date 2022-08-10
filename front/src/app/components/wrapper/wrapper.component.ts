@@ -31,6 +31,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() titleTemplate: TemplateRef<any> | undefined
   @Input() title: string = ''
   @Input() subtitle: string = ''
+  @Input() subtitleTemplate: TemplateRef<any> | undefined
   @Input() backUrl: string = ''
   @Input() backAnchor: string | undefined
   @Input() alignLeft: boolean | undefined
