@@ -72,7 +72,6 @@ export default (sequelizeInstance, Model) => {
         raw: true,
       })
     ).map((h) => h.id)
-    console.log(reelHRIds, oldNewHRList)
     for (let i = 0; i < oldNewHRList.length; i++) {
       await Model.destroyById(oldNewHRList[i])
     }
