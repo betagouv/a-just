@@ -42,6 +42,23 @@ export default class RouteActivities extends Route {
     }
   }
 
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
+  })
+  async loadAllActivities (ctx) {
+    const { hrBackupId } = this.body(ctx)
+
+    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.model.getAll(hrBackupId)
+      this.sendOk(ctx, list)
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
   /*
 @Route.Get({
   path: '*',

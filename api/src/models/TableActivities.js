@@ -4,7 +4,15 @@ import { Op } from 'sequelize'
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
     const list = await Model.findAll({
-      attributes: ['periode', 'entrees', 'sorties', 'stock'],
+      attributes: [
+        'periode',
+        'entrees',
+        'sorties',
+        'stock',
+        'original_entrees',
+        'original_sorties',
+        'original_stock',
+      ],
       where: {
         hr_backup_id: HRBackupId,
       },
@@ -13,6 +21,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.ContentieuxReferentiels,
         },
       ],
+      order: [['periode', 'asc']],
       raw: true,
     })
 
@@ -20,9 +29,9 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
-        entrees: list[i].entrees,
-        sorties: list[i].sorties,
-        stock: list[i].stock,
+        entrees: list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
+        sorties: list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
+        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -80,7 +89,8 @@ export default (sequelizeInstance, Model) => {
         if (
           findExist &&
           (parseInt(csv[i].entrees) !== findExist.dataValues.original_entrees ||
-            parseInt(csv[i].sorties) !== findExist.dataValues.original_sorties ||
+            parseInt(csv[i].sorties) !==
+              findExist.dataValues.original_sorties ||
             parseInt(csv[i].stock) !== findExist.dataValues.original_stock)
         ) {
           await findExist.update({
@@ -250,7 +260,10 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id)
+    await Model.models.HistoriesActivitiesUpdate.addHistory(
+      userId,
+      findActivity.dataValues.id
+    )
   }
 
   Model.getByMonth = async (date, HrBackupId) => {
