@@ -122,4 +122,12 @@
   </div>
 </aj-wrapper>
 
-<ng-template #subTitleTemplate> Bonjour {{ updatedBy | json}} </ng-template>
+<ng-template #subTitleTemplate>
+  <p *ngIf="updatedBy" class="sub-title">Dernière mise à jour, le {{ updatedBy.date | date:'dd' }} {{
+    getMonthString(updatedBy.date) }} {{
+    updatedBy.date
+    | date:'YYYY' }}
+    <ng-template [ngIf]="updatedBy.user">, par <span class="tag">{{ updatedBy.user.firstName }} {{
+        updatedBy.user.lastName }}</span></ng-template>
+  </p>
+</ng-template>

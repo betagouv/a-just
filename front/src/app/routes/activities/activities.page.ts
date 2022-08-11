@@ -7,6 +7,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   templateUrl: './activities.page.html',
@@ -17,14 +18,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   activityMonth: Date = new Date()
   referentiel: ContentieuReferentielInterface[] = []
   updatedBy: {
-    user: UserInterface
+    user: UserInterface | null
     date: Date
   } | null = null
 
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private userService: UserService,
   ) {
     super()
 
@@ -76,6 +78,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       sorties: subRef.out,
       stock: subRef.stock,
     })
+
+    this.updatedBy = {
+      date: new Date(),
+      user: this.userService.user.getValue(),
+    }
   }
 
   changeMonth(date: Date) {
