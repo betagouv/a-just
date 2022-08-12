@@ -67,6 +67,10 @@ export class HumanResourceService {
         .filter((a) => this.copyOfIdsIndispo.indexOf(a.id) === -1)
         .map((r) => r.id)
     })
+
+    this.backupId.subscribe(id => {
+      this.activitiesService.hrBackupId = id
+    })
   }
 
   initDatas() {
@@ -97,7 +101,6 @@ export class HumanResourceService {
             }))
           )
 
-          this.activitiesService.hrBackupId = result.backupId
           this.hr.next(result.hr.map(this.formatHR))
           this.backups.next(
             result.backups.map((b: BackupInterface) => ({
