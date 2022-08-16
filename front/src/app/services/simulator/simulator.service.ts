@@ -173,6 +173,7 @@ export class SimulatorService extends MainClass {
 
     let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
     let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
+    console.log(referentielId, activities, sumBy(activities, 'sorties'), nbMonth, Math.floor(sumBy(activities, 'sorties') / nbMonth))
     let lastStock = null
 
     if (activities.length) {
@@ -219,6 +220,7 @@ export class SimulatorService extends MainClass {
 
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+      
 
       // Projection of etpAffected between the last month available and today to compute stock
       let fururEtpAffectedToCompute = this.getHRPositions(
