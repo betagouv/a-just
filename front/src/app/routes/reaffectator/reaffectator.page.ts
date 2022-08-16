@@ -624,22 +624,23 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       const nbDaysByMonthForMagistrat = environment.nbDaysByMagistrat / 12
       const inValue = meanBy(activitiesFiltered, 'entrees') || 0
       const averageOut = meanBy(activitiesFiltered, 'sorties') || 0
-      const averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) * etpt / averageOut
+      let averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) * etpt / averageOut
       let outValue = etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
       let lastStock = (activitiesFiltered.length ? (activitiesFiltered[0].stock || 0) : 0) + inValue - outValue
 
       // simulate value if last datas are before selected month
-      const lastPeriode = activitiesFiltered.length ? month(activitiesFiltered[0].periode) : null
+      const lastPeriode = activitiesFiltered.length ? month(activitiesFiltered[0].periode, 0, 'lastday') : null
       if(lastPeriode && lastPeriode.getTime() < month(this.dateSelected).getTime()) {
         lastStock = activitiesFiltered[0].stock || 0
-        const etpAffected = this.simulatorService.getHRPositions(r.id) as Array<etpAffectedInterface>
+        const etpAffected = this.simulatorService.getHRPositions(r.id, lastPeriode, true, this.dateSelected) as Array<etpAffectedInterface>
         const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
         const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
 
-        console.log(etpMag)
+        console.log(etpAffected, lastPeriode, true, this.dateSelected)
 
+        averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) / (averageOut / etpMag)
         outValue = etpMag * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
-        lastStock += (nbDayCalendar / (365 / 12) * inValue) - ((nbDayCalendar / (365 / 12)) * nbDaysByMonthForMagistrat * etpMag * 8 / averageWorkingProcess)
+        lastStock += (nbDayCalendar / (365 / 12) * inValue) - ((nbDayCalendar / (365 / 12)) * nbDaysByMonthForMagistrat * ((etpMag * 8) / averageWorkingProcess))
       }
 
 
