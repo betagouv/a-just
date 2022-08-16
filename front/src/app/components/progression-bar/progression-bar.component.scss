@@ -3,14 +3,14 @@
 :host {
   display: block;
   position: relative;
-  height: 50px;
+  height: 62px;
   width: 41px;
 
-  &.dark-mode > div.white-background {
-    visibility: visible;    
+  &.dark-mode>div.white-background {
+    visibility: visible;
   }
 
-  > div.white-background {
+  >div.white-background {
     background-color: white;
     position: absolute;
     height: 100%;
@@ -21,7 +21,7 @@
     visibility: hidden;
   }
 
-  > div {
+  >div {
     position: absolute;
     height: 100%;
     left: 0;
