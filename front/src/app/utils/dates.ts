@@ -1,4 +1,4 @@
-import { ObjectType } from 'typescript'
+import { environment } from 'src/environments/environment'
 
 export function monthDiff(d1: Date, d2: Date) {
   var months
@@ -242,4 +242,31 @@ export function getRangeOfMonthsAsObject(
 
 export function isFirstDayOfMonth(date = new Date()) {
   return date.getDate() === 1
+}
+
+export function isDateBiggerThan(
+  firstDate: string | Date,
+  secondDate: string | Date
+): boolean {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
+  return firstDate.getTime() >= secondDate.getTime()
+}
+
+export function nbHourInMonth(date: Date = new Date()) {
+  const dateStart = new Date(date.getFullYear(), date.getMonth())
+  const dateStop = new Date(dateStart)
+  dateStop.setMonth(dateStop.getMonth() + 1)
+
+  let nbDay = 0
+  do {
+    // only working day
+    if (workingDay(dateStart)) {
+      nbDay++
+    }
+    dateStart.setDate(dateStart.getDate() + 1)
+  } while (dateStart.getTime() < dateStop.getTime())
+
+  return nbDay * environment.nbHoursPerDay
 }
