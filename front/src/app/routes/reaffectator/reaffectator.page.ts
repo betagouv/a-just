@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { groupBy, orderBy, sortBy, sumBy } from 'lodash'
+import { groupBy, meanBy, orderBy, sortBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
@@ -22,6 +22,10 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { isDateBiggerThan, month, nbHourInMonth, nbOfDays } from 'src/app/utils/dates'
+import { environment } from 'src/environments/environment'
+import { SimulatorService } from 'src/app/services/simulator/simulator.service'
+import { etpAffectedInterface } from 'src/app/interfaces/calculator'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -94,7 +98,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private simulatorService: SimulatorService,
   ) {
     super()
   }
@@ -593,20 +598,73 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   calculateReferentielValues() {
     console.log(this.listFormated)
-    const activities = this.activitiesService.getActivitiesByDate(
-      this.dateSelected
-    )
+    const magistrats = this.listFormated.find(l => l.groupId === 1)
+    const activities = this.activitiesService.activities.getValue()
 
     this.referentiel = this.referentiel.map((r) => {
-      const act = activities.find((a) => a.contentieux.id === r.id)
+      // list all activities
+      const activitiesFiltered = orderBy(
+        activities.filter((a) => a.contentieux.id === r.id && isDateBiggerThan(this.dateSelected, a.periode)),
+        (a) => {
+          const p = new Date(a.periode)
+          return p.getTime()
+        },
+        ['desc']
+      ).slice(0, 12)
+
+      // find new etpt
+      let etpt = 0
+      if(magistrats) {
+        const ref = magistrats.referentiel.find(referentiel => referentiel.id === r.id)
+        if(ref) {
+          etpt = ref.totalAffected || 0
+        }
+      }
+
+      const nbDaysByMonthForMagistrat = environment.nbDaysByMagistrat / 12
+      const inValue = meanBy(activitiesFiltered, 'entrees') || 0
+      const averageOut = meanBy(activitiesFiltered, 'sorties') || 0
+      let averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) * etpt / averageOut
+      let outValue = etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
+      let lastStock = (activitiesFiltered.length ? (activitiesFiltered[0].stock || 0) : 0) + inValue - outValue
+
+      // simulate value if last datas are before selected month
+      const lastPeriode = activitiesFiltered.length ? month(activitiesFiltered[0].periode, 0, 'lastday') : null
+      if(lastPeriode && lastPeriode.getTime() < month(this.dateSelected).getTime()) {
+        lastStock = activitiesFiltered[0].stock || 0
+        const etpAffected = this.simulatorService.getHRPositions(r.id, lastPeriode, true, this.dateSelected) as Array<etpAffectedInterface>
+        const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+        const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
+
+        console.log(etpAffected, lastPeriode, true, this.dateSelected)
+
+        averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) / (averageOut / etpMag)
+        outValue = etpMag * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
+        lastStock += (nbDayCalendar / (365 / 12) * inValue) - ((nbDayCalendar / (365 / 12)) * nbDaysByMonthForMagistrat * ((etpMag * 8) / averageWorkingProcess))
+      }
+
+
+
+      console.log(r, {
+        activitiesFiltered,
+        sumOut: sumBy(activitiesFiltered, 'sorties'),
+        nbHourInMonth: nbHourInMonth(this.dateSelected),
+        averageOut,
+        averageWorkingProcess,
+        in: inValue,
+        out: outValue,
+        stock: lastStock,
+        coverage: outValue / inValue * 100,
+        dtes: lastStock / outValue,
+      })
 
       return {
         ...r,
-        in: act?.entrees || 0,
-        out: act?.sorties || 0,
-        stock: act?.stock || 0,
-        coverage: ((act?.sorties || 0) / (act?.entrees || 0) || 0) * 100,
-        dtes: fixDecimal((act?.stock || 0) / (act?.sorties || 0)) || 0,
+        in: inValue,
+        out: outValue,
+        stock: lastStock,
+        coverage: outValue / inValue * 100,
+        dtes: lastStock / outValue,
       }
     })
   }
@@ -688,13 +746,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onInitList(list: listFormatedInterface) {
-    if(list.personSelected.length) {
-      list.personSelected.map(id => {
-        const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(h => h.id === id)
-        const orginalPerson = this.allHumanResources.find(h => h.id === id)
+    if (list.personSelected.length) {
+      list.personSelected.map((id) => {
+        const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(
+          (h) => h.id === id
+        )
+        const orginalPerson = this.allHumanResources.find((h) => h.id === id)
 
-        if(orginalPerson && indexOfFormatedList !== -1) {
-          this.preformatedAllHumanResource[indexOfFormatedList] = this.formatHR(orginalPerson)
+        if (orginalPerson && indexOfFormatedList !== -1) {
+          this.preformatedAllHumanResource[indexOfFormatedList] =
+            this.formatHR(orginalPerson)
         }
       })
 
