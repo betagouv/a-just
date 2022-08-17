@@ -9,6 +9,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { getShortMonthString, today } from 'src/app/utils/dates'
+import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
 
 @Injectable({
@@ -41,13 +42,15 @@ export class HumanResourceService {
   selectedReferentielIds: number[] = []
   selectedCategoriesIds: number[] = []
 
-  constructor(private serverService: ServerService) {
+  constructor(private serverService: ServerService, private activitiesService: ActivitiesService) {
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0
       this.backupId.next(+backupId)
     }
 
     this.backupId.subscribe((id) => {
+      this.activitiesService.hrBackupId = id
+
       if (id) {
         localStorage.setItem('backupId', '' + id)
       }

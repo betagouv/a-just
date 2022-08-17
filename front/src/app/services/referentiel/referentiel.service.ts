@@ -19,13 +19,7 @@ export class ReferentielService {
     private humanResourceService: HumanResourceService,
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
-    /*this.activitiesService.activities.subscribe(() =>
-      // TODO this.updateReferentielValues()
-    );
-    this.activitiesService.activityMonth.subscribe(() =>
-      // TODO this.updateReferentielValues()
-    );
-    this.contentieuxOptionsService.contentieuxOptions.subscribe(() =>
+    /*this.contentieuxOptionsService.contentieuxOptions.subscribe(() =>
       // TODO this.updateReferentielOptions()
     );*/
   }
@@ -71,43 +65,6 @@ export class ReferentielService {
     this.humanResourceService.contentieuxReferentiel.next(list)
     /*this.updateReferentielValues();
       this.updateReferentielOptions();*/
-  }
-
-  updateReferentielValues() {
-    const monthActivities = this.activitiesService.activityMonth.getValue()
-    const activities = this.activitiesService.activities
-      .getValue()
-      .filter(
-        (a) =>
-          a.periode.getFullYear() === monthActivities.getFullYear() &&
-          a.periode.getMonth() === monthActivities.getMonth()
-      )
-    const referentiels =
-      this.humanResourceService.contentieuxReferentiel.getValue()
-
-    // todo set in, out, stock for each
-    const list = referentiels.map((ref) => {
-      const getActivity = activities.find((a) => a.contentieux.id === ref.id)
-      ref.in = (getActivity && getActivity.entrees) || null
-      ref.out = (getActivity && getActivity.sorties) || null
-      ref.stock = (getActivity && getActivity.stock) || null
-
-      ref.childrens = (ref.childrens || []).map((c) => {
-        const getChildrenActivity = activities.find(
-          (a) => a.contentieux.id === c.id
-        )
-        c.in = (getChildrenActivity && getChildrenActivity.entrees) || null
-        c.out = (getChildrenActivity && getChildrenActivity.sorties) || null
-        c.stock = (getChildrenActivity && getChildrenActivity.stock) || null
-
-        return c
-      })
-
-      return ref
-    })
-
-    // update
-    this.humanResourceService.contentieuxReferentiel.next(list)
   }
 
   updateReferentielOptions() {
