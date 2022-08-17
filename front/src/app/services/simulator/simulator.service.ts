@@ -199,6 +199,16 @@ export class SimulatorService extends MainClass {
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
+      let etpMagistrat = etpAffected.find((item) => item.name == 'Magistrat')
+      let etpFonctionnaire = etpAffected.find(
+        (item) => item.name == 'Fonctionnaire'
+      )
+      let etpContractuel = etpAffected.find(
+        (item) => item.name == 'Contractuel'
+      )
+
+      console.log({ etp: etpAffected, etpMag })
+
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
         referentielId as number,
@@ -369,6 +379,18 @@ export class SimulatorService extends MainClass {
             ? fixDecimal(projectedLastStock / projectedTotalOut)
             : null
 
+        let projectedEtpMagistrat = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        ).find((item: any) => item.name == 'Magistrat')
+
+        let projectedEtFonctionnaire = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        ).find((item) => item.name == 'Fonctionnaire')
+
+        let projectedEtContractuel = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        ).find((item) => item.name == 'Contractuel')
+
         const list = {
           totalIn,
           totalOut: projectedTotalOut,
@@ -376,10 +398,10 @@ export class SimulatorService extends MainClass {
           realCoverage: projectedRealCoverage,
           realDTESInMonths: projectedRealDTESInMonths,
           realTimePerCase,
-          etpMag: projectedEtp,
+          etpMag: projectedEtpMagistrat!.totalEtp,
           etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
-          etpFon: null,
-          etpCont: null,
+          etpFon: projectedEtFonctionnaire!.totalEtp,
+          etpCont: projectedEtContractuel!.totalEtp,
           calculateCoverage: null,
           calculateDTESInMonths: null,
           calculateTimePerCase: null,
@@ -397,7 +419,9 @@ export class SimulatorService extends MainClass {
         realCoverage,
         realDTESInMonths,
         realTimePerCase,
-        etpMag,
+        etpMag: etpMagistrat!.totalEtp,
+        etpFon: etpFonctionnaire!.totalEtp,
+        etpCont: etpContractuel!.totalEtp,
         etpAffected,
         etpToCompute: etpToCompute,
       }
@@ -874,7 +898,7 @@ export class SimulatorService extends MainClass {
         } else return '0'
       }
       case 'etpFon':
-        return ''
+        return data?.etpFon || '0'
       case 'realCoverage': {
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
@@ -895,7 +919,7 @@ export class SimulatorService extends MainClass {
         if (initialValue) return data?.realTimePerCase || '0'
         else return decimalToStringDate(data?.realTimePerCase) || '0'
       case 'ETPTGreffe':
-        return ''
+        return data?.etpCont || '0'
     }
     return ''
   }
