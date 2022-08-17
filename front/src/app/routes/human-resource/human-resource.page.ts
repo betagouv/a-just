@@ -71,7 +71,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.humanResourceService.allIndisponibilityReferentiel.slice(1)
       })
     )
-    this.watch(this.humanResourceService.hr.subscribe(() => this.onLoad()))
+
     this.hrFonctionService.getAll().then((list) => {
       this.fonctions = list
       this.onLoad()
@@ -86,15 +86,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.watcherDestroy()
   }
 
-  onLoad() {
-    if (this.categories.length === 0) {
+  async onLoad(cacheHr: HumanResourceInterface | null = null) {
+    if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
 
-    const id = +this.route.snapshot.params.id
-    const allHuman = this.humanResourceService.hr.getValue()
+    let findUser
+    if (cacheHr) {
+      findUser = cacheHr
+    } else {
+      const id = +this.route.snapshot.params.id
+      findUser = await this.humanResourceService.loadRemoteHR(id)
+    }
 
-    const findUser = allHuman.find((h) => h.id === id)
     if (findUser) {
       this.currentHR = findUser
 
@@ -150,6 +154,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.histories = []
+    this.historiesOfThePast = []
+    this.historiesOfTheFutur = []
+
     this.allIndisponibilities = this.currentHR.indisponibilities || []
     const situations = orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
@@ -196,7 +203,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     // if not date end force to create a situation after the last one
-    if(!currentDateEnd && this.currentHR && this.currentHR.indisponibilities && this.currentHR.indisponibilities.length) {
+    if (
+      !currentDateEnd &&
+      this.currentHR &&
+      this.currentHR.indisponibilities &&
+      this.currentHR.indisponibilities.length
+    ) {
       maxDate.setDate(maxDate.getDate() + 1)
     }
 
@@ -292,11 +304,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories[0].dateStart.getTime() >
         today(this.currentHR.dateStart).getTime()
     ) {
-      const firstSituationExistant = this.histories.find(h => h.category)
+      const firstSituationExistant = this.histories.find((h) => h.category)
       this.histories.splice(0, 0, {
         id: -1,
-        category: firstSituationExistant ? firstSituationExistant.category : null,
-        fonction: firstSituationExistant ? firstSituationExistant.fonction : null,
+        category: firstSituationExistant
+          ? firstSituationExistant.category
+          : null,
+        fonction: firstSituationExistant
+          ? firstSituationExistant.fonction
+          : null,
         etp: 1,
         indisponibilities: [],
         activities: [],
@@ -383,14 +399,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         value = value.innerText
       }
 
-      await this.humanResourceService.updatePersonById(this.currentHR.id, {
-        [nodeName]: value,
-      })
+      this.onLoad(
+        await this.humanResourceService.updatePersonById(this.currentHR, {
+          [nodeName]: value,
+        })
+      )
     }
   }
 
   async onCancel(removeIndispo: boolean = false) {
-    if (removeIndispo) {
+    if (removeIndispo && this.currentHR && this.currentHR.indisponibilities.length) {
       await this.updateHuman('indisponibilities', [])
     }
 
@@ -696,13 +714,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
-    if (
-      returnValue === true &&
-      this.histories.length === 0 &&
-      this.onEditIndex !== null
-    ) {
+    console.log(returnValue, this.histories.length, this.onEditIndex)
+    if (returnValue) {
       // force to not show on boarding after delete last situation
       this.onEditIndex = null
+      this.onLoad(returnValue)
     }
   }
 }

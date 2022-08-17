@@ -134,42 +134,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
-    // find indisponibility dates
-    const listIndispoDateStart = this.indisponibilities.reduce<Date[]>(
-      (acc, current) => {
-        if (current.dateStart) {
-          const dateStart = new Date(current.dateStart)
-          acc.push(dateStart)
-        }
-
-        return acc
-      },
-      []
-    )
-    const minIndispoDateStart = minBy(listIndispoDateStart, function (o) {
-      return o.getTime()
-    })
-    const maxIndispoDateStart = maxBy(listIndispoDateStart, function (o) {
-      return o.getTime()
-    })
-    const listIndispoDateStop = this.indisponibilities.reduce<Date[]>(
-      (acc, current) => {
-        if (current.dateStop) {
-          const dateStop = new Date(current.dateStop)
-          acc.push(dateStop)
-        }
-
-        return acc
-      },
-      []
-    )
-    const minIndispoDateStop = minBy(listIndispoDateStop, function (o) {
-      return o.getTime()
-    })
-    const maxIndispoDateStop = maxBy(listIndispoDateStop, function (o) {
-      return o.getTime()
-    })
-
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !')
@@ -226,12 +190,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     if (this.human) {
       if (
-        await this.humanResourceService.updatePersonById(this.human?.id, {
+        await this.humanResourceService.updatePersonById(this.human, {
           situations,
           indisponibilities: this.indisponibilities,
         })
       ) {
-        this.onSaveConfirm.emit(true)
+        this.onSaveConfirm.emit()
       }
     }
   }

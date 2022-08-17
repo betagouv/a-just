@@ -18,7 +18,7 @@ import { ServerService } from '../http-server/server.service'
 export class HumanResourceService {
   hr: BehaviorSubject<HumanResourceInterface[]> = new BehaviorSubject<
     HumanResourceInterface[]
-  >([])
+  >([]) // TODO REMOVE
   contentieuxReferentiel: BehaviorSubject<ContentieuReferentielInterface[]> =
     new BehaviorSubject<ContentieuReferentielInterface[]>([])
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
@@ -42,7 +42,10 @@ export class HumanResourceService {
   selectedReferentielIds: number[] = []
   selectedCategoriesIds: number[] = []
 
-  constructor(private serverService: ServerService, private activitiesService: ActivitiesService) {
+  constructor(
+    private serverService: ServerService,
+    private activitiesService: ActivitiesService
+  ) {
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0
       this.backupId.next(+backupId)
@@ -117,15 +120,6 @@ export class HumanResourceService {
     }
   }
 
-  updateHR(list: HumanResourceInterface[], silentSave: boolean = false) {
-    this.hr.next(list)
-    this.hrIsModify.next(true)
-
-    if (silentSave) {
-      this.onSaveHRDatas(false, true)
-    }
-  }
-
   removeBackup() {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
       return this.serverService
@@ -158,52 +152,21 @@ export class HumanResourceService {
     return Promise.resolve()
   }
 
-  onSaveHRDatas(isCopy: boolean, silentSave: boolean = false) {
-    let backupName = null
-    if (isCopy) {
-      backupName = prompt('Sous quel nom ?')
-    }
-
-    return this.serverService
-      .post(`human-resources/save-backup`, {
-        hrList: this.hr.getValue(),
-        backupId: this.backupId.getValue(),
-        backupName: backupName ? backupName : null,
-      })
-      .then((r) => {
-        this.hrIsModify.next(false)
-
-        if (!silentSave) {
-          alert('Enregistrement OK !')
-          this.backupId.next(r.data)
-        }
-      })
-  }
-
   async removeHrById(id: number) {
     if (confirm('Supprimer cette personne ?')) {
       return this.serverService
         .delete(`human-resources/remove-hr/${id}`)
         .then(() => {
-          const list = this.hr.getValue()
-          const findIndex = list.findIndex((r) => r.id === id)
-          if (findIndex !== -1) {
-            list.splice(findIndex, 1)
-            this.hr.next(list)
-
-            // update date of backup after remove
-            const hrBackups = this.backups.getValue()
-            const backupIndex = hrBackups.findIndex(
-              (b) => b.id === this.backupId.getValue()
-            )
-            if (backupIndex !== -1) {
-              hrBackups[backupIndex].date = new Date()
-              this.backups.next(hrBackups)
-            }
-            return true
-          } else {
-            return false
+          // update date of backup after remove
+          const hrBackups = this.backups.getValue()
+          const backupIndex = hrBackups.findIndex(
+            (b) => b.id === this.backupId.getValue()
+          )
+          if (backupIndex !== -1) {
+            hrBackups[backupIndex].date = new Date()
+            this.backups.next(hrBackups)
           }
+          return true
         })
     }
 
@@ -382,23 +345,18 @@ export class HumanResourceService {
     return indisponibilities
   }
 
-  async updatePersonById(humanId: number, params: Object) {
-    const list = this.hr.getValue()
-    const index = list.findIndex((h) => h.id === humanId)
-
-    if (index !== -1) {
-      list[index] = {
-        ...list[index],
-        ...params,
-      }
-
-      console.log(list[index])
-
-      await this.updateRemoteHR(list[index])
-      return true
+  async updatePersonById(
+    orignalObject: HumanResourceInterface,
+    params: Object
+  ): Promise<HumanResourceInterface | null> {
+    orignalObject = {
+      ...orignalObject,
+      ...params,
     }
 
-    return false
+    console.log(orignalObject)
+
+    return await this.updateRemoteHR(orignalObject)
   }
 
   async pushHRUpdate(
@@ -497,16 +455,6 @@ export class HumanResourceService {
       })
       .then((response) => {
         const newHR = this.formatHR(response.data)
-        const list = this.hr.getValue()
-        const index = list.findIndex((l) => l.id === newHR.id)
-
-        if (index === -1) {
-          list.push(newHR)
-        } else {
-          list[index] = newHR
-        }
-
-        this.hr.next(list)
 
         const hrBackups = this.backups.getValue()
         const backupIndex = hrBackups.findIndex(
@@ -525,27 +473,19 @@ export class HumanResourceService {
     if (confirm('Supprimer cette situation ?')) {
       return this.serverService
         .delete(`human-resources/remove-situation/${situationId}`)
-        .then((data) => {
-          const hr = data.data
-          const list = this.hr.getValue()
-          const findIndex = list.findIndex((r) => r.id === hr.id)
-          if (findIndex !== -1) {
-            list[findIndex] = this.formatHR(hr)
-            this.hr.next(list)
+        .then((response) => {
+          const newHR = this.formatHR(response.data)
 
-            // update date of backup after remove
-            const hrBackups = this.backups.getValue()
-            const backupIndex = hrBackups.findIndex(
-              (b) => b.id === this.backupId.getValue()
-            )
-            if (backupIndex !== -1) {
-              hrBackups[backupIndex].date = new Date()
-              this.backups.next(hrBackups)
-            }
-            return true
-          } else {
-            return false
+          const hrBackups = this.backups.getValue()
+          const backupIndex = hrBackups.findIndex(
+            (b) => b.id === this.backupId.getValue()
+          )
+          if (backupIndex !== -1) {
+            hrBackups[backupIndex].date = newHR.updatedAt
+            this.backups.next(hrBackups)
           }
+
+          return newHR
         })
     }
 
@@ -663,5 +603,11 @@ export class HumanResourceService {
       .then((data) => {
         return data.data.list
       })
+  }
+
+  loadRemoteHR(hrId: number): Promise<HumanResourceInterface | null> {
+    return this.serverService
+      .get(`human-resources/read-hr/${hrId}`)
+      .then((response) => this.formatHR(response.data))
   }
 }
