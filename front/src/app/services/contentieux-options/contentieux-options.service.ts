@@ -22,8 +22,6 @@ export class ContentieuxOptionsService extends MainClass {
   optionsIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   )
-  autoReloadData: boolean = true
-  isLoading: boolean = false
 
   constructor(
     private serverService: ServerService,
@@ -33,50 +31,33 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   initDatas() {
-    this.humanResourceService.backupId.subscribe((juridictionId) => {
-      if (juridictionId) {
-        this.watchDatas()
-      }
+    this.humanResourceService.backupId.subscribe(() => {
+      this.loadBackupsAndId()
     })
   }
 
-  watchDatas() {
-    this.watcherDestroy()
-    this.watch(
-      this.backupId.subscribe((backupId) => {
-        const juridictionId = this.humanResourceService.backupId.getValue()
-        if (!juridictionId) {
-          return
-        }
-
-        if (!this.isLoading) {
-          this.isLoading = true
-
-          if (this.autoReloadData) {
-            this.getAllContentieuxOptions(backupId, juridictionId).then(
-              (result) => {
-                this.contentieuxOptions.next(result.list)
-                this.backups.next(result.backups)
-                this.backupId.next(result.backupId)
-                this.optionsIsModify.next(false)
-                this.autoReloadData = false
-                this.isLoading = false
-              }
-            )
-          } else {
-            this.autoReloadData = true
-            this.isLoading = false
-          }
-        }
+  loadBackupsAndId() {
+    const juridictionId = this.humanResourceService.backupId.getValue()
+    if (juridictionId !== null) {
+      this.optionsIsModify.next(false)
+      this.getAllContentieuxOptions(juridictionId).then((result) => {
+        this.backups.next(result.backups)
+        this.backupId.next(result.backupId)
       })
-    )
+    }
   }
 
-  getAllContentieuxOptions(id: number | null, juridictionId: number) {
+  loadDetails(backupId: number): Promise<ContentieuxOptionsInterface[]> {
+    return this.serverService
+      .get(`contentieux-options/get-backup-details/${backupId}`)
+      .then((r) => r.data || [])
+  }
+
+  getAllContentieuxOptions(juridictionId: number) {
     return this.serverService
       .post('contentieux-options/get-all', {
-        backupId: id,
         juridictionId,
+        backupId: this.backupId.getValue(),
       })
       .then((r) => r.data)
   }
@@ -115,8 +96,8 @@ export class ContentieuxOptionsService extends MainClass {
       return this.serverService
         .delete(`contentieux-options/remove-backup/${this.backupId.getValue()}`)
         .then(() => {
-          this.autoReloadData = true
           this.backupId.next(null)
+          this.loadBackupsAndId()
         })
     }
 
@@ -137,8 +118,8 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          this.autoReloadData = true
           this.backupId.next(r.data)
+          this.loadBackupsAndId()
         })
     }
 
@@ -159,8 +140,8 @@ export class ContentieuxOptionsService extends MainClass {
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
       .then((r) => {
-        this.autoReloadData = true
         this.backupId.next(r.data)
+        this.loadBackupsAndId()
       })
   }
 
@@ -175,8 +156,8 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          this.autoReloadData = true
           this.backupId.next(r.data)
+          this.loadBackupsAndId()
         })
     }
 

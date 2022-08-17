@@ -16,10 +16,10 @@
                 <div class="item">
                     <div class="label">
                         <p>{{ref.label}}</p>
-                        <button *ngIf="(ref.childrens || []).length"
+                        <button *ngIf="(ref.childrens || []).length"
                             (click)="ref.showOptionGroup = !ref.showOptionGroup" mat-icon-button>
-                            <mat-icon>{{ ref.showOptionGroup ? 'expand_less' :
-                                'expand_more' }}</mat-icon>
+                            <mat-icon>{{ ref.showOptionGroup ? 'expand_less' : 'expand_more'
+                                }}</mat-icon>
                         </button>
                     </div>
                     <div class="column-item">
@@ -31,8 +31,8 @@
                             (ngModelChange)="onUpdateOptions(ref, $event)" min="0" />
 
                         <p>
-                            {{perUnity === 'hour' ? '&nbsp; temps moyen en
-                            heure:minute' : 'nombre de dossiers par jour'}}
+                            {{perUnity === 'hour' ? '&nbsp; temps moyen en heure:minute' :
+                            'nombre de dossiers par jour'}}
                         </p>
                     </div>
                 </div>
@@ -51,8 +51,8 @@
                                 (ngModelChange)="onUpdateOptions(itemGroup, $event)" min="0" />
 
                             <p>
-                                {{perUnity === 'hour' ? '&nbsp; temps moyen en
-                                heure:minute' : 'nombre de dossiers par jour'}}
+                                {{perUnity === 'hour' ? '&nbsp; temps moyen en heure:minute' :
+                                'nombre de dossiers par jour'}}
                             </p>
                         </div>
                     </div>
