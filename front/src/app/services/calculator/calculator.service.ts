@@ -13,6 +13,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { environment } from 'src/environments/environment'
 import { ActivitiesService } from '../activities/activities.service'
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service'
+import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
 const start = month(new Date(), -4)
@@ -31,6 +32,7 @@ export class CalculatorService extends MainClass {
   timeoutUpdateDatas: any = null
 
   constructor(
+    private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
     private contentieuxOptionsService: ContentieuxOptionsService
@@ -453,4 +455,13 @@ export class CalculatorService extends MainClass {
 
     return list
   }
+
+  /*filterList() {
+    return this.serverService
+      .post(`human-resources/filter-list`, {
+      })
+      .then((data) => {
+        return data.data.list
+      })
+  }*/
 }
