@@ -654,11 +654,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           new Date(month(lastPeriode, -11)),
           true,
           new Date(month(lastPeriode, 0, 'lastday'))
-        )
-        let etpToComputeLast12Months = sumBy(
-          etpAffectedLast12Months as Array<etpAffectedInterface>,
-          'totalEtp'
-        )
+        ) as Array<etpAffectedInterface>
+        let etpToComputeLast12Months =
+          etpAffectedLast12Months.length >= 0
+            ? etpAffectedLast12Months[0].totalEtp
+            : 0
 
         let averageWorkingProcess = fixDecimal(
           (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
@@ -686,8 +686,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           Math.floor(lastStock) -
           Math.floor(
             (nbDayCalendar / (365 / 12)) *
-              17.33 *
-              ((etpMagDelta * 8) / averageWorkingProcess)
+              nbDaysByMonthForMagistrat *
+              ((etpMagDelta * environment.nbHoursPerDay) /
+                averageWorkingProcess)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
 
