@@ -7,8 +7,11 @@ export interface ContentieuReferentielInterface {
 	selected?: boolean;
 	rank?: number;
 	in?: number | null;
+	originalIn?: number | null;
 	out?: number | null;
+	originalOut?: number | null;
 	stock?: number | null;
+	originalStock?: number | null;
 	showActivityGroup?: boolean;
 	showOptionGroup?: boolean;
 	averageProcessingTime: number | null;

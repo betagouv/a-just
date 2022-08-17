@@ -49,13 +49,14 @@ export default (sequelizeInstance, Model) => {
       let findToBdd
 
       if (indispo.id > 0) {
-        findToBdd = await Model.updateById(indispo.id, options)
+        await Model.updateById(indispo.id, options)
+        reelHRIds.push(indispo.id)
       } else {
         findToBdd = await Model.create({
           ...options,
         })
+        reelHRIds.push(findToBdd.dataValues.id)
       }
-      reelHRIds.push(findToBdd.id)
     }
 
     // remove old HR

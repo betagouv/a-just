@@ -7,8 +7,8 @@
     p {
       color: white;
     }
-    
-    .progress-bar {    
+
+    .progress-bar {
       p {
         color: fColor(headerColor);
       }
@@ -63,7 +63,7 @@
         &.etp {
           flex: 1;
 
-          > p {
+          >p {
             color: fColor(headerNumberColor) !important;
           }
         }
@@ -87,7 +87,7 @@
 .activities-panel {
   display: flex;
 
-  > div {
+  >div {
     flex: 1;
     display: flex;
     align-items: center;
@@ -111,7 +111,7 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line > div {
+    .progress-bar-line>div {
       background-color: fColor(cred);
     }
   }
@@ -129,7 +129,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    > div {
+    >div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
@@ -187,8 +187,8 @@
     }
 
     progression-bar {
-      width: 88%;
-      height: 80px;
+      width: 40%;
+      height: 62px;
     }
 
     >p {

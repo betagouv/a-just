@@ -17,7 +17,6 @@ export class ReferentielService {
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService,
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     /*this.activitiesService.activities.subscribe(() =>

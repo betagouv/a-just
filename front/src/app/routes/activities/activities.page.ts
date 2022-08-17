@@ -1,75 +1,150 @@
-import { Component, OnDestroy } from '@angular/core';
-import { sumBy } from 'lodash';
-import { ActivityInterface } from 'src/app/interfaces/activity';
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
-import { MainClass } from 'src/app/libs/main-class';
-import { ActivitiesService } from 'src/app/services/activities/activities.service';
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
+import { Component, OnDestroy } from '@angular/core'
+import { sumBy } from 'lodash'
+import { ActivityInterface } from 'src/app/interfaces/activity'
+import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { UserInterface } from 'src/app/interfaces/user-interface'
+import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
-  activities: ActivityInterface[] = [];
-  activityMonth: Date = new Date();
-  referentiel: ContentieuReferentielInterface[] = [];
+  activities: ActivityInterface[] = []
+  activityMonth: Date = new Date()
+  referentiel: ContentieuReferentielInterface[] = []
+  updatedBy: {
+    user: UserInterface | null
+    date: Date
+  } | null = null
 
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private userService: UserService,
   ) {
-    super();
+    super()
 
     this.watch(
-      this.activitiesService.activityMonth.subscribe(
-        (a) => (this.activityMonth = a)
-      )
-    );
-
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
-        this.referentiel = ref.filter(
-          (r) =>
-            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-            this.referentielService.idsSoutien.indexOf(r.id) === -1
-        );
+      this.activitiesService.activityMonth.subscribe((a) => {
+        this.activityMonth = a
+        this.onLoadMonthActivities()
       })
-    );
+    )
   }
 
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
     subRef: ContentieuReferentielInterface
   ) {
-    referentiel.childrens = (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) => {
-      if (ref.id === subRef.id) {
-        ref.in = subRef.in;
-        ref.out = subRef.out;
-        ref.stock = subRef.stock;
+    referentiel.childrens = (referentiel.childrens || []).map(
+      (ref: ContentieuReferentielInterface) => {
+        if (ref.id === subRef.id) {
+          ref.in = subRef.in
+          ref.out = subRef.out
+          ref.stock = subRef.stock
+        }
+
+        return ref
       }
+    )
 
-      return ref;
-    });
+    const preformatArray = (list: any[], index: string) => {
+      const filtredList = list.filter((i: any) => i[index] != null)
+      return filtredList.length ? sumBy(filtredList, index) : null
+    }
+    referentiel.in = preformatArray(referentiel.childrens, 'in')
+    referentiel.out = preformatArray(referentiel.childrens, 'out')
+    referentiel.stock = preformatArray(referentiel.childrens, 'stock')
 
-    referentiel.in = sumBy(referentiel.childrens, 'in');
-    referentiel.out = sumBy(referentiel.childrens, 'out');
-    referentiel.stock = sumBy(referentiel.childrens, 'stock');
+    // save datas
+    this.activitiesService.updateDatasAt(referentiel.id, this.activityMonth, {
+      entrees: referentiel.in,
+      sorties: referentiel.out,
+      stock: referentiel.stock,
+    })
 
-    this.activitiesService.updateActivity(referentiel);
+    this.activitiesService.updateDatasAt(subRef.id, this.activityMonth, {
+      entrees: subRef.in,
+      sorties: subRef.out,
+      stock: subRef.stock,
+    })
+
+    this.updatedBy = {
+      date: new Date(),
+      user: this.userService.user.getValue(),
+    }
   }
 
-  onUpdateMainActivity(referentiel: ContentieuReferentielInterface) {
-    this.activitiesService.updateActivity(referentiel);
+  changeMonth(date: Date) {
+    this.activitiesService.activityMonth.next(date)
   }
 
-  changeMonth(deltaMonth: number) {
-    this.activitiesService.changeMonth(deltaMonth);
+  onLoadMonthActivities() {
+    this.activitiesService
+      .loadMonthActivities(this.activityMonth)
+      .then((monthValues) => {
+        this.updatedBy = monthValues.lastUpdate
+        const activities: ActivityInterface[] = monthValues.list
+        const referentiels = [
+          ...this.humanResourceService.contentieuxReferentiel.getValue(),
+        ]
+
+        // todo set in, out, stock for each
+        this.referentiel = referentiels
+          .filter(
+            (r) =>
+              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+              this.referentielService.idsSoutien.indexOf(r.id) === -1
+          )
+          .map((ref) => {
+            const getActivity = activities.find(
+              (a) => a.contentieux.id === ref.id
+            )
+            ref.in = (getActivity && getActivity.entrees) || null
+            ref.originalIn =
+              (getActivity && getActivity.originalEntrees) || null
+            ref.out = (getActivity && getActivity.sorties) || null
+            ref.originalOut =
+              (getActivity && getActivity.originalSorties) || null
+            ref.stock = (getActivity && getActivity.stock) || null
+            ref.originalStock =
+              (getActivity && getActivity.originalStock) || null
+
+            ref.childrens = (ref.childrens || []).map((c) => {
+              const getChildrenActivity = activities.find(
+                (a) => a.contentieux.id === c.id
+              )
+              c.in =
+                (getChildrenActivity && getChildrenActivity.entrees) || null
+              c.originalIn =
+                (getChildrenActivity && getChildrenActivity.originalEntrees) ||
+                null
+              c.out =
+                (getChildrenActivity && getChildrenActivity.sorties) || null
+              c.originalOut =
+                (getChildrenActivity && getChildrenActivity.originalSorties) ||
+                null
+              c.stock =
+                (getChildrenActivity && getChildrenActivity.stock) || null
+              c.originalStock =
+                (getChildrenActivity && getChildrenActivity.originalStock) ||
+                null
+
+              return c
+            })
+
+            return ref
+          })
+      })
   }
 }

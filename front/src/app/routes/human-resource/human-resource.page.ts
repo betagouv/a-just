@@ -631,6 +631,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                   this.currentHR,
                   this.allIndisponibilities
                 )
+
               if (!this.indisponibilityError) {
                 await this.updateHuman(
                   'indisponibilities',
