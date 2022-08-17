@@ -8,33 +8,21 @@ export default class RouteContentieuxOptions extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.any(),
+      backupId: Types.number(),
       juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async getAll (ctx) {
-    let { backupId, juridictionId } = this.body(ctx)
+    let { juridictionId, backupId } = this.body(ctx)
     const backups = await this.model.models.OptionsBackups.getBackup(
       ctx.state.user.id,
       juridictionId
     )
     backupId =
       backupId || (backups.length ? backups[backups.length - 1].id : null)
-    let list = []
-
-    //checkIfBackupIdExist
-    if (backups.find((b) => b.id === backupId)) {
-      list = await this.model.getAll(backupId, juridictionId)
-    } else if (backups.length) {
-      list = await this.model.getAll(backups[0].id, juridictionId)
-      backupId = backups[0].id
-    } else {
-      backupId = null
-    }
 
     this.sendOk(ctx, {
-      list,
       backups,
       backupId,
     })
@@ -94,7 +82,7 @@ export default class RouteContentieuxOptions extends Route {
   })
   async saveBackup (ctx) {
     const { backupId, list, backupName, juridictionId } = this.body(ctx)
-    
+
     if (
       (backupId &&
         (await this.models.OptionsBackups.haveAccess(
@@ -180,5 +168,24 @@ export default class RouteContentieuxOptions extends Route {
     )
 
     this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Get({
+    path: 'get-backup-details/:backupId',
+    accesses: [Access.canVewContentieuxOptions],
+  })
+  async getBackupDetails (ctx) {
+    const { backupId } = ctx.params
+
+    if (
+      await this.models.OptionsBackups.haveAccessWithoutJuridiction(
+        backupId,
+        ctx.state.user.id
+      )
+    ) {
+      this.sendOk(ctx, await this.model.getAllById(backupId))
+    } else {
+      this.sendOk(ctx, null)
+    }
   }
 }

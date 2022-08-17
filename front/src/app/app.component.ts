@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserService } from './services/user/user.service';
+import { Component } from '@angular/core'
+import { Router } from '@angular/router'
+import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
+import { UserService } from './services/user/user.service'
 
 @Component({
   selector: 'app-root',
@@ -8,19 +9,21 @@ import { UserService } from './services/user/user.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  dbReady: boolean = false;
+  dbReady: boolean = false
 
   constructor(
     router: Router,
     private userService: UserService,
+    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     router.events.subscribe(() => {
-      const user = this.userService.user.getValue();
+      const user = this.userService.user.getValue()
       if (user && this.dbReady === false) {
-        this.dbReady = true;
+        this.dbReady = true
 
-        this.userService.initDatas();
+        this.userService.initDatas()
+        this.contentieuxOptionsService.initDatas()
       }
-    });    
+    })
   }
 }

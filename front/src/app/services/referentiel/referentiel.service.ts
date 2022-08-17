@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import { ActivitiesService } from '../activities/activities.service'
-import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service'
-import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
 @Injectable({
@@ -15,13 +12,8 @@ export class ReferentielService {
   mainActivitiesId: number[] = []
 
   constructor(
-    private serverService: ServerService,
     private humanResourceService: HumanResourceService,
-    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
-    /*this.contentieuxOptionsService.contentieuxOptions.subscribe(() =>
-      // TODO this.updateReferentielOptions()
-    );*/
   }
 
   formatDatas(list: ContentieuReferentielInterface[]) {
@@ -62,34 +54,6 @@ export class ReferentielService {
       .filter((a) => idsIndispo.indexOf(a.id) === -1)
       .map((r) => r.id)
 
-    this.humanResourceService.contentieuxReferentiel.next(list)
-    /*this.updateReferentielValues();
-      this.updateReferentielOptions();*/
-  }
-
-  updateReferentielOptions() {
-    const options = this.contentieuxOptionsService.contentieuxOptions.getValue()
-    const referentiels =
-      this.humanResourceService.contentieuxReferentiel.getValue()
-
-    // todo set in, out, stock for each
-    const list = referentiels.map((ref) => {
-      const getOption = options.find((a) => a.contentieux.id === ref.id)
-      ref.averageProcessingTime =
-        (getOption && getOption.averageProcessingTime) || null
-
-      ref.childrens = (ref.childrens || []).map((c) => {
-        const getOptionActivity = options.find((a) => a.contentieux.id === c.id)
-        c.averageProcessingTime =
-          (getOptionActivity && getOptionActivity.averageProcessingTime) || null
-
-        return c
-      })
-
-      return ref
-    })
-
-    // update
     this.humanResourceService.contentieuxReferentiel.next(list)
   }
 }

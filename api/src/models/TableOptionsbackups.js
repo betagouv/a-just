@@ -179,6 +179,27 @@ export default (sequelizeInstance, Model) => {
     return find ? true : false
   }
 
+  Model.haveAccessWithoutJuridiction = async (optionBackupId, userId) => {
+    const find = await Model.findOne({
+      where: {
+        id: optionBackupId,
+      },
+      include: [{
+        model: Model.models.OptionsBackupJuridictions,
+        required: true,
+        include: [{ 
+          model: Model.models.UserVentilations,
+          required: true,
+          where: {
+            user_id: userId,
+          },
+        }],
+      }],
+    })
+
+    return find ? true : false
+  }
+
   Model.adminGetAll = async () => {
     const list = await Model.findAll({
       attributes: ['id', 'label'], 
