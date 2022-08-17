@@ -24,10 +24,6 @@ export class ActivitiesService {
         values,
         hrBackupId: this.hrBackupId,
       })
-      .then(() => {
-        // quick fix to remove after calcul moved to back
-        this.loadAllActivities()
-      })
   }
 
   getActivitiesByDate(date: Date) {
@@ -48,21 +44,5 @@ export class ActivitiesService {
         hrBackupId: this.hrBackupId,
       })
       .then((data) => data.data || null)
-  }
-
-  loadAllActivities() {
-    return this.serverService
-      .post(`activities/load-all-activities`, {
-        hrBackupId: this.hrBackupId,
-      })
-      .then((data) => {
-        const list = data.data
-        this.activities.next(
-          list.map((a: ActivityInterface) => ({
-            ...a,
-            periode: new Date(a.periode),
-          }))
-        )
-      })
   }
 }

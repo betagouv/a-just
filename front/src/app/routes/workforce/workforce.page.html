@@ -27,7 +27,7 @@
       </div>
 
       <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
-        (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()" ngDefaultControl icon="">
+        (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">
       </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">
         <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
