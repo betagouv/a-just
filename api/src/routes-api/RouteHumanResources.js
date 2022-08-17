@@ -4,24 +4,12 @@ import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
-import config from 'config'
-
-let cacheJuridictionPeoples = {}
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
 
-    this.onPreload()
-  }
-
-  async onPreload () {
-    if(config.preloadHumanResourcesDatas) {
-      const allBackups = await this.models.HRBackups.getAll()
-      for(let i = 0; i < allBackups.length; i++) {
-        cacheJuridictionPeoples[allBackups[i].id] = await this.model.getCurrentHr(allBackups[i].id)
-      }
-    }
+    this.model.onPreload()
   }
 
   @Route.Post({
@@ -38,8 +26,8 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, {
       backups,
       backupId,
-      categories: await this.model.models.HRCategories.getAll(),
-      fonctions: await this.model.models.HRFonctions.getAll(),
+      categories: await this.models.HRCategories.getAll(),
+      fonctions: await this.models.HRFonctions.getAll(),
     })
   }
 
@@ -68,23 +56,6 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId, backupName))
   }
 
-  @Route.Post({
-    bodyType: Types.object().keys({
-      hrList: Types.any(),
-      backupId: Types.number(),
-      backupName: Types.string(),
-    }),
-    accesses: [Access.canVewHR],
-  })
-  async saveBackup (ctx) {
-    const { backupId, hrList, backupName } = this.body(ctx)
-
-    const newId = await this.model.models.HRBackups.saveBackup(hrList, backupId, backupName)
-    cacheJuridictionPeoples[backupId] = await this.model.getCurrentHr(backupId) // save to cache
-
-    this.sendOk(ctx, newId)
-  }
-
   @Route.Get({
     accesses: [Access.isAdmin],
   })
@@ -103,7 +74,6 @@ export default class RouteHumanResources extends Route {
     let { backupId, hr } = this.body(ctx)
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
-    cacheJuridictionPeoples[backupId] = await this.model.getCurrentHr(backupId) // save to cache
 
     this.sendOk(ctx, responseUpdate)
   }
@@ -117,8 +87,8 @@ export default class RouteHumanResources extends Route {
 
     if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       const onRemoveHR = await this.model.removeHR(hrId)
+      console.log(onRemoveHR)
       if(onRemoveHR) {
-        cacheJuridictionPeoples[onRemoveHR.backupId] = await this.model.getCurrentHr(onRemoveHR.backupId) // save to cache
         this.sendOk(ctx, 'Ok')
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, { hrId })
       } else {
@@ -162,8 +132,7 @@ export default class RouteHumanResources extends Route {
     }
 
     console.time('step1')
-    const hr = !cacheJuridictionPeoples[backupId] ? await this.model.getCurrentHr(backupId) : cacheJuridictionPeoples[backupId]
-    cacheJuridictionPeoples[backupId] = hr
+    const hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
@@ -274,5 +243,19 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, {
       list: listFormated,
     })
+  }
+
+  @Route.Get({
+    path: 'read-hr/:hrId',
+    accesses: [Access.canVewHR],
+  })
+  async readHr (ctx) {
+    const { hrId } = ctx.params   
+
+    if(await this.model.haveAccess(hrId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.getHrDetails(hrId))
+    } else {
+      this.sendOk(ctx, null)
+    }
   }
 }
