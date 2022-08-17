@@ -173,7 +173,6 @@ export class SimulatorService extends MainClass {
 
     let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
     let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
-    console.log(referentielId, activities, sumBy(activities, 'sorties'), nbMonth, Math.floor(sumBy(activities, 'sorties') / nbMonth))
     let lastStock = null
 
     if (activities.length) {
@@ -219,8 +218,12 @@ export class SimulatorService extends MainClass {
       )
 
       // Compute totalOut with etp at dateStart (specific date) to display
-      totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
-      
+      totalOut = Math.floor(
+        (etpMag *
+          environment.nbHoursPerDay *
+          (environment.nbDaysByMagistrat / 12)) /
+          realTimePerCase
+      )
 
       // Projection of etpAffected between the last month available and today to compute stock
       let fururEtpAffectedToCompute = this.getHRPositions(
@@ -245,7 +248,7 @@ export class SimulatorService extends MainClass {
         Math.floor(
           (countOfCalandarDays / (365 / 12)) *
             17.33 *
-            ((futurEtpToCompute * 8) / realTimePerCase)
+            ((futurEtpToCompute * environment.nbHoursPerDay) / realTimePerCase)
         ) +
         Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
 
@@ -276,7 +279,12 @@ export class SimulatorService extends MainClass {
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
         // Compute totalOut with etp at dateStart (specific date) to display
-        totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+        totalOut = Math.floor(
+          (etpMag *
+            environment.nbHoursPerDay *
+            (environment.nbDaysByMagistrat / 12)) /
+            realTimePerCase
+        )
 
         // Projection of etpAffected between the last month available and today to compute stock
         fururEtpAffectedToCompute = this.getHRPositions(
@@ -296,7 +304,8 @@ export class SimulatorService extends MainClass {
           Math.floor(
             (nbDayCalendar / (365 / 12)) *
               17.33 *
-              ((futurEtpToCompute * 8) / realTimePerCase)
+              ((futurEtpToCompute * environment.nbHoursPerDay) /
+                realTimePerCase)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
 
@@ -324,7 +333,7 @@ export class SimulatorService extends MainClass {
 
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
-          (projectedEtp * 8 * 17.33) / realTimePerCase
+          (projectedEtp * environment.nbHoursPerDay * 17.33) / realTimePerCase
         )
 
         let monthlyReport: Array<any> = []
@@ -349,7 +358,8 @@ export class SimulatorService extends MainClass {
           Math.floor(
             (nbDayCalendarProjected / (365 / 12)) *
               17.33 *
-              ((futurEtpToCompute * 8) / realTimePerCase)
+              ((futurEtpToCompute * environment.nbHoursPerDay) /
+                realTimePerCase)
           ) +
           Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
 
