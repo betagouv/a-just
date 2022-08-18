@@ -806,7 +806,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       totalIn: null,
       totalOut: null,
       lastStock: null,
-      etpSum: null,
       etpMag: null,
       etpFon: null,
       etpCont: null,

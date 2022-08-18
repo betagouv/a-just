@@ -197,7 +197,7 @@ export class SimulatorService extends MainClass {
       let etpAffected = this.getHRPositions(
         referentielId as number
       ) as Array<etpAffectedInterface>
-      let etpSum = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+      let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
       let etpMagistrat = etpAffected.find((item) => item.name == 'Magistrat')
       let etpFonctionnaire = etpAffected.find(
@@ -207,7 +207,7 @@ export class SimulatorService extends MainClass {
         (item) => item.name == 'Contractuel'
       )
 
-      console.log({ etp: etpAffected, etpSum })
+      console.log({ etp: etpAffected, etpMag })
 
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
@@ -229,7 +229,7 @@ export class SimulatorService extends MainClass {
 
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = Math.floor(
-        (etpSum *
+        (etpMag *
           environment.nbHoursPerDay *
           (environment.nbDaysByMagistrat / 12)) /
           realTimePerCase
@@ -286,11 +286,11 @@ export class SimulatorService extends MainClass {
           referentielId as number,
           dateStart
         ) as Array<etpAffectedInterface>
-        etpSum = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+        etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
         // Compute totalOut with etp at dateStart (specific date) to display
         totalOut = Math.floor(
-          (etpSum *
+          (etpMag *
             environment.nbHoursPerDay *
             (environment.nbDaysByMagistrat / 12)) /
             realTimePerCase
@@ -398,9 +398,8 @@ export class SimulatorService extends MainClass {
           realCoverage: projectedRealCoverage,
           realDTESInMonths: projectedRealDTESInMonths,
           realTimePerCase,
-          etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
-          etpSum,
           etpMag: projectedEtpMagistrat!.totalEtp,
+          etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
           etpFon: projectedEtFonctionnaire!.totalEtp,
           etpCont: projectedEtContractuel!.totalEtp,
           calculateCoverage: null,
@@ -411,18 +410,7 @@ export class SimulatorService extends MainClass {
           monthlyReport: monthlyReport,
         }
         this.situationProjected.next(list)
-        console.log({
-          etpMag: projectedEtpMagistrat!.totalEtp,
-          etpFon: projectedEtFonctionnaire!.totalEtp,
-          etpCont: projectedEtContractuel!.totalEtp,
-        })
       }
-
-      console.log({
-        etpMag: etpMagistrat!.totalEtp,
-        etpFon: etpFonctionnaire!.totalEtp,
-        etpCont: etpContractuel!.totalEtp,
-      })
 
       return {
         totalIn,
@@ -431,7 +419,6 @@ export class SimulatorService extends MainClass {
         realCoverage,
         realDTESInMonths,
         realTimePerCase,
-        etpSum,
         etpMag: etpMagistrat!.totalEtp,
         etpFon: etpFonctionnaire!.totalEtp,
         etpCont: etpContractuel!.totalEtp,
@@ -446,7 +433,6 @@ export class SimulatorService extends MainClass {
         realCoverage: null,
         realDTESInMonths: null,
         realTimePerCase: null,
-        etpSum: null,
         etpMag: null,
         etpAffected: null,
         etpToCompute: null,
@@ -730,9 +716,9 @@ export class SimulatorService extends MainClass {
           }
         }
         if (x === 'totalOut') {
-          if (simulation.etpSum && simulation.realTimePerCase) {
+          if (simulation.etpMag && simulation.realTimePerCase) {
             simulation.totalOut = Math.floor(
-              Math.floor(simulation.etpSum * 8 * 17.3333) /
+              Math.floor(simulation.etpMag * 8 * 17.3333) /
                 simulation.realTimePerCase
             )
           } else if (
@@ -828,8 +814,8 @@ export class SimulatorService extends MainClass {
             Math.round(
               ((17.333 *
                 8 *
-                (simulation.etpSum ||
-                  (params.beginSituation?.etpSum as number))) /
+                (simulation.etpMag ||
+                  (params.beginSituation?.etpMag as number))) /
                 Math.floor(
                   simulation.totalOut ||
                     (params.endSituation?.totalOut as number)
@@ -839,7 +825,7 @@ export class SimulatorService extends MainClass {
         }
 
         if (x === 'etpMag') {
-          simulation.etpSum =
+          simulation.etpMag =
             Math.round(
               (((simulation.realTimePerCase ||
                 (params.endSituation?.realTimePerCase as number)) *
@@ -857,7 +843,7 @@ export class SimulatorService extends MainClass {
         simulation.totalIn !== null &&
         simulation.totalOut !== null &&
         simulation.lastStock !== null &&
-        simulation.etpSum !== null &&
+        simulation.etpMag !== null &&
         simulation.realTimePerCase !== null &&
         simulation.realDTESInMonths !== null &&
         simulation.realCoverage !== null
