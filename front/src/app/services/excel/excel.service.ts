@@ -122,18 +122,23 @@ export class ExcelService extends MainClass implements OnInit {
                   ...this.categories,
                 ]) as Array<any>
 
-                let counter = 0
+                let counterEtpTotal = 0
+                let counterEtpSubTotal = 0
 
                 Object.keys(etpAffected).map((key: string) => {
                   if (referentiel.childrens !== undefined) {
-                    counter += etpAffected[key].etpt
-                  }
+                    counterEtpTotal += etpAffected[key].etpt
+                  } else counterEtpSubTotal += etpAffected[key].etpt
                 })
 
-                if (referentiel.childrens) {
-                  refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
-                  totalEtpt += counter
-                } else refObj[referentiel.label.toUpperCase()] = counter
+                if (referentiel.childrens !== undefined) {
+                  refObj['TOTAL ' + referentiel.label.toUpperCase()] =
+                    counterEtpTotal
+                  totalEtpt += counterEtpTotal
+                } else {
+                  refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
+                  console.log('sous cont')
+                }
               }
             )
 
