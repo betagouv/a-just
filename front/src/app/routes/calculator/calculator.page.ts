@@ -5,6 +5,7 @@ import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
+import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 @Component({
@@ -13,7 +14,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = []
-  referentielIds: number[] = []
+  referentielIds: number[] = this.calculatorService.referentielIds.getValue()
   dateStart: Date = this.calculatorService.dateStart.getValue()
   dateStop: Date = this.calculatorService.dateStop.getValue()
   formReferentiel: dataInterface[] = []
@@ -24,15 +25,38 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   constructor(
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
   }
 
   ngOnInit() {
-    // this.calculatorService.filterList().then(list => console.log(list))
-
-
+    this.watch(
+      this.contentieuxOptionsService.backupId.subscribe(() => {
+        this.onLoad()
+      })
+    )
+    this.watch(
+      this.calculatorService.dateStart.subscribe(() => {
+        this.onLoad()
+      })
+    )
+    this.watch(
+      this.calculatorService.dateStop.subscribe(() => {
+        this.onLoad()
+      })
+    )
+    this.watch(
+      this.humanResourceService.backupId.subscribe(() => {
+        this.onLoad()
+      })
+    )
+    this.watch(
+      this.calculatorService.referentielIds.subscribe(() => {
+        this.onLoad()
+      })
+    )
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -41,25 +65,31 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
             this.referentielService.idsSoutien.indexOf(r.id) === -1
         )
-        this.formatReferenteil()
-        this.onCalculate()
+        this.formatReferentiel()
+        this.referentielIds =
+          this.referentielIds.length === 0
+            ? this.referentiel.map((r) => r.id)
+            : this.referentielIds
       })
     )
-    this.watch(
-      this.calculatorService.calculatorDatas.subscribe((d) =>
-        this.formatDatas(d)
-      )
-    )
-
-    this.calculatorService.syncDatas()
   }
 
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  onLoad() {
+    if (
+      this.humanResourceService.backupId.getValue() &&
+      this.contentieuxOptionsService.backupId.getValue()
+    ) {
+      this.calculatorService.filterList().then((list) => this.formatDatas(list))
+    }
+  }
+
   formatDatas(list: CalculatorInterface[]) {
-    this.datas = list
+    console.log(list)
+    this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
 
@@ -83,7 +113,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.datasFilted = list
   }
 
-  formatReferenteil() {
+  formatReferentiel() {
     this.formReferentiel = this.referentiel.map((r) => ({
       id: r.id,
       value: this.referentielMappingName(r.label),
@@ -93,7 +123,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
       this.referentielIds = event
-      this.calculatorService.referentielIds = this.referentielIds
+      this.calculatorService.referentielIds.next(this.referentielIds)
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
