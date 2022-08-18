@@ -187,9 +187,9 @@ export class SimulatorService extends MainClass {
         )
         console.log('inside', lastActivities, nbOfMonth)
       } while (
-        //lastActivities.length === 0 &&
-        (lastActivities![0]!.stock === null ||
-          lastActivities![0]!.stock !== 0) &&
+        (lastActivities.length === 0 ||
+          lastActivities![0]!.stock === null ||
+          lastActivities![0]!.stock === 0) &&
         nbOfMonth != -12
       )
 
