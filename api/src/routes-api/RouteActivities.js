@@ -12,12 +12,13 @@ export default class RouteActivities extends Route {
       date: Types.date(),
       values: Types.any(),
       hrBackupId: Types.number(),
+      saveUserUpdate: Types.boolean(),
     }),
     accesses: [Access.canVewActivities],
   })
   async updateBy (ctx) {
-    const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
-    await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id)
+    const { contentieuxId, date, values, hrBackupId, saveUserUpdate } = this.body(ctx)
+    await this.model.updateBy(contentieuxId, date, values, hrBackupId, saveUserUpdate ? ctx.state.user.id : null)
     this.sendOk(ctx, 'Ok')
   }
 
@@ -32,9 +33,10 @@ export default class RouteActivities extends Route {
     const { date, hrBackupId } = this.body(ctx)
 
     if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.model.getByMonth(date, hrBackupId)
+      const { list, previousList } = await this.model.getByMonth(date, hrBackupId)
       this.sendOk(ctx, {
         list,
+        previousList,
         lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map(i => i.id)),
       })
     } else {
