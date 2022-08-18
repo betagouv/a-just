@@ -4,6 +4,7 @@ export interface SimulationInterface {
   totalIn: number | null
   totalOut: number | null
   lastStock: number | null
+  etpSum: number | null
   etpMag: number | null
   etpFon: number | null
   etpCont: number | null
