@@ -58,21 +58,24 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       }
     )
 
-    const preformatArray = (list: any[], index: string) => {
-      const filtredList = list.filter((i: any) => i[index] != null)
-      return filtredList.length ? sumBy(filtredList, index) : null
+    const preformatArray = (list: any[], index: string[]) => {
+      let total: number | null = null
+      list.map(item => {
+        for(let i = 0; i < index.length; i++) {
+          if(item[index[i]] !== null) {
+            total = (total || 0) + item[index[i]]
+            break
+          }
+        }
+      })
+      
+      return total
     }
-    referentiel.in = preformatArray(referentiel.childrens, 'in')
-    referentiel.out = preformatArray(referentiel.childrens, 'out')
-    referentiel.stock = preformatArray(referentiel.childrens, 'stock')
+    referentiel.in = preformatArray(referentiel.childrens, ['in', 'originalIn'])
+    referentiel.out = preformatArray(referentiel.childrens, ['out', 'originalOut'])
+    referentiel.stock = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
 
     // save datas
-    this.activitiesService.updateDatasAt(referentiel.id, this.activityMonth, {
-      entrees: referentiel.in,
-      sorties: referentiel.out,
-      stock: referentiel.stock,
-    })
-
     this.activitiesService.updateDatasAt(subRef.id, this.activityMonth, {
       entrees: subRef.in,
       sorties: subRef.out,
