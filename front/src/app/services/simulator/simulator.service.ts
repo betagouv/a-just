@@ -185,7 +185,8 @@ export class SimulatorService extends MainClass {
             month(this.endCurrentSituation, nbOfMonth, 'lastday')
           )
         )
-        if (lastActivities.length !== 0 && lastActivities[0].stock) break
+        if (lastActivities.length !== 0 && lastActivities[0].stock !== null)
+          break
       } while (lastActivities.length === 0 && nbOfMonth != -12)
 
       // last available stock
