@@ -130,7 +130,7 @@ export class ExcelService extends MainClass implements OnInit {
                   }
                 })
 
-                if (referentiel.childrens !== undefined) {
+                if (referentiel.childrens) {
                   refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
                   totalEtpt += counter
                 } else refObj[referentiel.label.toUpperCase()] = counter
@@ -138,7 +138,7 @@ export class ExcelService extends MainClass implements OnInit {
             )
 
             this.data.push({
-              Matricule: human.id,
+              Numéro_A_JUST: human.id,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,
