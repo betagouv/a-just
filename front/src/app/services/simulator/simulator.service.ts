@@ -190,13 +190,15 @@ export class SimulatorService extends MainClass {
 
       // last available stock
       lastStock = sumBy(lastActivities, 'stock')
-      console.log('1', lastStock)
+      console.log('1', lastStock, lastActivities)
 
       // Compute etpAffected & etpMag today (on specific date) to display & output
       let etpAffected = this.getHRPositions(
         referentielId as number
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+      console.log('1 etp mag', etpMag)
+
       let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
       let etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
 
@@ -210,6 +212,7 @@ export class SimulatorService extends MainClass {
       let etpToCompute = (
         etpAffectedToCompute as Array<etpAffectedInterface>
       )[0].totalEtp
+      console.log('2 etp mag', etpToCompute)
 
       // Compute realTimePerCase to display using the etpAffected 12 last months available
       let realTimePerCase = fixDecimal(
@@ -235,6 +238,7 @@ export class SimulatorService extends MainClass {
       let futurEtpToCompute = (
         fururEtpAffectedToCompute as Array<etpAffectedInterface>
       )[0].totalEtp
+      console.log('3 etp mag', futurEtpToCompute)
 
       const countOfCalandarDays = nbOfDays(
         month(this.endCurrentSituation, counter, 'lastday'),
@@ -277,6 +281,8 @@ export class SimulatorService extends MainClass {
           dateStart
         ) as Array<etpAffectedInterface>
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+        console.log('4 etp mag', etpMag)
+
         etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
         etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
 
@@ -298,6 +304,7 @@ export class SimulatorService extends MainClass {
         futurEtpToCompute = (
           fururEtpAffectedToCompute as Array<etpAffectedInterface>
         )[0].totalEtp
+        console.log('5 etp mag', futurEtpToCompute)
 
         // Compute projectedStock with etp at dateStart
         lastStock =
