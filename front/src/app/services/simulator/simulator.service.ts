@@ -190,6 +190,7 @@ export class SimulatorService extends MainClass {
 
       // last available stock
       lastStock = sumBy(lastActivities, 'stock')
+      console.log('1', lastStock)
 
       // Compute etpAffected & etpMag today (on specific date) to display & output
       let etpAffected = this.getHRPositions(
@@ -249,6 +250,7 @@ export class SimulatorService extends MainClass {
             ((futurEtpToCompute * environment.nbHoursPerDay) / realTimePerCase)
         ) +
         Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+      console.log('2', lastStock)
 
       // Compute realCoverage & realDTESInMonths using last available stock
       let realCoverage = fixDecimal(totalOut / totalIn)
@@ -307,6 +309,7 @@ export class SimulatorService extends MainClass {
                 realTimePerCase)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
+        console.log('3', lastStock)
 
         realCoverage = fixDecimal(totalOut / totalIn)
         realDTESInMonths =
@@ -367,6 +370,7 @@ export class SimulatorService extends MainClass {
                 realTimePerCase)
           ) +
           Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
+        console.log('4', projectedLastStock)
 
         const projectedRealCoverage = fixDecimal(projectedTotalOut / totalIn)
         const projectedRealDTESInMonths =
