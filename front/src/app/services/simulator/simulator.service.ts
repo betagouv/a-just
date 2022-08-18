@@ -94,8 +94,6 @@ export class SimulatorService extends MainClass {
       const nbMonth = 12
       const list: SimulatorInterface | null = {
         ...this.getSituation(referentielId, nbMonth, dateStart, dateStop),
-        etpFon: null,
-        etpCont: null,
         calculateCoverage: null,
         calculateDTESInMonths: null,
         calculateTimePerCase: null,
@@ -198,6 +196,8 @@ export class SimulatorService extends MainClass {
         referentielId as number
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+      let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+      let etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
 
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
@@ -206,10 +206,14 @@ export class SimulatorService extends MainClass {
         true,
         new Date(month(this.endCurrentSituation, counter, 'lastday'))
       )
-      let etpToCompute = sumBy(
+      let etpToCompute = (
+        etpAffectedToCompute as Array<etpAffectedInterface>
+      )[0].totalEtp
+
+      /**sumBy(
         etpAffectedToCompute as Array<etpAffectedInterface>,
         'totalEtp'
-      )
+      )*/
 
       // Compute realTimePerCase to display using the etpAffected 12 last months available
       let realTimePerCase = fixDecimal(
@@ -232,10 +236,14 @@ export class SimulatorService extends MainClass {
         true,
         new Date()
       )
-      let futurEtpToCompute = sumBy(
+      let futurEtpToCompute = (
+        fururEtpAffectedToCompute as Array<etpAffectedInterface>
+      )[0].totalEtp
+
+      /**sumBy(
         fururEtpAffectedToCompute as Array<etpAffectedInterface>,
         'totalEtp'
-      )
+      )*/
 
       const countOfCalandarDays = nbOfDays(
         month(this.endCurrentSituation, counter, 'lastday'),
@@ -277,6 +285,8 @@ export class SimulatorService extends MainClass {
           dateStart
         ) as Array<etpAffectedInterface>
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+        etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+        etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
 
         // Compute totalOut with etp at dateStart (specific date) to display
         totalOut = Math.floor(
@@ -293,10 +303,14 @@ export class SimulatorService extends MainClass {
           true,
           dateStart
         )
-        futurEtpToCompute = sumBy(
+        futurEtpToCompute = (
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>
+        )[0].totalEtp
+
+        /**sumBy(
           fururEtpAffectedToCompute as Array<etpAffectedInterface>,
           'totalEtp'
-        )
+        )*/
 
         // Compute projectedStock with etp at dateStart
         lastStock =
@@ -326,10 +340,23 @@ export class SimulatorService extends MainClass {
           referentielId as number,
           dateStop
         )
-        const projectedEtp = sumBy(
+        const projectedEtp = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[0].totalEtp
+
+        const projectedEtpFon = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[1].totalEtp
+
+        const projectedEtpCont = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[2].totalEtp
+
+        console.log('PAris', projectedEtpAffected)
+        /**sumBy(
           projectedEtpAffected as Array<etpAffectedInterface>,
           'totalEtp'
-        )
+        )*/
 
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
@@ -347,10 +374,13 @@ export class SimulatorService extends MainClass {
           true
         ))
 
-        futurEtpToCompute = sumBy(
+        futurEtpToCompute = (
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>
+        )[0].totalEtp
+        /**sumBy(
           fururEtpAffectedToCompute as Array<etpAffectedInterface>,
           'totalEtp'
-        )
+        )*/
 
         // Compute projectedStock with etp at datestop
         const projectedLastStock =
@@ -378,8 +408,8 @@ export class SimulatorService extends MainClass {
           realTimePerCase,
           etpMag: projectedEtp,
           etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
-          etpFon: null,
-          etpCont: null,
+          etpFon: projectedEtpFon,
+          etpCont: projectedEtpCont,
           calculateCoverage: null,
           calculateDTESInMonths: null,
           calculateTimePerCase: null,
@@ -398,6 +428,8 @@ export class SimulatorService extends MainClass {
         realDTESInMonths,
         realTimePerCase,
         etpMag,
+        etpFon,
+        etpCont,
         etpAffected,
         etpToCompute: etpToCompute,
       }
@@ -410,6 +442,8 @@ export class SimulatorService extends MainClass {
         realDTESInMonths: null,
         realTimePerCase: null,
         etpMag: null,
+        etpFon: null,
+        etpCont: null,
         etpAffected: null,
         etpToCompute: null,
       }
@@ -874,7 +908,7 @@ export class SimulatorService extends MainClass {
         } else return '0'
       }
       case 'etpFon':
-        return ''
+        return data?.etpFon || '0'
       case 'realCoverage': {
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
@@ -895,7 +929,7 @@ export class SimulatorService extends MainClass {
         if (initialValue) return data?.realTimePerCase || '0'
         else return decimalToStringDate(data?.realTimePerCase) || '0'
       case 'ETPTGreffe':
-        return ''
+        return data?.etpCont || '0'
     }
     return ''
   }
