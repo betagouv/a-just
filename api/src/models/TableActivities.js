@@ -1,6 +1,7 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { sumBy } from 'lodash'
 import { Op } from 'sequelize'
+import { calculMainValuesFromChilds } from '../utils/activities'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
@@ -146,7 +147,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.cleanActivities = async (HRBackupId) => {
-    const ref = (await Model.models.ContentieuxReferentiels.getReferentiels())
+    const ref = await Model.models.ContentieuxReferentiels.getReferentiels()
     
     for (let i = 0; i < ref.length; i++) {
       const referentiel = ref[i]
@@ -290,14 +291,54 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    await Model.models.HistoriesActivitiesUpdate.addHistory(
-      userId,
-      findActivity.dataValues.id
-    )
+    if(userId !== null) {
+      await Model.models.HistoriesActivitiesUpdate.addHistory(
+        userId,
+        findActivity.dataValues.id
+      )
+    }
+
+    // update main activity in and out only
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const ref = referentiels.find(r => (r.childrens || []).find(c => c.id === contentieuxId))
+    console.log(ref)
+    if(ref) {
+      const findAllChild = await Model.findAll({
+        where: {
+          periode: {
+            [Op.between]: [startOfMonth(date), endOfMonth(date)],
+          },
+          hr_backup_id: hrBackupId,
+          contentieux_id: ref.childrens.map(r => r.id),
+        },
+        raw: true,
+      })
+      const findMain = await Model.findOne({
+        where: {
+          periode: {
+            [Op.between]: [startOfMonth(date), endOfMonth(date)],
+          },
+          hr_backup_id: hrBackupId,
+          contentieux_id: ref.id,
+        },
+      })
+      if(findMain) {
+        await findMain.update(calculMainValuesFromChilds(findAllChild))
+      }
+    }
   }
 
-  Model.getByMonth = async (date, HrBackupId) => {
+  Model.getByMonth = async (date, HrBackupId, loadPreviousList = true) => {
     date = new Date(date)
+
+    const lastMonth = new Date(date)
+    lastMonth.setMonth(lastMonth.getMonth() - 1)
+    let previousList
+
+    if(loadPreviousList) {
+      const previous = await Model.getByMonth(lastMonth, HrBackupId, false)
+      previousList = previous.list
+    }
 
     const list = await Model.findAll({
       attributes: [
@@ -339,9 +380,17 @@ export default (sequelizeInstance, Model) => {
           label: list[i]['ContentieuxReferentiel.label'],
         },
       }
+
+      if(loadPreviousList && list[i].stock == null) {
+        // calculate last month
+        // TODO
+      }
     }
 
-    return list
+    return {
+      list,
+      previousList,
+    }
   }
 
   return Model
