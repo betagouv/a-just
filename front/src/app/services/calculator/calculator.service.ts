@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core'
 import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
-import {
-  CalculatorInterface,
-} from 'src/app/interfaces/calculator'
+import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
@@ -28,7 +26,7 @@ export class CalculatorService extends MainClass {
   >([])
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
-  referentielIds: number[] = []
+  referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
   timeoutUpdateDatas: any = null
 
   constructor(
@@ -355,8 +353,7 @@ export class CalculatorService extends MainClass {
 
     if (calculateTimePerCase) {
       calculateOut = Math.floor(
-        (((etpAffected * environment.nbHoursPerDay) /
-          calculateTimePerCase) *
+        (((etpAffected * environment.nbHoursPerDay) / calculateTimePerCase) *
           environment.nbDaysByMagistrat) /
           12
       )
@@ -456,12 +453,15 @@ export class CalculatorService extends MainClass {
     return list
   }
 
-  /*filterList() {
+  filterList() {
     return this.serverService
-      .post(`human-resources/filter-list`, {
+      .post(`calculator/filter-list`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        dateStart: this.dateStart.getValue(),
+        dateStop: this.dateStop.getValue(),
+        contentieuxIds: this.referentielIds.getValue(),
+        optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
       })
-      .then((data) => {
-        return data.data.list
-      })
-  }*/
+      .then((data) => data.data || [])
+  }
 }

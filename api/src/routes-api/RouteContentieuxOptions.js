@@ -19,8 +19,7 @@ export default class RouteContentieuxOptions extends Route {
       ctx.state.user.id,
       juridictionId
     )
-    backupId =
-      backupId || (backups.length ? backups[backups.length - 1].id : null)
+    backupId = backups.find(b => b.id === backupId) ? backupId : (backups.length ? backups[backups.length - 1].id : null)
 
     this.sendOk(ctx, {
       backups,
