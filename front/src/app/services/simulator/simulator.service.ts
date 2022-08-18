@@ -210,11 +210,6 @@ export class SimulatorService extends MainClass {
         etpAffectedToCompute as Array<etpAffectedInterface>
       )[0].totalEtp
 
-      /**sumBy(
-        etpAffectedToCompute as Array<etpAffectedInterface>,
-        'totalEtp'
-      )*/
-
       // Compute realTimePerCase to display using the etpAffected 12 last months available
       let realTimePerCase = fixDecimal(
         ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
@@ -239,11 +234,6 @@ export class SimulatorService extends MainClass {
       let futurEtpToCompute = (
         fururEtpAffectedToCompute as Array<etpAffectedInterface>
       )[0].totalEtp
-
-      /**sumBy(
-        fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-        'totalEtp'
-      )*/
 
       const countOfCalandarDays = nbOfDays(
         month(this.endCurrentSituation, counter, 'lastday'),
@@ -307,11 +297,6 @@ export class SimulatorService extends MainClass {
           fururEtpAffectedToCompute as Array<etpAffectedInterface>
         )[0].totalEtp
 
-        /**sumBy(
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-          'totalEtp'
-        )*/
-
         // Compute projectedStock with etp at dateStart
         lastStock =
           Math.floor(lastStock) -
@@ -352,12 +337,6 @@ export class SimulatorService extends MainClass {
           projectedEtpAffected as Array<etpAffectedInterface>
         )[2].totalEtp
 
-        console.log('PAris', projectedEtpAffected)
-        /**sumBy(
-          projectedEtpAffected as Array<etpAffectedInterface>,
-          'totalEtp'
-        )*/
-
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
           (projectedEtp * environment.nbHoursPerDay * 17.33) / realTimePerCase
@@ -377,10 +356,6 @@ export class SimulatorService extends MainClass {
         futurEtpToCompute = (
           fururEtpAffectedToCompute as Array<etpAffectedInterface>
         )[0].totalEtp
-        /**sumBy(
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-          'totalEtp'
-        )*/
 
         // Compute projectedStock with etp at datestop
         const projectedLastStock =
