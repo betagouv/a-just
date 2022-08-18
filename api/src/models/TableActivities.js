@@ -1,3 +1,4 @@
+import { endOfMonth, startOfMonth } from 'date-fns'
 import { sumBy } from 'lodash'
 import { Op } from 'sequelize'
 
@@ -67,20 +68,12 @@ export default (sequelizeInstance, Model) => {
         const month = +csv[i].periode.slice(-2) - 1
         const periode = new Date(year, month)
 
-        const periodeStart = new Date(
-          periode.getFullYear(),
-          periode.getMonth()
-        )
-        const periodeEnd = new Date(periodeStart)
-        periodeEnd.setMonth(periodeEnd.getMonth() + 1)
-
         const findExist = await Model.findOne({
           where: {
             hr_backup_id: HRBackupId,
             contentieux_id: contentieuxIds[code],
             periode: {
-              [Op.gte]: periodeStart,
-              [Op.lte]: periodeEnd,
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
           },
         })
@@ -115,74 +108,115 @@ export default (sequelizeInstance, Model) => {
     await Model.cleanActivities(HRBackupId)
   }
 
-  Model.cleanActivities = async (HRBackupId) => {
-    const ref = await Model.models.ContentieuxReferentiels.getReferentiels()
-    const activitiesPeriodes = (
-      await Model.findAll({
-        attributes: ['periode'],
+  Model.removeDuplicateDatas = async (HRBackupId) => {
+    const activities = await Model.findAll({
+      attributes: [
+        'periode',
+        'contentieux_id',
+        'hr_backup_id',
+      ],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      group: ['periode', 'contentieux_id', 'hr_backup_id'],
+      raw: true,
+    })
+
+    for(let i = 0; i < activities.length; i++) {
+      const periode = activities[i].periode
+
+      const duplicateActivities = await Model.findAll({
         where: {
+          periode: {
+            [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+          },
           hr_backup_id: HRBackupId,
+          contentieux_id: activities[i].contentieux_id,
         },
-        group: ['periode'],
-        raw: true,
+        order: ['updated_at', 'id'],
       })
-    ).map((d) => d.periode)
 
-    console.log(activitiesPeriodes)
+      if(duplicateActivities.length >= 2) {
+        for(let z = 1; z < duplicateActivities.length; z++) {
+          await duplicateActivities[z].destroy()
+        }
+      }
+    }
 
+  }
+
+  Model.cleanActivities = async (HRBackupId) => {
+    const ref = (await Model.models.ContentieuxReferentiels.getReferentiels())
+    
     for (let i = 0; i < ref.length; i++) {
       const referentiel = ref[i]
 
-      if (referentiel.childrens && referentiel.childrens.length) {
-        for (let p = 0; p < activitiesPeriodes.length; p++) {
-          const periode = activitiesPeriodes[p]
+      // find all periode
+      const activitiesPeriodes = (
+        await Model.findAll({
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: referentiel.childrens.map((r) => r.id),
+          },
+          group: ['periode', 'id'],
+          order: [['periode', 'desc']],
+          raw: true,
+        })
+      ).map((d) => d.periode)
 
-          const activities = await Model.findAll({
-            attributes: [
-              'entrees',
-              'sorties',
-              'stock',
-              'original_entrees',
-              'original_sorties',
-              'original_stock',
-              'periode',
-              'contentieux_id',
-            ],
-            where: {
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.childrens.map((r) => r.id),
+      for (let p = 0; p < activitiesPeriodes.length; p++) {
+        const periode = activitiesPeriodes[p]
+
+        const activities = await Model.findAll({
+          attributes: [
+            'entrees',
+            'sorties',
+            'stock',
+            'original_entrees',
+            'original_sorties',
+            'original_stock',
+            'periode',
+            'contentieux_id',
+          ],
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
-            raw: true,
-          })
+            hr_backup_id: HRBackupId,
+            contentieux_id: referentiel.childrens.map((r) => r.id),
+          },
+          raw: true,
+        })
 
-          const findMainActivity = await Model.findOne({
-            where: {
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.id,
+
+        const findMainActivity = await Model.findOne({
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
+            hr_backup_id: HRBackupId,
+            contentieux_id: referentiel.id,
+          },
+        })
+
+        const options = {
+          entrees: sumBy(activities, 'entrees') || null,
+          sorties: sumBy(activities, 'sorties') || null,
+          stock: sumBy(activities, 'stock') || null,
+          original_entrees: sumBy(activities, 'original_entrees') || null,
+          original_sorties: sumBy(activities, 'original_sorties') || null,
+          original_stock: sumBy(activities, 'original_stock') || null,
+        }
+
+        if (findMainActivity) {          
+          await findMainActivity.update(options)
+        } else {
+          await Model.create({
+            ...options,
+            periode,
+            hr_backup_id: HRBackupId,
+            contentieux_id: referentiel.id,
           })
-
-          const options = {
-            entrees: sumBy(activities, 'entrees') || null,
-            sorties: sumBy(activities, 'sorties') || null,
-            stock: sumBy(activities, 'stock') || null,
-            original_entrees: sumBy(activities, 'original_entrees') || null,
-            original_sorties: sumBy(activities, 'original_sorties') || null,
-            original_stock: sumBy(activities, 'original_stock') || null,
-          }
-
-          if (findMainActivity) {
-            await findMainActivity.update(options)
-          } else {
-            await Model.create({
-              ...options,
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.id,
-            })
-          }
         }
       }
     }
@@ -234,15 +268,11 @@ export default (sequelizeInstance, Model) => {
 
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId) => {
     date = new Date(date)
-    const dateStart = new Date(date.getFullYear(), date.getMonth())
-    const dateStop = new Date(dateStart)
-    dateStop.setMonth(dateStop.getMonth() + 1)
 
     let findActivity = await Model.findOne({
       where: {
         periode: {
-          [Op.gte]: dateStart,
-          [Op.lte]: dateStop,
+          [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
         hr_backup_id: hrBackupId,
         contentieux_id: contentieuxId,
@@ -268,9 +298,6 @@ export default (sequelizeInstance, Model) => {
 
   Model.getByMonth = async (date, HrBackupId) => {
     date = new Date(date)
-    const dateStart = new Date(date.getFullYear(), date.getMonth())
-    const dateStop = new Date(dateStart)
-    dateStop.setMonth(dateStop.getMonth() + 1)
 
     const list = await Model.findAll({
       attributes: [
@@ -286,8 +313,7 @@ export default (sequelizeInstance, Model) => {
       where: {
         hr_backup_id: HrBackupId,
         periode: {
-          [Op.gte]: dateStart,
-          [Op.lte]: dateStop,
+          [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
       },
       include: [
