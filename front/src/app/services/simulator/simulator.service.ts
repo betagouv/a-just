@@ -186,13 +186,12 @@ export class SimulatorService extends MainClass {
           )
         )
         console.log('inside', lastActivities, nbOfMonth)
-        if (
-          lastActivities.length !== 0 &&
-          lastActivities[0].stock !== null &&
-          lastActivities[0].stock !== 0
-        )
-          break
-      } while (lastActivities.length === 0 && nbOfMonth != -12)
+      } while (
+        lastActivities.length !== 0 &&
+        lastActivities[0].stock !== null &&
+        lastActivities[0].stock !== 0 &&
+        nbOfMonth != -12
+      )
 
       // last available stock
       lastStock = sumBy(lastActivities, 'stock')
