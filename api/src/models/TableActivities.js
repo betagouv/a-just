@@ -298,33 +298,65 @@ export default (sequelizeInstance, Model) => {
       )
     }
 
-    // update main activity in and out only
+    await Model.updateTotalAndFuturValue(contentieuxId, date, hrBackupId)
+  }
+
+  Model.updateTotalAndFuturValue = async (contentieuxId, date, hrBackupId) => {
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
     const ref = referentiels.find(r => (r.childrens || []).find(c => c.id === contentieuxId))
     console.log(ref)
+
     if(ref) {
-      const findAllChild = await Model.findAll({
-        where: {
-          periode: {
-            [Op.between]: [startOfMonth(date), endOfMonth(date)],
+      let continueToDo = false
+      do {
+        ///// TODO Comment répercuter les stocks !!!!!!
+        console.log('check date', date)
+
+
+        // update main activity with entrees, sorties, stock
+        const findAllChild = await Model.findAll({
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(date), endOfMonth(date)],
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.childrens.map(r => r.id),
           },
-          hr_backup_id: hrBackupId,
-          contentieux_id: ref.childrens.map(r => r.id),
-        },
-        raw: true,
-      })
-      const findMain = await Model.findOne({
-        where: {
-          periode: {
-            [Op.between]: [startOfMonth(date), endOfMonth(date)],
+          raw: true,
+        })
+        const findMain = await Model.findOne({
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(date), endOfMonth(date)],
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.id,
           },
-          hr_backup_id: hrBackupId,
-          contentieux_id: ref.id,
-        },
-      })
-      if(findMain) {
-        await findMain.update(calculMainValuesFromChilds(findAllChild))
-      }
+        })
+        if(findMain) {
+          await findMain.update(calculMainValuesFromChilds(findAllChild))
+        }
+
+        // check if they are value after this periode
+        const nextPeriode = await Model.findAll({
+          attributes: ['periode'],
+          where: {
+            periode: {
+              [Op.gt]: endOfMonth(date),
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: [ref.id].concat(ref.childrens.map(r => r.id)),
+          },
+          raw: true,
+          order: ['periode'],
+        })
+        console.log('nextPeriode', nextPeriode)
+        continueToDo = nextPeriode.length !== 0
+        if(nextPeriode.length) {
+          date.setMonth(date.getMonth() + 1)
+        }
+
+      } while(continueToDo) 
     }
   }
 
