@@ -228,7 +228,7 @@ export function getRangeOfMonthsAsObject(
       getShortMonthString(dateCounter) +
       dateCounter.getFullYear().toString().slice(-2)
     if (asObject) {
-      monthlyL[str] = {}
+      monthlyL[str] = { ...{} }
     }
     dateCounter.setMonth(dateCounter.getMonth() + 1)
   }

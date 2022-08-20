@@ -137,7 +137,6 @@ export class ExcelService extends MainClass implements OnInit {
                   totalEtpt += counterEtpTotal
                 } else {
                   refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
-                  console.log('sous cont')
                 }
               }
             )
