@@ -34,6 +34,13 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   dateStop: Date | null = null
   today = new Date()
   classSelected = 'disabled'
+  categories = [
+    { id: 1, value: 'Tous' },
+    { id: 2, value: 'Magistrat' },
+    { id: 3, value: 'Contractuel' },
+    { id: 4, value: 'Fonctionnaire' },
+  ]
+  selectedCategorieId: undefined | string = undefined
 
   export() {
     this.excelService.exportExcel()
@@ -48,8 +55,28 @@ export class DashboardPage extends MainClass implements AfterViewInit {
       this.excelService.dateStop.next(value)
       this.dateStop = value
     }
+    this.checkValidity()
+  }
 
-    if (this.dateStart !== null && this.dateStop !== null)
+  updateCategory(event: any) {
+    const category = this.categories.find(
+      (category) => category.id === event[0]
+    )
+    this.selectedCategorieId = category?.value
+    if (this.selectedCategorieId) {
+      this.excelService.selectedCategory.next(
+        this.selectedCategorieId.toLowerCase()
+      )
+      this.checkValidity()
+    }
+  }
+
+  checkValidity() {
+    if (
+      this.dateStart !== null &&
+      this.dateStop !== null &&
+      this.selectedCategorieId !== undefined
+    )
       this.classSelected = ''
     else this.classSelected = 'disabled'
   }
