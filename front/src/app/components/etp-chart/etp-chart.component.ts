@@ -48,7 +48,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       bgColor: '#ffcade',
     },
     simulatedGref: {
-      values: [0],
+      values: [],
       dotColor: '#ffcade',
       bgColor: '#f083a0',
     },
@@ -58,7 +58,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       bgColor: '#fcd7d3',
     },
     simulatedCont: {
-      values: [0],
+      values: [],
       dotColor: '#fcd7d3',
       bgColor: '#eba89f',
     },
@@ -94,6 +94,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.labels.length
         )
 
+        /** TO ADD WHEN INTEGRATE CONT AND FON
         this.data.simulatedCont.values = simulatorService.generateLinearData(
           value?.etpCont as number,
           value?.etpCont as number,
@@ -105,7 +106,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           value?.etpFon as number,
           this.labels.length
         )
-
+        */
         let monthlyMagValues: any = undefined
         let monthlyContValues: any = undefined
         let monthlyFonValues: any = undefined
@@ -119,13 +120,20 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           })
 
         this.data.projectedMag.values = new Array()
+        this.data.projectedCont.values = new Array()
+        this.data.projectedGref.values = new Array()
 
         Object.keys(monthlyMagValues).forEach((x: any) => {
           this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
-          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
-          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+          this.data.projectedGref.values.push(monthlyContValues[x].etpt)
+          this.data.projectedCont.values.push(monthlyFonValues[x].etpt)
         })
 
+        console.log({
+          mag: this.data.projectedMag,
+          gref: this.data.projectedGref,
+          cont: this.data.projectedCont,
+        })
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data =
@@ -135,11 +143,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           //this.myChart._metasets[2]._dataset.data =
           //this.data.simulatedCont.values
           this.myChart._metasets[3]._dataset.data =
-            this.data.projectedCont.values
+            this.data.projectedGref.values
           //this.myChart._metasets[4]._dataset.data =
           //this.data.simulatedGref.values
           this.myChart._metasets[5]._dataset.data =
-            this.data.projectedGref.values
+            this.data.projectedCont.values
           this.myChart.update()
         }
       }
@@ -628,7 +636,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         bgColor: '#e07dd8',
       },
       projectedGref: {
-        values: [],
+        values: [0],
         dotColor: '#f083a0',
         bgColor: '#ffcade',
       },
@@ -638,7 +646,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         bgColor: '#f083a0',
       },
       projectedCont: {
-        values: [],
+        values: [0],
         dotColor: '#fdbfb7',
         bgColor: '#fcd7d3',
       },
