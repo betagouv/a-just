@@ -148,8 +148,8 @@ export class SimulatorService extends MainClass {
       if (
         lastActivitiesEntreesSorties.length !== 0 &&
         (lastActivitiesEntreesSorties[0].entrees ||
-          lastActivitiesEntreesSorties[0].sorties ||
-          lastActivitiesEntreesSorties[0].stock) &&
+          lastActivitiesEntreesSorties[0].sorties) &&
+        lastActivitiesEntreesSorties[0].stock &&
         lastActivitiesEntreesSorties[0].stock !== 0
       )
         break
