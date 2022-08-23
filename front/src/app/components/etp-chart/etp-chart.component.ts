@@ -129,6 +129,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.data.projectedCont.values.push(monthlyFonValues[x].etpt)
         })
 
+        console.log(
+          this.data.projectedMag.values,
+          this.data.projectedCont.values,
+          this.data.projectedGref.values
+        )
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data =
