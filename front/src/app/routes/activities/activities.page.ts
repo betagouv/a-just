@@ -80,7 +80,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       entrees: subRef.in,
       sorties: subRef.out,
       stock: subRef.stock,
-    })
+    }).then(() => this.onLoadMonthActivities())
 
     this.updatedBy = {
       date: new Date(),
