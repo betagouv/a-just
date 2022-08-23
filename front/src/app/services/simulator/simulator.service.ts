@@ -144,10 +144,13 @@ export class SimulatorService extends MainClass {
           month(this.endCurrentSituation, counter, 'lastday')
         )
       )
+      console.log(lastActivitiesEntreesSorties[0])
       if (
         lastActivitiesEntreesSorties.length !== 0 &&
         (lastActivitiesEntreesSorties[0].entrees ||
-          lastActivitiesEntreesSorties[0].sorties)
+          lastActivitiesEntreesSorties[0].sorties ||
+          lastActivitiesEntreesSorties[0].stock) &&
+        lastActivitiesEntreesSorties[0].stock !== 0
       )
         break
     } while (lastActivitiesEntreesSorties.length === 0 && counter != -12)
