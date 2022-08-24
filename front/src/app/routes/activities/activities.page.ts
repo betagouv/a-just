@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core'
-import { sumBy } from 'lodash'
 import { ActivityInterface } from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { UserInterface } from 'src/app/interfaces/user-interface'
@@ -21,12 +20,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     user: UserInterface | null
     date: Date
   } | null = null
+  timeoutUpdateAcitity: any = {}
 
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     super()
 
@@ -44,7 +44,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
-    subRef: ContentieuReferentielInterface
+    subRef: ContentieuReferentielInterface,
+    nodeUpdated: string
   ) {
     referentiel.childrens = (referentiel.childrens || []).map(
       (ref: ContentieuReferentielInterface) => {
@@ -60,32 +61,47 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     const preformatArray = (list: any[], index: string[]) => {
       let total: number | null = null
-      list.map(item => {
-        for(let i = 0; i < index.length; i++) {
-          if(item[index[i]] !== null) {
+      list.map((item) => {
+        for (let i = 0; i < index.length; i++) {
+          if (item[index[i]] !== null) {
             total = (total || 0) + item[index[i]]
             break
           }
         }
       })
-      
+
       return total
     }
     referentiel.in = preformatArray(referentiel.childrens, ['in', 'originalIn'])
-    referentiel.out = preformatArray(referentiel.childrens, ['out', 'originalOut'])
-    referentiel.stock = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
+    referentiel.out = preformatArray(referentiel.childrens, [
+      'out',
+      'originalOut',
+    ])
+    referentiel.stock = preformatArray(referentiel.childrens, [
+      'stock',
+      'originalStock',
+    ])
 
     // save datas
-    this.activitiesService.updateDatasAt(subRef.id, this.activityMonth, {
-      entrees: subRef.in,
-      sorties: subRef.out,
-      stock: subRef.stock,
-    }).then(() => this.onLoadMonthActivities())
-
-    this.updatedBy = {
-      date: new Date(),
-      user: this.userService.user.getValue(),
+    if (this.timeoutUpdateAcitity[subRef.id]) {
+      clearTimeout(this.timeoutUpdateAcitity[subRef.id])
+      this.timeoutUpdateAcitity[subRef.id] = null
     }
+
+    this.timeoutUpdateAcitity[subRef.id] = setTimeout(() => {
+      this.activitiesService
+        .updateDatasAt(subRef.id, this.activityMonth, {
+          entrees: subRef.in,
+          sorties: subRef.out,
+          stock: subRef.stock,
+        }, nodeUpdated)
+        .then(() => this.onLoadMonthActivities())
+
+      this.updatedBy = {
+        date: new Date(),
+        user: this.userService.user.getValue(),
+      }
+    }, 2000)
   }
 
   changeMonth(date: Date) {

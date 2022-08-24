@@ -16,14 +16,14 @@ export class ActivitiesService {
 
   constructor(private serverService: ServerService) {}
 
-  updateDatasAt(contentieuxId: number, date: Date, values: any, saveUserUpdate: boolean = true) {
+  updateDatasAt(contentieuxId: number, date: Date, values: any, nodeUpdated: string) {
     return this.serverService
       .postWithoutError(`activities/update-by`, {
         contentieuxId,
         date,
         values,
         hrBackupId: this.hrBackupId,
-        saveUserUpdate,
+        nodeUpdated,
       })
       .then(() => {
         // quick fix to remove after calcul moved to back
