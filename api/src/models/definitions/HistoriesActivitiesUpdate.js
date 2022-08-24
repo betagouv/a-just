@@ -17,6 +17,10 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      activity_node_updated: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -92,8 +92,8 @@
                   <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />
                 </div>
                 <div>
-                  <input type="number" [(ngModel)]="itemGroup.in" (ngModelChange)="onUpdateActivity(ref, itemGroup)"
-                    min="0" placeholder="-" />
+                  <input type="number" [(ngModel)]="itemGroup.in"
+                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
                 </div>
               </div>
               <div class="column-item">
@@ -101,8 +101,8 @@
                   <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />
                 </div>
                 <div>
-                  <input type="number" [(ngModel)]="itemGroup.out" (ngModelChange)="onUpdateActivity(ref, itemGroup)"
-                    min="0" placeholder="-" />
+                  <input type="number" [(ngModel)]="itemGroup.out"
+                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
                 </div>
               </div>
               <div class="column-item">
@@ -110,8 +110,8 @@
                   <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />
                 </div>
                 <div>
-                  <input type="number" [(ngModel)]="itemGroup.stock" (ngModelChange)="onUpdateActivity(ref, itemGroup)"
-                    min="0" placeholder="-" />
+                  <input type="number" [(ngModel)]="itemGroup.stock"
+                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
                 </div>
               </div>
             </div>
