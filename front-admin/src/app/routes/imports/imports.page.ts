@@ -80,7 +80,7 @@ export class ImportsPage {
     this.importService
       .importActivities({ file: await exportFileToString(file), backupId })
       .then(() => {
-        alert('Chargement en arrière plan. Patienter entre 1 à 2 minutes.');
+        alert('OK !');
         form.reset();
         this.onLoad();
       });
