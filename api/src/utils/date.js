@@ -1,4 +1,17 @@
-export const MONTH_LABEL = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'décembre']
+export const MONTH_LABEL = [
+  'janvier',
+  'février',
+  'mars',
+  'avril',
+  'mai',
+  'juin',
+  'juillet',
+  'aout',
+  'septembre',
+  'octobre',
+  'novembre',
+  'décembre',
+]
 
 export const convertHourMinutesToTimestamps = (hour, minute) => {
   return (hour || 1) * 60 * 60000 + (minute || 1) * 60000
@@ -63,4 +76,45 @@ export const monthName = (date) => {
 export function today (date = new Date()) {
   const now = new Date(date)
   return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+export function month (date = new Date(), monthToAdd, lastDay) {
+  const now = new Date(date)
+  if (monthToAdd) {
+    now.setDate(1)
+    now.setMonth(now.getMonth() + monthToAdd)
+  }
+  return lastDay
+    ? new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    : new Date(now.getFullYear(), now.getMonth())
+}
+
+export function getNbMonth (dateStart, dateStop) {
+  let totalMonth = 0
+
+  const now = new Date(dateStart)
+  do {
+    totalMonth++
+    now.setMonth(now.getMonth() + 1)
+  } while (now.getTime() <= dateStop.getTime())
+
+  if (totalMonth <= 0) {
+    totalMonth = 1
+  }
+
+  return totalMonth
+}
+
+export function isSameMonthAndYear (date1, date2) {
+  date1 = new Date(date1)
+  date2 = new Date(date2)
+
+  return (
+    date1.getMonth() === date2.getMonth() &&
+    date1.getFullYear() === date2.getFullYear()
+  )
+}
+
+export function workingDay (date) {
+  return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
 }

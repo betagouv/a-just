@@ -4,7 +4,8 @@ import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
-import { emptyCalulatorValues } from '../constants/calculator'
+import { emptyCalulatorValues, syncCalculatorDatas } from '../constants/calculator'
+import { getNbMonth } from '../utils/date'
 
 export default class RouteCalculator extends Route {
   constructor (params) {
@@ -28,8 +29,14 @@ export default class RouteCalculator extends Route {
       ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
     }
 
-    const list = emptyCalulatorValues(await this.models.ContentieuxReferentiels.getReferentiels())
-
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
+    const optionsBackups = await this.models.ContentieuxOptions.getAllById(optionBackupId)
+    let list = emptyCalulatorValues(referentiels)
+    const nbMonth = getNbMonth(dateStart, dateStop)
+    const categories = await this.models.HRCategories.getAll()
+    const hr = await this.model.getCache(backupId)
+    list = syncCalculatorDatas(list, nbMonth, await this.models.Activities.getAll(backupId), dateStart, dateStop, hr, categories, optionsBackups)
+    
     this.sendOk(ctx, list)
   }
 }

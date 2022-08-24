@@ -17,4 +17,6 @@ module.exports = {
   logsPassword: process.env.LOGS_PASSWORD,
   contactEmail: process.env.CONTACT_EMAIL,
   preloadHumanResourcesDatas: false,
+  nbDaysByMagistrat: 208,
+  nbHoursPerDay: 8,
 }
