@@ -75,6 +75,13 @@ export class ExcelService extends MainClass implements OnInit {
         }
     }
 
+    this.humanResourceService.onFilterList(
+      this.humanResourceService.backupId.getValue() || 0,
+      this.dateStop.getValue(),
+      [447],
+      [1]
+    )
+
     this.hrCategoryService.getAll().then((list) => {
       this.categories = list
       this.hrFonctionService.getAll().then((listfct) => {

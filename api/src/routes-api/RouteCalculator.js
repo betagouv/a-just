@@ -29,8 +29,6 @@ export default class RouteCalculator extends Route {
     }
 
     const list = emptyCalulatorValues(await this.models.ContentieuxReferentiels.getReferentiels())
-    let 
-
     this.sendOk(ctx, list)
   }
 }
