@@ -308,9 +308,6 @@ export default (sequelizeInstance, Model) => {
     if (ref) {
       let continueToDo = false
       do {
-        ///// TODO Comment répercuter les stocks !!!!!!
-        //const previousStock = await Model.checkAndUpdatePreviousStock(contentieuxId, date, hrBackupId)
-
         console.log(
           'check date',
           date,
@@ -333,16 +330,15 @@ export default (sequelizeInstance, Model) => {
           (c) => c.contentieux_id === contentieuxId
         )
 
-        if (
-          findIndexCurrentChildContentieux !== -1
-        ) {
+        if (findIndexCurrentChildContentieux !== -1) {
+          const { stock: s } = await Model.checkAndUpdatePreviousStock(
+            contentieuxId,
+            date,
+            hrBackupId
+          )
           // we calculate the new stock from the first previous
           findAllChild[findIndexCurrentChildContentieux].stock =
-            ((await Model.checkAndUpdatePreviousStock(
-              contentieuxId,
-              date,
-              hrBackupId
-            )) || 0) +
+            (s || 0) +
             (findAllChild[findIndexCurrentChildContentieux].entrees || 0) -
             (findAllChild[findIndexCurrentChildContentieux].sorties || 0)
           // save to database
@@ -431,7 +427,7 @@ export default (sequelizeInstance, Model) => {
       const monthBefore = new Date(periode)
       monthBefore.setMonth(monthBefore.getMonth() - 1)
       const firstPreviousPeriode = await Model.findOne({
-        attributes: ['id', 'periode', 'stock'],
+        attributes: ['id', 'periode', 'stock', 'entrees', 'sorties'],
         where: {
           periode: {
             [Op.between]: [startOfMonth(monthBefore), endOfMonth(monthBefore)],
@@ -445,9 +441,9 @@ export default (sequelizeInstance, Model) => {
         firstPreviousPeriode &&
         firstPreviousPeriode.dataValues.stock !== null
       ) {
-        return firstPreviousPeriode.dataValues.stock
+        return firstPreviousPeriode.dataValues
       } else {
-        const previousStock = await Model.checkAndUpdatePreviousStock(
+        let { stock: previousStock } = await Model.checkAndUpdatePreviousStock(
           contentieuxId,
           monthBefore,
           backupId
@@ -455,6 +451,11 @@ export default (sequelizeInstance, Model) => {
         if (previousStock !== null) {
           // update or create the previous month value
           if (firstPreviousPeriode) {
+            previousStock =
+              previousStock ||
+              0 +
+                (firstPreviousPeriode.dataValues.entrees || 0) +
+                (firstPreviousPeriode.dataValues.sorties || 0)
             await firstPreviousPeriode.update({ stock: previousStock })
           } else {
             await Model.create({
@@ -470,7 +471,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return null
+    return { stock: null, entrees: null, sorties: null }
   }
 
   Model.getByMonth = async (date, HrBackupId, loadPreviousList = true) => {
