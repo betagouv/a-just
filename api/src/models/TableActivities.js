@@ -269,7 +269,7 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId) => {
+  Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
     date = new Date(date)
 
     let findActivity = await Model.findOne({
@@ -296,7 +296,8 @@ export default (sequelizeInstance, Model) => {
     if (userId !== null) {
       await Model.models.HistoriesActivitiesUpdate.addHistory(
         userId,
-        findActivity.dataValues.id
+        findActivity.dataValues.id,
+        nodeUpdated
       )
     }
 
@@ -337,26 +338,38 @@ export default (sequelizeInstance, Model) => {
         )
 
         if (findIndexCurrentChildContentieux !== -1) {
-          const { stock: s } = await Model.checkAndUpdatePreviousStock(
-            contentieuxId,
-            date,
-            hrBackupId
-          )
-          // we calculate the new stock from the first previous
-          findAllChild[findIndexCurrentChildContentieux].stock =
+          const currentStock = findAllChild[findIndexCurrentChildContentieux].stock
+          let getUserUpdateStock
+          if(currentStock !== null) {
+            // if exist stock and is updated by user do not get previous stock
+            getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[findIndexCurrentChildContentieux].id, 'stock')
+          }
+
+          // do not updated if updated by user
+          if(!getUserUpdateStock) {
+            const { stock: s } = await Model.checkAndUpdatePreviousStock(
+              contentieuxId,
+              date,
+              hrBackupId
+            )
+            // we calculate the new stock from the first previous
+            findAllChild[findIndexCurrentChildContentieux].stock =
             (s || 0) +
             (findAllChild[findIndexCurrentChildContentieux].entrees || 0) -
             (findAllChild[findIndexCurrentChildContentieux].sorties || 0)
-          // save to database
-          await Model.updateById(
-            findAllChild[findIndexCurrentChildContentieux].id,
-            {
-              stock: findAllChild[findIndexCurrentChildContentieux].stock,
-            }
-          )
+            // save to database
+            await Model.updateById(
+              findAllChild[findIndexCurrentChildContentieux].id,
+              {
+                stock: findAllChild[findIndexCurrentChildContentieux].stock,
+              }
+            )
+          }
           console.log(
             'findAllChild[findIndexCurrentChildContentieux].stock(',
-            findAllChild[findIndexCurrentChildContentieux].stock
+            findAllChild[findIndexCurrentChildContentieux].stock,
+            currentStock,
+            getUserUpdateStock
           )
         }
 
