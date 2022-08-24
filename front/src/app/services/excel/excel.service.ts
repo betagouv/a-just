@@ -187,7 +187,7 @@ export class ExcelService extends MainClass implements OnInit {
 
             const filename = `Extraction-${
               this.userService.user.getValue()!.firstName
-            }_du ${new Date(
+            }_${this.userService.user.getValue()!.lastName!}_du ${new Date(
               this.dateStart
                 .getValue()
                 .setMinutes(
@@ -205,8 +205,7 @@ export class ExcelService extends MainClass implements OnInit {
                 )
             )
               .toJSON()
-              .slice(0, 10)}_${this.userService.user.getValue()!
-              .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
+              .slice(0, 10)}_fait le ${new Date().toJSON().slice(0, 10)}`
 
             const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
             FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
