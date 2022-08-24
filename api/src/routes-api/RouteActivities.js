@@ -33,10 +33,9 @@ export default class RouteActivities extends Route {
     const { date, hrBackupId } = this.body(ctx)
 
     if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const { list, previousList } = await this.model.getByMonth(date, hrBackupId)
+      const list = await this.model.getByMonth(date, hrBackupId)
       this.sendOk(ctx, {
         list,
-        previousList,
         lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map(i => i.id)),
       })
     } else {
