@@ -121,11 +121,12 @@ export default class RouteHumanResources extends Route {
       date: Types.date().required(),
       contentieuxIds: Types.array().required(),
       categoriesIds: Types.array().required(),
+      format: Types.boolean(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoriesIds, contentieuxIds } = this.body(ctx)
+    let { backupId, date, categoriesIds, contentieuxIds, format } = this.body(ctx)
 
     if(!await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
       ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
@@ -182,6 +183,7 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('step4')
     console.time('step5')
 
+    if (format !== true){
     let listFiltered = [...list]
     const categories = await this.models.HRCategories.getAll()
     const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
@@ -237,12 +239,22 @@ export default class RouteHumanResources extends Route {
           categoryId: category.id,
         }
       }
+      
     )
-    console.timeEnd('step5')
-
+  
     this.sendOk(ctx, {
       list: listFormated,
     })
+  } else {
+
+  console.timeEnd('step5')
+
+  this.sendOk(ctx, {
+        list
+      })
+  }
+    
+    
   }
 
   @Route.Get({

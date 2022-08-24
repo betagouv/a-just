@@ -599,6 +599,7 @@ export class HumanResourceService {
         date,
         contentieuxIds,
         categoriesIds,
+        format:true
       })
       .then((data) => {
         return data.data.list
