@@ -145,17 +145,16 @@ export class SimulatorService extends MainClass {
         )
       )
       console.log(lastActivitiesEntreesSorties[0])
-      if (
-        lastActivitiesEntreesSorties.length !== 0 &&
-        (lastActivitiesEntreesSorties[0].entrees ||
-          lastActivitiesEntreesSorties[0].entrees === 0 ||
-          lastActivitiesEntreesSorties[0].sorties ||
-          lastActivitiesEntreesSorties[0].sorties !== 0) &&
-        lastActivitiesEntreesSorties[0].stock &&
-        lastActivitiesEntreesSorties[0].stock !== 0
-      )
-        break
-    } while (lastActivitiesEntreesSorties.length === 0 && counter != -12)
+    } while (
+      (lastActivitiesEntreesSorties.length === 0 ||
+        !lastActivitiesEntreesSorties[0].entrees ||
+        lastActivitiesEntreesSorties[0].entrees === 0 ||
+        !lastActivitiesEntreesSorties[0].sorties ||
+        lastActivitiesEntreesSorties[0].sorties === 0 ||
+        !lastActivitiesEntreesSorties![0]!.stock ||
+        lastActivitiesEntreesSorties![0]!.stock === 0) &&
+      counter >= -12
+    )
 
     // if last month not available, then get the 12 last months starting from the last available
     if (counter !== -12 && counter !== 0) {
@@ -194,7 +193,7 @@ export class SimulatorService extends MainClass {
         (lastActivities.length === 0 ||
           lastActivities![0]!.stock === null ||
           lastActivities![0]!.stock === 0) &&
-        nbOfMonth != -12
+        nbOfMonth >= -12
       )
 
       // last available stock
