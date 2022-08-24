@@ -233,22 +233,22 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       let sufix = ''
       switch (context.dataset.label) {
         case 'projectedMag':
-          sufix = 'agents (projeté)'
+          sufix = 'magistrats (projeté)'
           break
         case 'simulatedMag':
-          sufix = 'agents (simulé)'
+          sufix = 'magistrats (simulé)'
           break
         case 'projectedGref':
-          sufix = 'agents (projeté)'
+          sufix = 'fonctionnaires (projeté)'
           break
         case 'simulatedGref':
-          sufix = 'agents (simulé)'
+          sufix = 'fonctionnaires (simulé)'
           break
         case 'projectedCont':
-          sufix = 'agents (projeté)'
+          sufix = 'contractuels (projeté)'
           break
         case 'simulatedCont':
-          sufix = 'agents (simulé)'
+          sufix = 'contractuels (simulé)'
           break
       }
       let lbl =
