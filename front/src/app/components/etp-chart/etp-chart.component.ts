@@ -125,15 +125,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
         Object.keys(monthlyMagValues).forEach((x: any) => {
           this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
-          this.data.projectedGref.values.push(monthlyContValues[x].etpt)
-          this.data.projectedCont.values.push(monthlyFonValues[x].etpt)
+          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
         })
 
-        console.log(
-          this.data.projectedMag.values,
-          this.data.projectedCont.values,
-          this.data.projectedGref.values
-        )
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data =
