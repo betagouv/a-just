@@ -591,7 +591,8 @@ export class HumanResourceService {
     backupId: number,
     date: Date,
     contentieuxIds: number[],
-    categoriesIds: number[]
+    categoriesIds: number[],
+    endPeriodToCheck?: Date
   ) {
     return this.serverService
       .post(`human-resources/filter-list`, {
@@ -599,7 +600,8 @@ export class HumanResourceService {
         date,
         contentieuxIds,
         categoriesIds,
-        format:true
+        format: true,
+        endPeriodToCheck,
       })
       .then((data) => {
         return data.data.list

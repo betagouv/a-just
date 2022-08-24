@@ -61,6 +61,20 @@ export class ExcelService extends MainClass implements OnInit {
     this.allReferentiels =
       this.humanResourceService.contentieuxReferentiel.getValue()
 
+    for (let i = 0; i < this.allReferentiels.length; i++) {
+      if (this.allReferentiels[i].childrens)
+        for (
+          let y = this.allReferentiels[i].childrens!.length - 1;
+          y >= 0;
+          y--
+        ) {
+          this.allReferentiels.splice(
+            i + 1,
+            0,
+            this.allReferentiels[i].childrens![y]
+          )
+        }
+    }
     console.log(this.allReferentiels)
 
     const referentielIds = this.allReferentiels.map((a) => a.id)
@@ -68,9 +82,10 @@ export class ExcelService extends MainClass implements OnInit {
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
-        this.dateStop.getValue(),
+        this.dateStart.getValue(),
         referentielIds,
-        [0, 1, 2]
+        [0, 1, 2],
+        this.dateStop.getValue()
       )
       .then((allHuman) => {
         this.hrCategoryService.getAll().then((list) => {
