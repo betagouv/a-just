@@ -28,6 +28,12 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < list.length; i++) {
+      const stock =
+        (list[i].entrees === null || list[i].entrees === 0) &&
+        (list[i].sorties === null || list[i].sorties === 0)
+          ? null
+          : list[i].stock // doesn't show temp stock if no in and out
+
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
@@ -35,7 +41,7 @@ export default (sequelizeInstance, Model) => {
           list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
         sorties:
           list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
+        stock: stock !== null ? stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -474,17 +480,8 @@ export default (sequelizeInstance, Model) => {
     return { stock: null, entrees: null, sorties: null }
   }
 
-  Model.getByMonth = async (date, HrBackupId, loadPreviousList = true) => {
+  Model.getByMonth = async (date, HrBackupId) => {
     date = new Date(date)
-
-    const lastMonth = new Date(date)
-    lastMonth.setMonth(lastMonth.getMonth() - 1)
-    let previousList
-
-    if (loadPreviousList) {
-      const previous = await Model.getByMonth(lastMonth, HrBackupId, false)
-      previousList = previous.list
-    }
 
     const list = await Model.findAll({
       attributes: [
@@ -512,6 +509,9 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < list.length; i++) {
+      if (list[i]['ContentieuxReferentiel.id'] === 447) {
+        console.log(list[i])
+      }
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
@@ -519,24 +519,20 @@ export default (sequelizeInstance, Model) => {
         originalEntrees: list[i].originalEntrees,
         sorties: list[i].sorties,
         originalSorties: list[i].originalSorties,
-        stock: list[i].stock,
+        stock:
+          (list[i].entrees === null || list[i].entrees === 0) &&
+          (list[i].sorties === null || list[i].sorties === 0)
+            ? null
+            : list[i].stock, // doesn't show temp stock if no in and out
         originalStock: list[i].originalStock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
       }
-
-      if (loadPreviousList && list[i].stock == null) {
-        // calculate last month
-        // TODO
-      }
     }
 
-    return {
-      list,
-      previousList,
-    }
+    return list
   }
 
   return Model
