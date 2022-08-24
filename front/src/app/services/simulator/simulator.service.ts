@@ -205,8 +205,8 @@ export class SimulatorService extends MainClass {
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
-      let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-      let etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+      let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+      let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
 
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
@@ -285,8 +285,8 @@ export class SimulatorService extends MainClass {
         ) as Array<etpAffectedInterface>
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
-        etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-        etpCont = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+        etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+        etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
 
         // Compute totalOut with etp at dateStart (specific date) to display
         totalOut = Math.floor(
@@ -341,11 +341,11 @@ export class SimulatorService extends MainClass {
 
         const projectedEtpFon = (
           projectedEtpAffected as Array<etpAffectedInterface>
-        )[1].totalEtp
+        )[2].totalEtp
 
         const projectedEtpCont = (
           projectedEtpAffected as Array<etpAffectedInterface>
-        )[2].totalEtp
+        )[1].totalEtp
 
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
