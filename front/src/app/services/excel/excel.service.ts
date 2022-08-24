@@ -36,7 +36,7 @@ export class ExcelService extends MainClass implements OnInit {
     endCurrentSituation
   )
   loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-
+  selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>('')
   data: Array<any> = []
 
   constructor(
@@ -48,14 +48,15 @@ export class ExcelService extends MainClass implements OnInit {
   ) {
     super()
 
-    this.watch(this.dateStart.subscribe(() => {}))
+    this.watch(this.dateStart.subscribe((value) => {}))
 
-    this.watch(this.dateStop.subscribe(() => {}))
+    this.watch(this.dateStop.subscribe((value) => {}))
   }
 
   ngOnInit(): void {}
 
   exportExcel(): void {
+    this.humanResourceService.contentieuxReferentiel
     this.loading.next(true)
     this.allReferentiels =
       this.humanResourceService.contentieuxReferentiel.getValue()
@@ -125,33 +126,56 @@ export class ExcelService extends MainClass implements OnInit {
                 ...this.categories,
               ]) as Array<any>
 
-              let counter = 0
+              let counterEtpTotal = 0
+              let counterEtpSubTotal = 0
 
               Object.keys(etpAffected).map((key: string) => {
                 if (referentiel.childrens !== undefined) {
-                  counter += etpAffected[key].etpt
-                }
+                  counterEtpTotal += etpAffected[key].etpt
+                } else counterEtpSubTotal += etpAffected[key].etpt
               })
 
               if (referentiel.childrens !== undefined) {
-                refObj['TOTAL ' + referentiel.label.toUpperCase()] = counter
-                totalEtpt += counter
-              } else refObj[referentiel.label.toUpperCase()] = counter
+                refObj['TOTAL ' + referentiel.label.toUpperCase()] =
+                  counterEtpTotal
+                totalEtpt += counterEtpTotal
+              } else {
+                refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
+              }
             }
           )
 
-          this.data.push({
-            Matricule: human.id,
-            Prénom: human.firstName,
-            Nom: human.lastName,
-            Catégorie: categoryName,
-            Fonction: fonctionName,
-            ETPT: totalEtpt,
-            ...refObj,
-          })
+          if (
+            categoryName === this.selectedCategory.getValue() ||
+            this.selectedCategory.getValue() === 'tous'
+          )
+            this.data.push({
+              Numéro_A_JUST: human.id,
+              Prénom: human.firstName,
+              Nom: human.lastName,
+              Catégorie: categoryName,
+              Fonction: fonctionName,
+              ETPT: totalEtpt,
+              ...refObj,
+            })
         })
 
         import('xlsx').then((xlsx) => {
+          this.data.sort((a, b) =>
+            a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
+          )
+
+          if (this.selectedCategory.getValue() !== 'tous') {
+            let headerSum: { [key: string]: any } = new Object({})
+            Object.keys(this.data[0]).map((key) => {
+              const sum = sumBy(this.data, key)
+              headerSum[key] =
+                typeof sum === 'string' || key === 'Numéro_A_JUST' ? '' : sum
+              if (key === 'Fonction') headerSum[key] = 'SOMME'
+            })
+            this.data.push(headerSum)
+          }
+
           const worksheet = xlsx.utils.json_to_sheet(this.data, {})
           const workbook = {
             Sheets: { data: worksheet },
@@ -167,9 +191,26 @@ export class ExcelService extends MainClass implements OnInit {
 
           const filename = `Extraction-${
             this.userService.user.getValue()!.firstName
-          }_${this.userService.user.getValue()!.lastName!}_${new Date()
+          }_du ${new Date(
+            this.dateStart
+              .getValue()
+              .setMinutes(
+                this.dateStart.getValue().getMinutes() -
+                  this.dateStart.getValue().getTimezoneOffset()
+              )
+          )
             .toJSON()
-            .slice(0, 10)}`
+            .slice(0, 10)} au ${new Date(
+            this.dateStop
+              .getValue()
+              .setMinutes(
+                this.dateStop.getValue().getMinutes() -
+                  this.dateStop.getValue().getTimezoneOffset()
+              )
+          )
+            .toJSON()
+            .slice(0, 10)}_${this.userService.user.getValue()!
+            .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
 
           const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
           FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
@@ -177,6 +218,10 @@ export class ExcelService extends MainClass implements OnInit {
         })
       })
     })
+  }
+
+  sortByFCT(key1: any, key2: any): number {
+    return +(key1.Fonction > key2.Fonction)
   }
 
   autofitColumns(json: any[]) {
@@ -223,7 +268,7 @@ export class ExcelService extends MainClass implements OnInit {
       }
     })
 
-    const now = new Date(this.dateStart.getValue())
+    const now = new Date(this.dateStart.getValue().getTime())
     let nbDay = 0
     do {
       // only working day
