@@ -122,11 +122,12 @@ export default class RouteHumanResources extends Route {
       contentieuxIds: Types.array().required(),
       categoriesIds: Types.array().required(),
       format: Types.boolean(),
+      endPeriodToCheck: Types.date()
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoriesIds, contentieuxIds, format } = this.body(ctx)
+    let { backupId, date,endPeriodToCheck, categoriesIds, contentieuxIds, format } = this.body(ctx)
 
     if(!await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
       ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
@@ -159,7 +160,7 @@ export default class RouteHumanResources extends Route {
 
           if (
             hr.dateStart &&
-            hr.dateStart.getTime() > date.getTime()
+            hr.dateStart.getTime() > endPeriodToCheck.getTime()
           ) {
             isOk = false
           }
