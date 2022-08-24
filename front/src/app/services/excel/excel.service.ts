@@ -173,11 +173,10 @@ export class ExcelService extends MainClass implements OnInit {
                 })
             })
 
-            import('xlsx').then((xlsx) => {
-              console.log(this.data)
-              this.data.sort((a, b) =>
-                a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
-              )
+          import('xlsx').then((xlsx) => {
+            this.data.sort((a, b) =>
+              a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
+            )
 
               if (this.selectedCategory.getValue() !== 'tous') {
                 let headerSum: { [key: string]: any } = new Object({})
@@ -205,28 +204,27 @@ export class ExcelService extends MainClass implements OnInit {
                 type: 'array',
               })
 
-              const filename = `Extraction-${
-                this.userService.user.getValue()!.firstName
-              }_du ${new Date(
-                this.dateStart
-                  .getValue()
-                  .setMinutes(
-                    this.dateStart.getValue().getMinutes() -
-                      this.dateStart.getValue().getTimezoneOffset()
-                  )
-              )
-                .toJSON()
-                .slice(0, 10)} au ${new Date(
-                this.dateStop
-                  .getValue()
-                  .setMinutes(
-                    this.dateStop.getValue().getMinutes() -
-                      this.dateStop.getValue().getTimezoneOffset()
-                  )
-              )
-                .toJSON()
-                .slice(0, 10)}_${this.userService.user.getValue()!
-                .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
+            const filename = `Extraction-${
+              this.userService.user.getValue()!.firstName
+            }_${this.userService.user.getValue()!.lastName!}_du ${new Date(
+              this.dateStart
+                .getValue()
+                .setMinutes(
+                  this.dateStart.getValue().getMinutes() -
+                    this.dateStart.getValue().getTimezoneOffset()
+                )
+            )
+              .toJSON()
+              .slice(0, 10)} au ${new Date(
+              this.dateStop
+                .getValue()
+                .setMinutes(
+                  this.dateStop.getValue().getMinutes() -
+                    this.dateStop.getValue().getTimezoneOffset()
+                )
+            )
+              .toJSON()
+              .slice(0, 10)}_fait le ${new Date().toJSON().slice(0, 10)}`
 
               const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
               FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
