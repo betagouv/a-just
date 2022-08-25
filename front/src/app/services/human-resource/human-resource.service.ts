@@ -37,6 +37,7 @@ export class HumanResourceService {
     HRFonctionInterface[]
   >([])
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
+  allIndisponibilityReferentielIds: Array<number> = []
   copyOfIdsIndispo: number[] = []
   categoriesFilterListIds: number[] = []
   selectedReferentielIds: number[] = []
@@ -504,14 +505,21 @@ export class HumanResourceService {
         (a) => a.contentieux && a.contentieux.id === referentielId
       )
       const indispoFiltred = this.findAllIndisponibilities(hr, date)
-      let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+      let reelEtp = 0
+      const isIndispoRef =
+        this.allIndisponibilityReferentielIds.includes(referentielId)
+      if (isIndispoRef) {
+        reelEtp = situation.etp
+      } else {
+        reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+      }
       if (reelEtp < 0) {
         reelEtp = 0
       }
-
       return {
         etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
         situation,
+        indisponibilities: indispoFiltred,
       }
     }
 
@@ -592,7 +600,8 @@ export class HumanResourceService {
     date: Date,
     contentieuxIds: number[],
     categoriesIds: number[],
-    endPeriodToCheck?: Date
+    endPeriodToCheck?: Date,
+    extractor?: boolean
   ) {
     return this.serverService
       .post(`human-resources/filter-list`, {
@@ -600,7 +609,7 @@ export class HumanResourceService {
         date,
         contentieuxIds,
         categoriesIds,
-        format: true,
+        extractor: extractor ? extractor : false,
         endPeriodToCheck,
       })
       .then((data) => {

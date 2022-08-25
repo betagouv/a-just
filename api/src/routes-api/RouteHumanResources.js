@@ -121,14 +121,13 @@ export default class RouteHumanResources extends Route {
       date: Types.date().required(),
       contentieuxIds: Types.array().required(),
       categoriesIds: Types.array().required(),
-      format: Types.boolean(),
+      extractor: Types.boolean().required(),
       endPeriodToCheck: Types.date()
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date,endPeriodToCheck, categoriesIds, contentieuxIds, format } = this.body(ctx)
-
+    let { backupId, date,endPeriodToCheck, categoriesIds, contentieuxIds, extractor } = this.body(ctx)
     if(!await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
       ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
     }
@@ -160,6 +159,7 @@ export default class RouteHumanResources extends Route {
 
           if (
             hr.dateStart &&
+            endPeriodToCheck &&
             hr.dateStart.getTime() > endPeriodToCheck.getTime()
           ) {
             isOk = false
@@ -184,7 +184,7 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('step4')
     console.time('step5')
 
-    if (format !== true){
+    if (extractor === false){
     let listFiltered = [...list]
     const categories = await this.models.HRCategories.getAll()
     const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
@@ -242,13 +242,17 @@ export default class RouteHumanResources extends Route {
       }
       
     )
-  
+    console.log('step7')
+    console.log(extractor)
+
     this.sendOk(ctx, {
       list: listFormated,
     })
   } else {
+  console.log(extractor)
 
   console.timeEnd('step5')
+  console.log('step6')
 
   this.sendOk(ctx, {
         list

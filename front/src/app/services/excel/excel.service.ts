@@ -75,7 +75,6 @@ export class ExcelService extends MainClass implements OnInit {
           )
         }
     }
-    console.log(this.allReferentiels)
 
     const referentielIds = this.allReferentiels.map((a) => a.id)
 
@@ -85,7 +84,8 @@ export class ExcelService extends MainClass implements OnInit {
         this.dateStart.getValue(),
         referentielIds,
         [0, 1, 2],
-        this.dateStop.getValue()
+        this.dateStop.getValue(),
+        true
       )
       .then((allHuman) => {
         this.hrCategoryService.getAll().then((list) => {
@@ -108,8 +108,6 @@ export class ExcelService extends MainClass implements OnInit {
                 categoryName = findCategory
                   ? findCategory.label.toLowerCase()
                   : ''
-              } else {
-                console.log({ error: human })
               }
 
               if (currentSituation && currentSituation.fonction) {
@@ -120,8 +118,6 @@ export class ExcelService extends MainClass implements OnInit {
                 fonctionName = findFonction
                   ? findFonction.label.toLowerCase()
                   : ''
-              } else {
-                console.log({ error: human })
               }
 
               let etpAffected: any = []
@@ -169,7 +165,6 @@ export class ExcelService extends MainClass implements OnInit {
             })
 
             import('xlsx').then((xlsx) => {
-              console.log('la DATA', this.data)
               this.data.sort((a, b) =>
                 a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
               )
@@ -276,23 +271,24 @@ export class ExcelService extends MainClass implements OnInit {
     categories.map((c) => {
       list[c.id] = {
         etpt: 0,
+        indisponibility: [],
         ...c,
       }
     })
 
     const now = new Date(this.dateStart.getValue().getTime())
     let nbDay = 0
+
     do {
       // only working day
       if (workingDay(now)) {
         nbDay++
-        const { etp, situation } =
+        const { etp, situation, indisponibilities } =
           this.humanResourceService.getEtpByDateAndPerson(
             referentiel.id,
             now,
             hr
           )
-
         if (etp !== null) {
           // @ts-ignore
           list[situation.category.id].etpt += etp
