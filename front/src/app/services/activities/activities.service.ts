@@ -16,13 +16,14 @@ export class ActivitiesService {
 
   constructor(private serverService: ServerService) {}
 
-  updateDatasAt(contentieuxId: number, date: Date, values: any) {
+  updateDatasAt(contentieuxId: number, date: Date, values: any, nodeUpdated: string) {
     return this.serverService
       .postWithoutError(`activities/update-by`, {
         contentieuxId,
         date,
         values,
         hrBackupId: this.hrBackupId,
+        nodeUpdated,
       })
   }
 

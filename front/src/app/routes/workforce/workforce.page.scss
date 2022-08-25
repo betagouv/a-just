@@ -450,9 +450,12 @@
 .title {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid fColor(cbrownlight);
   padding: 0 32px 24px 32px;
   background-color: white;
+
+  &.border-bottom {
+    border-bottom: 1px solid fColor(cbrownlight);
+  }
 
   aj-select,
   aj-date-select {
@@ -584,7 +587,7 @@ progression-bar {
   margin-right: 8px;
   text-decoration: none;
 
-  > button {
+  >button {
     display: flex;
     align-items: center;
 

@@ -12,12 +12,13 @@ export default class RouteActivities extends Route {
       date: Types.date(),
       values: Types.any(),
       hrBackupId: Types.number(),
+      nodeUpdated: Types.string(),
     }),
     accesses: [Access.canVewActivities],
   })
   async updateBy (ctx) {
-    const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
-    await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id)
+    const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
+    await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
     this.sendOk(ctx, 'Ok')
   }
 

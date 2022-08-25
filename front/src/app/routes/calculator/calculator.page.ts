@@ -21,6 +21,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   sortBy: string = ''
   datas: CalculatorInterface[] = []
   datasFilted: CalculatorInterface[] = []
+  isLoading: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -53,7 +54,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       })
     )
     this.watch(
-      this.calculatorService.referentielIds.subscribe(() => {
+      this.calculatorService.referentielIds.subscribe((refs) => {
+        this.referentielIds = refs
         this.onLoad()
       })
     )
@@ -66,10 +68,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentielService.idsSoutien.indexOf(r.id) === -1
         )
         this.formatReferentiel()
-        this.referentielIds =
-          this.referentielIds.length === 0
-            ? this.referentiel.map((r) => r.id)
-            : this.referentielIds
+
+        if (this.referentielIds.length === 0) {
+          this.calculatorService.referentielIds.next(
+            this.referentiel.map((r) => r.id)
+          )
+        }
       })
     )
   }
@@ -81,22 +85,27 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   onLoad() {
     if (
       this.humanResourceService.backupId.getValue() &&
-      this.contentieuxOptionsService.backupId.getValue()
+      this.contentieuxOptionsService.backupId.getValue() &&
+      this.calculatorService.referentielIds.getValue().length
     ) {
-      this.calculatorService.filterList().then((list) => this.formatDatas(list))
+      this.isLoading = true
+      this.calculatorService
+        .filterList()
+        .then((list) => {
+          this.formatDatas(list)
+          this.isLoading = false
+        })
+        .catch(() => (this.isLoading = false))
     }
   }
 
   formatDatas(list: CalculatorInterface[]) {
-    console.log(list)
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
 
   filtredDatas() {
-    let list = this.datas.filter(
-      (d) => this.referentielIds.indexOf(d.contentieux.id) !== -1
-    )
+    let list = this.datas
     if (this.sortBy) {
       list = orderBy(
         list,
@@ -122,8 +131,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
-      this.referentielIds = event
-      this.calculatorService.referentielIds.next(this.referentielIds)
+      this.calculatorService.referentielIds.next(event)
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
@@ -133,13 +141,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     this.filtredDatas()
-  }
-
-  onCalculate() {
-    if (this.referentiel.length && this.referentielIds.length === 0) {
-      this.referentielIds = this.referentiel.map((r) => r.id)
-      this.filtredDatas()
-    }
   }
 
   trackBy(index: number, item: CalculatorInterface) {
