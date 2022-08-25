@@ -528,7 +528,6 @@ export class HumanResourceService {
       situation: null,
     }
   }
-
   controlIndisponibilities(
     human: HumanResourceInterface,
     indisponibilities: RHActivityInterface[]
