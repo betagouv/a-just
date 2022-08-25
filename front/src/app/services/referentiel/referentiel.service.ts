@@ -32,7 +32,7 @@ export class ReferentielService {
       ) {
         return obj.id
       })
-
+    console.log(this.humanResourceService.allIndisponibilityReferentiel)
     this.idsIndispo = idsIndispo
     this.humanResourceService.copyOfIdsIndispo = idsIndispo
 

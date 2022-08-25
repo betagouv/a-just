@@ -1,6 +1,4 @@
 import { Injectable, OnInit } from '@angular/core'
-import { ServerService } from '../http-server/server.service'
-import { saveAs } from 'file-saver'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { HRCategoryService } from '../hr-category/hr-category.service'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -58,40 +56,24 @@ export class ExcelService extends MainClass implements OnInit {
   exportExcel(): void {
     this.humanResourceService.contentieuxReferentiel
     this.loading.next(true)
-    this.allReferentiels =
+    this.allReferentiels = this.flatListOfContentieux(
       this.humanResourceService.contentieuxReferentiel.getValue()
-
-    for (let i = 0; i < this.allReferentiels.length; i++) {
-      if (this.allReferentiels[i].childrens)
-        for (
-          let y = this.allReferentiels[i].childrens!.length - 1;
-          y >= 0;
-          y--
-        ) {
-          this.allReferentiels.splice(
-            i + 1,
-            0,
-            this.allReferentiels[i].childrens![y]
-          )
-        }
-    }
-
-    const referentielIds = this.allReferentiels.map((a) => a.id)
+    )
 
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateStart.getValue(),
-        referentielIds,
+        this.allReferentiels.map((a) => a.id),
         [0, 1, 2],
         this.dateStop.getValue(),
         true
       )
       .then((allHuman) => {
-        this.hrCategoryService.getAll().then((list) => {
-          this.categories = list
-          this.hrFonctionService.getAll().then((listfct) => {
-            this.fonctions = listfct
+        this.hrCategoryService.getAll().then((categoriesList) => {
+          this.categories = categoriesList
+          this.hrFonctionService.getAll().then((functionsList) => {
+            this.fonctions = functionsList
             this.data = []
 
             allHuman.map((human: any) => {
@@ -100,11 +82,12 @@ export class ExcelService extends MainClass implements OnInit {
 
               const currentSituation =
                 this.humanResourceService.findSituation(human)
+
               if (currentSituation && currentSituation.category) {
                 const findCategory = this.categories.find(
-                  // @ts-ignore
-                  (c) => c.id === currentSituation.category.id
+                  (c) => c.id === currentSituation.category!.id
                 )
+
                 categoryName = findCategory
                   ? findCategory.label.toLowerCase()
                   : ''
@@ -112,8 +95,7 @@ export class ExcelService extends MainClass implements OnInit {
 
               if (currentSituation && currentSituation.fonction) {
                 const findFonction = this.fonctions.find(
-                  // @ts-ignore
-                  (f) => f.id === currentSituation.fonction.id
+                  (f) => f.id === currentSituation.fonction!.id
                 )
                 fonctionName = findFonction
                   ? findFonction.label.toLowerCase()
@@ -124,30 +106,57 @@ export class ExcelService extends MainClass implements OnInit {
               let refObj: { [key: string]: any } = {}
               let totalEtpt = 0
 
-              this.allReferentiels.map(
+              const indispoArray = this.allReferentiels.map(
                 (referentiel: ContentieuReferentielInterface) => {
                   etpAffected = this.getHRVentilation(human, referentiel, [
                     ...this.categories,
-                  ]) as Array<any>
+                  ])
 
-                  let counterEtpTotal = 0
-                  let counterEtpSubTotal = 0
+                  const { counterEtpTotal, counterEtpSubTotal } = this.countEtp(
+                    etpAffected,
+                    referentiel
+                  )
 
-                  Object.keys(etpAffected).map((key: string) => {
-                    if (referentiel.childrens !== undefined) {
-                      counterEtpTotal += etpAffected[key].etpt
-                    } else counterEtpSubTotal += etpAffected[key].etpt
-                  })
+                  const isIndispoRef =
+                    this.humanResourceService.allIndisponibilityReferentielIds.includes(
+                      referentiel.id
+                    )
 
                   if (referentiel.childrens !== undefined) {
                     refObj['TOTAL ' + referentiel.label.toUpperCase()] =
                       counterEtpTotal
+
                     totalEtpt += counterEtpTotal
+
+                    if (isIndispoRef) {
+                      return {
+                        id: referentiel.id,
+                        label: 'TOTAL ' + referentiel.label.toUpperCase(),
+                        indispo: 0,
+                        contentieux: true,
+                      }
+                    }
                   } else {
                     refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
+
+                    if (isIndispoRef) {
+                      return {
+                        id: referentiel.id,
+                        indispo: counterEtpSubTotal,
+                        contentieux: false,
+                      }
+                    }
                   }
+
+                  return { indispo: 0 }
                 }
               )
+
+              const key =
+                indispoArray.filter((elem) => elem.contentieux! === true)[0]
+                  .label || ''
+
+              refObj[key] = sumBy(indispoArray, 'indispo')
 
               if (
                 categoryName === this.selectedCategory.getValue() ||
@@ -165,6 +174,7 @@ export class ExcelService extends MainClass implements OnInit {
             })
 
             import('xlsx').then((xlsx) => {
+              console.log(this.data)
               this.data.sort((a, b) =>
                 a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
               )
@@ -225,6 +235,33 @@ export class ExcelService extends MainClass implements OnInit {
           })
         })
       })
+  }
+
+  flatListOfContentieux(allReferentiels: ContentieuReferentielInterface[]) {
+    for (let i = 0; i < allReferentiels.length; i++) {
+      if (allReferentiels[i].childrens)
+        for (let y = allReferentiels[i].childrens!.length - 1; y >= 0; y--) {
+          allReferentiels.splice(i + 1, 0, allReferentiels[i].childrens![y])
+        }
+    }
+
+    return allReferentiels
+  }
+
+  countEtp(etpAffected: any, referentiel: ContentieuReferentielInterface) {
+    let counterEtpTotal = 0
+    let counterEtpSubTotal = 0
+
+    Object.keys(etpAffected).map((key: string) => {
+      if (referentiel.childrens !== undefined) {
+        // if contentieux
+        counterEtpTotal += etpAffected[key].etpt
+      } else {
+        // if sous contentieux
+        counterEtpSubTotal += etpAffected[key].etpt
+      }
+    })
+    return { counterEtpTotal, counterEtpSubTotal }
   }
 
   sortByFCT(key1: any, key2: any): number {
@@ -301,7 +338,6 @@ export class ExcelService extends MainClass implements OnInit {
     for (const property in list) {
       list[property].etpt = list[property].etpt / nbDay
     }
-
     return list
   }
 }
