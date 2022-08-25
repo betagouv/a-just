@@ -22,7 +22,12 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { isDateBiggerThan, month, nbHourInMonth, nbOfDays } from 'src/app/utils/dates'
+import {
+  isDateBiggerThan,
+  month,
+  nbHourInMonth,
+  nbOfDays,
+} from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -99,7 +104,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
     private activitiesService: ActivitiesService,
-    private simulatorService: SimulatorService,
+    private simulatorService: SimulatorService
   ) {
     super()
   }
@@ -598,13 +603,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   calculateReferentielValues() {
     console.log(this.listFormated)
-    const magistrats = this.listFormated.find(l => l.groupId === 1)
+    const magistrats = this.listFormated.find((l) => l.groupId === 1)
     const activities = this.activitiesService.activities.getValue()
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
       const activitiesFiltered = orderBy(
-        activities.filter((a) => a.contentieux.id === r.id && isDateBiggerThan(this.dateSelected, a.periode)),
+        activities.filter(
+          (a) =>
+            a.contentieux.id === r.id &&
+            isDateBiggerThan(this.dateSelected, a.periode)
+        ),
         (a) => {
           const p = new Date(a.periode)
           return p.getTime()
@@ -612,59 +621,94 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ['desc']
       ).slice(0, 12)
 
-      // find new etpt
+      // find new ETPT of today
       let etpt = 0
-      if(magistrats) {
-        const ref = magistrats.referentiel.find(referentiel => referentiel.id === r.id)
-        if(ref) {
-          etpt = ref.totalAffected || 0
+      if (magistrats) {
+        const ref = magistrats.referentiel.find(
+          (referentiel) => referentiel.id === r.id
+        )
+        if (ref) {
+          etpt = fixDecimal(ref.totalAffected!) || 0
         }
       }
 
       const nbDaysByMonthForMagistrat = environment.nbDaysByMagistrat / 12
-      const inValue = meanBy(activitiesFiltered, 'entrees') || 0
-      const averageOut = meanBy(activitiesFiltered, 'sorties') || 0
-      let averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) * etpt / averageOut
-      let outValue = etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
-      let lastStock = (activitiesFiltered.length ? (activitiesFiltered[0].stock || 0) : 0) + inValue - outValue
+      const inValue = Math.floor(meanBy(activitiesFiltered, 'entrees')) || 0
+      const averageOut = Math.floor(meanBy(activitiesFiltered, 'sorties')) || 0
+      let lastStock = activitiesFiltered.length
+        ? activitiesFiltered[0].stock || 0
+        : 0
 
       // simulate value if last datas are before selected month
-      const lastPeriode = activitiesFiltered.length ? month(activitiesFiltered[0].periode, 0, 'lastday') : null
-      if(lastPeriode && lastPeriode.getTime() < month(this.dateSelected).getTime()) {
-        lastStock = activitiesFiltered[0].stock || 0
-        const etpAffected = this.simulatorService.getHRPositions(r.id, lastPeriode, true, this.dateSelected) as Array<etpAffectedInterface>
-        const etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+      const lastPeriode = activitiesFiltered.length
+        ? month(activitiesFiltered[0].periode, 0, 'lastday')
+        : null
+
+      if (
+        lastPeriode &&
+        lastPeriode.getTime() < month(this.dateSelected).getTime()
+      ) {
+        // ETPT of the last 12 months
+        let etpAffectedLast12Months = this.simulatorService.getHRPositions(
+          r.id,
+          new Date(month(lastPeriode, -11)),
+          true,
+          new Date(month(lastPeriode, 0, 'lastday'))
+        ) as Array<etpAffectedInterface>
+        let etpToComputeLast12Months =
+          etpAffectedLast12Months.length >= 0
+            ? etpAffectedLast12Months[0].totalEtp
+            : 0
+
+        let averageWorkingProcess = fixDecimal(
+          (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
+            (averageOut / etpToComputeLast12Months)
+        )
+
+        let outValue = Math.floor(
+          (etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat) /
+            averageWorkingProcess
+        )
+
+        // ETPT Delta between lastperiod and today/selected date in the futur
+        const etpAffected = this.simulatorService.getHRPositions(
+          r.id,
+          lastPeriode,
+          true,
+          this.dateSelected
+        ) as Array<etpAffectedInterface>
+        const etpMagDelta =
+          etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
         const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
 
-        console.log(etpAffected, lastPeriode, true, this.dateSelected)
+        // Compute stock projection until today
+        lastStock =
+          Math.floor(lastStock) -
+          Math.floor(
+            (nbDayCalendar / (365 / 12)) *
+              nbDaysByMonthForMagistrat *
+              ((etpMagDelta * environment.nbHoursPerDay) /
+                averageWorkingProcess)
+          ) +
+          Math.floor((nbDayCalendar / (365 / 12)) * inValue)
 
-        averageWorkingProcess = (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) / (averageOut / etpMag)
-        outValue = etpMag * environment.nbHoursPerDay * nbDaysByMonthForMagistrat / averageWorkingProcess
-        lastStock += (nbDayCalendar / (365 / 12) * inValue) - ((nbDayCalendar / (365 / 12)) * nbDaysByMonthForMagistrat * ((etpMag * 8) / averageWorkingProcess))
+        return {
+          ...r,
+          in: inValue,
+          out: outValue,
+          stock: lastStock,
+          coverage: fixDecimal(outValue / inValue) * 100,
+          dtes: fixDecimal(lastStock / outValue),
+        }
       }
-
-
-
-      console.log(r, {
-        activitiesFiltered,
-        sumOut: sumBy(activitiesFiltered, 'sorties'),
-        nbHourInMonth: nbHourInMonth(this.dateSelected),
-        averageOut,
-        averageWorkingProcess,
-        in: inValue,
-        out: outValue,
-        stock: lastStock,
-        coverage: outValue / inValue * 100,
-        dtes: lastStock / outValue,
-      })
 
       return {
         ...r,
         in: inValue,
-        out: outValue,
+        out: averageOut,
         stock: lastStock,
-        coverage: outValue / inValue * 100,
-        dtes: lastStock / outValue,
+        coverage: fixDecimal(averageOut / inValue) * 100,
+        dtes: fixDecimal(lastStock / averageOut),
       }
     })
   }

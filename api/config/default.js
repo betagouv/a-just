@@ -7,7 +7,7 @@ module.exports = {
   port: process.env.PORT || 8080,
   database: {
     url: process.env.DATABASE_URL,
-    //logging: false,
+    // logging: false,
   },
   jsonwebtoken: {
     private_key: process.env.JSON_WEB_TOKEN,
@@ -17,4 +17,6 @@ module.exports = {
   logsPassword: process.env.LOGS_PASSWORD,
   contactEmail: process.env.CONTACT_EMAIL,
   preloadHumanResourcesDatas: false,
+  nbDaysByMagistrat: 208,
+  nbHoursPerDay: 8,
 }
