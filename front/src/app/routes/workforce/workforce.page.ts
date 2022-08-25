@@ -214,7 +214,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       ...l,
       hrFiltered: l.hrFiltered.map((h) => {
         const opacity = this.checkHROpacity(h)
-        nbPerson ++
+        nbPerson++
         if (opacity === 1) {
           valuesFinded.push(h)
         }

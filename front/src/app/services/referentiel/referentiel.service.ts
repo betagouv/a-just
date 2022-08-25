@@ -11,10 +11,7 @@ export class ReferentielService {
   idsSoutien: number[] = []
   mainActivitiesId: number[] = []
 
-  constructor(
-    private humanResourceService: HumanResourceService,
-  ) {
-  }
+  constructor(private humanResourceService: HumanResourceService) {}
 
   formatDatas(list: ContentieuReferentielInterface[]) {
     const refIndispo = list.find((r) => r.label === 'Indisponibilité')
@@ -29,6 +26,13 @@ export class ReferentielService {
         this.humanResourceService.allIndisponibilityReferentiel.push(c)
       })
     }
+    this.humanResourceService.allIndisponibilityReferentielIds =
+      this.humanResourceService.allIndisponibilityReferentiel.map(function (
+        obj
+      ) {
+        return obj.id
+      })
+
     this.idsIndispo = idsIndispo
     this.humanResourceService.copyOfIdsIndispo = idsIndispo
 
