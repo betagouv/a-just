@@ -7,6 +7,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { month } from 'src/app/utils/dates'
 
 @Component({
   templateUrl: './activities.page.html',
@@ -21,6 +22,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     date: Date
   } | null = null
   timeoutUpdateAcitity: any = {}
+  isInTheFutures: boolean = false
 
   constructor(
     private activitiesService: ActivitiesService,
@@ -90,11 +92,16 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     this.timeoutUpdateAcitity[subRef.id] = setTimeout(() => {
       this.activitiesService
-        .updateDatasAt(subRef.id, this.activityMonth, {
-          entrees: subRef.in,
-          sorties: subRef.out,
-          stock: subRef.stock,
-        }, nodeUpdated)
+        .updateDatasAt(
+          subRef.id,
+          this.activityMonth,
+          {
+            entrees: subRef.in,
+            sorties: subRef.out,
+            stock: subRef.stock,
+          },
+          nodeUpdated
+        )
         .then(() => this.onLoadMonthActivities())
 
       this.updatedBy = {
@@ -109,61 +116,69 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   }
 
   onLoadMonthActivities() {
-    this.activitiesService
-      .loadMonthActivities(this.activityMonth)
-      .then((monthValues) => {
-        this.updatedBy = monthValues.lastUpdate
-        const activities: ActivityInterface[] = monthValues.list
-        const referentiels = [
-          ...this.humanResourceService.contentieuxReferentiel.getValue(),
-        ]
+    const now = month()
+    const checkMonthDate = month(this.activityMonth)
+    this.isInTheFutures = now.getTime() < checkMonthDate.getTime()
 
-        // todo set in, out, stock for each
-        this.referentiel = referentiels
-          .filter(
-            (r) =>
-              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-              this.referentielService.idsSoutien.indexOf(r.id) === -1
-          )
-          .map((ref) => {
-            const getActivity = activities.find(
-              (a) => a.contentieux.id === ref.id
+    if (this.isInTheFutures === false) {
+      this.activitiesService
+        .loadMonthActivities(this.activityMonth)
+        .then((monthValues) => {
+          this.updatedBy = monthValues.lastUpdate
+          const activities: ActivityInterface[] = monthValues.list
+          const referentiels = [
+            ...this.humanResourceService.contentieuxReferentiel.getValue(),
+          ]
+
+          // todo set in, out, stock for each
+          this.referentiel = referentiels
+            .filter(
+              (r) =>
+                this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+                this.referentielService.idsSoutien.indexOf(r.id) === -1
             )
-            ref.in = (getActivity && getActivity.entrees) || null
-            ref.originalIn =
-              (getActivity && getActivity.originalEntrees) || null
-            ref.out = (getActivity && getActivity.sorties) || null
-            ref.originalOut =
-              (getActivity && getActivity.originalSorties) || null
-            ref.stock = (getActivity && getActivity.stock) || null
-            ref.originalStock =
-              (getActivity && getActivity.originalStock) || null
-
-            ref.childrens = (ref.childrens || []).map((c) => {
-              const getChildrenActivity = activities.find(
-                (a) => a.contentieux.id === c.id
+            .map((ref) => {
+              const getActivity = activities.find(
+                (a) => a.contentieux.id === ref.id
               )
-              c.in =
-                (getChildrenActivity && getChildrenActivity.entrees) || null
-              c.originalIn =
-                (getChildrenActivity && getChildrenActivity.originalEntrees) ||
-                null
-              c.out =
-                (getChildrenActivity && getChildrenActivity.sorties) || null
-              c.originalOut =
-                (getChildrenActivity && getChildrenActivity.originalSorties) ||
-                null
-              c.stock =
-                (getChildrenActivity && getChildrenActivity.stock) || null
-              c.originalStock =
-                (getChildrenActivity && getChildrenActivity.originalStock) ||
-                null
+              ref.in = (getActivity && getActivity.entrees) || null
+              ref.originalIn =
+                (getActivity && getActivity.originalEntrees) || null
+              ref.out = (getActivity && getActivity.sorties) || null
+              ref.originalOut =
+                (getActivity && getActivity.originalSorties) || null
+              ref.stock = (getActivity && getActivity.stock) || null
+              ref.originalStock =
+                (getActivity && getActivity.originalStock) || null
 
-              return c
+              ref.childrens = (ref.childrens || []).map((c) => {
+                const getChildrenActivity = activities.find(
+                  (a) => a.contentieux.id === c.id
+                )
+                c.in =
+                  (getChildrenActivity && getChildrenActivity.entrees) || null
+                c.originalIn =
+                  (getChildrenActivity &&
+                    getChildrenActivity.originalEntrees) ||
+                  null
+                c.out =
+                  (getChildrenActivity && getChildrenActivity.sorties) || null
+                c.originalOut =
+                  (getChildrenActivity &&
+                    getChildrenActivity.originalSorties) ||
+                  null
+                c.stock =
+                  (getChildrenActivity && getChildrenActivity.stock) || null
+                c.originalStock =
+                  (getChildrenActivity && getChildrenActivity.originalStock) ||
+                  null
+
+                return c
+              })
+
+              return ref
             })
-
-            return ref
-          })
-      })
+        })
+    }
   }
 }

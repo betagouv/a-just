@@ -1,4 +1,5 @@
-<aj-wrapper title="Données d'activité" [subtitleTemplate]="subTitleTemplate" class="content-margin-null">
+<aj-wrapper title="Données d'activité" [subtitleTemplate]="isInTheFutures ? null : subTitleTemplate"
+  class="content-margin-null">
   <div class="container">
     <div class="header-list">
       <div class="margin-left"></div>
@@ -7,117 +8,126 @@
           (valueChange)="changeMonth($event)">
         </aj-date-select>
       </div>
-      <div class="column-item">
-        <p>Entrées</p>
-        <div>
+      <ng-template [ngIf]="!isInTheFutures">
+        <div class="column-item">
+          <p>Entrées</p>
           <div>
-            <p>Entrées logiciel</p>
-          </div>
-          <div>
-            <p>Entrées A-JUSTées</p>
-          </div>
-        </div>
-      </div>
-      <div class="column-item">
-        <p>Sorties</p>
-        <div>
-          <div>
-            <p>Sorties logiciel</p>
-          </div>
-          <div>
-            <p>Sorties A-JUSTées</p>
+            <div>
+              <p>Entrées logiciel</p>
+            </div>
+            <div>
+              <p>Entrées A-JUSTées</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="column-item">
-        <p>Stock</p>
-        <div>
+        <div class="column-item">
+          <p>Sorties</p>
           <div>
-            <p>Stock logiciel</p>
-          </div>
-          <div>
-            <p>Stock A-JUSTées</p>
+            <div>
+              <p>Sorties logiciel</p>
+            </div>
+            <div>
+              <p>Sorties A-JUSTées</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="margin-right"></div>
+        <div class="column-item">
+          <p>Stock</p>
+          <div>
+            <div>
+              <p>Stock logiciel</p>
+            </div>
+            <div>
+              <p>Stock A-JUSTées</p>
+            </div>
+          </div>
+        </div>
+        <div class="margin-right"></div>
+      </ng-template>
     </div>
     <div class="content-list">
-      <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
-        <div class="item" (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
-          [class.selectable]="(ref.childrens || []).length">
-          <div class="label">
-            <div class="color-border"
-              [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"></div>
-            <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}
-            </mat-icon>
-            <p>{{ref.label}}</p>
+      <ng-template [ngIf]="isInTheFutures">
+        <p class="in-the-future-text">Vous ne pouvez saisir des données d'activités dans le future !</p>
+      </ng-template>
+
+      <ng-template [ngIf]="!isInTheFutures">
+        <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
+          <div class="item"
+            (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
+            [class.selectable]="(ref.childrens || []).length">
+            <div class="label">
+              <div class="color-border"
+                [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"></div>
+              <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+              <p>{{ref.label}}</p>
+            </div>
+            <div class="column-item">
+              <div>
+                <input type="number" [ngModel]="ref.originalIn" [attr.disabled]="true" placeholder="-" />
+              </div>
+              <div>
+                <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />
+              </div>
+            </div>
+            <div class="column-item">
+              <div>
+                <input type="number" [ngModel]="ref.originalOut" [attr.disabled]="true" placeholder="-" />
+              </div>
+              <div>
+                <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />
+              </div>
+            </div>
+            <div class="column-item">
+              <div>
+                <input type="number" [ngModel]="ref.originalStock" [attr.disabled]="true" placeholder="-" />
+              </div>
+              <div>
+                <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />
+              </div>
+            </div>
           </div>
-          <div class="column-item">
-            <div>
-              <input type="number" [ngModel]="ref.originalIn" [attr.disabled]="true" placeholder="-" />
+          <div class="group">
+            <div class="color-border">
+              <div [style.backgroundColor]="referentielMappingColor(ref.label)"></div>
             </div>
             <div>
-              <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />
-            </div>
-          </div>
-          <div class="column-item">
-            <div>
-              <input type="number" [ngModel]="ref.originalOut" [attr.disabled]="true" placeholder="-" />
-            </div>
-            <div>
-              <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />
-            </div>
-          </div>
-          <div class="column-item">
-            <div>
-              <input type="number" [ngModel]="ref.originalStock" [attr.disabled]="true" placeholder="-" />
-            </div>
-            <div>
-              <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />
+              <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
+                <div class="label">
+                  <p>{{itemGroup.label}}</p>
+                </div>
+                <div class="column-item">
+                  <div>
+                    <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />
+                  </div>
+                  <div>
+                    <input type="number" [(ngModel)]="itemGroup.in"
+                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
+                  </div>
+                </div>
+                <div class="column-item">
+                  <div>
+                    <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />
+                  </div>
+                  <div>
+                    <input type="number" [(ngModel)]="itemGroup.out"
+                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
+                  </div>
+                </div>
+                <div class="column-item">
+                  <div>
+                    <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />
+                  </div>
+                  <div>
+                    <input type="number" [(ngModel)]="itemGroup.stock"
+                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="group">
-          <div class="color-border">
-            <div [style.backgroundColor]="referentielMappingColor(ref.label)"></div>
-          </div>
-          <div>
-            <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
-              <div class="label">
-                <p>{{itemGroup.label}}</p>
-              </div>
-              <div class="column-item">
-                <div>
-                  <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />
-                </div>
-                <div>
-                  <input type="number" [(ngModel)]="itemGroup.in"
-                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
-                </div>
-              </div>
-              <div class="column-item">
-                <div>
-                  <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />
-                </div>
-                <div>
-                  <input type="number" [(ngModel)]="itemGroup.out"
-                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
-                </div>
-              </div>
-              <div class="column-item">
-                <div>
-                  <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />
-                </div>
-                <div>
-                  <input type="number" [(ngModel)]="itemGroup.stock"
-                    (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </ng-template>
     </div>
   </div>
 </aj-wrapper>
