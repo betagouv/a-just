@@ -13,6 +13,7 @@ import { ReferentielService } from '../referentiel/referentiel.service'
 import { sumBy } from 'lodash'
 import { UserService } from '../user/user.service'
 import * as FileSaver from 'file-saver'
+import { ServerService } from '../http-server/server.service'
 
 const startCurrentSituation = month(new Date(), -12)
 const endCurrentSituation = month(new Date(), -1, 'lastday')
@@ -42,7 +43,7 @@ export class ExcelService extends MainClass implements OnInit {
     private hrCategoryService: HRCategoryService,
     private hrFonctionService: HRFonctionService,
     private referentielService: ReferentielService,
-    private userService: UserService
+    private serverService: ServerService
   ) {
     super()
 
@@ -53,8 +54,17 @@ export class ExcelService extends MainClass implements OnInit {
 
   ngOnInit(): void {}
 
-  exportExcel(): void {
-    this.humanResourceService.contentieuxReferentiel
+  exportExcel() {
+    return this.serverService
+      .post(`extractor/filter-list`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        dateStart: this.dateStart.getValue(),
+        dateStop: this.dateStop.getValue(),
+      })
+      .then((data) => data.data || [])
+
+    /**
+
     this.loading.next(true)
     this.allReferentiels = this.flatListOfContentieux(
       this.humanResourceService.contentieuxReferentiel.getValue()
@@ -235,6 +245,9 @@ export class ExcelService extends MainClass implements OnInit {
           })
         })
       })
+
+
+      */
   }
 
   flatListOfContentieux(allReferentiels: ContentieuReferentielInterface[]) {
@@ -244,7 +257,6 @@ export class ExcelService extends MainClass implements OnInit {
           allReferentiels.splice(i + 1, 0, allReferentiels[i].childrens![y])
         }
     }
-
     return allReferentiels
   }
 
