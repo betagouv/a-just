@@ -7,6 +7,8 @@ import {
   HostBinding,
   ViewChild,
 } from '@angular/core'
+import { MatDatepicker } from '@angular/material/datepicker'
+import { Moment } from 'moment'
 import { MainClass } from 'src/app/libs/main-class'
 
 @Component({
@@ -89,5 +91,22 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   onClick() {
     this.readOnly === false ? this.picker.open() : null
+  }
+
+  setMonthAndYear(
+    normalizedMonthAndYear: Moment,
+    datepicker: MatDatepicker<Moment>
+  ) {
+    if (this.dateType === 'month') {
+      console.log(normalizedMonthAndYear, datepicker)
+      const date = new Date(
+        normalizedMonthAndYear.year(),
+        normalizedMonthAndYear.month()
+      )
+      this.value = date
+      this.valueChange.emit(this.value)
+      this.findRealValue()
+      datepicker.close()
+    }
   }
 }
