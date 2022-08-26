@@ -1,6 +1,9 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
-import { calculMainValuesFromChilds } from '../utils/activities'
+import {
+  calculMainValuesFromChilds,
+  preformatActivitiesArray,
+} from '../utils/activities'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async (HRBackupId) => {
@@ -27,14 +30,6 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < list.length; i++) {
-      const stock =
-        (list[i].entrees === null || list[i].entrees === 0) &&
-        (list[i].sorties === null || list[i].sorties === 0) &&
-        (list[i].original_entrees === null || list[i].original_entrees === 0) &&
-        (list[i].original_sorties === null || list[i].original_sorties === 0)
-          ? null
-          : list[i].stock // doesn't show temp stock if no in and out
-
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
@@ -42,7 +37,7 @@ export default (sequelizeInstance, Model) => {
           list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
         sorties:
           list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: stock !== null ? stock : list[i].original_stock,
+        stock: list[i].stock === null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -79,7 +74,7 @@ export default (sequelizeInstance, Model) => {
         const month = +csv[i].periode.slice(-2) - 1
         const periode = new Date(year, month)
 
-        if(minDate === null || periode.getTime() < minDate.getTime()) {
+        if (minDate === null || periode.getTime() < minDate.getTime()) {
           minDate = new Date(periode)
         }
 
@@ -120,7 +115,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    await Model.cleanActivities(HRBackupId/*, minDate*/)
+    await Model.cleanActivities(HRBackupId /*, minDate*/)
   }
 
   Model.removeDuplicateDatas = async (HRBackupId) => {
@@ -156,31 +151,52 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.cleanActivities = async (HRBackupId, minPeriode = null) => {
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels =
+      await Model.models.ContentieuxReferentiels.getReferentiels()
 
-    if(!minPeriode) {
+    if (!minPeriode) {
       const minPeriodeFromDB = await Model.min('periode', {
         where: {
           hr_backup_id: HRBackupId,
         },
       })
 
-      if(minPeriodeFromDB) {
+      if (minPeriodeFromDB) {
         minPeriode = new Date(minPeriodeFromDB)
       }
     }
 
     console.log('minPeriode', minPeriode)
-    if(!minPeriode) {
+    if (!minPeriode) {
       return // stop we don't have values to analyse
     }
 
-    for(let i = 0; i < referentiels.length; i++) {
-      await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId)
+    for (let i = 0; i < referentiels.length; i++) {
+      await Model.updateTotalAndFuturValue(
+        referentiels[i].id,
+        minPeriode,
+        HRBackupId
+      )
     }
   }
 
-  Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
+  Model.updateBy = async (
+    contentieuxId,
+    date,
+    values,
+    hrBackupId,
+    userId,
+    nodeUpdated
+  ) => {
+    console.log(
+      'updateBy',
+      contentieuxId,
+      date,
+      values,
+      hrBackupId,
+      userId,
+      nodeUpdated
+    )
     date = new Date(date)
 
     let findActivity = await Model.findOne({
@@ -204,6 +220,8 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
+    console.log(findActivity)
+
     if (userId !== null) {
       await Model.models.HistoriesActivitiesUpdate.addHistory(
         userId,
@@ -218,26 +236,25 @@ export default (sequelizeInstance, Model) => {
       (r.childrens || []).find((c) => c.id === contentieuxId)
     )
 
-    if(ref) {
+    if (ref) {
       await Model.updateTotalAndFuturValue(ref.id, date, hrBackupId)
     }
   }
 
-  Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
+  Model.updateTotalAndFuturValue = async (
+    mainContentieuxId,
+    date,
+    hrBackupId
+  ) => {
     const referentiels =
       await Model.models.ContentieuxReferentiels.getReferentiels()
-    const ref = referentiels.find((r) =>r.id === mainContentieuxId)
+    const ref = referentiels.find((r) => r.id === mainContentieuxId)
     console.log(ref)
 
     if (ref) {
       let continueToDo = false
       do {
-        console.log(
-          'check date',
-          date,
-          mainContentieuxId,
-          hrBackupId
-        )
+        console.log('check date', date, mainContentieuxId, hrBackupId)
 
         // update main activity with entrees, sorties, stock
         const findAllChild = await Model.findAll({
@@ -252,37 +269,79 @@ export default (sequelizeInstance, Model) => {
         })
 
         // calcul stock of custom stock
-        for(let i = 0; i < findAllChild.length; i++) {
-          const currentStock = findAllChild[i].stock
+        for (let i = 0; i < findAllChild.length; i++) {
+          let currentStock = findAllChild[i].stock
           let getUserUpdateStock
-          if(currentStock !== null) {
+          if (currentStock !== null) {
             // if exist stock and is updated by user do not get previous stock
-            getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].contentieux_id, 'stock')
+            getUserUpdateStock =
+              await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
+                findAllChild[i].contentieux_id,
+                'stock'
+              )
           }
 
           // do not updated if updated by user
-          if(!getUserUpdateStock) {
-            const { stock: s } = await Model.checkAndUpdatePreviousStock(
+          if (!getUserUpdateStock) {
+            const previousStockValue = await Model.checkAndUpdatePreviousStock(
               findAllChild[i].contentieux_id,
               date,
               hrBackupId
             )
-            // we calculate the new stock from the first previous
-            findAllChild[i].stock =
-            (s || 0) +
-            (findAllChild[i].entrees || 0) -
-            (findAllChild[i].sorties || 0)
-            // save to database
-            await Model.updateById(
-              findAllChild[i].id,
-              {
-                stock: findAllChild[i].stock,
+
+            if (previousStockValue !== null) {
+              if (
+                findAllChild[i].original_entrees === 0 &&
+                findAllChild[i].entrees === null &&
+                findAllChild[i].original_sorties === 0 &&
+                findAllChild[i].sorties === null
+              ) {
+                currentStock = findAllChild[i].original_stock || 0
+              } else if (
+                findAllChild[i].entrees !== null ||
+                findAllChild[i].sorties !== null ||
+                previousStockValue.type === 'calculate'
+              ) {
+                const entrees = preformatActivitiesArray(
+                  [findAllChild[i]],
+                  ['entrees', 'original_entrees']
+                )
+                const sorties = preformatActivitiesArray(
+                  [findAllChild[i]],
+                  ['sorties', 'original_sorties']
+                )
+                currentStock =
+                  previousStockValue.stock + (entrees || 0) - (sorties || 0)
+              } else {
+                currentStock = findAllChild[i].original_stock || 0
               }
-            )
+            } else {
+              currentStock = findAllChild[i].original_stock || 0
+
+              if (findAllChild[i].entrees) {
+                currentStock +=
+                  -(findAllChild[i].original_entrees || 0) +
+                  (findAllChild[i].entrees || 0)
+              }
+
+              if (findAllChild[i].sorties) {
+                currentStock +=
+                  -(findAllChild[i].original_entrees || 0) +
+                  (findAllChild[i].entrees || 0)
+              }
+            }
+
+            if (currentStock === findAllChild[i].original_stock) {
+              currentStock = null
+            }
+
+            // save to database
+            findAllChild[i].stock = currentStock
+            await Model.updateById(findAllChild[i].id, {
+              stock: currentStock,
+            })
           }
         }
-
-        console.log(date, findAllChild)
 
         const findMain = await Model.findOne({
           where: {
@@ -310,7 +369,6 @@ export default (sequelizeInstance, Model) => {
           raw: true,
           order: ['periode'],
         })
-        console.log('nextPeriode', nextPeriode)
         continueToDo = nextPeriode.length !== 0
         if (nextPeriode.length) {
           date.setMonth(date.getMonth() + 1)
@@ -328,13 +386,25 @@ export default (sequelizeInstance, Model) => {
     const startOfMonthPeriode = startOfMonth(periode)
 
     const previousPeriode = await Model.findAll({
-      attributes: ['periode'],
+      attributes: ['periode', 'stock', 'original_stock'],
       where: {
         periode: {
           [Op.lt]: startOfMonthPeriode,
         },
-        stock: {
-          [Op.ne]: null,
+        [Op.or]: [
+          {
+            stock: {
+              [Op.ne]: null,
+            },
+          },
+          {
+            original_stock: {
+              [Op.ne]: null,
+            },
+          },
+        ],
+        original_stock: {
+          [Op.ne]: 0,
         },
         hr_backup_id: backupId,
         contentieux_id: contentieuxId,
@@ -344,55 +414,19 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (previousPeriode.length) {
-      // they are stock and we need to find it
-      // find only the previous month
-      const monthBefore = new Date(periode)
-      monthBefore.setMonth(monthBefore.getMonth() - 1)
-      const firstPreviousPeriode = await Model.findOne({
-        attributes: ['id', 'periode', 'stock', 'entrees', 'sorties'],
-        where: {
-          periode: {
-            [Op.between]: [startOfMonth(monthBefore), endOfMonth(monthBefore)],
-          },
-          hr_backup_id: backupId,
-          contentieux_id: contentieuxId,
-        },
-      })
-      if (
-        firstPreviousPeriode &&
-        firstPreviousPeriode.dataValues.stock !== null
-      ) {
-        return firstPreviousPeriode.dataValues
-      } else {
-        let { stock: previousStock } = await Model.checkAndUpdatePreviousStock(
-          contentieuxId,
-          monthBefore,
-          backupId
-        )
-        if (previousStock !== null) {
-          // update or create the previous month value
-          if (firstPreviousPeriode) {
-            previousStock =
-              previousStock ||
-              0 +
-                (firstPreviousPeriode.dataValues.entrees || 0) +
-                (firstPreviousPeriode.dataValues.sorties || 0)
-            await firstPreviousPeriode.update({ stock: previousStock })
-          } else {
-            await Model.create({
-              hr_backup_id: backupId,
-              contentieux_id: contentieuxId,
-              periode: monthBefore,
-              stock: previousStock,
-            })
-          }
+      if (previousPeriode[previousPeriode.length - 1].stock) {
+        return {
+          stock: previousPeriode[previousPeriode.length - 1].stock,
+          type: 'calculate',
         }
-
-        return previousStock
+      } else if (previousPeriode[previousPeriode.length - 1].original_stock) {
+        return {
+          stock: previousPeriode[previousPeriode.length - 1].original_stock,
+          type: 'setted',
+        }
       }
     }
-
-    return { stock: null, entrees: null, sorties: null }
+    return null
   }
 
   Model.getByMonth = async (date, HrBackupId) => {
@@ -431,13 +465,7 @@ export default (sequelizeInstance, Model) => {
         originalEntrees: list[i].originalEntrees,
         sorties: list[i].sorties,
         originalSorties: list[i].originalSorties,
-        stock:
-          (list[i].entrees === null || list[i].entrees === 0) &&
-          (list[i].sorties === null || list[i].sorties === 0) &&
-          (list[i].originalEntrees === null || list[i].originalEntrees === 0) &&
-          (list[i].originalSorties === null || list[i].originalSorties === 0)
-            ? null
-            : list[i].stock, // doesn't show temp stock if no in and out
+        stock: list[i].stock,
         originalStock: list[i].originalStock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
