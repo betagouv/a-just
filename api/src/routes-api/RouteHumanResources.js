@@ -139,50 +139,8 @@ export default class RouteHumanResources extends Route {
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
     console.time('step3')
-    let list =
-      preformatedAllHumanResource
-        .filter((hr) => {
-          let isOk = true
-          if (
-            hr.category &&
-            categoriesIds.indexOf(hr.category.id) === -1
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateEnd &&
-            hr.dateEnd.getTime() < date.getTime()
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateStart &&
-            endPeriodToCheck &&
-            hr.dateStart.getTime() > endPeriodToCheck.getTime()
-          ) {
-            isOk = false
-          }
-
-          return isOk
-        })
-    console.timeEnd('step3')
-    console.time('step4')
-    list = list.filter((h) => {
-      const idsOfactivities = h.currentActivities.map(
-        (a) => (a.contentieux && a.contentieux.id) || 0
-      )
-      for (let i = 0; i < idsOfactivities.length; i++) {
-        if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
-          return true
-        }
-      }
-
-      return false
-    })
-    console.timeEnd('step4')
-    console.time('step5')
+    let list = getHumanRessourceList(preformatedAllHumanResource,categoriesIds,endPeriodToCheck)
+      
 
     if (extractor === false){
     let listFiltered = [...list]
@@ -261,6 +219,9 @@ export default class RouteHumanResources extends Route {
     
     
   }
+
+
+
 
   @Route.Get({
     path: 'read-hr/:hrId',
