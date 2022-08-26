@@ -25,7 +25,6 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import {
   isDateBiggerThan,
   month,
-  nbHourInMonth,
   nbOfDays,
 } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
@@ -86,7 +85,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   valuesFinded: HumanResourceInterface[] | null = null
   indexValuesFinded: number = 0
   timeoutUpdateSearch: any = null
-  hrBackup: BackupInterface | undefined
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] = []
   filterSelected: ContentieuReferentielCalculateInterface | null = null
@@ -111,14 +109,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.watch(
-      this.humanResourceService.hr.subscribe((hr) => {
-        this.allHumanResources = sortBy(hr, ['fonction.rank', 'category.rank'])
-        /* TODO this.categoriesFilterList =
-          this.humanResourceService.categoriesFilterList */
-        this.preformatHumanResources()
-      })
-    )
-    this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref
           .filter(
@@ -129,6 +119,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           id: r.id,
           value: this.referentielMappingName(r.label),
         }))
+
         this.reaffectatorService.selectedReferentielIds = this
           .reaffectatorService.selectedReferentielIds.length
           ? this.reaffectatorService.selectedReferentielIds
@@ -164,56 +155,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         }
       )
     )
-    this.watch(
-      this.humanResourceService.backupId.subscribe((backupId) => {
-        const hrBackups = this.humanResourceService.backups.getValue()
-        this.hrBackup = hrBackups.find((b) => b.id === backupId)
-      })
-    )
   }
 
   ngOnDestroy() {
     this.watcherDestroy()
-  }
-
-  preformatHumanResources() {
-    // init datas
-    this.objectOfFirstETPTargetValue = []
-
-    this.preformatedAllHumanResource = orderBy(
-      this.allHumanResources.map((h) => this.formatHR(h)),
-      ['fonction.rank', 'lastName'],
-      ['asc', 'asc']
-    )
-
-    this.onFilterList()
-  }
-
-  formatHR(h: HumanResourceInterface) {
-    const indisponibilities =
-      this.humanResourceService.findAllIndisponibilities(h, this.dateSelected)
-    const hasIndisponibility = fixDecimal(
-      sumBy(indisponibilities, 'percent') / 100
-    )
-    const currentSituation = this.humanResourceService.findSituation(
-      h,
-      this.dateSelected
-    )
-    const etp = (currentSituation && currentSituation.etp) || 0
-
-    return {
-      ...h,
-      currentActivities:
-        (currentSituation && currentSituation.activities) || [],
-      indisponibilities,
-      opacity: 1,
-      etpLabel: etpLabel(etp),
-      hasIndisponibility,
-      currentSituation,
-      etp,
-      category: currentSituation && currentSituation.category,
-      fonction: currentSituation && currentSituation.fonction,
-    }
   }
 
   updateCategoryValues() {
@@ -248,14 +193,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         value,
       }
     })
-  }
-
-  async addHR() {
-    const newId = await this.humanResourceService.createHumanResource(
-      this.dateSelected
-    )
-    this.route.snapshot.fragment = newId + ''
-    this.router.navigate(['/resource-humaine', newId])
   }
 
   trackById(index: number, item: any) {
@@ -300,8 +237,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (!this.categoriesFilterList.length || !this.referentiel.length) {
       return
     }
-
-    // TODO this.humanResourceService.categoriesFilterList = this.categoriesFilterList // copy to memoryse selection
+   
+    // init datas
+    this.objectOfFirstETPTargetValue = []
 
     let list: HumanResourceSelectedInterface[] =
       this.preformatedAllHumanResource
@@ -569,7 +507,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
-    this.preformatHumanResources()
+    this.onFilterList()
   }
 
   onFilterBy(ref: ContentieuReferentielCalculateInterface) {
@@ -798,8 +736,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const orginalPerson = this.allHumanResources.find((h) => h.id === id)
 
         if (orginalPerson && indexOfFormatedList !== -1) {
-          this.preformatedAllHumanResource[indexOfFormatedList] =
-            this.formatHR(orginalPerson)
+          /*this.preformatedAllHumanResource[indexOfFormatedList] =
+            this.formatHR(orginalPerson)*/ // TODO ICI
         }
       })
 
