@@ -60,168 +60,181 @@ export class ExcelService extends MainClass implements OnInit {
       this.humanResourceService.contentieuxReferentiel.getValue()
     )
 
-    const allHuman = this.humanResourceService.hr.getValue()
+    this.humanResourceService
+      .onFilterList(
+        this.humanResourceService.backupId.getValue() || 0,
+        this.dateStart.getValue(),
+        this.allReferentiels.map((a) => a.id),
+        [0, 1, 2],
+        this.dateStop.getValue(),
+        true
+      )
+      .then((allHuman) => {
+        this.hrCategoryService.getAll().then((categoriesList) => {
+          this.categories = categoriesList
+          this.hrFonctionService.getAll().then((functionsList) => {
+            this.fonctions = functionsList
+            this.data = []
 
-      this.hrCategoryService.getAll().then((categoriesList) => {
-      this.categories = categoriesList
-      this.hrFonctionService.getAll().then((functionsList) => {
-        this.fonctions = functionsList
-        this.data = []
+            allHuman.map((human: any) => {
+              let categoryName = ''
+              let fonctionName = ''
 
-        allHuman.map((human: any: any) => {
-            let categoryName = ''
-            let fonctionName = ''
+              const currentSituation =
+                this.humanResourceService.findSituation(human)
 
-          const currentSituation =
-            this.humanResourceService.findSituation(human)
-
-          if (currentSituation && currentSituation.category) {
-            const findCategory = this.categories.find(
-              (c) => c.id === currentSituation.category!.id
-            )
-
-            categoryName = findCategory ? findCategory.label.toLowerCase() : ''
-          }
-
-          if (currentSituation && currentSituation.fonction) {
-            const findFonction = this.fonctions.find(
-              (f) => f.id === currentSituation.fonction!.id
-            )
-            fonctionName = findFonction ? findFonction.label.toLowerCase() : ''
-          }
-
-            let etpAffected: any = []
-            let refObj: { [key: string]: any } = {}
-            let totalEtpt = 0
-
-          const indispoArray = this.allReferentiels.map(
-            (referentiel: ContentieuReferentielInterface) => {
-              etpAffected = this.getHRVentilation(human, referentiel, [
-                ...this.categories,
-              ])
-
-              const { counterEtpTotal, counterEtpSubTotal } = this.countEtp(
-                etpAffected,
-                referentiel
-              )
-
-              const isIndispoRef =
-                this.humanResourceService.allIndisponibilityReferentielIds.includes(
-                  referentiel.id
+              if (currentSituation && currentSituation.category) {
+                const findCategory = this.categories.find(
+                  (c) => c.id === currentSituation.category!.id
                 )
 
-              if (referentiel.childrens !== undefined) {
-                refObj['TOTAL ' + referentiel.label.toUpperCase()] =
-                  counterEtpTotal
-
-                totalEtpt += counterEtpTotal
-
-                if (isIndispoRef) {
-                  return {
-                    id: referentiel.id,
-                    label: 'TOTAL ' + referentiel.label.toUpperCase(),
-                    indispo: 0,
-                    contentieux: true,
-                  }
-                }
-              } else {
-                refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
-
-                if (isIndispoRef) {
-                  return {
-                    id: referentiel.id,
-                    indispo: counterEtpSubTotal,
-                    contentieux: false,
-                  }
-                }
+                categoryName = findCategory
+                  ? findCategory.label.toLowerCase()
+                  : ''
               }
 
-              return { indispo: 0 }
-            }
-          )
+              if (currentSituation && currentSituation.fonction) {
+                const findFonction = this.fonctions.find(
+                  (f) => f.id === currentSituation.fonction!.id
+                )
+                fonctionName = findFonction
+                  ? findFonction.label.toLowerCase()
+                  : ''
+              }
 
-          const key =
-            indispoArray.filter((elem) => elem.contentieux! === true)[0]
-              .label || ''
+              let etpAffected: any = []
+              let refObj: { [key: string]: any } = {}
+              let totalEtpt = 0
 
-          refObj[key] = sumBy(indispoArray, 'indispo')
+              const indispoArray = this.allReferentiels.map(
+                (referentiel: ContentieuReferentielInterface) => {
+                  etpAffected = this.getHRVentilation(human, referentiel, [
+                    ...this.categories,
+                  ])
 
-          if (
-            categoryName === this.selectedCategory.getValue() ||
-            this.selectedCategory.getValue() === 'tous'
-          )
-            this.data.push({
-              Numéro_A_JUST: human.id,
-              Prénom: human.firstName,
-              Nom: human.lastName,
-              Catégorie: categoryName,
-              Fonction: fonctionName,
-              ETPT: totalEtpt,
-              ...refObj,
-            })
-        })
+                  const { counterEtpTotal, counterEtpSubTotal } = this.countEtp(
+                    etpAffected,
+                    referentiel
+                  )
 
-        import('xlsx').then((xlsx) => {
-          console.log(this.data)
-          this.data.sort((a, b) =>
-            a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
-          )
+                  const isIndispoRef =
+                    this.humanResourceService.allIndisponibilityReferentielIds.includes(
+                      referentiel.id
+                    )
 
-          if (this.selectedCategory.getValue() !== 'tous') {
-            let headerSum: { [key: string]: any } = new Object({})
-            Object.keys(this.data[0]).map((key) => {
-              const sum = sumBy(this.data, key)
-              headerSum[key] =
-                typeof sum === 'string' || key === 'Numéro_A_JUST' ? '' : sum
-              if (key === 'Fonction') headerSum[key] = 'SOMME'
-            })
-            this.data.push(headerSum)
-          }
+                  if (referentiel.childrens !== undefined) {
+                    refObj['TOTAL ' + referentiel.label.toUpperCase()] =
+                      counterEtpTotal
 
-          const worksheet = xlsx.utils.json_to_sheet(this.data, {})
-          const workbook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          }
+                    totalEtpt += counterEtpTotal
 
-          worksheet['!cols'] = this.autofitColumns(this.data)
+                    if (isIndispoRef) {
+                      return {
+                        id: referentiel.id,
+                        label: 'TOTAL ' + referentiel.label.toUpperCase(),
+                        indispo: 0,
+                        contentieux: true,
+                      }
+                    }
+                  } else {
+                    refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
 
-          const excelBuffer: any = xlsx.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          })
+                    if (isIndispoRef) {
+                      return {
+                        id: referentiel.id,
+                        indispo: counterEtpSubTotal,
+                        contentieux: false,
+                      }
+                    }
+                  }
 
-          const filename = `Extraction-${
-            this.userService.user.getValue()!.firstName
-          }_du ${new Date(
-            this.dateStart
-              .getValue()
-              .setMinutes(
-                this.dateStart.getValue().getMinutes() -
-                  this.dateStart.getValue().getTimezoneOffset()
+                  return { indispo: 0 }
+                }
               )
-          )
-            .toJSON()
-            .slice(0, 10)} au ${new Date(
-            this.dateStop
-              .getValue()
-              .setMinutes(
-                this.dateStop.getValue().getMinutes() -
-                  this.dateStop.getValue().getTimezoneOffset()
-              )
-          )
-            .toJSON()
-            .slice(0, 10)}_${this.userService.user.getValue()!
-            .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
 
-          const data: Blob = new Blob([excelBuffer], {
-            type: EXCEL_TYPE,
+              const key =
+                indispoArray.filter((elem) => elem.contentieux! === true)[0]
+                  .label || ''
+
+              refObj[key] = sumBy(indispoArray, 'indispo')
+
+              if (
+                categoryName === this.selectedCategory.getValue() ||
+                this.selectedCategory.getValue() === 'tous'
+              )
+                this.data.push({
+                  Numéro_A_JUST: human.id,
+                  Prénom: human.firstName,
+                  Nom: human.lastName,
+                  Catégorie: categoryName,
+                  Fonction: fonctionName,
+                  ETPT: totalEtpt,
+                  ...refObj,
+                })
+            })
+
+            import('xlsx').then((xlsx) => {
+              console.log(this.data)
+              this.data.sort((a, b) =>
+                a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
+              )
+
+              if (this.selectedCategory.getValue() !== 'tous') {
+                let headerSum: { [key: string]: any } = new Object({})
+                Object.keys(this.data[0]).map((key) => {
+                  const sum = sumBy(this.data, key)
+                  headerSum[key] =
+                    typeof sum === 'string' || key === 'Numéro_A_JUST'
+                      ? ''
+                      : sum
+                  if (key === 'Fonction') headerSum[key] = 'SOMME'
+                })
+                this.data.push(headerSum)
+              }
+
+              const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+              const workbook = {
+                Sheets: { data: worksheet },
+                SheetNames: ['data'],
+              }
+
+              worksheet['!cols'] = this.autofitColumns(this.data)
+
+              const excelBuffer: any = xlsx.write(workbook, {
+                bookType: 'xlsx',
+                type: 'array',
+              })
+
+              const filename = `Extraction-${
+                this.userService.user.getValue()!.firstName
+              }_du ${new Date(
+                this.dateStart
+                  .getValue()
+                  .setMinutes(
+                    this.dateStart.getValue().getMinutes() -
+                      this.dateStart.getValue().getTimezoneOffset()
+                  )
+              )
+                .toJSON()
+                .slice(0, 10)} au ${new Date(
+                this.dateStop
+                  .getValue()
+                  .setMinutes(
+                    this.dateStop.getValue().getMinutes() -
+                      this.dateStop.getValue().getTimezoneOffset()
+                  )
+              )
+                .toJSON()
+                .slice(0, 10)}_${this.userService.user.getValue()!
+                .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
+
+              const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+              FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+              this.loading.next(false)
+            })
           })
-          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
-          this.loading.next(false)
         })
       })
-    })
   }
 
   flatListOfContentieux(allReferentiels: ContentieuReferentielInterface[]) {
@@ -248,7 +261,6 @@ export class ExcelService extends MainClass implements OnInit {
         counterEtpSubTotal += etpAffected[key].etpt
       }
     })
-    return { counterEtpTotal, counterEtpSubTotal }
     return { counterEtpTotal, counterEtpSubTotal }
   }
 
@@ -297,7 +309,6 @@ export class ExcelService extends MainClass implements OnInit {
       list[c.id] = {
         etpt: 0,
         indisponibility: [],
-        indisponibility: [],
         ...c,
       }
     })
@@ -305,12 +316,11 @@ export class ExcelService extends MainClass implements OnInit {
     const now = new Date(this.dateStart.getValue().getTime())
     let nbDay = 0
 
-
     do {
       // only working day
       if (workingDay(now)) {
         nbDay++
-        const { etp, situation, indisponibilities, indisponibilities } =
+        const { etp, situation, indisponibilities } =
           this.humanResourceService.getEtpByDateAndPerson(
             referentiel.id,
             now,
