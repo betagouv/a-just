@@ -32,20 +32,20 @@ export const countEtp = (etpAffected, referentiel) => {
 export const getIndispoDetails = (referentiels) => {
   const refIndispo = referentiels.find((r) => r.label === 'Indisponibilité');
 
-  const allIndisponibilityReferentiel = [];
+  const allIndispRef = [];
   const idsIndispo = [];
-
+  let idsMainIndispo = undefined;
   if (refIndispo) {
-    let idsMainIndispo = refIndispo.id;
-    allIndisponibilityReferentiel.push(refIndispo);
+    idsMainIndispo = refIndispo.id;
+    allIndispRef.push(refIndispo);
     idsIndispo.push(refIndispo.id);
     (refIndispo.childrens || []).map((c) => {
       idsIndispo.push(c.id);
-      allIndisponibilityReferentiel.push(c);
+      allIndispRef.push(c);
     });
   }
 
-  allIndisponibilityReferentielIds = allIndisponibilityReferentiel.map(function (obj) {
+  const allIndispRefIds = allIndispRef.map(function (obj) {
     return obj.id;
   });
 

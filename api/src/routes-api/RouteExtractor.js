@@ -1,15 +1,16 @@
 import Route, { Access } from './Route';
 import { Types } from '../utils/types';
+import { getHRVentilation } from '../constants/calculator';
 import {
-  emptyCalulatorValues,
-  getHRVentilation,
-  syncCalculatorDatas,
-} from '../constants/calculator';
-import { countEtp, flatListOfContentieuxAndSousContentieux } from '../utils/extractor';
-import { filterList } from './RouteHumanResources';
+  countEtp,
+  flatListOfContentieuxAndSousContentieux,
+  getIndispoDetails,
+} from '../utils/extractor';
 import { preformatHumanResources } from '../utils/ventilator';
 import { findSituation, getHumanRessourceList } from '../utils/humanServices';
 import { findFonctionName } from '../utils/hr-fonctions';
+import { findCategoryName } from '../utils/hr-catagories';
+import { sumBy } from 'lodash';
 export default class RouteExtractor extends Route {
   constructor(params) {
     super({ ...params, model: 'HumanResources' });
@@ -20,19 +21,18 @@ export default class RouteExtractor extends Route {
       backupId: Types.number().required(),
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
+      categoryFilter: Types.string().required(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList(ctx) {
-    let { backupId, dateStart, dateStop } = this.body(ctx);
+    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx);
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
     }
 
-    console.time('extractor-1');
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels();
-    console.timeEnd('extractor-1');
 
     const flatReferentielsList = flatListOfContentieuxAndSousContentieux(referentiels);
 
@@ -55,6 +55,7 @@ export default class RouteExtractor extends Route {
 
     allHuman.map((human) => {
       const currentSituation = findSituation(human);
+
       let categoryName = findCategoryName(categories, currentSituation);
       let fonctionName = findFonctionName(fonctions, currentSituation);
 
@@ -62,19 +63,13 @@ export default class RouteExtractor extends Route {
       let refObj = {};
       let totalEtpt = 0;
 
-      const indispoArray = this.allReferentiels.map((referentiel) => {
-        etpAffected = getHRVentilation(
-          human,
-          referentiel,
-          [...this.categories],
-          dateStart,
-          dateStop
-        );
+      const indispoArray = flatReferentielsList.map((referentiel) => {
+        etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop);
 
         const { counterEtpTotal, counterEtpSubTotal } = countEtp(etpAffected, referentiel);
 
         const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
-          getIndispoDetails(referentiel);
+          getIndispoDetails(flatReferentielsList);
 
         const isIndispoRef = allIndispRefIds.includes(referentiel.id);
 
@@ -109,10 +104,7 @@ export default class RouteExtractor extends Route {
 
       refObj[key] = sumBy(indispoArray, 'indispo');
 
-      if (
-        categoryName === this.selectedCategory.getValue() ||
-        this.selectedCategory.getValue() === 'tous'
-      )
+      if (categoryName === categoryFilter || categoryFilter === 'tous')
         data.push({
           Numéro_A_JUST: human.id,
           Prénom: human.firstName,
@@ -126,106 +118,4 @@ export default class RouteExtractor extends Route {
 
     this.sendOk(ctx, data);
   }
-  /**
-   
-  allHuman.map((human: any) => {
-              let categoryName = ''
-              let fonctionName = ''
-
-              const currentSituation =
-                this.humanResourceService.findSituation(human)
-
-              if (currentSituation && currentSituation.category) {
-                const findCategory = this.categories.find(
-                  (c) => c.id === currentSituation.category!.id
-                )
-
-                categoryName = findCategory
-                  ? findCategory.label.toLowerCase()
-                  : ''
-              }
-
-              if (currentSituation && currentSituation.fonction) {
-                const findFonction = this.fonctions.find(
-                  (f) => f.id === currentSituation.fonction!.id
-                )
-                fonctionName = findFonction
-                  ? findFonction.label.toLowerCase()
-                  : ''
-              }
-
-              let etpAffected: any = []
-              let refObj: { [key: string]: any } = {}
-              let totalEtpt = 0
-
-              const indispoArray = this.allReferentiels.map(
-                (referentiel: ContentieuReferentielInterface) => {
-                  etpAffected = this.getHRVentilation(human, referentiel, [
-                    ...this.categories,
-                  ])
-
-                  const { counterEtpTotal, counterEtpSubTotal } = this.countEtp(
-                    etpAffected,
-                    referentiel
-                  )
-
-                  const isIndispoRef =
-                    this.humanResourceService.allIndisponibilityReferentielIds.includes(
-                      referentiel.id
-                    )
-
-                  if (referentiel.childrens !== undefined) {
-                    refObj['TOTAL ' + referentiel.label.toUpperCase()] =
-                      counterEtpTotal
-
-                    totalEtpt += counterEtpTotal
-
-                    if (isIndispoRef) {
-                      return {
-                        id: referentiel.id,
-                        label: 'TOTAL ' + referentiel.label.toUpperCase(),
-                        indispo: 0,
-                        contentieux: true,
-                      }
-                    }
-                  } else {
-                    refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
-
-                    if (isIndispoRef) {
-                      return {
-                        id: referentiel.id,
-                        indispo: counterEtpSubTotal,
-                        contentieux: false,
-                      }
-                    }
-                  }
-
-                  return { indispo: 0 }
-                }
-              )
-
-              const key =
-                indispoArray.filter((elem) => elem.contentieux! === true)[0]
-                  .label || ''
-
-              refObj[key] = sumBy(indispoArray, 'indispo')
-
-              if (
-                categoryName === this.selectedCategory.getValue() ||
-                this.selectedCategory.getValue() === 'tous'
-              )
-                this.data.push({
-                  Numéro_A_JUST: human.id,
-                  Prénom: human.firstName,
-                  Nom: human.lastName,
-                  Catégorie: categoryName,
-                  Fonction: fonctionName,
-                  ETPT: totalEtpt,
-                  ...refObj,
-                })
-            })
-
- 
-
-   */
 }
