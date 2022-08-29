@@ -1,8 +1,8 @@
 import { orderBy, uniqBy } from 'lodash'
 import { today } from './date'
 
-export async function getHumanRessourceList(preformatedAllHumanResource,categoriesIds,endPeriodToCheck){
-  preformatedAllHumanResource
+export async function getHumanRessourceList(preformatedAllHumanResource,contentieuxIds,categoriesIds,date,endPeriodToCheck){
+  let list = preformatedAllHumanResource
         .filter((hr) => {
           let isOk = true
           if (

@@ -45,7 +45,10 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   tmpObjToDisplay: any = [1, 2, 3]
 
   export() {
-    this.tmpObjToDisplay = this.excelService.exportExcel()
+    this.excelService.exportExcel().then((data) => {
+      this.tmpObjToDisplay = data
+      console.log(data)
+    })
   }
 
   selectDate(dateType: string, value: any): void {
