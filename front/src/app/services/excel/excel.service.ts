@@ -43,7 +43,8 @@ export class ExcelService extends MainClass implements OnInit {
     private hrCategoryService: HRCategoryService,
     private hrFonctionService: HRFonctionService,
     private referentielService: ReferentielService,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private userService: UserService
   ) {
     super()
 
@@ -60,8 +61,68 @@ export class ExcelService extends MainClass implements OnInit {
         backupId: this.humanResourceService.backupId.getValue(),
         dateStart: this.dateStart.getValue(),
         dateStop: this.dateStop.getValue(),
+        categoryFilter: this.selectedCategory.getValue(),
       })
-      .then((data) => data.data || [])
+      .then((data) => {
+        this.data = data.data
+        import('xlsx').then((xlsx) => {
+          console.log(this.data)
+          this.data.sort((a, b) =>
+            a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
+          )
+
+          if (this.selectedCategory.getValue() !== 'tous') {
+            let headerSum: { [key: string]: any } = new Object({})
+            Object.keys(this.data[0]).map((key) => {
+              const sum = sumBy(this.data, key)
+              headerSum[key] =
+                typeof sum === 'string' || key === 'Numéro_A_JUST' ? '' : sum
+              if (key === 'Fonction') headerSum[key] = 'SOMME'
+            })
+            this.data.push(headerSum)
+          }
+
+          const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+          const workbook = {
+            Sheets: { data: worksheet },
+            SheetNames: ['data'],
+          }
+
+          worksheet['!cols'] = this.autofitColumns(this.data)
+
+          const excelBuffer: any = xlsx.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          })
+
+          const filename = `Extraction-${
+            this.userService.user.getValue()!.firstName
+          }_du ${new Date(
+            this.dateStart
+              .getValue()
+              .setMinutes(
+                this.dateStart.getValue().getMinutes() -
+                  this.dateStart.getValue().getTimezoneOffset()
+              )
+          )
+            .toJSON()
+            .slice(0, 10)} au ${new Date(
+            this.dateStop
+              .getValue()
+              .setMinutes(
+                this.dateStop.getValue().getMinutes() -
+                  this.dateStop.getValue().getTimezoneOffset()
+              )
+          )
+            .toJSON()
+            .slice(0, 10)}_${this.userService.user.getValue()!
+            .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
+
+          const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+          this.loading.next(false)
+        })
+      })
 
     /**
 
