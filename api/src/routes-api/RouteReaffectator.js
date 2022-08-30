@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
+import { copyArray } from '../utils/array'
 
 export default class RouteReaffectator extends Route {
   constructor (params) {
@@ -89,13 +90,13 @@ export default class RouteReaffectator extends Route {
 
     let listFiltered = [...list]
     const categories = await this.models.HRCategories.getAll()
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
+    const originalReferentiel = (await this.models.ContentieuxReferentiels.getReferentiels()).filter(r => contentieuxIds.indexOf(r.id) !== -1)
 
     const listFormated = categories.filter(c => categoriesIds.indexOf(c.id) !== -1).map(
       (category) => {
         let label = category.label
 
-        let referentiel = [...originalReferentiel].map((ref) => {
+        let referentiel = copyArray(originalReferentiel).map((ref) => {
           ref.totalAffected = 0
           return ref
         })
@@ -109,14 +110,15 @@ export default class RouteReaffectator extends Route {
               hr.tmpActivities[ref.id] = hr.currentActivities.filter(
                 (r) => r.contentieux && r.contentieux.id === ref.id
               )
-              const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-              if (timeAffected) {
-                let realETP = (hr.etp || 0) - hr.hasIndisponibility
-                if (realETP < 0) {
-                  realETP = 0
+              if(hr.tmpActivities[ref.id].length) {
+                const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+                if (timeAffected) {
+                  let realETP = (hr.etp || 0) - hr.hasIndisponibility
+                  if (realETP < 0) {
+                    realETP = 0
+                  }
+                  ref.totalAffected += ((timeAffected / 100) * realETP)
                 }
-                ref.totalAffected =
-                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
               }
 
               return ref
@@ -144,8 +146,11 @@ export default class RouteReaffectator extends Route {
       }
     )
 
+    const activities = await this.models.Activities.getAll(backupId, date)
+
     this.sendOk(ctx, {
       list: listFormated,
+      activities,
     })
   }
 }

@@ -4,9 +4,20 @@ import {
   calculMainValuesFromChilds,
   preformatActivitiesArray,
 } from '../utils/activities'
+import { month } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
-  Model.getAll = async (HRBackupId) => {
+  Model.getAll = async (HRBackupId, maxDate) => {
+    let optionQuery = {}
+
+    if(maxDate) {
+      optionQuery = {
+        periode: {
+          [Op.lte]: month(maxDate),
+        },
+      }
+    }
+
     const list = await Model.findAll({
       attributes: [
         'periode',
@@ -19,6 +30,7 @@ export default (sequelizeInstance, Model) => {
       ],
       where: {
         hr_backup_id: HRBackupId,
+        ...optionQuery,
       },
       include: [
         {
@@ -37,7 +49,7 @@ export default (sequelizeInstance, Model) => {
           list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
         sorties:
           list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: list[i].stock === null ? list[i].stock : list[i].original_stock,
+        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],

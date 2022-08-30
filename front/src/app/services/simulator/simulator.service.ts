@@ -201,6 +201,7 @@ export class SimulatorService extends MainClass {
 
       // Compute etpAffected & etpMag today (on specific date) to display & output
       let etpAffected = this.getHRPositions(
+        [], // TODO ICI
         referentielId as number
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
@@ -210,6 +211,7 @@ export class SimulatorService extends MainClass {
 
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
+        [], // TODO ICI
         referentielId as number,
         new Date(month(this.startCurrentSituation, counter)),
         true,
@@ -235,6 +237,7 @@ export class SimulatorService extends MainClass {
 
       // Projection of etpAffected between the last month available and today to compute stock
       let fururEtpAffectedToCompute = this.getHRPositions(
+        [], // TODO ICI
         referentielId as number,
         month(this.endCurrentSituation, counter, 'lastday'),
         true,
@@ -280,6 +283,7 @@ export class SimulatorService extends MainClass {
 
         // Compute etpAffected & etpMag at dateStart (specific date) to display
         etpAffected = this.getHRPositions(
+          [], // TODO ICI
           referentielId as number,
           dateStart
         ) as Array<etpAffectedInterface>
@@ -298,6 +302,7 @@ export class SimulatorService extends MainClass {
 
         // Projection of etpAffected between the last month available and today to compute stock
         fururEtpAffectedToCompute = this.getHRPositions(
+          [], // TODO ICI
           referentielId as number,
           new Date(),
           true,
@@ -332,6 +337,7 @@ export class SimulatorService extends MainClass {
 
         // Compute projected etp at stop date (specific date) to display
         const projectedEtpAffected = this.getHRPositions(
+          [], // TODO ICI
           referentielId as number,
           dateStop
         )
@@ -356,6 +362,7 @@ export class SimulatorService extends MainClass {
         // Projection of etpAffected between start and stop date to compute stock
         //@ts-ignore
         ;({ fururEtpAffectedToCompute, monthlyReport } = this.getHRPositions(
+          [], // TODO ICI
           referentielId as number,
           dateStart,
           true,
@@ -435,13 +442,13 @@ export class SimulatorService extends MainClass {
   }
 
   getHRPositions(
+    hr: HumanResourceInterface[],
     referentiel: number,
     date?: Date,
     onPeriod?: boolean,
     dateStop?: Date,
     monthlyReport = false
   ) {
-    const hr = this.humanResourceService.hr.getValue()
     const categories = this.humanResourceService.categories.getValue()
     const hrCategories: any = {}
     let hrCategoriesMonthly: { [key: string]: any } = new Object({})

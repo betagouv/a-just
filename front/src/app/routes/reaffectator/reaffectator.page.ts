@@ -23,6 +23,7 @@ import { isDateBiggerThan, month, nbOfDays } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
+import { ActivityInterface } from 'src/app/interfaces/activity'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -40,7 +41,6 @@ interface listFormatedInterface {
   textColor: string
   bgColor: string
   label: string
-  groupId: number
   hr: HumanResourceSelectedInterface[]
   hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
@@ -233,21 +233,23 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.reaffectatorService.selectedCategoriesIds,
         this.reaffectatorService.selectedFonctionsIds
       )
-      .then((list) => {
-        console.log(list)
-        this.listFormated = list.map((i: listFormatedInterface) => ({
-          ...i,
-          headerPanel: true,
-          personSelected: [],
-          firstETPTargetValue: [],
-        }))
+      .then((returnValues) => {
+        console.log(returnValues)
+        this.listFormated = returnValues.list.map(
+          (i: listFormatedInterface) => ({
+            ...i,
+            headerPanel: true,
+            personSelected: [],
+            firstETPTargetValue: [],
+          })
+        )
 
         this.orderListWithFiltersParams()
         this.onSearchBy()
-        // this.calculateReferentielValues()
+        this.calculateReferentielValues(returnValues.activities)
       })
   }
-  
+
   orderListWithFiltersParams() {
     this.listFormated = this.listFormated.map((list) => {
       list.hrFiltered = [...list.hr]
@@ -402,7 +404,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     console.log('allFonctions', allFonctions)
     let fonctionList: HRFonctionInterface[] = []
     this.reaffectatorService.selectedCategoriesIds.map((cId) => {
-      fonctionList = fonctionList.concat(allFonctions.filter((f) => f.categoryId === cId))
+      fonctionList = fonctionList.concat(
+        allFonctions.filter((f) => f.categoryId === cId)
+      )
     })
 
     this.formFilterFonctionsSelect = fonctionList.map((f) => ({
@@ -419,19 +423,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  calculateReferentielValues() {
-    console.log(this.listFormated)
-    const magistrats = this.listFormated.find((l) => l.groupId === 1)
-    const activities = this.activitiesService.activities.getValue()
+  calculateReferentielValues(activities: ActivityInterface[]) {
+    const magistrats = this.listFormated.find((l) => l.categoryId === 1)
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
       const activitiesFiltered = orderBy(
-        activities.filter(
-          (a) =>
-            a.contentieux.id === r.id &&
-            isDateBiggerThan(this.dateSelected, a.periode)
-        ),
+        activities.filter((a) => a.contentieux.id === r.id && a.stock !== 0 && a.stock !== null),
         (a) => {
           const p = new Date(a.periode)
           return p.getTime()
@@ -463,11 +461,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         : null
 
       if (
+        lastStock &&
         lastPeriode &&
         lastPeriode.getTime() < month(this.dateSelected).getTime()
       ) {
         // ETPT of the last 12 months
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
+          (magistrats && magistrats.hr) || [],
           r.id,
           new Date(month(lastPeriode, -11)),
           true,
@@ -490,6 +490,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
+          (magistrats && magistrats.hr) || [],
           r.id,
           lastPeriode,
           true,
@@ -525,8 +526,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         in: inValue,
         out: averageOut,
         stock: lastStock,
-        coverage: fixDecimal(averageOut / inValue) * 100,
-        dtes: fixDecimal(lastStock / averageOut),
+        coverage: averageOut === 0 ? 0 : (fixDecimal(averageOut / inValue) * 100),
+        dtes: lastStock === 0 ? 0 : fixDecimal(lastStock / averageOut),
       }
     })
   }

@@ -27,7 +27,7 @@ export class ReaffectatorService {
         fonctionsIds,
       })
       .then((data) => {
-        return data.data.list
+        return data.data
       })
   }
 }
