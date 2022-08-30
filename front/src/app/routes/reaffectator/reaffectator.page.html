@@ -115,14 +115,14 @@
         </div>
 
         <div class="sub-content-list">
-
           <div class="header-item">
             <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hr.length}"
               (click)="toogleCheckAllPerson(i)"></div>
             <p class="label">Tout sélectionner</p>
-            <p class="btn" (click)="onInitList(list)">Retour à la ventilation actuelle des fiches sélectionnées</p>
+            <p class="btn" (click)="onInitList(list)">
+              Retour à la ventilation actuelle des fiches sélectionnées
+            </p>
           </div>
-
 
           <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
             [id]="'human-'+hr.id">

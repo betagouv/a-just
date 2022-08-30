@@ -118,3 +118,13 @@ export function isSameMonthAndYear (date1, date2) {
 export function workingDay (date) {
   return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
 }
+
+export function isDateBiggerThan (
+  firstDate,
+  secondDate
+) {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
+  return firstDate.getTime() >= secondDate.getTime()
+}
