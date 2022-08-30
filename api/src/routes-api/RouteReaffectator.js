@@ -1,11 +1,10 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
 
-export default class RouteHumanResources extends Route {
+export default class RouteReaffectator extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
 
@@ -18,11 +17,12 @@ export default class RouteHumanResources extends Route {
       date: Types.date().required(),
       contentieuxIds: Types.array().required(),
       categoriesIds: Types.array().required(),
+      fonctionsIds: Types.array().required(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoriesIds, contentieuxIds } = this.body(ctx)
+    let { backupId, date, categoriesIds, contentieuxIds, fonctionsIds } = this.body(ctx)
     if(!await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
       ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
     }
@@ -46,8 +46,24 @@ export default class RouteHumanResources extends Route {
           }
 
           if (
+            hr.fonction &&
+            fonctionsIds.indexOf(
+              hr.fonction.id
+            ) === -1
+          ) {
+            isOk = false
+          }
+
+          if (
             hr.dateEnd &&
             hr.dateEnd.getTime() < date.getTime()
+          ) {
+            isOk = false
+          }
+
+          if (
+            hr.dateStart &&
+            hr.dateStart.getTime() > date.getTime()
           ) {
             isOk = false
           }
