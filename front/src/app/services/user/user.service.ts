@@ -79,8 +79,8 @@ export class UserService {
       this.humanResourceService.categoriesFilterListIds = result.categories.map(
         (c: HRCategoryInterface) => c.id
       )
-      this.humanResourceService.categories.next(result.categories)
       this.humanResourceService.fonctions.next(result.fonctions)
+      this.humanResourceService.categories.next(result.categories)
       this.referentielService.formatDatas(result.referentiel)
       this.humanResourceService.backups.next(
         result.backups.map((b: BackupInterface) => ({

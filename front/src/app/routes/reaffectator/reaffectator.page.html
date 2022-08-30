@@ -16,7 +16,7 @@
       </aj-select>
       <div class="flex-1"></div>
       <aj-input-button class="dark-mode" title="Rechercher un collaborateur" placeholder="Indiquer le nom"
-        [ngModel]="searchValue" (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()"
+        [ngModel]="searchValue" (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()"
         ngDefaultControl icon="">
       </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">
