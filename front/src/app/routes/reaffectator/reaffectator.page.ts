@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { groupBy, meanBy, orderBy, sortBy, sumBy } from 'lodash'
+import { groupBy, meanBy, orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
@@ -11,22 +11,15 @@ import {
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { fixDecimal } from 'src/app/utils/numbers'
-import { BackupInterface } from 'src/app/interfaces/backup'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { copyArray } from 'src/app/utils/array'
-import { etpLabel } from 'src/app/utils/referentiel'
-import { ActivatedRoute, Router } from '@angular/router'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import {
-  isDateBiggerThan,
-  month,
-  nbOfDays,
-} from 'src/app/utils/dates'
+import { isDateBiggerThan, month, nbOfDays } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -49,10 +42,12 @@ interface listFormatedInterface {
   label: string
   groupId: number
   hr: HumanResourceSelectedInterface[]
+  hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
   firstETPTargetValue: number[]
   headerPanel: boolean
   personSelected: number[]
+  categoryId: number
 }
 
 interface ContentieuReferentielCalculateInterface
@@ -97,8 +92,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute,
-    private router: Router,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
     private activitiesService: ActivitiesService,
@@ -131,27 +124,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.categories.subscribe(
         (categories: HRCategoryInterface[]) => {
-          this.reaffectatorService.selectedCategoriesIds = this
-            .reaffectatorService.selectedCategoriesIds.length
-            ? this.reaffectatorService.selectedCategoriesIds
-            : categories.map((c) => c.id)
-          this.onFilterList()
-        }
-      )
-    )
-    this.watch(
-      this.humanResourceService.fonctions.subscribe(
-        (fonctions: HRFonctionInterface[]) => {
-          this.reaffectatorService.selectedFonctionsIds = this
-            .reaffectatorService.selectedFonctionsIds.length
-            ? this.reaffectatorService.selectedFonctionsIds
-            : fonctions.map((c) => c.id)
-
-          this.formFilterFonctionsSelect = fonctions.map((f) => ({
+          this.formFilterSelect = categories.map((f) => ({
             id: f.id,
             value: f.label,
           }))
-          this.onFilterList()
+
+          this.onSelectedCategoriesIdsChanged(
+            this.reaffectatorService.selectedCategoriesIds.length
+              ? this.reaffectatorService.selectedCategoriesIds
+              : categories.map((c) => c.id)
+          )
         }
       )
     )
@@ -163,18 +145,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const personal = this.humanResources.filter(
-        (h) => h.category && h.category.id === c.id
-      )
+      const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
+      let personal = []
       let etpt = 0
 
-      personal.map((h) => {
-        let realETP = (h.etp || 0) - h.hasIndisponibility
-        if (realETP < 0) {
-          realETP = 0
-        }
-        etpt += realETP
-      })
+      if (formatedList) {
+        personal = formatedList.hrFiltered
+        personal.map((h) => {
+          let realETP = (h.etp || 0) - h.hasIndisponibility
+          if (realETP < 0) {
+            realETP = 0
+          }
+          etpt += realETP
+        })
+      }
 
       return {
         ...c,
@@ -183,7 +167,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       }
     })
 
-    this.formFilterSelect = this.categoriesFilterList.map((c) => {
+    /*this.formFilterSelect = this.categoriesFilterList.map((c) => {
       let value = `${c.nbPersonal} ${
         c.nbPersonal > 1 ? c.labelPlural : c.label
       }`
@@ -192,7 +176,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         id: c.id,
         value,
       }
-    })
+    })*/
   }
 
   trackById(index: number, item: any) {
@@ -234,194 +218,86 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onFilterList() {
-    if (!this.categoriesFilterList.length || !this.referentiel.length) {
+    if (!this.formFilterSelect.length || !this.referentiel.length) {
       return
     }
-   
+
     // init datas
     this.objectOfFirstETPTargetValue = []
 
-    let list: HumanResourceSelectedInterface[] =
-      this.preformatedAllHumanResource
-        .filter((hr) => {
-          let isOk = true
-          if (
-            hr.category &&
-            this.reaffectatorService.selectedCategoriesIds.indexOf(
-              hr.category.id
-            ) === -1
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.fonction &&
-            this.reaffectatorService.selectedFonctionsIds.indexOf(
-              hr.fonction.id
-            ) === -1
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateEnd &&
-            hr.dateEnd.getTime() < this.dateSelected.getTime()
-          ) {
-            isOk = false
-          }
-
-          if (
-            hr.dateStart &&
-            hr.dateStart.getTime() > this.dateSelected.getTime()
-          ) {
-            isOk = false
-          }
-
-          return isOk
-        })
-        .map((h) => ({
-          ...h,
-          opacity: this.checkHROpacity(h),
+    this.reaffectatorService
+      .onFilterList(
+        this.humanResourceService.backupId.getValue() || 0,
+        this.dateSelected,
+        this.reaffectatorService.selectedReferentielIds,
+        this.reaffectatorService.selectedCategoriesIds,
+        this.reaffectatorService.selectedFonctionsIds
+      )
+      .then((list) => {
+        console.log(list)
+        this.listFormated = list.map((i: listFormatedInterface) => ({
+          ...i,
+          headerPanel: true,
+          personSelected: [],
+          firstETPTargetValue: [],
         }))
 
-    const valuesFinded = list.filter((h) => h.opacity === 1)
-    this.valuesFinded =
-      valuesFinded.length === list.length ? null : valuesFinded
-    this.indexValuesFinded = 0
-
-    if (
-      this.reaffectatorService.selectedReferentielIds.length !==
-      this.referentiel.length
-    ) {
-      list = list.filter((h) => {
-        const idsOfactivities = h.currentActivities.map(
-          (a) => (a.contentieux && a.contentieux.id) || 0
-        )
-        for (let i = 0; i < idsOfactivities.length; i++) {
-          if (
-            this.reaffectatorService.selectedReferentielIds.indexOf(
-              idsOfactivities[i]
-            ) !== -1
-          ) {
-            return true
-          }
-        }
-
-        return false
+        this.orderListWithFiltersParams()
+        this.onSearchBy()
+        // this.calculateReferentielValues()
       })
-    }
+  }
+  
+  orderListWithFiltersParams() {
+    this.listFormated = this.listFormated.map((list) => {
+      list.hrFiltered = [...list.hr]
 
-    this.humanResources = list
+      if (this.filterSelected) {
+        list.hrFiltered = orderBy(
+          list.hrFiltered,
+          (h) => {
+            const acti = (h.currentActivities || []).find(
+              (a) => a.contentieux?.id === this.filterSelected?.id
+            )
+            return acti ? acti.percent || 0 : 0
+          },
+          ['desc']
+        )
+      }
 
-    this.formatListToShow()
+      return list
+    })
+
     this.updateCategoryValues()
-    this.calculateReferentielValues()
-
-    if (this.isFirstLoad && this.route.snapshot.fragment) {
-      this.isFirstLoad = false
-      this.onGoTo(+this.route.snapshot.fragment)
-    } else if (this.valuesFinded && this.valuesFinded.length) {
-      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
-    } else if (list.length) {
-      this.onGoTo(null)
-    }
   }
 
-  formatListToShow() {
-    const groupByCategory = groupBy(this.humanResources, 'category.id')
-
-    this.listFormated = Object.values(groupByCategory).map(
-      (group: HumanResourceSelectedInterface[]) => {
-        const label =
-          group[0].currentSituation && group[0].currentSituation.category
-            ? group[0].currentSituation.category.label
-            : 'Autre'
-        const groupId =
-          group[0].currentSituation && group[0].currentSituation.category
-            ? group[0].currentSituation.category.id
-            : -1
-
-        let referentiel = (
-          copyArray(
-            this.referentiel
-          ) as ContentieuReferentielCalculateInterface[]
-        ).map((ref) => {
-          ref.totalAffected = 0
-          return ref
-        })
-
-        group = group.map((hr) => {
-          hr.tmpActivities = {}
-
-          referentiel = referentiel.map((ref) => {
-            hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-              (r) => r.contentieux && r.contentieux.id === ref.id
-            )
-            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-            if (timeAffected) {
-              let realETP = (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP < 0) {
-                realETP = 0
-              }
-              ref.totalAffected =
-                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-            }
-
-            return ref
-          })
-
-          return hr
-        })
-
-        if (this.filterSelected) {
-          group = orderBy(
-            group,
-            (h) => {
-              const acti = (h.currentActivities || []).find(
-                (a) => a.contentieux?.id === this.filterSelected?.id
-              )
-              return acti ? acti.percent || 0 : 0
-            },
-            ['desc']
-          )
-        }
-
-        let firstETPTargetValue = referentiel.map((r) =>
-          fixDecimal(r.totalAffected || 0)
-        )
-
-        const findOldValues = this.objectOfFirstETPTargetValue.find(
-          (e) => e.groupId === groupId
-        )
-        if (findOldValues) {
-          firstETPTargetValue = findOldValues.list
-        } else {
-          this.objectOfFirstETPTargetValue.push({
-            groupId,
-            list: firstETPTargetValue,
-          })
+  onSearchBy() {
+    const valuesFinded: HumanResourceInterface[] = []
+    let nbPerson = 0
+    this.listFormated = this.listFormated.map((l: listFormatedInterface) => ({
+      ...l,
+      hrFiltered: l.hrFiltered.map((h) => {
+        const opacity = this.checkHROpacity(h)
+        nbPerson++
+        if (opacity === 1) {
+          valuesFinded.push(h)
         }
 
         return {
-          textColor: this.getCategoryColor(label),
-          bgColor: this.getCategoryColor(label, 0.2),
-          referentiel,
-          firstETPTargetValue,
-          groupId,
-          label:
-            group.length <= 1
-              ? label && label === 'Magistrat'
-                ? 'Magistrat du siège'
-                : label
-              : label && label === 'Magistrat'
-              ? 'Magistrats du siège'
-              : `${label}s`,
-          hr: group,
-          headerPanel: true,
-          personSelected: [],
+          ...h,
+          opacity,
         }
-      }
-    )
+      }),
+    }))
+
+    this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
+    this.indexValuesFinded = 0
+
+    if (this.valuesFinded && this.valuesFinded.length) {
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
+    } else {
+      this.onGoTo(null)
+    }
   }
 
   onGoTo(hrId: number | null) {
@@ -493,17 +369,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  updateSearch() {
-    if (this.timeoutUpdateSearch) {
-      clearTimeout(this.timeoutUpdateSearch)
-      this.timeoutUpdateSearch = null
-    }
-
-    this.timeoutUpdateSearch = setTimeout(() => {
-      this.onFilterList()
-    }, 500)
-  }
-
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
@@ -529,13 +394,28 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  onSelectedCategoriesIdsChanged(list: any) {
-    this.reaffectatorService.selectedCategoriesIds = list
-    this.onFilterList()
+  onSelectedCategoriesIdsChanged(list: string[] | number[]) {
+    console.log('onSelectedCategoriesIdsChanged', list)
+    this.reaffectatorService.selectedCategoriesIds = list.map((i) => +i)
+
+    const allFonctions = this.humanResourceService.fonctions.getValue()
+    console.log('allFonctions', allFonctions)
+    let fonctionList: HRFonctionInterface[] = []
+    this.reaffectatorService.selectedCategoriesIds.map((cId) => {
+      fonctionList = fonctionList.concat(allFonctions.filter((f) => f.categoryId === cId))
+    })
+
+    this.formFilterFonctionsSelect = fonctionList.map((f) => ({
+      id: f.id,
+      value: f.label,
+    }))
+
+    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
   }
 
-  onSelectedFonctionsIdsChanged(list: any) {
-    this.reaffectatorService.selectedFonctionsIds = list
+  onSelectedFonctionsIdsChanged(list: string[] | number[]) {
+    this.reaffectatorService.selectedFonctionsIds = list.map((i) => +i)
+
     this.onFilterList()
   }
 
@@ -737,7 +617,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         if (orginalPerson && indexOfFormatedList !== -1) {
           /*this.preformatedAllHumanResource[indexOfFormatedList] =
-            this.formatHR(orginalPerson)*/ // TODO ICI
+            this.formatHR(orginalPerson)*/
+          // TODO ICI
         }
       })
 
