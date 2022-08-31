@@ -22,6 +22,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   } | null = null
   timeoutUpdateAcitity: any = {}
   canEditActivities: boolean = false
+  isLoadedFirst: boolean = false
 
   constructor(
     private activitiesService: ActivitiesService,
@@ -133,6 +134,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
+        this.isLoadedFirst = true
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
 
