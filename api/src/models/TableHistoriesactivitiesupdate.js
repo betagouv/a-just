@@ -1,9 +1,10 @@
 export default (sequelizeInstance, Model) => {
-  Model.addHistory = async (userId, activityId, nodeUpdated) => {
+  Model.addHistory = async (userId, activityId, nodeUpdated, value) => {
     await Model.create({
       activity_id: activityId,
       user_id: userId,
       activity_node_updated: nodeUpdated,
+      value,
     })
   }
 
@@ -37,7 +38,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.getLastUpdateByActivityAndNode = async (activityId, nodeUpdated) => {
     const listUpdated = await Model.findAll({
-      attributes: ['user_id', 'updated_at'],
+      attributes: ['user_id', 'updated_at', 'value'],
       where: {
         activity_id: activityId,
         activity_node_updated: nodeUpdated,
@@ -57,6 +58,7 @@ export default (sequelizeInstance, Model) => {
           firstName: listUpdated[0]['User.first_name'],
           lastName: listUpdated[0]['User.last_name'],
         },
+        value: listUpdated[0].value,
         date: listUpdated[0].updated_at,
       }
     }
