@@ -110,9 +110,7 @@ export class HumanResourceService {
             }))
           )
           this.autoReloadData = false
-          if(id !== result.backupId) {
-            this.backupId.next(result.backupId)
-          }
+          this.backupId.next(result.backupId)
           this.hrIsModify.next(false)
         })
       } else {
