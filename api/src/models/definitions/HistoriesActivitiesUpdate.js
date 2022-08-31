@@ -25,6 +25,10 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      value: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

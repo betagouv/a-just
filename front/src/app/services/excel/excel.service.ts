@@ -179,26 +179,26 @@ export class ExcelService extends MainClass implements OnInit {
                 a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
               )
 
-              if (this.selectedCategory.getValue() !== 'tous') {
-                let headerSum: { [key: string]: any } = new Object({})
-                Object.keys(this.data[0]).map((key) => {
-                  const sum = sumBy(this.data, key)
-                  headerSum[key] =
-                    typeof sum === 'string' || key === 'Numéro_A_JUST'
+            if (this.selectedCategory.getValue() !== 'tous') {
+              let headerSum: { [key: string]: any } = new Object({})
+              Object.keys(this.data[0]).map((key) => {
+                const sum = sumBy(this.data, key)
+                headerSum[key] =
+                  typeof sum === 'string' || key === 'Numéro_A_JUST'
                       ? ''
                       : sum
-                  if (key === 'Fonction') headerSum[key] = 'SOMME'
-                })
-                this.data.push(headerSum)
-              }
+                if (key === 'Fonction') headerSum[key] = 'SOMME'
+              })
+              this.data.push(headerSum)
+            }
 
-              const worksheet = xlsx.utils.json_to_sheet(this.data, {})
-              const workbook = {
-                Sheets: { data: worksheet },
-                SheetNames: ['data'],
-              }
+            const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+            const workbook = {
+              Sheets: { data: worksheet },
+              SheetNames: ['data'],
+            }
 
-              worksheet['!cols'] = this.autofitColumns(this.data)
+            worksheet['!cols'] = this.autofitColumns(this.data)
 
               const excelBuffer: any = xlsx.write(workbook, {
                 bookType: 'xlsx',
@@ -261,6 +261,7 @@ export class ExcelService extends MainClass implements OnInit {
       }
     })
     return { counterEtpTotal, counterEtpSubTotal }
+    return { counterEtpTotal, counterEtpSubTotal }
   }
 
   sortByFCT(key1: any, key2: any): number {
@@ -308,6 +309,7 @@ export class ExcelService extends MainClass implements OnInit {
       list[c.id] = {
         etpt: 0,
         indisponibility: [],
+        indisponibility: [],
         ...c,
       }
     })
@@ -315,11 +317,12 @@ export class ExcelService extends MainClass implements OnInit {
     const now = new Date(this.dateStart.getValue().getTime())
     let nbDay = 0
 
+
     do {
       // only working day
       if (workingDay(now)) {
         nbDay++
-        const { etp, situation, indisponibilities } =
+        const { etp, situation, indisponibilities, indisponibilities } =
           this.humanResourceService.getEtpByDateAndPerson(
             referentiel.id,
             now,
