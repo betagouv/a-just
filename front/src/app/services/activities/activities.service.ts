@@ -56,7 +56,7 @@ export class ActivitiesService {
       .post(`activities/get-last-month`, {
         hrBackupId: this.hrBackupId,
       })
-      .then((data) => data.date || null)
+      .then((data) => data.data.date || null)
   }
 
   loadAllActivities() {
