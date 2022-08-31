@@ -14,7 +14,7 @@ export default (sequelizeInstance, Model) => {
       where: {
         hr_backup_id: HRBackupId,
       },
-      order: [['periode', 'asc']],
+      order: [['periode', 'desc']],
       raw: true,
     })
 
