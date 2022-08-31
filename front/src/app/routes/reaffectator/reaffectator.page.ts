@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { groupBy, meanBy, orderBy, sumBy } from 'lodash'
+import { meanBy, orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
@@ -12,14 +12,12 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { dataInterface } from 'src/app/components/select/select.component'
-import { copyArray } from 'src/app/utils/array'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { isDateBiggerThan, month, nbOfDays } from 'src/app/utils/dates'
+import { month, nbOfDays } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -68,8 +66,6 @@ interface FirstETPTargetValueInterface {
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   duringPrint: boolean = false
-  allHumanResources: HumanResourceInterface[] = []
-  preformatedAllHumanResource: HumanResourceSelectedInterface[] = []
   humanResources: HumanResourceSelectedInterface[] = []
   referentiel: ContentieuReferentielCalculateInterface[] = []
   formReferentiel: dataInterface[] = []
@@ -88,13 +84,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showIndicatorPanel: boolean = true
   objectOfFirstETPTargetValue: FirstETPTargetValueInterface[] = []
   timeoutUpdateETPTargetAfterDelay: any
+  actualActivities: ActivityInterface[] = []
 
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private activitiesService: ActivitiesService,
     private simulatorService: SimulatorService
   ) {
     super()
@@ -144,6 +140,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
+    //TODO utile ?
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal = []
@@ -235,9 +232,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       )
       .then((returnValues) => {
         console.log(returnValues)
+        this.actualActivities = returnValues.activities
         this.listFormated = returnValues.list.map(
           (i: listFormatedInterface) => ({
             ...i,
+            hrFiltered: [...i.hr],
             headerPanel: true,
             personSelected: [],
             firstETPTargetValue: [],
@@ -245,15 +244,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         )
 
         this.orderListWithFiltersParams()
-        this.onSearchBy()
-        this.calculateReferentielValues(returnValues.activities)
       })
   }
 
   orderListWithFiltersParams() {
     this.listFormated = this.listFormated.map((list) => {
-      list.hrFiltered = [...list.hr]
-
       if (this.filterSelected) {
         list.hrFiltered = orderBy(
           list.hrFiltered,
@@ -271,6 +266,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     })
 
     this.updateCategoryValues()
+    this.onSearchBy()
+    this.calculateReferentielValues()
   }
 
   onSearchBy() {
@@ -397,11 +394,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onSelectedCategoriesIdsChanged(list: string[] | number[]) {
-    console.log('onSelectedCategoriesIdsChanged', list)
     this.reaffectatorService.selectedCategoriesIds = list.map((i) => +i)
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
-    console.log('allFonctions', allFonctions)
     let fonctionList: HRFonctionInterface[] = []
     this.reaffectatorService.selectedCategoriesIds.map((cId) => {
       fonctionList = fonctionList.concat(
@@ -423,13 +418,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  calculateReferentielValues(activities: ActivityInterface[]) {
+  calculateReferentielValues() {
+    const activities = this.actualActivities
     const magistrats = this.listFormated.find((l) => l.categoryId === 1)
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
       const activitiesFiltered = orderBy(
-        activities.filter((a) => a.contentieux.id === r.id && a.stock !== 0 && a.stock !== null),
+        activities.filter(
+          (a) => a.contentieux.id === r.id && a.stock !== 0 && a.stock !== null
+        ),
         (a) => {
           const p = new Date(a.periode)
           return p.getTime()
@@ -467,7 +465,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       ) {
         // ETPT of the last 12 months
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hr) || [],
+          (magistrats && magistrats.hrFiltered) || [],
           r.id,
           new Date(month(lastPeriode, -11)),
           true,
@@ -490,7 +488,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hr) || [],
+          (magistrats && magistrats.hrFiltered) || [],
           r.id,
           lastPeriode,
           true,
@@ -526,7 +524,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         in: inValue,
         out: averageOut,
         stock: lastStock,
-        coverage: averageOut === 0 ? 0 : (fixDecimal(averageOut / inValue) * 100),
+        coverage: averageOut === 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
         dtes: lastStock === 0 ? 0 : fixDecimal(lastStock / averageOut),
       }
     })
@@ -534,7 +532,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   updateHRReferentiel(
     hr: HumanResourceSelectedInterface,
-    referentiels: ContentieuReferentielInterface[]
+    referentiels: ContentieuReferentielInterface[],
+    indexList: number
   ) {
     console.log(hr, referentiels)
     const list: RHActivityInterface[] = []
@@ -566,12 +565,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           })
       })
 
-    const indexOfHR = this.preformatedAllHumanResource.findIndex(
-      (p) => p.id === hr.id
+    const humanId = hr.id
+    const indexOfHR = this.listFormated[indexList].hrFiltered.findIndex(
+      (hr) => hr.id === humanId
     )
+
     if (indexOfHR !== -1) {
-      this.preformatedAllHumanResource[indexOfHR].currentActivities = list
-      this.onFilterList()
+      this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities =
+        list
+
+      this.orderListWithFiltersParams()
     }
   }
 
@@ -611,16 +614,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) => {
-        const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(
+        /*const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(
           (h) => h.id === id
         )
         const orginalPerson = this.allHumanResources.find((h) => h.id === id)
 
         if (orginalPerson && indexOfFormatedList !== -1) {
-          /*this.preformatedAllHumanResource[indexOfFormatedList] =
-            this.formatHR(orginalPerson)*/
+          this.preformatedAllHumanResource[indexOfFormatedList] =
+            this.formatHR(orginalPerson)
           // TODO ICI
-        }
+        }*/
       })
 
       list.personSelected = []
