@@ -46,7 +46,7 @@
       </ng-template>
     </div>
     <div class="content-list">
-      <ng-template [ngIf]="!canEditActivities">
+      <ng-template [ngIf]="!canEditActivities && !isLoadedFirst">
         <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
       </ng-template>
 
