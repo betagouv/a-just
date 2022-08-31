@@ -7,7 +7,6 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { month } from 'src/app/utils/dates'
 
 @Component({
   templateUrl: './activities.page.html',
@@ -36,7 +35,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
+            console.log(lastMonth)
             lastMonth = new Date(lastMonth)
+            console.log(lastMonth)
             this.activitiesService.activityMonth.next(lastMonth)
           })
         }
