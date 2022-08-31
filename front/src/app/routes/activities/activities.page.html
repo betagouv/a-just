@@ -1,4 +1,4 @@
-<aj-wrapper title="Données d'activité" [subtitleTemplate]="isInTheFutures ? null : subTitleTemplate"
+<aj-wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   class="content-margin-null">
   <div class="container">
     <div class="header-list">
@@ -8,7 +8,7 @@
           (valueChange)="changeMonth($event)">
         </aj-date-select>
       </div>
-      <ng-template [ngIf]="!isInTheFutures">
+      <ng-template [ngIf]="canEditActivities">
         <div class="column-item">
           <p>Entrées</p>
           <div>
@@ -38,7 +38,7 @@
               <p>Stock logiciel</p>
             </div>
             <div>
-              <p>Stock A-JUSTées</p>
+              <p>Stock A-JUSTé</p>
             </div>
           </div>
         </div>
@@ -46,11 +46,11 @@
       </ng-template>
     </div>
     <div class="content-list">
-      <ng-template [ngIf]="isInTheFutures">
-        <p class="in-the-future-text">Cet écran sera accessible dès que le mois aura débuté.</p>
+      <ng-template [ngIf]="!canEditActivities">
+        <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
       </ng-template>
 
-      <ng-template [ngIf]="!isInTheFutures">
+      <ng-template [ngIf]="canEditActivities">
         <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
           <div class="item"
             (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"

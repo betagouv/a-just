@@ -49,6 +49,25 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.canVewActivities],
   })
+  async getLastMonth (ctx) {
+    const { hrBackupId } = this.body(ctx)
+
+    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const date = await this.model.getLastMonth(hrBackupId)
+      this.sendOk(ctx, {
+        date,
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
+  })
   async loadAllActivities (ctx) {
     const { hrBackupId } = this.body(ctx)
 
