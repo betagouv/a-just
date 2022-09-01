@@ -21,6 +21,7 @@ import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
 import { ChartAnnotationBoxInterface } from 'src/app/interfaces/chart-annotation-box'
+import { ServerService } from '../http-server/server.service'
 
 const start = new Date()
 const end = new Date()
@@ -50,6 +51,7 @@ export class SimulatorService extends MainClass {
   endCurrentSituation = month(new Date(), -1, 'lastday')
 
   constructor(
+    private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService
   ) {
@@ -92,8 +94,12 @@ export class SimulatorService extends MainClass {
   syncDatas(referentielId: number | null, dateStart?: Date, dateStop?: Date) {
     if (referentielId !== null) {
       const nbMonth = 12
-      const list: SimulatorInterface | null = {
-        ...this.getSituation(referentielId, nbMonth, dateStart, dateStop),
+      const list: any = {
+        ...this.getSituation(referentielId, nbMonth, dateStart, dateStop).then(
+          (res) => {
+            return res
+          }
+        ),
         calculateCoverage: null,
         calculateDTESInMonths: null,
         calculateTimePerCase: null,
@@ -118,338 +124,362 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
-    // get 12 last months starting from now
-    let activities = sortBy(
-      this.activitiesService.activities
-        .getValue()
-        .filter(
-          (a) =>
-            a.contentieux.id === referentielId &&
-            month(a.periode).getTime() >=
-              month(this.startCurrentSituation).getTime() &&
-            month(a.periode).getTime() <=
-              month(this.endCurrentSituation).getTime()
-        ),
-      'periode'
-    )
+    return this.serverService
+      .post(`simulator/get-situation`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId: referentielId,
+        dateStart: dateStart,
+        dateStop: dateStop,
+      })
+      .then((data) => {
+        console.log(data)
 
-    // check when is the last month available on this periode with in and out flows
-    let counter = 1
-    let lastActivitiesEntreesSorties: any = []
-    do {
-      counter--
-      lastActivitiesEntreesSorties = activities.filter((a) =>
-        this.isSameMonthAndYear(
-          a.periode,
-          month(this.endCurrentSituation, counter, 'lastday')
-        )
-      )
-      console.log(lastActivitiesEntreesSorties[0])
-    } while (
-      (lastActivitiesEntreesSorties.length === 0 ||
-        !lastActivitiesEntreesSorties[0].entrees ||
-        lastActivitiesEntreesSorties[0].entrees === 0 ||
-        !lastActivitiesEntreesSorties[0].sorties ||
-        lastActivitiesEntreesSorties[0].sorties === 0 ||
-        !lastActivitiesEntreesSorties![0]!.stock ||
-        lastActivitiesEntreesSorties![0]!.stock === 0) &&
-      counter >= -12
-    )
-
-    // if last month not available, then get the 12 last months starting from the last available
-    if (counter !== -12 && counter !== 0) {
-      activities = sortBy(
-        this.activitiesService.activities
-          .getValue()
-          .filter(
-            (a) =>
-              a.contentieux.id === referentielId &&
-              month(a.periode).getTime() >=
-                month(this.startCurrentSituation, counter).getTime() &&
-              month(a.periode).getTime() <=
-                month(this.endCurrentSituation, counter, 'lastday').getTime()
-          ),
-        'periode'
-      )
-    }
-
-    let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
-    let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
-    let lastStock = null
-
-    if (activities.length) {
-      let lastActivities: any = []
-      let nbOfMonth = 1
-      // compute number of months without stock starting from today
-      do {
-        nbOfMonth--
-        lastActivities = activities.filter((a) =>
-          this.isSameMonthAndYear(
-            a.periode,
-            month(this.endCurrentSituation, nbOfMonth, 'lastday')
+        let activities = data.data.situation.activities
+        let counter = data.data.situation.deltaOfMonths
+        let categories = data.data.categories
+        /**
+        // check when is the last month available on this periode with in and out flows
+        let counter = 1
+        let lastActivitiesEntreesSorties: any = []
+        do {
+          counter--
+          lastActivitiesEntreesSorties = activities.filter((a: any) =>
+            this.isSameMonthAndYear(
+              a.periode,
+              month(this.endCurrentSituation, counter, 'lastday')
+            )
           )
-        )
-      } while (
-        (lastActivities.length === 0 ||
-          lastActivities![0]!.stock === null ||
-          lastActivities![0]!.stock === 0) &&
-        nbOfMonth >= -12
-      )
-
-      // last available stock
-      lastStock = sumBy(lastActivities, 'stock')
-
-      // Compute etpAffected & etpMag today (on specific date) to display & output
-      let etpAffected = this.getHRPositions(
-        [], // TODO ICI
-        referentielId as number
-      ) as Array<etpAffectedInterface>
-      let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-
-      let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
-      let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-
-      // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
-      let etpAffectedToCompute = this.getHRPositions(
-        [], // TODO ICI
-        referentielId as number,
-        new Date(month(this.startCurrentSituation, counter)),
-        true,
-        new Date(month(this.endCurrentSituation, counter, 'lastday'))
-      )
-      let etpToCompute = (
-        etpAffectedToCompute as Array<etpAffectedInterface>
-      )[0].totalEtp
-
-      // Compute realTimePerCase to display using the etpAffected 12 last months available
-      let realTimePerCase = fixDecimal(
-        ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
-          (totalOut / etpToCompute)
-      )
-
-      // Compute totalOut with etp at dateStart (specific date) to display
-      totalOut = Math.floor(
-        (etpMag *
-          environment.nbHoursPerDay *
-          (environment.nbDaysByMagistrat / 12)) /
-          realTimePerCase
-      )
-
-      // Projection of etpAffected between the last month available and today to compute stock
-      let fururEtpAffectedToCompute = this.getHRPositions(
-        [], // TODO ICI
-        referentielId as number,
-        month(this.endCurrentSituation, counter, 'lastday'),
-        true,
-        new Date()
-      )
-      let futurEtpToCompute = (
-        fururEtpAffectedToCompute as Array<etpAffectedInterface>
-      )[0].totalEtp
-
-      const countOfCalandarDays = nbOfDays(
-        month(this.endCurrentSituation, counter, 'lastday'),
-        new Date()
-      )
-
-      // Compute stock projection until today
-      lastStock =
-        Math.floor(lastStock) -
-        Math.floor(
-          (countOfCalandarDays / (365 / 12)) *
-            17.33 *
-            ((futurEtpToCompute * environment.nbHoursPerDay) / realTimePerCase)
-        ) +
-        Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
-
-      // Compute realCoverage & realDTESInMonths using last available stock
-      let realCoverage = fixDecimal(totalOut / totalIn)
-      let realDTESInMonths =
-        lastStock !== null && totalOut !== null
-          ? fixDecimal(lastStock / totalOut)
-          : null
-
-      const today = new Date()
-      if (
-        dateStart &&
-        (dateStart?.getDate() !== today.getDate() ||
-          dateStart?.getMonth() !== today.getMonth() ||
-          dateStart?.getFullYear() !== today.getFullYear())
-      ) {
-        const nbDayCalendar = nbOfDays(
-          new Date(),
-          new Date(this.dateStart.getValue())
+          //console.log(lastActivitiesEntreesSorties[0])
+        } while (
+          (lastActivitiesEntreesSorties.length === 0 ||
+            !lastActivitiesEntreesSorties[0].entrees ||
+            lastActivitiesEntreesSorties[0].entrees === 0 ||
+            !lastActivitiesEntreesSorties[0].sorties ||
+            lastActivitiesEntreesSorties[0].sorties === 0 ||
+            !lastActivitiesEntreesSorties![0]!.stock ||
+            lastActivitiesEntreesSorties![0]!.stock === 0) &&
+          counter >= -12
         )
 
-        // Compute etpAffected & etpMag at dateStart (specific date) to display
-        etpAffected = this.getHRPositions(
-          [], // TODO ICI
-          referentielId as number,
-          dateStart
-        ) as Array<etpAffectedInterface>
-        etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-
-        etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
-        etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-
-        // Compute totalOut with etp at dateStart (specific date) to display
-        totalOut = Math.floor(
-          (etpMag *
-            environment.nbHoursPerDay *
-            (environment.nbDaysByMagistrat / 12)) /
-            realTimePerCase
-        )
-
-        // Projection of etpAffected between the last month available and today to compute stock
-        fururEtpAffectedToCompute = this.getHRPositions(
-          [], // TODO ICI
-          referentielId as number,
-          new Date(),
-          true,
-          dateStart
-        )
-        futurEtpToCompute = (
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>
-        )[0].totalEtp
-
-        // Compute projectedStock with etp at dateStart
-        lastStock =
-          Math.floor(lastStock) -
-          Math.floor(
-            (nbDayCalendar / (365 / 12)) *
-              17.33 *
-              ((futurEtpToCompute * environment.nbHoursPerDay) /
-                realTimePerCase)
-          ) +
-          Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
-
-        realCoverage = fixDecimal(totalOut / totalIn)
-        realDTESInMonths =
-          lastStock !== null && totalOut !== null
-            ? fixDecimal(lastStock / totalOut)
-            : null
-      }
-      if (dateStop) {
-        const nbDayCalendarProjected = nbOfDays(
-          new Date(this.dateStart.getValue()),
-          new Date(this.dateStop.getValue())
-        )
-
-        // Compute projected etp at stop date (specific date) to display
-        const projectedEtpAffected = this.getHRPositions(
-          [], // TODO ICI
-          referentielId as number,
-          dateStop
-        )
-        const projectedEtp = (
-          projectedEtpAffected as Array<etpAffectedInterface>
-        )[0].totalEtp
-
-        const projectedEtpFon = (
-          projectedEtpAffected as Array<etpAffectedInterface>
-        )[2].totalEtp
-
-        const projectedEtpCont = (
-          projectedEtpAffected as Array<etpAffectedInterface>
-        )[1].totalEtp
-
-        // Compute projected out flow with projected etp at stop date (specific date)
-        const projectedTotalOut = Math.floor(
-          (projectedEtp * environment.nbHoursPerDay * 17.33) / realTimePerCase
-        )
-
-        let monthlyReport: Array<any> = []
-        // Projection of etpAffected between start and stop date to compute stock
-        //@ts-ignore
-        ;({ fururEtpAffectedToCompute, monthlyReport } = this.getHRPositions(
-          [], // TODO ICI
-          referentielId as number,
-          dateStart,
-          true,
-          dateStop,
-          true
-        ))
-
-        futurEtpToCompute = (
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>
-        )[0].totalEtp
-
-        // Compute projectedStock with etp at datestop
-        const projectedLastStock =
-          Math.floor(lastStock) -
-          Math.floor(
-            (nbDayCalendarProjected / (365 / 12)) *
-              17.33 *
-              ((futurEtpToCompute * environment.nbHoursPerDay) /
-                realTimePerCase)
-          ) +
-          Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
-
-        const projectedRealCoverage = fixDecimal(projectedTotalOut / totalIn)
-        const projectedRealDTESInMonths =
-          projectedLastStock !== null && projectedTotalOut !== null
-            ? fixDecimal(projectedLastStock / projectedTotalOut)
-            : null
-
-        const list = {
-          totalIn,
-          totalOut: projectedTotalOut,
-          lastStock: projectedLastStock,
-          realCoverage: projectedRealCoverage,
-          realDTESInMonths: projectedRealDTESInMonths,
-          realTimePerCase,
-          etpMag: projectedEtp,
-          etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
-          etpFon: projectedEtpFon,
-          etpCont: projectedEtpCont,
-          calculateCoverage: null,
-          calculateDTESInMonths: null,
-          calculateTimePerCase: null,
-          nbMonth,
-          etpToCompute: futurEtpToCompute,
-          monthlyReport: monthlyReport,
+        // if last month not available, then get the 12 last months starting from the last available
+        if (counter !== -12 && counter !== 0) {
+          activities = sortBy(
+            this.activitiesService.activities
+              .getValue()
+              .filter(
+                (a) =>
+                  a.contentieux.id === referentielId &&
+                  month(a.periode).getTime() >=
+                    month(this.startCurrentSituation, counter).getTime() &&
+                  month(a.periode).getTime() <=
+                    month(
+                      this.endCurrentSituation,
+                      counter,
+                      'lastday'
+                    ).getTime()
+              ),
+            'periode'
+          )
         }
-        this.situationProjected.next(list)
-      }
+ */
+        let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonth)
+        let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonth)
+        let lastStock = null
 
-      return {
-        totalIn,
-        totalOut,
-        lastStock,
-        realCoverage,
-        realDTESInMonths,
-        realTimePerCase,
-        etpMag,
-        etpFon,
-        etpCont,
-        etpAffected,
-        etpToCompute: etpToCompute,
-      }
-    } else
-      return {
-        totalIn: null,
-        totalOut: null,
-        lastStock: null,
-        realCoverage: null,
-        realDTESInMonths: null,
-        realTimePerCase: null,
-        etpMag: null,
-        etpFon: null,
-        etpCont: null,
-        etpAffected: null,
-        etpToCompute: null,
-      }
+        if (activities.length) {
+          let lastActivities: any = []
+          let nbOfMonth = 1
+          // compute number of months without stock starting from today
+          do {
+            nbOfMonth--
+            lastActivities = activities.filter((a: any) =>
+              this.isSameMonthAndYear(
+                a.periode,
+                month(this.endCurrentSituation, nbOfMonth, 'lastday')
+              )
+            )
+          } while (
+            (lastActivities.length === 0 ||
+              lastActivities![0]!.stock === null ||
+              lastActivities![0]!.stock === 0) &&
+            nbOfMonth >= -12
+          )
+
+          // last available stock
+          lastStock = sumBy(lastActivities, 'stock')
+
+          console.log(activities, totalIn, totalOut, lastStock)
+
+          // Compute etpAffected & etpMag today (on specific date) to display & output
+          let etpAffected = this.getHRPositions(
+            [], // TODO ICI
+            referentielId as number,
+            categories
+          ) as Array<etpAffectedInterface>
+
+          console.log({
+            front: etpAffected[0].totalEtp,
+            back: data.data.situation.etpAffected[0].totalEtp,
+          })
+
+          let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+
+          let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+          let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+
+          // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
+          let etpAffectedToCompute = this.getHRPositions(
+            [], // TODO ICI
+            referentielId as number,
+            categories,
+            new Date(month(this.startCurrentSituation, counter)),
+            true,
+            new Date(month(this.endCurrentSituation, counter, 'lastday'))
+          )
+          let etpToCompute = (
+            etpAffectedToCompute as Array<etpAffectedInterface>
+          )[0].totalEtp
+
+          // Compute realTimePerCase to display using the etpAffected 12 last months available
+          let realTimePerCase = fixDecimal(
+            ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
+              (totalOut / etpToCompute)
+          )
+
+          // Compute totalOut with etp at dateStart (specific date) to display
+          totalOut = Math.floor(
+            (etpMag *
+              environment.nbHoursPerDay *
+              (environment.nbDaysByMagistrat / 12)) /
+              realTimePerCase
+          )
+
+          // Projection of etpAffected between the last month available and today to compute stock
+          let fururEtpAffectedToCompute = this.getHRPositions(
+            [], // TODO ICI
+            referentielId as number,
+            categories,
+            month(this.endCurrentSituation, counter, 'lastday'),
+            true,
+            new Date()
+          )
+          let futurEtpToCompute = (
+            fururEtpAffectedToCompute as Array<etpAffectedInterface>
+          )[0].totalEtp
+
+          const countOfCalandarDays = nbOfDays(
+            month(this.endCurrentSituation, counter, 'lastday'),
+            new Date()
+          )
+
+          // Compute stock projection until today
+          lastStock =
+            Math.floor(lastStock) -
+            Math.floor(
+              (countOfCalandarDays / (365 / 12)) *
+                17.33 *
+                ((futurEtpToCompute * environment.nbHoursPerDay) /
+                  realTimePerCase)
+            ) +
+            Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+
+          // Compute realCoverage & realDTESInMonths using last available stock
+          let realCoverage = fixDecimal(totalOut / totalIn)
+          let realDTESInMonths =
+            lastStock !== null && totalOut !== null
+              ? fixDecimal(lastStock / totalOut)
+              : null
+
+          const today = new Date()
+          if (
+            dateStart &&
+            (dateStart?.getDate() !== today.getDate() ||
+              dateStart?.getMonth() !== today.getMonth() ||
+              dateStart?.getFullYear() !== today.getFullYear())
+          ) {
+            const nbDayCalendar = nbOfDays(
+              new Date(),
+              new Date(this.dateStart.getValue())
+            )
+
+            // Compute etpAffected & etpMag at dateStart (specific date) to display
+            etpAffected = this.getHRPositions(
+              [], // TODO ICI
+              referentielId as number,
+              categories,
+              dateStart
+            ) as Array<etpAffectedInterface>
+            etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
+
+            etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+            etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+
+            // Compute totalOut with etp at dateStart (specific date) to display
+            totalOut = Math.floor(
+              (etpMag *
+                environment.nbHoursPerDay *
+                (environment.nbDaysByMagistrat / 12)) /
+                realTimePerCase
+            )
+
+            // Projection of etpAffected between the last month available and today to compute stock
+            fururEtpAffectedToCompute = this.getHRPositions(
+              [], // TODO ICI
+              referentielId as number,
+              categories,
+              new Date(),
+              true,
+              dateStart
+            )
+            futurEtpToCompute = (
+              fururEtpAffectedToCompute as Array<etpAffectedInterface>
+            )[0].totalEtp
+
+            // Compute projectedStock with etp at dateStart
+            lastStock =
+              Math.floor(lastStock) -
+              Math.floor(
+                (nbDayCalendar / (365 / 12)) *
+                  17.33 *
+                  ((futurEtpToCompute * environment.nbHoursPerDay) /
+                    realTimePerCase)
+              ) +
+              Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
+
+            realCoverage = fixDecimal(totalOut / totalIn)
+            realDTESInMonths =
+              lastStock !== null && totalOut !== null
+                ? fixDecimal(lastStock / totalOut)
+                : null
+          }
+          if (dateStop) {
+            const nbDayCalendarProjected = nbOfDays(
+              new Date(this.dateStart.getValue()),
+              new Date(this.dateStop.getValue())
+            )
+
+            // Compute projected etp at stop date (specific date) to display
+            const projectedEtpAffected = this.getHRPositions(
+              [], // TODO ICI
+              referentielId as number,
+              categories,
+              dateStop
+            )
+            const projectedEtp = (
+              projectedEtpAffected as Array<etpAffectedInterface>
+            )[0].totalEtp
+
+            const projectedEtpFon = (
+              projectedEtpAffected as Array<etpAffectedInterface>
+            )[2].totalEtp
+
+            const projectedEtpCont = (
+              projectedEtpAffected as Array<etpAffectedInterface>
+            )[1].totalEtp
+
+            // Compute projected out flow with projected etp at stop date (specific date)
+            const projectedTotalOut = Math.floor(
+              (projectedEtp * environment.nbHoursPerDay * 17.33) /
+                realTimePerCase
+            )
+
+            let monthlyReport: Array<any> = []
+            // Projection of etpAffected between start and stop date to compute stock
+            //@ts-ignore
+            ;({ fururEtpAffectedToCompute, monthlyReport } =
+              this.getHRPositions(
+                [], // TODO ICI
+                referentielId as number,
+                categories,
+                dateStart,
+                true,
+                dateStop,
+                true
+              ))
+
+            futurEtpToCompute = (
+              fururEtpAffectedToCompute as Array<etpAffectedInterface>
+            )[0].totalEtp
+
+            // Compute projectedStock with etp at datestop
+            const projectedLastStock =
+              Math.floor(lastStock) -
+              Math.floor(
+                (nbDayCalendarProjected / (365 / 12)) *
+                  17.33 *
+                  ((futurEtpToCompute * environment.nbHoursPerDay) /
+                    realTimePerCase)
+              ) +
+              Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
+
+            const projectedRealCoverage = fixDecimal(
+              projectedTotalOut / totalIn
+            )
+            const projectedRealDTESInMonths =
+              projectedLastStock !== null && projectedTotalOut !== null
+                ? fixDecimal(projectedLastStock / projectedTotalOut)
+                : null
+
+            const list = {
+              totalIn,
+              totalOut: projectedTotalOut,
+              lastStock: projectedLastStock,
+              realCoverage: projectedRealCoverage,
+              realDTESInMonths: projectedRealDTESInMonths,
+              realTimePerCase,
+              etpMag: projectedEtp,
+              etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
+              etpFon: projectedEtpFon,
+              etpCont: projectedEtpCont,
+              calculateCoverage: null,
+              calculateDTESInMonths: null,
+              calculateTimePerCase: null,
+              nbMonth,
+              etpToCompute: futurEtpToCompute,
+              monthlyReport: monthlyReport,
+            }
+            this.situationProjected.next(list)
+          }
+
+          return {
+            totalIn,
+            totalOut,
+            lastStock,
+            realCoverage,
+            realDTESInMonths,
+            realTimePerCase,
+            etpMag,
+            etpFon,
+            etpCont,
+            etpAffected,
+            etpToCompute: etpToCompute,
+          }
+        } else
+          return {
+            totalIn: null,
+            totalOut: null,
+            lastStock: null,
+            realCoverage: null,
+            realDTESInMonths: null,
+            realTimePerCase: null,
+            etpMag: null,
+            etpFon: null,
+            etpCont: null,
+            etpAffected: null,
+            etpToCompute: null,
+          }
+      })
   }
 
   getHRPositions(
     hr: HumanResourceInterface[],
     referentiel: number,
+    categories: any,
     date?: Date,
     onPeriod?: boolean,
     dateStop?: Date,
     monthlyReport = false
   ) {
-    const categories = this.humanResourceService.categories.getValue()
     const hrCategories: any = {}
     let hrCategoriesMonthly: { [key: string]: any } = new Object({})
     let emptyList: { [key: string]: any } = new Object({})
@@ -463,7 +493,7 @@ export class SimulatorService extends MainClass {
       }
     })
 
-    categories.map((c) => {
+    categories.map((c: any) => {
       hrCategories[c.label] = hrCategories[c.label] || {
         totalEtp: 0,
         list: [],
@@ -474,10 +504,6 @@ export class SimulatorService extends MainClass {
         ...JSON.parse(JSON.stringify(emptyList)),
       }
     })
-
-    //categories.map((c) => {
-    //hrCategoriesMonthly[c.label] = hrCategoriesMonthly[c.label] || emptyList
-    //})
 
     for (let i = 0; i < hr.length; i++) {
       let etptAll,
@@ -495,6 +521,7 @@ export class SimulatorService extends MainClass {
       } else
         etptAll = this.getHRVentilation(hr[i], referentiel, categories, date)
 
+      console.log('laforet', etptAll)
       Object.values(etptAll).map((c: any) => {
         if (c.etpt) {
           hrCategories[c.label].list.push(hr[i])
@@ -510,6 +537,8 @@ export class SimulatorService extends MainClass {
         }
       })
     }
+
+    console.log('laforet', hrCategories)
 
     const list = []
     const listMonthly = []

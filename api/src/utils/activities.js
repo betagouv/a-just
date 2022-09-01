@@ -1,3 +1,6 @@
+import { sortBy } from 'lodash';
+import { month } from './date';
+
 export const calculMainValuesFromChilds = (childs) => {
   return {
     entrees: preformatActivitiesArray(childs, ['entrees', 'original_entrees']),
@@ -6,22 +9,39 @@ export const calculMainValuesFromChilds = (childs) => {
     original_sorties: preformatActivitiesArray(childs, ['original_sorties']),
     stock: preformatActivitiesArray(childs, ['stock', 'original_stock']),
     original_stock: preformatActivitiesArray(childs, ['original_stock']),
-  }
-}
+  };
+};
 
 export const preformatActivitiesArray = (list, index) => {
-  let total = null
-  list.map(item => {
-    for(let i = 0; i < index.length; i++) {
-      if(index[i] === 'stock' && (item[index[i]] !== null && item[index[i]] !== 0)) {
-        total = (total || 0) + item[index[i]]
-        break
-      } else if(item[index[i]] !== null) {
-        total = (total || 0) + item[index[i]]
-        break
+  let total = null;
+  list.map((item) => {
+    for (let i = 0; i < index.length; i++) {
+      if (index[i] === 'stock' && item[index[i]] !== null && item[index[i]] !== 0) {
+        total = (total || 0) + item[index[i]];
+        break;
+      } else if (item[index[i]] !== null) {
+        total = (total || 0) + item[index[i]];
+        break;
       }
     }
-  })
-  
-  return total
+  });
+
+  return total;
+};
+
+export async function filterActivitiesByDateAndContentieuxId(
+  activities,
+  referentielId,
+  startDate,
+  endDate
+) {
+  return sortBy(
+    activities.filter(
+      (a) =>
+        a.contentieux.id === referentielId &&
+        month(a.periode).getTime() >= month(startDate).getTime() &&
+        month(a.periode).getTime() <= month(endDate).getTime()
+    ),
+    'periode'
+  );
 }

@@ -467,6 +467,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
           (magistrats && magistrats.hrFiltered) || [],
           r.id,
+          this.humanResourceService.categories.getValue(),
           new Date(month(lastPeriode, -11)),
           true,
           new Date(month(lastPeriode, 0, 'lastday'))
@@ -490,6 +491,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const etpAffected = this.simulatorService.getHRPositions(
           (magistrats && magistrats.hrFiltered) || [],
           r.id,
+          this.humanResourceService.categories.getValue(),
           lastPeriode,
           true,
           this.dateSelected
