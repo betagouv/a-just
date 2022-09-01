@@ -18,7 +18,11 @@ export async function getHumanRessourceList(
       isOk = false;
     }
 
-    if (hr.dateStart && endPeriodToCheck && hr.dateStart.getTime() > endPeriodToCheck.getTime()) {
+    if (
+      hr.dateStart &&
+      endPeriodToCheck instanceof Date &&
+      hr.dateStart.getTime() > endPeriodToCheck.getTime()
+    ) {
       isOk = false;
     }
 
