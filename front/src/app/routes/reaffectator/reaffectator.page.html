@@ -16,7 +16,7 @@
       </aj-select>
       <div class="flex-1"></div>
       <aj-input-button class="dark-mode" title="Rechercher un collaborateur" placeholder="Indiquer le nom"
-        [ngModel]="searchValue" (valueChange)="searchValue = $event; updateSearch()" (search)="updateSearch()"
+        [ngModel]="searchValue" (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()"
         ngDefaultControl icon="">
       </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">
@@ -115,17 +115,17 @@
         </div>
 
         <div class="sub-content-list">
-
           <div class="header-item">
             <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hr.length}"
               (click)="toogleCheckAllPerson(i)"></div>
             <p class="label">Tout sélectionner</p>
-            <p class="btn" (click)="onInitList(list)">Retour à la ventilation actuelle des fiches sélectionnées</p>
+            <p class="btn" (click)="onInitList(list)">
+              Retour à la ventilation actuelle des fiches sélectionnées
+            </p>
           </div>
 
-
-          <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById" [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id">
+          <div class="item-list" *ngFor="let hr of list.hr; trackBy: trackById; let index = index"
+            [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
             <div class="profil item">
               <div class="text">
                 <div class="name">
@@ -162,7 +162,7 @@
             <div class="activities">
               <div class="flex-1"></div>
               <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"
-                (referentielChange)="updateHRReferentiel(hr, $event)" [updateRefentielOnLoad]="false">
+                (referentielChange)="updateHRReferentiel(hr, $event, index)" [updateRefentielOnLoad]="false">
               </panel-activities>
               <div class="flex-1"></div>
             </div>

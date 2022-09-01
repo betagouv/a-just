@@ -4,6 +4,7 @@ import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
+import { copyArray } from '../utils/array'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
@@ -122,7 +123,7 @@ export default class RouteHumanResources extends Route {
       contentieuxIds: Types.array().required(),
       categoriesIds: Types.array().required(),
       extractor: Types.boolean().required(),
-      endPeriodToCheck: Types.date()
+      endPeriodToCheck: Types.date(),
     }),
     accesses: [Access.canVewHR],
   })
@@ -143,79 +144,81 @@ export default class RouteHumanResources extends Route {
       
 
     if (extractor === false){
-    let listFiltered = [...list]
-    const categories = await this.models.HRCategories.getAll()
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
+      let listFiltered = [...list]
+      const categories = await this.models.HRCategories.getAll()
+      const originalReferentiel = (await this.models.ContentieuxReferentiels.getReferentiels()).filter(r => contentieuxIds.indexOf(r.id) !== -1)
 
-    const listFormated = categories.filter(c => categoriesIds.indexOf(c.id) !== -1).map(
-      (category) => {
-        let label = category.label
+      const listFormated = categories.filter(c => categoriesIds.indexOf(c.id) !== -1).map(
+        (category) => {
+          let label = category.label
 
-        let referentiel = [...originalReferentiel].map((ref) => {
-          ref.totalAffected = 0
-          return ref
-        })
-
-        let group = listFiltered
-          .filter((h) => h.category && h.category.id === category.id)
-          .map((hr) => {
-            hr.tmpActivities = {}
-
-            referentiel = referentiel.map((ref) => {
-              hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-                (r) => r.contentieux && r.contentieux.id === ref.id
-              )
-              const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-              if (timeAffected) {
-                let realETP = (hr.etp || 0) - hr.hasIndisponibility
-                if (realETP < 0) {
-                  realETP = 0
-                }
-                ref.totalAffected =
-                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              }
-
-              return ref
-            })
-
-            return hr
+          let referentiel = copyArray(originalReferentiel).map((ref) => {
+            ref.totalAffected = 0
+            return ref
           })
 
-        if (group.length > 1) {
-          if (label.indexOf('agistrat') !== -1) {
-            label = label.replace('agistrat', 'agistrats')
-          } else {
-            label += 's'
+          let group = listFiltered
+            .filter((h) => h.category && h.category.id === category.id)
+            .map((hr) => {
+              hr.tmpActivities = {}
+
+              referentiel = referentiel.map((ref) => {
+                hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+                  (r) => r.contentieux && r.contentieux.id === ref.id
+                )
+                if(hr.tmpActivities[ref.id].length) {
+                  const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+                  if (timeAffected) {
+                    let realETP = (hr.etp || 0) - hr.hasIndisponibility
+                    if (realETP < 0) {
+                      realETP = 0
+                    }
+                    ref.totalAffected =
+                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+                  }
+                }
+
+                return ref
+              })
+
+              return hr
+            })
+
+          if (group.length > 1) {
+            if (label.indexOf('agistrat') !== -1) {
+              label = label.replace('agistrat', 'agistrats')
+            } else {
+              label += 's'
+            }
+          }
+
+          return {
+            textColor: getCategoryColor(label),
+            bgColor: getCategoryColor(label, 0.2),
+            referentiel,
+            label,
+            hr: group,
+            categoryId: category.id,
           }
         }
-
-        return {
-          textColor: getCategoryColor(label),
-          bgColor: getCategoryColor(label, 0.2),
-          referentiel,
-          label,
-          hr: group,
-          categoryId: category.id,
-        }
-      }
       
-    )
-    console.log('step7')
-    console.log(extractor)
+      )
+      console.log('step7')
+      console.log(extractor)
 
-    this.sendOk(ctx, {
-      list: listFormated,
-    })
-  } else {
-  console.log(extractor)
-
-  console.timeEnd('step5')
-  console.log('step6')
-
-  this.sendOk(ctx, {
-        list
+      this.sendOk(ctx, {
+        list: listFormated,
       })
-  }
+    } else {
+      console.log(extractor)
+
+      console.timeEnd('step5')
+      console.log('step6')
+
+      this.sendOk(ctx, {
+        list,
+      })
+    }
     
     
   }

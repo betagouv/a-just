@@ -11,7 +11,7 @@ export class ActivitiesService {
   activities: BehaviorSubject<ActivityInterface[]> = new BehaviorSubject<
     ActivityInterface[]
   >([])
-  activityMonth: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  activityMonth: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(null)
   hrBackupId: number | null = null
 
   constructor(private serverService: ServerService) {}
@@ -45,5 +45,29 @@ export class ActivitiesService {
         hrBackupId: this.hrBackupId,
       })
       .then((data) => data.data || null)
+  }
+
+  getLastMonthActivities() {
+    return this.serverService
+      .post(`activities/get-last-month`, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) => data.data.date || null)
+  }
+
+  loadAllActivities() {
+    return this.serverService
+      .post(`activities/load-all-activities`, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) => {
+        const list = data.data
+        this.activities.next(
+          list.map((a: ActivityInterface) => ({
+            ...a,
+            periode: new Date(a.periode),
+          }))
+        )
+      })
   }
 }

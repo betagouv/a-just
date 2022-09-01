@@ -22,7 +22,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     date: Date
   } | null = null
   timeoutUpdateAcitity: any = {}
-  isInTheFutures: boolean = false
+  canEditActivities: boolean = false
+  isLoadedFirst: boolean = false
 
   constructor(
     private activitiesService: ActivitiesService,
@@ -33,9 +34,24 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     super()
 
     this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        if (backupId) {
+          this.activitiesService.getLastMonthActivities().then((lastMonth) => {
+            console.log(lastMonth)
+            lastMonth = new Date(lastMonth)
+            console.log(lastMonth)
+            this.activitiesService.activityMonth.next(lastMonth)
+          })
+        }
+      })
+    )
+
+    this.watch(
       this.activitiesService.activityMonth.subscribe((a) => {
-        this.activityMonth = a
-        this.onLoadMonthActivities()
+        if (a !== null) {
+          this.activityMonth = a
+          this.onLoadMonthActivities()
+        }
       })
     )
   }
@@ -116,62 +132,58 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   }
 
   onLoadMonthActivities() {
-    const now = month()
-    const checkMonthDate = month(this.activityMonth)
-    this.isInTheFutures = now.getTime() < checkMonthDate.getTime()
+    this.activitiesService
+      .loadMonthActivities(this.activityMonth)
+      .then((monthValues) => {
+        this.isLoadedFirst = true
+        this.updatedBy = monthValues.lastUpdate
+        const activities: ActivityInterface[] = monthValues.list
 
-    if (this.isInTheFutures === false) {
-      this.activitiesService
-        .loadMonthActivities(this.activityMonth)
-        .then((monthValues) => {
-          this.updatedBy = monthValues.lastUpdate
-          const activities: ActivityInterface[] = monthValues.list
-          const referentiels = [
-            ...this.humanResourceService.contentieuxReferentiel.getValue(),
-          ]
+        if (monthValues.list.length === 0) {
+          this.canEditActivities = false
+        } else {
+          this.canEditActivities = true
+        }
+        console.log(monthValues.list)
 
-          // todo set in, out, stock for each
-          this.referentiel = referentiels
-            .filter(
-              (r) =>
-                this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-                this.referentielService.idsSoutien.indexOf(r.id) === -1
+        const referentiels = [
+          ...this.humanResourceService.contentieuxReferentiel.getValue(),
+        ]
+
+        // todo set in, out, stock for each
+        this.referentiel = referentiels
+          .filter(
+            (r) =>
+              this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+              this.referentielService.idsSoutien.indexOf(r.id) === -1
+          )
+          .map((ref) => {
+            const getActivity = activities.find(
+              (a) => a.contentieux.id === ref.id
             )
-            .map((ref) => {
-              const getActivity = activities.find(
-                (a) => a.contentieux.id === ref.id
-              )
-              ref.in = (getActivity && getActivity.entrees) || null
-              ref.originalIn =
-                (getActivity && getActivity.originalEntrees) || null
-              ref.out = (getActivity && getActivity.sorties) || null
-              ref.originalOut =
-                (getActivity && getActivity.originalSorties) || null
-              ref.stock = (getActivity && getActivity.stock) || null
-              ref.originalStock =
-                (getActivity && getActivity.originalStock) || null
+            ref.in = getActivity ? getActivity.entrees : null
+            ref.originalIn = getActivity ? getActivity.originalEntrees : null
+            ref.out = getActivity ? getActivity.sorties : null
+            ref.originalOut = getActivity ? getActivity.originalSorties : null
+            ref.stock = getActivity ? getActivity.stock : null
+            ref.originalStock = getActivity ? getActivity.originalStock : null
 
-              ref.childrens = (ref.childrens || []).map((c) => {
-                const getChildrenActivity = activities.find(
-                  (a) => a.contentieux.id === c.id
-                )
-                c.in =
-                  (getChildrenActivity && getChildrenActivity.entrees) || null
-                c.originalIn =
-                  (getChildrenActivity &&
-                    getChildrenActivity.originalEntrees) ||
-                  null
-                c.out =
-                  (getChildrenActivity && getChildrenActivity.sorties) || null
-                c.originalOut =
-                  (getChildrenActivity &&
-                    getChildrenActivity.originalSorties) ||
-                  null
-                c.stock =
-                  (getChildrenActivity && getChildrenActivity.stock) || null
-                c.originalStock =
-                  (getChildrenActivity && getChildrenActivity.originalStock) ||
-                  null
+            ref.childrens = (ref.childrens || []).map((c) => {
+              const getChildrenActivity = activities.find(
+                (a) => a.contentieux.id === c.id
+              )
+              c.in = getChildrenActivity ? getChildrenActivity.entrees : null
+              c.originalIn = getChildrenActivity
+                ? getChildrenActivity.originalEntrees
+                : null
+              c.out = getChildrenActivity ? getChildrenActivity.sorties : null
+              c.originalOut = getChildrenActivity
+                ? getChildrenActivity.originalSorties
+                : null
+              c.stock = getChildrenActivity ? getChildrenActivity.stock : null
+              c.originalStock = getChildrenActivity
+                ? getChildrenActivity.originalStock
+                : null
 
                 return c
               })
