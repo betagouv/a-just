@@ -6,6 +6,25 @@ import {
 } from '../utils/activities'
 
 export default (sequelizeInstance, Model) => {
+  Model.getLastMonth = async (HRBackupId) => {
+    const theLast = await Model.findOne({
+      attributes: [
+        'periode',
+      ],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      order: [['periode', 'desc']],
+      raw: true,
+    })
+
+    if(theLast) {
+      return theLast.periode
+    }
+
+    return null
+  }
+
   Model.getAll = async (HRBackupId) => {
     const list = await Model.findAll({
       attributes: [
@@ -37,7 +56,7 @@ export default (sequelizeInstance, Model) => {
           list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
         sorties:
           list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: list[i].stock === null ? list[i].stock : list[i].original_stock,
+        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -226,7 +245,8 @@ export default (sequelizeInstance, Model) => {
       await Model.models.HistoriesActivitiesUpdate.addHistory(
         userId,
         findActivity.dataValues.id,
-        nodeUpdated
+        nodeUpdated,
+        values[nodeUpdated],
       )
     }
 
@@ -271,33 +291,31 @@ export default (sequelizeInstance, Model) => {
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
           let currentStock = findAllChild[i].stock
-          let getUserUpdateStock
-          if (currentStock !== null) {
-            // if exist stock and is updated by user do not get previous stock
-            getUserUpdateStock =
-              await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
-                findAllChild[i].contentieux_id,
-                'stock'
-              )
+          // if exist stock and is updated by user do not get previous stock
+          const getUserUpdateStock =
+            await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
+              findAllChild[i].id,
+              'stock'
+            )
+
+          if (findAllChild[i].contentieux_id === 449) {
+            console.log(findAllChild[i], getUserUpdateStock)
           }
 
           // do not updated if updated by user
-          if (!getUserUpdateStock) {
+          if (!getUserUpdateStock || (getUserUpdateStock.value === null)) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(
               findAllChild[i].contentieux_id,
               date,
               hrBackupId
             )
 
+            if (findAllChild[i].contentieux_id === 449) {
+              console.log('previousStockValue', previousStockValue)
+            }
+
             if (previousStockValue !== null) {
               if (
-                findAllChild[i].original_entrees === 0 &&
-                findAllChild[i].entrees === null &&
-                findAllChild[i].original_sorties === 0 &&
-                findAllChild[i].sorties === null
-              ) {
-                currentStock = findAllChild[i].original_stock || 0
-              } else if (
                 findAllChild[i].entrees !== null ||
                 findAllChild[i].sorties !== null ||
                 previousStockValue.type === 'calculate'
@@ -403,9 +421,6 @@ export default (sequelizeInstance, Model) => {
             },
           },
         ],
-        original_stock: {
-          [Op.ne]: 0,
-        },
         hr_backup_id: backupId,
         contentieux_id: contentieuxId,
       },
