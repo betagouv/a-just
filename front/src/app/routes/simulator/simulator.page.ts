@@ -53,6 +53,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   resetPercentage: boolean = false
   valueToAjust = { value: '', percentage: null }
   currentNode: any | undefined = {}
+
   paramsToAjust = {
     param1: {
       label: '',
@@ -253,6 +254,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return date
   }
 
+  //passer en back maybe ??????
   openPopupWithParams(button: any): void {
     this.buttonSelected = button
     const find = this.decisionTree.find((item) => item.label === button.id)
