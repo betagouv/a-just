@@ -39,7 +39,8 @@ interface listFormatedInterface {
   textColor: string
   bgColor: string
   label: string
-  hr: HumanResourceSelectedInterface[]
+  originalLabel: string
+  allHr: HumanResourceSelectedInterface[]
   hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
   firstETPTargetValue: number[]
@@ -236,7 +237,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.listFormated = returnValues.list.map(
           (i: listFormatedInterface) => ({
             ...i,
-            hrFiltered: [...i.hr],
+            hrFiltered: [...i.allHr],
             headerPanel: true,
             personSelected: [],
             firstETPTargetValue: [],
@@ -248,6 +249,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
+    this.onCalculETPAffected()
+
     this.listFormated = this.listFormated.map((list) => {
       if (this.filterSelected) {
         list.hrFiltered = orderBy(
@@ -416,6 +419,52 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.reaffectatorService.selectedFonctionsIds = list.map((i) => +i)
 
     this.onFilterList()
+  }
+
+  onCalculETPAffected() {
+    this.listFormated = this.listFormated.map((list) => {
+      list.referentiel.map((ref) => {
+        ref.totalAffected = 0
+        return ref
+      })
+
+      list.hrFiltered = list.hrFiltered.map((hr) => {
+        hr.tmpActivities = {}
+
+        list.referentiel = list.referentiel.map((ref) => {
+          hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+            (r) => r.contentieux && r.contentieux.id === ref.id
+          )
+          if (hr.tmpActivities[ref.id].length) {
+            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+            if (timeAffected) {
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP < 0) {
+                realETP = 0
+              }
+              ref.totalAffected =
+                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+            }
+          }
+
+          return ref
+        })
+
+        return hr
+      })
+
+      if (list.hrFiltered.length > 1) {
+        if (list.originalLabel.indexOf('agistrat') !== -1) {
+          list.label = list.originalLabel.replace('agistrat', 'agistrats')
+        } else {
+          list.label = list.originalLabel + 's'
+        }
+      } else {
+        list.label = list.originalLabel
+      }
+
+      return list
+    })
   }
 
   calculateReferentielValues() {
@@ -601,11 +650,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   toogleCheckAllPerson(index: number) {
     if (
       this.listFormated[index].personSelected.length ===
-      this.listFormated[index].hr.length
+      this.listFormated[index].hrFiltered.length
     ) {
       this.listFormated[index].personSelected = []
     } else {
-      this.listFormated[index].personSelected = this.listFormated[index].hr.map(
+      this.listFormated[index].personSelected = this.listFormated[index].hrFiltered.map(
         (h) => h.id
       )
     }
@@ -614,20 +663,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) => {
-        /*const indexOfFormatedList = this.preformatedAllHumanResource.findIndex(
-          (h) => h.id === id
-        )
-        const orginalPerson = this.allHumanResources.find((h) => h.id === id)
+        const indexOfHRFiltered = list.hrFiltered.findIndex(h => h.id === id)
+        const indexOfAllHR = list.allHr.findIndex(h => h.id === id)
 
-        if (orginalPerson && indexOfFormatedList !== -1) {
-          this.preformatedAllHumanResource[indexOfFormatedList] =
-            this.formatHR(orginalPerson)
-          // TODO ICI
-        }*/
+        if(indexOfHRFiltered !== 1 && indexOfAllHR !== -1) {
+          list.hrFiltered[indexOfHRFiltered] = {...list.allHr[indexOfAllHR]}
+        }
       })
 
       list.personSelected = []
-      this.onFilterList()
+      this.orderListWithFiltersParams()
     }
   }
 }
