@@ -2,6 +2,8 @@ import Route, { Access } from './Route';
 import { Types } from '../utils/types';
 import { getHRVentilation } from '../constants/calculator';
 import {
+  addSumLine,
+  autofitColumns,
   countEtp,
   flatListOfContentieuxAndSousContentieux,
   getIndispoDetails,
@@ -116,6 +118,10 @@ export default class RouteExtractor extends Route {
         });
     });
 
-    this.sendOk(ctx, data);
+    data.sort((a, b) => (a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0));
+
+    data = addSumLine(data, categoryFilter);
+    const columnSize = autofitColumns(data);
+    this.sendOk(ctx, { values: data, columnSize });
   }
 }

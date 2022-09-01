@@ -7,26 +7,7 @@ import { ExcelService } from 'src/app/services/excel/excel.service'
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage extends MainClass implements AfterViewInit {
-  ngAfterViewInit(): void {
-    this.watch(
-      this.excelService.loading.subscribe((value: boolean) => {
-        if (value === true) {
-          ;(
-            document.getElementsByTagName('aj-wrapper')[0] as HTMLElement
-          ).style.cursor = 'wait'
-
-          document.getElementById('export-excel-button')!.style.cursor = 'wait'
-        } else {
-          ;(
-            document.getElementsByTagName('aj-wrapper')[0] as HTMLElement
-          ).style.cursor = 'auto'
-
-          document.getElementById('export-excel-button')!.style.cursor =
-            'pointer'
-        }
-      })
-    )
-  }
+  ngAfterViewInit(): void {}
   constructor(private excelService: ExcelService) {
     super()
   }
@@ -45,10 +26,7 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   tmpObjToDisplay: any = [1, 2, 3]
 
   export() {
-    this.excelService.exportExcel().then((data) => {
-      this.tmpObjToDisplay = data
-      console.log(data)
-    })
+    this.excelService.exportExcel()
   }
 
   selectDate(dateType: string, value: any): void {
