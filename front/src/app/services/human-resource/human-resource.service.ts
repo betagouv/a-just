@@ -613,6 +613,8 @@ export class HumanResourceService {
     endPeriodToCheck?: Date,
     extractor?: boolean
   ) {
+    console.log('extra', extractor ? extractor : false)
+
     return this.serverService
       .post(`human-resources/filter-list`, {
         backupId,

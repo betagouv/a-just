@@ -137,6 +137,8 @@ export class SimulatorService extends MainClass {
         let activities = data.data.situation.activities
         let counter = data.data.situation.deltaOfMonths
         let categories = data.data.categories
+        let hr = data.data.hr
+
         /**
         // check when is the last month available on this periode with in and out flows
         let counter = 1
@@ -212,7 +214,7 @@ export class SimulatorService extends MainClass {
 
           // Compute etpAffected & etpMag today (on specific date) to display & output
           let etpAffected = this.getHRPositions(
-            [], // TODO ICI
+            hr,
             referentielId as number,
             categories
           ) as Array<etpAffectedInterface>
@@ -229,7 +231,7 @@ export class SimulatorService extends MainClass {
 
           // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
           let etpAffectedToCompute = this.getHRPositions(
-            [], // TODO ICI
+            hr,
             referentielId as number,
             categories,
             new Date(month(this.startCurrentSituation, counter)),
@@ -256,7 +258,7 @@ export class SimulatorService extends MainClass {
 
           // Projection of etpAffected between the last month available and today to compute stock
           let fururEtpAffectedToCompute = this.getHRPositions(
-            [], // TODO ICI
+            hr,
             referentielId as number,
             categories,
             month(this.endCurrentSituation, counter, 'lastday'),
@@ -304,7 +306,7 @@ export class SimulatorService extends MainClass {
 
             // Compute etpAffected & etpMag at dateStart (specific date) to display
             etpAffected = this.getHRPositions(
-              [], // TODO ICI
+              hr,
               referentielId as number,
               categories,
               dateStart
@@ -324,7 +326,7 @@ export class SimulatorService extends MainClass {
 
             // Projection of etpAffected between the last month available and today to compute stock
             fururEtpAffectedToCompute = this.getHRPositions(
-              [], // TODO ICI
+              hr,
               referentielId as number,
               categories,
               new Date(),
@@ -360,7 +362,7 @@ export class SimulatorService extends MainClass {
 
             // Compute projected etp at stop date (specific date) to display
             const projectedEtpAffected = this.getHRPositions(
-              [], // TODO ICI
+              hr,
               referentielId as number,
               categories,
               dateStop
@@ -388,7 +390,7 @@ export class SimulatorService extends MainClass {
             //@ts-ignore
             ;({ fururEtpAffectedToCompute, monthlyReport } =
               this.getHRPositions(
-                [], // TODO ICI
+                hr,
                 referentielId as number,
                 categories,
                 dateStart,
@@ -521,7 +523,6 @@ export class SimulatorService extends MainClass {
       } else
         etptAll = this.getHRVentilation(hr[i], referentiel, categories, date)
 
-      console.log('laforet', etptAll)
       Object.values(etptAll).map((c: any) => {
         if (c.etpt) {
           hrCategories[c.label].list.push(hr[i])
@@ -537,8 +538,6 @@ export class SimulatorService extends MainClass {
         }
       })
     }
-
-    console.log('laforet', hrCategories)
 
     const list = []
     const listMonthly = []
