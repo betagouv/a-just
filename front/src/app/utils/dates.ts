@@ -213,7 +213,7 @@ export function getRangeOfMonthsAsObject(
 
   dateCounter.setDate(1)
 
-  while (dateCounter < endDate) {
+  while (dateCounter <= endDate) {
     if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
         `${
