@@ -38,7 +38,6 @@ export class HumanResourceService {
   >([])
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   allIndisponibilityReferentielIds: Array<number> = []
-  allIndisponibilityReferentielIds: Array<number> = []
   copyOfIdsIndispo: number[] = []
   categoriesFilterListIds: number[] = []
   selectedReferentielIds: number[] = []
@@ -258,13 +257,11 @@ export class HumanResourceService {
   }
 
   findSituation(
-    
     hr: HumanResourceInterface | null,
-   
+
     date?: Date,
-   
+
     order = 'desc'
-  
   ) {
     if (date) {
       date = today(date)
@@ -289,13 +286,11 @@ export class HumanResourceService {
   }
 
   findAllSituations(
-    
     hr: HumanResourceInterface | null,
-   
+
     date?: Date,
-   
+
     order: string | boolean = 'desc'
-  
   ) {
     let situations = orderBy(
       hr?.situations || [],
@@ -521,13 +516,13 @@ export class HumanResourceService {
         reelEtp = situation.etp
       } else {
         reelEtp = 0
-      const isIndispoRef =
-        this.allIndisponibilityReferentielIds.includes(referentielId)
-      if (isIndispoRef) {
-        reelEtp = situation.etp
-      } else {
-        reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
-      }
+        const isIndispoRef =
+          this.allIndisponibilityReferentielIds.includes(referentielId)
+        if (isIndispoRef) {
+          reelEtp = situation.etp
+        } else {
+          reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+        }
       }
       if (reelEtp < 0) {
         reelEtp = 0
@@ -535,7 +530,6 @@ export class HumanResourceService {
       return {
         etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
         situation,
-        indisponibilities: indispoFiltred,
         indisponibilities: indispoFiltred,
       }
     }

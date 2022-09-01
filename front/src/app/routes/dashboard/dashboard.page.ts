@@ -23,8 +23,6 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   ]
   selectedCategorieId: undefined | string = undefined
 
-  tmpObjToDisplay: any = [1, 2, 3]
-
   export() {
     this.excelService.exportExcel()
   }
