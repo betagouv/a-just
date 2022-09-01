@@ -92,7 +92,9 @@ export default class RouteHumanResources extends Route {
       console.log(onRemoveHR);
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok');
-        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, { hrId });
+        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
+          hrId,
+        });
       } else {
         ctx.throw(401, "Cette personne n'est pas supprimable !");
       }
@@ -141,8 +143,14 @@ export default class RouteHumanResources extends Route {
     console.time('step2');
     const preformatedAllHumanResource = preformatHumanResources(hr, date);
     console.timeEnd('step2');
-    console.time('step3');
-    let list = getHumanRessourceList(preformatedAllHumanResource, categoriesIds, endPeriodToCheck);
+    let list = getHumanRessourceList(
+      preformatedAllHumanResource,
+      contentieuxIds,
+      categoriesIds,
+      date,
+      endPeriodToCheck
+    );
+
     if (extractor === false) {
       let listFiltered = [...list];
       const categories = await this.models.HRCategories.getAll();
@@ -150,7 +158,7 @@ export default class RouteHumanResources extends Route {
         await this.models.ContentieuxReferentiels.getReferentiels()
       ).filter((r) => contentieuxIds.indexOf(r.id) !== -1);
 
-      const listFormated = await categories
+      const listFormated = categories
         .filter((c) => categoriesIds.indexOf(c.id) !== -1)
         .map((category) => {
           let label = category.label;
