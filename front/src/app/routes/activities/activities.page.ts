@@ -185,12 +185,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 ? getChildrenActivity.originalStock
                 : null
 
-                return c
-              })
-
-              return ref
+              return c
             })
-        })
-    }
+
+            return ref
+          })
+      })
   }
 }
