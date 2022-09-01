@@ -5,6 +5,7 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { sumBy } from 'lodash'
 import { copyArray } from '../utils/array'
+import { getHumanRessourceList } from '../utils/humanServices'
 
 export default class RouteHumanResources extends Route {
   constructor (params) {
@@ -22,8 +23,9 @@ export default class RouteHumanResources extends Route {
   async getCurrentHr (ctx) {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
-    backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
-    
+    backupId =
+      backupId || (backups.length ? backups[backups.length - 1].id : null)
+
     this.sendOk(ctx, {
       backups,
       backupId,
@@ -37,7 +39,7 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeBackup (ctx) {
-    const { backupId } = ctx.params   
+    const { backupId } = ctx.params
 
     await this.model.models.HRBackups.removeBackup(backupId)
 
@@ -54,7 +56,10 @@ export default class RouteHumanResources extends Route {
   async duplicateBackup (ctx) {
     const { backupId, backupName } = this.body(ctx)
 
-    this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId, backupName))
+    this.sendOk(
+      ctx,
+      await this.model.models.HRBackups.duplicateBackup(backupId, backupName)
+    )
   }
 
   @Route.Get({
@@ -84,16 +89,18 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeHR (ctx) {
-    const { hrId } = ctx.params   
+    const { hrId } = ctx.params
 
-    if(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       const onRemoveHR = await this.model.removeHR(hrId)
       console.log(onRemoveHR)
-      if(onRemoveHR) {
+      if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
-        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, { hrId })
+        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
+          hrId,
+        })
       } else {
-        ctx.throw(401, 'Cette personne n\'est pas supprimable !')
+        ctx.throw(401, "Cette personne n'est pas supprimable !")
       }
     } else {
       this.sendOk(ctx, null)
@@ -105,14 +112,17 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeSituation (ctx) {
-    const { situationId } = ctx.params   
-    const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
-    if(hrId) {
-      if(await this.models.HRSituations.destroyById(situationId)) {
+    const { situationId } = ctx.params
+    const hrId = await this.models.HRSituations.haveHRId(
+      situationId,
+      ctx.state.user.id
+    )
+    if (hrId) {
+      if (await this.models.HRSituations.destroyById(situationId)) {
         this.sendOk(ctx, await this.model.getHr(hrId))
       }
     }
-    
+
     this.sendOk(ctx, null)
   }
 
@@ -128,9 +138,18 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date,endPeriodToCheck, categoriesIds, contentieuxIds, extractor } = this.body(ctx)
-    if(!await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
-      ctx.throw(401, 'Vous n\'avez pas accès à cette juridiction !')
+    let {
+      backupId,
+      date,
+      endPeriodToCheck,
+      categoriesIds,
+      contentieuxIds,
+      extractor,
+    } = this.body(ctx)
+    if (
+      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
+    ) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     console.time('step1')
@@ -139,17 +158,24 @@ export default class RouteHumanResources extends Route {
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
-    console.time('step3')
-    let list = getHumanRessourceList(preformatedAllHumanResource,categoriesIds,endPeriodToCheck)
-      
+    let list = getHumanRessourceList(
+      preformatedAllHumanResource,
+      contentieuxIds,
+      categoriesIds,
+      date,
+      endPeriodToCheck
+    )
 
-    if (extractor === false){
+    if (extractor === false) {
       let listFiltered = [...list]
       const categories = await this.models.HRCategories.getAll()
-      const originalReferentiel = (await this.models.ContentieuxReferentiels.getReferentiels()).filter(r => contentieuxIds.indexOf(r.id) !== -1)
+      const originalReferentiel = (
+        await this.models.ContentieuxReferentiels.getReferentiels()
+      ).filter((r) => contentieuxIds.indexOf(r.id) !== -1)
 
-      const listFormated = categories.filter(c => categoriesIds.indexOf(c.id) !== -1).map(
-        (category) => {
+      const listFormated = categories
+        .filter((c) => categoriesIds.indexOf(c.id) !== -1)
+        .map((category) => {
           let label = category.label
 
           let referentiel = copyArray(originalReferentiel).map((ref) => {
@@ -166,15 +192,18 @@ export default class RouteHumanResources extends Route {
                 hr.tmpActivities[ref.id] = hr.currentActivities.filter(
                   (r) => r.contentieux && r.contentieux.id === ref.id
                 )
-                if(hr.tmpActivities[ref.id].length) {
-                  const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+                if (hr.tmpActivities[ref.id].length) {
+                  const timeAffected = sumBy(
+                    hr.tmpActivities[ref.id],
+                    'percent'
+                  )
                   if (timeAffected) {
                     let realETP = (hr.etp || 0) - hr.hasIndisponibility
                     if (realETP < 0) {
                       realETP = 0
                     }
                     ref.totalAffected =
-                  (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+                      (ref.totalAffected || 0) + (timeAffected / 100) * realETP
                   }
                 }
 
@@ -200,9 +229,7 @@ export default class RouteHumanResources extends Route {
             hr: group,
             categoryId: category.id,
           }
-        }
-      
-      )
+        })
       console.log('step7')
       console.log(extractor)
 
@@ -219,21 +246,16 @@ export default class RouteHumanResources extends Route {
         list,
       })
     }
-    
-    
   }
-
-
-
 
   @Route.Get({
     path: 'read-hr/:hrId',
     accesses: [Access.canVewHR],
   })
   async readHr (ctx) {
-    const { hrId } = ctx.params   
+    const { hrId } = ctx.params
 
-    if(await this.model.haveAccess(hrId, ctx.state.user.id)) {
+    if (await this.model.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getHrDetails(hrId))
     } else {
       this.sendOk(ctx, null)

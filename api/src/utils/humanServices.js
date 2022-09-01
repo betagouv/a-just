@@ -1,56 +1,52 @@
 import { orderBy, uniqBy } from 'lodash'
 import { today } from './date'
 
-export async function getHumanRessourceList(preformatedAllHumanResource,contentieuxIds,categoriesIds,date,endPeriodToCheck){
-  let list = preformatedAllHumanResource
-        .filter((hr) => {
-          let isOk = true
-          if (
-            hr.category &&
-            categoriesIds.indexOf(hr.category.id) === -1
-          ) {
-            isOk = false
-          }
+export function getHumanRessourceList (
+  preformatedAllHumanResource,
+  contentieuxIds,
+  categoriesIds,
+  date,
+  endPeriodToCheck
+) {
+  console.time('step3')
+  
+  const list = preformatedAllHumanResource.filter((hr) => {
+    let isOk = true
+    if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
+      isOk = false
+    }
 
-          if (
-            hr.dateEnd &&
-            hr.dateEnd.getTime() < date.getTime()
-          ) {
-            isOk = false
-          }
+    if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
+      isOk = false
+    }
 
-          if (
-            hr.dateStart &&
-            endPeriodToCheck &&
-            hr.dateStart.getTime() > endPeriodToCheck.getTime()
-          ) {
-            isOk = false
-          }
+    if (
+      hr.dateStart &&
+      endPeriodToCheck &&
+      hr.dateStart.getTime() > endPeriodToCheck.getTime()
+    ) {
+      isOk = false
+    }
 
-          return isOk
-        })
-    console.timeEnd('step3')
-    console.time('step4')
-    return list.filter((h) => {
-      const idsOfactivities = h.currentActivities.map(
-        (a) => (a.contentieux && a.contentieux.id) || 0
-      )
-      for (let i = 0; i < idsOfactivities.length; i++) {
-        if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
-          return true
-        }
+    return isOk
+  })
+
+  console.timeEnd('step3')
+  return list.filter((h) => {
+    const idsOfactivities = h.currentActivities.map(
+      (a) => (a.contentieux && a.contentieux.id) || 0
+    )
+    for (let i = 0; i < idsOfactivities.length; i++) {
+      if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
+        return true
       }
+    }
 
-      return false
-    })
+    return false
+  })
 }
 
-
-
-export function filterActivitiesByDate (
-  list,
-  date
-) {
+export function filterActivitiesByDate (list, date) {
   list = orderBy(list || [], ['dateStart'], ['desc'])
   list = list.filter((a) => {
     const dateStop = a.dateStop ? today(a.dateStop) : null
