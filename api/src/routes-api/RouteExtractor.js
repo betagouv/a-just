@@ -44,10 +44,10 @@ export default class RouteExtractor extends Route {
 
     let allHuman = await getHumanRessourceList(
       preformatedAllHumanResource,
-      flatReferentielsList.map((a) => a.id),
       [0, 1, 2],
+      dateStop,
       dateStart,
-      dateStop
+      flatReferentielsList.map((a) => a.id)
     );
 
     const categories = await this.models.HRCategories.getAll();

@@ -46,6 +46,6 @@ export default class RouteSimulator extends Route {
 
     const situation = await getSituation(referentielId, hr, activities, categories);
 
-    this.sendOk(ctx, { situation, categories });
+    this.sendOk(ctx, { situation, categories, hr });
   }
 }
