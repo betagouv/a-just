@@ -308,7 +308,7 @@ export default (sequelizeInstance, Model) => {
 
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
-          console.log(findAllChild[i])
+          console.log(findAllChild[i].contentieux_id)
 
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
@@ -402,7 +402,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         // check if they are value after this periode
-        const nextPeriode = await Model.findAll({
+        /*const nextPeriode = await Model.findAll({
           attributes: ['periode'],
           where: {
             periode: {
@@ -417,7 +417,7 @@ export default (sequelizeInstance, Model) => {
         continueToDo = nextPeriode.length !== 0
         if (nextPeriode.length) {
           date.setMonth(date.getMonth() + 1)
-        }
+        }*/
       } while (continueToDo)
     }
   }
