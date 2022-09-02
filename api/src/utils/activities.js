@@ -37,5 +37,5 @@ export const preformatActivitiesArray = (list, index) => {
     }
   })
   
-  return total
+  return total !== null && total < 0 ? 0 : total
 }
