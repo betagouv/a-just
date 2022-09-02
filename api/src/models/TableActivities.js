@@ -316,10 +316,8 @@ export default (sequelizeInstance, Model) => {
               'stock'
             )
 
-          if(findAllChild[i].contentieux_id === 442) {
-            console.log('currentStock', currentStock, getUserUpdateStock)
-          }
-
+          console.log('currentStock', currentStock, getUserUpdateStock)
+          
           // do not updated if updated by user
           if (!getUserUpdateStock || getUserUpdateStock.value === null) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(
@@ -328,10 +326,8 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             )
 
-            if(findAllChild[i].contentieux_id === 442) {
-              console.log('previousStockValue', previousStockValue)
-            }
-
+            console.log('previousStockValue', previousStockValue)
+            
             if (previousStockValue !== null) {
               if (
                 findAllChild[i].entrees !== null ||
