@@ -308,6 +308,8 @@ export default (sequelizeInstance, Model) => {
 
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
+          console.log(findAllChild[i])
+
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
           const getUserUpdateStock =
@@ -365,6 +367,10 @@ export default (sequelizeInstance, Model) => {
 
             if (currentStock === findAllChild[i].original_stock) {
               currentStock = null
+            }
+
+            if(currentStock !== null && currentStock < 0) {
+              currentStock = 0
             }
 
             // save to database
