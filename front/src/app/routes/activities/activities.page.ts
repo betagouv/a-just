@@ -85,7 +85,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         }
       })
 
-      return total
+      return total !== null && total < 0 ? 0 : total
     }
     const inValue = preformatArray(referentiel.childrens, ['in', 'originalIn'])
     const outValue = preformatArray(referentiel.childrens, ['out', 'originalOut'])
