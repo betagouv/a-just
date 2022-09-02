@@ -8,9 +8,7 @@ import {
 export default (sequelizeInstance, Model) => {
   Model.getLastMonth = async (HRBackupId) => {
     const theLast = await Model.findOne({
-      attributes: [
-        'periode',
-      ],
+      attributes: ['periode'],
       where: {
         hr_backup_id: HRBackupId,
       },
@@ -18,7 +16,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if(theLast) {
+    if (theLast) {
       return theLast.periode
     }
 
@@ -239,14 +237,12 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    console.log(findActivity)
-
     if (userId !== null) {
       await Model.models.HistoriesActivitiesUpdate.addHistory(
         userId,
         findActivity.dataValues.id,
         nodeUpdated,
-        values[nodeUpdated],
+        values[nodeUpdated]
       )
     }
 
@@ -274,7 +270,29 @@ export default (sequelizeInstance, Model) => {
     if (ref) {
       let continueToDo = false
       do {
+        const childrens = ref.childrens || []
         console.log('check date', date, mainContentieuxId, hrBackupId)
+
+        for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
+          // IF not exist, create it
+          if (
+            !(await Model.findOne({
+              where: {
+                periode: {
+                  [Op.between]: [startOfMonth(date), endOfMonth(date)],
+                },
+                hr_backup_id: hrBackupId,
+                contentieux_id: childrens[cIndex].id,
+              },
+            }))
+          ) {
+            await Model.create({
+              periode: date,
+              hr_backup_id: hrBackupId,
+              contentieux_id: childrens[cIndex].id,
+            })
+          }
+        }
 
         // update main activity with entrees, sorties, stock
         const findAllChild = await Model.findAll({
@@ -298,19 +316,19 @@ export default (sequelizeInstance, Model) => {
               'stock'
             )
 
-          if (findAllChild[i].contentieux_id === 449) {
-            console.log(findAllChild[i], getUserUpdateStock)
+          if(findAllChild[i].contentieux_id === 442) {
+            console.log('currentStock', currentStock, getUserUpdateStock)
           }
 
           // do not updated if updated by user
-          if (!getUserUpdateStock || (getUserUpdateStock.value === null)) {
+          if (!getUserUpdateStock || getUserUpdateStock.value === null) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(
               findAllChild[i].contentieux_id,
               date,
               hrBackupId
             )
 
-            if (findAllChild[i].contentieux_id === 449) {
+            if(findAllChild[i].contentieux_id === 442) {
               console.log('previousStockValue', previousStockValue)
             }
 
@@ -331,10 +349,10 @@ export default (sequelizeInstance, Model) => {
                 currentStock =
                   previousStockValue.stock + (entrees || 0) - (sorties || 0)
               } else {
-                currentStock = findAllChild[i].original_stock || 0
+                currentStock = findAllChild[i].original_stock
               }
             } else {
-              currentStock = findAllChild[i].original_stock || 0
+              currentStock = findAllChild[i].original_stock
 
               if (findAllChild[i].entrees) {
                 currentStock +=
@@ -372,6 +390,13 @@ export default (sequelizeInstance, Model) => {
         })
         if (findMain) {
           await findMain.update(calculMainValuesFromChilds(findAllChild))
+        } else {
+          await Model.create({
+            periode: date,
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.id,
+            ...calculMainValuesFromChilds(findAllChild),
+          })
         }
 
         // check if they are value after this periode
@@ -434,6 +459,10 @@ export default (sequelizeInstance, Model) => {
           stock: previousPeriode[previousPeriode.length - 1].stock,
           type: 'calculate',
         }
+      } else if (
+        previousPeriode[previousPeriode.length - 1].original_stock === null
+      ) {
+        return null
       } else if (previousPeriode[previousPeriode.length - 1].original_stock) {
         return {
           stock: previousPeriode[previousPeriode.length - 1].original_stock,
