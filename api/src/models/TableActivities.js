@@ -352,16 +352,20 @@ export default (sequelizeInstance, Model) => {
             } else {
               currentStock = findAllChild[i].original_stock
 
-              if (findAllChild[i].entrees) {
-                currentStock +=
-                  -(findAllChild[i].original_entrees || 0) +
-                  (findAllChild[i].entrees || 0)
+              if (findAllChild[i].entrees !== null) {
+                currentStock += (findAllChild[i].entrees || 0)
               }
 
-              if (findAllChild[i].sorties) {
-                currentStock +=
-                  -(findAllChild[i].original_entrees || 0) +
-                  (findAllChild[i].entrees || 0)
+              if (findAllChild[i].original_entrees !== null && findAllChild[i].entrees === null) {
+                currentStock += (findAllChild[i].original_entrees || 0)
+              }
+
+              if (findAllChild[i].sorties !== null) {
+                currentStock += (findAllChild[i].sorties || 0)
+              }
+
+              if (findAllChild[i].original_sorties !== null && findAllChild[i].sorties === null) {
+                currentStock += (findAllChild[i].original_sorties || 0)
               }
             }
 
@@ -402,7 +406,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         // check if they are value after this periode
-        /*const nextPeriode = await Model.findAll({
+        const nextPeriode = await Model.findAll({
           attributes: ['periode'],
           where: {
             periode: {
@@ -417,7 +421,7 @@ export default (sequelizeInstance, Model) => {
         continueToDo = nextPeriode.length !== 0
         if (nextPeriode.length) {
           date.setMonth(date.getMonth() + 1)
-        }*/
+        }
       } while (continueToDo)
     }
   }
