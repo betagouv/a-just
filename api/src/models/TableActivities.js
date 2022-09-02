@@ -354,17 +354,13 @@ export default (sequelizeInstance, Model) => {
 
               if (findAllChild[i].entrees !== null) {
                 currentStock += (findAllChild[i].entrees || 0)
-              }
-
-              if (findAllChild[i].original_entrees !== null && findAllChild[i].entrees === null) {
+              } else if (findAllChild[i].original_entrees !== null) {
                 currentStock += (findAllChild[i].original_entrees || 0)
               }
 
               if (findAllChild[i].sorties !== null) {
                 currentStock += (findAllChild[i].sorties || 0)
-              }
-
-              if (findAllChild[i].original_sorties !== null && findAllChild[i].sorties === null) {
+              } else if (findAllChild[i].original_sorties !== null) {
                 currentStock += (findAllChild[i].original_sorties || 0)
               }
             }
