@@ -359,9 +359,9 @@ export default (sequelizeInstance, Model) => {
               }
 
               if (findAllChild[i].sorties !== null) {
-                currentStock += (findAllChild[i].sorties || 0)
+                currentStock -= (findAllChild[i].sorties || 0)
               } else if (findAllChild[i].original_sorties !== null) {
-                currentStock += (findAllChild[i].original_sorties || 0)
+                currentStock -= (findAllChild[i].original_sorties || 0)
               }
             }
 
