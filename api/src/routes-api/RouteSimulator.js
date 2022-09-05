@@ -1,21 +1,6 @@
 import Route, { Access } from './Route';
 import { Types } from '../utils/types';
-import { getHRVentilation } from '../constants/calculator';
-import {
-  addSumLine,
-  autofitColumns,
-  countEtp,
-  flatListOfContentieuxAndSousContentieux,
-  getIndispoDetails,
-} from '../utils/extractor';
-import { preformatHumanResources } from '../utils/ventilator';
-import { findSituation, getHumanRessourceList } from '../utils/humanServices';
-import { findFonctionName } from '../utils/hr-fonctions';
-import { findCategoryName } from '../utils/hr-catagories';
-import { sortBy, sumBy } from 'lodash';
-import { filterActivitiesByDateAndContentieuxId } from '../utils/activities';
-import { month } from '../utils/date';
-import { getLastActivity, getSituation } from '../utils/simulator';
+import { getSituation } from '../utils/simulator';
 
 export default class RouteSimulator extends Route {
   constructor(params) {
