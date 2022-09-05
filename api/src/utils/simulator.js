@@ -105,13 +105,12 @@ export function hasInOutOrStock(activities) {
 
   if (activities.length !== 0)
     activities.map((activity) => {
-      console.log(activity.contentieux);
       if (activity.entrees && activity.entrees !== 0) hasIn = true;
       if (activity.sorties && activity.sorties !== 0) hasOut = true;
       if (activity.stock && activity.stock !== 0) hasStock = true;
     });
 
-  console.log(hasIn, hasOut, hasStock, hasIn && hasOut && hasStock);
+  //console.log(hasIn, hasOut, hasStock, hasIn && hasOut && hasStock);
   return hasIn && hasOut && hasStock;
 }
 

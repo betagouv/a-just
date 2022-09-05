@@ -3,18 +3,19 @@ import { today } from './date';
 
 export async function getHumanRessourceList(
   preformatedAllHumanResource,
+  contentieuxIds,
   categoriesIds,
-  endPeriodToCheck,
-  date = undefined,
-  contentieuxIds = undefined
+  date,
+  endPeriodToCheck
 ) {
+  /**
   let list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true;
-    if (hr.category && categoriesIds && categoriesIds.indexOf(hr.category.id) === -1) {
+    if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
       isOk = false;
     }
 
-    if (hr.dateEnd && date && hr.dateEnd.getTime() < date.getTime()) {
+    if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
       isOk = false;
     }
 
@@ -28,18 +29,46 @@ export async function getHumanRessourceList(
 
     return isOk;
   });
+
+*/
+
+  const list = preformatedAllHumanResource.filter((hr) => {
+    let isOk = true;
+    console.log('start isOk', isOk);
+    if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
+      isOk = false;
+    }
+    console.log('isOk', isOk);
+
+    if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
+      isOk = false;
+    }
+    console.log('isOk', isOk);
+    console.log({
+      //preformatedAllHumanResource,
+      contentieuxIds,
+      categoriesIds,
+      date,
+      endPeriodToCheck,
+    });
+    if (hr.dateStart && endPeriodToCheck && hr.dateStart.getTime() > endPeriodToCheck.getTime()) {
+      isOk = false;
+    }
+    console.log('End isOk', isOk);
+
+    return isOk;
+  });
   console.timeEnd('step3');
   console.time('step4');
-  console.log(list);
-
-  if (contentieuxIds === undefined) return list;
+  console.log(list.length, 'lenght');
+  //if (contentieuxIds === undefined) return list;
 
   return list.filter((h) => {
     const idsOfactivities = h.currentActivities.map(
       (a) => (a.contentieux && a.contentieux.id) || 0
     );
     for (let i = 0; i < idsOfactivities.length; i++) {
-      if (contentieuxIds && contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
+      if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
         return true;
       }
     }
