@@ -35,7 +35,7 @@ export async function getSituation(referentielId, hr, allActivities, categories)
 
   if (activities.length === 0) return emptySituation;
   else {
-    let etpAffected = getHRPositions(hr, referentielId, categories);
+    let etpAffected = await getHRPositions(hr, referentielId, categories);
     return { etpAffected, activities, deltaOfMonths, totalIn, totalOut, lastStock };
   }
   return {
@@ -110,21 +110,19 @@ export function hasInOutOrStock(activities) {
       if (activity.stock && activity.stock !== 0) hasStock = true;
     });
 
-  //console.log(hasIn, hasOut, hasStock, hasIn && hasOut && hasStock);
   return hasIn && hasOut && hasStock;
 }
 
-export function getHRPositions(
+export async function getHRPositions(
   hr,
-  referentiel,
+  referentielId,
   categories,
   date = undefined,
-  onPeriod = undefined,
+  onPeriod = false,
   dateStop = undefined,
   monthlyReport = false
 ) {
   const hrCategories = {};
-
   let hrCategoriesMonthly = new Object({});
   let emptyList = new Object({});
 
@@ -139,6 +137,7 @@ export function getHRPositions(
       };
     });
   }
+
   categories.map((c) => {
     hrCategories[c.label] = hrCategories[c.label] || {
       totalEtp: 0,
@@ -160,13 +159,21 @@ export function getHRPositions(
       ({ etptAll, monthlyList } = {
         ...getHRVentilationOnPeriod(
           hr[i],
-          referentiel,
+          referentielId,
           categories,
           date instanceof Date ? date : undefined,
           dateStop instanceof Date ? dateStop : undefined
         ),
       });
-    } else etptAll = getHRVentilation(hr[i], referentiel, categories, date);
+    } else {
+      etptAll = await getHRVentilation(
+        hr[i],
+        referentielId,
+        categories,
+        date instanceof Date ? date : undefined
+      );
+      console.log(etptAll);
+    }
 
     Object.values(etptAll).map((c) => {
       if (c.etpt) {
@@ -217,6 +224,7 @@ export function getHRPositions(
     }
   }
 
+  console.log('laliste', list);
   if (monthlyReport) {
     return {
       fururEtpAffectedToCompute: sortBy(list, 'rank'),
@@ -299,7 +307,7 @@ export function getHRVentilationOnPeriod(
   return { etptAll: list, monthlyList: { ...monthlyList } };
 }
 
-export function getHRVentilation(hr, referentielId, categories, date = undefined) {
+export async function getHRVentilation(hr, referentielId, categories, date) {
   const list = {};
   categories.map((c) => {
     list[c.id] = {
@@ -309,8 +317,8 @@ export function getHRVentilation(hr, referentielId, categories, date = undefined
   });
 
   const now = date ? date : new Date();
-  const { etp, situation } = getEtpByDateAndPerson(referentielId, now, hr);
-
+  const { etp, situation } = await getEtpByDateAndPerson(referentielId, now, hr);
+  console.log('l ETP', etp, situation);
   if (etp !== null) {
     // @ts-ignore
     list[situation.category.id].etpt += etp;
