@@ -139,13 +139,11 @@ export default class RouteHumanResources extends Route {
 
     console.time('step1');
     const hr = await this.model.getCache(backupId);
-    console.log('bam', hr.length);
     console.timeEnd('step1');
     console.time('step2');
     const preformatedAllHumanResource = preformatHumanResources(hr, date);
-    console.log('bam', preformatedAllHumanResource.length);
     console.timeEnd('step2');
-    let list = getHumanRessourceList(
+    let list = await getHumanRessourceList(
       preformatedAllHumanResource,
       contentieuxIds,
       categoriesIds,
@@ -153,11 +151,8 @@ export default class RouteHumanResources extends Route {
       endPeriodToCheck
     );
 
-    console.log('bamBoum', extractor);
-
     if (extractor === false) {
       let listFiltered = [...list];
-      console.log('listFiltered', listFiltered.length, listFiltered, typeof list);
       const categories = await this.models.HRCategories.getAll();
       const originalReferentiel = (
         await this.models.ContentieuxReferentiels.getReferentiels()
@@ -207,7 +202,6 @@ export default class RouteHumanResources extends Route {
             }
           }
 
-          console.log('hr', group);
           return {
             textColor: getCategoryColor(label),
             bgColor: getCategoryColor(label, 0.2),
@@ -218,14 +212,11 @@ export default class RouteHumanResources extends Route {
           };
         });
       console.log('step7');
-      console.log(extractor);
 
       this.sendOk(ctx, {
         list: listFormated,
       });
     } else {
-      console.log(extractor);
-
       console.timeEnd('step5');
       console.log('step6');
 

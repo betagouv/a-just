@@ -3,65 +3,32 @@ import { today } from './date';
 
 export async function getHumanRessourceList(
   preformatedAllHumanResource,
-  contentieuxIds,
+  contentieuxIds = undefined,
   categoriesIds,
   date,
-  endPeriodToCheck
+  endPeriodToCheck = undefined
 ) {
-  /**
-  let list = preformatedAllHumanResource.filter((hr) => {
-    let isOk = true;
-    if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
-      isOk = false;
-    }
-
-    if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
-      isOk = false;
-    }
-
-    if (
-      hr.dateStart &&
-      endPeriodToCheck instanceof Date &&
-      hr.dateStart.getTime() > endPeriodToCheck.getTime()
-    ) {
-      isOk = false;
-    }
-
-    return isOk;
-  });
-
-*/
-
   const list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true;
-    console.log('start isOk', isOk);
+
     if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
       isOk = false;
     }
-    console.log('isOk', isOk);
 
     if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
       isOk = false;
     }
-    console.log('isOk', isOk);
-    console.log({
-      //preformatedAllHumanResource,
-      contentieuxIds,
-      categoriesIds,
-      date,
-      endPeriodToCheck,
-    });
+
     if (hr.dateStart && endPeriodToCheck && hr.dateStart.getTime() > endPeriodToCheck.getTime()) {
       isOk = false;
     }
-    console.log('End isOk', isOk);
 
     return isOk;
   });
   console.timeEnd('step3');
   console.time('step4');
-  console.log(list.length, 'lenght');
-  //if (contentieuxIds === undefined) return list;
+
+  if (contentieuxIds === undefined) return list;
 
   return list.filter((h) => {
     const idsOfactivities = h.currentActivities.map(
