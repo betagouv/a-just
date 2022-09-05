@@ -210,8 +210,8 @@ export class SimulatorService extends MainClass {
           // last available stock
           lastStock = sumBy(lastActivities, 'stock')
 
-          console.log(activities, totalIn, totalOut, lastStock)
-
+          console.log({ activities, totalIn, totalOut, lastStock })
+          console.log(data.data.situation)
           // Compute etpAffected & etpMag today (on specific date) to display & output
           let etpAffected = this.getHRPositions(
             hr,
