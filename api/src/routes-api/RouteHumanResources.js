@@ -89,7 +89,7 @@ export default class RouteHumanResources extends Route {
 
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       const onRemoveHR = await this.model.removeHR(hrId);
-      console.log(onRemoveHR);
+
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok');
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
@@ -139,9 +139,11 @@ export default class RouteHumanResources extends Route {
 
     console.time('step1');
     const hr = await this.model.getCache(backupId);
+    console.log('bam', hr.length);
     console.timeEnd('step1');
     console.time('step2');
     const preformatedAllHumanResource = preformatHumanResources(hr, date);
+    console.log('bam', preformatedAllHumanResource.length);
     console.timeEnd('step2');
     let list = getHumanRessourceList(
       preformatedAllHumanResource,
@@ -151,8 +153,11 @@ export default class RouteHumanResources extends Route {
       endPeriodToCheck
     );
 
+    console.log('bamBoum', extractor);
+
     if (extractor === false) {
       let listFiltered = [...list];
+      console.log('listFiltered', listFiltered.length, listFiltered, typeof list);
       const categories = await this.models.HRCategories.getAll();
       const originalReferentiel = (
         await this.models.ContentieuxReferentiels.getReferentiels()
@@ -202,6 +207,7 @@ export default class RouteHumanResources extends Route {
             }
           }
 
+          console.log('hr', group);
           return {
             textColor: getCategoryColor(label),
             bgColor: getCategoryColor(label, 0.2),
