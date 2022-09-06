@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core'
 import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
-import {
-  CalculatorInterface,
-} from 'src/app/interfaces/calculator'
+import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
@@ -15,9 +13,6 @@ import { ActivitiesService } from '../activities/activities.service'
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
-const start = month(new Date(), -4)
-const end = month(new Date(), -2, 'lastday')
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,8 +20,12 @@ export class CalculatorService extends MainClass {
   calculatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
     CalculatorInterface[]
   >([])
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  dateStart: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
+    null
+  )
+  dateStop: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
+    null
+  )
   referentielIds: number[] = []
   timeoutUpdateDatas: any = null
 
@@ -316,16 +315,18 @@ export class CalculatorService extends MainClass {
 
   getNbMonth() {
     let totalMonth = 0
+    const dateStart = new Date(this.dateStart.getValue() ? this.dateStart.getValue() as Date : '')
+    const dateStop = new Date(this.dateStop.getValue() ? this.dateStop.getValue() as Date : '')
 
-    const now = new Date(this.dateStart.getValue())
-    do {
-      totalMonth++
-      now.setMonth(now.getMonth() + 1)
-    } while (now.getTime() <= this.dateStop.getValue().getTime())
+      const now = new Date(dateStart)
+      do {
+        totalMonth++
+        now.setMonth(now.getMonth() + 1)
+      } while (now.getTime() <= dateStop.getTime())
 
-    if (totalMonth <= 0) {
-      totalMonth = 1
-    }
+      if (totalMonth <= 0) {
+        totalMonth = 1
+      }
 
     return totalMonth
   }
@@ -353,8 +354,7 @@ export class CalculatorService extends MainClass {
 
     if (calculateTimePerCase) {
       calculateOut = Math.floor(
-        (((etpAffected * environment.nbHoursPerDay) /
-          calculateTimePerCase) *
+        (((etpAffected * environment.nbHoursPerDay) / calculateTimePerCase) *
           environment.nbDaysByMagistrat) /
           12
       )
@@ -424,8 +424,10 @@ export class CalculatorService extends MainClass {
         ...c,
       }
     })
+    const dateStart = new Date(this.dateStart.getValue() ? this.dateStart.getValue() as Date : '')
+    const dateStop = new Date(this.dateStop.getValue() ? this.dateStop.getValue() as Date : '')
 
-    const now = new Date(this.dateStart.getValue())
+    const now = new Date(dateStart)
     let nbDay = 0
     do {
       // only working day
@@ -444,7 +446,7 @@ export class CalculatorService extends MainClass {
         }
       }
       now.setDate(now.getDate() + 1)
-    } while (now.getTime() <= this.dateStop.getValue().getTime())
+    } while (now.getTime() <= dateStop.getTime())
 
     // format render
     for (const property in list) {

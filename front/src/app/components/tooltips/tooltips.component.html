@@ -1,4 +1,4 @@
-<div class="tooltip-text animate__animated" *ngIf="title || content || footer"
+<div class="tooltip-text animate__animated" *ngIf="tooltipsIsVisible && (title || content || footer)"
   [ngStyle]="{visibility: tooltipsIsVisible ? 'visible' : 'hidden', animate__fadeIn: tooltipsIsVisible}">
   <div>
     <div class="triangle"></div>
