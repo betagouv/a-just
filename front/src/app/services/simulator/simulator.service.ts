@@ -31,6 +31,7 @@ const end = new Date()
   providedIn: 'root',
 })
 export class SimulatorService extends MainClass {
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   situationActuelle: BehaviorSubject<SimulatorInterface | null> =
     new BehaviorSubject<SimulatorInterface | null>(null)
   situationProjected: BehaviorSubject<SimulatorInterface | null> =
@@ -104,6 +105,7 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
+    this.isLoading.next(true)
     return this.serverService
       .post(`simulator/get-situation`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -115,10 +117,12 @@ export class SimulatorService extends MainClass {
         if (dateStop) {
           this.situationProjected.next(data.data.situation.endSituation)
         } else this.situationActuelle.next(data.data.situation)
+        this.isLoading.next(false)
       })
   }
 
   toSimulate(params: any, simulation: SimulationInterface) {
+    this.isLoading.next(true)
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -129,6 +133,7 @@ export class SimulatorService extends MainClass {
       })
       .then((data) => {
         this.situationSimulated.next(data.data)
+        this.isLoading.next(false)
       })
   }
 

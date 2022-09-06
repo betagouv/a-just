@@ -33,165 +33,6 @@ const emptySituation = {
   etpToCompute: null,
 };
 
-export function execSimulation(params, simulation, dateStart, dateStop) {
-  params.toDisplay.map((x) => {
-    if (params.beginSituation !== null)
-      //@ts-ignore
-      simulation[x] = params.beginSituation[x];
-  });
-
-  if (
-    params.lockedParams.param1.label !== '' &&
-    simulation.hasOwnProperty(params.lockedParams.param1.label)
-  )
-    //@ts-ignore
-    simulation[params.lockedParams.param1.label] =
-      params.lockedParams.param1.label === 'realCoverage'
-        ? parseFloat(params.lockedParams.param1.value) / 100
-        : parseFloat(params.lockedParams.param1.value);
-  if (
-    params.lockedParams.param2.label !== '' &&
-    simulation.hasOwnProperty(params.lockedParams.param2.label)
-  )
-    //@ts-ignore
-    simulation[params.lockedParams.param2.label] =
-      params.lockedParams.param2.label === 'realCoverage'
-        ? parseFloat(params.lockedParams.param2.value) / 100
-        : parseFloat(params.lockedParams.param2.value);
-
-  if (params.modifiedParams.param1.input !== 0)
-    //@ts-ignore
-    simulation[params.modifiedParams.param1.label] =
-      params.modifiedParams.param1.label === 'realCoverage'
-        ? parseFloat(params.modifiedParams.param1.value) / 100
-        : parseFloat(params.modifiedParams.param1.value);
-
-  if (params.modifiedParams.param2.input !== 0)
-    //@ts-ignore
-    simulation[params.modifiedParams.param2.label] =
-      params.modifiedParams.param2.label === 'realCoverage'
-        ? parseFloat(params.modifiedParams.param2.value) / 100
-        : parseFloat(params.modifiedParams.param2.value);
-
-  do {
-    params.toCalculate.map((x) => {
-      if (x === 'totalIn') {
-        if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) /
-              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
-              Math.floor(simulation.totalOut)
-          );
-        } else if (simulation.totalOut && simulation.realCoverage) {
-          simulation.totalIn = Math.floor(
-            Math.floor(simulation.totalOut) / simulation.realCoverage
-          );
-        }
-      }
-      if (x === 'totalOut') {
-        if (simulation.etpMag && simulation.realTimePerCase) {
-          simulation.totalOut = Math.floor(
-            Math.floor(simulation.etpMag * 8 * 17.3333) / simulation.realTimePerCase
-          );
-        } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalOut = Math.floor(
-            Math.floor(
-              Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)
-            ) /
-              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
-              simulation.totalIn
-          );
-        } else if (
-          simulation.lastStock &&
-          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)
-        ) {
-          simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths);
-        } else if (simulation.realCoverage && simulation.totalIn) {
-          simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn);
-        } else if (
-          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
-          simulation.totalIn
-        ) {
-          simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) +
-              simulation.totalIn * (nbOfDays(dateStart, dateStop) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(dateStart, dateStop) / (365 / 12))
-          );
-        }
-      }
-      if (x === 'lastStock') {
-        if (simulation.realDTESInMonths === 0) {
-          simulation.lastStock = 0;
-        } else if (simulation.totalIn && simulation.totalOut) {
-          simulation.lastStock = Math.floor(
-            Math.floor(
-              Math.floor(params.beginSituation.lastStock) +
-                Math.floor(simulation.totalIn) * (nbOfDays(dateStart, dateStop) / (365 / 12)) -
-                Math.floor(simulation.totalOut) * (nbOfDays(dateStart, dateStop) / (365 / 12))
-            )
-          );
-        } else if (
-          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
-          simulation.totalOut
-        ) {
-          simulation.lastStock = Math.floor(
-            simulation.realDTESInMonths * Math.floor(simulation.totalOut)
-          );
-        }
-        if (simulation.lastStock && simulation.lastStock < 0) {
-          simulation.lastStock = 0;
-        }
-      }
-      if (x === 'realCoverage') {
-        if (simulation.totalOut && simulation.totalIn) {
-          simulation.realCoverage =
-            (simulation.totalOut || params.endSituation.totalOut) /
-            (simulation.totalIn || params.endSituation.totalIn);
-        }
-      }
-      if (x === 'realDTESInMonths') {
-        simulation.realDTESInMonths =
-          Math.round(
-            (Math.floor(simulation.lastStock || 0) /
-              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
-              100
-          ) / 100;
-      }
-
-      if (x === 'realTimePerCase') {
-        simulation.realTimePerCase =
-          Math.round(
-            ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) /
-              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
-              100
-          ) / 100;
-      }
-
-      if (x === 'etpMag') {
-        simulation.etpMag =
-          Math.round(
-            (((simulation.realTimePerCase || params.endSituation.realTimePerCase) *
-              Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
-              (17.333 * 8)) *
-              100
-          ) / 100;
-      }
-    });
-  } while (
-    !(
-      simulation.totalIn !== null &&
-      simulation.totalOut !== null &&
-      simulation.lastStock !== null &&
-      simulation.etpMag !== null &&
-      simulation.realTimePerCase !== null &&
-      simulation.realDTESInMonths !== null &&
-      simulation.realCoverage !== null
-    )
-  );
-  //this.situationSimulated.next(simulation);
-  return simulation;
-}
-
 export async function getSituation(
   referentielId,
   hr,
@@ -437,7 +278,9 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerC
   );
 }
 function computeTotalOut(realTimePerCase, etp) {
-  return (etp * environment.nbHoursPerDay * (environment.nbDaysByMagistrat / 12)) / realTimePerCase;
+  return Math.floor(
+    (etp * environment.nbHoursPerDay * (environment.nbDaysByMagistrat / 12)) / realTimePerCase
+  );
 }
 
 function computeRealTimePerCase(totalOut, etp) {
@@ -594,7 +437,7 @@ export async function getHRPositions(
     list.push({
       name: key,
       // @ts-ignore
-      totalEtp: fixDecimal(value.totalEtp || 0),
+      totalEtp: fixDecimal(value.totalEtp || 0, 100),
       // @ts-ignore
       rank: value.rank,
     });
@@ -735,4 +578,162 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
   }
 
   return list;
+}
+
+export function execSimulation(params, simulation, dateStart, dateStop) {
+  params.toDisplay.map((x) => {
+    if (params.beginSituation !== null)
+      //@ts-ignore
+      simulation[x] = params.beginSituation[x];
+  });
+
+  if (
+    params.lockedParams.param1.label !== '' &&
+    simulation.hasOwnProperty(params.lockedParams.param1.label)
+  )
+    //@ts-ignore
+    simulation[params.lockedParams.param1.label] =
+      params.lockedParams.param1.label === 'realCoverage'
+        ? parseFloat(params.lockedParams.param1.value) / 100
+        : parseFloat(params.lockedParams.param1.value);
+  if (
+    params.lockedParams.param2.label !== '' &&
+    simulation.hasOwnProperty(params.lockedParams.param2.label)
+  )
+    //@ts-ignore
+    simulation[params.lockedParams.param2.label] =
+      params.lockedParams.param2.label === 'realCoverage'
+        ? parseFloat(params.lockedParams.param2.value) / 100
+        : parseFloat(params.lockedParams.param2.value);
+
+  if (params.modifiedParams.param1.input !== 0)
+    //@ts-ignore
+    simulation[params.modifiedParams.param1.label] =
+      params.modifiedParams.param1.label === 'realCoverage'
+        ? parseFloat(params.modifiedParams.param1.value) / 100
+        : parseFloat(params.modifiedParams.param1.value);
+
+  if (params.modifiedParams.param2.input !== 0)
+    //@ts-ignore
+    simulation[params.modifiedParams.param2.label] =
+      params.modifiedParams.param2.label === 'realCoverage'
+        ? parseFloat(params.modifiedParams.param2.value) / 100
+        : parseFloat(params.modifiedParams.param2.value);
+
+  do {
+    params.toCalculate.map((x) => {
+      if (x === 'totalIn') {
+        if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
+          simulation.totalIn = Math.floor(
+            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) /
+              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+              Math.floor(simulation.totalOut)
+          );
+        } else if (simulation.totalOut && simulation.realCoverage) {
+          simulation.totalIn = Math.floor(
+            Math.floor(simulation.totalOut) / simulation.realCoverage
+          );
+        }
+      }
+      if (x === 'totalOut') {
+        if (simulation.etpMag && simulation.realTimePerCase) {
+          simulation.totalOut = Math.floor(
+            Math.floor(simulation.etpMag * 8 * 17.3333) / simulation.realTimePerCase
+          );
+        } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
+          simulation.totalOut = Math.floor(
+            Math.floor(
+              Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)
+            ) /
+              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+              simulation.totalIn
+          );
+        } else if (
+          simulation.lastStock &&
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)
+        ) {
+          simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths);
+        } else if (simulation.realCoverage && simulation.totalIn) {
+          simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn);
+        } else if (
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
+          simulation.totalIn
+        ) {
+          simulation.totalOut = Math.floor(
+            (Math.floor(params.beginSituation.lastStock) +
+              simulation.totalIn * (nbOfDays(dateStart, dateStop) / (365 / 12))) /
+              (simulation.realDTESInMonths + nbOfDays(dateStart, dateStop) / (365 / 12))
+          );
+        }
+      }
+      if (x === 'lastStock') {
+        if (simulation.realDTESInMonths === 0) {
+          simulation.lastStock = 0;
+        } else if (simulation.totalIn && simulation.totalOut) {
+          simulation.lastStock = Math.floor(
+            Math.floor(
+              Math.floor(params.beginSituation.lastStock) +
+                Math.floor(simulation.totalIn) * (nbOfDays(dateStart, dateStop) / (365 / 12)) -
+                Math.floor(simulation.totalOut) * (nbOfDays(dateStart, dateStop) / (365 / 12))
+            )
+          );
+        } else if (
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
+          simulation.totalOut
+        ) {
+          simulation.lastStock = Math.floor(
+            simulation.realDTESInMonths * Math.floor(simulation.totalOut)
+          );
+        }
+        if (simulation.lastStock && simulation.lastStock < 0) {
+          simulation.lastStock = 0;
+        }
+      }
+      if (x === 'realCoverage') {
+        if (simulation.totalOut && simulation.totalIn) {
+          simulation.realCoverage =
+            (simulation.totalOut || params.endSituation.totalOut) /
+            (simulation.totalIn || params.endSituation.totalIn);
+        }
+      }
+      if (x === 'realDTESInMonths') {
+        simulation.realDTESInMonths =
+          Math.round(
+            (Math.floor(simulation.lastStock || 0) /
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+              100
+          ) / 100;
+      }
+
+      if (x === 'realTimePerCase') {
+        simulation.realTimePerCase =
+          Math.round(
+            ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) /
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+              100
+          ) / 100;
+      }
+
+      if (x === 'etpMag') {
+        simulation.etpMag =
+          Math.round(
+            (((simulation.realTimePerCase || params.endSituation.realTimePerCase) *
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
+              (17.333 * 8)) *
+              100
+          ) / 100;
+      }
+    });
+  } while (
+    !(
+      simulation.totalIn !== null &&
+      simulation.totalOut !== null &&
+      simulation.lastStock !== null &&
+      simulation.etpMag !== null &&
+      simulation.realTimePerCase !== null &&
+      simulation.realDTESInMonths !== null &&
+      simulation.realCoverage !== null
+    )
+  );
+  return simulation;
 }

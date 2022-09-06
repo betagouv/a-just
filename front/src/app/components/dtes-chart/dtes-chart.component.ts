@@ -39,10 +39,10 @@ export class DtesChartComponent {
       values: [0],
     },
     simulatedStock: {
-      values: [0], 
+      values: [0],
     },
     projectedDTES: {
-      values: [0], 
+      values: [0],
     },
     simulatedDTES: {
       values: [0],
@@ -139,16 +139,16 @@ export class DtesChartComponent {
 
     this.data = {
       projectedStock: {
-        values: [0], 
+        values: [0],
       },
       simulatedStock: {
-        values: [0], 
+        values: [0],
       },
       projectedDTES: {
-        values: [0], 
+        values: [0],
       },
       simulatedDTES: {
-        values: [0], 
+        values: [0],
       },
     }
   }
@@ -258,7 +258,9 @@ export class DtesChartComponent {
       else {
         lbl =
           '  ' +
-          Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+          Math.floor(
+            localeParseFloat(context.formattedValue.replace(/\s/g, ''))
+          ) +
           ' ' +
           sufix
       }
