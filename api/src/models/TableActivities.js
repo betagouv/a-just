@@ -54,7 +54,7 @@ export default (sequelizeInstance, Model) => {
           list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
         sorties:
           list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: list[i].stock === null ? list[i].stock : list[i].original_stock,
+        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
