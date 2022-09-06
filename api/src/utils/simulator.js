@@ -115,6 +115,14 @@ export async function getSituation(
 
     const countOfCalandarDays = nbOfDays(new Date(endDateCs), new Date());
 
+    console.log('stock Actual Today', {
+      lastStock,
+      countOfCalandarDays,
+      time: 17.33,
+      etpMagFuturToCompute,
+      realTimePerCase,
+    });
+
     // Compute stock projection until today
     lastStock = computeLastStock(
       lastStock,
@@ -123,6 +131,7 @@ export async function getSituation(
       realTimePerCase,
       totalIn
     );
+    console.log('stock Actual Today', { lastStock });
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn);
@@ -199,6 +208,13 @@ export async function getSituation(
       let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpContStartToEndToCompute } =
         getEtpByCategory(etpAffectedStartToEndToCompute, 'StartToEndToCompute');
 
+      console.log('stock datestop', {
+        lastStock,
+        nbDayCalendarProjected,
+        time: 17.3333333,
+        etpMagStartToEndToCompute,
+        realTimePerCase,
+      });
       // Compute projectedStock with etp at datestop
       const projectedLastStock = computeLastStock(
         lastStock,
@@ -207,7 +223,7 @@ export async function getSituation(
         realTimePerCase,
         totalIn
       );
-
+      console.log('stock datestop', { projectedLastStock });
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn);
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut);
 
