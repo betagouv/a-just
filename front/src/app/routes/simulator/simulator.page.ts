@@ -130,8 +130,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           this.simulatorService.situationProjected.getValue()
       })
     )
-
-    this.simulatorService.syncDatas(this.contentieuId)
+    this.watch(
+      this.simulatorService.situationSimulated.subscribe((d) => {
+        this.simulatedSationData =
+          this.simulatorService.situationSimulated.getValue()
+      })
+    )
+    if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
   }
 
   ngOnDestroy() {}
@@ -816,10 +821,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       realCoverage: null,
     }
 
-    this.simulatedSationData = this.simulatorService.toSimulate(
-      params,
-      simulation
-    )
+    //this.simulatedSationData =
+    this.simulatorService.toSimulate(params, simulation)
   }
 
   onKeypressEvent(

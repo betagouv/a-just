@@ -1,6 +1,6 @@
 import Route, { Access } from './Route';
 import { Types } from '../utils/types';
-import { getSituation } from '../utils/simulator';
+import { execSimulation, getSituation } from '../utils/simulator';
 
 export default class RouteSimulator extends Route {
   constructor(params) {
@@ -29,7 +29,6 @@ export default class RouteSimulator extends Route {
 
     const activities = await this.models.Activities.getAll(backupId);
 
-    console.log('la data date', dateStart);
     const situation = await getSituation(
       referentielId,
       hr,
@@ -40,5 +39,26 @@ export default class RouteSimulator extends Route {
     );
 
     this.sendOk(ctx, { situation, categories, hr });
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      params: Types.any().required(),
+      simulation: Types.object().required(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async toSimulate(ctx) {
+    let { backupId, params, simulation, dateStart, dateStop } = this.body(ctx);
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+    }
+
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop);
+    this.sendOk(ctx, simulatedSituation);
   }
 }
