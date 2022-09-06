@@ -132,9 +132,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data =
-            this.data.simulatedMag.values
-          this.myChart._metasets[1]._dataset.data =
             this.data.projectedMag.values
+          this.myChart._metasets[1]._dataset.data =
+            this.data.simulatedMag.values
           //this.myChart._metasets[2]._dataset.data =
           //this.data.simulatedCont.values
           this.myChart._metasets[3]._dataset.data =
