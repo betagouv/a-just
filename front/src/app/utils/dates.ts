@@ -270,3 +270,16 @@ export function nbHourInMonth(date: Date = new Date()) {
 
   return nbDay * environment.nbHoursPerDay
 }
+
+export function convertLocalDatetoUTCDate(date: Date | undefined) {
+  if (date === undefined) return undefined
+  else
+    return new Date(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    )
+}

@@ -1,10 +1,34 @@
 import { orderBy, sumBy } from 'lodash';
 import { today } from '../utils/date';
 
-export async function getEtpByDateAndPerson(referentielId, date, hr) {
+export function getEtpByDateAndPerson(referentielId, date, hr) {
   const situation = findSituation(hr, date);
-  //console.log('sit', situation);
-  //console.log('laref', referentielId);
+
+  if (situation && situation.category && situation.category.id) {
+    const activitiesFiltred = (situation.activities || []).filter(
+      (a) => a.contentieux && a.contentieux.id === referentielId
+    );
+    const indispoFiltred = findAllIndisponibilities(hr, date);
+    let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100;
+    if (reelEtp < 0) {
+      reelEtp = 0;
+    }
+
+    return {
+      etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
+      situation,
+    };
+  }
+
+  return {
+    etp: null,
+    situation: null,
+  };
+}
+
+export async function getEtpByDateAndPersonSimu(referentielId, date, hr) {
+  const situation = findSituation(hr, date);
+
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter(
       (a) => a.contentieux && a.contentieux.id === referentielId

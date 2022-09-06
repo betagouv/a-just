@@ -56,7 +56,7 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-7');
 
     console.time('calculator-8');
-    list = await syncCalculatorDatas(
+    list = syncCalculatorDatas(
       list,
       nbMonth,
       activities,

@@ -1,8 +1,23 @@
+import { isFirstDayOfMonth } from 'date-fns';
 import { sortBy, sumBy } from 'lodash';
-import { getEtpByDateAndPerson } from '../constants/human-resource';
+import { getEtpByDateAndPersonSimu } from '../constants/human-resource';
 import { filterActivitiesByDateAndContentieuxId } from './activities';
-import { getRangeOfMonthsAsObject, getShortMonthString, isSameMonthAndYear, month } from './date';
+import {
+  checkIfDateIsNotToday,
+  getRangeOfMonthsAsObject,
+  getShortMonthString,
+  isSameMonthAndYear,
+  month,
+  nbOfDays,
+  workingDay,
+} from './date';
 import { fixDecimal } from './number';
+
+export const environment = {
+  nbDaysByMagistrat: 208,
+  nbDaysByMagistratPerMonth: 208 / 12,
+  nbHoursPerDay: 8,
+};
 
 const emptySituation = {
   totalIn: null,
@@ -18,7 +33,16 @@ const emptySituation = {
   etpToCompute: null,
 };
 
-export async function getSituation(referentielId, hr, allActivities, categories) {
+export async function getSituation(
+  referentielId,
+  hr,
+  allActivities,
+  categories,
+  dateStart = undefined,
+  dateStop = undefined
+) {
+  console.log('dates', dateStart, new Date(dateStart));
+
   const nbMonthHistory = 12;
   const { activities, lastActivities, deltaOfMonths, startDateCs, endDateCs } =
     await getCSActivities(
@@ -35,8 +59,149 @@ export async function getSituation(referentielId, hr, allActivities, categories)
 
   if (activities.length === 0) return emptySituation;
   else {
-    let etpAffected = await getHRPositions(hr, referentielId, categories);
-    return { etpAffected, activities, deltaOfMonths, totalIn, totalOut, lastStock };
+    // Compute etpAffected & etpMag today (on specific date) to display & output
+    let etpAffectedToday = await getHRPositions(hr, referentielId, categories);
+    let { etpMag, etpFon, etpCont } = getEtpByCategory(etpAffectedToday);
+
+    // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
+    let etpAffectedLast12MonthsToCompute = await getHRPositions(
+      hr,
+      referentielId,
+      categories,
+      new Date(startDateCs),
+      true,
+      new Date(endDateCs)
+    );
+
+    let { etpMagToCompute, etpFonToCompute, etpContToCompute } = getEtpByCategory(
+      etpAffectedLast12MonthsToCompute,
+      'ToCompute'
+    );
+
+    // Compute realTimePerCase to display using the etpAffected 12 last months available
+    let realTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute);
+
+    // Compute totalOut with etp at dateStart (specific date) to display
+    totalOut = computeTotalOut(realTimePerCase, etpMag);
+
+    // Projection of etpAffected between the last month available and today to compute stock
+    let etpAffectedDeltaToCompute = await getHRPositions(
+      hr,
+      referentielId,
+      categories,
+      new Date(endDateCs),
+      true,
+      new Date()
+    );
+
+    let { etpMagFuturToCompute, etpFonFuturToCompute, etpContFuturToCompute } = getEtpByCategory(
+      etpAffectedDeltaToCompute,
+      'FuturToCompute'
+    );
+
+    const countOfCalandarDays = nbOfDays(new Date(endDateCs), new Date());
+
+    // Compute stock projection until today
+    lastStock = computeLastStock(
+      lastStock,
+      countOfCalandarDays,
+      etpMagFuturToCompute,
+      realTimePerCase,
+      totalIn
+    );
+
+    // Compute realCoverage & realDTESInMonths using last available stock
+    let Coverage = computeCoverage(totalOut, totalIn);
+    let DTES = computeDTES(lastStock, totalOut);
+
+    if (checkIfDateIsNotToday(dateStart)) {
+      const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart));
+
+      // Compute etpAffected & etpMag at dateStart (specific date) to display
+      let etpAffectedAtStartDate = await getHRPositions(
+        hr,
+        referentielId,
+        categories,
+        new Date(dateStart)
+      );
+
+      let { etpMagAtStartDate, etpFonAtStartDate, etpContAtStartDate } = getEtpByCategory(
+        etpAffectedAtStartDate,
+        'AtStartDate'
+      );
+
+      // Compute totalOut with etp at dateStart (specific date) to display
+      totalOut = computeTotalOut(realTimePerCase, etpMagAtStartDate);
+
+      // Projection of etpAffected between the last month available and dateStart to compute stock
+      etpAffectedDeltaToCompute = await getHRPositions(
+        hr,
+        referentielId,
+        categories,
+        new Date(),
+        true,
+        new Date(dateStart)
+      );
+      console.log(etpAffectedDeltaToCompute);
+      console.log(new Date(), dateStart);
+      let { etpMagUntilStartDate, etpFonUntilStartDate, etpContUntilStartDate } = getEtpByCategory(
+        etpAffectedDeltaToCompute,
+        'UntilStartDate'
+      );
+
+      // Compute stock, coverage, dtes projection until dateStart
+      lastStock = computeLastStock(
+        lastStock,
+        nbDayCalendar,
+        etpMagUntilStartDate,
+        realTimePerCase,
+        totalIn
+      );
+
+      let Coverage = computeCoverage(totalOut, totalIn);
+      let DTES = computeDTES(lastStock, totalOut);
+
+      return {
+        etpAffectedDeltaToCompute,
+        etpMagAtStartDate,
+        nbDayCalendar,
+        DTES,
+        Coverage,
+        lastStock,
+        etpMagFuturToCompute,
+        countOfCalandarDays,
+        etpMag,
+        totalOut,
+        realTimePerCase,
+        etpMagToCompute,
+        etpAffectedToday,
+        activities,
+        deltaOfMonths,
+        totalIn,
+        totalOut,
+      };
+    }
+    if (dateStop) {
+      const nbDayCalendarProjected = nbOfDays(new Date(dateStart), new Date(dateStop));
+    }
+
+    return {
+      DTES,
+      Coverage,
+      lastStock,
+      etpMagFuturToCompute,
+      countOfCalandarDays,
+      etpAffectedDeltaToCompute,
+      etpMag,
+      totalOut,
+      realTimePerCase,
+      etpMagToCompute,
+      etpAffectedToday,
+      activities,
+      deltaOfMonths,
+      totalIn,
+      totalOut,
+    };
   }
   return {
     totalIn,
@@ -50,6 +215,42 @@ export async function getSituation(referentielId, hr, allActivities, categories)
   };
 }
 
+function computeCoverage(totalOut, totalIn) {
+  return fixDecimal(totalOut / totalIn, 100);
+}
+
+function computeDTES(lastStock, totalOut) {
+  return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null;
+}
+function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerCase, totalIn) {
+  return (
+    Math.floor(lastStock) -
+    Math.floor(
+      (countOfCalandarDays / (365 / 12)) *
+        environment.nbDaysByMagistratPerMonth *
+        ((futurEtp * environment.nbHoursPerDay) / realTimePerCase)
+    ) +
+    Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+  );
+}
+function computeTotalOut(realTimePerCase, etp) {
+  return (etp * environment.nbHoursPerDay * (environment.nbDaysByMagistrat / 12)) / realTimePerCase;
+}
+
+function computeRealTimePerCase(totalOut, etp) {
+  return fixDecimal(
+    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) / (totalOut / etp),
+    100
+  );
+}
+
+export function getEtpByCategory(etpAffected, sufix = '') {
+  let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0;
+  let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0;
+  let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0;
+
+  return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCont' + sufix]: etpCont };
+}
 /**
  * Get the Current Situations Activities of the last 12 months available
  * @param {*} referentielId
@@ -78,7 +279,7 @@ export async function getCSActivities(referentielId, allActivities, filter, date
     } while (hasInOutOrStock(lastActivities) === false && deltaOfMonths >= -12);
   }
   const startDateCs = month(dateStart, deltaOfMonths);
-  const endDateCs = month(dateStop, deltaOfMonths);
+  const endDateCs = month(dateStop, deltaOfMonths, true);
 
   if (deltaOfMonths !== -12 && deltaOfMonths !== 0) {
     activivitiesFiltered = await filterActivitiesByDateAndContentieuxId(
@@ -126,17 +327,15 @@ export async function getHRPositions(
   let hrCategoriesMonthly = new Object({});
   let emptyList = new Object({});
 
-  if (monthlyReport) {
-    emptyList = { ...getRangeOfMonthsAsObject(date, dateStop, true) };
+  emptyList = { ...getRangeOfMonthsAsObject(date, dateStop, true) };
 
-    Object.keys(emptyList).map((x) => {
-      emptyList[x] = {
-        ...{
-          etpt: 0,
-        },
-      };
-    });
-  }
+  Object.keys(emptyList).map((x) => {
+    emptyList[x] = {
+      ...{
+        etpt: 0,
+      },
+    };
+  });
 
   categories.map((c) => {
     hrCategories[c.label] = hrCategories[c.label] || {
@@ -144,12 +343,9 @@ export async function getHRPositions(
       list: [],
       rank: c.rank,
     };
-
-    if (monthlyReport) {
-      hrCategoriesMonthly[c.label] = {
-        ...JSON.parse(JSON.stringify(emptyList)),
-      };
-    }
+    hrCategoriesMonthly[c.label] = {
+      ...JSON.parse(JSON.stringify(emptyList)),
+    };
   });
 
   for (let i = 0; i < hr.length; i++) {
@@ -157,13 +353,13 @@ export async function getHRPositions(
       monthlyList = null;
     if (onPeriod === true) {
       ({ etptAll, monthlyList } = {
-        ...getHRVentilationOnPeriod(
+        ...(await getHRVentilationOnPeriod(
           hr[i],
           referentielId,
           categories,
           date instanceof Date ? date : undefined,
           dateStop instanceof Date ? dateStop : undefined
-        ),
+        )),
       });
     } else {
       etptAll = await getHRVentilation(
@@ -172,7 +368,7 @@ export async function getHRPositions(
         categories,
         date instanceof Date ? date : undefined
       );
-      console.log(etptAll);
+      //console.log('etptAll', etptAll);
     }
 
     Object.values(etptAll).map((c) => {
@@ -224,7 +420,7 @@ export async function getHRPositions(
     }
   }
 
-  console.log('laliste', list);
+  //console.log('laliste', list);
   if (monthlyReport) {
     return {
       fururEtpAffectedToCompute: sortBy(list, 'rank'),
@@ -233,7 +429,7 @@ export async function getHRPositions(
   } else return sortBy(list, 'rank');
 }
 
-export function getHRVentilationOnPeriod(
+export async function getHRVentilationOnPeriod(
   hr,
   referentielId,
   categories,
@@ -276,13 +472,14 @@ export function getHRVentilationOnPeriod(
       // only working day
       nbDay++;
       monthDaysCounter++;
-      const { etp, situation } = getEtpByDateAndPerson(referentielId, now, hr);
+      const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr);
 
       if (etp !== null) {
         // @ts-ignore
         list[situation.category.id].etpt += etp;
 
         const str = getShortMonthString(now) + now.getFullYear().toString().slice(-2);
+        //console.log(str, [situation.category.id]);
 
         // @ts-ignore
         monthlyList[str][situation.category.id].etpt += etp;
@@ -317,8 +514,16 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
   });
 
   const now = date ? date : new Date();
-  const { etp, situation } = await getEtpByDateAndPerson(referentielId, now, hr);
-  console.log('l ETP', etp, situation);
+  const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr);
+
+  if (etp !== null && etp !== 0) {
+    let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null;
+    if (listContentieux !== [] && listContentieux !== null) {
+      listContentieux = listContentieux.filter((contentieux) => contentieux.id === referentielId);
+      if (listContentieux !== []) console.log('L"ETP', etp, listContentieux);
+    }
+  }
+
   if (etp !== null) {
     // @ts-ignore
     list[situation.category.id].etpt += etp;
