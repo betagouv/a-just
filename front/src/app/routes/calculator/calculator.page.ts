@@ -23,6 +23,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   datas: CalculatorInterface[] = []
   datasFilted: CalculatorInterface[] = []
   isLoading: boolean = false
+  maxDateSelectionDate: Date | null = null
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -50,13 +51,18 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.formatReferenteil()
         this.onCalculate()
 
-        if (this.dateStart === null && this.isLoading === false) {
+        if (this.isLoading === false) {
           this.isLoading = true
 
           this.activitiesService.getLastMonthActivities().then((date) => {
-            date = new Date(date)
-            this.calculatorService.dateStart.next(month(date, -2))
-            this.calculatorService.dateStop.next(month(date, 0, 'lastday'))
+            date = new Date(date ? date : '')
+            const max = month(date, 0, 'lastday')
+
+            if (this.dateStop === null || max.getTime() < this.dateStop.getTime()) {
+              this.calculatorService.dateStart.next(month(max, -2))
+              this.calculatorService.dateStop.next(max)
+            }
+            this.maxDateSelectionDate = max
             this.isLoading = false
           })
         }
