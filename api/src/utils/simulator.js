@@ -33,6 +33,165 @@ const emptySituation = {
   etpToCompute: null,
 };
 
+export function execSimulation(params, simulation, dateStart, dateStop) {
+  params.toDisplay.map((x) => {
+    if (params.beginSituation !== null)
+      //@ts-ignore
+      simulation[x] = params.beginSituation[x];
+  });
+
+  if (
+    params.lockedParams.param1.label !== '' &&
+    simulation.hasOwnProperty(params.lockedParams.param1.label)
+  )
+    //@ts-ignore
+    simulation[params.lockedParams.param1.label] =
+      params.lockedParams.param1.label === 'realCoverage'
+        ? parseFloat(params.lockedParams.param1.value) / 100
+        : parseFloat(params.lockedParams.param1.value);
+  if (
+    params.lockedParams.param2.label !== '' &&
+    simulation.hasOwnProperty(params.lockedParams.param2.label)
+  )
+    //@ts-ignore
+    simulation[params.lockedParams.param2.label] =
+      params.lockedParams.param2.label === 'realCoverage'
+        ? parseFloat(params.lockedParams.param2.value) / 100
+        : parseFloat(params.lockedParams.param2.value);
+
+  if (params.modifiedParams.param1.input !== 0)
+    //@ts-ignore
+    simulation[params.modifiedParams.param1.label] =
+      params.modifiedParams.param1.label === 'realCoverage'
+        ? parseFloat(params.modifiedParams.param1.value) / 100
+        : parseFloat(params.modifiedParams.param1.value);
+
+  if (params.modifiedParams.param2.input !== 0)
+    //@ts-ignore
+    simulation[params.modifiedParams.param2.label] =
+      params.modifiedParams.param2.label === 'realCoverage'
+        ? parseFloat(params.modifiedParams.param2.value) / 100
+        : parseFloat(params.modifiedParams.param2.value);
+
+  do {
+    params.toCalculate.map((x) => {
+      if (x === 'totalIn') {
+        if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
+          simulation.totalIn = Math.floor(
+            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) /
+              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+              Math.floor(simulation.totalOut)
+          );
+        } else if (simulation.totalOut && simulation.realCoverage) {
+          simulation.totalIn = Math.floor(
+            Math.floor(simulation.totalOut) / simulation.realCoverage
+          );
+        }
+      }
+      if (x === 'totalOut') {
+        if (simulation.etpMag && simulation.realTimePerCase) {
+          simulation.totalOut = Math.floor(
+            Math.floor(simulation.etpMag * 8 * 17.3333) / simulation.realTimePerCase
+          );
+        } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
+          simulation.totalOut = Math.floor(
+            Math.floor(
+              Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)
+            ) /
+              (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+              simulation.totalIn
+          );
+        } else if (
+          simulation.lastStock &&
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)
+        ) {
+          simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths);
+        } else if (simulation.realCoverage && simulation.totalIn) {
+          simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn);
+        } else if (
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
+          simulation.totalIn
+        ) {
+          simulation.totalOut = Math.floor(
+            (Math.floor(params.beginSituation.lastStock) +
+              simulation.totalIn * (nbOfDays(dateStart, dateStop) / (365 / 12))) /
+              (simulation.realDTESInMonths + nbOfDays(dateStart, dateStop) / (365 / 12))
+          );
+        }
+      }
+      if (x === 'lastStock') {
+        if (simulation.realDTESInMonths === 0) {
+          simulation.lastStock = 0;
+        } else if (simulation.totalIn && simulation.totalOut) {
+          simulation.lastStock = Math.floor(
+            Math.floor(
+              Math.floor(params.beginSituation.lastStock) +
+                Math.floor(simulation.totalIn) * (nbOfDays(dateStart, dateStop) / (365 / 12)) -
+                Math.floor(simulation.totalOut) * (nbOfDays(dateStart, dateStop) / (365 / 12))
+            )
+          );
+        } else if (
+          (simulation.realDTESInMonths || simulation.realDTESInMonths === 0) &&
+          simulation.totalOut
+        ) {
+          simulation.lastStock = Math.floor(
+            simulation.realDTESInMonths * Math.floor(simulation.totalOut)
+          );
+        }
+        if (simulation.lastStock && simulation.lastStock < 0) {
+          simulation.lastStock = 0;
+        }
+      }
+      if (x === 'realCoverage') {
+        if (simulation.totalOut && simulation.totalIn) {
+          simulation.realCoverage =
+            (simulation.totalOut || params.endSituation.totalOut) /
+            (simulation.totalIn || params.endSituation.totalIn);
+        }
+      }
+      if (x === 'realDTESInMonths') {
+        simulation.realDTESInMonths =
+          Math.round(
+            (Math.floor(simulation.lastStock || 0) /
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+              100
+          ) / 100;
+      }
+
+      if (x === 'realTimePerCase') {
+        simulation.realTimePerCase =
+          Math.round(
+            ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) /
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+              100
+          ) / 100;
+      }
+
+      if (x === 'etpMag') {
+        simulation.etpMag =
+          Math.round(
+            (((simulation.realTimePerCase || params.endSituation.realTimePerCase) *
+              Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
+              (17.333 * 8)) *
+              100
+          ) / 100;
+      }
+    });
+  } while (
+    !(
+      simulation.totalIn !== null &&
+      simulation.totalOut !== null &&
+      simulation.lastStock !== null &&
+      simulation.etpMag !== null &&
+      simulation.realTimePerCase !== null &&
+      simulation.realDTESInMonths !== null &&
+      simulation.realCoverage !== null
+    )
+  );
+  //this.situationSimulated.next(simulation);
+  return simulation;
+}
+
 export async function getSituation(
   referentielId,
   hr,
@@ -41,8 +200,6 @@ export async function getSituation(
   dateStart = undefined,
   dateStop = undefined
 ) {
-  console.log('dates', dateStart, new Date(dateStart));
-
   const nbMonthHistory = 12;
   const { activities, lastActivities, deltaOfMonths, startDateCs, endDateCs } =
     await getCSActivities(
@@ -56,11 +213,27 @@ export async function getSituation(
   let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonthHistory);
   let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonthHistory);
   let lastStock = sumBy(lastActivities, 'stock');
+  let realTimePerCase = undefined;
+  let DTES = undefined;
+  let Coverage = undefined;
+  let etpAffectedAtStartDate = undefined;
+  let etpAffectedToday = undefined;
+  let etpMagToCompute = undefined;
+  let etpFonToCompute = undefined;
+  let etpContToCompute = undefined;
+  let endSituation = undefined;
+  let etpAffectedDeltaToCompute = undefined;
+  let etpMagFuturToCompute = undefined;
+  let etpFonFuturToCompute = undefined;
+  let etpContFuturToCompute = undefined;
+  let etpMagUntilStartDate = undefined;
+  let etpFonUntilStartDate = undefined;
+  let etpContUntilStartDate = undefined;
 
   if (activities.length === 0) return emptySituation;
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
-    let etpAffectedToday = await getHRPositions(hr, referentielId, categories);
+    etpAffectedToday = await getHRPositions(hr, referentielId, categories);
     let { etpMag, etpFon, etpCont } = getEtpByCategory(etpAffectedToday);
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
@@ -73,13 +246,13 @@ export async function getSituation(
       new Date(endDateCs)
     );
 
-    let { etpMagToCompute, etpFonToCompute, etpContToCompute } = getEtpByCategory(
+    ({ etpMagToCompute, etpFonToCompute, etpContToCompute } = getEtpByCategory(
       etpAffectedLast12MonthsToCompute,
       'ToCompute'
-    );
+    ));
 
     // Compute realTimePerCase to display using the etpAffected 12 last months available
-    let realTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute);
+    realTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute);
 
     // Compute totalOut with etp at dateStart (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, etpMag);
@@ -94,10 +267,10 @@ export async function getSituation(
       new Date()
     );
 
-    let { etpMagFuturToCompute, etpFonFuturToCompute, etpContFuturToCompute } = getEtpByCategory(
+    ({ etpMagFuturToCompute, etpFonFuturToCompute, etpContFuturToCompute } = getEtpByCategory(
       etpAffectedDeltaToCompute,
       'FuturToCompute'
-    );
+    ));
 
     const countOfCalandarDays = nbOfDays(new Date(endDateCs), new Date());
 
@@ -111,27 +284,24 @@ export async function getSituation(
     );
 
     // Compute realCoverage & realDTESInMonths using last available stock
-    let Coverage = computeCoverage(totalOut, totalIn);
-    let DTES = computeDTES(lastStock, totalOut);
+    Coverage = computeCoverage(totalOut, totalIn);
+    DTES = computeDTES(lastStock, totalOut);
 
     if (checkIfDateIsNotToday(dateStart)) {
       const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart));
 
       // Compute etpAffected & etpMag at dateStart (specific date) to display
-      let etpAffectedAtStartDate = await getHRPositions(
+      etpAffectedAtStartDate = await getHRPositions(
         hr,
         referentielId,
         categories,
         new Date(dateStart)
       );
 
-      let { etpMagAtStartDate, etpFonAtStartDate, etpContAtStartDate } = getEtpByCategory(
-        etpAffectedAtStartDate,
-        'AtStartDate'
-      );
+      ({ etpMag, etpFon, etpCont } = getEtpByCategory(etpAffectedAtStartDate));
 
       // Compute totalOut with etp at dateStart (specific date) to display
-      totalOut = computeTotalOut(realTimePerCase, etpMagAtStartDate);
+      totalOut = computeTotalOut(realTimePerCase, etpMag);
 
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = await getHRPositions(
@@ -142,12 +312,11 @@ export async function getSituation(
         true,
         new Date(dateStart)
       );
-      console.log(etpAffectedDeltaToCompute);
-      console.log(new Date(), dateStart);
-      let { etpMagUntilStartDate, etpFonUntilStartDate, etpContUntilStartDate } = getEtpByCategory(
+
+      ({ etpMagUntilStartDate, etpFonUntilStartDate, etpContUntilStartDate } = getEtpByCategory(
         etpAffectedDeltaToCompute,
         'UntilStartDate'
-      );
+      ));
 
       // Compute stock, coverage, dtes projection until dateStart
       lastStock = computeLastStock(
@@ -158,61 +327,95 @@ export async function getSituation(
         totalIn
       );
 
-      let Coverage = computeCoverage(totalOut, totalIn);
-      let DTES = computeDTES(lastStock, totalOut);
-
-      return {
-        etpAffectedDeltaToCompute,
-        etpMagAtStartDate,
-        nbDayCalendar,
-        DTES,
-        Coverage,
-        lastStock,
-        etpMagFuturToCompute,
-        countOfCalandarDays,
-        etpMag,
-        totalOut,
-        realTimePerCase,
-        etpMagToCompute,
-        etpAffectedToday,
-        activities,
-        deltaOfMonths,
-        totalIn,
-        totalOut,
-      };
+      Coverage = computeCoverage(totalOut, totalIn);
+      DTES = computeDTES(lastStock, totalOut);
     }
     if (dateStop) {
       const nbDayCalendarProjected = nbOfDays(new Date(dateStart), new Date(dateStop));
+
+      // Compute projected etp at stop date (specific date) to display
+      const projectedEtpAffected = await getHRPositions(hr, referentielId, categories, dateStop);
+
+      let { etpMagProjected, etpFonProjected, etpContProjected } = getEtpByCategory(
+        projectedEtpAffected,
+        'Projected'
+      );
+
+      // Compute projected out flow with projected etp at stop date (specific date)
+      const projectedTotalOut = computeTotalOut(realTimePerCase, etpMagProjected);
+
+      // Projection of etpAffected between start and stop date to compute stock
+      let { etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(
+        hr,
+        referentielId,
+        categories,
+        dateStart,
+        true,
+        dateStop,
+        true
+      );
+
+      let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpContStartToEndToCompute } =
+        getEtpByCategory(etpAffectedStartToEndToCompute, 'StartToEndToCompute');
+
+      // Compute projectedStock with etp at datestop
+      const projectedLastStock = computeLastStock(
+        lastStock,
+        nbDayCalendarProjected,
+        etpMagStartToEndToCompute,
+        realTimePerCase,
+        totalIn
+      );
+
+      const projectedCoverage = computeCoverage(projectedTotalOut, totalIn);
+      const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut);
+
+      endSituation = {
+        totalIn,
+        totalOut: projectedTotalOut,
+        lastStock: projectedLastStock,
+        realCoverage: projectedCoverage,
+        realDTESInMonths: projectedDTES,
+        realTimePerCase,
+        etpMag: etpMagProjected,
+        etpAffected: etpAffectedStartToEndToCompute,
+        etpFon: etpFonStartToEndToCompute,
+        etpCont: etpContStartToEndToCompute,
+        calculateCoverage: null,
+        calculateDTESInMonths: null,
+        calculateTimePerCase: null,
+        nbMonthHistory,
+        etpToCompute: etpMagStartToEndToCompute,
+        monthlyReport: monthlyReport,
+      };
     }
 
-    return {
-      DTES,
-      Coverage,
-      lastStock,
+    const tmpList = {
       etpMagFuturToCompute,
       countOfCalandarDays,
       etpAffectedDeltaToCompute,
-      etpMag,
-      totalOut,
-      realTimePerCase,
       etpMagToCompute,
       etpAffectedToday,
       activities,
       deltaOfMonths,
+    };
+
+    return {
+      //...tmpList,
+      endSituation,
       totalIn,
       totalOut,
+      lastStock,
+      realCoverage: Coverage,
+      realDTESInMonths: DTES,
+      realTimePerCase,
+      etpMag,
+      etpFon,
+      etpCont,
+      etpAffected: etpAffectedAtStartDate || etpAffectedToday,
+      etpToCompute: etpMagToCompute,
     };
   }
-  return {
-    totalIn,
-    totalOut,
-    lastStock,
-    activities,
-    lastActivities,
-    deltaOfMonths,
-    startDateCs,
-    endDateCs,
-  };
 }
 
 function computeCoverage(totalOut, totalIn) {
@@ -368,7 +571,6 @@ export async function getHRPositions(
         categories,
         date instanceof Date ? date : undefined
       );
-      //console.log('etptAll', etptAll);
     }
 
     Object.values(etptAll).map((c) => {
@@ -420,10 +622,9 @@ export async function getHRPositions(
     }
   }
 
-  //console.log('laliste', list);
   if (monthlyReport) {
     return {
-      fururEtpAffectedToCompute: sortBy(list, 'rank'),
+      etpAffectedStartToEndToCompute: sortBy(list, 'rank'),
       monthlyReport: listMonthly,
     };
   } else return sortBy(list, 'rank');
@@ -479,7 +680,6 @@ export async function getHRVentilationOnPeriod(
         list[situation.category.id].etpt += etp;
 
         const str = getShortMonthString(now) + now.getFullYear().toString().slice(-2);
-        //console.log(str, [situation.category.id]);
 
         // @ts-ignore
         monthlyList[str][situation.category.id].etpt += etp;
