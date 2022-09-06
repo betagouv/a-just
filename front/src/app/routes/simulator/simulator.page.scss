@@ -4,6 +4,13 @@
 
 :host {
 
+    .progress-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 80px;
+    }
+
     #print-title {
         margin: 8px;
         align-items: center;

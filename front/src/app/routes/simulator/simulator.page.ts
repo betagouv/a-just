@@ -53,6 +53,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   resetPercentage: boolean = false
   valueToAjust = { value: '', percentage: null }
   currentNode: any | undefined = {}
+  isLoading: boolean = false
 
   paramsToAjust = {
     param1: {
@@ -134,6 +135,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.simulatorService.situationSimulated.subscribe((d) => {
         this.simulatedSationData =
           this.simulatorService.situationSimulated.getValue()
+      })
+    )
+    this.watch(
+      this.simulatorService.isLoading.subscribe((d) => {
+        this.isLoading = d
       })
     )
     if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)

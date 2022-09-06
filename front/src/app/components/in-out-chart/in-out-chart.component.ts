@@ -185,6 +185,18 @@ export class InOutChartComponent implements OnDestroy {
       },
     }
 
+    function localeParseFloat(s: string, locale?: any) {
+      // Get the thousands and decimal separator characters used in the locale.
+      let [, thousandsSeparator, , , , decimalSeparator] =
+        (1111.1).toLocaleString(locale)
+      // Remove thousand separators, and put a point where the decimal separator occurs
+      s = Array.from(s, (c) =>
+        c === thousandsSeparator ? '' : c === decimalSeparator ? '.' : c
+      ).join('')
+      // Now it can be parsed
+      return parseFloat(s)
+    }
+
     const label = (context: any) => {
       let sufix = ''
       switch (context.dataset.label) {
@@ -204,7 +216,9 @@ export class InOutChartComponent implements OnDestroy {
 
       let lbl =
         '  ' +
-        Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
+        Math.floor(
+          localeParseFloat(context.formattedValue.replace(/\s/g, ''))
+        ) +
         ' ' +
         sufix
       return lbl
