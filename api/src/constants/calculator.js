@@ -55,7 +55,7 @@ export const emptyCalulatorValues = (referentiels) => {
   return list;
 };
 
-export async function syncCalculatorDatas(
+export const syncCalculatorDatas = (
   list,
   nbMonth,
   activities,
@@ -64,12 +64,12 @@ export async function syncCalculatorDatas(
   hr,
   categories,
   optionsBackups
-) {
+) => {
   for (let i = 0; i < list.length; i++) {
-    const childrens = (list[i].childrens || []).map(async (c) => ({
+    const childrens = (list[i].childrens || []).map((c) => ({
       ...c,
       nbMonth,
-      ...(await getActivityValues(
+      ...getActivityValues(
         dateStart,
         dateStop,
         activities,
@@ -78,12 +78,12 @@ export async function syncCalculatorDatas(
         hr,
         categories,
         optionsBackups
-      )),
+      ),
     }));
 
     list[i] = {
       ...list[i],
-      ...(await getActivityValues(
+      ...getActivityValues(
         dateStart,
         dateStop,
         activities,
@@ -92,16 +92,15 @@ export async function syncCalculatorDatas(
         hr,
         categories,
         optionsBackups
-      )),
+      ),
       childrens,
       nbMonth,
     };
   }
 
   return list;
-}
-
-export async function getActivityValues(
+};
+const getActivityValues = (
   dateStart,
   dateStop,
   activities,
@@ -110,7 +109,7 @@ export async function getActivityValues(
   hr,
   categories,
   optionsBackups
-) {
+) => {
   activities = sortBy(
     activities.filter(
       (a) =>
@@ -133,7 +132,7 @@ export async function getActivityValues(
   const realCoverage = fixDecimal(totalOut / totalIn);
   const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null;
 
-  const etpAffected = await getHRPositions(hr, categories, referentielId, dateStart, dateStop);
+  const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop);
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0;
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0;
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0;
@@ -156,9 +155,8 @@ export async function getActivityValues(
     etpCont,
     etpAffected,
   };
-}
-
-export async function getHRPositions(hr, categories, referentielId, dateStart, dateStop) {
+};
+const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {};
 
   categories.map((c) => {
@@ -170,7 +168,7 @@ export async function getHRPositions(hr, categories, referentielId, dateStart, d
   });
 
   for (let i = 0; i < hr.length; i++) {
-    const etptAll = await getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop);
+    const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop);
     Object.values(etptAll).map((c) => {
       if (c.etpt) {
         hrCategories[c.label].list.push(hr[i]);
@@ -191,9 +189,9 @@ export async function getHRPositions(hr, categories, referentielId, dateStart, d
   }
 
   return sortBy(list, 'rank');
-}
+};
 
-export async function getHRVentilation(hr, referentielId, categories, dateStart, dateStop) {
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop) => {
   const list = {};
   categories.map((c) => {
     list[c.id] = {
@@ -208,7 +206,7 @@ export async function getHRVentilation(hr, referentielId, categories, dateStart,
     // only working day
     if (workingDay(now)) {
       nbDay++;
-      const { etp, situation } = await getEtpByDateAndPerson(referentielId, now, hr);
+      const { etp, situation } = getEtpByDateAndPerson(referentielId, now, hr);
 
       if (etp !== null) {
         // @ts-ignore
@@ -224,7 +222,7 @@ export async function getHRVentilation(hr, referentielId, categories, dateStart,
   }
 
   return list;
-}
+};
 
 const calculateActivities = (referentielId, totalIn, lastStock, etpAffected, optionsBackups) => {
   let calculateTimePerCase = null;

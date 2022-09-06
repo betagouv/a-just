@@ -170,3 +170,25 @@ export function getShortMonthString(date) {
     'Déc.',
   ][date.getMonth()];
 }
+
+export function nbOfDays(startDate, endDate) {
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+  const start = new Date(startDate);
+  let nbOfDay = 0;
+  do {
+    nbOfDay++;
+    start.setDate(start.getDate() + 1);
+  } while (start.getTime() <= endDate.getTime());
+  return nbOfDay;
+}
+
+export function checkIfDateIsNotToday(date) {
+  const today = new Date();
+  return (
+    date &&
+    (date.getDate() !== today.getDate() ||
+      date.getMonth() !== today.getMonth() ||
+      date.getFullYear() !== today.getFullYear())
+  );
+}

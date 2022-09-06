@@ -29,7 +29,15 @@ export default class RouteSimulator extends Route {
 
     const activities = await this.models.Activities.getAll(backupId);
 
-    const situation = await getSituation(referentielId, hr, activities, categories);
+    console.log('la data date', dateStart);
+    const situation = await getSituation(
+      referentielId,
+      hr,
+      activities,
+      categories,
+      dateStart,
+      dateStop
+    );
 
     this.sendOk(ctx, { situation, categories, hr });
   }

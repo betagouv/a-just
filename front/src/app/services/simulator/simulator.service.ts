@@ -12,6 +12,7 @@ import {
   decimalToStringDate,
   getRangeOfMonthsAsObject,
   isFirstDayOfMonth,
+  convertLocalDatetoUTCDate,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { ActivitiesService } from '../activities/activities.service'
@@ -124,14 +125,21 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
+    console.log(
+      'lala',
+      new String(dateStart),
+      convertLocalDatetoUTCDate(dateStart)
+    )
+
     return this.serverService
       .post(`simulator/get-situation`, {
         backupId: this.humanResourceService.backupId.getValue(),
         referentielId: referentielId,
-        dateStart: dateStart,
+        dateStart: convertLocalDatetoUTCDate(dateStart),
         dateStop: dateStop,
       })
       .then((data) => {
+        console.log(dateStart)
         console.log(data)
 
         let activities = data.data.situation.activities
@@ -219,16 +227,14 @@ export class SimulatorService extends MainClass {
             categories
           ) as Array<etpAffectedInterface>
 
-          console.log({
-            front: etpAffected[0].totalEtp,
-            back: data.data.situation.etpAffected[0].totalEtp,
-          })
-
           let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-
           let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
           let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
 
+          console.log('etpMag', {
+            front: etpMag,
+            back: data.data.situation.etpMag,
+          })
           // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
           let etpAffectedToCompute = this.getHRPositions(
             hr,
@@ -242,20 +248,35 @@ export class SimulatorService extends MainClass {
             etpAffectedToCompute as Array<etpAffectedInterface>
           )[0].totalEtp
 
+          console.log('ETP TO COMPUTE', {
+            front: etpToCompute,
+            back: data.data.situation.etpMagToCompute,
+          })
           // Compute realTimePerCase to display using the etpAffected 12 last months available
           let realTimePerCase = fixDecimal(
             ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) /
               (totalOut / etpToCompute)
           )
-
+          console.log('REAL TIME PER CASE', {
+            front: realTimePerCase,
+            back: data.data.situation.realTimePerCase,
+          })
           // Compute totalOut with etp at dateStart (specific date) to display
+
           totalOut = Math.floor(
             (etpMag *
               environment.nbHoursPerDay *
               (environment.nbDaysByMagistrat / 12)) /
               realTimePerCase
           )
-
+          console.log('TOTAL OUT', {
+            front: totalOut,
+            back: data.data.situation.totalOut,
+            etpMag,
+            nbHour: environment.nbHoursPerDay,
+            nbDays: environment.nbDaysByMagistrat,
+            realTimePerCase,
+          })
           // Projection of etpAffected between the last month available and today to compute stock
           let fururEtpAffectedToCompute = this.getHRPositions(
             hr,
@@ -265,6 +286,12 @@ export class SimulatorService extends MainClass {
             true,
             new Date()
           )
+
+          console.log('fururEtpAffectedToCompute', {
+            front: fururEtpAffectedToCompute,
+            back: data.data.situation.etpAffectedDeltaToCompute,
+          })
+
           let futurEtpToCompute = (
             fururEtpAffectedToCompute as Array<etpAffectedInterface>
           )[0].totalEtp
@@ -273,6 +300,22 @@ export class SimulatorService extends MainClass {
             month(this.endCurrentSituation, counter, 'lastday'),
             new Date()
           )
+          console.log('futurEtpToCompute', {
+            front: futurEtpToCompute,
+            back: data.data.situation.etpMagFuturToCompute,
+          })
+          console.log('countOfCalandarDays', {
+            front: countOfCalandarDays,
+            back: data.data.situation.countOfCalandarDays,
+          })
+
+          console.log('lastStock details', {
+            lastStock,
+            countOfCalandarDays,
+            futurEtpToCompute,
+            realTimePerCase,
+            totalIn,
+          })
 
           // Compute stock projection until today
           lastStock =
@@ -285,6 +328,11 @@ export class SimulatorService extends MainClass {
             ) +
             Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
 
+          console.log('lastStock', {
+            front: lastStock,
+            back: data.data.situation.lastStock,
+          })
+
           // Compute realCoverage & realDTESInMonths using last available stock
           let realCoverage = fixDecimal(totalOut / totalIn)
           let realDTESInMonths =
@@ -292,7 +340,16 @@ export class SimulatorService extends MainClass {
               ? fixDecimal(lastStock / totalOut)
               : null
 
+          console.log('realCoverage', {
+            front: realCoverage,
+            back: data.data.situation.Coverage,
+          })
+          console.log('realDTESInMonths', {
+            front: realDTESInMonths,
+            back: data.data.situation.DTES,
+          })
           const today = new Date()
+
           if (
             dateStart &&
             (dateStart?.getDate() !== today.getDate() ||
@@ -303,6 +360,11 @@ export class SimulatorService extends MainClass {
               new Date(),
               new Date(this.dateStart.getValue())
             )
+
+            console.log('nbDayCalendar', {
+              front: nbDayCalendar,
+              back: data.data.situation.nbDayCalendar,
+            })
 
             // Compute etpAffected & etpMag at dateStart (specific date) to display
             etpAffected = this.getHRPositions(
@@ -333,6 +395,9 @@ export class SimulatorService extends MainClass {
               true,
               dateStart
             )
+            console.log(new Date(), new Date(dateStart))
+
+            console.log(new Date(), dateStart)
             futurEtpToCompute = (
               fururEtpAffectedToCompute as Array<etpAffectedInterface>
             )[0].totalEtp
@@ -353,7 +418,37 @@ export class SimulatorService extends MainClass {
               lastStock !== null && totalOut !== null
                 ? fixDecimal(lastStock / totalOut)
                 : null
+
+            console.log('lastStock', {
+              front: lastStock,
+              back: data.data.situation.lastStock,
+            })
+            console.log('totalOut', {
+              front: totalOut,
+              back: data.data.situation.totalOut,
+            })
+            console.log('realCoverage', {
+              front: realCoverage,
+              back: data.data.situation.Coverage,
+            })
+            console.log('realDTESInMonths', {
+              front: realDTESInMonths,
+              back: data.data.situation.DTES,
+            })
+
+            console.log('etpMagAtStartDate', {
+              front: futurEtpToCompute,
+              back: data.data.situation.etpMagAtStartDate,
+            })
+
+            console.log('fururEtpAffectedToCompute', {
+              front: fururEtpAffectedToCompute,
+              back: data.data.situation.etpAffectedDeltaToCompute,
+            })
           }
+
+          // ====================++>
+
           if (dateStop) {
             const nbDayCalendarProjected = nbOfDays(
               new Date(this.dateStart.getValue()),
