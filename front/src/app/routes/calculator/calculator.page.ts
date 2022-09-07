@@ -30,7 +30,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
     private referentielService: ReferentielService,
-    private contentieuxOptionsService: ContentieuxOptionsService
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private activitiesService: ActivitiesService,
   ) {
     super()
   }
@@ -42,12 +43,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       })
     )
     this.watch(
-      this.calculatorService.dateStart.subscribe(() => {
+      this.calculatorService.dateStart.subscribe((date) => {
+        this.dateStart = date
         this.onLoad()
       })
     )
     this.watch(
-      this.calculatorService.dateStop.subscribe(() => {
+      this.calculatorService.dateStop.subscribe((date) => {
+        this.dateStop = date
         this.onLoad()
       })
     )
@@ -84,6 +87,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           this.activitiesService.getLastMonthActivities().then((date) => {
             date = new Date(date ? date : '')
             const max = month(date, 0, 'lastday')
+            console.log(max)
 
             if (this.dateStop === null || max.getTime() < this.dateStop.getTime()) {
               this.calculatorService.dateStart.next(month(max, -2))
@@ -106,7 +110,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.humanResourceService.backupId.getValue() &&
       this.contentieuxOptionsService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
-      this.dateStart !== null
+      this.dateStart !== null &&
+      this.dateStop !== null
     ) {
       this.isLoading = true
       this.calculatorService
