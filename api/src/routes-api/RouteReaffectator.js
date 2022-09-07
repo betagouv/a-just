@@ -1,8 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
-import { getCategoryColor } from '../constants/categories'
-import { sumBy } from 'lodash'
 import { copyArray } from '../utils/array'
 
 export default class RouteReaffectator extends Route {
@@ -93,57 +91,12 @@ export default class RouteReaffectator extends Route {
     const originalReferentiel = (await this.models.ContentieuxReferentiels.getReferentiels()).filter(r => contentieuxIds.indexOf(r.id) !== -1)
 
     const listFormated = categories.filter(c => categoriesIds.indexOf(c.id) !== -1).map(
-      (category) => {
-        let label = category.label
-
-        let referentiel = copyArray(originalReferentiel).map((ref) => {
-          ref.totalAffected = 0
-          return ref
-        })
-
-        let group = listFiltered
-          .filter((h) => h.category && h.category.id === category.id)
-          .map((hr) => {
-            hr.tmpActivities = {}
-
-            referentiel = referentiel.map((ref) => {
-              hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-                (r) => r.contentieux && r.contentieux.id === ref.id
-              )
-              if(hr.tmpActivities[ref.id].length) {
-                const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-                if (timeAffected) {
-                  let realETP = (hr.etp || 0) - hr.hasIndisponibility
-                  if (realETP < 0) {
-                    realETP = 0
-                  }
-                  ref.totalAffected += ((timeAffected / 100) * realETP)
-                }
-              }
-
-              return ref
-            })
-
-            return hr
-          })
-
-        if (group.length > 1) {
-          if (label.indexOf('agistrat') !== -1) {
-            label = label.replace('agistrat', 'agistrats')
-          } else {
-            label += 's'
-          }
-        }
-
-        return {
-          textColor: getCategoryColor(label),
-          bgColor: getCategoryColor(label, 0.2),
-          referentiel,
-          label,
-          hr: group,
-          categoryId: category.id,
-        }
-      }
+      (category) => ({
+        originalLabel: category.label,
+        referentiel: copyArray(originalReferentiel),
+        allHr: listFiltered.filter((h) => h.category && h.category.id === category.id),
+        categoryId: category.id,
+      })
     )
 
     const activities = await this.models.Activities.getAll(backupId, date)
