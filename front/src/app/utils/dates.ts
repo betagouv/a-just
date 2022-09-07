@@ -90,11 +90,11 @@ export function today(date: Date | null | undefined = new Date()): Date {
 }
 
 export function month(
-  date = new Date(),
+  date: Date | null = new Date(),
   monthToAdd?: number,
   lastDay?: string
 ) {
-  const now = new Date(date)
+  const now = new Date(date ? date : '')
   if (monthToAdd) {
     now.setDate(1)
     now.setMonth(now.getMonth() + monthToAdd)
@@ -213,7 +213,7 @@ export function getRangeOfMonthsAsObject(
 
   dateCounter.setDate(1)
 
-  while (dateCounter < endDate) {
+  while (dateCounter <= endDate) {
     if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
         `${

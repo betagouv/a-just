@@ -431,19 +431,15 @@ export class SimulatorService extends MainClass {
             hr
           )
 
-        if (etp !== null) {
-          // @ts-ignore
+        if (etp !== null && situation && situation.category) {
           list[situation.category.id].etpt += etp
 
-          const str: string =
+          const str =
             this.getShortMonthString(now) +
             now.getFullYear().toString().slice(-2)
 
-          // @ts-ignore
           monthlyList[str][situation.category.id].etpt += etp
-          // @ts-ignore
           monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
-          // @ts-ignore
         }
       }
       now.setDate(now.getDate() + 1)
