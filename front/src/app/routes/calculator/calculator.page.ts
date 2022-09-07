@@ -88,13 +88,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           this.activitiesService.getLastMonthActivities().then((date) => {
             date = new Date(date ? date : '')
             const max = month(date, 0, 'lastday')
+            this.maxDateSelectionDate = max
             console.log(max)
 
             if (this.dateStop === null || max.getTime() < this.dateStop.getTime()) {
               this.calculatorService.dateStart.next(month(max, -2))
               this.calculatorService.dateStop.next(max)
             }
-            this.maxDateSelectionDate = max
             this.isLoadingLastMonth = false
           })
         }
@@ -113,7 +113,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.calculatorService.referentielIds.getValue().length &&
       this.dateStart !== null &&
       this.dateStop !== null && 
-      this.maxDateSelectionDate
+      this.maxDateSelectionDate &&
+      this.isLoading === false
     ) {
       this.isLoading = true
       this.calculatorService
