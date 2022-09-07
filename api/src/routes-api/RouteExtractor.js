@@ -1,21 +1,21 @@
-import Route, { Access } from './Route';
-import { Types } from '../utils/types';
-import { getHRVentilation } from '../constants/calculator';
+import Route, { Access } from './Route'
+import { Types } from '../utils/types'
+import { getHRVentilation } from '../utils/calculator'
 import {
   addSumLine,
   autofitColumns,
   countEtp,
   flatListOfContentieuxAndSousContentieux,
   getIndispoDetails,
-} from '../utils/extractor';
-import { preformatHumanResources } from '../utils/ventilator';
-import { findSituation, getHumanRessourceList } from '../utils/humanServices';
-import { findFonctionName } from '../utils/hr-fonctions';
-import { findCategoryName } from '../utils/hr-catagories';
-import { sumBy } from 'lodash';
+} from '../utils/extractor'
+import { preformatHumanResources } from '../utils/ventilator'
+import { findSituation, getHumanRessourceList } from '../utils/humanServices'
+import { findFonctionName } from '../utils/hr-fonctions'
+import { findCategoryName } from '../utils/hr-catagories'
+import { sumBy } from 'lodash'
 export default class RouteExtractor extends Route {
-  constructor(params) {
-    super({ ...params, model: 'HumanResources' });
+  constructor (params) {
+    super({ ...params, model: 'HumanResources' })
   }
 
   @Route.Post({
@@ -27,20 +27,20 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterList(ctx) {
-    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx);
+  async filterList (ctx) {
+    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels();
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
 
-    const flatReferentielsList = flatListOfContentieuxAndSousContentieux(referentiels);
+    const flatReferentielsList = flatListOfContentieuxAndSousContentieux(referentiels)
 
-    const hr = await this.model.getCache(backupId);
+    const hr = await this.model.getCache(backupId)
 
-    const preformatedAllHumanResource = preformatHumanResources(hr, dateStart);
+    const preformatedAllHumanResource = preformatHumanResources(hr, dateStart)
 
     let allHuman = await getHumanRessourceList(
       preformatedAllHumanResource,
@@ -48,37 +48,37 @@ export default class RouteExtractor extends Route {
       [0, 1, 2],
       dateStop,
       dateStart
-    );
+    )
 
-    const categories = await this.models.HRCategories.getAll();
-    const fonctions = await this.models.HRFonctions.getAll();
+    const categories = await this.models.HRCategories.getAll()
+    const fonctions = await this.models.HRFonctions.getAll()
 
-    let data = [];
+    let data = []
 
     allHuman.map((human) => {
-      const currentSituation = findSituation(human);
+      const currentSituation = findSituation(human)
 
-      let categoryName = findCategoryName(categories, currentSituation);
-      let fonctionName = findFonctionName(fonctions, currentSituation);
+      let categoryName = findCategoryName(categories, currentSituation)
+      let fonctionName = findFonctionName(fonctions, currentSituation)
 
-      let etpAffected = [];
-      let refObj = {};
-      let totalEtpt = 0;
+      let etpAffected = []
+      let refObj = {}
+      let totalEtpt = 0
 
       const indispoArray = flatReferentielsList.map((referentiel) => {
-        etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop);
+        etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
 
-        const { counterEtpTotal, counterEtpSubTotal } = countEtp(etpAffected, referentiel);
+        const { counterEtpTotal, counterEtpSubTotal } = countEtp(etpAffected, referentiel)
 
         const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
-          getIndispoDetails(flatReferentielsList);
+          getIndispoDetails(flatReferentielsList)
 
-        const isIndispoRef = allIndispRefIds.includes(referentiel.id);
+        const isIndispoRef = allIndispRefIds.includes(referentiel.id)
 
         if (referentiel.childrens !== undefined) {
-          refObj['TOTAL ' + referentiel.label.toUpperCase()] = counterEtpTotal;
+          refObj['TOTAL ' + referentiel.label.toUpperCase()] = counterEtpTotal
 
-          totalEtpt += counterEtpTotal;
+          totalEtpt += counterEtpTotal
 
           if (isIndispoRef) {
             return {
@@ -86,24 +86,24 @@ export default class RouteExtractor extends Route {
               label: 'TOTAL ' + referentiel.label.toUpperCase(),
               indispo: 0,
               contentieux: true,
-            };
+            }
           }
         } else {
-          refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal;
+          refObj[referentiel.label.toUpperCase()] = counterEtpSubTotal
 
           if (isIndispoRef) {
             return {
               id: referentiel.id,
               indispo: counterEtpSubTotal,
               contentieux: false,
-            };
+            }
           }
         }
-        return { indispo: 0 };
-      });
-      const key = indispoArray.filter((elem) => elem.contentieux === true)[0].label || '';
+        return { indispo: 0 }
+      })
+      const key = indispoArray.filter((elem) => elem.contentieux === true)[0].label || ''
 
-      refObj[key] = sumBy(indispoArray, 'indispo');
+      refObj[key] = sumBy(indispoArray, 'indispo')
 
       if (categoryName === categoryFilter || categoryFilter === 'tous')
         data.push({
@@ -114,13 +114,13 @@ export default class RouteExtractor extends Route {
           Fonction: fonctionName,
           ETPT: totalEtpt,
           ...refObj,
-        });
-    });
+        })
+    })
 
-    data.sort((a, b) => (a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0));
+    data.sort((a, b) => (a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0))
 
-    data = addSumLine(data, categoryFilter);
-    const columnSize = autofitColumns(data);
-    this.sendOk(ctx, { values: data, columnSize });
+    data = addSumLine(data, categoryFilter)
+    const columnSize = autofitColumns(data)
+    this.sendOk(ctx, { values: data, columnSize })
   }
 }
