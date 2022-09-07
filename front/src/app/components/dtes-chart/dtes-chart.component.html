@@ -9,11 +9,8 @@
     </p>
   </div>
   <div class="container">
-    <div style="width: 100%">
-      <canvas
-        id="dtes-chart"
-        style="height: 250px; width: content-box"
-      ></canvas>
+    <div class="canvas-container">
+      <canvas id="dtes-chart"></canvas>
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
@@ -24,14 +21,10 @@
           <p class="hard">Simulés</p>
           <p class="white">Variation</p>
         </div>
-        <div class="popin-raw" style="display: flex">
+        <div class="popin-raw">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #6fe49d"
-            ></div>
-            <b style="align-self: center"> Affaires</b>
+            <div _ngcontent-vmx-c83="" class="circle green"></div>
+            <b> Affaires</b>
           </div>
           <p class="low-value first">
             {{ getRounded(tooltip.projectedStock, true) || '' }}
@@ -53,13 +46,9 @@
             </div>
           </div>
         </div>
-        <div class="popin-raw" style="display: flex">
+        <div class="popin-raw">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #b8c5e2"
-            ></div>
+            <div _ngcontent-vmx-c83="" class="circle light-blue"></div>
             <b>DTES</b> &nbsp; en mois
           </div>
           <p class="low-value">{{ getRounded(tooltip.projectedDTES) || '' }}</p>

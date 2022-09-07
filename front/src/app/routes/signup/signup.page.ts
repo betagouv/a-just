@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { UserService } from 'src/app/services/user/user.service';
+import { Component } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
+import { Router } from '@angular/router'
+import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   templateUrl: './signup.page.html',
@@ -14,32 +14,33 @@ export class SignupPage {
     firstName: new FormControl(),
     lastName: new FormControl(),
     passwordConf: new FormControl(),
-  });
+  })
 
-  constructor(
-    private userService: UserService,
-    private router: Router
-  ) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit() {}
 
   onSubmit() {
     const { email, password, firstName, lastName, passwordConf } =
-      this.form.value;
+      this.form.value
 
     if (password.length < 6) {
-      alert("Vous devez saisir un mot de passe d'au moins 6 caractères");
-      return;
+      alert("Vous devez saisir un mot de passe d'au moins 6 caractères")
+      return
     }
 
-    if(password !== passwordConf) {
-      alert("Vos mots de passe ne sont pas identiques");
-      return;
+    if (password !== passwordConf) {
+      alert('Vos mots de passe ne sont pas identiques')
+      return
     }
 
-    this.userService.register({ email, password, firstName, lastName }).then(() => {
-      alert('Félicitation ! Votre compte est maintenant crée. Veuillez vous rapprocher de l\'équipe A-Just pour avoir accès à votre juridiction')
-      this.router.navigate(['/login']);
-    });
+    this.userService
+      .register({ email, password, firstName, lastName })
+      .then(() => {
+        alert(
+          "Merci de votre inscription. L'équipe A-JUST vous avertira dès que les droits vous auront été attribués"
+        )
+        this.router.navigate(['/login'])
+      })
   }
 }

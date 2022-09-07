@@ -9,11 +9,8 @@
     </p>
   </div>
   <div class="container">
-    <div style="width: 100%">
-      <canvas
-        id="in-out-chart"
-        style="height: 250px; width: content-box"
-      ></canvas>
+    <div class="canvas-container">
+      <canvas id="in-out-chart"></canvas>
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
@@ -24,14 +21,10 @@
           <p class="hard">Simulés</p>
           <p class="white">Variation</p>
         </div>
-        <div class="popin-raw" style="display: flex">
+        <div class="popin-raw">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #fcc63a"
-            ></div>
-            <b style="align-self: center"> Entrées</b>
+            <div _ngcontent-vmx-c83="" class="circle orange"></div>
+            <b> Entrées</b>
           </div>
           <p class="low-value first">
             {{ getRounded(tooltip.projectedIn) || 0 }}
@@ -51,13 +44,9 @@
             </div>
           </div>
         </div>
-        <div class="popin-raw" style="display: flex">
+        <div class="popin-raw">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #60e0eb"
-            ></div>
+            <div _ngcontent-vmx-c83="" class="circle turquoise"></div>
             <b>Sorties</b> &nbsp;
           </div>
           <p class="low-value">{{ getRounded(tooltip.projectedOut) || 0 }}</p>

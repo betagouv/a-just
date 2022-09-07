@@ -27,23 +27,23 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  labels: string[] | null = null
   tooltip: any = { display: false }
   realSelectedMonth = ''
 
   data = {
     projectedMag: {
-      values: [0], //[0, 10, 5],
+      values: [0],
       dotColor: '#e07dd8',
       bgColor: '#fdc0f8',
     },
     simulatedMag: {
-      values: [0], //[0, 8, 18],
+      values: [0],
       dotColor: '#fdc0f8',
       bgColor: '#e07dd8',
     },
     projectedGref: {
-      values: [],
+      values: [0],
       dotColor: '#f083a0',
       bgColor: '#ffcade',
     },
@@ -53,7 +53,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       bgColor: '#f083a0',
     },
     projectedCont: {
-      values: [],
+      values: [0],
       dotColor: '#fdbfb7',
       bgColor: '#fcd7d3',
     },
@@ -94,17 +94,39 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.labels.length
         )
 
-        let tmpValue: any = undefined
+        /** TO ADD WHEN INTEGRATE CONT AND FON
+        this.data.simulatedCont.values = simulatorService.generateLinearData(
+          value?.etpCont as number,
+          value?.etpCont as number,
+          this.labels.length
+        )
+
+        this.data.simulatedGref.values = simulatorService.generateLinearData(
+          value?.etpFon as number,
+          value?.etpFon as number,
+          this.labels.length
+        )
+        */
+        let monthlyMagValues: any = undefined
+        let monthlyContValues: any = undefined
+        let monthlyFonValues: any = undefined
+
         simulatorService.situationProjected
           .getValue()!
           .monthlyReport!.forEach((x) => {
-            if (x.name === 'Magistrat') tmpValue = x.values
+            if (x.name === 'Magistrat') monthlyMagValues = x.values
+            if (x.name === 'Contractuel') monthlyContValues = x.values
+            if (x.name === 'Fonctionnaire') monthlyFonValues = x.values
           })
 
         this.data.projectedMag.values = new Array()
+        this.data.projectedCont.values = new Array()
+        this.data.projectedGref.values = new Array()
 
-        Object.keys(tmpValue).forEach((x: any) => {
-          this.data.projectedMag.values.push(tmpValue[x].etpt)
+        Object.keys(monthlyMagValues).forEach((x: any) => {
+          this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
+          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
         })
 
         if (this.myChart !== null) {
@@ -113,6 +135,14 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             this.data.simulatedMag.values
           this.myChart._metasets[1]._dataset.data =
             this.data.projectedMag.values
+          //this.myChart._metasets[2]._dataset.data =
+          //this.data.simulatedCont.values
+          this.myChart._metasets[3]._dataset.data =
+            this.data.projectedGref.values
+          //this.myChart._metasets[4]._dataset.data =
+          //this.data.simulatedGref.values
+          this.myChart._metasets[5]._dataset.data =
+            this.data.projectedCont.values
           this.myChart.update()
         }
       }
@@ -203,22 +233,22 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       let sufix = ''
       switch (context.dataset.label) {
         case 'projectedMag':
-          sufix = 'agents (projeté)'
+          sufix = 'magistrats (projeté)'
           break
         case 'simulatedMag':
-          sufix = 'agents (simulé)'
+          sufix = 'magistrats (simulé)'
           break
         case 'projectedGref':
-          sufix = 'agents (projeté)'
+          sufix = 'fonctionnaires (projeté)'
           break
         case 'simulatedGref':
-          sufix = 'agents (simulé)'
+          sufix = 'fonctionnaires (simulé)'
           break
         case 'projectedCont':
-          sufix = 'agents (projeté)'
+          sufix = 'contractuels (projeté)'
           break
         case 'simulatedCont':
-          sufix = 'agents (simulé)'
+          sufix = 'contractuels (simulé)'
           break
       }
       let lbl =
@@ -234,7 +264,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     let $this = this
 
     const externalTooltipHandler = (context: any) => {
-      // Tooltip Element
       const { chart, tooltip } = context
 
       const { offsetLeft: positionX, offsetTop: positionY } =
@@ -355,7 +384,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
-        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
           events: ['click'],
           callbacks: {
@@ -447,7 +475,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             display: false,
           },
           tooltip: {
-            //events: ['click'],
             external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,
@@ -476,7 +503,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           },
         },
       },
-      plugins: [yScaleTextStock], //custom_canvas_background_color
+      plugins: [yScaleTextStock],
     }
     this.myChart = new Chart(
       document.getElementById('etp-chart') as ChartItem,
@@ -594,17 +621,17 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
     this.data = {
       projectedMag: {
-        values: [0], //[0, 10, 5],
+        values: [0],
         dotColor: '#e07dd8',
         bgColor: '#fdc0f8',
       },
       simulatedMag: {
-        values: [0], //[0, 8, 18],
+        values: [0],
         dotColor: '#fdc0f8',
         bgColor: '#e07dd8',
       },
       projectedGref: {
-        values: [],
+        values: [0],
         dotColor: '#f083a0',
         bgColor: '#ffcade',
       },
@@ -614,7 +641,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         bgColor: '#f083a0',
       },
       projectedCont: {
-        values: [],
+        values: [0],
         dotColor: '#fdbfb7',
         bgColor: '#fcd7d3',
       },

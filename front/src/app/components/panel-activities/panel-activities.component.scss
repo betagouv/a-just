@@ -2,6 +2,26 @@
 
 :host {
   display: block;
+
+  &.dark-mode {
+    p {
+      color: white;
+    }
+
+    .progress-bar {
+      p {
+        color: fColor(headerColor);
+      }
+    }
+
+    .sub-panel-activites {
+      .arrow-block {
+        .arrow {
+          background-color: fColor(darkModeBgLight);
+        }
+      }
+    }
+  }
 }
 
 .header-panel {
@@ -9,6 +29,7 @@
   height: 87px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   margin-bottom: 8px;
+
   .sub-item {
     flex: 1;
     align-self: stretch;
@@ -30,6 +51,7 @@
       div {
         display: flex;
         align-items: center;
+
         &.label {
           flex: 2;
           color: fColor(cblackdark);
@@ -40,15 +62,16 @@
 
         &.etp {
           flex: 1;
-          > p {
-            color: fColor(headerNumberColor)!important;
+
+          >p {
+            color: fColor(headerNumberColor) !important;
           }
         }
       }
 
       p {
         text-align: center;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: bold;
         margin: 0 2px;
       }
@@ -64,22 +87,22 @@
 .activities-panel {
   display: flex;
 
-  > div {
+  >div {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
 
     progression-bar {
-      width: 95%;
-      height: 80px;
+      width: 75%;
       cursor: pointer;
     }
   }
 }
 
 .progress-bar {
-  margin-top: 8px;
+  margin-top: 16px;
+  padding: 0px 8px;
   display: flex;
   align-items: center;
 
@@ -88,7 +111,7 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line > div {
+    .progress-bar-line>div {
       background-color: fColor(cred);
     }
   }
@@ -106,7 +129,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    > div {
+    >div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
@@ -144,30 +167,31 @@
   .group-sub-item {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(9, 11.1%);
+    grid-template-columns: repeat(4, 25%);
 
-    > div.sub-item {
+    >div.sub-item {
       width: 100%;
       margin-bottom: 4px;
     }
   }
 
   div.sub-item {
-    width: 9%;
+    width: 18%;
     display: flex;
     align-items: center;
     flex-direction: column;
 
     &.sub-item-or {
+      width: 9%;
       justify-self: center;
     }
 
     progression-bar {
-      width: 95%;
-      height: 80px;
+      width: 40%;
+      height: 62px;
     }
 
-    > p {
+    >p {
       text-align: center;
       font-size: 10px;
       font-weight: 500;

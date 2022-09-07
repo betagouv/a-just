@@ -21,21 +21,21 @@ export class InOutChartComponent implements OnDestroy {
   stopRealValue = ''
   elementRef: HTMLElement | undefined
   myChart: any = null
-  labels: string[] | null = ['Juil', 'Aout', 'Sept'] //null
+  labels: string[] | null = null
   tooltip: any = { display: false }
   realSelectedMonth = ''
   data = {
     projectedIn: {
-      values: [0], //[40, 30, 5],
+      values: [0],
     },
     simulatedIn: {
-      values: [0], //[10, 20, 30],
+      values: [0],
     },
     projectedOut: {
-      values: [0], //[0, 10, 20],
+      values: [0],
     },
     simulatedOut: {
-      values: [0], //[9, 10, 11],
+      values: [0],
     },
   }
 
@@ -119,16 +119,16 @@ export class InOutChartComponent implements OnDestroy {
 
     this.data = {
       projectedIn: {
-        values: [0], //[40, 30, 5],
+        values: [0],
       },
       simulatedIn: {
-        values: [0], //[10, 20, 30],
+        values: [0],
       },
       projectedOut: {
-        values: [0], //[0, 10, 20],
+        values: [0],
       },
       simulatedOut: {
-        values: [0], //[9, 10, 11],
+        values: [0],
       },
     }
   }
@@ -141,34 +141,34 @@ export class InOutChartComponent implements OnDestroy {
         {
           label: 'projectedIn',
           yAxisID: 'A',
-          backgroundColor: '#FCC63A', //'rgba(254, 235, 208, 0.5)', //claire
-          borderColor: '#FCC63A', //'rgba(254, 235, 208, 0.5)', //'#feebd0',
+          backgroundColor: '#FCC63A',
+          borderColor: '#FCC63A',
           data: this.data.projectedIn.values,
           fill: false,
         },
         {
           label: 'simulatedIn',
           yAxisID: 'A',
-          backgroundColor: '#CB9F2D', //'rgba(252, 198, 58, 0.7)', //fonce
-          borderColor: '#CB9F2D', //'rgba(252, 198, 58, 0.7)', //'#fcc63a',
+          backgroundColor: '#CB9F2D',
+          borderColor: '#CB9F2D',
           data: this.data.simulatedIn.values,
-          fill: false, //'-1',
+          fill: false,
         },
         {
           label: 'projectedOut',
           yAxisID: 'A',
-          backgroundColor: '#60E0EB', //'rgba(199, 246, 252, 0.5)',
-          borderColor: '#60E0EB', //'rgba(199, 246, 252, 0.5)', //'#60e0eb', // fonce rgba(96, 224, 235, 1)
+          backgroundColor: '#60E0EB',
+          borderColor: '#60E0EB',
           data: this.data.projectedOut.values,
-          fill: false, //'-1',
+          fill: false,
         },
         {
           yAxisID: 'A',
           label: 'simulatedOut',
-          backgroundColor: '#49B6C0', //'rgba(96, 224, 235, 0.7)', //claire //'#c7f6fc', // claire rgba(199, 246, 252, 1)
-          borderColor: '#49B6C0', //'rgba(96, 224, 235, 0.7)',
+          backgroundColor: '#49B6C0',
+          borderColor: '#49B6C0',
           data: this.data.simulatedOut.values,
-          fill: false, //'-1',
+          fill: false,
         },
       ],
     }
@@ -181,7 +181,6 @@ export class InOutChartComponent implements OnDestroy {
         ctx.save()
         ctx.font = '14px Arial'
         ctx.fillStyle = '#666'
-        //ctx.fillText('Stock', 1, top - 2)
         ctx.restore()
       },
     }
@@ -203,7 +202,6 @@ export class InOutChartComponent implements OnDestroy {
           break
       }
 
-      // TODO WARNING TO TEST WITH US LANGAGE
       let lbl =
         '  ' +
         Math.floor(parseFloat(context.formattedValue.replace(/\s/g, ''))) +
@@ -215,7 +213,6 @@ export class InOutChartComponent implements OnDestroy {
     let $this = this
 
     const externalTooltipHandler = (context: any) => {
-      // Tooltip Element
       const { chart, tooltip } = context
 
       const { offsetLeft: positionX, offsetTop: positionY } =
@@ -344,10 +341,7 @@ export class InOutChartComponent implements OnDestroy {
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
         },
-        //events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
         tooltips: {
-          //events: ['click'],
-          //events: ['click', 'mouseout'],
           callbacks: {
             title: function (tooltipItem: any, data: any) {
               return data['labels'][tooltipItem[0]['index']]
@@ -445,8 +439,6 @@ export class InOutChartComponent implements OnDestroy {
             display: false,
           },
           tooltip: {
-            //events: ['click', 'mouseout'],
-
             external: externalTooltipHandler,
             usePointStyle: true,
             boxWidth: 15,

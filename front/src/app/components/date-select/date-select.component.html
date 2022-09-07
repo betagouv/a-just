@@ -1,10 +1,15 @@
 <p (click)="onClick()" class="title-select">{{ title }}</p>
 <div>
-    <p (click)="onClick()">{{ realValue }}</p>
-    <mat-icon *ngIf="value && clearable && !readOnly"
-        (click)="onDateChanged(null); $event.preventDefault(); $event.stopPropagation();" class="cursor-pointer">
-        highlight_off</mat-icon>
-    <mat-icon *ngIf="!(value && clearable && !readOnly)" (click)="onClick()">{{ icon }}</mat-icon>
+  <p (click)="onClick()">{{ realValue }}</p>
+  <mat-icon *ngIf="value && clearable && !readOnly" (click)="
+      onDateChanged(null); $event.preventDefault(); $event.stopPropagation()
+    " class="cursor-pointer">
+    highlight_off</mat-icon>
+  <mat-icon *ngIf="!(value && clearable && !readOnly)" (click)="onClick()">{{
+    icon
+    }}</mat-icon>
 </div>
-<input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)">
-<mat-datepicker #picker></mat-datepicker>
+<input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)" [min]="min"
+  [max]="max" />
+<mat-datepicker #picker (monthSelected)="setMonthAndYear($event, picker)"
+  [startView]="dateType === 'month' ? 'year' : 'month'"></mat-datepicker>

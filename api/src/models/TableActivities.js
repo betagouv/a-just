@@ -1,10 +1,39 @@
-import { sumBy } from 'lodash'
+import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
+import {
+  calculMainValuesFromChilds,
+  preformatActivitiesArray,
+} from '../utils/activities'
 
 export default (sequelizeInstance, Model) => {
+  Model.getLastMonth = async (HRBackupId) => {
+    const theLast = await Model.findOne({
+      attributes: ['periode'],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      order: [['periode', 'desc']],
+      raw: true,
+    })
+
+    if (theLast) {
+      return theLast.periode
+    }
+
+    return null
+  }
+
   Model.getAll = async (HRBackupId) => {
     const list = await Model.findAll({
-      attributes: ['periode', 'entrees', 'sorties', 'stock'],
+      attributes: [
+        'periode',
+        'entrees',
+        'sorties',
+        'stock',
+        'original_entrees',
+        'original_sorties',
+        'original_stock',
+      ],
       where: {
         hr_backup_id: HRBackupId,
       },
@@ -13,6 +42,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.ContentieuxReferentiels,
         },
       ],
+      order: [['periode', 'asc']],
       raw: true,
     })
 
@@ -20,9 +50,11 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
-        entrees: list[i].entrees,
-        sorties: list[i].sorties,
-        stock: list[i].stock,
+        entrees:
+          list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
+        sorties:
+          list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
+        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -35,11 +67,12 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (csv, HRBackupId) => {
     const contentieuxIds = {}
+    let minDate = null
 
     for (let i = 0; i < csv.length; i++) {
       const code = csv[i].code_import
 
-      if(!contentieuxIds[code]) {
+      if (!contentieuxIds[code]) {
         const contentieux = await Model.models.ContentieuxReferentiels.findOne({
           attributes: ['id'],
           where: {
@@ -54,187 +87,440 @@ export default (sequelizeInstance, Model) => {
       }
 
       if (contentieuxIds[code]) {
-        const year = csv[i].periode.slice(0,4)
-        const month = (+csv[i].periode.slice(-2)) - 1
+        const year = csv[i].periode.slice(0, 4)
+        const month = +csv[i].periode.slice(-2) - 1
         const periode = new Date(year, month)
-        
-        const periodeStart = new Date(
-          periode.getFullYear(),
-          periode.getMonth()
-        )
-        const periodeEnd = new Date(periodeStart)
-        periodeEnd.setMonth(periodeEnd.getMonth() + 1)
+
+        if (minDate === null || periode.getTime() < minDate.getTime()) {
+          minDate = new Date(periode)
+        }
 
         const findExist = await Model.findOne({
           where: {
             hr_backup_id: HRBackupId,
             contentieux_id: contentieuxIds[code],
             periode: {
-              [Op.gte]: periodeStart,
-              [Op.lte]: periodeEnd,
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
           },
         })
-        
+
         // if existe update content
-        if (findExist && 
-            (parseInt(csv[i].entrees) !== findExist.dataValues.entrees || 
-            parseInt(csv[i].sorties) !== findExist.dataValues.sorties || 
-            parseInt(csv[i].stock) !== findExist.dataValues.stock)
+        if (
+          findExist &&
+          (parseInt(csv[i].entrees) !== findExist.dataValues.original_entrees ||
+            parseInt(csv[i].sorties) !==
+              findExist.dataValues.original_sorties ||
+            parseInt(csv[i].stock) !== findExist.dataValues.original_stock)
         ) {
           await findExist.update({
-            entrees: parseInt(csv[i].entrees) || 0,
-            sorties: parseInt(csv[i].sorties) || 0,
-            stock: parseInt(csv[i].stock) || 0,
+            original_entrees: parseInt(csv[i].entrees) || 0,
+            original_sorties: parseInt(csv[i].sorties) || 0,
+            original_stock: parseInt(csv[i].stock) || 0,
           })
-        } else if(!findExist) {
+        } else if (!findExist) {
           // else create
           await Model.create({
             hr_backup_id: HRBackupId,
             periode,
             contentieux_id: contentieuxIds[code],
-            entrees: parseInt(csv[i].entrees) || 0,
-            sorties: parseInt(csv[i].sorties) || 0,
-            stock: parseInt(csv[i].stock) || 0,
+            original_entrees: parseInt(csv[i].entrees) || 0,
+            original_sorties: parseInt(csv[i].sorties) || 0,
+            original_stock: parseInt(csv[i].stock) || 0,
           })
         }
       }
     }
 
-    await Model.cleanActivities(HRBackupId)
+    await Model.cleanActivities(HRBackupId /*, minDate*/)
   }
 
-  Model.cleanActivities = async (HRBackupId) => {
-    const ref = await Model.models.ContentieuxReferentiels.getReferentiels()
-    const activitiesPeriodes = (await Model.findAll({
-      attributes: ['periode'],
+  Model.removeDuplicateDatas = async (HRBackupId) => {
+    const activities = await Model.findAll({
+      attributes: ['periode', 'contentieux_id', 'hr_backup_id'],
       where: {
         hr_backup_id: HRBackupId,
       },
-      group: ['periode'],
+      group: ['periode', 'contentieux_id', 'hr_backup_id'],
       raw: true,
-    })).map(d => d.periode)
+    })
 
-    console.log(activitiesPeriodes)
+    for (let i = 0; i < activities.length; i++) {
+      const periode = activities[i].periode
 
-    for (let i = 0; i < ref.length; i++) {
-      const referentiel = ref[i]
+      const duplicateActivities = await Model.findAll({
+        where: {
+          periode: {
+            [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+          },
+          hr_backup_id: HRBackupId,
+          contentieux_id: activities[i].contentieux_id,
+        },
+        order: ['updated_at', 'id'],
+      })
 
-      if(referentiel.childrens && referentiel.childrens.length) {
-        
-        for(let p = 0; p < activitiesPeriodes.length; p++) {
-          const periode = activitiesPeriodes[p]
-
-          const activities = await Model.findAll({
-            attributes: ['entrees', 'sorties', 'stock', 'periode', 'contentieux_id'],
-            where: {
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.childrens.map(r => r.id),
-            },
-            raw: true,
-          })
-
-          const findMainActivity = await Model.findOne({
-            where: {
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.id,
-            },
-          })
-
-          const options = {
-            entrees: sumBy(activities, 'entrees') || 0,
-            sorties: sumBy(activities, 'sorties') || 0,
-            stock: sumBy(activities, 'stock') || 0,
-          }
-
-          if(findMainActivity) {
-            await findMainActivity.update(options)
-          } else {
-            await Model.create({
-              ...options,
-              periode,
-              hr_backup_id: HRBackupId,
-              contentieux_id: referentiel.id,
-            })
-          }
+      if (duplicateActivities.length >= 2) {
+        for (let z = 1; z < duplicateActivities.length; z++) {
+          await duplicateActivities[z].destroy()
         }
       }
     }
   }
 
-  Model.saveBackup = async (list, hrBackupId) => {
-    let reelIds = []
+  Model.cleanActivities = async (HRBackupId, minPeriode = null) => {
+    const referentiels =
+      await Model.models.ContentieuxReferentiels.getReferentiels()
 
-    for (let x = 0; x < list.length; x++) {
-      const op = list[x]
+    if (!minPeriode) {
+      const minPeriodeFromDB = await Model.min('periode', {
+        where: {
+          hr_backup_id: HRBackupId,
+        },
+      })
 
-      const options = {
-        contentieux_id: op.contentieux.id,
-        periode: op.periode,
-        entrees: op.entrees,
-        sorties: op.sorties,
-        stock: op.stock,
-        hr_backup_id: hrBackupId,
+      if (minPeriodeFromDB) {
+        minPeriode = new Date(minPeriodeFromDB)
       }
-
-      if (op.id && op.id > 0) {
-        // update
-        await Model.updateById(op.id, options)
-      } else {
-        // create
-        const newOp = await Model.create(options)
-        op.id = newOp.dataValues.id
-      }
-
-      reelIds.push(op.id)
     }
 
-    // remove old
-    const oldNewList = (
-      await Model.models.Activities.findAll({
-        attributes: ['id'],
-        where: {
-          hr_backup_id: hrBackupId,
-        },
-        raw: true,
-      })
-    ).map((h) => h.id)
-    for (let i = 0; i < oldNewList.length; i++) {
-      if (reelIds.indexOf(oldNewList[i]) === -1) {
-        await Model.destroyById(oldNewList[i])
-      }
+    console.log('minPeriode', minPeriode)
+    if (!minPeriode) {
+      return // stop we don't have values to analyse
+    }
+
+    for (let i = 0; i < referentiels.length; i++) {
+      await Model.updateTotalAndFuturValue(
+        referentiels[i].id,
+        minPeriode,
+        HRBackupId
+      )
     }
   }
 
-  Model.updateBy = async (contentieuxId, date, values, hrBackupId) => {
+  Model.updateBy = async (
+    contentieuxId,
+    date,
+    values,
+    hrBackupId,
+    userId,
+    nodeUpdated
+  ) => {
+    console.log(
+      'updateBy',
+      contentieuxId,
+      date,
+      values,
+      hrBackupId,
+      userId,
+      nodeUpdated
+    )
     date = new Date(date)
-    const dateStart = new Date(date.getFullYear(), date.getMonth())
-    const dateStop = new Date(dateStart)
-    dateStop.setMonth(dateStop.getMonth() + 1)
 
-    const findActivity = await Model.findOne({
+    let findActivity = await Model.findOne({
       where: {
         periode: {
-          [Op.gte]: dateStart,
-          [Op.lte]: dateStop,
+          [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
         hr_backup_id: hrBackupId,
         contentieux_id: contentieuxId,
       },
     })
 
-    if(findActivity) {
+    if (findActivity) {
       await findActivity.update(values)
     } else {
-      await Model.create({
+      findActivity = await Model.create({
         ...values,
         hr_backup_id: hrBackupId,
         contentieux_id: contentieuxId,
         periode: date,
       })
     }
+
+    if (userId !== null) {
+      await Model.models.HistoriesActivitiesUpdate.addHistory(
+        userId,
+        findActivity.dataValues.id,
+        nodeUpdated,
+        values[nodeUpdated]
+      )
+    }
+
+    const referentiels =
+      await Model.models.ContentieuxReferentiels.getReferentiels()
+    const ref = referentiels.find((r) =>
+      (r.childrens || []).find((c) => c.id === contentieuxId)
+    )
+
+    if (ref) {
+      await Model.updateTotalAndFuturValue(ref.id, date, hrBackupId)
+    }
+  }
+
+  Model.updateTotalAndFuturValue = async (
+    mainContentieuxId,
+    date,
+    hrBackupId
+  ) => {
+    const referentiels =
+      await Model.models.ContentieuxReferentiels.getReferentiels()
+    const ref = referentiels.find((r) => r.id === mainContentieuxId)
+    console.log(ref)
+
+    if (ref) {
+      let continueToDo = false
+      do {
+        const childrens = ref.childrens || []
+        console.log('check date', date, mainContentieuxId, hrBackupId)
+
+        for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
+          // IF not exist, create it
+          if (
+            !(await Model.findOne({
+              where: {
+                periode: {
+                  [Op.between]: [startOfMonth(date), endOfMonth(date)],
+                },
+                hr_backup_id: hrBackupId,
+                contentieux_id: childrens[cIndex].id,
+              },
+            }))
+          ) {
+            await Model.create({
+              periode: date,
+              hr_backup_id: hrBackupId,
+              contentieux_id: childrens[cIndex].id,
+            })
+          }
+        }
+
+        // update main activity with entrees, sorties, stock
+        const findAllChild = await Model.findAll({
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(date), endOfMonth(date)],
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.childrens.map((r) => r.id),
+          },
+          raw: true,
+        })
+
+        // calcul stock of custom stock
+        for (let i = 0; i < findAllChild.length; i++) {
+          console.log(findAllChild[i].contentieux_id)
+
+          let currentStock = findAllChild[i].stock
+          // if exist stock and is updated by user do not get previous stock
+          const getUserUpdateStock =
+            await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
+              findAllChild[i].id,
+              'stock'
+            )
+
+          console.log('currentStock', currentStock, getUserUpdateStock)
+          
+          // do not updated if updated by user
+          if (!getUserUpdateStock || getUserUpdateStock.value === null) {
+            const previousStockValue = await Model.checkAndUpdatePreviousStock(
+              findAllChild[i].contentieux_id,
+              date,
+              hrBackupId
+            )
+
+            console.log('previousStockValue', previousStockValue)
+            
+            if (previousStockValue !== null) {
+              if (
+                findAllChild[i].entrees !== null ||
+                findAllChild[i].sorties !== null ||
+                previousStockValue.type === 'calculate'
+              ) {
+                const entrees = preformatActivitiesArray(
+                  [findAllChild[i]],
+                  ['entrees', 'original_entrees']
+                )
+                const sorties = preformatActivitiesArray(
+                  [findAllChild[i]],
+                  ['sorties', 'original_sorties']
+                )
+                currentStock =
+                  previousStockValue.stock + (entrees || 0) - (sorties || 0)
+              } else {
+                currentStock = findAllChild[i].original_stock
+              }
+            } else {
+              currentStock = findAllChild[i].original_stock
+
+              if (findAllChild[i].entrees !== null) {
+                currentStock += (findAllChild[i].entrees || 0)
+              } else if (findAllChild[i].original_entrees !== null) {
+                currentStock += (findAllChild[i].original_entrees || 0)
+              }
+
+              if (findAllChild[i].sorties !== null) {
+                currentStock -= (findAllChild[i].sorties || 0)
+              } else if (findAllChild[i].original_sorties !== null) {
+                currentStock -= (findAllChild[i].original_sorties || 0)
+              }
+            }
+
+            if (currentStock === findAllChild[i].original_stock) {
+              currentStock = null
+            }
+
+            if(currentStock !== null && currentStock < 0) {
+              currentStock = 0
+            }
+
+            // save to database
+            findAllChild[i].stock = currentStock
+            await Model.updateById(findAllChild[i].id, {
+              stock: currentStock,
+            })
+          }
+        }
+
+        const findMain = await Model.findOne({
+          where: {
+            periode: {
+              [Op.between]: [startOfMonth(date), endOfMonth(date)],
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.id,
+          },
+        })
+        if (findMain) {
+          await findMain.update(calculMainValuesFromChilds(findAllChild))
+        } else {
+          await Model.create({
+            periode: date,
+            hr_backup_id: hrBackupId,
+            contentieux_id: ref.id,
+            ...calculMainValuesFromChilds(findAllChild),
+          })
+        }
+
+        // check if they are value after this periode
+        const nextPeriode = await Model.findAll({
+          attributes: ['periode'],
+          where: {
+            periode: {
+              [Op.gt]: endOfMonth(date),
+            },
+            hr_backup_id: hrBackupId,
+            contentieux_id: [ref.id].concat(ref.childrens.map((r) => r.id)),
+          },
+          raw: true,
+          order: ['periode'],
+        })
+        continueToDo = nextPeriode.length !== 0
+        if (nextPeriode.length) {
+          date.setMonth(date.getMonth() + 1)
+        }
+      } while (continueToDo)
+    }
+  }
+
+  // check if they are a stock before, set by user, and find it. If this is multiple month ago then update all month between them.
+  Model.checkAndUpdatePreviousStock = async (
+    contentieuxId,
+    periode,
+    backupId
+  ) => {
+    const startOfMonthPeriode = startOfMonth(periode)
+
+    const previousPeriode = await Model.findAll({
+      attributes: ['periode', 'stock', 'original_stock'],
+      where: {
+        periode: {
+          [Op.lt]: startOfMonthPeriode,
+        },
+        [Op.or]: [
+          {
+            stock: {
+              [Op.ne]: null,
+            },
+          },
+          {
+            original_stock: {
+              [Op.ne]: null,
+            },
+          },
+        ],
+        hr_backup_id: backupId,
+        contentieux_id: contentieuxId,
+      },
+      raw: true,
+      order: ['periode'],
+    })
+
+    if (previousPeriode.length) {
+      if (previousPeriode[previousPeriode.length - 1].stock) {
+        return {
+          stock: previousPeriode[previousPeriode.length - 1].stock,
+          type: 'calculate',
+        }
+      } else if (
+        previousPeriode[previousPeriode.length - 1].original_stock === null
+      ) {
+        return null
+      } else if (previousPeriode[previousPeriode.length - 1].original_stock) {
+        return {
+          stock: previousPeriode[previousPeriode.length - 1].original_stock,
+          type: 'setted',
+        }
+      }
+    }
+    return null
+  }
+
+  Model.getByMonth = async (date, HrBackupId) => {
+    date = new Date(date)
+
+    const list = await Model.findAll({
+      attributes: [
+        'id',
+        'periode',
+        'entrees',
+        'sorties',
+        'stock',
+        ['original_entrees', 'originalEntrees'],
+        ['original_sorties', 'originalSorties'],
+        ['original_stock', 'originalStock'],
+      ],
+      where: {
+        hr_backup_id: HrBackupId,
+        periode: {
+          [Op.between]: [startOfMonth(date), endOfMonth(date)],
+        },
+      },
+      include: [
+        {
+          model: Model.models.ContentieuxReferentiels,
+        },
+      ],
+      raw: true,
+    })
+
+    for (let i = 0; i < list.length; i++) {
+      list[i] = {
+        id: list[i].id,
+        periode: list[i].periode,
+        entrees: list[i].entrees,
+        originalEntrees: list[i].originalEntrees,
+        sorties: list[i].sorties,
+        originalSorties: list[i].originalSorties,
+        stock: list[i].stock,
+        originalStock: list[i].originalStock,
+        contentieux: {
+          id: list[i]['ContentieuxReferentiel.id'],
+          label: list[i]['ContentieuxReferentiel.label'],
+        },
+      }
+    }
+
+    return list
   }
 
   return Model

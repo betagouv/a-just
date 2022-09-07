@@ -41,9 +41,11 @@ export class HumanResourceService {
   >([])
   allContentieuxReferentiel: ContentieuReferentielInterface[] = []
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
+  allIndisponibilityReferentielIds: Array<number> = []
   copyOfIdsIndispo: number[] = []
   categoriesFilterList: HRCategorySelectedInterface[] = []
   selectedReferentielIds: number[] = []
+  selectedCategoriesIds: number[] = []
 
   constructor(
     private serverService: ServerService,
@@ -65,6 +67,10 @@ export class HumanResourceService {
       this.selectedReferentielIds = c
         .filter((a) => this.copyOfIdsIndispo.indexOf(a.id) === -1)
         .map((r) => r.id)
+    })
+
+    this.backupId.subscribe((id) => {
+      this.activitiesService.hrBackupId = id
     })
   }
 
@@ -88,7 +94,7 @@ export class HumanResourceService {
             etpt: 0,
             nbPersonal: 0,
           }))
-          this.fonctions.next(result.fonctions)
+          this.fonctions.next(orderBy(result.fonctions, ['categoryId', 'rank']))
           this.activitiesService.activities.next(
             result.activities.map((a: ActivityInterface) => ({
               ...a,
@@ -96,7 +102,6 @@ export class HumanResourceService {
             }))
           )
 
-          this.activitiesService.hrBackupId = result.backupId
           this.hr.next(result.hr.map(this.formatHR))
           this.backups.next(
             result.backups.map((b: BackupInterface) => ({
@@ -334,7 +339,11 @@ export class HumanResourceService {
     )
   }
 
-  findSituation(hr: HumanResourceInterface | null, date?: Date, order = 'desc') {
+  findSituation(
+    hr: HumanResourceInterface | null,
+    date?: Date,
+    order = 'desc'
+  ) {
     if (date) {
       date = today(date)
     }
@@ -357,7 +366,11 @@ export class HumanResourceService {
     return situations.length ? situations[0] : null
   }
 
-  findAllSituations(hr: HumanResourceInterface | null, date?: Date, order: string | boolean = 'desc') {
+  findAllSituations(
+    hr: HumanResourceInterface | null,
+    date?: Date,
+    order: string | boolean = 'desc'
+  ) {
     let situations = orderBy(
       hr?.situations || [],
       [
@@ -598,14 +611,21 @@ export class HumanResourceService {
         (a) => a.contentieux && a.contentieux.id === referentielId
       )
       const indispoFiltred = this.findAllIndisponibilities(hr, date)
-      let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+      let reelEtp = 0
+      const isIndispoRef =
+        this.allIndisponibilityReferentielIds.includes(referentielId)
+      if (isIndispoRef) {
+        reelEtp = situation.etp
+      } else {
+        reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+      }
       if (reelEtp < 0) {
         reelEtp = 0
       }
-
       return {
         etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
         situation,
+        indisponibilities: indispoFiltred,
       }
     }
 
@@ -614,7 +634,6 @@ export class HumanResourceService {
       situation: null,
     }
   }
-
   controlIndisponibilities(
     human: HumanResourceInterface,
     indisponibilities: RHActivityInterface[]
@@ -626,9 +645,7 @@ export class HumanResourceService {
         .map((s) => today(s.dateStart))
     )
     listAllDates = listAllDates.concat(
-      indisponibilities
-        .filter((i) => i.dateStop)
-        .map((s) => today(s.dateStop))
+      indisponibilities.filter((i) => i.dateStop).map((s) => today(s.dateStop))
     )
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
