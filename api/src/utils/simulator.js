@@ -16,7 +16,7 @@ import config from 'config';
 
 export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
-  nbDaysByMagistratPerMonth: environment.nbDaysByMagistrat / 12,
+  nbDaysByMagistratPerMonth: config.nbDaysByMagistrat / 12,
   nbHoursPerDay: config.nbHoursPerDay,
 };
 
