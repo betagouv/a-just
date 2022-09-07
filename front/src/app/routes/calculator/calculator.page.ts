@@ -25,6 +25,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   datasFilted: CalculatorInterface[] = []
   isLoading: boolean = false
   maxDateSelectionDate: Date | null = null
+  isLoadingLastMonth: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -81,8 +82,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           )
         }
 
-        if (this.isLoading === false) {
-          this.isLoading = true
+        if (this.isLoadingLastMonth === false) {
+          this.isLoadingLastMonth = true
 
           this.activitiesService.getLastMonthActivities().then((date) => {
             date = new Date(date ? date : '')
@@ -94,7 +95,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
               this.calculatorService.dateStop.next(max)
             }
             this.maxDateSelectionDate = max
-            this.isLoading = false
+            this.isLoadingLastMonth = false
           })
         }
       })

@@ -72,7 +72,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   formReferentiel: dataInterface[] = []
   formFilterSelect: dataInterface[] = []
   formFilterFonctionsSelect: dataInterface[] = []
-  categoriesFilterList: HRCategorySelectedInterface[] = []
   searchValue: string = ''
   valuesFinded: HumanResourceInterface[] | null = null
   indexValuesFinded: number = 0
@@ -99,6 +98,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.watch(
+      this.humanResourceService.backupId.subscribe(() => {
+        this.onFilterList()
+      })
+    )
+    this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
         this.referentiel = ref
           .filter(
@@ -124,6 +128,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           this.formFilterSelect = categories.map((f) => ({
             id: f.id,
             value: f.label,
+            orignalValue: f.label,
           }))
 
           this.onSelectedCategoriesIdsChanged(
@@ -141,40 +146,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    //TODO utile ?
-    this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
-      let personal = []
-      let etpt = 0
+    this.formFilterSelect = this.formFilterSelect.map(c => {
+      const itemBlock = this.listFormated.find(l => l.categoryId === c.id)
+      c.value = (c.orignalValue + '')
 
-      if (formatedList) {
-        personal = formatedList.hrFiltered
-        personal.map((h) => {
-          let realETP = (h.etp || 0) - h.hasIndisponibility
-          if (realETP < 0) {
-            realETP = 0
-          }
-          etpt += realETP
-        })
+      if(itemBlock && itemBlock.hrFiltered.length > 1) {
+        c.value = `${c.value}s`
       }
 
-      return {
-        ...c,
-        etpt,
-        nbPersonal: personal.length,
-      }
+      return c
     })
-
-    /*this.formFilterSelect = this.categoriesFilterList.map((c) => {
-      let value = `${c.nbPersonal} ${
-        c.nbPersonal > 1 ? c.labelPlural : c.label
-      }`
-
-      return {
-        id: c.id,
-        value,
-      }
-    })*/
   }
 
   trackById(index: number, item: any) {
@@ -216,18 +197,27 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onFilterList() {
-    if (!this.formFilterSelect.length || !this.referentiel.length) {
+    if (
+      !this.formFilterSelect.length ||
+      !this.referentiel.length ||
+      this.humanResourceService.backupId.getValue() === null
+    ) {
       return
     }
 
     // init datas
     this.objectOfFirstETPTargetValue = []
 
+    let selectedReferentielIds: number[] | null = null
+    if (this.formReferentiel.length !== this.reaffectatorService.selectedReferentielIds.length) {
+      selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
+    }
+
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
-        this.reaffectatorService.selectedReferentielIds,
+        selectedReferentielIds,
         this.reaffectatorService.selectedCategoriesIds,
         this.reaffectatorService.selectedFonctionsIds
       )
@@ -455,10 +445,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       if (list.hrFiltered.length > 1) {
         if (list.originalLabel.indexOf('agistrat') !== -1) {
-          list.label = list.originalLabel.replace('agistrat', 'agistrats')
+          list.label = list.originalLabel.replace(
+            'agistrat',
+            'agistrats du siège'
+          )
         } else {
           list.label = list.originalLabel + 's'
         }
+      } else if (list.originalLabel.indexOf('agistrat') !== -1) {
+        list.label = list.originalLabel.replace('agistrat', 'agistrat du siège')
       } else {
         list.label = list.originalLabel
       }
@@ -656,20 +651,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     ) {
       this.listFormated[index].personSelected = []
     } else {
-      this.listFormated[index].personSelected = this.listFormated[index].hrFiltered.map(
-        (h) => h.id
-      )
+      this.listFormated[index].personSelected = this.listFormated[
+        index
+      ].hrFiltered.map((h) => h.id)
     }
   }
 
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) => {
-        const indexOfHRFiltered = list.hrFiltered.findIndex(h => h.id === id)
-        const indexOfAllHR = list.allHr.findIndex(h => h.id === id)
+        const indexOfHRFiltered = list.hrFiltered.findIndex((h) => h.id === id)
+        const indexOfAllHR = list.allHr.findIndex((h) => h.id === id)
 
-        if(indexOfHRFiltered !== 1 && indexOfAllHR !== -1) {
-          list.hrFiltered[indexOfHRFiltered] = {...list.allHr[indexOfAllHR]}
+        if (indexOfHRFiltered !== 1 && indexOfAllHR !== -1) {
+          list.hrFiltered[indexOfHRFiltered] = { ...list.allHr[indexOfAllHR] }
         }
       })
 
