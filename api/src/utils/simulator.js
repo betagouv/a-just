@@ -12,11 +12,12 @@ import {
   workingDay,
 } from './date';
 import { fixDecimal } from './number';
+import config from 'config';
 
 export const environment = {
-  nbDaysByMagistrat: 208,
-  nbDaysByMagistratPerMonth: 208 / 12,
-  nbHoursPerDay: 8,
+  nbDaysByMagistrat: config.nbDaysByMagistrat,
+  nbDaysByMagistratPerMonth: environment.nbDaysByMagistrat / 12,
+  nbHoursPerDay: config.nbHoursPerDay,
 };
 
 const emptySituation = {
@@ -115,14 +116,6 @@ export async function getSituation(
 
     const countOfCalandarDays = nbOfDays(new Date(endDateCs), new Date());
 
-    console.log('stock Actual Today', {
-      lastStock,
-      countOfCalandarDays,
-      time: 17.33,
-      etpMagFuturToCompute,
-      realTimePerCase,
-    });
-
     // Compute stock projection until today
     lastStock = computeLastStock(
       lastStock,
@@ -131,7 +124,6 @@ export async function getSituation(
       realTimePerCase,
       totalIn
     );
-    console.log('stock Actual Today', { lastStock });
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn);
@@ -208,13 +200,6 @@ export async function getSituation(
       let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpContStartToEndToCompute } =
         getEtpByCategory(etpAffectedStartToEndToCompute, 'StartToEndToCompute');
 
-      console.log('stock datestop', {
-        lastStock,
-        nbDayCalendarProjected,
-        time: 17.3333333,
-        etpMagStartToEndToCompute,
-        realTimePerCase,
-      });
       // Compute projectedStock with etp at datestop
       const projectedLastStock = computeLastStock(
         lastStock,
@@ -223,7 +208,6 @@ export async function getSituation(
         realTimePerCase,
         totalIn
       );
-      console.log('stock datestop', { projectedLastStock });
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn);
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut);
 
@@ -579,7 +563,7 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
     let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null;
     if (listContentieux !== [] && listContentieux !== null) {
       listContentieux = listContentieux.filter((contentieux) => contentieux.id === referentielId);
-      if (listContentieux !== []) console.log('L"ETP', etp, listContentieux);
+      //if (listContentieux !== []) console.log('L"ETP', etp, listContentieux);
     }
   }
 
