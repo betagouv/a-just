@@ -248,9 +248,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.humanResourceService.categoriesFilterListIds =
       this.categoriesFilterList.filter((c) => c.selected).map((c) => c.id) // copy to memoryse selection
     let selectedReferentielIds: number[] | null = null
-    if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
+    // if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds
-    }
+    // }
 
     this.humanResourceService
       .onFilterList(
