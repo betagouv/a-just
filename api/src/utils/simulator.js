@@ -1,6 +1,5 @@
 import { isFirstDayOfMonth } from 'date-fns';
 import { sortBy, sumBy } from 'lodash';
-import { getEtpByDateAndPersonSimu } from '../constants/human-resource';
 import { filterActivitiesByDateAndContentieuxId } from './activities';
 import {
   checkIfDateIsNotToday,
@@ -13,6 +12,7 @@ import {
 } from './date';
 import { fixDecimal } from './number';
 import config from 'config';
+import { getEtpByDateAndPersonSimu } from './human-resource';
 
 export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
@@ -589,7 +589,7 @@ export function execSimulation(params, simulation, dateStart, dateStop) {
 
   if (
     params.lockedParams.param1.label !== '' &&
-    simulation.hasOwnProperty(params.lockedParams.param1.label)
+    simulation[params.lockedParams.param1.label] !== undefined
   )
     //@ts-ignore
     simulation[params.lockedParams.param1.label] =
@@ -598,7 +598,7 @@ export function execSimulation(params, simulation, dateStart, dateStop) {
         : parseFloat(params.lockedParams.param1.value);
   if (
     params.lockedParams.param2.label !== '' &&
-    simulation.hasOwnProperty(params.lockedParams.param2.label)
+    simulation[params.lockedParams.param2.label] !== undefined
   )
     //@ts-ignore
     simulation[params.lockedParams.param2.label] =

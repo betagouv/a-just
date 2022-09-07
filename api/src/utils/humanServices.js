@@ -63,31 +63,3 @@ export function filterActivitiesByDate (list, date) {
 
   return uniqBy(list, 'referentielId')
 }
-
-export function findSituation (hr, date) {
-  let situations = findAllSituations(hr, date)
-
-  return situations.length ? situations[0] : null
-}
-
-export function findAllSituations (hr, date) {
-  let situations = orderBy(
-    (hr && hr.situations) || [],
-    [
-      (o) => {
-        const d = today(o.dateStart)
-        return d.getTime()
-      },
-    ],
-    ['desc']
-  )
-
-  if (date) {
-    situations = situations.filter((hra) => {
-      const dateStart = today(hra.dateStart)
-      return dateStart.getTime() <= date.getTime()
-    })
-  }
-
-  return situations
-}
