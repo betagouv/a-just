@@ -65,14 +65,8 @@ export default class RouteExtractor extends Route {
       let refObj = {};
       let totalEtpt = 0;
 
-      const indispoArray = flatReferentielsList.map(async (referentiel) => {
-        etpAffected = await getHRVentilation(
-          human,
-          referentiel.id,
-          [...categories],
-          dateStart,
-          dateStop
-        );
+      const indispoArray = flatReferentielsList.map((referentiel) => {
+        etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop);
 
         const { counterEtpTotal, counterEtpSubTotal } = countEtp(etpAffected, referentiel);
 
@@ -107,7 +101,6 @@ export default class RouteExtractor extends Route {
         }
         return { indispo: 0 };
       });
-
       const key = indispoArray.filter((elem) => elem.contentieux === true)[0].label || '';
 
       refObj[key] = sumBy(indispoArray, 'indispo');
