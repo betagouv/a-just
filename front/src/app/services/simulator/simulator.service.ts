@@ -105,6 +105,7 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
+    console.log('getSituation')
     this.isLoading.next(true)
     return this.serverService
       .post(`simulator/get-situation`, {
@@ -117,8 +118,8 @@ export class SimulatorService extends MainClass {
         if (dateStop) {
           this.situationProjected.next(data.data.situation.endSituation)
         } else this.situationActuelle.next(data.data.situation)
-        this.isLoading.next(false)
       })
+      .then(() => this.isLoading.next(false))
   }
 
   toSimulate(params: any, simulation: SimulationInterface) {
