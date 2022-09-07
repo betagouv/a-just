@@ -10,6 +10,7 @@ import { MainClass } from 'src/app/libs/main-class'
 export interface dataInterface {
   id: number
   value: string
+  orignalValue?: string
   childrens?: childrenInterface[]
 }
 

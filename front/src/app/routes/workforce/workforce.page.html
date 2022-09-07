@@ -25,7 +25,8 @@
           <p class="etp">{{ category.etpt | number:".2-2" }} ETPT</p>
         </div>
       </div>
-
+    </div>
+    <div class="search-zone">
       <aj-input-button title="Rechercher un collaborateur" placeholder="Indiquer le nom" [ngModel]="searchValue"
         (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">
       </aj-input-button>
