@@ -7,9 +7,6 @@ import { ContentieuxOptionsService } from '../contentieux-options/contentieux-op
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
-const start = month(new Date(), -4)
-const end = month(new Date(), -2, 'lastday')
-
 @Injectable({
   providedIn: 'root',
 })
@@ -17,8 +14,12 @@ export class CalculatorService extends MainClass {
   calculatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
     CalculatorInterface[]
   >([])
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  dateStart: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
+    null
+  )
+  dateStop: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
+    null
+  )
   referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
 
   constructor(

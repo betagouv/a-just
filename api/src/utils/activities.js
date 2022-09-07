@@ -1,5 +1,5 @@
 export const calculMainValuesFromChilds = (childs) => {
-  return {
+  const returnObject = {
     entrees: preformatActivitiesArray(childs, ['entrees', 'original_entrees']),
     original_entrees: preformatActivitiesArray(childs, ['original_entrees']),
     sorties: preformatActivitiesArray(childs, ['sorties', 'original_sorties']),
@@ -7,6 +7,20 @@ export const calculMainValuesFromChilds = (childs) => {
     stock: preformatActivitiesArray(childs, ['stock', 'original_stock']),
     original_stock: preformatActivitiesArray(childs, ['original_stock']),
   }
+
+  if(returnObject.entrees === returnObject.original_entrees) {
+    returnObject.entrees = null
+  }
+
+  if(returnObject.sorties === returnObject.original_sorties) {
+    returnObject.sorties = null
+  }
+
+  if(returnObject.stock === returnObject.original_stock) {
+    returnObject.stock = null
+  }
+
+  return returnObject
 }
 
 export const preformatActivitiesArray = (list, index) => {
@@ -23,5 +37,5 @@ export const preformatActivitiesArray = (list, index) => {
     }
   })
   
-  return total
+  return total !== null && total < 0 ? 0 : total
 }

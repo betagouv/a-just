@@ -4,10 +4,12 @@ import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { month } from 'src/app/utils/dates'
 @Component({
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
@@ -15,13 +17,14 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentiel: ContentieuReferentielInterface[] = []
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
-  dateStart: Date = this.calculatorService.dateStart.getValue()
-  dateStop: Date = this.calculatorService.dateStop.getValue()
+  dateStart: Date | null = null
+  dateStop: Date | null = null
   formReferentiel: dataInterface[] = []
   sortBy: string = ''
   datas: CalculatorInterface[] = []
   datasFilted: CalculatorInterface[] = []
   isLoading: boolean = false
+  maxDateSelectionDate: Date | null = null
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -74,6 +77,22 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentiel.map((r) => r.id)
           )
         }
+
+        if (this.isLoading === false) {
+          this.isLoading = true
+
+          this.activitiesService.getLastMonthActivities().then((date) => {
+            date = new Date(date ? date : '')
+            const max = month(date, 0, 'lastday')
+
+            if (this.dateStop === null || max.getTime() < this.dateStop.getTime()) {
+              this.calculatorService.dateStart.next(month(max, -2))
+              this.calculatorService.dateStop.next(max)
+            }
+            this.maxDateSelectionDate = max
+            this.isLoading = false
+          })
+        }
       })
     )
   }
@@ -86,7 +105,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     if (
       this.humanResourceService.backupId.getValue() &&
       this.contentieuxOptionsService.backupId.getValue() &&
-      this.calculatorService.referentielIds.getValue().length
+      this.calculatorService.referentielIds.getValue().length &&
+      this.dateStart !== null
     ) {
       this.isLoading = true
       this.calculatorService

@@ -23,7 +23,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   } | null = null
   timeoutUpdateAcitity: any = {}
   canEditActivities: boolean = false
-  isLoadedFirst: boolean = false
+  isLoadedFirst: boolean = true
 
   constructor(
     private activitiesService: ActivitiesService,
@@ -37,9 +37,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
-            console.log(lastMonth)
             lastMonth = new Date(lastMonth)
-            console.log(lastMonth)
             this.activitiesService.activityMonth.next(lastMonth)
           })
         }
@@ -88,17 +86,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         }
       })
 
-      return total
+      return total !== null && total < 0 ? 0 : total
     }
-    referentiel.in = preformatArray(referentiel.childrens, ['in', 'originalIn'])
-    referentiel.out = preformatArray(referentiel.childrens, [
-      'out',
-      'originalOut',
-    ])
-    referentiel.stock = preformatArray(referentiel.childrens, [
-      'stock',
-      'originalStock',
-    ])
+    const inValue = preformatArray(referentiel.childrens, ['in', 'originalIn'])
+    const outValue = preformatArray(referentiel.childrens, ['out', 'originalOut'])
+    const stockValue = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
+    referentiel.in = inValue === referentiel.originalIn ? null : inValue
+    referentiel.out = outValue === referentiel.originalOut ? null : outValue
+    referentiel.stock = outValue === referentiel.originalStock ? null : stockValue
 
     // save datas
     if (this.timeoutUpdateAcitity[subRef.id]) {
@@ -124,7 +119,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         date: new Date(),
         user: this.userService.user.getValue(),
       }
-    }, 2000)
+    }, 500)
   }
 
   changeMonth(date: Date) {
@@ -135,7 +130,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
-        this.isLoadedFirst = true
+        this.isLoadedFirst = false
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
 

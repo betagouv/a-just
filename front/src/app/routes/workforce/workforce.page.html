@@ -157,7 +157,7 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <a routerLink="/reaffectateur" class="reaffectator-page">
+  <a *ngIf="canViewReaffectator" routerLink="/reaffectateur" class="reaffectator-page">
     <button class="white outline">
       Simuler des affectations
       <aj-radio-button [title]="'title'" width="40px" height="20px" bgColor="#8585f6" borderColor="#8585f6"

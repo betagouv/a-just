@@ -30,6 +30,7 @@
         visibility: hidden;
         top: calc(75% + 4px);
         left: 50%;
+        cursor: auto;
 
         > div {
             position: relative;
@@ -59,6 +60,7 @@
             top: 18px;
             right: 10px;
             font-size: 20px;
+            cursor: pointer;
         }
 
         .title {
