@@ -54,7 +54,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   formReferentiel: dataInterface[] = []
   categoriesFilterList: HRCategorySelectedInterface[] = []
   categoriesFilterListIds: number[] = []
-  selectedReferentielIds: any[] = []
+  selectedReferentielIds: number[] = []
   searchValue: string = ''
   valuesFinded: HumanResourceInterface[] | null = null
   indexValuesFinded: number = 0
@@ -247,12 +247,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.humanResourceService.categoriesFilterListIds =
       this.categoriesFilterList.filter((c) => c.selected).map((c) => c.id) // copy to memoryse selection
+    let selectedReferentielIds: number[] | null = null
+    if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
+      selectedReferentielIds = this.selectedReferentielIds
+    }
 
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
-        this.selectedReferentielIds,
+        selectedReferentielIds,
         this.categoriesFilterListIds
       )
       .then((list) => {
