@@ -14,7 +14,7 @@ export class ReaffectatorService {
   onFilterList(
     backupId: number,
     date: Date,
-    contentieuxIds: number[],
+    contentieuxIds: number[] | null,
     categoriesIds: number[],
     fonctionsIds: number[]
   ) {

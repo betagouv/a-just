@@ -608,7 +608,7 @@ export class HumanResourceService {
   onFilterList(
     backupId: number,
     date: Date,
-    contentieuxIds: number[],
+    contentieuxIds: number[] | null,
     categoriesIds: number[],
     endPeriodToCheck?: Date,
     extractor?: boolean
