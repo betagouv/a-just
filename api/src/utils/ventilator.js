@@ -1,6 +1,7 @@
 import { orderBy, sumBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { findSituation } from './hr-situations'
+import { findAllSituations } from './human-resource'
+import { findSituation } from './humanServices'
 import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
 
@@ -30,11 +31,8 @@ export const preformatHumanResources = (list, dateSelected) => {
       let firstSituation = currentSituation
       //console.log(h, currentSituation)
       if (!firstSituation) {
-        firstSituation = findSituation(
-          h,
-          undefined,
-          'asc'
-        )
+        const allSituation = findAllSituations(h)
+        firstSituation = allSituation.length ? allSituation[allSituation.length - 1] : null
         etp = 1
       }
 
