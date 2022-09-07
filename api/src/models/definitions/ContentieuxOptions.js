@@ -1,8 +1,8 @@
-import Sequelize from 'sequelize'
+import Sequelize from 'sequelize';
 
-const tableName = 'ContentieuxOptions'
+const tableName = 'ContentieuxOptions';
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -18,7 +18,7 @@ export default sequelizeInstance => {
         allowNull: true,
       },
       average_processing_time: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.FLOAT(11),
         allowNull: true,
       },
       backup_id: {
@@ -45,15 +45,14 @@ export default sequelizeInstance => {
       underscored: true,
       tableName,
     }
-  )
+  );
 
-  Model.associate = function (models) {    
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
-    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'backup_id' }) 
+  Model.associate = function (models) {
+    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' });
+    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'backup_id' });
 
-    
-    return models
-  }
+    return models;
+  };
 
-  return Model
-}
+  return Model;
+};

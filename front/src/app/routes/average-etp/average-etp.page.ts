@@ -75,7 +75,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         ? null
         : this.perUnity === 'hour'
         ? value
-        : fixDecimal(8 / value),
+        : 8 / value,
     })
   }
 
