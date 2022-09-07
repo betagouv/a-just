@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { groupBy, last, sortBy, sumBy } from 'lodash'
+import { sortBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -9,10 +9,8 @@ import {
   month,
   nbOfDays,
   workingDay,
-  nbOfWorkingDays,
   decimalToStringDate,
   getRangeOfMonthsAsObject,
-  getRangeOfMonths,
   isFirstDayOfMonth,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
@@ -48,21 +46,16 @@ export class SimulatorService extends MainClass {
       xMax: null,
       content: undefined,
     })
-
   startCurrentSituation = month(new Date(), -12)
   endCurrentSituation = month(new Date(), -1, 'lastday')
+
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService
   ) {
     super()
 
-    this.watch(
-      this.chartAnnotationBox.subscribe(() => {
-        if (this.chartAnnotationBox.getValue()) {
-        }
-      })
-    )
+    this.watch(this.chartAnnotationBox.subscribe(() => {}))
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
@@ -101,8 +94,6 @@ export class SimulatorService extends MainClass {
       const nbMonth = 12
       const list: SimulatorInterface | null = {
         ...this.getSituation(referentielId, nbMonth, dateStart, dateStop),
-        etpFon: null,
-        etpCont: null,
         calculateCoverage: null,
         calculateDTESInMonths: null,
         calculateTimePerCase: null,
@@ -153,13 +144,17 @@ export class SimulatorService extends MainClass {
           month(this.endCurrentSituation, counter, 'lastday')
         )
       )
-      if (
-        lastActivitiesEntreesSorties.length !== 0 &&
-        (lastActivitiesEntreesSorties[0].entrees ||
-          lastActivitiesEntreesSorties[0].sorties)
-      )
-        break
-    } while (lastActivitiesEntreesSorties.length === 0 && counter != -12)
+      console.log(lastActivitiesEntreesSorties[0])
+    } while (
+      (lastActivitiesEntreesSorties.length === 0 ||
+        !lastActivitiesEntreesSorties[0].entrees ||
+        lastActivitiesEntreesSorties[0].entrees === 0 ||
+        !lastActivitiesEntreesSorties[0].sorties ||
+        lastActivitiesEntreesSorties[0].sorties === 0 ||
+        !lastActivitiesEntreesSorties![0]!.stock ||
+        lastActivitiesEntreesSorties![0]!.stock === 0) &&
+      counter >= -12
+    )
 
     // if last month not available, then get the 12 last months starting from the last available
     if (counter !== -12 && counter !== 0) {
@@ -194,8 +189,12 @@ export class SimulatorService extends MainClass {
             month(this.endCurrentSituation, nbOfMonth, 'lastday')
           )
         )
-        if (lastActivities.length !== 0 && lastActivities[0].stock) break
-      } while (lastActivities.length === 0 && nbOfMonth != -12)
+      } while (
+        (lastActivities.length === 0 ||
+          lastActivities![0]!.stock === null ||
+          lastActivities![0]!.stock === 0) &&
+        nbOfMonth >= -12
+      )
 
       // last available stock
       lastStock = sumBy(lastActivities, 'stock')
@@ -206,6 +205,9 @@ export class SimulatorService extends MainClass {
       ) as Array<etpAffectedInterface>
       let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
+      let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+      let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+
       // Compute etpAffected of the 12 last months starting at the last month available in db to compute realTimePerCase
       let etpAffectedToCompute = this.getHRPositions(
         referentielId as number,
@@ -213,10 +215,9 @@ export class SimulatorService extends MainClass {
         true,
         new Date(month(this.endCurrentSituation, counter, 'lastday'))
       )
-      let etpToCompute = sumBy(
-        etpAffectedToCompute as Array<etpAffectedInterface>,
-        'totalEtp'
-      )
+      let etpToCompute = (
+        etpAffectedToCompute as Array<etpAffectedInterface>
+      )[0].totalEtp
 
       // Compute realTimePerCase to display using the etpAffected 12 last months available
       let realTimePerCase = fixDecimal(
@@ -225,7 +226,12 @@ export class SimulatorService extends MainClass {
       )
 
       // Compute totalOut with etp at dateStart (specific date) to display
-      totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+      totalOut = Math.floor(
+        (etpMag *
+          environment.nbHoursPerDay *
+          (environment.nbDaysByMagistrat / 12)) /
+          realTimePerCase
+      )
 
       // Projection of etpAffected between the last month available and today to compute stock
       let fururEtpAffectedToCompute = this.getHRPositions(
@@ -234,10 +240,9 @@ export class SimulatorService extends MainClass {
         true,
         new Date()
       )
-      let futurEtpToCompute = sumBy(
-        fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-        'totalEtp'
-      )
+      let futurEtpToCompute = (
+        fururEtpAffectedToCompute as Array<etpAffectedInterface>
+      )[0].totalEtp
 
       const countOfCalandarDays = nbOfDays(
         month(this.endCurrentSituation, counter, 'lastday'),
@@ -250,7 +255,7 @@ export class SimulatorService extends MainClass {
         Math.floor(
           (countOfCalandarDays / (365 / 12)) *
             17.33 *
-            ((futurEtpToCompute * 8) / realTimePerCase)
+            ((futurEtpToCompute * environment.nbHoursPerDay) / realTimePerCase)
         ) +
         Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
 
@@ -280,8 +285,16 @@ export class SimulatorService extends MainClass {
         ) as Array<etpAffectedInterface>
         etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
 
+        etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+        etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+
         // Compute totalOut with etp at dateStart (specific date) to display
-        totalOut = Math.floor((etpMag * 8 * 17.33) / realTimePerCase)
+        totalOut = Math.floor(
+          (etpMag *
+            environment.nbHoursPerDay *
+            (environment.nbDaysByMagistrat / 12)) /
+            realTimePerCase
+        )
 
         // Projection of etpAffected between the last month available and today to compute stock
         fururEtpAffectedToCompute = this.getHRPositions(
@@ -290,10 +303,9 @@ export class SimulatorService extends MainClass {
           true,
           dateStart
         )
-        futurEtpToCompute = sumBy(
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-          'totalEtp'
-        )
+        futurEtpToCompute = (
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>
+        )[0].totalEtp
 
         // Compute projectedStock with etp at dateStart
         lastStock =
@@ -301,7 +313,8 @@ export class SimulatorService extends MainClass {
           Math.floor(
             (nbDayCalendar / (365 / 12)) *
               17.33 *
-              ((futurEtpToCompute * 8) / realTimePerCase)
+              ((futurEtpToCompute * environment.nbHoursPerDay) /
+                realTimePerCase)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * totalIn)
 
@@ -322,14 +335,21 @@ export class SimulatorService extends MainClass {
           referentielId as number,
           dateStop
         )
-        const projectedEtp = sumBy(
-          projectedEtpAffected as Array<etpAffectedInterface>,
-          'totalEtp'
-        )
+        const projectedEtp = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[0].totalEtp
+
+        const projectedEtpFon = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[2].totalEtp
+
+        const projectedEtpCont = (
+          projectedEtpAffected as Array<etpAffectedInterface>
+        )[1].totalEtp
 
         // Compute projected out flow with projected etp at stop date (specific date)
         const projectedTotalOut = Math.floor(
-          (projectedEtp * 8 * 17.33) / realTimePerCase
+          (projectedEtp * environment.nbHoursPerDay * 17.33) / realTimePerCase
         )
 
         let monthlyReport: Array<any> = []
@@ -343,10 +363,9 @@ export class SimulatorService extends MainClass {
           true
         ))
 
-        futurEtpToCompute = sumBy(
-          fururEtpAffectedToCompute as Array<etpAffectedInterface>,
-          'totalEtp'
-        )
+        futurEtpToCompute = (
+          fururEtpAffectedToCompute as Array<etpAffectedInterface>
+        )[0].totalEtp
 
         // Compute projectedStock with etp at datestop
         const projectedLastStock =
@@ -354,7 +373,8 @@ export class SimulatorService extends MainClass {
           Math.floor(
             (nbDayCalendarProjected / (365 / 12)) *
               17.33 *
-              ((futurEtpToCompute * 8) / realTimePerCase)
+              ((futurEtpToCompute * environment.nbHoursPerDay) /
+                realTimePerCase)
           ) +
           Math.floor((nbDayCalendarProjected / (365 / 12)) * totalIn)
 
@@ -373,8 +393,8 @@ export class SimulatorService extends MainClass {
           realTimePerCase,
           etpMag: projectedEtp,
           etpAffected: projectedEtpAffected as Array<etpAffectedInterface>,
-          etpFon: null,
-          etpCont: null,
+          etpFon: projectedEtpFon,
+          etpCont: projectedEtpCont,
           calculateCoverage: null,
           calculateDTESInMonths: null,
           calculateTimePerCase: null,
@@ -393,6 +413,8 @@ export class SimulatorService extends MainClass {
         realDTESInMonths,
         realTimePerCase,
         etpMag,
+        etpFon,
+        etpCont,
         etpAffected,
         etpToCompute: etpToCompute,
       }
@@ -405,6 +427,8 @@ export class SimulatorService extends MainClass {
         realDTESInMonths: null,
         realTimePerCase: null,
         etpMag: null,
+        etpFon: null,
+        etpCont: null,
         etpAffected: null,
         etpToCompute: null,
       }
@@ -420,13 +444,15 @@ export class SimulatorService extends MainClass {
     const hr = this.humanResourceService.hr.getValue()
     const categories = this.humanResourceService.categories.getValue()
     const hrCategories: any = {}
-    let hrCategoriesMonthly: any = {}
+    let hrCategoriesMonthly: { [key: string]: any } = new Object({})
     let emptyList: { [key: string]: any } = new Object({})
     emptyList = { ...getRangeOfMonthsAsObject(date!, dateStop!, true) }
 
     Object.keys(emptyList).map((x: any) => {
       emptyList[x] = {
-        etpt: 0,
+        ...{
+          etpt: 0,
+        },
       }
     })
 
@@ -437,12 +463,14 @@ export class SimulatorService extends MainClass {
         rank: c.rank,
       }
 
-      hrCategoriesMonthly[c.label] = { ...emptyList }
+      hrCategoriesMonthly[c.label] = {
+        ...JSON.parse(JSON.stringify(emptyList)),
+      }
     })
 
-    categories.map((c) => {
-      hrCategoriesMonthly[c.label] = hrCategoriesMonthly[c.label] || emptyList
-    })
+    //categories.map((c) => {
+    //hrCategoriesMonthly[c.label] = hrCategoriesMonthly[c.label] || emptyList
+    //})
 
     for (let i = 0; i < hr.length; i++) {
       let etptAll,
@@ -467,8 +495,10 @@ export class SimulatorService extends MainClass {
         }
 
         if (onPeriod === true && dateStop) {
-          Object.keys(monthlyList).map((x: any) => {
-            hrCategoriesMonthly[c.label][x].etpt += monthlyList[x][c.id].etpt
+          Object.keys(monthlyList).map((month: any) => {
+            if (c.label === monthlyList[month][c.id].name)
+              hrCategoriesMonthly[c.label][month].etpt +=
+                monthlyList[month][c.id].etpt
           })
         }
       })
@@ -508,12 +538,12 @@ export class SimulatorService extends MainClass {
       })
     }
 
-    if (monthlyReport)
+    if (monthlyReport) {
       return {
         fururEtpAffectedToCompute: sortBy(list, 'rank'),
         monthlyReport: listMonthly,
       }
-    else return sortBy(list, 'rank')
+    } else return sortBy(list, 'rank')
   }
 
   getHRVentilation(
@@ -570,6 +600,7 @@ export class SimulatorService extends MainClass {
       }
       Object.keys(monthlyList).map((x: any) => {
         monthlyList[x][c.id] = {
+          name: c.label,
           etpt: 0,
           nbOfDays: 0,
         }
@@ -869,7 +900,7 @@ export class SimulatorService extends MainClass {
         } else return '0'
       }
       case 'etpFon':
-        return ''
+        return data?.etpFon || '0'
       case 'realCoverage': {
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
@@ -890,7 +921,7 @@ export class SimulatorService extends MainClass {
         if (initialValue) return data?.realTimePerCase || '0'
         else return decimalToStringDate(data?.realTimePerCase) || '0'
       case 'ETPTGreffe':
-        return ''
+        return data?.etpCont || '0'
     }
     return ''
   }

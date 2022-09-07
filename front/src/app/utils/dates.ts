@@ -1,4 +1,4 @@
-import { ObjectType } from 'typescript'
+import { environment } from 'src/environments/environment'
 
 export function monthDiff(d1: Date, d2: Date) {
   var months
@@ -39,12 +39,12 @@ export function getShortMonthString(date: Date | string) {
   return [
     'Janv.',
     'Févr.',
-    'Mars.',
+    'Mars',
     'Avr.',
     'Mai.',
-    'Juin.',
+    'Juin',
     'Juil.',
-    'Août.',
+    'Août',
     'Sept.',
     'Oct.',
     'Nov.',
@@ -90,11 +90,11 @@ export function today(date: Date | null | undefined = new Date()): Date {
 }
 
 export function month(
-  date = new Date(),
+  date: Date | null = new Date(),
   monthToAdd?: number,
   lastDay?: string
 ) {
-  const now = new Date(date)
+  const now = new Date(date ? date : '')
   if (monthToAdd) {
     now.setDate(1)
     now.setMonth(now.getMonth() + monthToAdd)
@@ -228,7 +228,7 @@ export function getRangeOfMonthsAsObject(
       getShortMonthString(dateCounter) +
       dateCounter.getFullYear().toString().slice(-2)
     if (asObject) {
-      monthlyL[str] = {}
+      monthlyL[str] = { ...{} }
     }
     dateCounter.setMonth(dateCounter.getMonth() + 1)
   }
@@ -242,4 +242,31 @@ export function getRangeOfMonthsAsObject(
 
 export function isFirstDayOfMonth(date = new Date()) {
   return date.getDate() === 1
+}
+
+export function isDateBiggerThan(
+  firstDate: string | Date,
+  secondDate: string | Date
+): boolean {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
+  return firstDate.getTime() >= secondDate.getTime()
+}
+
+export function nbHourInMonth(date: Date = new Date()) {
+  const dateStart = new Date(date.getFullYear(), date.getMonth())
+  const dateStop = new Date(dateStart)
+  dateStop.setMonth(dateStop.getMonth() + 1)
+
+  let nbDay = 0
+  do {
+    // only working day
+    if (workingDay(dateStart)) {
+      nbDay++
+    }
+    dateStart.setDate(dateStart.getDate() + 1)
+  } while (dateStart.getTime() < dateStop.getTime())
+
+  return nbDay * environment.nbHoursPerDay
 }

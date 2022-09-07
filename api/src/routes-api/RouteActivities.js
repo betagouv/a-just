@@ -8,29 +8,86 @@ export default class RouteActivities extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      list: Types.any(),
+      contentieuxId: Types.number(),
+      date: Types.date(),
+      values: Types.any(),
       hrBackupId: Types.number(),
+      nodeUpdated: Types.string(),
     }),
     accesses: [Access.canVewActivities],
   })
-  async saveBackup (ctx) {
-    const { hrBackupId, list } = this.body(ctx)
-    await this.model.saveBackup(list, hrBackupId)
+  async updateBy (ctx) {
+    const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
+    await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
     this.sendOk(ctx, 'Ok')
   }
 
   @Route.Post({
     bodyType: Types.object().keys({
-      contentieuxId: Types.number(),
       date: Types.date(),
-      values: Types.any(),
       hrBackupId: Types.number(),
     }),
     accesses: [Access.canVewActivities],
   })
-  async updateBy (ctx) {
-    const { contentieuxId, date, values, hrBackupId } = this.body(ctx)
-    await this.model.updateBy(contentieuxId, date, values, hrBackupId)
-    this.sendOk(ctx, 'Ok')
+  async getByMonth (ctx) {
+    const { date, hrBackupId } = this.body(ctx)
+
+    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.model.getByMonth(date, hrBackupId)
+      this.sendOk(ctx, {
+        list,
+        lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map(i => i.id)),
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
+  })
+  async getLastMonth (ctx) {
+    const { hrBackupId } = this.body(ctx)
+
+    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const date = await this.model.getLastMonth(hrBackupId)
+      this.sendOk(ctx, {
+        date,
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.canVewActivities],
+  })
+  async loadAllActivities (ctx) {
+    const { hrBackupId } = this.body(ctx)
+
+    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.model.getAll(hrBackupId)
+      this.sendOk(ctx, list)
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  /*
+@Route.Get({
+  path: '*',
+})
+  async getAll (ctx) {
+    this.sendOk(ctx, (req, res) => {
+      let workbook = createTestWorkbook().then(()=>{
+        workbook.write('workbook.xlsx', res)
+      })
+    })
+  }*/
 }

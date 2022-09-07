@@ -13,13 +13,16 @@ body {
 	padding: 0;
 	margin: 0;
 	background-color: fColor(bgColor);
+
+	&.remove-height {
+		height: fit-content;
+	}
 }
 
 * {
 	box-sizing: border-box;
 }
 
-html, body { height: 100%; }
 body { margin: 0; font-family: Marianne; }
 
 .flex-1 {

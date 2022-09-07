@@ -15,6 +15,14 @@ export class MainClass {
     return fixDecimal(n)
   }
 
+  parseInt(s: string): number {
+    return parseInt(s)
+  }
+
+  parseFloat(s: string): number {
+    return parseFloat(s.replace(/,/,'.'))
+  }
+
   watch(sub: any) {
     this.watcherList.push(sub)
   }
@@ -133,9 +141,9 @@ export class MainClass {
     return date.getDate()
   }
 
-  public isSameMonthAndYear(date1: Date, date2: Date) {
-    date1 = new Date(date1)
-    date2 = new Date(date2)
+  public isSameMonthAndYear(date1: Date | null, date2: Date | null) {
+    date1 = new Date(date1 ? date1 : '')
+    date2 = new Date(date2 ? date2 : '')
 
     return (
       date1.getMonth() === date2.getMonth() &&

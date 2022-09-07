@@ -10,9 +10,6 @@
         display: none;
 
         p {
-            //font-size: 14px;
-            //line-height: 1.71;
-            //color: #929292;
             font-size: 24px;
             font-weight: bold;
             color: #3a3a3a;
@@ -68,7 +65,10 @@
         aj-figures-widget,
         aj-dial-widget {
             flex: 1;
-            //height: 100%;
+        }
+
+        aj-figures-widget {
+            margin: 0 8px;
         }
     }
 
@@ -84,7 +84,6 @@
     .simulation-bottom {
         background-color: fColor(bgColor);
         position: relative;
-        // height: 100%;
         margin-top: 83px;
         padding-top: 48px;
 
@@ -141,7 +140,7 @@
                 padding: 6px 0px;
                 width: 200px;
                 margin-bottom: 48px;
-                margin-right: 22px;
+                //margin-right: 22px;
 
                 &:first-child {
                     font-size: 16px;
@@ -154,7 +153,7 @@
 
             .item-container {
                 display: flex;
-                width: 100%;
+                flex: 1;
             }
 
             .line-item:last-child {
@@ -206,7 +205,7 @@
             }
 
             .modified-label {
-
+                z-index: 2;
                 position: absolute;
                 bottom: -15px;
                 display: block;
@@ -313,7 +312,6 @@
 
         .rectangle {
             width: 496px;
-            //height: 84px;
             padding: 12px 24px;
             border-radius: 8px;
             background-color: #f6f6f6;
@@ -413,7 +411,7 @@
     }
 
     .options {
-        height: 84px;
+        height: 83px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -485,7 +483,6 @@
         &.color-white {
             background-color: white;
             border-bottom: solid 1px #e5e5e5;
-            //box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
             &::before {
                 background-color: white;
@@ -565,7 +562,7 @@
             }
 
             .modified-label {
-
+                z-index: 2;
                 position: absolute;
                 bottom: -15px;
                 display: block;
@@ -629,7 +626,7 @@
                 pointer-events: all;
                 cursor: pointer;
                 border: solid 2px #000091;
-                width: 80px;
+                width: 95%;
                 height: 32px;
                 text-align: center;
                 color: #000091;
@@ -650,6 +647,12 @@
                     border: none;
                     color: black;
                     border-bottom: solid 2px #e5e5e5 !important;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                    position: relative;
+                    border-bottom: solid 2px #e5e5e5;
+                    background-color: #eeeeee;
+                    height: 40px;
                     width: 95%;
 
                     :focus {
@@ -669,7 +672,6 @@
 
 
     .items {
-        //height: 64px !important;
         background-color: #fff;
         display: flex;
         position: relative;
@@ -910,7 +912,7 @@
     }
 
     aj-date-select-blue {
-        margin: 0 50px; //128px;
+        margin: 0 50px;
         transition-timing-function: linear;
         transition-property: margin-left;
         transition-duration: 0.1s;

@@ -4,6 +4,12 @@
   display: block;
   position: relative;
 
+  &.dark-mode {
+    .preview {
+      background-color: fColor(darkModeBgMenu);
+    }
+  }
+
   .preview {
     width: 40px;
     height: 40px;

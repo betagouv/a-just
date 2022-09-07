@@ -9,6 +9,19 @@
   position: relative;
   cursor: pointer;
 
+  &.dark-mode {
+    background-color: fColor(darkModeBgMenu);
+    border: 1px solid fColor(darkModeTitle);
+
+    p, mat-icon {
+      color: white;
+    }
+
+    p.title-select {
+      color: fColor(headerColor);
+    }
+  }
+
   &.read-only {
     cursor: inherit;
     opacity: 0.7;

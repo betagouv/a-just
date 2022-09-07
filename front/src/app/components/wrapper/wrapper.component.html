@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<div class="contener" id="conteneur-main" title="">
+<div class="contener" #contener title="">
   <div class="header no-print" id="top">
     <div *ngIf="backUrl" class="back-url">
       <a [routerLink]="backUrl" [fragment]="backAnchor">
@@ -37,7 +37,9 @@
     </div>
     <div>
       <h3 [innerHTML]="title"></h3>
-      <p class="subtitle">{{ subtitle }}</p>
+      <p class="subtitle">
+        <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+      </p>
     </div>
     <ng-template [ngIf]="titleTemplate">
       <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
@@ -47,9 +49,10 @@
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>
   </div>
-  <div class="content" id="content">
+  <div class="content" #content id="content">
     <ng-content></ng-content>
   </div>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
+<ng-template #defaultSubtitleTemplate>{{ subtitle }}</ng-template>

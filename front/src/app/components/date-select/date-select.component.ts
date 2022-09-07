@@ -7,6 +7,8 @@ import {
   HostBinding,
   ViewChild,
 } from '@angular/core'
+import { MatDatepicker } from '@angular/material/datepicker'
+import { Moment } from 'moment'
 import { MainClass } from 'src/app/libs/main-class'
 
 @Component({
@@ -17,10 +19,13 @@ import { MainClass } from 'src/app/libs/main-class'
 export class DateSelectComponent extends MainClass implements OnChanges {
   @Input() title: string | null = null
   @Input() icon: string = 'calendar_today'
+  @Input() dateType: string = 'date' // date | month
   @Input() value: Date | string | undefined | null = null
   @Input() readOnly: boolean = false
   @Input() showToday: boolean = true
   @Input() clearable: boolean = false
+  @Input() min: Date | null = null
+  @Input() max: Date | null = null
   @Output() valueChange = new EventEmitter()
   @HostBinding('class.read-only') onReadOnly: boolean = false
   @ViewChild('picker') picker: any
@@ -43,18 +48,29 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     }
 
     if (this.value && typeof this.value.getMonth === 'function') {
-      if (
-        now.getFullYear() === this.value.getFullYear() &&
-        now.getMonth() === this.value.getMonth() &&
-        now.getDate() === this.value.getDate() &&
-        this.showToday === true
-      ) {
-        this.realValue = "Aujourd'hui"
-      } else {
-        this.realValue = `${(this.value.getDate() + '').padStart(
-          2,
-          '0'
-        )} ${this.getShortMonthString(this.value)} ${this.value.getFullYear()}`
+      switch (this.dateType) {
+        case 'date':
+          if (
+            now.getFullYear() === this.value.getFullYear() &&
+            now.getMonth() === this.value.getMonth() &&
+            now.getDate() === this.value.getDate() &&
+            this.showToday === true
+          ) {
+            this.realValue = "Aujourd'hui"
+          } else {
+            this.realValue = `${(this.value.getDate() + '').padStart(
+              2,
+              '0'
+            )} ${this.getShortMonthString(
+              this.value
+            )} ${this.value.getFullYear()}`
+          }
+          break
+        case 'month':
+          this.realValue = `${this.getShortMonthString(
+            this.value
+          )} ${this.value.getFullYear()}`
+          break
       }
     } else {
       this.realValue = ''
@@ -75,5 +91,22 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   onClick() {
     this.readOnly === false ? this.picker.open() : null
+  }
+
+  setMonthAndYear(
+    normalizedMonthAndYear: Moment,
+    datepicker: MatDatepicker<Moment>
+  ) {
+    if (this.dateType === 'month') {
+      console.log(normalizedMonthAndYear, datepicker)
+      const date = new Date(
+        normalizedMonthAndYear.year(),
+        normalizedMonthAndYear.month()
+      )
+      this.value = date
+      this.valueChange.emit(this.value)
+      this.findRealValue()
+      datepicker.close()
+    }
   }
 }

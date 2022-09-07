@@ -4,6 +4,12 @@
   display: flex;
   height: 100%;
 
+  &.print {
+    .content {
+      overflow: inherit !important;
+    }
+  }
+
   &.full-screen {
     height: inherit;
   }
@@ -52,12 +58,11 @@
 
   &.dark-screen {
     .menu {
-      background-color: fColor(darkModeBgMenu);
+      background-color: fColor(darkModeBgMenuSelected);
       border-right: 1px solid fColor(darkModeBgMenu);
       margin-right: 0px;
 
       .menu-item {
-
         &.disconnect,
         a,
         p {
@@ -76,7 +81,7 @@
     }
 
     .header {
-      background-color: fColor(darkModeBgMenuSelected);
+      background-color: fColor(darkModeBgMenu);
 
       h3 {
         color: fColor(darkModeTitle);
@@ -104,7 +109,7 @@
     margin-bottom: 29px;
     margin-top: 29px;
 
-    >img {
+    > img {
       width: 45%;
     }
   }
@@ -145,7 +150,6 @@
     }
 
     &.selected {
-
       a,
       p {
         color: fColor(cbluedark);

@@ -2,16 +2,19 @@
     display: flex;
     margin-top: 1px;
 
+    #in-out-chart {
+        height: 250px;
+        width: content-box;
+    }
+
     #chartjs-tooltip {
         text-align: center;
         position: relative;
         z-index: 5;
         opacity: 0;
         width: 381px;
-        //height: 148px;
         position: absolute;
         background: white;
-        //color: white;
         padding: 16px;
         border-radius: 3px;
         -webkit-transition: all .1s ease;
@@ -41,10 +44,17 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
+
+            &.orange {
+                background-color: #fcc63a;
+            }
+
+            &.turquoise {
+                background-color: #60e0eb;
+            }
         }
 
         .popin-raw {
-            //padding: 0px 16px 0px 16px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -56,6 +66,10 @@
                 line-height: 1.33;
                 color: #666;
                 align-items: center;
+
+                b {
+                    align-self: center;
+                }
             }
 
             .low-value {
@@ -139,7 +153,6 @@
         }
 
         .popin-title-content {
-            //padding: 16px 16px 0px 16px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -232,6 +245,10 @@
             align-items: center;
             display: flex;
             justify-content: center;
+
+            .canvas-container {
+                width: 100%;
+            }
         }
     }
 

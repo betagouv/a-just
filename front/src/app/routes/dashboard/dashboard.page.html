@@ -1,2 +1,41 @@
 <aj-wrapper title="Panorama">
+  <div class="title">
+    <p>Extracteur de données A-JUST</p>
+  </div>
+  <div class="exportateur-container">
+    <aj-date-select
+      title="Pour la période du"
+      [value]="dateStart"
+      (valueChange)="selectDate('start',$event)"
+      [max]="dateStop || today"
+    >
+    </aj-date-select>
+    <aj-date-select
+      title="À"
+      [value]="dateStop"
+      (valueChange)="selectDate('stop',$event)"
+      [max]="today"
+      [min]="dateStart"
+    >
+    </aj-date-select>
+
+    <aj-select
+      title="Catégorie"
+      class="category-select"
+      [defaultRealValue]="'Sélectionner la catégorie'"
+      [value]="'Tous'"
+      [datas]="categories"
+      [multiple]="false"
+      (valueChange)="updateCategory($event)"
+    >
+    </aj-select>
+
+    <div
+      id="export-excel-button"
+      class="export-button {{classSelected}}"
+      (click)="export()"
+    >
+      <p>Télécharger le fichier au format Excel</p>
+    </div>
+  </div>
 </aj-wrapper>

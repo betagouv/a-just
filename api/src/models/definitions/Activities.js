@@ -35,7 +35,19 @@ export default sequelizeInstance => {
       },
       stock: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
+      },
+      original_entrees: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      original_sorties: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      original_stock: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
