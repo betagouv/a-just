@@ -112,7 +112,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.contentieuxOptionsService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
       this.dateStart !== null &&
-      this.dateStop !== null
+      this.dateStop !== null && 
+      this.maxDateSelectionDate
     ) {
       this.isLoading = true
       this.calculatorService
