@@ -132,7 +132,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    await Model.cleanActivities(HRBackupId /*, minDate*/)
+    await Model.cleanActivities(HRBackupId, minDate)
   }
 
   Model.removeDuplicateDatas = async (HRBackupId) => {
@@ -262,16 +262,18 @@ export default (sequelizeInstance, Model) => {
     date,
     hrBackupId
   ) => {
+    date = new Date(date) // detach date reference
     const referentiels =
       await Model.models.ContentieuxReferentiels.getReferentiels()
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
-    console.log(ref)
+    // console.log(ref)
+    console.log('startOfMonth(date), endOfMonth(date)', date, startOfMonth(date), endOfMonth(date))
 
     if (ref) {
       let continueToDo = false
       do {
         const childrens = ref.childrens || []
-        console.log('check date', date, mainContentieuxId, hrBackupId)
+        // console.log('check date', date, mainContentieuxId, hrBackupId)
 
         for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
           // IF not exist, create it
@@ -308,7 +310,7 @@ export default (sequelizeInstance, Model) => {
 
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
-          console.log(findAllChild[i].contentieux_id)
+          //console.log(findAllChild[i].contentieux_id)
 
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
@@ -318,7 +320,7 @@ export default (sequelizeInstance, Model) => {
               'stock'
             )
 
-          console.log('currentStock', currentStock, getUserUpdateStock)
+          //console.log('currentStock', currentStock, getUserUpdateStock)
           
           // do not updated if updated by user
           if (!getUserUpdateStock || getUserUpdateStock.value === null) {
@@ -328,7 +330,7 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             )
 
-            console.log('previousStockValue', previousStockValue)
+            //console.log('previousStockValue', previousStockValue)
             
             if (previousStockValue !== null) {
               if (
