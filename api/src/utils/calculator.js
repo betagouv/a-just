@@ -225,8 +225,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay;
     list[property].indispo = list[property].indispo / nbDay;
-
-    if (list[property].indispo !== 0) console.log(referentielId, list);
   }
 
   return list;

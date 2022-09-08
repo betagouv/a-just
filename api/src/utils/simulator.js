@@ -266,6 +266,7 @@ function computeCoverage(totalOut, totalIn) {
 function computeDTES(lastStock, totalOut) {
   return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null;
 }
+
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerCase, totalIn) {
   return (
     Math.floor(lastStock) -
@@ -277,6 +278,7 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerC
     Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
   );
 }
+
 function computeTotalOut(realTimePerCase, etp) {
   return Math.floor(
     (etp * environment.nbHoursPerDay * (environment.nbDaysByMagistrat / 12)) / realTimePerCase
