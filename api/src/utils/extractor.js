@@ -97,3 +97,14 @@ export const autofitColumns = (json) => {
 
   return wscols;
 };
+
+export const replaceZeroByDot = (data) => {
+  for (let i = 0; i < data.length; i++) {
+    Object.keys(data[i]).forEach((key) => {
+      if (data[i][key] === 0) {
+        data[i][key] = '-';
+      }
+    });
+  }
+  return data;
+};

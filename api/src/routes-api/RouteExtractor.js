@@ -7,6 +7,7 @@ import {
   countEtp,
   flatListOfContentieuxAndSousContentieux,
   getIndispoDetails,
+  replaceZeroByDot,
 } from '../utils/extractor';
 import { preformatHumanResources } from '../utils/ventilator';
 import { getHumanRessourceList } from '../utils/humanServices';
@@ -46,7 +47,7 @@ export default class RouteExtractor extends Route {
     let allHuman = await getHumanRessourceList(
       preformatedAllHumanResource,
       flatReferentielsList.map((a) => a.id),
-      [0, 1, 2],
+      [1, 2, 3],
       dateStop,
       dateStart
     );
@@ -134,6 +135,7 @@ export default class RouteExtractor extends Route {
     data.sort((a, b) => (a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0));
 
     data = addSumLine(data, categoryFilter);
+    data = replaceZeroByDot(data);
     const columnSize = autofitColumns(data);
     this.sendOk(ctx, { values: data, columnSize });
   }
