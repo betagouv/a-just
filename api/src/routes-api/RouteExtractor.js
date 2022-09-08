@@ -71,15 +71,16 @@ export default class RouteExtractor extends Route {
       const indispoArray = flatReferentielsList.map((referentiel) => {
         etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop);
 
-        const { counterEtpTotal, counterEtpSubTotal } = countEtp(etpAffected, referentiel);
+        const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = countEtp(
+          etpAffected,
+          referentiel
+        );
 
         const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
           getIndispoDetails(flatReferentielsList);
 
         const isIndispoRef = allIndispRefIds.includes(referentiel.id);
 
-        //+ referentiel.label.toUpperCase()
-        console.log(referentiel);
         if (referentiel.childrens !== undefined) {
           refObj[
             'TOTAL ' + referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
@@ -90,22 +91,27 @@ export default class RouteExtractor extends Route {
           if (isIndispoRef) {
             return {
               id: referentiel.id,
-              label: 'TOTAL ' + referentiel.label.toUpperCase(),
+              label:
+                'TOTAL ' +
+                referentiel.label.toUpperCase() +
+                ' ' +
+                referentiel.code_import.toUpperCase(),
               indispo: 0,
               contentieux: true,
             };
           }
         } else {
-          refObj[referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()] =
-            counterEtpSubTotal;
-
           if (isIndispoRef) {
+            refObj[referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()] =
+              counterIndispo / 100;
             return {
               id: referentiel.id,
-              indispo: counterEtpSubTotal,
+              indispo: counterIndispo / 100,
               contentieux: false,
             };
-          }
+          } else
+            refObj[referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()] =
+              counterEtpSubTotal;
         }
         return { indispo: 0 };
       });
