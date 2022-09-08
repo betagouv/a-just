@@ -19,16 +19,18 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
 export const countEtp = (etpAffected, referentiel) => {
   let counterEtpTotal = 0;
   let counterEtpSubTotal = 0;
+  let counterIndispo = 0;
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
       counterEtpTotal += etpAffected[key].etpt;
     } else {
       counterEtpSubTotal += etpAffected[key].etpt;
+      counterIndispo += etpAffected[key].indispo;
     }
   });
 
-  return { counterEtpTotal, counterEtpSubTotal };
+  return { counterEtpTotal, counterEtpSubTotal, counterIndispo };
 };
 
 export const getIndispoDetails = (referentiels) => {
