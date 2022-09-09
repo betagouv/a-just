@@ -99,16 +99,19 @@ export class HumanResourceService {
 
     const hr = {
       id: this.hr.getValue().length * -1,
-      firstName: 'Personne',
-      lastName: 'XXX',
+      firstName: 'Prénom',
+      lastName: 'Nom',
       activities,
       situations: [],
       indisponibilities: [],
       updatedAt: new Date(),
     }
 
+    //if (hr.firstName !== 'Prénom' && hr.lastName !== 'Nom') {
     const newHR = await this.updateRemoteHR(hr)
     return newHR.id
+    return hr.id
+    //} else return null
   }
 
   deleteHRById(HRId: number) {
@@ -358,8 +361,6 @@ export class HumanResourceService {
       ...orignalObject,
       ...params,
     }
-
-    console.log(orignalObject)
 
     return await this.updateRemoteHR(orignalObject)
   }

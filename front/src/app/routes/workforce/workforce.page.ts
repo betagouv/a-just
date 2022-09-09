@@ -260,7 +260,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.categoriesFilterListIds
       )
       .then((list) => {
-        console.log(list)
         this.listFormated = list
 
         this.orderListWithFiltersParams()

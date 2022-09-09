@@ -1,34 +1,60 @@
 <div class="header-panel">
   <div class="tags">
-    <p *ngIf="dateStart" class="date">Du {{ dateStart | date:"dd" }} {{ getShortMonthString(dateStart) }} {{
-      getFullYear(dateStart) }}</p>
-    <p *ngIf="dateStop" class="date">Au {{ dateStop | date:"dd" }} {{ getShortMonthString(dateStop) }} {{
-      getFullYear(dateStop) }}</p>
+    <p *ngIf="dateStart" class="date">
+      Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+      {{ getFullYear(dateStart) }}
+    </p>
+    <p *ngIf="dateStop" class="date">
+      Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+      {{ getFullYear(dateStop) }}
+    </p>
     <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
     <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
   </div>
   <div class="etpt">
     <p>ETPTravaillé :</p>
-    <etp-preview [etp]="etp - indisponibility" [indisponibility]="indisponibility"></etp-preview>
+    <etp-preview
+      [etp]="etp - indisponibility"
+      [indisponibility]="indisponibility"
+    ></etp-preview>
   </div>
 </div>
 
-<div *ngIf="indisponibilities.length" class="indisponibility-panel indispo-content">
-  <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+<div
+  *ngIf="indisponibilities.length"
+  class="indisponibility-panel indispo-content"
+>
+  <div
+    *ngFor="let indisp of indisponibilities"
+    class="cursor-pointer"
+    (click)="addIndispiniblity.emit(indisp)"
+  >
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>
     <div class="text">
-      <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
       <p>
-        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: "dd" }}
+        {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{
+          indisp.percent || 0
+        }}%)
+      </p>
+      <p>
+        <ng-template [ngIf]="indisp.dateStart"
+          >du {{ indisp.dateStart | date: 'dd' }}
           {{ getShortMonthString(indisp.dateStart) }}
-          {{ getFullYear(indisp.dateStart) }}</ng-template>
-        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop"> au </ng-template>
-        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop"> jusqu'au </ng-template>
-        <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: "dd" }}
+          {{ getFullYear(indisp.dateStart) }}</ng-template
+        >
+        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
+          au
+        </ng-template>
+        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
+          jusqu'au
+        </ng-template>
+        <ng-template [ngIf]="indisp.dateStop"
+          >{{ indisp.dateStop | date: 'dd' }}
           {{ getShortMonthString(indisp.dateStop) }}
-          {{ getFullYear(indisp.dateStop) }}</ng-template>
+          {{ getFullYear(indisp.dateStop) }}</ng-template
+        >
       </p>
     </div>
     <div class="action">
@@ -38,11 +64,21 @@
 </div>
 
 <div class="activities-panel">
-  <panel-activities [etp]="etp - indisponibility" [activities]="activities"></panel-activities>
+  <panel-activities
+    [etp]="etp - indisponibility"
+    [activities]="activities"
+  ></panel-activities>
 </div>
 
 <div class="actions-panel">
-  <button (click)="onEditSituation()" class="outline small primary">Modifier la ventilation</button>
-  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">Supprimer la
-    ventilation</button>
+  <button (click)="onEditSituation()" class="outline small primary">
+    Modifier la situation
+  </button>
+  <button
+    *ngIf="canRemoveSituation"
+    (click)="onRemove.emit()"
+    class="outline small red"
+  >
+    Supprimer la situation
+  </button>
 </div>

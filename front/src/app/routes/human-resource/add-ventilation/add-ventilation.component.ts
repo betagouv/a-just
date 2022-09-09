@@ -44,9 +44,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   etp: number = 1
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
-    etp: new FormControl<number|null>(null, [Validators.required]),
-    fonctionId: new FormControl<number|null>(null, [Validators.required]),
-    categoryId: new FormControl<number|null>(null, [Validators.required]),
+    etp: new FormControl<number | null>(null, [Validators.required]),
+    fonctionId: new FormControl<number | null>(null, [Validators.required]),
+    categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
   constructor(
@@ -135,6 +135,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
+
+    if (this.human?.lastName === 'Nom' || this.human?.lastName === null) {
+      alert('Vous devez saisir un nom pour valider la création !')
+      return
+    }
+    if (this.human?.firstName === 'Prénom' || this.human?.firstName === null) {
+      alert('Vous devez saisir un prénom pour valider la création !')
+      return
+    }
+
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !')
       return
