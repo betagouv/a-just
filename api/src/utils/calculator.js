@@ -65,6 +65,7 @@ export const syncCalculatorDatas = (
   categories,
   optionsBackups
 ) => {
+  console.log('syncCalculatorDatas')
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
@@ -112,6 +113,7 @@ const getActivityValues = (
   categories,
   optionsBackups
 ) => {
+  console.log('getActivityValues' + referentielId)
   activities = activities.filter(
     (a) =>
       month(a.periode).getTime() >= month(dateStart).getTime() &&
@@ -177,6 +179,7 @@ const getActivityValues = (
 
 const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {}
+  console.log(`getHRPositions - ref : ${referentielId}`)
 
   categories.map((c) => {
     hrCategories[c.label] = hrCategories[c.label] || {
@@ -188,6 +191,7 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
 
   for (let i = 0; i < hr.length; i++) {
     const situtations = hr[i].situations || []
+    console.log(`getHRPositions - ${hr[i].id}`)
     if (
       situtations.some((s) => {
         const activities = s.activities || []
