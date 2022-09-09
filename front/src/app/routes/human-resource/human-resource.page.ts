@@ -408,7 +408,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async onCancel(removeIndispo: boolean = false) {
-    if (removeIndispo && this.currentHR && this.currentHR.indisponibilities.length) {
+    if (
+      removeIndispo &&
+      this.currentHR &&
+      this.currentHR.indisponibilities.length
+    ) {
       await this.updateHuman('indisponibilities', [])
     }
 
@@ -443,7 +447,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           contentieux: {
             ...this.allIndisponibilityReferentiel[0],
           },
-          dateStart: new Date(),
+          dateStart: null,
         }
   }
 
@@ -458,6 +462,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         break
       case 'modify':
         {
+          if (
+            this.updateIndisponiblity &&
+            !this.updateIndisponiblity.dateStart
+          ) {
+            alert("Vous devez saisir une date de début d'indisponibilité !")
+            return false
+          }
+
           if (this.updateIndisponiblity && !this.updateIndisponiblity.percent) {
             alert("Vous devez saisir un temps d'indisponibilité !")
             return false
