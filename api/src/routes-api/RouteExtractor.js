@@ -42,22 +42,12 @@ export default class RouteExtractor extends Route {
 
     const hr = await this.model.getCache(backupId);
 
-    const preformatedAllHumanResource = preformatHumanResources(hr, dateStart);
-
-    let allHuman = await getHumanRessourceList(
-      preformatedAllHumanResource,
-      flatReferentielsList.map((a) => a.id),
-      [1, 2, 3],
-      dateStop,
-      dateStart
-    );
-
     const categories = await this.models.HRCategories.getAll();
     const fonctions = await this.models.HRFonctions.getAll();
 
-    let data = [];
+    let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStop, dateStart);
 
-    //let refLabels = getLabelList();
+    let data = [];
 
     allHuman.map((human) => {
       const currentSituation = findSituation(human);
@@ -83,13 +73,13 @@ export default class RouteExtractor extends Route {
         const isIndispoRef = allIndispRefIds.includes(referentiel.id);
 
         if (referentiel.childrens !== undefined) {
-          refObj[
-            'TOTAL ' + referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
-          ] = counterEtpTotal;
-
-          totalEtpt += counterEtpTotal;
-
           if (isIndispoRef) {
+            refObj[
+              'TOTAL ' +
+                referentiel.label.toUpperCase() +
+                ' ' +
+                referentiel.code_import.toUpperCase()
+            ] = 0;
             return {
               id: referentiel.id,
               label:
@@ -100,6 +90,15 @@ export default class RouteExtractor extends Route {
               indispo: 0,
               contentieux: true,
             };
+          } else {
+            refObj[
+              'TOTAL ' +
+                referentiel.label.toUpperCase() +
+                ' ' +
+                referentiel.code_import.toUpperCase()
+            ] = counterEtpTotal;
+
+            totalEtpt += counterEtpTotal;
           }
         } else {
           if (isIndispoRef) {

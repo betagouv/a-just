@@ -24,6 +24,7 @@ export function getEtpByDateAndPerson(referentielId, date, hr) {
   return {
     etp: null,
     situation: null,
+    indispoFiltred: [],
   };
 }
 

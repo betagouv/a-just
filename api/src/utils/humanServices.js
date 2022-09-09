@@ -11,7 +11,7 @@ export async function getHumanRessourceList(
   const list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true;
 
-    if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
+    if (hr.category && categoriesIds && categoriesIds.indexOf(hr.category.id) === -1) {
       isOk = false;
     }
 
