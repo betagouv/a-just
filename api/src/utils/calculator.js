@@ -187,7 +187,6 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   })
 
   for (let i = 0; i < hr.length; i++) {
-    console.time('etpall-' + hr[i].id)
     const situtations = hr[i].situations || []
     if (
       situtations.some((s) => {
@@ -210,7 +209,6 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
         }
       })
     }
-    console.timeEnd('etpall-' + hr[i].id)
   }
 
   const list = []
