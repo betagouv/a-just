@@ -32,7 +32,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private calculatorService: CalculatorService,
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private activitiesService: ActivitiesService,
+    private activitiesService: ActivitiesService
   ) {
     super()
   }
@@ -91,10 +91,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.maxDateSelectionDate = max
             console.log(max)
 
-            if (this.dateStop === null || max.getTime() < this.dateStop.getTime()) {
-              this.calculatorService.dateStart.next(month(max, -2))
-              this.calculatorService.dateStop.next(max)
-            }
+            this.calculatorService.dateStart.next(month(max, -2))
+            this.calculatorService.dateStop.next(max)
             this.isLoadingLastMonth = false
           })
         }
@@ -112,7 +110,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.contentieuxOptionsService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
       this.dateStart !== null &&
-      this.dateStop !== null && 
+      this.dateStop !== null &&
       this.maxDateSelectionDate &&
       this.isLoading === false
     ) {

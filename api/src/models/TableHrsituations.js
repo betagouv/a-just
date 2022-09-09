@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { today } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
   Model.getListByHumanId = async (humanId) => {
@@ -26,6 +27,7 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         etp: list[i].etp,
         dateStart: list[i].date_start,
+        dateStartTimesTamps: today(list[i].date_start).getTime(),
         category: {
           id: list[i]['HRCategory.id'],
           rank: list[i]['HRCategory.rank'],

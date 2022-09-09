@@ -56,7 +56,7 @@ module.exports = {
           activities,
           currentDate
         )
-        const findSit = findSituation(
+        const { currentSituation: findSit } = findSituation(
           hr,
           currentDate
         )

@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { today } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
   Model.getAllByHR = async (HRId) => {
@@ -21,7 +22,9 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         percent: list[i].percent,
         dateStart: list[i].date_start,
+        dateStartTimesTamps: today(list[i].date_start).getTime(),
         dateStop: list[i].date_stop,
+        dateStopTimesTamps: today(list[i].date_stop).getTime(),
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],

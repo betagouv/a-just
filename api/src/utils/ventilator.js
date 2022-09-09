@@ -18,7 +18,7 @@ export const preformatHumanResources = (list, dateSelected) => {
       if (hasIndisponibility > 1) {
         hasIndisponibility = 1
       }
-      const currentSituation = findSituation(
+      const { currentSituation } = findSituation(
         h,
         dateSelected
       )
