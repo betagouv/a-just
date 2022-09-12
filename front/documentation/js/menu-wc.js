@@ -249,20 +249,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="modules/DashboardModule.html" data-type="entity-link" >DashboardModule</a>
-                                    <li class="chapter inner">
-                                        <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-DashboardModule-1113fc631928de9c6f09b376af62458baa716c5cb13faadf91ac41c9fb45acb73ee082f673305f5e79110a41ba7136201e009c78d04468693543438e1e71d5f8"' : 'data-target="#xs-components-links-module-DashboardModule-1113fc631928de9c6f09b376af62458baa716c5cb13faadf91ac41c9fb45acb73ee082f673305f5e79110a41ba7136201e009c78d04468693543438e1e71d5f8"' }>
-                                            <span class="icon ion-md-cog"></span>
-                                            <span>Components</span>
-                                            <span class="icon ion-ios-arrow-down"></span>
-                                        </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-DashboardModule-1113fc631928de9c6f09b376af62458baa716c5cb13faadf91ac41c9fb45acb73ee082f673305f5e79110a41ba7136201e009c78d04468693543438e1e71d5f8"' :
-                                            'id="xs-components-links-module-DashboardModule-1113fc631928de9c6f09b376af62458baa716c5cb13faadf91ac41c9fb45acb73ee082f673305f5e79110a41ba7136201e009c78d04468693543438e1e71d5f8"' }>
-                                            <li class="link">
-                                                <a href="components/DashboardPage.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DashboardPage</a>
-                                            </li>
-                                        </ul>
-                                    </li>
                             </li>
                             <li class="link">
                                 <a href="modules/DashboardPageModule.html" data-type="entity-link" >DashboardPageModule</a>

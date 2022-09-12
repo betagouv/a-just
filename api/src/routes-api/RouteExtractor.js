@@ -7,7 +7,7 @@ import {
   countEtp,
   flatListOfContentieuxAndSousContentieux,
   getIndispoDetails,
-  replaceZeroByDot,
+  replaceZeroByDash,
 } from '../utils/extractor';
 import { preformatHumanResources } from '../utils/ventilator';
 import { getHumanRessourceList } from '../utils/humanServices';
@@ -38,7 +38,7 @@ export default class RouteExtractor extends Route {
 
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels();
 
-    const flatReferentielsList = flatListOfContentieuxAndSousContentieux(referentiels);
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels]);
 
     const hr = await this.model.getCache(backupId);
 
@@ -49,6 +49,8 @@ export default class RouteExtractor extends Route {
 
     let data = new Array();
 
+    //console.log('len human', allHuman.length);
+
     await Promise.all(
       allHuman.map(async (human) => {
         const { currentSituation } = findSituation(human);
@@ -57,78 +59,87 @@ export default class RouteExtractor extends Route {
         let fonctionName = await findFonctionName(fonctions, currentSituation);
 
         let etpAffected = new Array();
-        let refObj = new Object();
+        let refObj = { ...JSON.parse(JSON.stringify({})) };
         let totalEtpt = 0;
 
-        const indispoArray = await Promise.all(
-          flatReferentielsList.map(async (referentiel) => {
-            etpAffected = await getHRVentilation(
-              human,
-              referentiel.id,
-              [...categories],
-              dateStart,
-              dateStop
-            );
+        let indispoArray = new Array([]);
+        //console.log('flat ref', flatReferentielsList.length);
+        indispoArray = [
+          ...(await Promise.all(
+            flatReferentielsList.map(async (referentiel) => {
+              etpAffected = {
+                ...(await getHRVentilation(
+                  human,
+                  referentiel.id,
+                  [...categories],
+                  dateStart,
+                  dateStop
+                )),
+              };
 
-            const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = await countEtp(
-              etpAffected,
-              referentiel
-            );
+              const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = {
+                ...(await countEtp({ ...etpAffected }, referentiel)),
+              };
 
-            const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
-              await getIndispoDetails(flatReferentielsList);
+              const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
+                await getIndispoDetails(flatReferentielsList);
 
-            const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
+              const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
 
-            if (referentiel.childrens !== undefined) {
-              if (isIndispoRef) {
-                refObj[
-                  'TOTAL ' +
-                    referentiel.label.toUpperCase() +
-                    ' ' +
-                    referentiel.code_import.toUpperCase()
-                ] = 0;
-                return {
-                  id: referentiel.id,
-                  label:
+              if (referentiel.childrens !== undefined) {
+                if (isIndispoRef) {
+                  refObj[
                     'TOTAL ' +
-                    referentiel.label.toUpperCase() +
-                    ' ' +
-                    referentiel.code_import.toUpperCase(),
-                  indispo: 0,
-                  contentieux: true,
-                };
-              } else {
-                refObj[
-                  'TOTAL ' +
-                    referentiel.label.toUpperCase() +
-                    ' ' +
-                    referentiel.code_import.toUpperCase()
-                ] = counterEtpTotal;
+                      referentiel.label.toUpperCase() +
+                      ' ' +
+                      referentiel.code_import.toUpperCase()
+                  ] = 0;
 
-                totalEtpt += counterEtpTotal;
+                  return {
+                    id: referentiel.id,
+                    label:
+                      'TOTAL ' +
+                      referentiel.label.toUpperCase() +
+                      ' ' +
+                      referentiel.code_import.toUpperCase(),
+                    indispo: 0,
+                    contentieux: true,
+                  };
+                } else {
+                  refObj[
+                    'TOTAL ' +
+                      referentiel.label.toUpperCase() +
+                      ' ' +
+                      referentiel.code_import.toUpperCase()
+                  ] = counterEtpTotal;
+
+                  totalEtpt += counterEtpTotal;
+                }
+              } else {
+                if (isIndispoRef) {
+                  refObj[
+                    referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
+                  ] = counterIndispo / 100;
+                  return {
+                    id: referentiel.id,
+                    indispo: counterIndispo / 100,
+                    contentieux: false,
+                  };
+                } else
+                  refObj[
+                    referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
+                  ] = counterEtpSubTotal;
               }
-            } else {
-              if (isIndispoRef) {
-                refObj[
-                  referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
-                ] = counterIndispo / 100;
-                return {
-                  id: referentiel.id,
-                  indispo: counterIndispo / 100,
-                  contentieux: false,
-                };
-              } else
-                refObj[
-                  referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
-                ] = counterEtpSubTotal;
-            }
-            return { indispo: 0 };
-          })
-        );
+              return { indispo: 0 };
+            })
+          )),
+        ];
+        //console.log('len', indispoArray.length);
+
         const key = (await indispoArray.filter((elem) => elem.contentieux === true)[0].label) || '';
 
-        refObj[key] = await sumBy(indispoArray, 'indispo');
+        refObj[key] = sumBy(indispoArray, 'indispo');
+        //console.log(refObj[key]);
 
         if (categoryName === categoryFilter || categoryFilter === 'tous')
           data.push({
@@ -143,13 +154,11 @@ export default class RouteExtractor extends Route {
       })
     );
 
-    await data.sort(async (a, b) =>
-      a.last_nom > b.Fonction ? 1 : b.Fonction > a.Fonction ? -1 : 0
-    );
+    await data.sort((a, b) => (a.last_nom > b.last_nom ? 1 : b.Fonction > a.Fonction ? -1 : 0));
 
     data = addSumLine(data, categoryFilter);
-    data = replaceZeroByDot(data);
-    const columnSize = autofitColumns(data);
+    data = replaceZeroByDash(data);
+    const columnSize = await autofitColumns(data);
     this.sendOk(ctx, { values: data, columnSize });
   }
 }
