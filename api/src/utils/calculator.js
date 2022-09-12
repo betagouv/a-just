@@ -200,13 +200,13 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
 };
 
 export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop) => {
-  const list = {};
+  const list = new Object();
   categories.map((c) => {
-    list[c.id] = {
+    list[c.id] = new Object({
       etpt: 0,
       indispo: 0,
       ...c,
-    };
+    });
   });
 
   let now = new Date(dateStart);

@@ -87,7 +87,9 @@ export class ExcelService extends MainClass implements OnInit {
   getFileName() {
     return `Extraction-${
       this.userService.user.getValue()!.firstName
-    }_du ${new Date(
+    }_${this.userService.user.getValue()!.lastName!}_fait le ${new Date()
+      .toJSON()
+      .slice(0, 10)}_du ${new Date(
       this.dateStart
         .getValue()
         .setMinutes(
@@ -105,7 +107,6 @@ export class ExcelService extends MainClass implements OnInit {
         )
     )
       .toJSON()
-      .slice(0, 10)}_${this.userService.user.getValue()!
-      .lastName!}_fait le ${new Date().toJSON().slice(0, 10)}`
+      .slice(0, 10)}`
   }
 }

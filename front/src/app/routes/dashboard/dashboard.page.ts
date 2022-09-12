@@ -22,9 +22,11 @@ export class DashboardPage extends MainClass implements AfterViewInit {
     { id: 4, value: 'Fonctionnaire' },
   ]
   selectedCategorieId: undefined | string = undefined
+  isLoading: boolean = false
 
   export() {
-    this.excelService.exportExcel()
+    this.isLoading = true
+    this.excelService.exportExcel().then(() => (this.isLoading = false))
   }
 
   selectDate(dateType: string, value: any): void {
