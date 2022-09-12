@@ -250,7 +250,7 @@ export const getHRVentilation = (
     // only working day
     if (workingDay(now)) {
       nbDay++
-      const { etp, situation, nextDeltaDate } = getEtpByDateAndPerson(
+      const { etp, situation, nextDeltaDate, indispoFiltred } = getEtpByDateAndPerson(
         referentielId,
         now,
         hr
@@ -263,6 +263,13 @@ export const getHRVentilation = (
         lastEtpAdded = etp
         lastSituationId = situation.category.id
         list[situation.category.id].etpt += etp
+      }
+
+      const sumByInd = sumBy(indispoFiltred, 'percent')
+      if (sumByInd !== 0) {
+        indispoFiltred.map((c) => {
+          if (c.contentieux.id === referentielId) list[situation.category.id].indispo += c.percent
+        })
       }
     }
 
