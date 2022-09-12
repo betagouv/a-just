@@ -14,14 +14,14 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
       reelEtp = 0
     }
 
-    const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
+    //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
     let nextDeltaDate = null
-    if(nextSituation) {
+    /*if(nextSituation) {
       nextDeltaDate = today(nextSituation.dateStart)
     }
     if(nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())) {
       nextDeltaDate = nextIndispoDate
-    }
+    }*/
 
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
@@ -107,16 +107,16 @@ export const findSituation = (hr, date) => {
       }
     }
   }
-  /*let situations = findAllSituations(hr, date)
+  let situations = findAllSituations(hr, date)
   return {
     currentSituation: situations.length ? situations[0] : null,
     nextSituation: null,
-  }*/
-  let situations = findAllFuturSituations(hr, date)
+  }
+  /*let situations = findAllFuturSituations(hr, date)
   return {
     currentSituation: situations.length ? situations[situations.length - 1] : null,
     nextSituation: situations.length > 1 ? situations[situations.length - 2] : null,
-  }
+  }*/
 }
 
 export const findAllFuturSituations = (hr, date) => {
