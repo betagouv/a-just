@@ -72,50 +72,51 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;;
-import { MatInputModule } from &#x27;@angular/material/input&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;
+import { MatInputModule } from &#x27;@angular/material/input&#x27;
 import {
   MatFormFieldModule,
   MAT_FORM_FIELD_DEFAULT_OPTIONS,
-} from &#x27;@angular/material/form-field&#x27;;
-import { MatButtonModule } from &#x27;@angular/material/button&#x27;;
-import { MatCardModule } from &#x27;@angular/material/card&#x27;;
+} from &#x27;@angular/material/form-field&#x27;
+import { MatButtonModule } from &#x27;@angular/material/button&#x27;
+import { MatCardModule } from &#x27;@angular/material/card&#x27;
 import {
   MatSnackBarModule,
   MAT_SNACK_BAR_DEFAULT_OPTIONS,
-} from &#x27;@angular/material/snack-bar&#x27;;
-import { MatTableModule } from &#x27;@angular/material/table&#x27;;
-import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
-import { MatDialogModule } from &#x27;@angular/material/dialog&#x27;;
-import { MatSelectModule } from &#x27;@angular/material/select&#x27;;
-import { MatSortModule } from &#x27;@angular/material/sort&#x27;;
-import { MatDatepickerModule } from &#x27;@angular/material/datepicker&#x27;;
-import { MatProgressSpinnerModule } from &#x27;@angular/material/progress-spinner&#x27;;
-import { DragDropModule } from &#x27;@angular/cdk/drag-drop&#x27;;
+} from &#x27;@angular/material/snack-bar&#x27;
+import { MatTableModule } from &#x27;@angular/material/table&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { MatDialogModule } from &#x27;@angular/material/dialog&#x27;
+import { MatSelectModule } from &#x27;@angular/material/select&#x27;
+import { MatSortModule } from &#x27;@angular/material/sort&#x27;
+import { MatDatepickerModule } from &#x27;@angular/material/datepicker&#x27;
+import { MatProgressSpinnerModule } from &#x27;@angular/material/progress-spinner&#x27;
+import { DragDropModule } from &#x27;@angular/cdk/drag-drop&#x27;
 import {
   MatTooltipDefaultOptions,
   MatTooltipModule,
   MAT_TOOLTIP_DEFAULT_OPTIONS,
-} from &#x27;@angular/material/tooltip&#x27;;
-import { MatMenuModule } from &#x27;@angular/material/menu&#x27;;
-import { MatButtonToggleModule } from &#x27;@angular/material/button-toggle&#x27;;
-import { MatCheckboxModule } from &#x27;@angular/material/checkbox&#x27;;
+} from &#x27;@angular/material/tooltip&#x27;
+import { MatMenuModule } from &#x27;@angular/material/menu&#x27;
+import { MatButtonToggleModule } from &#x27;@angular/material/button-toggle&#x27;
+import { MatCheckboxModule } from &#x27;@angular/material/checkbox&#x27;
 import {
   MatNativeDateModule,
   DateAdapter,
   MAT_DATE_LOCALE,
   MAT_DATE_FORMATS,
-} from &#x27;@angular/material/core&#x27;;
+} from &#x27;@angular/material/core&#x27;
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-} from &#x27;@angular/material-moment-adapter&#x27;;
+} from &#x27;@angular/material-moment-adapter&#x27;
+import { MatProgressBarModule } from &#x27;@angular/material/progress-bar&#x27;
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions &#x3D; {
   showDelay: 1000,
   hideDelay: 1000,
   touchendHideDelay: 1000,
-};
+}
 
 export const MY_FORMATS &#x3D; {
   parse: {
@@ -127,7 +128,7 @@ export const MY_FORMATS &#x3D; {
     dateA11yLabel: &#x27;LL&#x27;,
     monthYearA11yLabel: &#x27;MMMM YYYY&#x27;,
   },
-};
+}
 
 @NgModule({
   exports: [
@@ -149,6 +150,7 @@ export const MY_FORMATS &#x3D; {
     MatTooltipModule,
     MatMenuModule,
     MatCheckboxModule,
+    MatProgressBarModule,
   ],
   providers: [
     {

@@ -152,6 +152,9 @@
                                 <a href="#ngOnInit" >ngOnInit</a>
                             </li>
                             <li>
+                                <a href="#permuteValues" >permuteValues</a>
+                            </li>
+                            <li>
                                 <a href="#toNumber" >toNumber</a>
                             </li>
                         </ul>
@@ -364,6 +367,43 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="permuteValues"></a>
+                    <span class="name">
+                        <span ><b>permuteValues</b></span>
+                        <a href="#permuteValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>permuteValues()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/app/components/dial-widget/dial-widget.component.ts:33</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="toNumber"></a>
                     <span class="name">
                         <span ><b>toNumber</b></span>
@@ -503,6 +543,12 @@ export class DialWidgetComponent implements OnInit {
   toNumber(str: string): number {
     return parseInt(str)
   }
+
+  permuteValues() {
+    const tmpVal &#x3D; String(this.valueProjected)
+    this.valueProjected &#x3D; this.valueSimulated
+    this.valueSimulated &#x3D; tmpVal
+  }
 }
 </code></pre>
     </div>
@@ -520,32 +566,27 @@ export class DialWidgetComponent implements OnInit {
     &lt;div
       [class.selected]&#x3D;&quot;selectedSituation &#x3D;&#x3D;&#x3D; &#x27;projected&#x27;&quot;
       class&#x3D;&quot;button&quot;
-      (click)&#x3D;&quot;selectedSituation &#x3D; &#x27;projected&#x27;&quot;
+      (click)&#x3D;&quot;selectedSituation &#x3D; &#x27;projected&#x27;; permuteValues()&quot;
     &gt;
       Situation projetée
     &lt;/div&gt;
     &lt;div
       [class.selected]&#x3D;&quot;selectedSituation &#x3D;&#x3D;&#x3D; &#x27;simulated&#x27;&quot;
       class&#x3D;&quot;button&quot;
-      (click)&#x3D;&quot;selectedSituation &#x3D; &#x27;simulated&#x27;&quot;
+      (click)&#x3D;&quot;selectedSituation &#x3D; &#x27;simulated&#x27;; permuteValues()&quot;
     &gt;
       Situation simulée
     &lt;/div&gt;
   &lt;/div&gt;
-
-  &lt;div class&#x3D;&quot;container&quot; *ngIf&#x3D;&quot;selectedSituation &#x3D;&#x3D;&#x3D; &#x27;projected&#x27;&quot;&gt;
-    &lt;aj-coverage-preview
-      [@fadeInOut]
-      [coverageRate]&#x3D;&quot;toNumber(valueProjected)&quot;
-    &gt;&lt;/aj-coverage-preview&gt;
-  &lt;/div&gt;
-  &lt;div class&#x3D;&quot;container&quot; *ngIf&#x3D;&quot;selectedSituation &#x3D;&#x3D;&#x3D; &#x27;simulated&#x27;&quot;&gt;
+  &lt;div class&#x3D;&quot;space-flex&quot;&gt;&lt;/div&gt;
+  &lt;div class&#x3D;&quot;container&quot;&gt;
     &lt;aj-coverage-preview
       [@fadeInOut]
       [oldCoverageRate]&#x3D;&quot;toNumber(valueProjected)&quot;
       [coverageRate]&#x3D;&quot;toNumber(valueSimulated)&quot;
     &gt;&lt;/aj-coverage-preview&gt;
   &lt;/div&gt;
+  &lt;div class&#x3D;&quot;space-flex&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
     </div>
@@ -560,6 +601,13 @@ export class DialWidgetComponent implements OnInit {
     background-color: white;
     position: relative;
     z-index: 1;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+
+    .space-flex {
+        flex: 1;
+    }
 
     .title {
         height: 96px;
@@ -583,12 +631,14 @@ export class DialWidgetComponent implements OnInit {
     }
 
     .button-container {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        flex: 1;
         background-color: #fff;
         position: relative;
         padding: 8px;
         align-items: center;
         height: 356px;
+        display: flex;
+        flex-direction: column;
 
         .buttons {
             position: relative;
@@ -621,6 +671,7 @@ export class DialWidgetComponent implements OnInit {
 
     .container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 22px;
@@ -655,8 +706,8 @@ export class DialWidgetComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="title">  <p>Evolution du taux de couverture</p>  <label    >{{ dateStart === \'\' ? "d\'aujourd\'hui" : \'du\' }} {{ dateStart }} au    {{ dateStop }}</label  ></div><div class="button-container">  <div class="buttons">    <div      [class.selected]="selectedSituation === \'projected\'"      class="button"      (click)="selectedSituation = \'projected\'"    >      Situation projetée    </div>    <div      [class.selected]="selectedSituation === \'simulated\'"      class="button"      (click)="selectedSituation = \'simulated\'"    >      Situation simulée    </div>  </div>  <div class="container" *ngIf="selectedSituation === \'projected\'">    <aj-coverage-preview      [@fadeInOut]      [coverageRate]="toNumber(valueProjected)"    ></aj-coverage-preview>  </div>  <div class="container" *ngIf="selectedSituation === \'simulated\'">    <aj-coverage-preview      [@fadeInOut]      [oldCoverageRate]="toNumber(valueProjected)"      [coverageRate]="toNumber(valueSimulated)"    ></aj-coverage-preview>  </div></div></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'RhBackupPanelComponent', 'selector': 'aj-rh-backup-panel'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><div class="title">  <p>Evolution du taux de couverture</p>  <label    >{{ dateStart === \'\' ? "d\'aujourd\'hui" : \'du\' }} {{ dateStart }} au    {{ dateStop }}</label  ></div><div class="button-container">  <div class="buttons">    <div      [class.selected]="selectedSituation === \'projected\'"      class="button"      (click)="selectedSituation = \'projected\'; permuteValues()"    >      Situation projetée    </div>    <div      [class.selected]="selectedSituation === \'simulated\'"      class="button"      (click)="selectedSituation = \'simulated\'; permuteValues()"    >      Situation simulée    </div>  </div>  <div class="space-flex"></div>  <div class="container">    <aj-coverage-preview      [@fadeInOut]      [oldCoverageRate]="toNumber(valueProjected)"      [coverageRate]="toNumber(valueSimulated)"    ></aj-coverage-preview>  </div>  <div class="space-flex"></div></div></div>'
+    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'DialWidgetComponent'};
 </script>

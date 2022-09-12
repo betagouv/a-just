@@ -159,13 +159,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/ComponentsModule.html" data-type="entity-link" >ComponentsModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-ComponentsModule-d6602df6c471c3ca0472a31e91ed77ac9d23e191f24cabb490791eb95dbaa67abb0dcdbf453c8a33ed1b03a77962fa22eee4c5fc88598e1cbe668f39bfcc479b"' : 'data-target="#xs-components-links-module-ComponentsModule-d6602df6c471c3ca0472a31e91ed77ac9d23e191f24cabb490791eb95dbaa67abb0dcdbf453c8a33ed1b03a77962fa22eee4c5fc88598e1cbe668f39bfcc479b"' }>
+                                            'data-target="#components-links-module-ComponentsModule-321ed7a0f95165a9dcbb718b9ec84195c01991906406d2424febea3945af07ac0e995fd54cd26ddd01cd39c2b03004b7681c8e0b2c90c2219d52ce5dc3b5e729"' : 'data-target="#xs-components-links-module-ComponentsModule-321ed7a0f95165a9dcbb718b9ec84195c01991906406d2424febea3945af07ac0e995fd54cd26ddd01cd39c2b03004b7681c8e0b2c90c2219d52ce5dc3b5e729"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-d6602df6c471c3ca0472a31e91ed77ac9d23e191f24cabb490791eb95dbaa67abb0dcdbf453c8a33ed1b03a77962fa22eee4c5fc88598e1cbe668f39bfcc479b"' :
-                                            'id="xs-components-links-module-ComponentsModule-d6602df6c471c3ca0472a31e91ed77ac9d23e191f24cabb490791eb95dbaa67abb0dcdbf453c8a33ed1b03a77962fa22eee4c5fc88598e1cbe668f39bfcc479b"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-321ed7a0f95165a9dcbb718b9ec84195c01991906406d2424febea3945af07ac0e995fd54cd26ddd01cd39c2b03004b7681c8e0b2c90c2219d52ce5dc3b5e729"' :
+                                            'id="xs-components-links-module-ComponentsModule-321ed7a0f95165a9dcbb718b9ec84195c01991906406d2424febea3945af07ac0e995fd54cd26ddd01cd39c2b03004b7681c8e0b2c90c2219d52ce5dc3b5e729"' }>
                                             <li class="link">
                                                 <a href="components/CoveragePreviewComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >CoveragePreviewComponent</a>
                                             </li>
@@ -180,6 +180,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link">
                                                 <a href="components/DtesChartComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DtesChartComponent</a>
+                                            </li>
+                                            <li class="link">
+                                                <a href="components/EtpChartComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >EtpChartComponent</a>
                                             </li>
                                             <li class="link">
                                                 <a href="components/EtpPreviewComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >EtpPreviewComponent</a>
@@ -222,9 +225,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link">
                                                 <a href="components/ReferentielCalculatorComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ReferentielCalculatorComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/RhBackupPanelComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >RhBackupPanelComponent</a>
                                             </li>
                                             <li class="link">
                                                 <a href="components/SelectCheckAllComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SelectCheckAllComponent</a>
@@ -386,6 +386,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="components/DtesChartComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DtesChartComponent</a>
                                             </li>
                                             <li class="link">
+                                                <a href="components/EtpChartComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >EtpChartComponent</a>
+                                            </li>
+                                            <li class="link">
                                                 <a href="components/EtpPreviewComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >EtpPreviewComponent</a>
                                             </li>
                                             <li class="link">
@@ -426,9 +429,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link">
                                                 <a href="components/ReferentielCalculatorComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ReferentielCalculatorComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/RhBackupPanelComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >RhBackupPanelComponent</a>
                                             </li>
                                             <li class="link">
                                                 <a href="components/SelectCheckAllComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SelectCheckAllComponent</a>
@@ -515,13 +515,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/WorkforceModule.html" data-type="entity-link" >WorkforceModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-WorkforceModule-02f2499e7677aa0f2832ccfbe57da750064b5628d768ab07d1a24044603a6c353242fcc384b01c635b6688d094c1f27f20729474ced30901e57785650a69fd61"' : 'data-target="#xs-components-links-module-WorkforceModule-02f2499e7677aa0f2832ccfbe57da750064b5628d768ab07d1a24044603a6c353242fcc384b01c635b6688d094c1f27f20729474ced30901e57785650a69fd61"' }>
+                                            'data-target="#components-links-module-WorkforceModule-5bbc61503585d2b0208a9c06c5607e1087d973387ebb198984069ab396e145041a173343c4d72d73e1388b718a069be9a190b4889b926d4b15917fcd5e07b98d"' : 'data-target="#xs-components-links-module-WorkforceModule-5bbc61503585d2b0208a9c06c5607e1087d973387ebb198984069ab396e145041a173343c4d72d73e1388b718a069be9a190b4889b926d4b15917fcd5e07b98d"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-WorkforceModule-02f2499e7677aa0f2832ccfbe57da750064b5628d768ab07d1a24044603a6c353242fcc384b01c635b6688d094c1f27f20729474ced30901e57785650a69fd61"' :
-                                            'id="xs-components-links-module-WorkforceModule-02f2499e7677aa0f2832ccfbe57da750064b5628d768ab07d1a24044603a6c353242fcc384b01c635b6688d094c1f27f20729474ced30901e57785650a69fd61"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-WorkforceModule-5bbc61503585d2b0208a9c06c5607e1087d973387ebb198984069ab396e145041a173343c4d72d73e1388b718a069be9a190b4889b926d4b15917fcd5e07b98d"' :
+                                            'id="xs-components-links-module-WorkforceModule-5bbc61503585d2b0208a9c06c5607e1087d973387ebb198984069ab396e145041a173343c4d72d73e1388b718a069be9a190b4889b926d4b15917fcd5e07b98d"' }>
+                                            <li class="link">
+                                                <a href="components/FilterPanelComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >FilterPanelComponent</a>
+                                            </li>
                                             <li class="link">
                                                 <a href="components/WorkforcePage.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >WorkforcePage</a>
                                             </li>
@@ -567,6 +570,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/ContentieuxOptionsService.html" data-type="entity-link" >ContentieuxOptionsService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ExcelService.html" data-type="entity-link" >ExcelService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/HRCategoryService.html" data-type="entity-link" >HRCategoryService</a>
                                 </li>
                                 <li class="link">
@@ -580,6 +586,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/HumanResourceService.html" data-type="entity-link" >HumanResourceService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ReaffectatorService.html" data-type="entity-link" >ReaffectatorService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/ReferentielService.html" data-type="entity-link" >ReferentielService</a>
@@ -644,7 +653,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/CalculatorInterface.html" data-type="entity-link" >CalculatorInterface</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ChartAnnotationBoxInterface.html" data-type="entity-link" >ChartAnnotationBoxInterface</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/childrenInterface.html" data-type="entity-link" >childrenInterface</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ContentieuReferentielCalculateInterface.html" data-type="entity-link" >ContentieuReferentielCalculateInterface</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ContentieuReferentielInterface.html" data-type="entity-link" >ContentieuReferentielInterface</a>
@@ -657,6 +672,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/etpAffectedInterface.html" data-type="entity-link" >etpAffectedInterface</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FilterPanelInterface.html" data-type="entity-link" >FilterPanelInterface</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FirstETPTargetValueInterface.html" data-type="entity-link" >FirstETPTargetValueInterface</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/HistoryInterface.html" data-type="entity-link" >HistoryInterface</a>

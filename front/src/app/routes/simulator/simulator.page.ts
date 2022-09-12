@@ -827,7 +827,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       realCoverage: null,
     }
 
-    //this.simulatedSationData =
     this.simulatorService.toSimulate(params, simulation)
   }
 

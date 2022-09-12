@@ -139,6 +139,13 @@
                                         </a>
                                 </li>
                                 <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#monthlyReport" 
+>
+                                            monthlyReport
+                                        </a>
+                                </li>
+                                <li>
                                         <a href="#nbMonth" 
 >
                                             nbMonth
@@ -491,6 +498,44 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
+                                        <a name="monthlyReport"></a>
+                                        <span class="name "><b>monthlyReport</b>
+                                            <a href="#monthlyReport">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>monthlyReport:     <code>any[] | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>any[] | null</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
                                         <a name="nbMonth"></a>
                                         <span class="name "><b>nbMonth</b>
                                             <a href="#nbMonth">
@@ -693,21 +738,22 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { etpAffectedInterface } from &#x27;./calculator&#x27;
 
 export interface SimulatorInterface {
-    totalIn: number | null
-    totalOut: number | null
-    lastStock: number | null
-    etpMag: number | null
-    etpFon: number | null
-    etpCont: number | null
-    realCoverage: number | null
-    realDTESInMonths: number | null
-    realTimePerCase: number | null
-    calculateCoverage: number | null
-    calculateDTESInMonths: number | null
-    calculateTimePerCase: number | null
-    nbMonth: number
-    etpAffected: etpAffectedInterface[] | null
-    etpToCompute?: number | null
+  totalIn: number | null
+  totalOut: number | null
+  lastStock: number | null
+  etpMag: number | null
+  etpFon: number | null
+  etpCont: number | null
+  realCoverage: number | null
+  realDTESInMonths: number | null
+  realTimePerCase: number | null
+  calculateCoverage: number | null
+  calculateDTESInMonths: number | null
+  calculateTimePerCase: number | null
+  nbMonth: number
+  etpAffected: etpAffectedInterface[] | null
+  etpToCompute?: number | null
+  monthlyReport?: any[] | null
 }
 </code></pre>
     </div>

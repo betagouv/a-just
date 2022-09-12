@@ -407,6 +407,7 @@ export class FiguresWidgetComponent implements OnInit {
     {{ dateStop }}&lt;/label
   &gt;
 &lt;/div&gt;
+&lt;div class&#x3D;&quot;space-one&quot;&gt;&lt;/div&gt;
 &lt;div class&#x3D;&quot;items&quot;&gt;
   &lt;div class&#x3D;&quot;circle&quot;&gt;
     &lt;p class&#x3D;&quot;loader-title&quot;&gt;Situation simulée &lt;br /&gt;au {{ dateStop }}&lt;/p&gt;
@@ -426,6 +427,7 @@ export class FiguresWidgetComponent implements OnInit {
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
+&lt;div class&#x3D;&quot;space-halfone&quot;&gt;&lt;/div&gt;
 </code></pre>
     </div>
 
@@ -438,6 +440,18 @@ export class FiguresWidgetComponent implements OnInit {
 :host {
     background-color: white;
     position: relative;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+
+    display: flex;
+    flex-direction: column;
+
+    .space-one {
+        flex: 1;
+    }
+
+    .space-halfone {
+        flex: 0.5;
+    }
 
     .title {
         height: 96px;
@@ -461,7 +475,6 @@ export class FiguresWidgetComponent implements OnInit {
     }
 
     .items {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         background-color: #fff;
         position: relative;
 
@@ -561,8 +574,8 @@ export class FiguresWidgetComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="title">  <p>Temps moyen par dossier</p>  <label    >{{ dateStart === \'\' ? "d\'aujourd\'hui" : \'du\' }} {{ dateStart }} au    {{ dateStop }}</label  ></div><div class="items">  <div class="circle">    <p class="loader-title">Situation simulée <br />au {{ dateStop }}</p>    <label class="loader-value hard">{{ valueSimulated }}</label>  </div>  <div class="block-container">    <div class="block">      <p class="loader-title">        Situation <br />{{ dateStart === \'\' ? "à aujourd\'hui" : \'au\' }}        {{ dateStart }}      </p>      <label class="loader-value">{{ valueAt }}</label>    </div>    <div class="block">      <p class="loader-title">Situation projetée <br />au {{ dateStop }}</p>      <label class="loader-value medium">{{ valueProjected }}</label>    </div>  </div></div></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'RhBackupPanelComponent', 'selector': 'aj-rh-backup-panel'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><div class="title">  <p>Temps moyen par dossier</p>  <label    >{{ dateStart === \'\' ? "d\'aujourd\'hui" : \'du\' }} {{ dateStart }} au    {{ dateStop }}</label  ></div><div class="space-one"></div><div class="items">  <div class="circle">    <p class="loader-title">Situation simulée <br />au {{ dateStop }}</p>    <label class="loader-value hard">{{ valueSimulated }}</label>  </div>  <div class="block-container">    <div class="block">      <p class="loader-title">        Situation <br />{{ dateStart === \'\' ? "à aujourd\'hui" : \'au\' }}        {{ dateStart }}      </p>      <label class="loader-value">{{ valueAt }}</label>    </div>    <div class="block">      <p class="loader-title">Situation projetée <br />au {{ dateStop }}</p>      <label class="loader-value medium">{{ valueProjected }}</label>    </div>  </div></div><div class="space-halfone"></div></div>'
+    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'FiguresWidgetComponent'};
 </script>
