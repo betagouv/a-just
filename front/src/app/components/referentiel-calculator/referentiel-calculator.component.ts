@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
   selector: 'aj-referentiel-calculator',
@@ -26,6 +27,7 @@ export class ReferentielCalculatorComponent extends MainClass {
 
   decimalToStringDate(decimal: number | null) {
     if (decimal != null) {
+      decimal = fixDecimal(decimal)
       const strArray = String(decimal).split('.')
       let minute = strArray[1]
         ? String(Math.ceil((1 / 100) * +strArray[1] * 60))

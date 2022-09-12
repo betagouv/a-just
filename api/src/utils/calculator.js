@@ -179,7 +179,6 @@ const getActivityValues = (
 
 const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {}
-  console.log(`getHRPositions - ref : ${referentielId}`)
 
   categories.map((c) => {
     hrCategories[c.label] = hrCategories[c.label] || {
@@ -191,7 +190,6 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
 
   for (let i = 0; i < hr.length; i++) {
     const situtations = hr[i].situations || []
-    console.log(`getHRPositions - ${hr[i].id}`)
     if (
       situtations.some((s) => {
         const activities = s.activities || []
