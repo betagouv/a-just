@@ -40,7 +40,7 @@
 
 <ol class="breadcrumb">
   <li>Injectables</li>
-  <li >ReferentielService</li>
+  <li >ReaffectatorService</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -58,7 +58,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/services/referentiel/referentiel.service.ts</code>
+            <code>src/app/services/reaffectator/reaffectator.service.ts</code>
         </p>
 
 
@@ -78,16 +78,13 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#idsIndispo" >idsIndispo</a>
+                                <a href="#selectedCategoriesIds" >selectedCategoriesIds</a>
                             </li>
                             <li>
-                                <a href="#idsMainIndispo" >idsMainIndispo</a>
+                                <a href="#selectedFonctionsIds" >selectedFonctionsIds</a>
                             </li>
                             <li>
-                                <a href="#idsSoutien" >idsSoutien</a>
-                            </li>
-                            <li>
-                                <a href="#mainActivitiesId" >mainActivitiesId</a>
+                                <a href="#selectedReferentielIds" >selectedReferentielIds</a>
                             </li>
                         </ul>
                     </td>
@@ -102,7 +99,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#formatDatas" >formatDatas</a>
+                                <a href="#onFilterList" >onFilterList</a>
                             </li>
                         </ul>
                     </td>
@@ -122,12 +119,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>)</code>
+<code>constructor(serverService: <a href="../injectables/ServerService.html" target="_self">ServerService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:10</a></div>
                             </td>
                         </tr>
 
@@ -145,10 +142,10 @@
                                         </thead>
                                         <tbody>
                                                 <tr>
-                                                        <td>humanResourceService</td>
+                                                        <td>serverService</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../injectables/HumanResourceService.html" target="_self" >HumanResourceService</a></code>
+                                                                        <code><a href="../injectables/ServerService.html" target="_self" >ServerService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -174,24 +171,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="formatDatas"></a>
+                    <a name="onFilterList"></a>
                     <span class="name">
-                        <span ><b>formatDatas</b></span>
-                        <a href="#formatDatas"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>onFilterList</b></span>
+                        <a href="#onFilterList"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>formatDatas(list: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface[]</a>)</code>
+<code>onFilterList(backupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, contentieuxIds: number[] | null, categoriesIds: number[], fonctionsIds: number[])</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="14"
+                            class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:14</a></div>
                 </td>
             </tr>
 
@@ -212,9 +209,57 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>list</td>
+                                    <td>backupId</td>
                                     <td>
-                                                <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface[]</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>date</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>contentieuxIds</td>
+                                    <td>
+                                            <code>number[] | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>categoriesIds</td>
+                                    <td>
+                                            <code>number[]</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>fonctionsIds</td>
+                                    <td>
+                                            <code>number[]</code>
                                     </td>
 
                                     <td>
@@ -229,7 +274,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">
@@ -249,10 +294,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="idsIndispo"></a>
+                    <a name="selectedCategoriesIds"></a>
                     <span class="name">
-                        <span ><b>idsIndispo</b></span>
-                        <a href="#idsIndispo"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>selectedCategoriesIds</b></span>
+                        <a href="#selectedCategoriesIds"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -269,7 +314,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:9</a></div>
                         </td>
                     </tr>
 
@@ -280,41 +325,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="idsMainIndispo"></a>
+                    <a name="selectedFonctionsIds"></a>
                     <span class="name">
-                        <span ><b>idsMainIndispo</b></span>
-                        <a href="#idsMainIndispo"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>0</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:10</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="idsSoutien"></a>
-                    <span class="name">
-                        <span ><b>idsSoutien</b></span>
-                        <a href="#idsSoutien"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>selectedFonctionsIds</b></span>
+                        <a href="#selectedFonctionsIds"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -331,7 +345,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:11</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:10</a></div>
                         </td>
                     </tr>
 
@@ -342,10 +356,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="mainActivitiesId"></a>
+                    <a name="selectedReferentielIds"></a>
                     <span class="name">
-                        <span ><b>mainActivitiesId</b></span>
-                        <a href="#mainActivitiesId"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>selectedReferentielIds</b></span>
+                        <a href="#selectedReferentielIds"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -362,7 +376,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:8</a></div>
                         </td>
                     </tr>
 
@@ -376,66 +390,36 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
-import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
-import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
 
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
-export class ReferentielService {
-  idsIndispo: number[] &#x3D; []
-  idsMainIndispo: number &#x3D; 0
-  idsSoutien: number[] &#x3D; []
-  mainActivitiesId: number[] &#x3D; []
+export class ReaffectatorService {
+  selectedReferentielIds: number[] &#x3D; []
+  selectedCategoriesIds: number[] &#x3D; []
+  selectedFonctionsIds: number[] &#x3D; []
 
-  constructor(private humanResourceService: HumanResourceService) {}
+  constructor(private serverService: ServerService) {}
 
-  formatDatas(list: ContentieuReferentielInterface[]) {
-    const refIndispo &#x3D; list.find((r) &#x3D;&gt; r.label &#x3D;&#x3D;&#x3D; &#x27;Indisponibilité&#x27;)
-    const idsIndispo: number[] &#x3D; []
-    this.humanResourceService.allIndisponibilityReferentiel &#x3D; []
-    if (refIndispo) {
-      this.idsMainIndispo &#x3D; refIndispo.id
-      this.humanResourceService.allIndisponibilityReferentiel.push(refIndispo)
-      idsIndispo.push(refIndispo.id)
-      ;(refIndispo.childrens || []).map((c) &#x3D;&gt; {
-        idsIndispo.push(c.id)
-        this.humanResourceService.allIndisponibilityReferentiel.push(c)
+  onFilterList(
+    backupId: number,
+    date: Date,
+    contentieuxIds: number[] | null,
+    categoriesIds: number[],
+    fonctionsIds: number[]
+  ) {
+    return this.serverService
+      .post(&#x60;reaffectator/filter-list&#x60;, {
+        backupId,
+        date,
+        contentieuxIds,
+        categoriesIds,
+        fonctionsIds,
       })
-    }
-    this.humanResourceService.allIndisponibilityReferentielIds &#x3D;
-      this.humanResourceService.allIndisponibilityReferentiel.map(function (
-        obj
-      ) {
-        return obj.id
+      .then((data) &#x3D;&gt; {
+        return data.data
       })
-
-    this.idsIndispo &#x3D; idsIndispo
-    this.humanResourceService.copyOfIdsIndispo &#x3D; idsIndispo
-
-    const refSoutien &#x3D; list.find((r) &#x3D;&gt; r.label &#x3D;&#x3D;&#x3D; &#x27;Soutien&#x27;)
-    const idsSoutien &#x3D; []
-    if (refSoutien) {
-      idsSoutien.push(refSoutien.id)
-      ;(refSoutien.childrens || []).map((c) &#x3D;&gt; {
-        idsSoutien.push(c.id)
-      })
-    }
-    this.idsSoutien &#x3D; idsSoutien
-
-    this.mainActivitiesId &#x3D; list.map((r) &#x3D;&gt; r.id)
-
-    // feach all id of contentieux
-    let listAll: ContentieuReferentielInterface[] &#x3D; []
-    list.map((cont) &#x3D;&gt; {
-      listAll.push(cont)
-      listAll &#x3D; list.concat(cont.childrens || [])
-    })
-    this.humanResourceService.selectedReferentielIds &#x3D; listAll
-      .filter((a) &#x3D;&gt; idsIndispo.indexOf(a.id) &#x3D;&#x3D;&#x3D; -1)
-      .map((r) &#x3D;&gt; r.id)
-
-    this.humanResourceService.contentieuxReferentiel.next(list)
   }
 }
 </code></pre>
@@ -481,7 +465,7 @@ export class ReferentielService {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
-            var COMPODOC_CURRENT_PAGE_URL = 'ReferentielService.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'ReaffectatorService.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

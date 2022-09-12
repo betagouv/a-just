@@ -142,7 +142,19 @@
                                 <a href="#activityMonth" >activityMonth</a>
                             </li>
                             <li>
+                                <a href="#canEditActivities" >canEditActivities</a>
+                            </li>
+                            <li>
+                                <a href="#isLoadedFirst" >isLoadedFirst</a>
+                            </li>
+                            <li>
                                 <a href="#referentiel" >referentiel</a>
+                            </li>
+                            <li>
+                                <a href="#timeoutUpdateAcitity" >timeoutUpdateAcitity</a>
+                            </li>
+                            <li>
+                                <a href="#updatedBy" >updatedBy</a>
                             </li>
                             <li>
                                 <a href="#environment" >environment</a>
@@ -169,10 +181,10 @@
                                 <a href="#ngOnDestroy" >ngOnDestroy</a>
                             </li>
                             <li>
-                                <a href="#onUpdateActivity" >onUpdateActivity</a>
+                                <a href="#onLoadMonthActivities" >onLoadMonthActivities</a>
                             </li>
                             <li>
-                                <a href="#onUpdateMainActivity" >onUpdateMainActivity</a>
+                                <a href="#onUpdateActivity" >onUpdateActivity</a>
                             </li>
                             <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
@@ -222,6 +234,12 @@
                                 <a href="#isToday" >isToday</a>
                             </li>
                             <li>
+                                <a href="#parseFloat" >parseFloat</a>
+                            </li>
+                            <li>
+                                <a href="#parseInt" >parseInt</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
                                 <a href="#referentielMappingColor" >referentielMappingColor</a>
                             </li>
@@ -257,12 +275,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(activitiesService: <a href="../injectables/ActivitiesService.html" target="_self">ActivitiesService</a>, humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, referentielService: <a href="../injectables/ReferentielService.html" target="_self">ReferentielService</a>)</code>
+<code>constructor(activitiesService: <a href="../injectables/ActivitiesService.html" target="_self">ActivitiesService</a>, humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, referentielService: <a href="../injectables/ReferentielService.html" target="_self">ReferentielService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/activities/activities.page.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/routes/activities/activities.page.ts:26</a></div>
                             </td>
                         </tr>
 
@@ -315,6 +333,18 @@
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -346,15 +376,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>changeMonth(deltaMonth: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>changeMonth(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="72"
-                            class="link-to-prism">src/app/routes/activities/activities.page.ts:72</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="125"
+                            class="link-to-prism">src/app/routes/activities/activities.page.ts:125</a></div>
                 </td>
             </tr>
 
@@ -375,9 +405,9 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>deltaMonth</td>
+                                    <td>date</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
                                     </td>
 
                                     <td>
@@ -422,8 +452,45 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="43"
-                            class="link-to-prism">src/app/routes/activities/activities.page.ts:43</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="57"
+                            class="link-to-prism">src/app/routes/activities/activities.page.ts:57</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onLoadMonthActivities"></a>
+                    <span class="name">
+                        <span ><b>onLoadMonthActivities</b></span>
+                        <a href="#onLoadMonthActivities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onLoadMonthActivities()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="129"
+                            class="link-to-prism">src/app/routes/activities/activities.page.ts:129</a></div>
                 </td>
             </tr>
 
@@ -452,15 +519,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onUpdateActivity(referentiel: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>, subRef: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>)</code>
+<code>onUpdateActivity(referentiel: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>, subRef: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>, nodeUpdated: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="47"
-                            class="link-to-prism">src/app/routes/activities/activities.page.ts:47</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="61"
+                            class="link-to-prism">src/app/routes/activities/activities.page.ts:61</a></div>
                 </td>
             </tr>
 
@@ -504,67 +571,10 @@
 
 
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="onUpdateMainActivity"></a>
-                    <span class="name">
-                        <span ><b>onUpdateMainActivity</b></span>
-                        <a href="#onUpdateMainActivity"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>onUpdateMainActivity(referentiel: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="68"
-                            class="link-to-prism">src/app/routes/activities/activities.page.ts:68</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
                                 <tr>
-                                    <td>Name</td>
-                                    <td>Type</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>referentiel</td>
+                                    <td>nodeUpdated</td>
                                     <td>
-                                                <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                     </td>
 
                                     <td>
@@ -692,7 +702,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
 </div>
                 </td>
             </tr>
@@ -769,7 +779,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
 </div>
                 </td>
             </tr>
@@ -864,7 +874,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:125</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
 </div>
                 </td>
             </tr>
@@ -941,7 +951,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
 </div>
                 </td>
             </tr>
@@ -1018,7 +1028,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
 </div>
                 </td>
             </tr>
@@ -1095,7 +1105,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
 </div>
                 </td>
             </tr>
@@ -1172,7 +1182,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:113</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
 </div>
                 </td>
             </tr>
@@ -1253,7 +1263,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
 </div>
                 </td>
             </tr>
@@ -1298,7 +1308,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
 </div>
                 </td>
             </tr>
@@ -1330,7 +1340,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>isSameMonthAndYear(date1: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, date2: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                    <code>isSameMonthAndYear(date1: Date | null, date2: Date | null)</code>
                 </td>
             </tr>
 
@@ -1343,7 +1353,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:133</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
 </div>
                 </td>
             </tr>
@@ -1367,7 +1377,7 @@
                                 <tr>
                                     <td>date1</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            <code>Date | null</code>
                                     </td>
 
                                     <td>
@@ -1379,7 +1389,7 @@
                                 <tr>
                                     <td>date2</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            <code>Date | null</code>
                                     </td>
 
                                     <td>
@@ -1432,7 +1442,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:103</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
 </div>
                 </td>
             </tr>
@@ -1485,6 +1495,156 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="parseFloat"></a>
+                    <span class="name">
+                        <span ><b>parseFloat</b></span>
+                        <a href="#parseFloat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseFloat(s: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>s</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="parseInt"></a>
+                    <span class="name">
+                        <span ><b>parseInt</b></span>
+                        <a href="#parseInt"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseInt(s: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>s</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="referentielMappingColor"></a>
                     <span class="name">
                         <span class="modifier">Public</span>
@@ -1509,7 +1669,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:34</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
 </div>
                 </td>
             </tr>
@@ -1586,7 +1746,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
 </div>
                 </td>
             </tr>
@@ -1663,7 +1823,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
 </div>
                 </td>
             </tr>
@@ -1750,7 +1910,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
 </div>
                 </td>
             </tr>
@@ -1825,7 +1985,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
 </div>
                 </td>
             </tr>
@@ -1872,7 +2032,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/routes/activities/activities.page.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/activities/activities.page.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -1903,7 +2063,69 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/routes/activities/activities.page.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/routes/activities/activities.page.ts:18</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canEditActivities"></a>
+                    <span class="name">
+                        <span ><b>canEditActivities</b></span>
+                        <a href="#canEditActivities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/activities/activities.page.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isLoadedFirst"></a>
+                    <span class="name">
+                        <span ><b>isLoadedFirst</b></span>
+                        <a href="#isLoadedFirst"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/routes/activities/activities.page.ts:26</a></div>
                         </td>
                     </tr>
 
@@ -1934,7 +2156,69 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/activities/activities.page.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/routes/activities/activities.page.ts:19</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="timeoutUpdateAcitity"></a>
+                    <span class="name">
+                        <span ><b>timeoutUpdateAcitity</b></span>
+                        <a href="#timeoutUpdateAcitity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/routes/activities/activities.page.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updatedBy"></a>
+                    <span class="name">
+                        <span ><b>updatedBy</b></span>
+                        <a href="#updatedBy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/routes/activities/activities.page.ts:20</a></div>
                         </td>
                     </tr>
 
@@ -2017,151 +2301,350 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnDestroy } from &#x27;@angular/core&#x27;;
-import { sumBy } from &#x27;lodash&#x27;;
-import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;;
-import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;;
-import { MainClass } from &#x27;src/app/libs/main-class&#x27;;
-import { ActivitiesService } from &#x27;src/app/services/activities/activities.service&#x27;;
-import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;;
-import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnDestroy } from &#x27;@angular/core&#x27;
+import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
+import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
+import { UserInterface } from &#x27;src/app/interfaces/user-interface&#x27;
+import { MainClass } from &#x27;src/app/libs/main-class&#x27;
+import { ActivitiesService } from &#x27;src/app/services/activities/activities.service&#x27;
+import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
+import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
+import { UserService } from &#x27;src/app/services/user/user.service&#x27;
+import { month } from &#x27;src/app/utils/dates&#x27;
 
 @Component({
   templateUrl: &#x27;./activities.page.html&#x27;,
   styleUrls: [&#x27;./activities.page.scss&#x27;],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
-  activities: ActivityInterface[] &#x3D; [];
-  activityMonth: Date &#x3D; new Date();
-  referentiel: ContentieuReferentielInterface[] &#x3D; [];
+  activities: ActivityInterface[] &#x3D; []
+  activityMonth: Date &#x3D; new Date()
+  referentiel: ContentieuReferentielInterface[] &#x3D; []
+  updatedBy: {
+    user: UserInterface | null
+    date: Date
+  } | null &#x3D; null
+  timeoutUpdateAcitity: any &#x3D; {}
+  canEditActivities: boolean &#x3D; false
+  isLoadedFirst: boolean &#x3D; true
 
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private userService: UserService
   ) {
-    super();
+    super()
 
     this.watch(
-      this.activitiesService.activityMonth.subscribe(
-        (a) &#x3D;&gt; (this.activityMonth &#x3D; a)
-      )
-    );
-
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref) &#x3D;&gt; {
-        this.referentiel &#x3D; ref.filter(
-          (r) &#x3D;&gt;
-            this.referentielService.idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1 &amp;&amp;
-            this.referentielService.idsSoutien.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1
-        );
+      this.humanResourceService.backupId.subscribe((backupId) &#x3D;&gt; {
+        if (backupId) {
+          this.activitiesService.getLastMonthActivities().then((lastMonth) &#x3D;&gt; {
+            lastMonth &#x3D; new Date(lastMonth)
+            this.activitiesService.activityMonth.next(lastMonth)
+          })
+        }
       })
-    );
+    )
+
+    this.watch(
+      this.activitiesService.activityMonth.subscribe((a) &#x3D;&gt; {
+        if (a !&#x3D;&#x3D; null) {
+          this.activityMonth &#x3D; a
+          this.onLoadMonthActivities()
+        }
+      })
+    )
   }
 
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
-    subRef: ContentieuReferentielInterface
+    subRef: ContentieuReferentielInterface,
+    nodeUpdated: string
   ) {
-    referentiel.childrens &#x3D; (referentiel.childrens || []).map((ref: ContentieuReferentielInterface) &#x3D;&gt; {
-      if (ref.id &#x3D;&#x3D;&#x3D; subRef.id) {
-        ref.in &#x3D; subRef.in;
-        ref.out &#x3D; subRef.out;
-        ref.stock &#x3D; subRef.stock;
+    referentiel.childrens &#x3D; (referentiel.childrens || []).map(
+      (ref: ContentieuReferentielInterface) &#x3D;&gt; {
+        if (ref.id &#x3D;&#x3D;&#x3D; subRef.id) {
+          ref.in &#x3D; subRef.in
+          ref.out &#x3D; subRef.out
+          ref.stock &#x3D; subRef.stock
+        }
+
+        return ref
       }
+    )
 
-      return ref;
-    });
+    const preformatArray &#x3D; (list: any[], index: string[]) &#x3D;&gt; {
+      let total: number | null &#x3D; null
+      list.map((item) &#x3D;&gt; {
+        for (let i &#x3D; 0; i &lt; index.length; i++) {
+          if (item[index[i]] !&#x3D;&#x3D; null) {
+            total &#x3D; (total || 0) + item[index[i]]
+            break
+          }
+        }
+      })
 
-    referentiel.in &#x3D; sumBy(referentiel.childrens, &#x27;in&#x27;);
-    referentiel.out &#x3D; sumBy(referentiel.childrens, &#x27;out&#x27;);
-    referentiel.stock &#x3D; sumBy(referentiel.childrens, &#x27;stock&#x27;);
+      return total !&#x3D;&#x3D; null &amp;&amp; total &lt; 0 ? 0 : total
+    }
+    const inValue &#x3D; preformatArray(referentiel.childrens, [&#x27;in&#x27;, &#x27;originalIn&#x27;])
+    const outValue &#x3D; preformatArray(referentiel.childrens, [&#x27;out&#x27;, &#x27;originalOut&#x27;])
+    const stockValue &#x3D; preformatArray(referentiel.childrens, [&#x27;stock&#x27;, &#x27;originalStock&#x27;])
+    referentiel.in &#x3D; inValue &#x3D;&#x3D;&#x3D; referentiel.originalIn ? null : inValue
+    referentiel.out &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalOut ? null : outValue
+    referentiel.stock &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalStock ? null : stockValue
 
-    this.activitiesService.updateActivity(referentiel);
+    // save datas
+    if (this.timeoutUpdateAcitity[subRef.id]) {
+      clearTimeout(this.timeoutUpdateAcitity[subRef.id])
+      this.timeoutUpdateAcitity[subRef.id] &#x3D; null
+    }
+
+    this.timeoutUpdateAcitity[subRef.id] &#x3D; setTimeout(() &#x3D;&gt; {
+      this.activitiesService
+        .updateDatasAt(
+          subRef.id,
+          this.activityMonth,
+          {
+            entrees: subRef.in,
+            sorties: subRef.out,
+            stock: subRef.stock,
+          },
+          nodeUpdated
+        )
+        .then(() &#x3D;&gt; this.onLoadMonthActivities())
+
+      this.updatedBy &#x3D; {
+        date: new Date(),
+        user: this.userService.user.getValue(),
+      }
+    }, 500)
   }
 
-  onUpdateMainActivity(referentiel: ContentieuReferentielInterface) {
-    this.activitiesService.updateActivity(referentiel);
+  changeMonth(date: Date) {
+    this.activitiesService.activityMonth.next(date)
   }
 
-  changeMonth(deltaMonth: number) {
-    this.activitiesService.changeMonth(deltaMonth);
+  onLoadMonthActivities() {
+    this.activitiesService
+      .loadMonthActivities(this.activityMonth)
+      .then((monthValues) &#x3D;&gt; {
+        this.isLoadedFirst &#x3D; false
+        this.updatedBy &#x3D; monthValues.lastUpdate
+        const activities: ActivityInterface[] &#x3D; monthValues.list
+
+        if (monthValues.list.length &#x3D;&#x3D;&#x3D; 0) {
+          this.canEditActivities &#x3D; false
+        } else {
+          this.canEditActivities &#x3D; true
+        }
+        console.log(monthValues.list)
+
+        const referentiels &#x3D; [
+          ...this.humanResourceService.contentieuxReferentiel.getValue(),
+        ]
+
+        // todo set in, out, stock for each
+        this.referentiel &#x3D; referentiels
+          .filter(
+            (r) &#x3D;&gt;
+              this.referentielService.idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1 &amp;&amp;
+              this.referentielService.idsSoutien.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1
+          )
+          .map((ref) &#x3D;&gt; {
+            const getActivity &#x3D; activities.find(
+              (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; ref.id
+            )
+            ref.in &#x3D; getActivity ? getActivity.entrees : null
+            ref.originalIn &#x3D; getActivity ? getActivity.originalEntrees : null
+            ref.out &#x3D; getActivity ? getActivity.sorties : null
+            ref.originalOut &#x3D; getActivity ? getActivity.originalSorties : null
+            ref.stock &#x3D; getActivity ? getActivity.stock : null
+            ref.originalStock &#x3D; getActivity ? getActivity.originalStock : null
+
+            ref.childrens &#x3D; (ref.childrens || []).map((c) &#x3D;&gt; {
+              const getChildrenActivity &#x3D; activities.find(
+                (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; c.id
+              )
+              c.in &#x3D; getChildrenActivity ? getChildrenActivity.entrees : null
+              c.originalIn &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalEntrees
+                : null
+              c.out &#x3D; getChildrenActivity ? getChildrenActivity.sorties : null
+              c.originalOut &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalSorties
+                : null
+              c.stock &#x3D; getChildrenActivity ? getChildrenActivity.stock : null
+              c.originalStock &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalStock
+                : null
+
+              return c
+            })
+
+            return ref
+          })
+      })
   }
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper title&#x3D;&quot;Données d&#x27;activité&quot;&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper title&#x3D;&quot;Données d&#x27;activité&quot; [subtitleTemplate]&#x3D;&quot;!canEditActivities ? null : subTitleTemplate&quot;
+  class&#x3D;&quot;content-margin-null&quot;&gt;
   &lt;div class&#x3D;&quot;container&quot;&gt;
     &lt;div class&#x3D;&quot;header-list&quot;&gt;
+      &lt;div class&#x3D;&quot;margin-left&quot;&gt;&lt;/div&gt;
       &lt;div class&#x3D;&quot;label month&quot;&gt;
-        &lt;button mat-stroked-button (click)&#x3D;&quot;changeMonth(-1)&quot;&gt;Précédent&lt;/button&gt;
-        &lt;div class&#x3D;&quot;current-month&quot;&gt;{{activityMonth | date:&#x27;MM - YYYY&#x27;}}&lt;/div&gt;
-        &lt;button mat-stroked-button (click)&#x3D;&quot;changeMonth(1)&quot;&gt;Suivant&lt;/button&gt;
+        &lt;aj-date-select title&#x3D;&quot;Voir les données de&quot; dateType&#x3D;&quot;month&quot; [value]&#x3D;&quot;activityMonth&quot;
+          (valueChange)&#x3D;&quot;changeMonth($event)&quot;&gt;
+        &lt;/aj-date-select&gt;
       &lt;/div&gt;
-      &lt;div class&#x3D;&quot;column-item&quot;&gt;Entrées&lt;/div&gt;
-      &lt;div class&#x3D;&quot;column-item&quot;&gt;Sorties&lt;/div&gt;
-      &lt;div class&#x3D;&quot;column-item&quot;&gt;Stocks&lt;/div&gt;
+      &lt;ng-template [ngIf]&#x3D;&quot;canEditActivities&quot;&gt;
+        &lt;div class&#x3D;&quot;column-item&quot;&gt;
+          &lt;p&gt;Entrées&lt;/p&gt;
+          &lt;div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Entrées logiciel&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Entrées A-JUSTées&lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class&#x3D;&quot;column-item&quot;&gt;
+          &lt;p&gt;Sorties&lt;/p&gt;
+          &lt;div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Sorties logiciel&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Sorties A-JUSTées&lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class&#x3D;&quot;column-item&quot;&gt;
+          &lt;p&gt;Stock&lt;/p&gt;
+          &lt;div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Stock logiciel&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;p&gt;Stock A-JUSTé&lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class&#x3D;&quot;margin-right&quot;&gt;&lt;/div&gt;
+      &lt;/ng-template&gt;
     &lt;/div&gt;
     &lt;div class&#x3D;&quot;content-list&quot;&gt;
-      &lt;div *ngFor&#x3D;&quot;let ref of referentiel&quot; class&#x3D;&quot;item-grouped&quot;&gt;
-        &lt;div class&#x3D;&quot;item&quot; (click)&#x3D;&quot;(ref.childrens || []).length ? ref.showActivityGroup &#x3D; !ref.showActivityGroup : null&quot;
-          [class.selectable]&#x3D;&quot;(ref.childrens || []).length&quot;&gt;
-          &lt;div class&#x3D;&quot;label&quot;&gt;
-            &lt;p&gt;{{ref.label}}&lt;/p&gt;
-            &lt;button *ngIf&#x3D;&quot;(ref.childrens || []).length&quot; mat-icon-button&gt;
-              &lt;mat-icon&gt;{{ ref.showActivityGroup ? &#x27;expand_less&#x27; : &#x27;expand_more&#x27; }}&lt;/mat-icon&gt;
-            &lt;/button&gt;
-          &lt;/div&gt;
-          &lt;div class&#x3D;&quot;column-item&quot;&gt;
-            &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.in&quot; [attr.disabled]&#x3D;&quot;(ref.childrens || []).length ? true : null&quot;
-              (ngModelChange)&#x3D;&quot;onUpdateMainActivity(ref)&quot; min&#x3D;&quot;0&quot; /&gt;
-          &lt;/div&gt;
-          &lt;div class&#x3D;&quot;column-item&quot;&gt;
-            &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.out&quot; [attr.disabled]&#x3D;&quot;(ref.childrens || []).length ? true : null&quot;
-              (ngModelChange)&#x3D;&quot;onUpdateMainActivity(ref)&quot; min&#x3D;&quot;0&quot; /&gt;
-          &lt;/div&gt;
-          &lt;div class&#x3D;&quot;column-item&quot;&gt;
-            &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.stock&quot; [attr.disabled]&#x3D;&quot;(ref.childrens || []).length ? true : null&quot;
-              (ngModelChange)&#x3D;&quot;onUpdateMainActivity(ref)&quot; min&#x3D;&quot;0&quot; /&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class&#x3D;&quot;group&quot; [class.enable]&#x3D;&quot;ref.showActivityGroup&quot;&gt;
-          &lt;div class&#x3D;&quot;group-item&quot; *ngFor&#x3D;&quot;let itemGroup of (ref.childrens || [])&quot;
-            [style.borderColor]&#x3D;&quot;referentielMappingColor(ref.label)&quot;&gt;
+      &lt;ng-template [ngIf]&#x3D;&quot;!canEditActivities &amp;&amp; !isLoadedFirst&quot;&gt;
+        &lt;p class&#x3D;&quot;in-the-future-text&quot;&gt;Cet écran sera accessible dès l&#x27;import des données logiciel du mois.&lt;/p&gt;
+      &lt;/ng-template&gt;
+
+      &lt;ng-template [ngIf]&#x3D;&quot;canEditActivities&quot;&gt;
+        &lt;div *ngFor&#x3D;&quot;let ref of referentiel&quot; class&#x3D;&quot;item-grouped&quot; [class.maximize]&#x3D;&quot;ref.showActivityGroup&quot;&gt;
+          &lt;div class&#x3D;&quot;item&quot;
+            (click)&#x3D;&quot;(ref.childrens || []).length ? ref.showActivityGroup &#x3D; !ref.showActivityGroup : null&quot;
+            [class.selectable]&#x3D;&quot;(ref.childrens || []).length&quot;&gt;
             &lt;div class&#x3D;&quot;label&quot;&gt;
-              &lt;p&gt;{{itemGroup.label}}&lt;/p&gt;
+              &lt;div class&#x3D;&quot;color-border&quot;
+                [style.backgroundColor]&#x3D;&quot;ref.showActivityGroup ? null : referentielMappingColor(ref.label)&quot;&gt;&lt;/div&gt;
+              &lt;mat-icon *ngIf&#x3D;&quot;(ref.childrens || []).length&quot;&gt;{{ ref.showActivityGroup ? &#x27;expand_less&#x27; : &#x27;expand_more&#x27; }}
+              &lt;/mat-icon&gt;
+              &lt;p&gt;{{ref.label}}&lt;/p&gt;
             &lt;/div&gt;
             &lt;div class&#x3D;&quot;column-item&quot;&gt;
-              &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.in&quot; (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup)&quot;
-                min&#x3D;&quot;0&quot; /&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;ref.originalIn&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.in&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
             &lt;div class&#x3D;&quot;column-item&quot;&gt;
-              &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.out&quot; (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup)&quot;
-                min&#x3D;&quot;0&quot; /&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;ref.originalOut&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.out&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
             &lt;div class&#x3D;&quot;column-item&quot;&gt;
-              &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.stock&quot; (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup)&quot;
-                min&#x3D;&quot;0&quot; /&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;ref.originalStock&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;ref.stock&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;group&quot;&gt;
+            &lt;div class&#x3D;&quot;color-border&quot;&gt;
+              &lt;div [style.backgroundColor]&#x3D;&quot;referentielMappingColor(ref.label)&quot;&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;div class&#x3D;&quot;group-item&quot; *ngFor&#x3D;&quot;let itemGroup of (ref.childrens || [])&quot;&gt;
+                &lt;div class&#x3D;&quot;label&quot;&gt;
+                  &lt;p&gt;{{itemGroup.label}}&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;column-item&quot;&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;itemGroup.originalIn&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.in&quot;
+                      (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup, &#x27;entrees&#x27;)&quot; min&#x3D;&quot;0&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;column-item&quot;&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;itemGroup.originalOut&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.out&quot;
+                      (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup, &#x27;sorties&#x27;)&quot; min&#x3D;&quot;0&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;column-item&quot;&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [ngModel]&#x3D;&quot;itemGroup.originalStock&quot; [attr.disabled]&#x3D;&quot;true&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                  &lt;div&gt;
+                    &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;itemGroup.stock&quot;
+                      (ngModelChange)&#x3D;&quot;onUpdateActivity(ref, itemGroup, &#x27;stock&#x27;)&quot; min&#x3D;&quot;0&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
           &lt;/div&gt;
         &lt;/div&gt;
-      &lt;/div&gt;
+      &lt;/ng-template&gt;
     &lt;/div&gt;
   &lt;/div&gt;
-&lt;/aj-wrapper&gt;</code></pre>
+&lt;/aj-wrapper&gt;
+
+&lt;ng-template #subTitleTemplate&gt;
+  &lt;p *ngIf&#x3D;&quot;updatedBy&quot; class&#x3D;&quot;sub-title&quot;&gt;Dernière mise à jour, le {{ updatedBy.date | date:&#x27;dd&#x27; }} {{
+    getMonthString(updatedBy.date) }} {{
+    updatedBy.date
+    | date:&#x27;YYYY&#x27; }}
+    &lt;ng-template [ngIf]&#x3D;&quot;updatedBy.user&quot;&gt;, par &lt;span class&#x3D;&quot;tag&quot;&gt;{{ updatedBy.user.firstName }} {{
+        updatedBy.user.lastName }}&lt;/span&gt;&lt;/ng-template&gt;
+  &lt;/p&gt;
+&lt;/ng-template&gt;</code></pre>
     </div>
 
     <div class="tab-pane fade " id="c-styleData">
                 <p class="comment">
                     <code>./activities.page.scss</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">@import &quot;../../styles/utils.scss&quot;;
+                <pre class="line-numbers"><code class="language-scss">@import &#x27;../../styles/utils.scss&#x27;;
 
 .container {
   display: flex;
@@ -2171,45 +2654,111 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   .content-list {
     flex: 1;
     overflow: auto;
+
+    &gt; div:last-child {
+      margin-bottom: 32px;
+    }
+
+    .column-item {
+      &gt; div {
+        width: 92px;
+        display: flex;
+        align-items: center;
+
+        &amp;:first-child {
+          background-color: fColor(bgSelect);
+          align-self: stretch;
+        }
+
+        &gt; input {
+          margin: 0 8px;
+        }
+      }
+    }
   }
 }
 
-.header-list, .content-list {
+.header-list,
+.content-list {
   .label {
     width: 300px;
 
     &amp;.month {
       display: flex;
-      align-items: center;
-      justify-content: center;
     }
   }
 
   .column-item {
     flex: 1;
-    text-align: center;
-    margin: 0 16px;
   }
 }
 
 .header-list {
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
-  padding: 8px 0;
+  padding: 25px 0 7px 0;
   display: flex;
   align-items: center;
+  background-color: white;
 
-  .current-month {
-    margin: 0 16px;
+  .label.month aj-date-select {
+    margin-left: 29px;
+  }
+
+  .margin-left {
+    width: 16px;
+  }
+
+  .margin-right {
+    width: 16px;
   }
 
   .activities.is-not-ios {
     margin-right: 16px;
   }
+
+  .column-item {
+    &gt; p {
+      text-align: center;
+    }
+
+    &gt; div {
+      margin-top: 9px;
+      display: flex;
+
+      &gt; div {
+        flex: 1;
+        display: flex;
+
+        &amp;:first-child {
+          justify-content: flex-end;
+
+          p {
+            margin-right: 1px;
+          }
+        }
+
+        &amp;:last-child {
+          p {
+            margin-left: 1px;
+            margin-right: auto;
+          }
+        }
+
+        &gt; p {
+          padding: 2px 8px;
+          border-radius: 12px;
+          background-color: fColor(cgrayDefault);
+          font-size: 12px;
+          color: fColor(cblackdark);
+          display: inline-block;
+        }
+      }
+    }
+  }
 }
 
 .item {
-  padding: 8px 0;
   display: flex;
+  height: 67px;
 
   &amp;.selectable {
     cursor: pointer;
@@ -2222,9 +2771,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   .label {
     display: flex;
     align-items: center;
+    padding: 0 15px;
+
+    .color-border {
+      width: 3px;
+      height: 4px;
+      border-radius: 3px;
+    }
 
     p {
       flex: 1;
+      margin-left: 8px;
     }
   }
 
@@ -2236,33 +2793,80 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 }
 
 .item-grouped {
+  margin: 8px 16px 0 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  &amp;.maximize {
+    .item {
+      position: relative;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .group {
+      height: inherit;
+      overflow: inherit;
+    }
+  }
+
   .group {
     height: 0;
     overflow: hidden;
+    display: flex;
 
-    &amp;.enable {
-      height: inherit;
-      overflow: inherit;
-      margin-bottom: 16px;
+    &gt; div:last-child {
+      flex: 1;
+    }
+
+    .color-border {
+      padding: 12px;
+      margin-right: 19px;
+
+      &gt; div {
+        width: 3px;
+        border-radius: 3px;
+        height: 100%;
+      }
     }
 
     .group-item {
       display: flex;
       align-items: center;
-      padding: 8px 0;
-      border-left: 4px solid gray;
+      height: 67px;
 
       .label {
-        width: 296px;
-        padding-left: 8px;
+        width: 254px;
       }
-    
+
       .column-item {
         flex: 1;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-self: stretch;
       }
     }
   }
+}
+
+.sub-title {
+  font-size: 12px;
+
+  span {
+    padding: 2px 8px;
+    border-radius: 12px;
+    background-color: fColor(cgrayDefault);
+    height: 24px;
+    line-height: 24px;
+    position: relative;
+    top: 1px;
+  }
+}
+
+.in-the-future-text {
+  text-align: center;
+  margin: 64px;
 }</code></pre>
     </div>
 
@@ -2291,8 +2895,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><aj-wrapper title="Données d\'activité">  <div class="container">    <div class="header-list">      <div class="label month">        <button mat-stroked-button (click)="changeMonth(-1)">Précédent</button>        <div class="current-month">{{activityMonth | date:\'MM - YYYY\'}}</div>        <button mat-stroked-button (click)="changeMonth(1)">Suivant</button>      </div>      <div class="column-item">Entrées</div>      <div class="column-item">Sorties</div>      <div class="column-item">Stocks</div>    </div>    <div class="content-list">      <div *ngFor="let ref of referentiel" class="item-grouped">        <div class="item" (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"          [class.selectable]="(ref.childrens || []).length">          <div class="label">            <p>{{ref.label}}</p>            <button *ngIf="(ref.childrens || []).length" mat-icon-button>              <mat-icon>{{ ref.showActivityGroup ? \'expand_less\' : \'expand_more\' }}</mat-icon>            </button>          </div>          <div class="column-item">            <input type="number" [(ngModel)]="ref.in" [attr.disabled]="(ref.childrens || []).length ? true : null"              (ngModelChange)="onUpdateMainActivity(ref)" min="0" />          </div>          <div class="column-item">            <input type="number" [(ngModel)]="ref.out" [attr.disabled]="(ref.childrens || []).length ? true : null"              (ngModelChange)="onUpdateMainActivity(ref)" min="0" />          </div>          <div class="column-item">            <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="(ref.childrens || []).length ? true : null"              (ngModelChange)="onUpdateMainActivity(ref)" min="0" />          </div>        </div>        <div class="group" [class.enable]="ref.showActivityGroup">          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"            [style.borderColor]="referentielMappingColor(ref.label)">            <div class="label">              <p>{{itemGroup.label}}</p>            </div>            <div class="column-item">              <input type="number" [(ngModel)]="itemGroup.in" (ngModelChange)="onUpdateActivity(ref, itemGroup)"                min="0" />            </div>            <div class="column-item">              <input type="number" [(ngModel)]="itemGroup.out" (ngModelChange)="onUpdateActivity(ref, itemGroup)"                min="0" />            </div>            <div class="column-item">              <input type="number" [(ngModel)]="itemGroup.stock" (ngModelChange)="onUpdateActivity(ref, itemGroup)"                min="0" />            </div>          </div>        </div>      </div>    </div>  </div></aj-wrapper></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'RhBackupPanelComponent', 'selector': 'aj-rh-backup-panel'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper title="Données d\'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"  class="content-margin-null">  <div class="container">    <div class="header-list">      <div class="margin-left"></div>      <div class="label month">        <aj-date-select title="Voir les données de" dateType="month" [value]="activityMonth"          (valueChange)="changeMonth($event)">        </aj-date-select>      </div>      <ng-template [ngIf]="canEditActivities">        <div class="column-item">          <p>Entrées</p>          <div>            <div>              <p>Entrées logiciel</p>            </div>            <div>              <p>Entrées A-JUSTées</p>            </div>          </div>        </div>        <div class="column-item">          <p>Sorties</p>          <div>            <div>              <p>Sorties logiciel</p>            </div>            <div>              <p>Sorties A-JUSTées</p>            </div>          </div>        </div>        <div class="column-item">          <p>Stock</p>          <div>            <div>              <p>Stock logiciel</p>            </div>            <div>              <p>Stock A-JUSTé</p>            </div>          </div>        </div>        <div class="margin-right"></div>      </ng-template>    </div>    <div class="content-list">      <ng-template [ngIf]="!canEditActivities && !isLoadedFirst">        <p class="in-the-future-text">Cet écran sera accessible dès l\'import des données logiciel du mois.</p>      </ng-template>      <ng-template [ngIf]="canEditActivities">        <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">          <div class="item"            (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"            [class.selectable]="(ref.childrens || []).length">            <div class="label">              <div class="color-border"                [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"></div>              <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showActivityGroup ? \'expand_less\' : \'expand_more\' }}              </mat-icon>              <p>{{ref.label}}</p>            </div>            <div class="column-item">              <div>                <input type="number" [ngModel]="ref.originalIn" [attr.disabled]="true" placeholder="-" />              </div>              <div>                <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />              </div>            </div>            <div class="column-item">              <div>                <input type="number" [ngModel]="ref.originalOut" [attr.disabled]="true" placeholder="-" />              </div>              <div>                <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />              </div>            </div>            <div class="column-item">              <div>                <input type="number" [ngModel]="ref.originalStock" [attr.disabled]="true" placeholder="-" />              </div>              <div>                <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />              </div>            </div>          </div>          <div class="group">            <div class="color-border">              <div [style.backgroundColor]="referentielMappingColor(ref.label)"></div>            </div>            <div>              <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">                <div class="label">                  <p>{{itemGroup.label}}</p>                </div>                <div class="column-item">                  <div>                    <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />                  </div>                  <div>                    <input type="number" [(ngModel)]="itemGroup.in"                      (ngModelChange)="onUpdateActivity(ref, itemGroup, \'entrees\')" min="0" placeholder="-" />                  </div>                </div>                <div class="column-item">                  <div>                    <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />                  </div>                  <div>                    <input type="number" [(ngModel)]="itemGroup.out"                      (ngModelChange)="onUpdateActivity(ref, itemGroup, \'sorties\')" min="0" placeholder="-" />                  </div>                </div>                <div class="column-item">                  <div>                    <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />                  </div>                  <div>                    <input type="number" [(ngModel)]="itemGroup.stock"                      (ngModelChange)="onUpdateActivity(ref, itemGroup, \'stock\')" min="0" placeholder="-" />                  </div>                </div>              </div>            </div>          </div>        </div>      </ng-template>    </div>  </div></aj-wrapper><ng-template #subTitleTemplate>  <p *ngIf="updatedBy" class="sub-title">Dernière mise à jour, le {{ updatedBy.date | date:\'dd\' }} {{    getMonthString(updatedBy.date) }} {{    updatedBy.date    | date:\'YYYY\' }}    <ng-template [ngIf]="updatedBy.user">, par <span class="tag">{{ updatedBy.user.firstName }} {{        updatedBy.user.lastName }}</span></ng-template>  </p></ng-template></div>'
+    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ActivitiesPage'};
 </script>

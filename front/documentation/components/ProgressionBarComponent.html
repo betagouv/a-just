@@ -416,12 +416,17 @@ export class ProgressionBarComponent {
 
     <div class="tab-pane fade " id="c-templateData">
         <pre class="line-numbers"><code class="language-html">&lt;ng-template [ngIf]&#x3D;&quot;enable&quot;&gt;
+  &lt;div class&#x3D;&quot;white-background&quot;&gt;&lt;/div&gt;
   &lt;div class&#x3D;&quot;background-bar&quot; [style.backgroundColor]&#x3D;&quot;color&quot; (click)&#x3D;&quot;changePercent()&quot; [class.seleted]&#x3D;&quot;selected&quot;&gt;
   &lt;/div&gt;
-  &lt;div class&#x3D;&quot;progress-bar&quot; [style.height.%]&#x3D;&quot;percent &amp;&amp; percent &gt; 100 ? 100 : (percent || 0)&quot;
+  &lt;div class&#x3D;&quot;progress-bar&quot; [style.height.%]&#x3D;&quot;percent &amp;&amp; percent &gt; 100 ? 100 : percent || 0&quot;
     [style.backgroundColor]&#x3D;&quot;color&quot; (click)&#x3D;&quot;changePercent()&quot; [class.seleted]&#x3D;&quot;selected&quot;&gt;
-    &lt;p *ngIf&#x3D;&quot;percent &amp;&amp; percent &gt;&#x3D; 30&quot; class&#x3D;&quot;s inside&quot;&gt;{{(percent || 0) | number:&quot;.0-1&quot;}}%&lt;/p&gt;
-    &lt;p *ngIf&#x3D;&quot;percent &amp;&amp; percent &lt; 30&quot; class&#x3D;&quot;s top&quot;&gt;{{(percent || 0) | number:&quot;.0-1&quot;}}%&lt;/p&gt;
+    &lt;p *ngIf&#x3D;&quot;percent &amp;&amp; percent &gt;&#x3D; 30&quot; class&#x3D;&quot;s inside&quot;&gt;
+      {{ percent || 0 | number: &#x27;.0-1&#x27; }}%
+    &lt;/p&gt;
+    &lt;p *ngIf&#x3D;&quot;percent &amp;&amp; percent &lt; 30&quot; [style.color]&#x3D;&quot;color&quot; class&#x3D;&quot;s top&quot;&gt;
+      {{ percent || 0 | number: &#x27;.0-1&#x27; }}%
+    &lt;/p&gt;
   &lt;/div&gt;
 &lt;/ng-template&gt;
 &lt;ng-template [ngIf]&#x3D;&quot;!enable&quot;&gt;
@@ -441,7 +446,22 @@ export class ProgressionBarComponent {
   height: 62px;
   width: 41px;
 
-  &gt; div {
+  &amp;.dark-mode&gt;div.white-background {
+    visibility: visible;
+  }
+
+  &gt;div.white-background {
+    background-color: white;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    visibility: hidden;
+  }
+
+  &gt;div {
     position: absolute;
     height: 100%;
     left: 0;
@@ -507,8 +527,8 @@ export class ProgressionBarComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><ng-template [ngIf]="enable">  <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">  </div>  <div class="progress-bar" [style.height.%]="percent && percent > 100 ? 100 : (percent || 0)"    [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">    <p *ngIf="percent && percent >= 30" class="s inside">{{(percent || 0) | number:".0-1"}}%</p>    <p *ngIf="percent && percent < 30" class="s top">{{(percent || 0) | number:".0-1"}}%</p>  </div></ng-template><ng-template [ngIf]="!enable">  <div class="hidden-bar"></div></ng-template></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'RhBackupPanelComponent', 'selector': 'aj-rh-backup-panel'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><ng-template [ngIf]="enable">  <div class="white-background"></div>  <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">  </div>  <div class="progress-bar" [style.height.%]="percent && percent > 100 ? 100 : percent || 0"    [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">    <p *ngIf="percent && percent >= 30" class="s inside">      {{ percent || 0 | number: \'.0-1\' }}%    </p>    <p *ngIf="percent && percent < 30" [style.color]="color" class="s top">      {{ percent || 0 | number: \'.0-1\' }}%    </p>  </div></ng-template><ng-template [ngIf]="!enable">  <div class="hidden-bar"></div></ng-template></div>'
+    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ProgressionBarComponent'};
 </script>

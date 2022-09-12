@@ -295,7 +295,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.humanResourceService.allIndisponibilityReferentiel.slice(1)
       })
     )
-    this.watch(this.humanResourceService.hr.subscribe(() &#x3D;&gt; this.onLoad()))
+
     this.hrFonctionService.getAll().then((list) &#x3D;&gt; {
       this.fonctions &#x3D; list
       this.onLoad()
@@ -310,15 +310,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.watcherDestroy()
   }
 
-  onLoad() {
-    if (this.categories.length &#x3D;&#x3D;&#x3D; 0) {
+  async onLoad(cacheHr: HumanResourceInterface | null &#x3D; null) {
+    if (this.categories.length &#x3D;&#x3D;&#x3D; 0 || this.fonctions.length &#x3D;&#x3D;&#x3D; 0) {
       return
     }
 
-    const id &#x3D; +this.route.snapshot.params.id
-    const allHuman &#x3D; this.humanResourceService.hr.getValue()
+    let findUser
+    if (cacheHr) {
+      findUser &#x3D; cacheHr
+    } else {
+      const id &#x3D; +this.route.snapshot.params.id
+      findUser &#x3D; await this.humanResourceService.loadRemoteHR(id)
+    }
 
-    const findUser &#x3D; allHuman.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; id)
     if (findUser) {
       this.currentHR &#x3D; findUser
 
@@ -374,6 +378,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.histories &#x3D; []
+    this.historiesOfThePast &#x3D; []
+    this.historiesOfTheFutur &#x3D; []
+
     this.allIndisponibilities &#x3D; this.currentHR.indisponibilities || []
     const situations &#x3D; orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
@@ -417,6 +424,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (!minDate || !maxDate) {
       this.onEditIndex &#x3D; -1
       return
+    }
+
+    // if not date end force to create a situation after the last one
+    if (
+      !currentDateEnd &amp;&amp;
+      this.currentHR &amp;&amp;
+      this.currentHR.indisponibilities &amp;&amp;
+      this.currentHR.indisponibilities.length
+    ) {
+      maxDate.setDate(maxDate.getDate() + 1)
     }
 
     console.log(minDate, maxDate)
@@ -511,11 +528,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories[0].dateStart.getTime() &gt;
         today(this.currentHR.dateStart).getTime()
     ) {
-      const firstSituationExistant &#x3D; this.histories.find(h &#x3D;&gt; h.category)
+      const firstSituationExistant &#x3D; this.histories.find((h) &#x3D;&gt; h.category)
       this.histories.splice(0, 0, {
         id: -1,
-        category: firstSituationExistant ? firstSituationExistant.category : null,
-        fonction: firstSituationExistant ? firstSituationExistant.fonction : null,
+        category: firstSituationExistant
+          ? firstSituationExistant.category
+          : null,
+        fonction: firstSituationExistant
+          ? firstSituationExistant.fonction
+          : null,
         etp: 1,
         indisponibilities: [],
         activities: [],
@@ -596,19 +617,26 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async updateHuman(nodeName: string, value: any) {
+    console.log(&#x27;updateHuman&#x27;, nodeName, value)
     if (this.currentHR) {
       if (value &amp;&amp; typeof value.innerText !&#x3D;&#x3D; &#x27;undefined&#x27;) {
         value &#x3D; value.innerText
       }
 
-      await this.humanResourceService.updatePersonById(this.currentHR.id, {
-        [nodeName]: value,
-      })
+      this.onLoad(
+        await this.humanResourceService.updatePersonById(this.currentHR, {
+          [nodeName]: value,
+        })
+      )
     }
   }
 
   async onCancel(removeIndispo: boolean &#x3D; false) {
-    if (removeIndispo) {
+    if (
+      removeIndispo &amp;&amp;
+      this.currentHR &amp;&amp;
+      this.currentHR.indisponibilities.length
+    ) {
       await this.updateHuman(&#x27;indisponibilities&#x27;, [])
     }
 
@@ -643,7 +671,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           contentieux: {
             ...this.allIndisponibilityReferentiel[0],
           },
-          dateStart: new Date(),
+          dateStart: null,
         }
   }
 
@@ -658,6 +686,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         break
       case &#x27;modify&#x27;:
         {
+          if (
+            this.updateIndisponiblity &amp;&amp;
+            !this.updateIndisponiblity.dateStart
+          ) {
+            alert(&quot;Vous devez saisir une date de début d&#x27;indisponibilité !&quot;)
+            return false
+          }
+
           if (this.updateIndisponiblity &amp;&amp; !this.updateIndisponiblity.percent) {
             alert(&quot;Vous devez saisir un temps d&#x27;indisponibilité !&quot;)
             return false
@@ -849,6 +885,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                   this.currentHR,
                   this.allIndisponibilities
                 )
+
               if (!this.indisponibilityError) {
                 await this.updateHuman(
                   &#x27;indisponibilities&#x27;,
@@ -913,13 +950,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   async onRemoveSituation(id: number) {
     const returnValue &#x3D; await this.humanResourceService.removeSituation(id)
-    if (
-      returnValue &#x3D;&#x3D;&#x3D; true &amp;&amp;
-      this.histories.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp;
-      this.onEditIndex !&#x3D;&#x3D; null
-    ) {
+    console.log(returnValue, this.histories.length, this.onEditIndex)
+    if (returnValue) {
       // force to not show on boarding after delete last situation
       this.onEditIndex &#x3D; null
+      this.onLoad(returnValue)
     }
   }
 }

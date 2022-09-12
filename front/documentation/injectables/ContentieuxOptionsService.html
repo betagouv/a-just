@@ -84,9 +84,6 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#autoReloadData" >autoReloadData</a>
-                            </li>
-                            <li>
                                 <a href="#backupId" >backupId</a>
                             </li>
                             <li>
@@ -94,9 +91,6 @@
                             </li>
                             <li>
                                 <a href="#contentieuxOptions" >contentieuxOptions</a>
-                            </li>
-                            <li>
-                                <a href="#isLoading" >isLoading</a>
                             </li>
                             <li>
                                 <a href="#optionsIsModify" >optionsIsModify</a>
@@ -132,6 +126,12 @@
                                 <a href="#initDatas" >initDatas</a>
                             </li>
                             <li>
+                                <a href="#loadBackupsAndId" >loadBackupsAndId</a>
+                            </li>
+                            <li>
+                                <a href="#loadDetails" >loadDetails</a>
+                            </li>
+                            <li>
                                 <a href="#onSaveDatas" >onSaveDatas</a>
                             </li>
                             <li>
@@ -142,9 +142,6 @@
                             </li>
                             <li>
                                 <a href="#updateOptions" >updateOptions</a>
-                            </li>
-                            <li>
-                                <a href="#watchDatas" >watchDatas</a>
                             </li>
                             <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
@@ -194,6 +191,12 @@
                                 <a href="#isToday" >isToday</a>
                             </li>
                             <li>
+                                <a href="#parseFloat" >parseFloat</a>
+                            </li>
+                            <li>
+                                <a href="#parseInt" >parseInt</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
                                 <a href="#referentielMappingColor" >referentielMappingColor</a>
                             </li>
@@ -234,7 +237,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:26</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:24</a></div>
                             </td>
                         </tr>
 
@@ -309,8 +312,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="167"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:167</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="148"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:148</a></div>
                 </td>
             </tr>
 
@@ -346,8 +349,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="126"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:126</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="107"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:107</a></div>
                 </td>
             </tr>
 
@@ -376,15 +379,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getAllContentieuxOptions(id: number | null, juridictionId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>getAllContentieuxOptions(juridictionId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="75"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:75</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="56"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:56</a></div>
                 </td>
             </tr>
 
@@ -404,18 +407,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>id</td>
-                                    <td>
-                                            <code>number | null</code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
                                 <tr>
                                     <td>juridictionId</td>
                                     <td>
@@ -464,8 +455,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="35"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:35</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:33</a></div>
                 </td>
             </tr>
 
@@ -476,6 +467,112 @@
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadBackupsAndId"></a>
+                    <span class="name">
+                        <span ><b>loadBackupsAndId</b></span>
+                        <a href="#loadBackupsAndId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadBackupsAndId()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="39"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:39</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadDetails"></a>
+                    <span class="name">
+                        <span ><b>loadDetails</b></span>
+                        <a href="#loadDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadDetails(backupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="50"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:50</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>backupId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="../interfaces/ContentieuxOptionsInterface.html" target="_self" >Promise&lt;ContentieuxOptionsInterface[]&gt;</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -501,8 +598,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="148"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:148</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="129"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:129</a></div>
                 </td>
             </tr>
 
@@ -570,8 +667,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="113"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:113</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="94"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:94</a></div>
                 </td>
             </tr>
 
@@ -607,8 +704,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="186"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:186</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="167"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:167</a></div>
                 </td>
             </tr>
 
@@ -644,8 +741,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="84"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:84</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:65</a></div>
                 </td>
             </tr>
 
@@ -688,43 +785,6 @@
                     </div>
                     <div class="io-description">
                         
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="watchDatas"></a>
-                    <span class="name">
-                        <span ><b>watchDatas</b></span>
-                        <a href="#watchDatas"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>watchDatas()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="43"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:43</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
                     </div>
                 </td>
             </tr>
@@ -833,7 +893,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
 </div>
                 </td>
             </tr>
@@ -910,7 +970,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
 </div>
                 </td>
             </tr>
@@ -1005,7 +1065,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:125</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
 </div>
                 </td>
             </tr>
@@ -1082,7 +1142,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
 </div>
                 </td>
             </tr>
@@ -1159,7 +1219,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
 </div>
                 </td>
             </tr>
@@ -1236,7 +1296,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
 </div>
                 </td>
             </tr>
@@ -1313,7 +1373,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:113</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
 </div>
                 </td>
             </tr>
@@ -1394,7 +1454,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
 </div>
                 </td>
             </tr>
@@ -1439,7 +1499,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
 </div>
                 </td>
             </tr>
@@ -1471,7 +1531,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>isSameMonthAndYear(date1: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, date2: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                    <code>isSameMonthAndYear(date1: Date | null, date2: Date | null)</code>
                 </td>
             </tr>
 
@@ -1484,7 +1544,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:133</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
 </div>
                 </td>
             </tr>
@@ -1508,7 +1568,7 @@
                                 <tr>
                                     <td>date1</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            <code>Date | null</code>
                                     </td>
 
                                     <td>
@@ -1520,7 +1580,7 @@
                                 <tr>
                                     <td>date2</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            <code>Date | null</code>
                                     </td>
 
                                     <td>
@@ -1573,7 +1633,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:103</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
 </div>
                 </td>
             </tr>
@@ -1626,6 +1686,156 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="parseFloat"></a>
+                    <span class="name">
+                        <span ><b>parseFloat</b></span>
+                        <a href="#parseFloat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseFloat(s: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>s</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="parseInt"></a>
+                    <span class="name">
+                        <span ><b>parseInt</b></span>
+                        <a href="#parseInt"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseInt(s: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>s</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="referentielMappingColor"></a>
                     <span class="name">
                         <span class="modifier">Public</span>
@@ -1650,7 +1860,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:34</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
 </div>
                 </td>
             </tr>
@@ -1727,7 +1937,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
 </div>
                 </td>
             </tr>
@@ -1804,7 +2014,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
 </div>
                 </td>
             </tr>
@@ -1891,7 +2101,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
 </div>
                 </td>
             </tr>
@@ -1966,7 +2176,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
 </div>
                 </td>
             </tr>
@@ -1989,37 +2199,6 @@
     <h3 id="inputs">
         Properties
     </h3>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="autoReloadData"></a>
-                    <span class="name">
-                        <span ><b>autoReloadData</b></span>
-                        <a href="#autoReloadData"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>true</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:25</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -2111,37 +2290,6 @@
                     <tr>
                         <td class="col-md-4">
                                 <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:14</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isLoading"></a>
-                    <span class="name">
-                        <span ><b>isLoading</b></span>
-                        <a href="#isLoading"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>false</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:26</a></div>
                         </td>
                     </tr>
 
@@ -2281,8 +2429,6 @@ export class ContentieuxOptionsService extends MainClass {
   optionsIsModify: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(
     false
   )
-  autoReloadData: boolean &#x3D; true
-  isLoading: boolean &#x3D; false
 
   constructor(
     private serverService: ServerService,
@@ -2292,50 +2438,33 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   initDatas() {
-    this.humanResourceService.backupId.subscribe((juridictionId) &#x3D;&gt; {
-      if (juridictionId) {
-        this.watchDatas()
-      }
+    this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
+      this.loadBackupsAndId()
     })
   }
 
-  watchDatas() {
-    this.watcherDestroy()
-    this.watch(
-      this.backupId.subscribe((backupId) &#x3D;&gt; {
-        const juridictionId &#x3D; this.humanResourceService.backupId.getValue()
-        if (!juridictionId) {
-          return
-        }
-
-        if (!this.isLoading) {
-          this.isLoading &#x3D; true
-
-          if (this.autoReloadData) {
-            this.getAllContentieuxOptions(backupId, juridictionId).then(
-              (result) &#x3D;&gt; {
-                this.contentieuxOptions.next(result.list)
-                this.backups.next(result.backups)
-                this.backupId.next(result.backupId)
-                this.optionsIsModify.next(false)
-                this.autoReloadData &#x3D; false
-                this.isLoading &#x3D; false
-              }
-            )
-          } else {
-            this.autoReloadData &#x3D; true
-            this.isLoading &#x3D; false
-          }
-        }
+  loadBackupsAndId() {
+    const juridictionId &#x3D; this.humanResourceService.backupId.getValue()
+    if (juridictionId !&#x3D;&#x3D; null) {
+      this.optionsIsModify.next(false)
+      this.getAllContentieuxOptions(juridictionId).then((result) &#x3D;&gt; {
+        this.backups.next(result.backups)
+        this.backupId.next(result.backupId)
       })
-    )
+    }
   }
 
-  getAllContentieuxOptions(id: number | null, juridictionId: number) {
+  loadDetails(backupId: number): Promise&lt;ContentieuxOptionsInterface[]&gt; {
+    return this.serverService
+      .get(&#x60;contentieux-options/get-backup-details/${backupId}&#x60;)
+      .then((r) &#x3D;&gt; r.data || [])
+  }
+
+  getAllContentieuxOptions(juridictionId: number) {
     return this.serverService
       .post(&#x27;contentieux-options/get-all&#x27;, {
-        backupId: id,
         juridictionId,
+        backupId: this.backupId.getValue(),
       })
       .then((r) &#x3D;&gt; r.data)
   }
@@ -2374,8 +2503,8 @@ export class ContentieuxOptionsService extends MainClass {
       return this.serverService
         .delete(&#x60;contentieux-options/remove-backup/${this.backupId.getValue()}&#x60;)
         .then(() &#x3D;&gt; {
-          this.autoReloadData &#x3D; true
           this.backupId.next(null)
+          this.loadBackupsAndId()
         })
     }
 
@@ -2396,8 +2525,8 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) &#x3D;&gt; {
-          this.autoReloadData &#x3D; true
           this.backupId.next(r.data)
+          this.loadBackupsAndId()
         })
     }
 
@@ -2418,8 +2547,8 @@ export class ContentieuxOptionsService extends MainClass {
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
       .then((r) &#x3D;&gt; {
-        this.autoReloadData &#x3D; true
         this.backupId.next(r.data)
+        this.loadBackupsAndId()
       })
   }
 
@@ -2434,8 +2563,8 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) &#x3D;&gt; {
-          this.autoReloadData &#x3D; true
           this.backupId.next(r.data)
+          this.loadBackupsAndId()
         })
     }
 

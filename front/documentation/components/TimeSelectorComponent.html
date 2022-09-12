@@ -305,8 +305,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="62"
-                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:62</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="58"
+                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:58</a></div>
                 </td>
             </tr>
 
@@ -374,8 +374,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="54"
-                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:54</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="52"
+                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:52</a></div>
                 </td>
             </tr>
 
@@ -413,7 +413,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                     </div>
                     <div class="io-description">
@@ -480,8 +480,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="71"
-                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:71</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="67"
+                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:67</a></div>
                 </td>
             </tr>
 
@@ -549,8 +549,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="76"
-                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:76</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="72"
+                            class="link-to-prism">src/app/components/time-selector/time-selector.component.ts:72</a></div>
                 </td>
             </tr>
 
@@ -618,9 +618,9 @@
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>new FormGroup({
-        hour: new FormControl(&#x27;&#x27;),
-        minute: new FormControl(&#x27;&#x27;),
-    })</code>
+    hour: new FormControl(&#x27;&#x27;),
+    minute: new FormControl(&#x27;&#x27;),
+  })</code>
                     </td>
                 </tr>
                     <tr>
@@ -670,88 +670,86 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
 } from &#x27;@angular/core&#x27;
 import { FormControl, FormGroup } from &#x27;@angular/forms&#x27;
 
 @Component({
-    selector: &#x27;app-time-selector&#x27;,
-    templateUrl: &#x27;./time-selector.component.html&#x27;,
-    styleUrls: [&#x27;./time-selector.component.scss&#x27;],
+  selector: &#x27;app-time-selector&#x27;,
+  templateUrl: &#x27;./time-selector.component.html&#x27;,
+  styleUrls: [&#x27;./time-selector.component.scss&#x27;],
 })
 export class TimeSelectorComponent implements OnChanges {
-    @Input() value: number &#x3D; 0
-    @Output() valueChange &#x3D; new EventEmitter()
-    toChange: boolean &#x3D; true
+  @Input() value: number &#x3D; 0
+  @Output() valueChange &#x3D; new EventEmitter()
+  toChange: boolean &#x3D; true
 
-    timeForm &#x3D; new FormGroup({
-        hour: new FormControl(&#x27;&#x27;),
-        minute: new FormControl(&#x27;&#x27;),
+  timeForm &#x3D; new FormGroup({
+    hour: new FormControl(&#x27;&#x27;),
+    minute: new FormControl(&#x27;&#x27;),
+  })
+
+  constructor() {
+    this.timeForm.controls.minute.valueChanges.subscribe((value) &#x3D;&gt; {
+      if (value &amp;&amp; parseInt(value) &lt;&#x3D; 59 &amp;&amp; this.toChange &#x3D;&#x3D;&#x3D; true)
+        this.onChangeHour(this.getFormString())
+      else if (value &amp;&amp; parseInt(value) &gt; 59 &amp;&amp; this.toChange &#x3D;&#x3D;&#x3D; true) {
+        this.toChange &#x3D; false
+        this.timeForm.controls[&#x27;minute&#x27;].setValue(&#x27;59&#x27;)
+        this.onChangeHour(this.getFormString(&#x27;59&#x27;))
+      } else this.toChange &#x3D; true
     })
 
-    constructor() {
-        this.timeForm.controls.minute.valueChanges.subscribe((value) &#x3D;&gt; {
-            if (parseInt(value) &lt;&#x3D; 59 &amp;&amp; this.toChange &#x3D;&#x3D;&#x3D; true)
-                this.onChangeHour(this.getFormString())
-            else if (parseInt(value) &gt; 59 &amp;&amp; this.toChange &#x3D;&#x3D;&#x3D; true) {
-                this.toChange &#x3D; false
-                this.timeForm.controls[&#x27;minute&#x27;].setValue(59)
-                this.onChangeHour(this.getFormString(&#x27;59&#x27;))
-            } else this.toChange &#x3D; true
-        })
+    this.timeForm.controls.hour.valueChanges.subscribe(() &#x3D;&gt; {
+      if (this.toChange &#x3D;&#x3D;&#x3D; true) this.onChangeHour(this.getFormString())
+    })
+  }
 
-        this.timeForm.controls.hour.valueChanges.subscribe(() &#x3D;&gt; {
-            if (this.toChange &#x3D;&#x3D;&#x3D; true) this.onChangeHour(this.getFormString())
-        })
+  ngOnChanges() {
+    if (this.toChange &#x3D;&#x3D;&#x3D; true) {
+      this.toChange &#x3D; false
+      this.timeForm.controls[&#x27;hour&#x27;].setValue(String(this.value).split(&#x27;.&#x27;)[0])
+      this.toChange &#x3D; false
+      this.timeForm.controls[&#x27;minute&#x27;].setValue(
+        this.decimalToStringDate(this.value).split(&#x27;:&#x27;)[1] || &#x27;00&#x27;
+      )
+    } else this.toChange &#x3D; true
+  }
+
+  getFormString(minute?: string) {
+    return &#x60;${this.timeForm.controls[&#x27;hour&#x27;].value}:${
+      minute ? minute : this.timeForm.controls[&#x27;minute&#x27;].value
+    }&#x60;
+  }
+
+  decimalToStringDate(decimal: number) {
+    if (decimal !&#x3D; null) {
+      const n &#x3D; new Date(0, 0)
+      n.setMinutes(Math.ceil(+decimal * 60))
+      return n.toTimeString().slice(0, 5)
     }
+    return &#x27;0&#x27;
+  }
 
-    ngOnChanges() {
-        if (this.toChange &#x3D;&#x3D;&#x3D; true) {
-            this.toChange &#x3D; false
-            this.timeForm.controls[&#x27;hour&#x27;].setValue(
-                String(this.value).split(&#x27;.&#x27;)[0]
-            )
-            this.toChange &#x3D; false
-            this.timeForm.controls[&#x27;minute&#x27;].setValue(
-                this.decimalToStringDate(this.value).split(&#x27;:&#x27;)[1] || &#x27;00&#x27;
-            )
-        } else this.toChange &#x3D; true
-    }
+  onChangeHour(str: string) {
+    this.value &#x3D; this.timeToDecimal(str)
+    this.valueChange.emit(this.timeToDecimal(str))
+  }
 
-    getFormString(minute?: string) {
-        return &#x27;&#x27;.concat(
-            this.timeForm.controls[&#x27;hour&#x27;].value,
-            &#x27;:&#x27;,
-            minute ? minute : this.timeForm.controls[&#x27;minute&#x27;].value
-        )
-    }
+  timeToDecimal(time: string) {
+    var arr &#x3D; time.split(&#x27;:&#x27;)
+    var dec &#x3D; (parseInt(arr[1], 10) / 6) * 10
 
-    decimalToStringDate(decimal: number) {
-        if (decimal !&#x3D; null) {
-            const n &#x3D; new Date(0, 0)
-            n.setMinutes(Math.ceil(+decimal * 60))
-            return n.toTimeString().slice(0, 5)
-        }
-        return &#x27;0&#x27;
-    }
+    let fulldec &#x3D; String(dec).split(&#x27;.&#x27;).join(&#x27;&#x27;)
 
-    onChangeHour(str: string) {
-        this.value &#x3D; this.timeToDecimal(str)
-        this.valueChange.emit(this.timeToDecimal(str))
-    }
-
-    timeToDecimal(time: string) {
-        var arr &#x3D; time.split(&#x27;:&#x27;)
-        var dec &#x3D; (parseInt(arr[1], 10) / 6) * 10
-
-        return parseFloat(
-            (parseInt(arr[0], 10) || 0) + &#x27;.&#x27; + (dec &lt; 10 ? &#x27;0&#x27; : &#x27;&#x27;) + dec
-        )
-    }
+    return parseFloat(
+      (parseInt(arr[0], 10) || 0) + &#x27;.&#x27; + (dec &lt; 10 ? &#x27;0&#x27; : &#x27;&#x27;) + fulldec
+    )
+  }
 }
 </code></pre>
     </div>
@@ -805,7 +803,7 @@ export class TimeSelectorComponent implements OnChanges {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div>    <form [formGroup]="timeForm">        <input formControlName="hour" type="number" style="width: 100px" />        h        <input            formControlName="minute"            type="number"            style="width: 100px"            (ngModelChange)="(value)"        />    </form></div></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'RhBackupPanelComponent', 'selector': 'aj-rh-backup-panel'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'TimeSelectorComponent'};
 </script>

@@ -99,13 +99,16 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#changeMonth" >changeMonth</a>
+                                <a href="#getActivitiesByDate" >getActivitiesByDate</a>
                             </li>
                             <li>
-                                <a href="#onSaveDatas" >onSaveDatas</a>
+                                <a href="#getLastMonthActivities" >getLastMonthActivities</a>
                             </li>
                             <li>
-                                <a href="#updateActivity" >updateActivity</a>
+                                <a href="#loadAllActivities" >loadAllActivities</a>
+                            </li>
+                            <li>
+                                <a href="#loadMonthActivities" >loadMonthActivities</a>
                             </li>
                             <li>
                                 <a href="#updateDatasAt" >updateDatasAt</a>
@@ -180,24 +183,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="changeMonth"></a>
+                    <a name="getActivitiesByDate"></a>
                     <span class="name">
-                        <span ><b>changeMonth</b></span>
-                        <a href="#changeMonth"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>getActivitiesByDate</b></span>
+                        <a href="#getActivitiesByDate"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>changeMonth(deltaMonth: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>getActivitiesByDate(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="73"
-                            class="link-to-prism">src/app/services/activities/activities.service.ts:73</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="30"
+                            class="link-to-prism">src/app/services/activities/activities.service.ts:30</a></div>
                 </td>
             </tr>
 
@@ -218,9 +221,9 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>deltaMonth</td>
+                                    <td>date</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
                                     </td>
 
                                     <td>
@@ -235,7 +238,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">
@@ -249,24 +252,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="onSaveDatas"></a>
+                    <a name="getLastMonthActivities"></a>
                     <span class="name">
-                        <span ><b>onSaveDatas</b></span>
-                        <a href="#onSaveDatas"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>getLastMonthActivities</b></span>
+                        <a href="#getLastMonthActivities"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onSaveDatas()</code>
+<code>getLastMonthActivities()</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="79"
-                            class="link-to-prism">src/app/services/activities/activities.service.ts:79</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="50"
+                            class="link-to-prism">src/app/services/activities/activities.service.ts:50</a></div>
                 </td>
             </tr>
 
@@ -286,24 +289,61 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="updateActivity"></a>
+                    <a name="loadAllActivities"></a>
                     <span class="name">
-                        <span ><b>updateActivity</b></span>
-                        <a href="#updateActivity"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>loadAllActivities</b></span>
+                        <a href="#loadAllActivities"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>updateActivity(referentiel: <a href="../interfaces/ContentieuReferentielInterface.html" target="_self">ContentieuReferentielInterface</a>, activities: <a href="../interfaces/ActivityInterface.html" target="_self">ActivityInterface[]</a>, firstRow: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+<code>loadAllActivities()</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="19"
-                            class="link-to-prism">src/app/services/activities/activities.service.ts:19</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="58"
+                            class="link-to-prism">src/app/services/activities/activities.service.ts:58</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadMonthActivities"></a>
+                    <span class="name">
+                        <span ><b>loadMonthActivities</b></span>
+                        <a href="#loadMonthActivities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadMonthActivities(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">src/app/services/activities/activities.service.ts:41</a></div>
                 </td>
             </tr>
 
@@ -320,52 +360,19 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
-                                    <td>Default value</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>referentiel</td>
+                                    <td>date</td>
                                     <td>
-                                                <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
                                     </td>
 
                                     <td>
                                         No
                                     </td>
 
-                                    <td>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                    <td>activities</td>
-                                    <td>
-                                                <code><a href="../interfaces/ActivityInterface.html" target="_self" >ActivityInterface[]</a></code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-                                    <td>
-                                        <code>this.activities.getValue()</code>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                    <td>firstRow</td>
-                                    <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-                                    <td>
-                                        <code>true</code>
-                                    </td>
 
                                 </tr>
                             </tbody>
@@ -374,7 +381,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{}</code>
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">
@@ -397,15 +404,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>updateDatasAt(contentieuxId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, values: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+<code>updateDatasAt(contentieuxId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, values: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, nodeUpdated: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="86"
-                            class="link-to-prism">src/app/services/activities/activities.service.ts:86</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="19"
+                            class="link-to-prism">src/app/services/activities/activities.service.ts:19</a></div>
                 </td>
             </tr>
 
@@ -453,6 +460,18 @@
                                     <td>values</td>
                                     <td>
                                                 <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>nodeUpdated</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                     </td>
 
                                     <td>
@@ -529,13 +548,13 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>BehaviorSubject&lt;Date&gt;</code>
+                        <i>Type : </i>    <code>BehaviorSubject&lt;Date | null&gt;</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(new Date())</code>
+                        <i>Default value : </i><code>new BehaviorSubject&lt;Date | null&gt;(null)</code>
                     </td>
                 </tr>
                     <tr>
@@ -584,11 +603,11 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-import { BehaviorSubject } from &#x27;rxjs&#x27;;
-import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;;
-import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
+import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
 
 @Injectable({
   providedIn: &#x27;root&#x27;,
@@ -596,86 +615,65 @@ import { ServerService } from &#x27;../http-server/server.service&#x27;;
 export class ActivitiesService {
   activities: BehaviorSubject&lt;ActivityInterface[]&gt; &#x3D; new BehaviorSubject&lt;
     ActivityInterface[]
-  &gt;([]);
-  activityMonth: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(new Date());
-  hrBackupId: number | null &#x3D; null;
+  &gt;([])
+  activityMonth: BehaviorSubject&lt;Date | null&gt; &#x3D; new BehaviorSubject&lt;Date | null&gt;(null)
+  hrBackupId: number | null &#x3D; null
 
   constructor(private serverService: ServerService) {}
 
-  updateActivity(
-    referentiel: ContentieuReferentielInterface,
-    activities: ActivityInterface[] &#x3D; this.activities.getValue(),
-    firstRow: boolean &#x3D; true
-  ) {
-    const activityMonth &#x3D; this.activityMonth.getValue();
-    const findIndexActivity &#x3D; activities.findIndex(
+  updateDatasAt(contentieuxId: number, date: Date, values: any, nodeUpdated: string) {
+    return this.serverService
+      .postWithoutError(&#x60;activities/update-by&#x60;, {
+        contentieuxId,
+        date,
+        values,
+        hrBackupId: this.hrBackupId,
+        nodeUpdated,
+      })
+  }
+
+  getActivitiesByDate(date: Date) {
+    let activities &#x3D; this.activities.getValue()
+    activities &#x3D; activities.filter(
       (a) &#x3D;&gt;
-        a.contentieux.id &#x3D;&#x3D;&#x3D; referentiel.id &amp;&amp;
-        a.periode.getFullYear() &#x3D;&#x3D;&#x3D; activityMonth.getFullYear() &amp;&amp;
-        a.periode.getMonth() &#x3D;&#x3D;&#x3D; activityMonth.getMonth()
-    );
+        a.periode.getMonth() &#x3D;&#x3D;&#x3D; date.getMonth() &amp;&amp;
+        a.periode.getFullYear() &#x3D;&#x3D;&#x3D; date.getFullYear()
+    )
 
-    if (referentiel.in || referentiel.out || referentiel.stock) {
-      if (findIndexActivity &#x3D;&#x3D;&#x3D; -1) {
-        // add
-        activities.push({
-          periode: this.activityMonth.getValue(),
-          entrees: referentiel.in || 0,
-          sorties: referentiel.out || 0,
-          stock: referentiel.stock || 0,
-          contentieux: referentiel,
-        });
-      } else {
-        // update
-        activities[findIndexActivity] &#x3D; {
-          ...activities[findIndexActivity],
-          entrees: referentiel.in || 0,
-          sorties: referentiel.out || 0,
-          stock: referentiel.stock || 0,
-        };
-      }
-    } else if (findIndexActivity !&#x3D;&#x3D; -1) {
-      // remove activity
-      activities.splice(findIndexActivity, 1);
-    }
-
-    (referentiel.childrens || []).map((refChildren) &#x3D;&gt; {
-      activities &#x3D; this.updateActivity(refChildren, activities, false);
-    });
-
-    if (firstRow) {
-      this.activities.next(activities);
-    }
-
-    this.updateDatasAt(referentiel.id, activityMonth, {
-      entrees: referentiel.in || 0,
-      sorties: referentiel.out || 0,
-      stock: referentiel.stock || 0,
-    });
-
-    return activities;
+    return activities
   }
 
-  changeMonth(deltaMonth: number) {
-    const cm &#x3D; new Date(this.activityMonth.getValue());
-    cm.setMonth(cm.getMonth() + deltaMonth);
-    this.activityMonth.next(cm);
+  loadMonthActivities(date: Date) {
+    return this.serverService
+      .post(&#x60;activities/get-by-month&#x60;, {
+        date,
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) &#x3D;&gt; data.data || null)
   }
 
-  onSaveDatas() {
-    return this.serverService.post(&#x60;activities/save-backup&#x60;, {
-      list: this.activities.getValue(),
-      hrBackupId: this.hrBackupId,
-    });
+  getLastMonthActivities() {
+    return this.serverService
+      .post(&#x60;activities/get-last-month&#x60;, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) &#x3D;&gt; data.data.date || null)
   }
 
-  updateDatasAt(contentieuxId: number, date: Date, values: any) {
-    return this.serverService.postWithoutError(&#x60;activities/update-by&#x60;, {
-      contentieuxId,
-      date,
-      values,
-      hrBackupId: this.hrBackupId,
-    });
+  loadAllActivities() {
+    return this.serverService
+      .post(&#x60;activities/load-all-activities&#x60;, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) &#x3D;&gt; {
+        const list &#x3D; data.data
+        this.activities.next(
+          list.map((a: ActivityInterface) &#x3D;&gt; ({
+            ...a,
+            periode: new Date(a.periode),
+          }))
+        )
+      })
   }
 }
 </code></pre>
