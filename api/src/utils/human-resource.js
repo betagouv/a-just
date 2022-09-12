@@ -2,7 +2,7 @@ import { minBy, sumBy } from 'lodash'
 import { today } from '../utils/date'
 
 export function getEtpByDateAndPerson (referentielId, date, hr) {
-  const { currentSituation: situation, nextSituation } = findSituation(hr, date)
+  const { currentSituation: situation/*, nextSituation*/ } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter(

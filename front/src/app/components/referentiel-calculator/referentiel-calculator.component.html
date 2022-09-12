@@ -48,7 +48,7 @@
         <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }">
             <div class="block">
                 <ng-template [ngIf]="calculator.realDTESInMonths !== null" [ngIfElse]="nr">
-                    <p>{{ calculator.realDTESInMonths || 0 }}</p>
+                    <p>{{ calculator.realDTESInMonths | number:'0.2-2' || 0 }}</p>
                     <p class="unity">mois</p>
                 </ng-template>
             </div>
@@ -76,7 +76,7 @@
         <div [ngClass]="{ selected: sortBy === 'calculateDTESInMonths' }">
             <div class="block">
                 <ng-template [ngIf]="calculator.calculateDTESInMonths !== null" [ngIfElse]="nr">
-                    <p>{{ calculator.calculateDTESInMonths || 0 }}</p>
+                    <p>{{ calculator.calculateDTESInMonths | number:'0.2-2' || 0 }}</p>
                     <p class="unity">mois</p>
                 </ng-template>
             </div>
