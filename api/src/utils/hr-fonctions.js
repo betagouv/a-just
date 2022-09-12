@@ -1,4 +1,4 @@
-export function findFonctionName(AllFonctions, currentSituation) {
+export async function findFonctionName(AllFonctions, currentSituation) {
   return currentSituation && currentSituation.category
     ? AllFonctions.find((c) => c.id === currentSituation.category.id).label.toLowerCase()
     : '';
