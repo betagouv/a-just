@@ -23,12 +23,19 @@ export default class RouteSimulator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
     }
 
+    console.time('simulator-1');
     const hr = await this.model.getCache(backupId);
+    console.timeEnd('simulator-1');
 
+    console.time('simulator-2');
     const categories = await this.models.HRCategories.getAll();
+    console.timeEnd('simulator-2');
 
+    console.time('simulator-3');
     const activities = await this.models.Activities.getAll(backupId);
+    console.timeEnd('simulator-3');
 
+    console.time('simulator-4');
     const situation = await getSituation(
       referentielId,
       hr,
@@ -37,6 +44,7 @@ export default class RouteSimulator extends Route {
       dateStart,
       dateStop
     );
+    console.timeEnd('simulator-4');
 
     this.sendOk(ctx, { situation, categories, hr });
   }
