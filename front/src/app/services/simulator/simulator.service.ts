@@ -169,7 +169,7 @@ export class SimulatorService extends MainClass {
   }
 
   /**
-   *
+   * Get the value of the displayed field
    * @param param label name
    * @param data simulated situation data object
    * @param initialValue specified if initialValue need to be converted or not in case of % or month
