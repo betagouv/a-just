@@ -5,7 +5,9 @@ import {
   addSumLine,
   autofitColumns,
   countEtp,
+  emptyRefObj,
   flatListOfContentieuxAndSousContentieux,
+  getExcelLabel,
   getIndispoDetails,
   replaceZeroByDash,
 } from '../utils/extractor';
@@ -36,11 +38,18 @@ export default class RouteExtractor extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
     }
 
+    console.time('extractor-1');
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels();
+    console.timeEnd('extractor-1');
 
+    console.time('extractor-2');
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels]);
+    console.timeEnd('extractor-2');
 
+    console.time('extractor-3');
     const hr = await this.model.getCache(backupId);
+    console.timeEnd('extractor-3');
+    console.time('extractor-4');
 
     const categories = await this.models.HRCategories.getAll();
     const fonctions = await this.models.HRFonctions.getAll();
@@ -48,98 +57,74 @@ export default class RouteExtractor extends Route {
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop);
 
     let data = new Array();
+    console.timeEnd('extractor-4');
 
-    //console.log('len human', allHuman.length);
-
+    console.time('extractor-5');
     await Promise.all(
       allHuman.map(async (human) => {
         const { currentSituation } = findSituation(human);
 
-        let categoryName = await findCategoryName(categories, currentSituation);
-        let fonctionName = await findFonctionName(fonctions, currentSituation);
+        let categoryName = findCategoryName(categories, currentSituation);
+        let fonctionName = findFonctionName(fonctions, currentSituation);
 
         let etpAffected = new Array();
-        let refObj = { ...JSON.parse(JSON.stringify({})) };
+        let refObj = { ...emptyRefObj(flatReferentielsList) };
         let totalEtpt = 0;
 
         let indispoArray = new Array([]);
-        //console.log('flat ref', flatReferentielsList.length);
+        const { allIndispRefIds, refIndispo } = await getIndispoDetails(flatReferentielsList);
+
         indispoArray = [
           ...(await Promise.all(
             flatReferentielsList.map(async (referentiel) => {
-              etpAffected = {
-                ...(await getHRVentilation(
+              const situations = human.situations || [];
+              const indisponibilities = human.indisponibilities || [];
+
+              if (
+                situations.some((s) => {
+                  const activities = s.activities || [];
+                  return activities.some((a) => a.contentieux.id === referentiel.id);
+                }) ||
+                indisponibilities.some((indisponibility) => {
+                  return indisponibility.contentieux.id === referentiel.id;
+                })
+              ) {
+                etpAffected = await getHRVentilation(
                   human,
                   referentiel.id,
                   [...categories],
                   dateStart,
                   dateStop
-                )),
-              };
+                );
 
-              const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = {
-                ...(await countEtp({ ...etpAffected }, referentiel)),
-              };
+                const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = {
+                  ...(await countEtp({ ...etpAffected }, referentiel)),
+                };
 
-              const { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo } =
-                await getIndispoDetails(flatReferentielsList);
+                const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
 
-              const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
-
-              if (referentiel.childrens !== undefined) {
-                if (isIndispoRef) {
-                  refObj[
-                    'TOTAL ' +
-                      referentiel.label.toUpperCase() +
-                      ' ' +
-                      referentiel.code_import.toUpperCase()
-                  ] = 0;
-
-                  return {
-                    id: referentiel.id,
-                    label:
-                      'TOTAL ' +
-                      referentiel.label.toUpperCase() +
-                      ' ' +
-                      referentiel.code_import.toUpperCase(),
-                    indispo: 0,
-                    contentieux: true,
-                  };
-                } else {
-                  refObj[
-                    'TOTAL ' +
-                      referentiel.label.toUpperCase() +
-                      ' ' +
-                      referentiel.code_import.toUpperCase()
-                  ] = counterEtpTotal;
-
+                if (referentiel.childrens !== undefined && !isIndispoRef) {
+                  const label = getExcelLabel(referentiel, true);
+                  refObj[label] = counterEtpTotal;
                   totalEtpt += counterEtpTotal;
+                } else {
+                  const label = getExcelLabel(referentiel, false);
+                  if (isIndispoRef) {
+                    refObj[label] = counterIndispo / 100;
+                    return {
+                      indispo: counterIndispo / 100,
+                    };
+                  } else refObj[label] = counterEtpSubTotal;
                 }
-              } else {
-                if (isIndispoRef) {
-                  refObj[
-                    referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
-                  ] = counterIndispo / 100;
-                  return {
-                    id: referentiel.id,
-                    indispo: counterIndispo / 100,
-                    contentieux: false,
-                  };
-                } else
-                  refObj[
-                    referentiel.label.toUpperCase() + ' ' + referentiel.code_import.toUpperCase()
-                  ] = counterEtpSubTotal;
               }
               return { indispo: 0 };
             })
           )),
         ];
-        //console.log('len', indispoArray.length);
 
-        const key = (await indispoArray.filter((elem) => elem.contentieux === true)[0].label) || '';
+        const key = getExcelLabel(refIndispo, true);
 
         refObj[key] = sumBy(indispoArray, 'indispo');
-        //console.log(refObj[key]);
 
         if (categoryName === categoryFilter || categoryFilter === 'tous')
           data.push({
@@ -153,12 +138,16 @@ export default class RouteExtractor extends Route {
           });
       })
     );
+    console.timeEnd('extractor-5');
 
+    console.time('extractor-6');
     await data.sort((a, b) => (a.last_nom > b.last_nom ? 1 : b.Fonction > a.Fonction ? -1 : 0));
 
     data = addSumLine(data, categoryFilter);
     data = replaceZeroByDash(data);
     const columnSize = await autofitColumns(data);
+    console.timeEnd('extractor-6');
+
     this.sendOk(ctx, { values: data, columnSize });
   }
 }
