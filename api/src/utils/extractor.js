@@ -1,5 +1,21 @@
 import { sumBy } from 'lodash';
 
+export function emptyRefObj(flatReferentielsList) {
+  let obj = { ...JSON.parse(JSON.stringify({})) };
+  flatReferentielsList.map((referentiel) => {
+    if (referentiel.childrens !== undefined) {
+      obj[getExcelLabel(referentiel, true)] = 0;
+    } else obj[getExcelLabel(referentiel, false)] = 0;
+  });
+  return obj;
+}
+
+export const getExcelLabel = (referentiel, isTotal) => {
+  if (isTotal)
+    return referentiel.code_import.toUpperCase() + ' TOTAL ' + referentiel.label.toUpperCase();
+  else return referentiel.code_import.toUpperCase() + ' ' + referentiel.label.toUpperCase();
+};
+
 /**
  * Return a flat list with Contentieux and Sous-Contentieux at the same level
  * @param {*} allReferentiels
