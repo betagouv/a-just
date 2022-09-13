@@ -99,6 +99,7 @@ export async function getSituation(
     // Compute totalOut with etp at dateStart (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, etpMag);
 
+    console.log(hr.length);
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(
       hr,
@@ -362,6 +363,12 @@ export function hasInOutOrStock(activities) {
   return hasIn && hasOut && hasStock;
 }
 
+export function appearOneTimeAtLeast(situations, referentielId) {
+  return situations.some((s) => {
+    const activities = s.activities || [];
+    return activities.some((a) => a.contentieux.id === referentielId);
+  });
+}
 export async function getHRPositions(
   hr,
   referentielId,
@@ -397,9 +404,11 @@ export async function getHRPositions(
   });
 
   for (let i = 0; i < hr.length; i++) {
-    let etptAll,
-      monthlyList = null;
-    if (onPeriod === true) {
+    let etptAll = [];
+    let monthlyList = null;
+    const situations = hr[i].situations || [];
+
+    if (onPeriod === true && appearOneTimeAtLeast(situations, referentielId)) {
       ({ etptAll, monthlyList } = {
         ...(await getHRVentilationOnPeriod(
           hr[i],
@@ -409,7 +418,7 @@ export async function getHRPositions(
           dateStop instanceof Date ? dateStop : undefined
         )),
       });
-    } else {
+    } else if (appearOneTimeAtLeast(situations, referentielId)) {
       etptAll = await getHRVentilation(
         hr[i],
         referentielId,
