@@ -11,15 +11,15 @@ export const calculMainValuesFromChilds = (childs) => {
     original_stock: preformatActivitiesArray(childs, ['original_stock']),
   }
 
-  if (returnObject.entrees === returnObject.original_entrees) {
+  if (childs.every((c) => c.entrees === null)) {
     returnObject.entrees = null
   }
 
-  if (returnObject.sorties === returnObject.original_sorties) {
+  if (childs.every((c) => c.sorties === null)) {
     returnObject.sorties = null
   }
 
-  if (returnObject.stock === returnObject.original_stock) {
+  if (childs.every((c) => c.stock === null)) {
     returnObject.stock = null
   }
 
@@ -30,7 +30,11 @@ export const preformatActivitiesArray = (list, index) => {
   let total = null
   list.map((item) => {
     for (let i = 0; i < index.length; i++) {
-      if (index[i] === 'stock' && item[index[i]] !== null && item[index[i]] !== 0) {
+      if (
+        index[i] === 'stock' &&
+        item[index[i]] !== null &&
+        item[index[i]] !== 0
+      ) {
         total = (total || 0) + item[index[i]]
         break
       } else if (item[index[i]] !== null) {
