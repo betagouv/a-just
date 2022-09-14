@@ -11,12 +11,24 @@ export const calculMainValuesFromChilds = (childs) => {
     original_stock: preformatActivitiesArray(childs, ['original_stock']),
   }
 
+  if (childs.every((c) => c.original_entrees === null)) {
+    returnObject.original_entrees = null
+  }
+
   if (childs.every((c) => c.entrees === null)) {
     returnObject.entrees = null
   }
 
+  if (childs.every((c) => c.original_sorties === null)) {
+    returnObject.original_sorties = null
+  }
+
   if (childs.every((c) => c.sorties === null)) {
     returnObject.sorties = null
+  }
+
+  if (childs.every((c) => c.original_stock === null)) {
+    returnObject.original_stock = null
   }
 
   if (childs.every((c) => c.stock === null)) {
