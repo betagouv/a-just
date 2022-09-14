@@ -91,9 +91,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     const inValue = preformatArray(referentiel.childrens, ['in', 'originalIn'])
     const outValue = preformatArray(referentiel.childrens, ['out', 'originalOut'])
     const stockValue = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
-    referentiel.in = inValue === referentiel.originalIn ? null : inValue
-    referentiel.out = outValue === referentiel.originalOut ? null : outValue
-    referentiel.stock = outValue === referentiel.originalStock ? null : stockValue
+    referentiel.in = inValue === referentiel.originalIn && referentiel.childrens.every(c => c.in === null) ? null : inValue
+    referentiel.out = outValue === referentiel.originalOut && referentiel.childrens.every(c => c.out === null) ? null : outValue
+    referentiel.stock = outValue === referentiel.originalStock && referentiel.childrens.every(c => c.stock === null) ? null : stockValue
 
     // save datas
     if (this.timeoutUpdateAcitity[subRef.id]) {
