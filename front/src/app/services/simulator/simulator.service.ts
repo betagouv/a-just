@@ -220,7 +220,9 @@ export class SimulatorService extends MainClass {
         return '0'
       case 'realTimePerCase':
         if (initialValue) return data?.realTimePerCase || '0'
-        else return decimalToStringDate(data?.realTimePerCase) || '0'
+        else {
+          return decimalToStringDate(data?.realTimePerCase) || '0'
+        }
       case 'ETPTGreffe':
         return data?.etpCont || '0'
     }

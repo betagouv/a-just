@@ -3,11 +3,14 @@ import { sortBy, sumBy } from 'lodash';
 import { filterActivitiesByDateAndContentieuxId } from './activities';
 import {
   checkIfDateIsNotToday,
+  decimalToStringDate,
+  generalizeTimeZone,
   getRangeOfMonthsAsObject,
   getShortMonthString,
   isSameMonthAndYear,
   month,
   nbOfDays,
+  stringToDecimalDate,
   workingDay,
 } from './date';
 import { fixDecimal } from './number';
@@ -49,10 +52,11 @@ export async function getSituation(
       allActivities,
       'InOutStock',
       month(new Date(), -nbMonthHistory),
-      month(new Date(), -1, 'lastday')
+      month(new Date())
     );
 
   let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonthHistory);
+
   let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonthHistory);
   let lastStock = sumBy(lastActivities, 'stock');
   let realTimePerCase = undefined;
@@ -96,10 +100,9 @@ export async function getSituation(
     // Compute realTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute);
 
-    // Compute totalOut with etp at dateStart (specific date) to display
+    // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, etpMag);
 
-    console.log(hr.length);
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(
       hr,
@@ -115,7 +118,7 @@ export async function getSituation(
       'FuturToCompute'
     ));
 
-    const countOfCalandarDays = nbOfDays(new Date(endDateCs), new Date());
+    const countOfCalandarDays = nbOfDays(month(endDateCs, 0), month(new Date(), 0));
 
     // Compute stock projection until today
     lastStock = computeLastStock(
@@ -287,10 +290,16 @@ function computeTotalOut(realTimePerCase, etp) {
 }
 
 function computeRealTimePerCase(totalOut, etp) {
-  return fixDecimal(
+  let realTimeCorrectValue = fixDecimal(
     ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) / (totalOut / etp),
     100
   );
+  let realTimeCorrectvalueNotRounded =
+    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) / (totalOut / etp);
+  let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue);
+  let realTimeToUse = stringToDecimalDate(realTimeDisplayed);
+
+  return realTimeToUse;
 }
 
 export function getEtpByCategory(etpAffected, sufix = '') {
@@ -315,7 +324,7 @@ export async function getCSActivities(referentielId, allActivities, filter, date
     'periode'
   ).reverse();
 
-  let deltaOfMonths = 1;
+  let deltaOfMonths = 0;
   let activivitiesFiltered = [];
   let lastActivities = [];
 
@@ -328,9 +337,9 @@ export async function getCSActivities(referentielId, allActivities, filter, date
     } while (hasInOutOrStock(lastActivities) === false && deltaOfMonths >= -12);
   }
   const startDateCs = month(dateStart, deltaOfMonths);
-  const endDateCs = month(dateStop, deltaOfMonths, true);
+  const endDateCs = generalizeTimeZone(month(dateStop, deltaOfMonths, 'lastday'));
 
-  if (deltaOfMonths !== -12 && deltaOfMonths !== 0) {
+  if (deltaOfMonths !== -12 && deltaOfMonths <= 0) {
     activivitiesFiltered = await filterActivitiesByDateAndContentieuxId(
       activities,
       referentielId,
@@ -574,7 +583,6 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
     let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null;
     if (listContentieux !== [] && listContentieux !== null) {
       listContentieux = listContentieux.filter((contentieux) => contentieux.id === referentielId);
-      //if (listContentieux !== []) console.log('L"ETP', etp, listContentieux);
     }
   }
 

@@ -1,3 +1,4 @@
+import { toInteger } from 'lodash'
 import { environment } from 'src/environments/environment'
 
 export function monthDiff(d1: Date, d2: Date) {
@@ -126,8 +127,6 @@ export function nbOfDays(startDate: Date, endDate: Date) {
   return nbOfDay
 }
 
-export function decimalToDateString(decimal: number | null | undefined) {}
-
 export function dateAddDays(date: Date, nbDays: number = 0) {
   date = new Date(date)
   date.setDate(date.getDate() + nbDays)
@@ -164,13 +163,8 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
 export function decimalToStringDate(decimal: number | null | undefined) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
-    const decimalMinute =
-      strArray[1] && +strArray[1].length === 1
-        ? +strArray[1] * 10
-        : +strArray[1]
-    let minute = strArray[1]
-      ? String(Math.ceil((1 / 100) * decimalMinute * 60))
-      : '00'
+    const dMin = decimal - parseInt(strArray[0])
+    let minute = strArray[1] ? String(Math.round(dMin * 60)) : '00'
     minute = minute.length === 1 ? '0' + minute : minute
     return strArray[0] + 'h' + minute
   }

@@ -2,7 +2,7 @@ import { Injectable, OnInit } from '@angular/core'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { HRCategoryService } from '../hr-category/hr-category.service'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { month, workingDay } from 'src/app/utils/dates'
+import { generalizeTimeZone, month, workingDay } from 'src/app/utils/dates'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { BehaviorSubject } from 'rxjs'
@@ -56,8 +56,8 @@ export class ExcelService extends MainClass implements OnInit {
     return this.serverService
       .post(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: this.dateStart.getValue(),
-        dateStop: this.dateStop.getValue(),
+        dateStart: generalizeTimeZone(this.dateStart.getValue()),
+        dateStop: generalizeTimeZone(this.dateStop.getValue()),
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
