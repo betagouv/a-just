@@ -35,6 +35,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() backUrl: string = ''
   @Input() backAnchor: string | undefined
   @Input() alignLeft: boolean | undefined
+  @Input() isLoading: boolean = false
 
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
