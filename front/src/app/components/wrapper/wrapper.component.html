@@ -48,6 +48,9 @@
     <div class="actions">
       <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
     </div>
+    <div class="progress-bar" *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
   </div>
   <div class="content" #content id="content">
     <ng-content></ng-content>

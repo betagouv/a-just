@@ -4,7 +4,6 @@ import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
   templateUrl: './average-etp.page.html',
@@ -13,6 +12,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 export class AverageEtpPage extends MainClass implements OnDestroy {
   referentiel: ContentieuReferentielInterface[] = []
   perUnity: string = 'hour'
+  isLoading: boolean = false
 
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
@@ -35,6 +35,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   }
 
   onLoad(backupId: number) {
+    this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
 
@@ -65,6 +66,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
         return ref
       })
+
+      this.isLoading = false
     })
   }
 

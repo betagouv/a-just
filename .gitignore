@@ -9,3 +9,4 @@ front/.angular
 front-admin/.angular
 format-datas/outputs*
 format-datas/inputs*
+node_modules
