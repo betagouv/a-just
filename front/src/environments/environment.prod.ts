@@ -1,5 +1,5 @@
 // @ts-ignore
-import packageJSON from '../package.json';
+import packageJSON from '../../../package.json';
 
 export const environment = {
   production: true,
