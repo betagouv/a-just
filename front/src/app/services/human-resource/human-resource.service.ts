@@ -99,8 +99,8 @@ export class HumanResourceService {
 
     const hr = {
       id: this.hr.getValue().length * -1,
-      firstName: 'Prénom',
-      lastName: 'Nom',
+      firstName: null,
+      lastName: null,
       activities,
       situations: [],
       indisponibilities: [],
@@ -470,7 +470,6 @@ export class HumanResourceService {
           hrBackups[backupIndex].date = newHR.updatedAt
           this.backups.next(hrBackups)
         }
-
         return newHR
       })
   }
