@@ -1,14 +1,24 @@
-<aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"
-  [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" class="content-margin-null">
-  <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
-    [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop" [canEdit]="indexOfTheFuture !== null"
+<aj-wrapper
+  [titleTemplate]="titleTemplate"
+  [actionTemplate]="actions"
+  backUrl="/ventilations"
+  [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined"
+  class="content-margin-null"
+>
+  <actual-panel-situation
+    *ngIf="currentHR && histories.length"
+    [currentHR]="currentHR"
+    [dateStart]="actualHistoryDateStart"
+    [dateStop]="actualHistoryDateStop"
+    [canEdit]="indexOfTheFuture !== null"
     [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
     [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
     [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
     [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
     (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
     (addIndispiniblity)="onAddIndispiniblity($event)"
-    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">
+    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
+  >
   </actual-panel-situation>
 
   <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
@@ -21,61 +31,108 @@
     </button>
   </div>
 
-  <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"
+  <add-ventilation
+    *ngIf="onEditIndex !== null"
+    #addDomVentilation
+    [human]="currentHR"
     [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
-    [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1"
+    [indisponibilities]="allIndisponibilities"
+    [isEdit]="onEditIndex !== -1"
     [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"
-    [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
-    (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)"
-    [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0">
+    [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null"
+    (close)="onCancel()"
+    (onSaveConfirm)="onNewUpdate()"
+    (addIndispiniblity)="onAddIndispiniblity($event)"
+    [indisponibilityError]="indisponibilityError"
+    [saveActions]="histories.length !== 0"
+  >
   </add-ventilation>
-
 
   <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
     <p class="title-history">
-      Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir pré-renseignée{{historiesOfTheFutur.length >= 1 ?
-      's' : ''}}
+      Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir
+      pré-renseignée{{historiesOfTheFutur.length >= 1 ? 's' : ''}}
     </p>
-    <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
-      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
+    <panel-history-ventilation
+      *ngFor="let h of historiesOfTheFutur"
+      [id]="h.id"
+      [fonction]="h.fonction"
+      [etp]="h.etp"
+      [indisponibilities]="h.indisponibilities"
+      [activities]="h.activities"
+      [dateStart]="h.dateStart"
+      [dateStop]="h.dateStop"
+      [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      [canRemoveSituation]="h.situationForTheFirstTime"
+      (editVentilation)="onSelectSituationToEdit(h)"
+      (addIndispiniblity)="onAddIndispiniblity($event)"
+      (onRemove)="onRemoveSituation(h.id)"
+    >
     </panel-history-ventilation>
   </div>
 
   <div class="panel-hsitory-group">
     <p *ngIf="historiesOfThePast.length" class="title-history">
-      Situation{{historiesOfThePast.length > 1 ? 's' : ''}} antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
-      categoryName }}
+      Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
+      antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{ categoryName
+      }}
     </p>
-    <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
-      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">
+    <panel-history-ventilation
+      *ngFor="let h of historiesOfThePast"
+      [id]="h.id"
+      [fonction]="h.fonction"
+      [etp]="h.etp"
+      [indisponibilities]="h.indisponibilities"
+      [activities]="h.activities"
+      [dateStart]="h.dateStart"
+      [dateStop]="h.dateStop"
+      [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      [canRemoveSituation]="h.situationForTheFirstTime"
+      (editVentilation)="onSelectSituationToEdit(h)"
+      (addIndispiniblity)="onAddIndispiniblity($event)"
+      (onRemove)="onRemoveSituation(h.id)"
+    >
     </panel-history-ventilation>
   </div>
 
-  <div *ngIf="currentHR && onEditIndex === null && histories.length === 0" class="text-center">
-    <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>
+  <div
+    *ngIf="currentHR && onEditIndex === null && histories.length === 0"
+    class="text-center"
+  >
+    <button class="small outline red strict-border" (click)="onDelete()">
+      Supprimer cette fiche
+    </button>
   </div>
 
   <div class="flex-1"></div>
 
-  <div class="sticky-action-footer" *ngIf="onEditIndex !== null && histories.length === 0">
-    <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>
-    <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
+  <div
+    class="sticky-action-footer"
+    *ngIf="onEditIndex !== null && histories.length === 0"
+  >
+    <button class="small outline blue strict-border" (click)="onCancel(true)">
+      Annuler
+    </button>
+    <button class="small primary strict-border" (click)="onSave()">
+      Enregistrer
+    </button>
   </div>
 </aj-wrapper>
 
 <ng-template #actions>
   <div class="actions">
-    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
-      (valueChange)="updateHuman('dateStart', $event)">
+    <aj-date-select
+      title="Date d'arrivée"
+      [value]="currentHR && currentHR.dateStart"
+      (valueChange)="updateHuman('dateStart', $event)"
+    >
     </aj-date-select>
-    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
-      (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true">
+    <aj-date-select
+      title="Date de départ"
+      [value]="currentHR && currentHR.dateEnd"
+      (valueChange)="updateHuman('dateEnd', $event)"
+      [clearable]="true"
+    >
     </aj-date-select>
   </div>
 </ng-template>
@@ -84,55 +141,84 @@
   <div class="title">
     <p class="page-name">Fiche individuelle de</p>
     <p class="user-name">
-      <span contenteditable data-placeholder="Prénom"
-        (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '')">{{ (currentHR &&
-        currentHR.firstName) }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
-        (blur)="updateHuman('lastName', $event && $event.target ? $event.target : '')">{{ (currentHR &&
-        currentHR.lastName) }}</span>
+      <span
+        contenteditable
+        data-placeholder="Prénom"
+        (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '',$event)"
+        >{{ (currentHR && currentHR.firstName)||'' }}</span
+      >&nbsp;<span
+        contenteditable
+        data-placeholder="Nom"
+        (blur)="updateHuman('lastName', $event && $event.target ? $event.target : '',$event)"
+        >{{ (currentHR && currentHR.lastName) }}</span
+      >
       <mat-icon>drive_file_rename_outline</mat-icon>
     </p>
   </div>
   <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
     {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-    getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
-    + ' ' + getFullYear(currentHR.updatedAt) : '' }}
+    getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt) + '
+    ' + getFullYear(currentHR.updatedAt) : '' }}
   </p>
 </ng-template>
 
-<aj-popup *ngIf="updateIndisponiblity" [actions]="[
+<aj-popup
+  *ngIf="updateIndisponiblity"
+  [actions]="[
     { id: 'close', content: 'Annuler' },
     { id: 'modify', content: 'Enregister', fill: true }
-  ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
-  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
+  ]"
+  [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]"
+  [closeIcon]="true"
+  (onClose)="updateIndisponiblity = null"
+  (selectedAction)="onEditIndisponibility($event)"
+>
   <p class="title">
-    {{
-    updateIndisponiblity.id > 0
-    ? "Modification de l'indisponibilité"
-    : "Nouvelle indisponibilité"
-    }}
+    {{ updateIndisponiblity.id > 0 ? "Modification de l'indisponibilité" :
+    "Nouvelle indisponibilité" }}
   </p>
   <div class="form">
     <div>
       <div class="label-aj">Motif d'indisponibilité</div>
       <select [(ngModel)]="updateIndisponiblity.contentieux.id">
-        <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
+        <option
+          *ngFor="let cat of allIndisponibilityReferentiel"
+          [value]="cat.id"
+        >
           {{ cat.label }}
         </option>
       </select>
     </div>
     <div class="grid-double">
-      <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
-        (valueChange)="updateIndisponiblity.dateStart = $event">
+      <aj-date-select
+        title="Date de début"
+        [showToday]="false"
+        [value]="updateIndisponiblity.dateStart"
+        (valueChange)="updateIndisponiblity.dateStart = $event"
+      >
       </aj-date-select>
-      <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = $event" [clearable]="true">
+      <aj-date-select
+        title="Date de fin"
+        [showToday]="false"
+        [value]="updateIndisponiblity.dateStop"
+        (valueChange)="updateIndisponiblity.dateStop = $event"
+        [clearable]="true"
+      >
       </aj-date-select>
     </div>
     <div>
       <div class="label-aj">Indisponibilité (en % d'un plein temps) :</div>
-      <input type="number" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />
+      <input
+        type="number"
+        [(ngModel)]="updateIndisponiblity.percent"
+        min="0"
+        max="100"
+      />
     </div>
   </div>
 </aj-popup>
 
-<div class="black-screen" *ngIf="histories.length && onEditIndex !== null"></div>
+<div
+  class="black-screen"
+  *ngIf="histories.length && onEditIndex !== null"
+></div>
