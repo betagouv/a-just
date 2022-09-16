@@ -257,7 +257,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         selectedReferentielIds,
-        this.categoriesFilterListIds
+        this.humanResourceService.categoriesFilterListIds
       )
       .then((list) => {
         this.listFormated = list
@@ -272,6 +272,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
+
+    console.log(this.filterParams)
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr]
       if (this.filterParams) {

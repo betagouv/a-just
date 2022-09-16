@@ -7,14 +7,18 @@
     </div>
     <div class="item actual">
         <div [ngClass]="{ selected: sortBy === 'totalIn' }">
-            <div>
-                <p>{{ calculator.totalIn }}</p>
-            </div>
+            <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">
+                <div>
+                    <p>{{ calculator.totalIn }}</p>
+                </div>
+            </ng-template>
         </div>
         <div [ngClass]="{ selected: sortBy === 'totalOut' }">
-            <div>
-                <p>{{ calculator.totalOut }}</p>
-            </div>
+            <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">
+                <div>
+                    <p>{{ calculator.totalOut }}</p>
+                </div>
+            </ng-template>
         </div>
         <div [ngClass]="{ selected: sortBy === 'lastStock' }">
             <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
