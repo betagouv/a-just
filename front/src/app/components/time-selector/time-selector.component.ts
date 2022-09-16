@@ -58,7 +58,7 @@ export class TimeSelectorComponent implements OnChanges {
   decimalToStringDate(decimal: number) {
     if (decimal != null) {
       const n = new Date(0, 0)
-      n.setMinutes(Math.ceil(+decimal * 60))
+      n.setMinutes(Math.round(+decimal * 60))
       return n.toTimeString().slice(0, 5)
     }
     return '0'

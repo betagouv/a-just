@@ -168,7 +168,7 @@ export function decimalToStringDate(decimal: number | null | undefined) {
     minute = minute.length === 1 ? '0' + minute : minute
     return strArray[0] + 'h' + minute
   }
-  return
+  return '0'
 }
 
 export function getRangeOfMonths(startDate: Date, endDate: Date) {

@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { decimalToStringDate } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
@@ -26,27 +27,6 @@ export class ReferentielCalculatorComponent extends MainClass {
   }
 
   decimalToStringDate(decimal: number | null) {
-    if (decimal != null) {
-      decimal = fixDecimal(decimal)
-
-      const strArray = String(decimal).split('.')
-
-      let extractedMinute = strArray[1] ? strArray[1] : 0
-
-      let minute =
-        String(extractedMinute).length === 1
-          ? extractedMinute + '0'
-          : extractedMinute
-
-      minute =
-        extractedMinute !== 0
-          ? String(Math.ceil((1 / 100) * +Number(minute) * 60))
-          : '00'
-
-      minute = minute.length === 1 ? '0' + minute : minute
-
-      return strArray[0] + 'h' + minute
-    }
-    return
+    return decimalToStringDate(decimal)
   }
 }
