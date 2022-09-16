@@ -272,6 +272,20 @@ function computeDTES(lastStock, totalOut) {
 }
 
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerCase, totalIn) {
+  console.log({
+    lastStock,
+    countOfCalandarDays,
+    futurEtp,
+    realTimePerCase,
+    totalIn,
+    calculaterOut: Math.floor(
+      (countOfCalandarDays / (365 / 12)) *
+        environment.nbDaysByMagistratPerMonth *
+        ((futurEtp * environment.nbHoursPerDay) / realTimePerCase)
+    ),
+    calculatedIn: Math.floor((countOfCalandarDays / (365 / 12)) * totalIn),
+    stockUsed: Math.floor(lastStock),
+  });
   return (
     Math.floor(lastStock) -
     Math.floor(
