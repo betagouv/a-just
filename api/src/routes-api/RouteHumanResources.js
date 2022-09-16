@@ -157,7 +157,7 @@ export default class RouteHumanResources extends Route {
       const categories = await this.models.HRCategories.getAll()
       const originalReferentiel = (
         await this.models.ContentieuxReferentiels.getReferentiels()
-      ).filter((r) => !contentieuxIds || contentieuxIds.indexOf(r.id) !== -1)
+      )
 
       const listFormated = categories
         .filter((c) => categoriesIds.indexOf(c.id) !== -1)
