@@ -4,6 +4,17 @@ import { Types } from '../utils/types'
 export default class RouteActivities extends Route {
   constructor (params) {
     super({ ...params, model: 'Activities' })
+
+    // this.cleanDatas() TO TEST
+  }
+
+  async cleanDatas () {
+    const backups = await this.models.HRBackups.getAll()
+    
+    for(let i = 0; i < backups.length; i++) {
+      await this.models.Activities.removeDuplicateDatas(backups[i].id)
+      await this.models.Activities.cleanActivities(backups[i].id)
+    }
   }
 
   @Route.Post({
