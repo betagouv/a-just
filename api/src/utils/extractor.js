@@ -1,5 +1,13 @@
 import { sumBy } from 'lodash';
 
+export function sortByCatAndFct(a, b) {
+  if (a['Catégorie'] === b['Catégorie']) {
+    return a.Fonction < b.Fonction ? -1 : 1;
+  } else {
+    return a['Catégorie'] > b['Catégorie'] ? -1 : 1;
+  }
+}
+
 export function emptyRefObj(flatReferentielsList) {
   let obj = { ...JSON.parse(JSON.stringify({})) };
   flatReferentielsList.map((referentiel) => {

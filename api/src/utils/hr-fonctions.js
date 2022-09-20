@@ -1,5 +1,6 @@
 export function findFonctionName(AllFonctions, currentSituation) {
-  return currentSituation && currentSituation.category
-    ? AllFonctions.find((c) => c.id === currentSituation.category.id).label.toLowerCase()
-    : '';
+  if (currentSituation && currentSituation.fonction)
+    if (currentSituation.fonction.id === null) return '';
+    else return AllFonctions.find((c) => c.id === currentSituation.fonction.id).label.toLowerCase();
+  else return '';
 }
