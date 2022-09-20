@@ -263,8 +263,8 @@ export default class App {
         // format string to integer
         monthValues = monthValues.map((m) => ({
           ...m,
-          nbaff: m.nbaff ? parseInt(m.nbaff) : 0,
-          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : 0,
+          nbaff: m.nbaff ? parseInt(m.nbaff) : null,
+          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : null,
         }))
 
         const formatMonthDataFromRules = this.formatMonthFromRules(
@@ -317,9 +317,9 @@ export default class App {
     categoriesOfRules.map((rule) => {
       if (!list[rule['Code nomenclature']]) {
         list[rule['Code nomenclature']] = {
-          entrees: 0,
-          sorties: 0,
-          stock: 0,
+          entrees: null,
+          sorties: null,
+          stock: null,
           periode: monthValues.length ? monthValues[0].periode : null,
           code_import: rule['Code nomenclature'],
         }
@@ -341,10 +341,13 @@ export default class App {
             })
 
             // save values
-            list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + (sumBy(
-              lines,
-              (newRules.TOTAL || '').toLowerCase()
-            ) || 0)
+            const totalKeyNode = (newRules.TOTAL || '').toLowerCase()
+            const filterLine = lines.filter(l => l[totalKeyNode] && l[totalKeyNode] !== '' && l[totalKeyNode] !== null)
+            const sumByValues = filterLine.length ? sumBy(lines, totalKeyNode) : null
+
+            if(sumByValues !== null) {
+              list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + sumByValues
+            }
           }
         }
       }
