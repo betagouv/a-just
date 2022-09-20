@@ -1,7 +1,9 @@
 <div class="menu no-print" title="">
   <div class="images">
-    <img src="/assets/images/Logo-Ministere_de_la_justice_2020.png" class="logo" />
-    <img src="/assets/images/logo-ajust.png" class="logo-ajust" />
+    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" class="logo white-mode" />
+    <img src="/assets/icons/bloc-marque/bloc-marque-dark@2x.svg" class="logo dark-mode" />
+    <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust white-mode" />
+    <img src="/assets/icons/logos/dark-192x192@1x.svg" class="logo-ajust dark-mode" />
   </div>
 
   <div class="juridiction" *ngIf="hrBackups.length">
@@ -20,6 +22,32 @@
     <a [routerLink]="['/' + item.path]">
       {{ item.label }}
     </a>
+  </div>
+  <div class="flex-1"></div>
+  <div class="menu-item tools">
+    <p>Outils</p>
+    <ul>
+      <li>
+        <a href="https://a-just.gitbook.io/documentation-deploiement/" target="_blank">
+          <p>Documentation
+            <i class="ri-external-link-line"></i>
+          </p>
+        </a>
+      </li>
+      <li>
+        <a href="https://resana.numerique.gouv.fr/public/information/consulterAccessUrl?cle_url=741345737VT9VNQMPBjpQPQhuAmwGJlRqXWACI1Q9AGtXalU0XGVTaFBiUDZVMlVgVG0="
+          target="_blank">
+          <p>Calculatrice de ventilation
+            <i class="ri-external-link-line"></i>
+          </p>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/dashboard">
+          <p>Extraitre des données</p>
+        </a>
+      </li>
+    </ul>
   </div>
   <div class="menu-item disconnect" (click)="onDisconnect()">
     <p>Déconnexion</p>
