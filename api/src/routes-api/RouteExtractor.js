@@ -10,6 +10,7 @@ import {
   getExcelLabel,
   getIndispoDetails,
   replaceZeroByDash,
+  sortByCatAndFct,
 } from '../utils/extractor';
 import { preformatHumanResources } from '../utils/ventilator';
 import { getHumanRessourceList } from '../utils/humanServices';
@@ -72,7 +73,7 @@ export default class RouteExtractor extends Route {
         let totalEtpt = 0;
 
         let indispoArray = new Array([]);
-        const { allIndispRefIds, refIndispo } = await getIndispoDetails(flatReferentielsList);
+        const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList);
 
         indispoArray = [
           ...(await Promise.all(
@@ -141,7 +142,8 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-5');
 
     console.time('extractor-6');
-    await data.sort((a, b) => (a.last_nom > b.last_nom ? 1 : b.Fonction > a.Fonction ? -1 : 0));
+
+    await data.sort((a, b) => sortByCatAndFct(a, b));
 
     data = addSumLine(data, categoryFilter);
     data = replaceZeroByDash(data);
