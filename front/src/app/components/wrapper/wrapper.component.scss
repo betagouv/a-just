@@ -4,6 +4,10 @@
   display: flex;
   height: 100%;
 
+  .dark-mode {
+    display: none;
+  }
+
   &.print {
     .content {
       overflow: inherit !important;
@@ -57,6 +61,14 @@
   }
 
   &.dark-screen {
+    .dark-mode {
+      display: inherit;
+    }
+
+    .white-mode {
+      display: none;
+    }
+
     .menu {
       background-color: fColor(darkModeBgMenuSelected);
       border-right: 1px solid fColor(darkModeBgMenu);
@@ -101,6 +113,8 @@
   margin-right: 1px;
   background-color: white;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
 
   .images {
     display: flex;
@@ -153,6 +167,35 @@
       a,
       p {
         color: fColor(cbluedark);
+      }
+    }
+
+    &.disconnect {
+      margin-bottom: 32px;
+    }
+
+    &.tools {
+      p {
+        cursor: inherit;
+      }
+    }
+
+    ul {
+      padding-inline-start: 16px;
+
+      li {
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: normal;
+      }
+
+      i {
+        margin-left: 4px;
+        position: relative;
+        top: 2px;
       }
     }
   }
