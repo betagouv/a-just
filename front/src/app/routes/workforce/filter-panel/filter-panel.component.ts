@@ -61,7 +61,7 @@ export class FilterPanelComponent
       label: 'Date de mise à jour',
       sortFunction: (list: HumanResourceSelectedInterface[]) =>
         sortBy(list, [
-          (h: HumanResourceSelectedInterface) => h.updatedAt.getTime(),
+          (h: HumanResourceSelectedInterface) => new Date(h.updatedAt).getTime(),
         ]),
     },
     {
