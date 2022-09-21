@@ -75,7 +75,7 @@ export class PanelActivitiesComponent
 
     return {
       percent,
-      totalAffected: ((percent || 0) * (this.etp || 0)) / 100,
+      totalAffected: (percent || 0) / 100,
     }
   }
 

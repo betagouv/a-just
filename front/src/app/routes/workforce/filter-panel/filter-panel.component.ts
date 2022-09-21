@@ -70,7 +70,7 @@ export class FilterPanelComponent
         return sortBy(list, [
           (h: HumanResourceSelectedInterface) => {
             const allMainActivities = (h.currentActivities || [])
-            return sumBy(allMainActivities, 'percent') * (h.etp || 0)
+            return sumBy(allMainActivities, 'percent')
           },
         ])
       },
