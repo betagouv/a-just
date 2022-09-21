@@ -179,9 +179,7 @@ export default class App {
         } else if (`</${secondTag}>` === lineFormated) {
           // create file if not exist and only for authorizes jurdiction
           const codeJuridiction = dataLines[0]
-          if (
-            !existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))
-          ) {
+          if (!existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))) {
             // create file
             writeFileSync(
               this.getCsvOutputPath(tmpFolder, codeJuridiction),
@@ -240,16 +238,22 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
-      const ielst = fileName.replace('export-activities-','').replace('.csv', '')
-      if(!I_ELST_LIST[ielst]) {
+      const ielst = fileName
+        .replace('export-activities-', '')
+        .replace('.csv', '')
+      if (!I_ELST_LIST[ielst]) {
         continue
       }
 
-      if(!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
         JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
       }
 
-      console.log(fileName, fileName.replace('export-activities-','').replace('.csv', ''), I_ELST_LIST[ielst])
+      console.log(
+        fileName,
+        fileName.replace('export-activities-', '').replace('.csv', ''),
+        I_ELST_LIST[ielst]
+      )
 
       const arrayOfCsv = await csvToArrayJson(
         readFileSync(`${tmpFolder}/${fileName}`, 'utf8'),
@@ -277,8 +281,10 @@ export default class App {
 
       // merge to existing list
       JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
-        const index = acc.findIndex(a => a.code_import === cur.code_import && a.periode === cur.periode)
-        if(index === -1) {
+        const index = acc.findIndex(
+          (a) => a.code_import === cur.code_import && a.periode === cur.periode
+        )
+        if (index === -1) {
           acc.push(cur)
         } else {
           acc[index] = {
@@ -332,22 +338,27 @@ export default class App {
           const newRules = rule.filtres[node]
 
           // control il node exist
-          if(newRules) {
+          if (newRules) {
             let lines = monthValues
 
             // EXCLUDES INCLUDES QUERIES
-            Object.keys(newRules).filter(r => r !== 'TOTAL').map(ruleKey => {
-              lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
-            })
+            Object.keys(newRules)
+              .filter((r) => r !== 'TOTAL')
+              .map((ruleKey) => {
+                lines = this.filterDatasByNomenc(
+                  newRules,
+                  lines,
+                  ruleKey,
+                  referentiel
+                )
+              })
 
             // save values
             const totalKeyNode = (newRules.TOTAL || '').toLowerCase()
-            const filterLine = lines.filter(l => l[totalKeyNode] && l[totalKeyNode] !== '' && l[totalKeyNode] !== null)
-            const sumByValues = filterLine.length ? sumBy(lines, totalKeyNode) : null
+            const sumByValues = sumBy(lines, totalKeyNode)
 
-            if(sumByValues !== null) {
-              list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + sumByValues
-            }
+            list[rule['Code nomenclature']][node] =
+              (list[rule['Code nomenclature']][node] || 0) + (sumByValues || 0)
           }
         }
       }
@@ -360,20 +371,20 @@ export default class App {
     let nodeValues = rules[node]
     let include = true
     let listCodeToFind = []
-    if(typeof nodeValues === 'undefined') {
+    if (typeof nodeValues === 'undefined') {
       return lines
     }
 
     // force to read array of string
-    if(typeof nodeValues === 'string') {
+    if (typeof nodeValues === 'string') {
       nodeValues = [nodeValues]
     }
 
-    nodeValues.map(value => {
+    nodeValues.map((value) => {
       value = value.trim() // clean string
       let label = value
 
-      if(label.startsWith('<>') === true) {
+      if (label.startsWith('<>') === true) {
         label = label.replace('<>', '').trim().slice(1, -1)
         include = false // warning need to be alway same
       }
@@ -381,8 +392,8 @@ export default class App {
       const findRefList = referentiel.filter(
         (r) => r.LIBELLE === label && r.TYPE_NOMENC === node
       )
-      let codeList = findRefList.map(f => f.CODE)
-      if(codeList.length === 0) {
+      let codeList = findRefList.map((f) => f.CODE)
+      if (codeList.length === 0) {
         // if no code finded then find by label
         codeList = [label]
       }
@@ -390,10 +401,14 @@ export default class App {
       listCodeToFind = listCodeToFind.concat(codeList)
     })
 
-    if(include) {
-      lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) !== -1)
+    if (include) {
+      lines = lines.filter(
+        (m) => listCodeToFind.indexOf(m[node.toLowerCase()]) !== -1
+      )
     } else {
-      lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) === -1)
+      lines = lines.filter(
+        (m) => listCodeToFind.indexOf(m[node.toLowerCase()]) === -1
+      )
     }
 
     return lines
