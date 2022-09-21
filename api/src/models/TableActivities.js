@@ -105,18 +105,23 @@ export default (sequelizeInstance, Model) => {
           },
         })
 
+        // clean null values
+        csv[i].entrees = csv[i].entrees === 'null' ? null : csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' ? null : csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' ? null : csv[i].stock
+
         // if existe update content
         if (
           findExist &&
-          (parseInt(csv[i].entrees) !== findExist.dataValues.original_entrees ||
-            parseInt(csv[i].sorties) !==
+          (csv[i].entrees !== findExist.dataValues.original_entrees ||
+            csv[i].sorties !==
               findExist.dataValues.original_sorties ||
-            parseInt(csv[i].stock) !== findExist.dataValues.original_stock)
+            csv[i].stock !== findExist.dataValues.original_stock)
         ) {
           await findExist.update({
-            original_entrees: parseInt(csv[i].entrees) || 0,
-            original_sorties: parseInt(csv[i].sorties) || 0,
-            original_stock: parseInt(csv[i].stock) || 0,
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
           })
         } else if (!findExist) {
           // else create
@@ -124,9 +129,9 @@ export default (sequelizeInstance, Model) => {
             hr_backup_id: HRBackupId,
             periode,
             contentieux_id: contentieuxIds[code],
-            original_entrees: parseInt(csv[i].entrees) || 0,
-            original_sorties: parseInt(csv[i].sorties) || 0,
-            original_stock: parseInt(csv[i].stock) || 0,
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
           })
         }
       }
@@ -310,8 +315,6 @@ export default (sequelizeInstance, Model) => {
 
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
-          //console.log(findAllChild[i].contentieux_id)
-
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
           const getUserUpdateStock =
@@ -330,8 +333,6 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             )
 
-            //console.log('previousStockValue', previousStockValue)
-            
             if (previousStockValue !== null) {
               if (
                 findAllChild[i].entrees !== null ||
@@ -356,13 +357,13 @@ export default (sequelizeInstance, Model) => {
 
               if (findAllChild[i].entrees !== null) {
                 currentStock += (findAllChild[i].entrees || 0)
-              } else if (findAllChild[i].original_entrees !== null) {
+              } else if (findAllChild[i].original_entrees !== null && findAllChild[i].sorties !== null) {
                 currentStock += (findAllChild[i].original_entrees || 0)
               }
 
               if (findAllChild[i].sorties !== null) {
                 currentStock -= (findAllChild[i].sorties || 0)
-              } else if (findAllChild[i].original_sorties !== null) {
+              } else if (findAllChild[i].original_sorties !== null && findAllChild[i].entrees !== null) {
                 currentStock -= (findAllChild[i].original_sorties || 0)
               }
             }
@@ -458,7 +459,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (previousPeriode.length) {
-      if (previousPeriode[previousPeriode.length - 1].stock) {
+      if (previousPeriode[previousPeriode.length - 1].stock !== null) {
         return {
           stock: previousPeriode[previousPeriode.length - 1].stock,
           type: 'calculate',
@@ -467,7 +468,7 @@ export default (sequelizeInstance, Model) => {
         previousPeriode[previousPeriode.length - 1].original_stock === null
       ) {
         return null
-      } else if (previousPeriode[previousPeriode.length - 1].original_stock) {
+      } else if (previousPeriode[previousPeriode.length - 1].original_stock !== null) {
         return {
           stock: previousPeriode[previousPeriode.length - 1].original_stock,
           type: 'setted',
