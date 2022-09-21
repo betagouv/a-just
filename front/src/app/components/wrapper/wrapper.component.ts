@@ -17,6 +17,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'aj-wrapper',
@@ -36,7 +37,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() backAnchor: string | undefined
   @Input() alignLeft: boolean | undefined
   @Input() isLoading: boolean = false
-
+  versionNumber: string = environment.version
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
   hrBackups: BackupInterface[] = []

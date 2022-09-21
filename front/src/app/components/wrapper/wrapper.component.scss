@@ -120,18 +120,21 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin-bottom: 29px;
-    margin-top: 29px;
+    margin-bottom: 8px;
+    margin-top: 8px;
 
-    > img {
+    > div {
       width: 45%;
+      height: 80px;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
     }
   }
 
   .juridiction {
     padding: 19px 10px 23px 10px;
     background-color: fColor(cblue);
-    margin-bottom: 16px;
     border: 1px solid fColor(cblack);
 
     .juridiction-title {
@@ -152,7 +155,7 @@
 
   .menu-item {
     display: block;
-    padding: 16px 16px;
+    padding: 13px 13px;
 
     &.disconnect,
     a,
@@ -255,4 +258,20 @@
   left: 0;
   right: 0;
   top: 86px;
+}
+
+.block-marque-white {
+  background-image: url('/assets/icons/bloc-marque/bloc-marque-white@2x.svg');
+}
+
+.block-marque-dark {
+  background-image: url('/assets/icons/bloc-marque/bloc-marque-dark@2x.svg');
+}
+
+.logo-white {
+  background-image: url('/assets/icons/logos/white-192x192@1x.svg');
+}
+
+.logo-dark {
+  background-image: url('/assets/icons/logos/dark-192x192@1x.svg');
 }

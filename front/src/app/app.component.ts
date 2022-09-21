@@ -11,7 +11,6 @@ import { UserService } from './services/user/user.service'
 })
 export class AppComponent {
   dbReady: boolean = false
-  versionNumber: string = environment.version
 
   constructor(
     router: Router,

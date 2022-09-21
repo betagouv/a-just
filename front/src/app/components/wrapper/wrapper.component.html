@@ -1,9 +1,9 @@
 <div class="menu no-print" title="">
   <div class="images">
-    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" class="logo white-mode" />
-    <img src="/assets/icons/bloc-marque/bloc-marque-dark@2x.svg" class="logo dark-mode" />
-    <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust white-mode" />
-    <img src="/assets/icons/logos/dark-192x192@1x.svg" class="logo-ajust dark-mode" />
+    <div class="logo white-mode block-marque-white"></div>
+    <div class="logo dark-mode block-marque-dark"></div>
+    <div class="logo-ajust white-mode logo-white" [title]="versionNumber"></div>
+    <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber"></div>
   </div>
 
   <div class="juridiction" *ngIf="hrBackups.length">
@@ -54,9 +54,9 @@
       <p>Nous contacter</p>
     </a>
   </div>
-  <div class="menu-item disconnect" (click)="onDisconnect()">
+  <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
     <p>Déconnexion</p>
-  </div>
+  </div> -->
 </div>
 
 <div class="contener" #contener title="">
