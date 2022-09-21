@@ -2394,9 +2394,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     const inValue &#x3D; preformatArray(referentiel.childrens, [&#x27;in&#x27;, &#x27;originalIn&#x27;])
     const outValue &#x3D; preformatArray(referentiel.childrens, [&#x27;out&#x27;, &#x27;originalOut&#x27;])
     const stockValue &#x3D; preformatArray(referentiel.childrens, [&#x27;stock&#x27;, &#x27;originalStock&#x27;])
-    referentiel.in &#x3D; inValue &#x3D;&#x3D;&#x3D; referentiel.originalIn ? null : inValue
-    referentiel.out &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalOut ? null : outValue
-    referentiel.stock &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalStock ? null : stockValue
+    referentiel.in &#x3D; inValue &#x3D;&#x3D;&#x3D; referentiel.originalIn &amp;&amp; referentiel.childrens.every(c &#x3D;&gt; c.in &#x3D;&#x3D;&#x3D; null) ? null : inValue
+    referentiel.out &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalOut &amp;&amp; referentiel.childrens.every(c &#x3D;&gt; c.out &#x3D;&#x3D;&#x3D; null) ? null : outValue
+    referentiel.stock &#x3D; outValue &#x3D;&#x3D;&#x3D; referentiel.originalStock &amp;&amp; referentiel.childrens.every(c &#x3D;&gt; c.stock &#x3D;&#x3D;&#x3D; null) ? null : stockValue
 
     // save datas
     if (this.timeoutUpdateAcitity[subRef.id]) {

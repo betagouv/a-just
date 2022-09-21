@@ -645,8 +645,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="441"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:441</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="442"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:442</a></div>
                 </td>
             </tr>
 
@@ -720,8 +720,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="410"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:410</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="411"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:411</a></div>
                 </td>
             </tr>
 
@@ -834,8 +834,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="454"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:454</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="455"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:455</a></div>
                 </td>
             </tr>
 
@@ -978,8 +978,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="436"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:436</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="437"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:437</a></div>
                 </td>
             </tr>
 
@@ -1017,8 +1017,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="727"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:727</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="728"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:728</a></div>
                 </td>
             </tr>
 
@@ -1086,8 +1086,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="430"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:430</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="431"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:431</a></div>
                 </td>
             </tr>
 
@@ -1123,8 +1123,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="681"
-                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:681</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="682"
+                            class="link-to-prism">src/app/routes/human-resource/human-resource.page.ts:682</a></div>
                 </td>
             </tr>
 
@@ -1272,7 +1272,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>updateHuman(nodeName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, value: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                    <code>updateHuman(nodeName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, value: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, directRef?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                 </td>
             </tr>
 
@@ -1320,6 +1320,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>directRef</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -3755,13 +3767,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  async updateHuman(nodeName: string, value: any) {
-    console.log(&#x27;updateHuman&#x27;, nodeName, value)
+  async updateHuman(nodeName: string, value: any, directRef?: any) {
     if (this.currentHR) {
-      if (value &amp;&amp; typeof value.innerText !&#x3D;&#x3D; &#x27;undefined&#x27;) {
+      if (nodeName &#x3D;&#x3D;&#x3D; &#x27;firstName&#x27; || nodeName &#x3D;&#x3D;&#x3D; &#x27;lastName&#x27;) {
+        directRef.srcElement.innerText &#x3D; value.innerText
+        value &#x3D; value.innerText
+      } else if (value &amp;&amp; typeof value.innerText !&#x3D;&#x3D; &#x27;undefined&#x27;) {
         value &#x3D; value.innerText
       }
-
       this.onLoad(
         await this.humanResourceService.updatePersonById(this.currentHR, {
           [nodeName]: value,
@@ -4101,17 +4114,27 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper [titleTemplate]&#x3D;&quot;titleTemplate&quot; [actionTemplate]&#x3D;&quot;actions&quot; backUrl&#x3D;&quot;/ventilations&quot;
-  [backAnchor]&#x3D;&quot;currentHR &amp;&amp; currentHR.id ? &#x27;&#x27;+currentHR.id : undefined&quot; class&#x3D;&quot;content-margin-null&quot;&gt;
-  &lt;actual-panel-situation *ngIf&#x3D;&quot;currentHR &amp;&amp; histories.length&quot; [currentHR]&#x3D;&quot;currentHR&quot;
-    [dateStart]&#x3D;&quot;actualHistoryDateStart&quot; [dateStop]&#x3D;&quot;actualHistoryDateStop&quot; [canEdit]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null&quot;
+        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper
+  [titleTemplate]&#x3D;&quot;titleTemplate&quot;
+  [actionTemplate]&#x3D;&quot;actions&quot;
+  backUrl&#x3D;&quot;/ventilations&quot;
+  [backAnchor]&#x3D;&quot;currentHR &amp;&amp; currentHR.id ? &#x27;&#x27;+currentHR.id : undefined&quot;
+  class&#x3D;&quot;content-margin-null&quot;
+&gt;
+  &lt;actual-panel-situation
+    *ngIf&#x3D;&quot;currentHR &amp;&amp; histories.length&quot;
+    [currentHR]&#x3D;&quot;currentHR&quot;
+    [dateStart]&#x3D;&quot;actualHistoryDateStart&quot;
+    [dateStop]&#x3D;&quot;actualHistoryDateStop&quot;
+    [canEdit]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null&quot;
     [canRemoveSituation]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? histories[indexOfTheFuture].situationForTheFirstTime : false&quot;
     [etp]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? histories[indexOfTheFuture].etp : 0&quot;
     [fonction]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? histories[indexOfTheFuture].fonction : null&quot;
     [indisponibilities]&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? histories[indexOfTheFuture].indisponibilities : []&quot;
     (editVentilation)&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null&quot;
     (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot;
-    (onRemove)&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? onRemoveSituation(histories[indexOfTheFuture].id) : true&quot;&gt;
+    (onRemove)&#x3D;&quot;indexOfTheFuture !&#x3D;&#x3D; null ? onRemoveSituation(histories[indexOfTheFuture].id) : true&quot;
+  &gt;
   &lt;/actual-panel-situation&gt;
 
   &lt;div class&#x3D;&quot;new-action text-center&quot; *ngIf&#x3D;&quot;currentHR &amp;&amp; onEditIndex &#x3D;&#x3D;&#x3D; null&quot;&gt;
@@ -4124,61 +4147,108 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     &lt;/button&gt;
   &lt;/div&gt;
 
-  &lt;add-ventilation *ngIf&#x3D;&quot;onEditIndex !&#x3D;&#x3D; null&quot; #addDomVentilation [human]&#x3D;&quot;currentHR&quot;
+  &lt;add-ventilation
+    *ngIf&#x3D;&quot;onEditIndex !&#x3D;&#x3D; null&quot;
+    #addDomVentilation
+    [human]&#x3D;&quot;currentHR&quot;
     [activities]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])&quot;
-    [indisponibilities]&#x3D;&quot;allIndisponibilities&quot; [isEdit]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1&quot;
+    [indisponibilities]&#x3D;&quot;allIndisponibilities&quot;
+    [isEdit]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1&quot;
     [lastDateStart]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)&quot;
-    [dateStop]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1 ? histories[onEditIndex].dateStop : null&quot; (close)&#x3D;&quot;onCancel()&quot;
-    (onSaveConfirm)&#x3D;&quot;onNewUpdate()&quot; (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot;
-    [indisponibilityError]&#x3D;&quot;indisponibilityError&quot; [saveActions]&#x3D;&quot;histories.length !&#x3D;&#x3D; 0&quot;&gt;
+    [dateStop]&#x3D;&quot;onEditIndex !&#x3D;&#x3D; -1 ? histories[onEditIndex].dateStop : null&quot;
+    (close)&#x3D;&quot;onCancel()&quot;
+    (onSaveConfirm)&#x3D;&quot;onNewUpdate()&quot;
+    (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot;
+    [indisponibilityError]&#x3D;&quot;indisponibilityError&quot;
+    [saveActions]&#x3D;&quot;histories.length !&#x3D;&#x3D; 0&quot;
+  &gt;
   &lt;/add-ventilation&gt;
-
 
   &lt;div *ngIf&#x3D;&quot;historiesOfTheFutur.length&quot; class&#x3D;&quot;panel-hsitory-group futur&quot;&gt;
     &lt;p class&#x3D;&quot;title-history&quot;&gt;
-      Situation{{historiesOfTheFutur.length &gt;&#x3D; 1 ? &#x27;s&#x27; : &#x27;&#x27;}} à venir pré-renseignée{{historiesOfTheFutur.length &gt;&#x3D; 1 ?
-      &#x27;s&#x27; : &#x27;&#x27;}}
+      Situation{{historiesOfTheFutur.length &gt;&#x3D; 1 ? &#x27;s&#x27; : &#x27;&#x27;}} à venir
+      pré-renseignée{{historiesOfTheFutur.length &gt;&#x3D; 1 ? &#x27;s&#x27; : &#x27;&#x27;}}
     &lt;/p&gt;
-    &lt;panel-history-ventilation *ngFor&#x3D;&quot;let h of historiesOfTheFutur&quot; [id]&#x3D;&quot;h.id&quot; [fonction]&#x3D;&quot;h.fonction&quot; [etp]&#x3D;&quot;h.etp&quot;
-      [indisponibilities]&#x3D;&quot;h.indisponibilities&quot; [activities]&#x3D;&quot;h.activities&quot; [dateStart]&#x3D;&quot;h.dateStart&quot;
-      [dateStop]&#x3D;&quot;h.dateStop&quot; [dateEndToJuridiction]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
-      [canRemoveSituation]&#x3D;&quot;h.situationForTheFirstTime&quot; (editVentilation)&#x3D;&quot;onSelectSituationToEdit(h)&quot;
-      (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot; (onRemove)&#x3D;&quot;onRemoveSituation(h.id)&quot;&gt;
+    &lt;panel-history-ventilation
+      *ngFor&#x3D;&quot;let h of historiesOfTheFutur&quot;
+      [id]&#x3D;&quot;h.id&quot;
+      [fonction]&#x3D;&quot;h.fonction&quot;
+      [etp]&#x3D;&quot;h.etp&quot;
+      [indisponibilities]&#x3D;&quot;h.indisponibilities&quot;
+      [activities]&#x3D;&quot;h.activities&quot;
+      [dateStart]&#x3D;&quot;h.dateStart&quot;
+      [dateStop]&#x3D;&quot;h.dateStop&quot;
+      [dateEndToJuridiction]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
+      [canRemoveSituation]&#x3D;&quot;h.situationForTheFirstTime&quot;
+      (editVentilation)&#x3D;&quot;onSelectSituationToEdit(h)&quot;
+      (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot;
+      (onRemove)&#x3D;&quot;onRemoveSituation(h.id)&quot;
+    &gt;
     &lt;/panel-history-ventilation&gt;
   &lt;/div&gt;
 
   &lt;div class&#x3D;&quot;panel-hsitory-group&quot;&gt;
     &lt;p *ngIf&#x3D;&quot;historiesOfThePast.length&quot; class&#x3D;&quot;title-history&quot;&gt;
-      Situation{{historiesOfThePast.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;}} antérieure{{historiesOfThePast.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;}} du {{
-      categoryName }}
+      Situation{{historiesOfThePast.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;}}
+      antérieure{{historiesOfThePast.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;}} du {{ categoryName
+      }}
     &lt;/p&gt;
-    &lt;panel-history-ventilation *ngFor&#x3D;&quot;let h of historiesOfThePast&quot; [id]&#x3D;&quot;h.id&quot; [fonction]&#x3D;&quot;h.fonction&quot; [etp]&#x3D;&quot;h.etp&quot;
-      [indisponibilities]&#x3D;&quot;h.indisponibilities&quot; [activities]&#x3D;&quot;h.activities&quot; [dateStart]&#x3D;&quot;h.dateStart&quot;
-      [dateStop]&#x3D;&quot;h.dateStop&quot; [dateEndToJuridiction]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
-      [canRemoveSituation]&#x3D;&quot;h.situationForTheFirstTime&quot; (editVentilation)&#x3D;&quot;onSelectSituationToEdit(h)&quot;
-      (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot; (onRemove)&#x3D;&quot;onRemoveSituation(h.id)&quot;&gt;
+    &lt;panel-history-ventilation
+      *ngFor&#x3D;&quot;let h of historiesOfThePast&quot;
+      [id]&#x3D;&quot;h.id&quot;
+      [fonction]&#x3D;&quot;h.fonction&quot;
+      [etp]&#x3D;&quot;h.etp&quot;
+      [indisponibilities]&#x3D;&quot;h.indisponibilities&quot;
+      [activities]&#x3D;&quot;h.activities&quot;
+      [dateStart]&#x3D;&quot;h.dateStart&quot;
+      [dateStop]&#x3D;&quot;h.dateStop&quot;
+      [dateEndToJuridiction]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
+      [canRemoveSituation]&#x3D;&quot;h.situationForTheFirstTime&quot;
+      (editVentilation)&#x3D;&quot;onSelectSituationToEdit(h)&quot;
+      (addIndispiniblity)&#x3D;&quot;onAddIndispiniblity($event)&quot;
+      (onRemove)&#x3D;&quot;onRemoveSituation(h.id)&quot;
+    &gt;
     &lt;/panel-history-ventilation&gt;
   &lt;/div&gt;
 
-  &lt;div *ngIf&#x3D;&quot;currentHR &amp;&amp; onEditIndex &#x3D;&#x3D;&#x3D; null &amp;&amp; histories.length &#x3D;&#x3D;&#x3D; 0&quot; class&#x3D;&quot;text-center&quot;&gt;
-    &lt;button class&#x3D;&quot;small outline red strict-border&quot; (click)&#x3D;&quot;onDelete()&quot;&gt;Supprimer cette fiche&lt;/button&gt;
+  &lt;div
+    *ngIf&#x3D;&quot;currentHR &amp;&amp; onEditIndex &#x3D;&#x3D;&#x3D; null &amp;&amp; histories.length &#x3D;&#x3D;&#x3D; 0&quot;
+    class&#x3D;&quot;text-center&quot;
+  &gt;
+    &lt;button class&#x3D;&quot;small outline red strict-border&quot; (click)&#x3D;&quot;onDelete()&quot;&gt;
+      Supprimer cette fiche
+    &lt;/button&gt;
   &lt;/div&gt;
 
   &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
 
-  &lt;div class&#x3D;&quot;sticky-action-footer&quot; *ngIf&#x3D;&quot;onEditIndex !&#x3D;&#x3D; null &amp;&amp; histories.length &#x3D;&#x3D;&#x3D; 0&quot;&gt;
-    &lt;button class&#x3D;&quot;small outline blue strict-border&quot; (click)&#x3D;&quot;onCancel(true)&quot;&gt;Annuler&lt;/button&gt;
-    &lt;button class&#x3D;&quot;small primary strict-border&quot; (click)&#x3D;&quot;onSave()&quot;&gt;Enregistrer&lt;/button&gt;
+  &lt;div
+    class&#x3D;&quot;sticky-action-footer&quot;
+    *ngIf&#x3D;&quot;onEditIndex !&#x3D;&#x3D; null &amp;&amp; histories.length &#x3D;&#x3D;&#x3D; 0&quot;
+  &gt;
+    &lt;button class&#x3D;&quot;small outline blue strict-border&quot; (click)&#x3D;&quot;onCancel(true)&quot;&gt;
+      Annuler
+    &lt;/button&gt;
+    &lt;button class&#x3D;&quot;small primary strict-border&quot; (click)&#x3D;&quot;onSave()&quot;&gt;
+      Enregistrer
+    &lt;/button&gt;
   &lt;/div&gt;
 &lt;/aj-wrapper&gt;
 
 &lt;ng-template #actions&gt;
   &lt;div class&#x3D;&quot;actions&quot;&gt;
-    &lt;aj-date-select title&#x3D;&quot;Date d&#x27;arrivée&quot; [value]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateStart&quot;
-      (valueChange)&#x3D;&quot;updateHuman(&#x27;dateStart&#x27;, $event)&quot;&gt;
+    &lt;aj-date-select
+      title&#x3D;&quot;Date d&#x27;arrivée&quot;
+      [value]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateStart&quot;
+      (valueChange)&#x3D;&quot;updateHuman(&#x27;dateStart&#x27;, $event)&quot;
+    &gt;
     &lt;/aj-date-select&gt;
-    &lt;aj-date-select title&#x3D;&quot;Date de départ&quot; [value]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
-      (valueChange)&#x3D;&quot;updateHuman(&#x27;dateEnd&#x27;, $event)&quot; [clearable]&#x3D;&quot;true&quot;&gt;
+    &lt;aj-date-select
+      title&#x3D;&quot;Date de départ&quot;
+      [value]&#x3D;&quot;currentHR &amp;&amp; currentHR.dateEnd&quot;
+      (valueChange)&#x3D;&quot;updateHuman(&#x27;dateEnd&#x27;, $event)&quot;
+      [clearable]&#x3D;&quot;true&quot;
+    &gt;
     &lt;/aj-date-select&gt;
   &lt;/div&gt;
 &lt;/ng-template&gt;
@@ -4187,58 +4257,88 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   &lt;div class&#x3D;&quot;title&quot;&gt;
     &lt;p class&#x3D;&quot;page-name&quot;&gt;Fiche individuelle de&lt;/p&gt;
     &lt;p class&#x3D;&quot;user-name&quot;&gt;
-      &lt;span contenteditable data-placeholder&#x3D;&quot;Prénom&quot;
-        (blur)&#x3D;&quot;updateHuman(&#x27;firstName&#x27;, $event &amp;&amp; $event.target ? $event.target : &#x27;&#x27;)&quot;&gt;{{ (currentHR &amp;&amp;
-        currentHR.firstName) }}&lt;/span&gt;&amp;nbsp;&lt;span contenteditable data-placeholder&#x3D;&quot;Nom&quot;
-        (blur)&#x3D;&quot;updateHuman(&#x27;lastName&#x27;, $event &amp;&amp; $event.target ? $event.target : &#x27;&#x27;)&quot;&gt;{{ (currentHR &amp;&amp;
-        currentHR.lastName) }}&lt;/span&gt;
+      &lt;span
+        contenteditable
+        data-placeholder&#x3D;&quot;Prénom&quot;
+        (blur)&#x3D;&quot;updateHuman(&#x27;firstName&#x27;, $event &amp;&amp; $event.target ? $event.target : &#x27;&#x27;,$event)&quot;
+        &gt;{{ (currentHR &amp;&amp; currentHR.firstName)||&#x27;&#x27; }}&lt;/span
+      &gt;&amp;nbsp;&lt;span
+        contenteditable
+        data-placeholder&#x3D;&quot;Nom&quot;
+        (blur)&#x3D;&quot;updateHuman(&#x27;lastName&#x27;, $event &amp;&amp; $event.target ? $event.target : &#x27;&#x27;,$event)&quot;
+        &gt;{{ (currentHR &amp;&amp; currentHR.lastName) }}&lt;/span
+      &gt;
       &lt;mat-icon&gt;drive_file_rename_outline&lt;/mat-icon&gt;
     &lt;/p&gt;
   &lt;/div&gt;
   &lt;p class&#x3D;&quot;user-updated-at&quot; *ngIf&#x3D;&quot;currentHR &amp;&amp; onEditIndex &#x3D;&#x3D;&#x3D; null&quot;&gt;
     {{ currentHR &amp;&amp; currentHR.updatedAt ? &#x27;Dernière mise à jour le &#x27; +
-    getDate(currentHR.updatedAt) + &#x27; &#x27; + getMonthString(currentHR.updatedAt)
-    + &#x27; &#x27; + getFullYear(currentHR.updatedAt) : &#x27;&#x27; }}
+    getDate(currentHR.updatedAt) + &#x27; &#x27; + getMonthString(currentHR.updatedAt) + &#x27;
+    &#x27; + getFullYear(currentHR.updatedAt) : &#x27;&#x27; }}
   &lt;/p&gt;
 &lt;/ng-template&gt;
 
-&lt;aj-popup *ngIf&#x3D;&quot;updateIndisponiblity&quot; [actions]&#x3D;&quot;[
+&lt;aj-popup
+  *ngIf&#x3D;&quot;updateIndisponiblity&quot;
+  [actions]&#x3D;&quot;[
     { id: &#x27;close&#x27;, content: &#x27;Annuler&#x27; },
     { id: &#x27;modify&#x27;, content: &#x27;Enregister&#x27;, fill: true }
-  ]&quot; [actionsLeft]&#x3D;&quot;[{ id: &#x27;delete&#x27;, content: &#x27;Supprimer&#x27; }]&quot; [closeIcon]&#x3D;&quot;true&quot;
-  (onClose)&#x3D;&quot;updateIndisponiblity &#x3D; null&quot; (selectedAction)&#x3D;&quot;onEditIndisponibility($event)&quot;&gt;
+  ]&quot;
+  [actionsLeft]&#x3D;&quot;[{ id: &#x27;delete&#x27;, content: &#x27;Supprimer&#x27; }]&quot;
+  [closeIcon]&#x3D;&quot;true&quot;
+  (onClose)&#x3D;&quot;updateIndisponiblity &#x3D; null&quot;
+  (selectedAction)&#x3D;&quot;onEditIndisponibility($event)&quot;
+&gt;
   &lt;p class&#x3D;&quot;title&quot;&gt;
-    {{
-    updateIndisponiblity.id &gt; 0
-    ? &quot;Modification de l&#x27;indisponibilité&quot;
-    : &quot;Nouvelle indisponibilité&quot;
-    }}
+    {{ updateIndisponiblity.id &gt; 0 ? &quot;Modification de l&#x27;indisponibilité&quot; :
+    &quot;Nouvelle indisponibilité&quot; }}
   &lt;/p&gt;
   &lt;div class&#x3D;&quot;form&quot;&gt;
     &lt;div&gt;
       &lt;div class&#x3D;&quot;label-aj&quot;&gt;Motif d&#x27;indisponibilité&lt;/div&gt;
       &lt;select [(ngModel)]&#x3D;&quot;updateIndisponiblity.contentieux.id&quot;&gt;
-        &lt;option *ngFor&#x3D;&quot;let cat of allIndisponibilityReferentiel&quot; [value]&#x3D;&quot;cat.id&quot;&gt;
+        &lt;option
+          *ngFor&#x3D;&quot;let cat of allIndisponibilityReferentiel&quot;
+          [value]&#x3D;&quot;cat.id&quot;
+        &gt;
           {{ cat.label }}
         &lt;/option&gt;
       &lt;/select&gt;
     &lt;/div&gt;
     &lt;div class&#x3D;&quot;grid-double&quot;&gt;
-      &lt;aj-date-select title&#x3D;&quot;Date de début&quot; [showToday]&#x3D;&quot;false&quot; [value]&#x3D;&quot;updateIndisponiblity.dateStart&quot;
-        (valueChange)&#x3D;&quot;updateIndisponiblity.dateStart &#x3D; $event&quot;&gt;
+      &lt;aj-date-select
+        title&#x3D;&quot;Date de début&quot;
+        [showToday]&#x3D;&quot;false&quot;
+        [value]&#x3D;&quot;updateIndisponiblity.dateStart&quot;
+        (valueChange)&#x3D;&quot;updateIndisponiblity.dateStart &#x3D; $event&quot;
+      &gt;
       &lt;/aj-date-select&gt;
-      &lt;aj-date-select title&#x3D;&quot;Date de fin&quot; [showToday]&#x3D;&quot;false&quot; [value]&#x3D;&quot;updateIndisponiblity.dateStop&quot;
-        (valueChange)&#x3D;&quot;updateIndisponiblity.dateStop &#x3D; $event&quot; [clearable]&#x3D;&quot;true&quot;&gt;
+      &lt;aj-date-select
+        title&#x3D;&quot;Date de fin&quot;
+        [showToday]&#x3D;&quot;false&quot;
+        [value]&#x3D;&quot;updateIndisponiblity.dateStop&quot;
+        (valueChange)&#x3D;&quot;updateIndisponiblity.dateStop &#x3D; $event&quot;
+        [clearable]&#x3D;&quot;true&quot;
+      &gt;
       &lt;/aj-date-select&gt;
     &lt;/div&gt;
     &lt;div&gt;
       &lt;div class&#x3D;&quot;label-aj&quot;&gt;Indisponibilité (en % d&#x27;un plein temps) :&lt;/div&gt;
-      &lt;input type&#x3D;&quot;number&quot; [(ngModel)]&#x3D;&quot;updateIndisponiblity.percent&quot; min&#x3D;&quot;0&quot; max&#x3D;&quot;100&quot; /&gt;
+      &lt;input
+        type&#x3D;&quot;number&quot;
+        [(ngModel)]&#x3D;&quot;updateIndisponiblity.percent&quot;
+        min&#x3D;&quot;0&quot;
+        max&#x3D;&quot;100&quot;
+      /&gt;
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/aj-popup&gt;
 
-&lt;div class&#x3D;&quot;black-screen&quot; *ngIf&#x3D;&quot;histories.length &amp;&amp; onEditIndex !&#x3D;&#x3D; null&quot;&gt;&lt;/div&gt;</code></pre>
+&lt;div
+  class&#x3D;&quot;black-screen&quot;
+  *ngIf&#x3D;&quot;histories.length &amp;&amp; onEditIndex !&#x3D;&#x3D; null&quot;
+&gt;&lt;/div&gt;
+</code></pre>
     </div>
 
     <div class="tab-pane fade " id="c-styleData">
@@ -4401,7 +4501,7 @@ add-ventilation {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><aj-wrapper [titleTemplate]="titleTemplate" [actionTemplate]="actions" backUrl="/ventilations"  [backAnchor]="currentHR && currentHR.id ? \'\'+currentHR.id : undefined" class="content-margin-null">  <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"    [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop" [canEdit]="indexOfTheFuture !== null"    [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"    [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"    [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"    [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"    (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"    (addIndispiniblity)="onAddIndispiniblity($event)"    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">  </actual-panel-situation>  <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">    <button class="outline primary small" (click)="onAddIndispiniblity()">      Ajouter une indisponibilité    </button>    <button class="fill primary small" (click)="onSelectSituationToEdit()">      Renseigner une nouvelle situation    </button>  </div>  <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"    [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"    [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1"    [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"    [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"    (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)"    [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0">  </add-ventilation>  <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">    <p class="title-history">      Situation{{historiesOfTheFutur.length >= 1 ? \'s\' : \'\'}} à venir pré-renseignée{{historiesOfTheFutur.length >= 1 ?      \'s\' : \'\'}}    </p>    <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">    </panel-history-ventilation>  </div>  <div class="panel-hsitory-group">    <p *ngIf="historiesOfThePast.length" class="title-history">      Situation{{historiesOfThePast.length > 1 ? \'s\' : \'\'}} antérieure{{historiesOfThePast.length > 1 ? \'s\' : \'\'}} du {{      categoryName }}    </p>    <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"      [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"      [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"      [canRemoveSituation]="h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"      (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)">    </panel-history-ventilation>  </div>  <div *ngIf="currentHR && onEditIndex === null && histories.length === 0" class="text-center">    <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>  </div>  <div class="flex-1"></div>  <div class="sticky-action-footer" *ngIf="onEditIndex !== null && histories.length === 0">    <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>    <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>  </div></aj-wrapper><ng-template #actions>  <div class="actions">    <aj-date-select title="Date d\'arrivée" [value]="currentHR && currentHR.dateStart"      (valueChange)="updateHuman(\'dateStart\', $event)">    </aj-date-select>    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"      (valueChange)="updateHuman(\'dateEnd\', $event)" [clearable]="true">    </aj-date-select>  </div></ng-template><ng-template #titleTemplate>  <div class="title">    <p class="page-name">Fiche individuelle de</p>    <p class="user-name">      <span contenteditable data-placeholder="Prénom"        (blur)="updateHuman(\'firstName\', $event && $event.target ? $event.target : \'\')">{{ (currentHR &&        currentHR.firstName) }}</span>&nbsp;<span contenteditable data-placeholder="Nom"        (blur)="updateHuman(\'lastName\', $event && $event.target ? $event.target : \'\')">{{ (currentHR &&        currentHR.lastName) }}</span>      <mat-icon>drive_file_rename_outline</mat-icon>    </p>  </div>  <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">    {{ currentHR && currentHR.updatedAt ? \'Dernière mise à jour le \' +    getDate(currentHR.updatedAt) + \' \' + getMonthString(currentHR.updatedAt)    + \' \' + getFullYear(currentHR.updatedAt) : \'\' }}  </p></ng-template><aj-popup *ngIf="updateIndisponiblity" [actions]="[    { id: \'close\', content: \'Annuler\' },    { id: \'modify\', content: \'Enregister\', fill: true }  ]" [actionsLeft]="[{ id: \'delete\', content: \'Supprimer\' }]" [closeIcon]="true"  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">  <p class="title">    {{    updateIndisponiblity.id > 0    ? "Modification de l\'indisponibilité"    : "Nouvelle indisponibilité"    }}  </p>  <div class="form">    <div>      <div class="label-aj">Motif d\'indisponibilité</div>      <select [(ngModel)]="updateIndisponiblity.contentieux.id">        <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">          {{ cat.label }}        </option>      </select>    </div>    <div class="grid-double">      <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"        (valueChange)="updateIndisponiblity.dateStart = $event">      </aj-date-select>      <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"        (valueChange)="updateIndisponiblity.dateStop = $event" [clearable]="true">      </aj-date-select>    </div>    <div>      <div class="label-aj">Indisponibilité (en % d\'un plein temps) :</div>      <input type="number" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />    </div>  </div></aj-popup><div class="black-screen" *ngIf="histories.length && onEditIndex !== null"></div></div>'
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper  [titleTemplate]="titleTemplate"  [actionTemplate]="actions"  backUrl="/ventilations"  [backAnchor]="currentHR && currentHR.id ? \'\'+currentHR.id : undefined"  class="content-margin-null">  <actual-panel-situation    *ngIf="currentHR && histories.length"    [currentHR]="currentHR"    [dateStart]="actualHistoryDateStart"    [dateStop]="actualHistoryDateStop"    [canEdit]="indexOfTheFuture !== null"    [canRemoveSituation]="indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"    [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"    [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"    [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"    (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"    (addIndispiniblity)="onAddIndispiniblity($event)"    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"  >  </actual-panel-situation>  <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">    <button class="outline primary small" (click)="onAddIndispiniblity()">      Ajouter une indisponibilité    </button>    <button class="fill primary small" (click)="onSelectSituationToEdit()">      Renseigner une nouvelle situation    </button>  </div>  <add-ventilation    *ngIf="onEditIndex !== null"    #addDomVentilation    [human]="currentHR"    [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"    [indisponibilities]="allIndisponibilities"    [isEdit]="onEditIndex !== -1"    [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"    [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null"    (close)="onCancel()"    (onSaveConfirm)="onNewUpdate()"    (addIndispiniblity)="onAddIndispiniblity($event)"    [indisponibilityError]="indisponibilityError"    [saveActions]="histories.length !== 0"  >  </add-ventilation>  <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">    <p class="title-history">      Situation{{historiesOfTheFutur.length >= 1 ? \'s\' : \'\'}} à venir      pré-renseignée{{historiesOfTheFutur.length >= 1 ? \'s\' : \'\'}}    </p>    <panel-history-ventilation      *ngFor="let h of historiesOfTheFutur"      [id]="h.id"      [fonction]="h.fonction"      [etp]="h.etp"      [indisponibilities]="h.indisponibilities"      [activities]="h.activities"      [dateStart]="h.dateStart"      [dateStop]="h.dateStop"      [dateEndToJuridiction]="currentHR && currentHR.dateEnd"      [canRemoveSituation]="h.situationForTheFirstTime"      (editVentilation)="onSelectSituationToEdit(h)"      (addIndispiniblity)="onAddIndispiniblity($event)"      (onRemove)="onRemoveSituation(h.id)"    >    </panel-history-ventilation>  </div>  <div class="panel-hsitory-group">    <p *ngIf="historiesOfThePast.length" class="title-history">      Situation{{historiesOfThePast.length > 1 ? \'s\' : \'\'}}      antérieure{{historiesOfThePast.length > 1 ? \'s\' : \'\'}} du {{ categoryName      }}    </p>    <panel-history-ventilation      *ngFor="let h of historiesOfThePast"      [id]="h.id"      [fonction]="h.fonction"      [etp]="h.etp"      [indisponibilities]="h.indisponibilities"      [activities]="h.activities"      [dateStart]="h.dateStart"      [dateStop]="h.dateStop"      [dateEndToJuridiction]="currentHR && currentHR.dateEnd"      [canRemoveSituation]="h.situationForTheFirstTime"      (editVentilation)="onSelectSituationToEdit(h)"      (addIndispiniblity)="onAddIndispiniblity($event)"      (onRemove)="onRemoveSituation(h.id)"    >    </panel-history-ventilation>  </div>  <div    *ngIf="currentHR && onEditIndex === null && histories.length === 0"    class="text-center"  >    <button class="small outline red strict-border" (click)="onDelete()">      Supprimer cette fiche    </button>  </div>  <div class="flex-1"></div>  <div    class="sticky-action-footer"    *ngIf="onEditIndex !== null && histories.length === 0"  >    <button class="small outline blue strict-border" (click)="onCancel(true)">      Annuler    </button>    <button class="small primary strict-border" (click)="onSave()">      Enregistrer    </button>  </div></aj-wrapper><ng-template #actions>  <div class="actions">    <aj-date-select      title="Date d\'arrivée"      [value]="currentHR && currentHR.dateStart"      (valueChange)="updateHuman(\'dateStart\', $event)"    >    </aj-date-select>    <aj-date-select      title="Date de départ"      [value]="currentHR && currentHR.dateEnd"      (valueChange)="updateHuman(\'dateEnd\', $event)"      [clearable]="true"    >    </aj-date-select>  </div></ng-template><ng-template #titleTemplate>  <div class="title">    <p class="page-name">Fiche individuelle de</p>    <p class="user-name">      <span        contenteditable        data-placeholder="Prénom"        (blur)="updateHuman(\'firstName\', $event && $event.target ? $event.target : \'\',$event)"        >{{ (currentHR && currentHR.firstName)||\'\' }}</span      >&nbsp;<span        contenteditable        data-placeholder="Nom"        (blur)="updateHuman(\'lastName\', $event && $event.target ? $event.target : \'\',$event)"        >{{ (currentHR && currentHR.lastName) }}</span      >      <mat-icon>drive_file_rename_outline</mat-icon>    </p>  </div>  <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">    {{ currentHR && currentHR.updatedAt ? \'Dernière mise à jour le \' +    getDate(currentHR.updatedAt) + \' \' + getMonthString(currentHR.updatedAt) + \'    \' + getFullYear(currentHR.updatedAt) : \'\' }}  </p></ng-template><aj-popup  *ngIf="updateIndisponiblity"  [actions]="[    { id: \'close\', content: \'Annuler\' },    { id: \'modify\', content: \'Enregister\', fill: true }  ]"  [actionsLeft]="[{ id: \'delete\', content: \'Supprimer\' }]"  [closeIcon]="true"  (onClose)="updateIndisponiblity = null"  (selectedAction)="onEditIndisponibility($event)">  <p class="title">    {{ updateIndisponiblity.id > 0 ? "Modification de l\'indisponibilité" :    "Nouvelle indisponibilité" }}  </p>  <div class="form">    <div>      <div class="label-aj">Motif d\'indisponibilité</div>      <select [(ngModel)]="updateIndisponiblity.contentieux.id">        <option          *ngFor="let cat of allIndisponibilityReferentiel"          [value]="cat.id"        >          {{ cat.label }}        </option>      </select>    </div>    <div class="grid-double">      <aj-date-select        title="Date de début"        [showToday]="false"        [value]="updateIndisponiblity.dateStart"        (valueChange)="updateIndisponiblity.dateStart = $event"      >      </aj-date-select>      <aj-date-select        title="Date de fin"        [showToday]="false"        [value]="updateIndisponiblity.dateStop"        (valueChange)="updateIndisponiblity.dateStop = $event"        [clearable]="true"      >      </aj-date-select>    </div>    <div>      <div class="label-aj">Indisponibilité (en % d\'un plein temps) :</div>      <input        type="number"        [(ngModel)]="updateIndisponiblity.percent"        min="0"        max="100"      />    </div>  </div></aj-popup><div  class="black-screen"  *ngIf="histories.length && onEditIndex !== null"></div></div>'
     var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'HumanResourcePage'};
