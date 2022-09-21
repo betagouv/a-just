@@ -14,6 +14,7 @@ import { orderBy, sortBy, sumBy } from 'lodash'
 import { ItemInterface } from 'src/app/interfaces/item'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 
 export interface FilterPanelInterface {
@@ -69,7 +70,12 @@ export class FilterPanelComponent
       sortFunction: (list: HumanResourceSelectedInterface[]) => {
         return sortBy(list, [
           (h: HumanResourceSelectedInterface) => {
-            const allMainActivities = (h.currentActivities || [])
+            const allMainActivities = (h.currentActivities || []).filter(
+              (c) =>
+                this.referentielService.mainActivitiesId.indexOf(
+                  c.contentieux.id
+                ) !== -1
+            )
             return sumBy(allMainActivities, 'percent')
           },
         ])
@@ -106,7 +112,8 @@ export class FilterPanelComponent
 
   constructor(
     private hrFonctionService: HRFonctionService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private referentielService: ReferentielService,
   ) {
     super()
   }
