@@ -483,12 +483,7 @@ export class FilterPanelComponent
       sortFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
         return sortBy(list, [
           (h: HumanResourceSelectedInterface) &#x3D;&gt; {
-            const allMainActivities &#x3D; h.currentActivities.filter(
-              (c) &#x3D;&gt;
-                this.referentielService.mainActivitiesId.indexOf(
-                  c.contentieux.id
-                ) !&#x3D;&#x3D; -1
-            )
+            const allMainActivities &#x3D; (h.currentActivities || [])
             return sumBy(allMainActivities, &#x27;percent&#x27;)
           },
         ])

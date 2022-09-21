@@ -2147,7 +2147,7 @@
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
 import { HRCategoryService } from &#x27;../hr-category/hr-category.service&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
-import { month, workingDay } from &#x27;src/app/utils/dates&#x27;
+import { generalizeTimeZone, month, workingDay } from &#x27;src/app/utils/dates&#x27;
 import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { BehaviorSubject } from &#x27;rxjs&#x27;
@@ -2201,8 +2201,8 @@ export class ExcelService extends MainClass implements OnInit {
     return this.serverService
       .post(&#x60;extractor/filter-list&#x60;, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: this.dateStart.getValue(),
-        dateStop: this.dateStop.getValue(),
+        dateStart: generalizeTimeZone(this.dateStart.getValue()),
+        dateStop: generalizeTimeZone(this.dateStop.getValue()),
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) &#x3D;&gt; {
