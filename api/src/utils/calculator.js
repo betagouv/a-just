@@ -113,37 +113,64 @@ const getActivityValues = (
   categories,
   optionsBackups
 ) => {
-  console.log('getActivityValues' + referentielId)
   activities = activities.filter(
     (a) =>
       month(a.periode).getTime() >= month(dateStart).getTime() &&
       month(a.periode).getTime() <= month(dateStop).getTime()
   )
-  const totalIn = (activities || []).some(e => e.entrees !== null && e.entrees !== 0) ? Math.floor(sumBy(activities, 'entrees') / nbMonth) : null
-  const totalOut = (activities || []).some(e => e.sorties !== null && e.entrees !== 0) ? Math.floor(sumBy(activities, 'sorties') / nbMonth) : null
+
+  const totalIn =
+    (activities || []).filter((e) => e.entrees !== null).length !== 0
+      ? Math.floor(sumBy(activities, 'entrees') / nbMonth)
+      : null
+
+  const totalOut =
+    (activities || []).filter((e) => e.sorties !== null).length !== 0
+      ? Math.floor(sumBy(activities, 'sorties') / nbMonth)
+      : null
   let lastStock = null
   if (activities.length) {
     const lastActivities = activities[activities.length - 1]
-    if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, dateStop)) {
+    if (
+      lastActivities.stock !== null &&
+      isSameMonthAndYear(lastActivities.periode, dateStop)
+    ) {
       lastStock = lastActivities.stock
     }
   }
 
   const realCoverage = fixDecimal(totalOut / totalIn)
-  const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null
+  const realDTESInMonths =
+    lastStock !== null ? fixDecimal(lastStock / totalOut) : null
 
-  const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop)
-  const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
-  const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
-  const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
+  const etpAffected = getHRPositions(
+    hr,
+    categories,
+    referentielId,
+    dateStart,
+    dateStop
+  )
+  const etpMag =
+    etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
+  const etpFon =
+    etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
+  const etpCont =
+    etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const realTimePerCase = fixDecimal(
-    ((config.nbDaysByMagistrat / 12) * config.nbHoursPerDay) / (totalOut / etpMag)
+    ((config.nbDaysByMagistrat / 12) * config.nbHoursPerDay) /
+      (totalOut / etpMag)
   )
 
   return {
-    ...calculateActivities(referentielId, totalIn, lastStock, etpMag, optionsBackups),
+    ...calculateActivities(
+      referentielId,
+      totalIn,
+      lastStock,
+      etpMag,
+      optionsBackups
+    ),
     totalIn,
     totalOut,
     lastStock,
@@ -176,7 +203,13 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
         return activities.some((s) => s.contentieux.id === referentielId)
       })
     ) {
-      const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAll = getHRVentilation(
+        hr[i],
+        referentielId,
+        categories,
+        dateStart,
+        dateStop
+      )
 
       Object.values(etptAll).map((c) => {
         if (c.etpt) {
@@ -199,7 +232,13 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   return sortBy(list, 'rank')
 }
 
-export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop) => {
+export const getHRVentilation = (
+  hr,
+  referentielId,
+  categories,
+  dateStart,
+  dateStop
+) => {
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -218,11 +257,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     // only working day
     if (workingDay(now)) {
       nbDay++
-      const { etp, situation, indispoFiltred, nextDeltaDate } = getEtpByDateAndPerson(
-        referentielId,
-        now,
-        hr
-      )
+      const { etp, situation, indispoFiltred, nextDeltaDate } =
+        getEtpByDateAndPerson(referentielId, now, hr)
       if (nextDeltaDate) {
         nextDateFinded = new Date(nextDeltaDate)
       }
@@ -236,7 +272,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       const sumByInd = sumBy(indispoFiltred, 'percent')
       if (sumByInd !== 0) {
         indispoFiltred.map((c) => {
-          if (c.contentieux.id === referentielId) list[situation.category.id].indispo += c.percent
+          if (c.contentieux.id === referentielId)
+            list[situation.category.id].indispo += c.percent
         })
       }
     }
@@ -274,25 +311,36 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   return list
 }
 
-const calculateActivities = (referentielId, totalIn, lastStock, etpAffected, optionsBackups) => {
+const calculateActivities = (
+  referentielId,
+  totalIn,
+  lastStock,
+  etpAffected,
+  optionsBackups
+) => {
   let calculateTimePerCase = null
   let calculateOut = null
   let calculateCoverage = null
   let calculateDTESInMonths = null
 
-  const findIndexOption = optionsBackups.findIndex((o) => o.contentieux.id === referentielId)
+  const findIndexOption = optionsBackups.findIndex(
+    (o) => o.contentieux.id === referentielId
+  )
 
   if (findIndexOption !== -1) {
-    calculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
+    calculateTimePerCase =
+      optionsBackups[findIndexOption].averageProcessingTime
   }
 
   if (calculateTimePerCase) {
     calculateOut = Math.floor(
-      (((etpAffected * config.nbHoursPerDay) / calculateTimePerCase) * config.nbDaysByMagistrat) /
+      (((etpAffected * config.nbHoursPerDay) / calculateTimePerCase) *
+        config.nbDaysByMagistrat) /
         12
     )
     calculateCoverage = fixDecimal(calculateOut / (totalIn || 0))
-    calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / calculateOut)
+    calculateDTESInMonths =
+      lastStock === null ? null : fixDecimal(lastStock / calculateOut)
   } else {
     calculateOut = null
     calculateCoverage = null
