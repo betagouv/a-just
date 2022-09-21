@@ -155,7 +155,7 @@
 
   .menu-item {
     display: block;
-    padding: 13px 13px;
+    padding: 13px 4px 13px 13px;
 
     &.disconnect,
     a,
@@ -184,9 +184,17 @@
     }
 
     ul {
-      padding-inline-start: 16px;
+      padding-inline-start: 4px;
+      list-style: none;
 
       li {
+        &:before {
+          content: '•';
+          position: absolute;
+          left: 8px;
+          margin-top: -2px;
+        }
+
         margin-bottom: 8px;
       }
 
