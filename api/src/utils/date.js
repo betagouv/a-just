@@ -95,6 +95,23 @@ export function month (date = new Date(), monthToAdd, lastDay) {
   }
 }
 
+export function monthJimmy (date = new Date(), monthToAdd, lastDay) {
+  const now = new Date(date)
+  now.setUTCHours(0, 0, 0, 0)
+
+  if (monthToAdd && monthToAdd !== 0) {
+    now.setDate(1)
+    now.setMonth(now.getMonth() + monthToAdd)
+  }
+  if (lastDay) {
+    now.setMonth(now.getMonth() + 1)
+    now.setHours(-1)
+    return now
+  } else {
+    return generalizeTimeZone(new Date(now))
+  }
+}
+
 export function generalizeTimeZone (date) {
   if (date === undefined) return undefined
   else date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
