@@ -287,11 +287,27 @@ export default class App {
         if (index === -1) {
           acc.push(cur)
         } else {
+          let entrees = acc[index].entrees
+          if(cur.entrees !== null) {
+            entrees = (entrees || 0) + (cur.entrees || 0)
+          }
+
+          let sorties = acc[index].sorties
+          if(cur.sorties !== null) {
+            sorties = (sorties || 0) + (cur.sorties || 0)
+          }
+
+          let stock = acc[index].stock
+          if(cur.stock !== null) {
+            stock = (stock || 0) + (cur.stock || 0)
+          }
+
+
           acc[index] = {
             ...acc[index],
-            entrees: (acc[index].entrees || 0) + (cur.entrees || 0),
-            sorties: (acc[index].sorties || 0) + (cur.sorties || 0),
-            stock: (acc[index].stock || 0) + (cur.stock || 0),
+            entrees,
+            sorties,
+            stock,
           }
         }
 
