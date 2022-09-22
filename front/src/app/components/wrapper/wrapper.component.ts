@@ -11,6 +11,7 @@ import {
 import { Router } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { CALCULATE_DOWNLOAD_URL, DOCUMENTATION_URL } from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
@@ -41,6 +42,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
   hrBackups: BackupInterface[] = []
+  DOCUMENTATION_URL = DOCUMENTATION_URL;
+  CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL;
   menu = [
     {
       label: 'Panorama',

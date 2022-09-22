@@ -1,0 +1,2 @@
+export const DOCUMENTATION_URL = 'https://a-just.gitbook.io/documentation-deploiement/'
+export const CALCULATE_DOWNLOAD_URL = 'https://resana-onlyoffice.numerique.gouv.fr/cache/files/1663776730A2865269A4_7586/output.xlsx/Calculatrice%20de%20ventilation%20du%20temps%20par%20activit%C3%A9%20A-JUST%20MAG%20et%20GRF.xlsx?md5=KUog0yKkeayzS9iDdbbOdw&expires=1663853552&filename=Calculatrice%20de%20ventilation%20du%20temps%20par%20activit%C3%A9%20A-JUST%20MAG%20et%20GRF.xlsx'
