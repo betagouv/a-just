@@ -58,3 +58,24 @@ body { margin: 0; font-family: Marianne; }
 	white-space: nowrap;
 	overflow: hidden;
 }
+
+.flex-center {
+	display: flex;
+	align-items: center;
+}
+
+.margin-right-16 {
+	margin-right: 16px;
+}
+
+.margin-right-8 {
+	margin-right: 8px;
+}
+
+.color-white {
+	color: white;
+}
+
+.font-size-12 {
+	font-size: 12px;
+}

@@ -47,7 +47,9 @@
     </div>
     <div class="content-list">
       <ng-template [ngIf]="!canEditActivities && !isLoadedFirst">
-        <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
+        <p class="in-the-future-text">
+          Cet écran sera accessible dès l'import des données logiciel du mois.
+        </p>
       </ng-template>
 
       <ng-template [ngIf]="canEditActivities">
@@ -67,7 +69,11 @@
                 <input type="number" [ngModel]="ref.originalIn" [attr.disabled]="true" placeholder="-" />
               </div>
               <div>
-                <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />
+                <span>
+                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref }">
+                  </ng-container>
+                  <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />
+                </span>
               </div>
             </div>
             <div class="column-item">
@@ -75,7 +81,11 @@
                 <input type="number" [ngModel]="ref.originalOut" [attr.disabled]="true" placeholder="-" />
               </div>
               <div>
-                <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />
+                <span>
+                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref }">
+                  </ng-container>
+                  <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />
+                </span>
               </div>
             </div>
             <div class="column-item">
@@ -83,7 +93,11 @@
                 <input type="number" [ngModel]="ref.originalStock" [attr.disabled]="true" placeholder="-" />
               </div>
               <div>
-                <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />
+                <span>
+                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref }">
+                  </ng-container>
+                  <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />
+                </span>
               </div>
             </div>
           </div>
@@ -101,8 +115,12 @@
                     <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />
                   </div>
                   <div>
-                    <input type="number" [(ngModel)]="itemGroup.in"
-                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
+                    <span>
+                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: itemGroup }">
+                      </ng-container>
+                      <input type="number" [(ngModel)]="itemGroup.in"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
+                    </span>
                   </div>
                 </div>
                 <div class="column-item">
@@ -110,8 +128,12 @@
                     <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />
                   </div>
                   <div>
-                    <input type="number" [(ngModel)]="itemGroup.out"
-                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
+                    <span>
+                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: itemGroup }">
+                      </ng-container>
+                      <input type="number" [(ngModel)]="itemGroup.out"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
+                    </span>
                   </div>
                 </div>
                 <div class="column-item">
@@ -119,8 +141,12 @@
                     <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />
                   </div>
                   <div>
-                    <input type="number" [(ngModel)]="itemGroup.stock"
-                      (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
+                    <span>
+                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: itemGroup }">
+                      </ng-container>
+                      <input type="number" [(ngModel)]="itemGroup.stock"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -133,11 +159,19 @@
 </aj-wrapper>
 
 <ng-template #subTitleTemplate>
-  <p *ngIf="updatedBy" class="sub-title">Dernière mise à jour, le {{ updatedBy.date | date:'dd' }} {{
-    getMonthString(updatedBy.date) }} {{
-    updatedBy.date
-    | date:'YYYY' }}
-    <ng-template [ngIf]="updatedBy.user">, par <span class="tag">{{ updatedBy.user.firstName }} {{
-        updatedBy.user.lastName }}</span></ng-template>
+  <p *ngIf="updatedBy" class="sub-title">
+    Dernière mise à jour, le {{ updatedBy.date | date:'dd' }} {{
+    getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}
+    <ng-template [ngIf]="updatedBy.user">, par
+      <span class="tag">{{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }}</span>
+    </ng-template>
   </p>
+</ng-template>
+
+<ng-template #tooltip let-type="type" let-contentieux="contentieux">
+  <i class="{{contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer"
+    #light (click)="$event.stopPropagation()"></i>
+  <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux)"
+    [content]="getTooltipBody(type, contentieux)" class="medium">
+  </aj-tooltips>
 </ng-template>
