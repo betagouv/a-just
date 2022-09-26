@@ -174,16 +174,19 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       const tmpRefLength = this.referentiel.find(
         (v) => v.id === this.contentieuId
       )
-      if (event.length === tmpRefLength?.childrens?.length)
-        this.simulatorService.contentieuOrSubContentieuId.next(
-          this.contentieuId as number
-        )
-      else
-        this.simulatorService.contentieuOrSubContentieuId.next(
-          this.subList[0] as number
-        )
+
       if (!event.length) this.disabled = 'disabled'
-      else this.disabled = ''
+      else {
+        if (event.length === tmpRefLength?.childrens?.length)
+          this.simulatorService.contentieuOrSubContentieuId.next(
+            this.contentieuId as number
+          )
+        else
+          this.simulatorService.contentieuOrSubContentieuId.next(
+            this.subList[0] as number
+          )
+        this.disabled = ''
+      }
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
