@@ -53,8 +53,11 @@ export const countEtp = (etpAffected, referentiel) => {
       counterIndispo += etpAffected[key].indispo;
     }
   });
-
-  return { counterEtpTotal, counterEtpSubTotal, counterIndispo };
+  return {
+    counterEtpTotal: Math.round(counterEtpTotal * 1000) / 1000,
+    counterEtpSubTotal: Math.round(counterEtpSubTotal * 1000) / 1000,
+    counterIndispo,
+  };
 };
 
 export const getIndispoDetails = (referentiels) => {
