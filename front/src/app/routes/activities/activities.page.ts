@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core'
-import { ActivityInterface } from 'src/app/interfaces/activity'
+import {
+  ActivityInterface,
+  NodeActivityUpdatedInterface,
+} from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
@@ -7,7 +10,11 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { month } from 'src/app/utils/dates'
+
+interface ContentieuReferentielActivitiesInterface
+  extends ContentieuReferentielInterface {
+  activityUpdated: NodeActivityUpdatedInterface | null
+}
 
 @Component({
   templateUrl: './activities.page.html',
@@ -16,7 +23,7 @@ import { month } from 'src/app/utils/dates'
 export class ActivitiesPage extends MainClass implements OnDestroy {
   activities: ActivityInterface[] = []
   activityMonth: Date = new Date()
-  referentiel: ContentieuReferentielInterface[] = []
+  referentiel: ContentieuReferentielActivitiesInterface[] = []
   updatedBy: {
     user: UserInterface | null
     date: Date
@@ -89,11 +96,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       return total !== null && total < 0 ? 0 : total
     }
     const inValue = preformatArray(referentiel.childrens, ['in', 'originalIn'])
-    const outValue = preformatArray(referentiel.childrens, ['out', 'originalOut'])
-    const stockValue = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
-    referentiel.in = inValue === referentiel.originalIn && referentiel.childrens.every(c => c.in === null) ? null : inValue
-    referentiel.out = outValue === referentiel.originalOut && referentiel.childrens.every(c => c.out === null) ? null : outValue
-    referentiel.stock = outValue === referentiel.originalStock && referentiel.childrens.every(c => c.stock === null) ? null : stockValue
+    const outValue = preformatArray(referentiel.childrens, [
+      'out',
+      'originalOut',
+    ])
+    const stockValue = preformatArray(referentiel.childrens, [
+      'stock',
+      'originalStock',
+    ])
+    referentiel.in =
+      inValue === referentiel.originalIn &&
+      referentiel.childrens.every((c) => c.in === null)
+        ? null
+        : inValue
+    referentiel.out =
+      outValue === referentiel.originalOut &&
+      referentiel.childrens.every((c) => c.out === null)
+        ? null
+        : outValue
+    referentiel.stock =
+      outValue === referentiel.originalStock &&
+      referentiel.childrens.every((c) => c.stock === null)
+        ? null
+        : stockValue
 
     // save datas
     if (this.timeoutUpdateAcitity[subRef.id]) {
@@ -133,6 +158,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         this.isLoadedFirst = false
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
+        this.activities = activities
 
         if (monthValues.list.length === 0) {
           this.canEditActivities = false
@@ -180,11 +206,135 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 ? getChildrenActivity.originalStock
                 : null
 
-              return c
+              return {
+                ...c,
+                activityUpdated:
+                  (getChildrenActivity && getChildrenActivity.updatedBy) ||
+                  null,
+              }
             })
 
-            return ref
+            return {
+              ...ref,
+              activityUpdated: (getActivity && getActivity.updatedBy) || null,
+            }
           })
       })
+  }
+
+  getTooltipTitle(
+    type: 'entrees' | 'sorties' | 'stock',
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null
+  ) {
+    const activityUpdated = contentieux.activityUpdated
+    const modifyBy =
+      activityUpdated && activityUpdated[type] ? activityUpdated[type] : null
+    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${
+      value !== null
+        ? modifyBy
+          ? 'ri-lightbulb-flash-fill'
+          : 'ri-lightbulb-flash-line'
+        : ''
+    }"></i><p class="color-white">`
+
+    switch (type) {
+      case 'entrees':
+        string += 'Entrées A-JUSTées'
+        break
+      case 'sorties':
+        string += 'Sorties A-JUSTées'
+        break
+      case 'stock':
+        string += 'Stock A-JUSTé'
+
+        if (value !== null) {
+          const isMainActivity =
+            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !==
+            -1
+          const activityUpdated = contentieux.activityUpdated
+          const modifyBy =
+            activityUpdated && activityUpdated[type]
+              ? activityUpdated[type]
+              : null
+          if (isMainActivity || !modifyBy) {
+            string += ' - Calculé'
+          }
+        }
+        break
+    }
+    string += '</p></div>'
+
+    if (modifyBy) {
+      const date = new Date(modifyBy.date)
+      string += `<p class="color-white font-size-12">Modifié par <b>${
+        modifyBy.user?.firstName
+      } ${
+        modifyBy.user?.lastName
+      }</b> le ${date.getDate()} ${this.getShortMonthString(
+        date
+      )} ${date.getFullYear()}</p>`
+    }
+
+    return string
+  }
+
+  getTooltipBody(
+    type: string,
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null
+  ) {
+    switch (type) {
+      case 'entrees':
+        return "Dès lors que des entrées seront saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+      case 'sorties':
+        return "Dès lors que des sorties de l'un des sous-contentieux ont été saisies dans cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+      case 'stock': {
+        if (value !== null) {
+          const isMainActivity =
+            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !==
+            -1
+          const activityUpdated = contentieux.activityUpdated
+          const modifyBy =
+            activityUpdated && activityUpdated[type]
+              ? activityUpdated[type]
+              : null
+          if (isMainActivity || !modifyBy) {
+            return "Cette donnée a été calculée suite à des modifications que vous avez effectuées sur vos données d'entrées et/ou de sorties du mois en cours ou des mois précédents. Cette valeur sera prise en compte pour le calcul du stock du mois prochain, sauf si vous la modifiez manuellement."
+          } else {
+            return 'Cette donnée a été saisie manuellement et sera prise en compte pour le calcul du stock des mois prochains. Si vous modifiez les entrées et/ou les sorties ou données de stock des mois antérieurs, cette valeur ne sera pas modifiée.'
+          }
+        }
+
+        return 'Dès lors que cette donnée de stock en fin de mois est modifiée manuellement, le stock des prochains mois sera recalculé à partir de la valeur que vous avez saisie.<br/>Si vous modifiez les entrées et/ou sorties de mois antérieurs, le stock affiché ne sera pas recalculé et restera conforme à votre saisie.'
+      }
+    }
+    return ''
+  }
+
+  getTooltipFooter(
+    type: string,
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null
+  ) {
+    if (type === 'stock') {
+      if (value !== null) {
+        const activityUpdated = contentieux.activityUpdated
+        const modifyBy =
+          activityUpdated && activityUpdated[type]
+            ? activityUpdated[type]
+            : null
+
+        if (modifyBy) {
+          return ''
+        }
+
+        return 'Calcul :<br/>Stock A-JUSTé M+1 = stock A-JUSTé mois M + entrées mois M+1 - sorties mois M+1'
+      }
+
+      return 'Calcul :<br/>Stock mois M = Stock mois M-1 + Entrées mois M - Sorties mois M'
+    }
+
+    return ''
   }
 }

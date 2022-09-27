@@ -24,8 +24,32 @@
           align-self: stretch;
         }
 
-        > input {
+        > input,
+        > span {
           margin: 0 8px;
+        }
+
+        > span {
+          position: relative;
+
+          > i {
+            position: absolute;
+            right: 3px;
+            top: 13px;
+
+            &.blue {
+              color: fColor(darkModeTitle);
+            }
+          }
+
+          > input {
+            padding-right: 18px;
+          }
+        }
+
+        input.blue {
+          color: fColor(darkModeTitle);
+          border-color: fColor(darkModeTitle);
         }
       }
     }

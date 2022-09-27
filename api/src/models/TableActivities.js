@@ -520,6 +520,11 @@ export default (sequelizeInstance, Model) => {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
+        updatedBy: {
+          entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
+          sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
+          stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
+        },
       }
     }
 
