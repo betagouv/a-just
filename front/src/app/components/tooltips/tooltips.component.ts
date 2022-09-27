@@ -28,7 +28,7 @@ export class TooltipsComponent implements AfterViewInit {
       })
 
       this.elementRef.nativeElement.addEventListener('mouseleave', (e: any) => {
-        this.tooltipsIsVisible = false
+        // this.tooltipsIsVisible = false
       })
     }
   }

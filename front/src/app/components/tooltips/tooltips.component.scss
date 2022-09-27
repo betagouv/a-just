@@ -24,6 +24,37 @@
     width: 700px;
   }
 
+  &.black {
+    .tooltip-text {
+      mat-icon {
+        color: white;
+      }
+
+      .triangle {
+        border-color: transparent transparent fColor(cblack)
+          transparent;
+      }
+
+      .title {
+        color: white;
+        background-color: fColor(cblack);
+
+        > p {
+          color: fColor(tooltipContentTitleColor);
+        }
+      }
+
+      .footer {
+        color: fColor(tooltipContentFooterColor);
+        background-color: fColor(tooltipBgFooterColor);
+
+        &:before {
+          background-color: fColor(tooltipContentFooterColor);
+        }
+      }
+    }
+  }
+
   .tooltip-text {
     position: absolute;
     z-index: 1;

@@ -70,9 +70,11 @@
               </div>
               <div>
                 <span>
-                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref }">
+                  <ng-container
+                    *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref, value: ref.in, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-" />
+                  <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-"
+                    [ngClass]="{blue: ref.in}" />
                 </span>
               </div>
             </div>
@@ -82,9 +84,11 @@
               </div>
               <div>
                 <span>
-                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref }">
+                  <ng-container
+                    *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref, value: ref.out, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-" />
+                  <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-"
+                    [ngClass]="{blue: ref.out}" />
                 </span>
               </div>
             </div>
@@ -94,9 +98,11 @@
               </div>
               <div>
                 <span>
-                  <ng-container *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref }">
+                  <ng-container
+                    *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref, value: ref.stock, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-" />
+                  <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-"
+                    [ngClass]="{blue: ref.stock}" />
                 </span>
               </div>
             </div>
@@ -116,10 +122,12 @@
                   </div>
                   <div>
                     <span>
-                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: itemGroup }">
+                      <ng-container
+                        *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: itemGroup, value: itemGroup.in, level: 4 }">
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.in"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-" />
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-"
+                        [ngClass]="{blue: itemGroup.in}" />
                     </span>
                   </div>
                 </div>
@@ -129,10 +137,12 @@
                   </div>
                   <div>
                     <span>
-                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: itemGroup }">
+                      <ng-container
+                        *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: itemGroup, value: itemGroup.out, level: 4 }">
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.out"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-" />
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-"
+                        [ngClass]="{blue: itemGroup.out}" />
                     </span>
                   </div>
                 </div>
@@ -142,10 +152,12 @@
                   </div>
                   <div>
                     <span>
-                      <ng-container *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: itemGroup }">
+                      <ng-container
+                        *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: itemGroup, value: itemGroup.stock, level: 4 }">
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.stock"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-" />
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-"
+                        [ngClass]="{blue: itemGroup.stock}" />
                     </span>
                   </div>
                 </div>
@@ -168,10 +180,11 @@
   </p>
 </ng-template>
 
-<ng-template #tooltip let-type="type" let-contentieux="contentieux">
-  <i class="{{contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer"
+<ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value">
+  <i class="{{contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
     #light (click)="$event.stopPropagation()"></i>
-  <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux)"
-    [content]="getTooltipBody(type, contentieux)" class="medium">
+  <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux, value)"
+    [content]="getTooltipBody(type, contentieux, value)" [footer]="getTooltipFooter(type, contentieux, value)"
+    class="medium" [ngClass]="{black: value === null, left: type === 'stock'}">
   </aj-tooltips>
 </ng-template>
