@@ -45,11 +45,11 @@
       }
 
       .footer {
-        color: fColor(tooltipContentFooterColor);
-        background-color: fColor(tooltipBgFooterColor);
+        color: white;
+        background-color: fColor(cblack);
 
         &:before {
-          background-color: fColor(tooltipContentFooterColor);
+          background-color: fColor(cblack);
         }
       }
     }

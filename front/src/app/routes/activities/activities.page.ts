@@ -171,6 +171,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           ...this.humanResourceService.contentieuxReferentiel.getValue(),
         ]
 
+        const oldReferentielSetted = [...this.referentiel]
         // todo set in, out, stock for each
         this.referentiel = referentiels
           .filter(
@@ -214,9 +215,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               }
             })
 
+            const oldReferentielFinded = oldReferentielSetted.find(i => i.id === ref.id)
             return {
               ...ref,
               activityUpdated: (getActivity && getActivity.updatedBy) || null,
+              showActivityGroup: oldReferentielFinded ? oldReferentielFinded.showActivityGroup : false 
             }
           })
       })
