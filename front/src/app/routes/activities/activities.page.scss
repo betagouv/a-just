@@ -36,11 +36,20 @@
             position: absolute;
             right: 3px;
             top: 13px;
+
+            &.blue {
+              color: fColor(darkModeTitle);
+            }
           }
 
           > input {
             padding-right: 18px;
           }
+        }
+
+        input.blue {
+          color: fColor(darkModeTitle);
+          border-color: fColor(darkModeTitle);
         }
       }
     }
