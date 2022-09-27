@@ -54,8 +54,8 @@ export const countEtp = (etpAffected, referentiel) => {
     }
   });
   return {
-    counterEtpTotal: Math.round(counterEtpTotal * 1000) / 1000,
-    counterEtpSubTotal: Math.round(counterEtpSubTotal * 1000) / 1000,
+    counterEtpTotal,
+    counterEtpSubTotal,
     counterIndispo,
   };
 };
