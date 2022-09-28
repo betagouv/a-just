@@ -13,6 +13,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { CALCULATE_DOWNLOAD_URL, DOCUMENTATION_URL } from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { AuthService } from 'src/app/services/auth/auth.service'
@@ -38,6 +39,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() backAnchor: string | undefined
   @Input() alignLeft: boolean | undefined
   @Input() isLoading: boolean = false
+  @Input() documentation: DocumentationInterface | undefined
+  panelHelper: boolean = true
   versionNumber: string = environment.version
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
