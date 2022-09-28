@@ -57,6 +57,7 @@ $colors: (
 	darkModeBgLight: #1b1b35,
 	tagBg: #dee5fd,
 	tagText: #6e445a,
+	bgHelper: #33569e,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
