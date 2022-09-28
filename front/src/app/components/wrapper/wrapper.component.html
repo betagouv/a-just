@@ -68,7 +68,7 @@
     <div>
       <div class="title-with-doc">
         <h3 [innerHTML]="title"></h3>
-        <span *ngIf="documentation" class="documentation">
+        <span *ngIf="documentation" class="documentation" (click)="panelHelper = !panelHelper">
           <i class="ri-lightbulb-flash-line"></i>
           <span>Comment ça marche ?</span>
         </span>
@@ -95,7 +95,9 @@
 
 <div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
   <div class="panel-header">
-    <h6>{{documentation && documentation.title}}</h6>
+    <div>
+      <h6>{{documentation && documentation.title}}</h6>
+    </div>
     <p>
       <i class="ri-lightbulb-flash-line"></i>
       <span>Comment ça marche ?</span>
