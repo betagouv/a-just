@@ -11,7 +11,10 @@ import {
 import { Router } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import { CALCULATE_DOWNLOAD_URL, DOCUMENTATION_URL } from 'src/app/constants/documentation'
+import {
+  CALCULATE_DOWNLOAD_URL,
+  DOCUMENTATION_URL,
+} from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
@@ -45,8 +48,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
   hrBackups: BackupInterface[] = []
-  DOCUMENTATION_URL = DOCUMENTATION_URL;
-  CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL;
+  DOCUMENTATION_URL = DOCUMENTATION_URL
+  CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL
   menu = [
     {
       label: 'Panorama',
@@ -154,7 +157,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     const element = this[header ? 'contener' : 'content']?.nativeElement
 
     if (!element) {
-      return new Promise((resolve) => { resolve(true) })
+      return new Promise((resolve) => {
+        resolve(true)
+      })
     }
     document.body.classList.add('remove-height')
 
@@ -188,5 +193,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
         resolve(true)
       })
     })
+  }
+
+  onTogglePanelHelper() {
+    this.panelHelper = !this.panelHelper
   }
 }

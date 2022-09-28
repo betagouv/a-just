@@ -334,7 +334,27 @@
 
   > div.panel-header {
     background-color: fColor(bgHelper);
-    padding: 14px 16px 84px 14px;
+    padding: 14px 0 84px 0;
+
+    .over-title {
+      background-color: fColor(bgHelper);
+      height: 68px;
+      position: relative;
+      z-index: 30;
+      padding: 0 14px;
+    }
+
+    .panel-header-closing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      i {
+        color: white;
+        cursor: pointer;
+        font-size: 32px;
+      }
+    }
 
     h6,
     p {
@@ -355,7 +375,7 @@
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    margin: -68px 8px 8px 8px;
+    margin: -132px 8px 8px 8px;
     border: none;
     height: calc(100% + 80px);
   }
