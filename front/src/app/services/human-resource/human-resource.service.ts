@@ -66,7 +66,7 @@ export class HumanResourceService {
     })
 
     this.backups.subscribe((list) => {
-      if (list.length && !list.find((b) => b.id !== this.backupId.getValue())) {
+      if (list.length && !list.find((b) => b.id === this.backupId.getValue())) {
         this.backupId.next(list[0].id)
       }
 
