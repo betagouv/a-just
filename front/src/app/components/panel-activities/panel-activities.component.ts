@@ -112,7 +112,7 @@ export class PanelActivitiesComponent
   }
 
   onTotalAffected() {
-    this.percentAffected = sumBy(this.referentiel, 'percent')
+    this.percentAffected = fixDecimal(sumBy(this.referentiel, 'percent'), 1000)
   }
 
   onTogglePanel(index: number) {
