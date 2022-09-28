@@ -69,8 +69,7 @@ export class PanelActivitiesComponent
       a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id
     )
     const percent = fixDecimal(
-      activity && activity.percent ? activity.percent : 0,
-      10
+      activity && activity.percent ? activity.percent : 0
     )
 
     return {
@@ -106,14 +105,14 @@ export class PanelActivitiesComponent
       return ref
     })
 
-    if(this.updateRefentielOnLoad) {
+    if (this.updateRefentielOnLoad) {
       this.referentielChange.emit(this.referentiel)
     }
     this.onTotalAffected()
   }
 
   onTotalAffected() {
-    this.percentAffected = Math.round(sumBy(this.referentiel, 'percent'))
+    this.percentAffected = sumBy(this.referentiel, 'percent')
   }
 
   onTogglePanel(index: number) {
