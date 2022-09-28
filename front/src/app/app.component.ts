@@ -4,6 +4,8 @@ import { environment } from 'src/environments/environment'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
 
+declare const window: any
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -26,5 +28,24 @@ export class AppComponent {
         this.contentieuxOptionsService.initDatas()
       }
     })
+
+    if (environment.matomo !== null) {
+      var _paq = (window._paq = window._paq || [])
+      _paq.push(['trackPageView'])
+      _paq.push(['enableLinkTracking'])
+      ;(function () {
+        var u = 'https://stats.data.gouv.fr/'
+        _paq.push(['setTrackerUrl', u + 'piwik.php'])
+        _paq.push(['setSiteId', environment.matomo])
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0]
+        g.async = true
+        g.src = u + 'piwik.js'
+        if (s && s.parentNode) {
+          s.parentNode.insertBefore(g, s)
+        }
+      })()
+    }
   }
 }
