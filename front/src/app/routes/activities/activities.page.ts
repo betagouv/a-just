@@ -4,6 +4,7 @@ import {
   NodeActivityUpdatedInterface,
 } from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
@@ -31,6 +32,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   timeoutUpdateAcitity: any = {}
   canEditActivities: boolean = false
   isLoadedFirst: boolean = true
+  documentation: DocumentationInterface = {
+    title: "Données d'activité A-JUST :",
+    path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+  }
 
   constructor(
     private activitiesService: ActivitiesService,

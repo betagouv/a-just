@@ -68,7 +68,7 @@
     <div>
       <div class="title-with-doc">
         <h3 [innerHTML]="title"></h3>
-        <span *ngIf="documentation" class="documentation" (click)="panelHelper = !panelHelper">
+        <span *ngIf="documentation" class="documentation" (click)="onTogglePanelHelper()">
           <i class="ri-lightbulb-flash-line"></i>
           <span>Comment ça marche ?</span>
         </span>
@@ -95,13 +95,16 @@
 
 <div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
   <div class="panel-header">
-    <div>
-      <h6>{{documentation && documentation.title}}</h6>
+    <div class="over-title">
+      <div class="panel-header-closing-row">
+        <h6>{{documentation && documentation.title}}</h6>
+        <i class="ri-close-line" (click)="panelHelper = false"></i>
+      </div>
+      <p>
+        <i class="ri-lightbulb-flash-line"></i>
+        <span>Comment ça marche ?</span>
+      </p>
     </div>
-    <p>
-      <i class="ri-lightbulb-flash-line"></i>
-      <span>Comment ça marche ?</span>
-    </p>
   </div>
 
   <iframe [src]="(documentation && documentation.path || '') | sanitizeResourceUrl"></iframe>
