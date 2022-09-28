@@ -40,7 +40,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() alignLeft: boolean | undefined
   @Input() isLoading: boolean = false
   @Input() documentation: DocumentationInterface | undefined
-  panelHelper: boolean = true
+  panelHelper: boolean = false
   versionNumber: string = environment.version
   hrBackup: BackupInterface | undefined
   hrBackupId: number | null = null
