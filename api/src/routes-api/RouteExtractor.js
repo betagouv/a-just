@@ -65,7 +65,7 @@ export default class RouteExtractor extends Route {
       allHuman.map(async (human) => {
         const { currentSituation } = findSituation(human)
 
-        console.log('findCategoryName', categories, currentSituation)
+        console.log('findCategoryName', currentSituation.category)
         let categoryName = findCategoryName(categories, currentSituation)
         let fonctionName = findFonctionName(fonctions, currentSituation)
 
