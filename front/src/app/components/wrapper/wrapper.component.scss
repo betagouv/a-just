@@ -106,6 +106,10 @@
       }
     }
   }
+
+  &.action-fit-width .actions {
+    width: 100%;
+  }
 }
 
 .menu {
@@ -295,6 +299,7 @@
 .actions {
   display: flex;
   align-items: center;
+  margin-left: 34px;
 }
 
 .progress-bar {
