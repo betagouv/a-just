@@ -120,8 +120,8 @@ export const findSituation = (hr, date, reelEtp = false) => {
       };
     }
   }
-  let situations = findAllSituations(hr, date);
 
+  let situations = findAllSituations(hr, date);
   return {
     currentSituation: situations.length ? situations[0] : null,
     nextSituation: null,

@@ -12,10 +12,7 @@ import {
   replaceZeroByDash,
   sortByCatAndFct,
 } from '../utils/extractor';
-import { preformatHumanResources } from '../utils/ventilator';
 import { getHumanRessourceList } from '../utils/humanServices';
-import { findFonctionName } from '../utils/hr-fonctions';
-import { findCategoryName } from '../utils/hr-catagories';
 import { sumBy } from 'lodash';
 import { findSituation } from '../utils/human-resource';
 export default class RouteExtractor extends Route {
@@ -53,7 +50,6 @@ export default class RouteExtractor extends Route {
     console.time('extractor-4');
 
     const categories = await this.models.HRCategories.getAll();
-    const fonctions = await this.models.HRFonctions.getAll();
 
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop);
 
@@ -65,8 +61,14 @@ export default class RouteExtractor extends Route {
       allHuman.map(async (human) => {
         const { currentSituation } = findSituation(human);
 
-        let categoryName = findCategoryName(categories, currentSituation);
-        let fonctionName = findFonctionName(fonctions, currentSituation);
+        let categoryName =
+          currentSituation && currentSituation.category && currentSituation.category.label
+            ? currentSituation.category.label
+            : 'pas de catégorie';
+        let fonctionName =
+          currentSituation && currentSituation.fonction && currentSituation.fonction.label
+            ? currentSituation.fonction.label
+            : 'pas de fonction';
 
         let etpAffected = new Array();
         let refObj = { ...emptyRefObj(flatReferentielsList) };
@@ -134,8 +136,10 @@ export default class RouteExtractor extends Route {
 
         refObj[key] = sumBy(indispoArray, 'indispo');
 
-        //console.log(human);
-        if (categoryName === categoryFilter || categoryFilter === 'tous')
+        if (
+          categoryName.toUpperCase() === categoryFilter.toUpperCase() ||
+          categoryFilter === 'tous'
+        )
           data.push({
             ['Numéro A-JUST']: human.id,
             Prénom: human.firstName,

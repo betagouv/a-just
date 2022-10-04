@@ -4,6 +4,7 @@ import {
   NodeActivityUpdatedInterface,
 } from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
@@ -31,6 +32,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   timeoutUpdateAcitity: any = {}
   canEditActivities: boolean = false
   isLoadedFirst: boolean = true
+  documentation: DocumentationInterface = {
+    title: "Données d'activité A-JUST :",
+    path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+  }
 
   constructor(
     private activitiesService: ActivitiesService,
@@ -215,11 +220,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               }
             })
 
-            const oldReferentielFinded = oldReferentielSetted.find(i => i.id === ref.id)
+            const oldReferentielFinded = oldReferentielSetted.find(
+              (i) => i.id === ref.id
+            )
             return {
               ...ref,
               activityUpdated: (getActivity && getActivity.updatedBy) || null,
-              showActivityGroup: oldReferentielFinded ? oldReferentielFinded.showActivityGroup : false 
+              showActivityGroup: oldReferentielFinded
+                ? oldReferentielFinded.showActivityGroup
+                : false,
             }
           })
       })
@@ -290,13 +299,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   ) {
     switch (type) {
       case 'entrees':
-        if(level === 3) {
+        if (level === 3) {
           return "Dès lors que cette donnée d'entrées mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé »."
         }
         return "Dès lors que des entrées seront saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
       case 'sorties':
-        if(level === 3) {
-          return "Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé »."
+        if (level === 3) {
+          return 'Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé ».'
         }
         return "Dès lors que des sorties de l'un des sous-contentieux ont été saisies dans cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
       case 'stock': {
