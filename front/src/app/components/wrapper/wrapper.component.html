@@ -9,16 +9,29 @@
   <div class="juridiction" *ngIf="hrBackups.length">
     <div class="juridiction-title">
       <h6>{{ hrBackup && hrBackup.label }}</h6>
-      <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
+      <mat-icon
+        *ngIf="hrBackups && hrBackups.length > 1"
+        [matMenuTriggerFor]="menu"
+        >expand_more</mat-icon
+      >
       <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+        <button
+          mat-menu-item
+          *ngFor="let bu of hrBackups"
+          (click)="onChangeHRBackup(bu.id)"
+          [title]="bu.id"
+        >
           {{ bu.label }}
         </button>
       </mat-menu>
     </div>
   </div>
 
-  <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
+  <div
+    class="menu-item"
+    *ngFor="let item of menu"
+    [class.selected]="isSelected(item)"
+  >
     <a [routerLink]="['/' + item.path]">
       {{ item.label }}
     </a>
@@ -36,7 +49,7 @@
         </a>
       </li>
       <li>
-        <a [href]="CALCULATE_DOWNLOAD_URL" (click)="downloadComing()" download>
+        <a [href]="CALCULATE_DOWNLOAD_URL" download>
           <p>Calculatrice de ventilation</p>
         </a>
       </li>
@@ -69,13 +82,19 @@
     <div>
       <div class="title-with-doc">
         <h3 [innerHTML]="title"></h3>
-        <span *ngIf="documentation" class="documentation" (click)="onTogglePanelHelper()">
+        <span
+          *ngIf="documentation"
+          class="documentation"
+          (click)="onTogglePanelHelper()"
+        >
           <i class="ri-lightbulb-flash-line"></i>
           <span>Comment ça marche ?</span>
         </span>
       </div>
       <p class="subtitle">
-        <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"
+        ></ng-container>
       </p>
     </div>
     <ng-template [ngIf]="titleTemplate">
@@ -83,7 +102,9 @@
     </ng-template>
     <div *ngIf="!alignLeft" class="space"></div>
     <div class="actions">
-      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="actionTemplate || defaultActionTemplate"
+      ></ng-container>
     </div>
     <div class="progress-bar" *ngIf="isLoading">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -94,7 +115,10 @@
   </div>
 </div>
 
-<div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
+<div
+  *ngIf="panelHelper"
+  class="panel-helper animate__animated animate__bounceInLeft"
+>
   <div class="panel-header">
     <div class="over-title">
       <div class="panel-header-closing-row">
@@ -108,7 +132,9 @@
     </div>
   </div>
 
-  <iframe [src]="(documentation && documentation.path) || '' | sanitizeResourceUrl"></iframe>
+  <iframe
+    [src]="(documentation && documentation.path) || '' | sanitizeResourceUrl"
+  ></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
