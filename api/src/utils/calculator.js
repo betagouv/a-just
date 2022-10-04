@@ -236,8 +236,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         nextDateFinded = new Date(nextDeltaDate);
       }
 
-      //if (hr.id === 1821) console.log({ hr, reelEtp }); // list: list[situation.category.id].reelEtp });
-
       if (etp !== null) {
         lastEtpAdded = etp;
         lastSituationId = situation.category.id;

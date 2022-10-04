@@ -105,11 +105,14 @@ export default class RouteExtractor extends Route {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 };
 
-                if (human.id === 1837)
+                //if (human.id === 1730) console.log({ human: human.id, reelEtp }); // list: list[situation.category.id].reelEtp });
+
+                /**if (human.id === 1837)
                   console.log({
                     counterReelEtp,
-                  });
-                reelEtp = counterReelEtp;
+                  });*/
+
+                reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp;
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
 
@@ -140,16 +143,17 @@ export default class RouteExtractor extends Route {
           categoryName.toUpperCase() === categoryFilter.toUpperCase() ||
           categoryFilter === 'tous'
         )
-          data.push({
-            ['Numéro A-JUST']: human.id,
-            Prénom: human.firstName,
-            Nom: human.lastName,
-            Catégorie: categoryName,
-            Fonction: fonctionName,
-            ['ETPT sur la période']: reelEtp,
-            ['Temps ventilés sur la période  ']: totalEtpt,
-            ...refObj,
-          });
+          if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
+            data.push({
+              ['Numéro A-JUST']: human.id,
+              Prénom: human.firstName,
+              Nom: human.lastName,
+              Catégorie: categoryName,
+              Fonction: fonctionName,
+              ['ETPT sur la période']: reelEtp,
+              ['Temps ventilés sur la période  ']: totalEtpt,
+              ...refObj,
+            });
       })
     );
     console.timeEnd('extractor-5');
