@@ -58,9 +58,9 @@ export class AppComponent {
 
   onControlSSL() {
     if (location.protocol !== 'https:' && environment.forceSSL) {
-      /*location.replace(
+      location.replace(
         `https:${location.href.substring(location.protocol.length)}`
-      )*/
+      )
     }
   }
 
