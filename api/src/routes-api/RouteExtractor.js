@@ -71,6 +71,7 @@ export default class RouteExtractor extends Route {
         let etpAffected = new Array();
         let refObj = { ...emptyRefObj(flatReferentielsList) };
         let totalEtpt = 0;
+        let reelEtp = 0;
 
         let indispoArray = new Array([]);
         const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList);
@@ -98,9 +99,15 @@ export default class RouteExtractor extends Route {
                   dateStop
                 );
 
-                const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = {
+                const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 };
+
+                if (human.id === 1837)
+                  console.log({
+                    counterReelEtp,
+                  });
+                reelEtp = counterReelEtp;
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
 
@@ -127,14 +134,16 @@ export default class RouteExtractor extends Route {
 
         refObj[key] = sumBy(indispoArray, 'indispo');
 
+        //console.log(human);
         if (categoryName === categoryFilter || categoryFilter === 'tous')
           data.push({
-            Numéro_A_JUST: human.id,
+            ['Numéro A-JUST']: human.id,
             Prénom: human.firstName,
             Nom: human.lastName,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            ETPT: totalEtpt,
+            ['ETPT sur la période']: reelEtp,
+            ['Temps ventilés sur la période  ']: totalEtpt,
             ...refObj,
           });
       })

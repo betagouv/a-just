@@ -26,6 +26,7 @@ export function getEtpByDateAndPerson(referentielId, date, hr) {
 
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
+      reelEtp,
       situation,
       indispoFiltred,
       nextDeltaDate, // find the next date with have changes
@@ -35,6 +36,7 @@ export function getEtpByDateAndPerson(referentielId, date, hr) {
   return {
     etp: null,
     situation: null,
+    reelEtp: null,
     indispoFiltred: [],
     nextDeltaDate: null,
   };
@@ -68,6 +70,7 @@ export async function getEtpByDateAndPersonSimu(referentielId, date, hr) {
 
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
+      reelEtp,
       situation,
       indispoFiltred,
       nextDeltaDate, // find the next date with have changes
@@ -98,7 +101,7 @@ export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   return min ? new Date(min) : null;
 };
 
-export const findSituation = (hr, date) => {
+export const findSituation = (hr, date, reelEtp = false) => {
   if (date) {
     date = today(date);
   }
@@ -118,6 +121,7 @@ export const findSituation = (hr, date) => {
     }
   }
   let situations = findAllSituations(hr, date);
+
   return {
     currentSituation: situations.length ? situations[0] : null,
     nextSituation: null,
