@@ -52,6 +52,8 @@ export class PanelActivitiesComponent
       this.etp = 0
     }
 
+    console.log('new etp', this.etp)
+
     // copy list of activities
     this.activities = JSON.parse(
       JSON.stringify(this.activities)
@@ -69,13 +71,12 @@ export class PanelActivitiesComponent
       a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id
     )
     const percent = fixDecimal(
-      activity && activity.percent ? activity.percent : 0,
-      10
+      activity && activity.percent ? activity.percent : 0
     )
 
     return {
       percent,
-      totalAffected: (percent || 0) / 100,
+      totalAffected: (this.etp * (percent || 0)) / 100,
     }
   }
 
@@ -106,14 +107,14 @@ export class PanelActivitiesComponent
       return ref
     })
 
-    if(this.updateRefentielOnLoad) {
+    if (this.updateRefentielOnLoad) {
       this.referentielChange.emit(this.referentiel)
     }
     this.onTotalAffected()
   }
 
   onTotalAffected() {
-    this.percentAffected = Math.round(sumBy(this.referentiel, 'percent'))
+    this.percentAffected = fixDecimal(sumBy(this.referentiel, 'percent'), 1000)
   }
 
   onTogglePanel(index: number) {
@@ -129,26 +130,9 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
-    referentiel.percent = percent
-    if (referentiel.childrens && referentiel.childrens.length) {
-      // is main
-      referentiel.childrens = (referentiel.childrens || []).map((r) => ({
-        ...r,
-        percent: 0,
-      }))
-    } else if (parentReferentiel) {
-      // is child
-      parentReferentiel.percent = sumBy(
-        parentReferentiel.childrens || [],
-        'percent'
-      )
-    }
-
     // memorise list
-    const activity = this.activities.find((a) =>
-      a.contentieux
-        ? a.contentieux.id === referentiel.id
-        : a.referentielId === referentiel.id
+    const activity = this.activities.find(
+      (a) => a.contentieux.id === referentiel.id
     )
     if (activity) {
       activity.percent = percent
@@ -165,6 +149,38 @@ export class PanelActivitiesComponent
       })
     }
 
+    // clean parent réferentiel
+    if (parentReferentiel) {
+      const mainActivity = this.activities.find(
+        (a) => a.contentieux.id === parentReferentiel.id
+      )
+      const childId = (parentReferentiel.childrens || []).map((r) => r.id)
+      const childActivities = this.activities.filter(
+        (a) => childId.indexOf(a.contentieux.id) !== -1
+      )
+      const mainPercent = sumBy(childActivities, 'percent')
+      if (mainActivity) {
+        mainActivity.percent = mainPercent
+      } else {
+        this.activities.push({
+          id: -1,
+          contentieux: {
+            id: parentReferentiel.id,
+            label: '',
+            averageProcessingTime: 0,
+          },
+          referentielId: parentReferentiel.id,
+          percent,
+        })
+      }
+    } else {
+      // remove activities of childs
+      const childId = (referentiel.childrens || []).map((r) => r.id)
+      this.activities = this.activities.filter(a => childId.indexOf(a.contentieux.id) === -1)
+    }
+
+
+    this.onLoadReferentiel()
     this.referentielChange.emit(this.referentiel)
     this.onTotalAffected()
   }

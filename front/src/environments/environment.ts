@@ -11,6 +11,7 @@ export const environment = {
   nbDaysByMagistrat: 208,
   nbHoursPerDay: 8,
   version: packageJSON.version,
+  matomo: null,
 };
 
 /*

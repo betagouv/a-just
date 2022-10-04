@@ -250,6 +250,42 @@
     font-size: 12px;
     margin-top: -4px;
   }
+
+  .title-with-doc {
+    display: flex;
+    align-items: center;
+  }
+
+  .documentation {
+    background-color: fColor(bgHelper);
+    font-size: 14px;
+    color: white;
+    height: 26px;
+    line-height: 26px;
+    padding: 0 6px;
+    border-radius: 26px;
+    -webkit-transition: width 0.25s ease;
+    transition: width 0.25s ease;
+    width: 26px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover {
+      width: 190px;
+
+      > span {
+        display: inline;
+      }
+    }
+
+    > span {
+      display: none;
+      white-space: nowrap;
+      margin-left: 4px;
+    }
+  }
 }
 
 .space {
@@ -282,4 +318,65 @@
 
 .logo-dark {
   background-image: url('/assets/icons/logos/dark-192x192@1x.svg');
+}
+
+.panel-helper {
+  width: 431px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  > div.panel-header {
+    background-color: fColor(bgHelper);
+    padding: 14px 0 84px 0;
+
+    .over-title {
+      background-color: fColor(bgHelper);
+      height: 85px;
+      position: relative;
+      z-index: 30;
+      padding: 0 14px;
+    }
+
+    .panel-header-closing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      i {
+        color: white;
+        cursor: pointer;
+        font-size: 32px;
+      }
+    }
+
+    h6,
+    p {
+      color: white;
+    }
+
+    p {
+      span {
+        position: relative;
+        top: -2px;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  > iframe {
+    border-radius: 4px;
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin: -148px 8px 8px 8px;
+    border: none;
+    height: calc(100% + 80px);
+  }
 }

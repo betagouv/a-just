@@ -1,7 +1,8 @@
 {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true,
-    "embeddedLanguageFormatting": "auto"
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "embeddedLanguageFormatting": "auto",
+  "max-len": ["error", { "code": 160 }]
 }

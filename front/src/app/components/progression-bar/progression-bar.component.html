@@ -5,10 +5,10 @@
   <div class="progress-bar" [style.height.%]="percent && percent > 100 ? 100 : percent || 0"
     [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">
     <p *ngIf="percent && percent >= 30" class="s inside">
-      {{ percent || 0 | number: '.0-1' }}%
+      {{ percent || 0 | number: '.0-2' }}%
     </p>
     <p *ngIf="percent && percent < 30" [style.color]="color" class="s top">
-      {{ percent || 0 | number: '.0-1' }}%
+      {{ percent || 0 | number: '.0-2' }}%
     </p>
   </div>
 </ng-template>
