@@ -8,7 +8,7 @@ import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
-const sslify = require('koa-sslify').default 
+const { default: enforceHttps } = require('koa-sslify')
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -62,7 +62,9 @@ export default class App extends AppBase {
     ]
 
     if(config.forceSSL) {
-      // middlewares.push(sslify())
+      middlewares.push(enforceHttps({
+        port: config.port,
+      }))
     }
 
     super.addMiddlewares(middlewares)
