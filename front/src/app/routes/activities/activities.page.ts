@@ -309,16 +309,20 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         }
         return 'Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé ».'
       case 'stock': {
+        if(level === 3) {
+          return 'Dès lors que des données de stock ont été saisies manuellement ou calculées dans l\'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s\'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.'
+        }
+        if(level === 4) {
+          return 'Dès lors que cette donnée d\'entrées/sorties mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".'
+        }
+
         if (value !== null) {
-          const isMainActivity =
-            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !==
-            -1
           const activityUpdated = contentieux.activityUpdated
           const modifyBy =
             activityUpdated && activityUpdated[type]
               ? activityUpdated[type]
               : null
-          if (isMainActivity || !modifyBy) {
+          if (level === 3 || !modifyBy) {
             return "Cette donnée a été calculée suite à des modifications que vous avez effectuées sur vos données d'entrées et/ou de sorties du mois en cours ou des mois précédents. Cette valeur sera prise en compte pour le calcul du stock du mois prochain, sauf si vous la modifiez manuellement."
           } else {
             return 'Cette donnée a été saisie manuellement et sera prise en compte pour le calcul du stock des mois prochains. Si vous modifiez les entrées et/ou les sorties ou données de stock des mois antérieurs, cette valeur ne sera pas modifiée.'
