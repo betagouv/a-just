@@ -8,6 +8,7 @@ import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
+const sslify = require('koa-sslify').default 
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -42,7 +43,7 @@ export default class App extends AppBase {
       debug: true,
     })
 
-    super.addMiddlewares([
+    const middlewares = [
       // we add the relevant middlewares to our API
       cors({ credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
@@ -58,7 +59,13 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-    ])
+    ]
+
+    if(config.forceSSL) {
+      middlewares.push(sslify())
+    }
+
+    super.addMiddlewares(middlewares)
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files 
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files 
