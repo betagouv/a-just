@@ -19,6 +19,7 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -61,7 +62,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private userService: UserService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private appService: AppService
   ) {
     super()
 
@@ -201,5 +203,12 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onTogglePanelHelper() {
     this.panelHelper = !this.panelHelper
+  }
+
+  onDownloadCalculator() {
+    this.appService.alert.next({
+      text: 'Le téléchargement va démarrer dans quelques secondes.',
+      delay: 5,
+    })
   }
 }
