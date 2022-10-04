@@ -44,19 +44,23 @@ export const countEtp = (etpAffected, referentiel) => {
   let counterEtpTotal = 0;
   let counterEtpSubTotal = 0;
   let counterIndispo = 0;
+  let counterReelEtp = 0;
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
       counterEtpTotal += etpAffected[key].etpt;
+      counterReelEtp += etpAffected[key].reelEtp;
     } else {
       counterEtpSubTotal += etpAffected[key].etpt;
       counterIndispo += etpAffected[key].indispo;
     }
   });
+
   return {
     counterEtpTotal,
     counterEtpSubTotal,
     counterIndispo,
+    counterReelEtp,
   };
 };
 
