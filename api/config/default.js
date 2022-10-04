@@ -19,5 +19,4 @@ module.exports = {
   preloadHumanResourcesDatas: false,
   nbDaysByMagistrat: 208,
   nbHoursPerDay: 8,
-  forceSSL: true,
 }

@@ -74,7 +74,7 @@
                     *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref, value: ref.in, level: 3 }">
                   </ng-container>
                   <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-"
-                    [ngClass]="{blue: ref.in}" />
+                    [ngClass]="{blue: ref.in !== null}" />
                 </span>
               </div>
             </div>
@@ -88,7 +88,7 @@
                     *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref, value: ref.out, level: 3 }">
                   </ng-container>
                   <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-"
-                    [ngClass]="{blue: ref.out}" />
+                    [ngClass]="{blue: ref.out !== null}" />
                 </span>
               </div>
             </div>
@@ -102,7 +102,7 @@
                     *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref, value: ref.stock, level: 3 }">
                   </ng-container>
                   <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-"
-                    [ngClass]="{blue: ref.stock}" />
+                    [ngClass]="{blue: ref.stock !== null}" />
                 </span>
               </div>
             </div>
@@ -127,7 +127,7 @@
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.in"
                         (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.in}" />
+                        [ngClass]="{blue: itemGroup.in !== null}" />
                     </span>
                   </div>
                 </div>
@@ -142,7 +142,7 @@
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.out"
                         (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.out}" />
+                        [ngClass]="{blue: itemGroup.out !== null}" />
                     </span>
                   </div>
                 </div>
@@ -157,7 +157,7 @@
                       </ng-container>
                       <input type="number" [(ngModel)]="itemGroup.stock"
                         (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.stock}" />
+                        [ngClass]="{blue: itemGroup.stock !== null}" />
                     </span>
                   </div>
                 </div>
