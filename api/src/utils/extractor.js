@@ -49,7 +49,7 @@ export const countEtp = (etpAffected, referentiel) => {
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
       counterEtpTotal += etpAffected[key].etpt;
-      counterReelEtp += etpAffected[key].reelEtp;
+      counterReelEtp = counterReelEtp === 0 ? etpAffected[key].reelEtp : counterReelEtp;
     } else {
       counterEtpSubTotal += etpAffected[key].etpt;
       counterIndispo += etpAffected[key].indispo;
