@@ -300,14 +300,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     switch (type) {
       case 'entrees':
         if (level === 3) {
-          return "Dès lors que cette donnée d'entrées mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé »."
+          return "Dès lors que des entrées seront saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
         }
-        return "Dès lors que des entrées seront saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+        return "Dès lors que cette donnée d'entrées mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé »."
       case 'sorties':
         if (level === 3) {
-          return 'Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé ».'
+          return "Dès lors que des sorties de l'un des sous-contentieux ont été saisies dans cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
         }
-        return "Dès lors que des sorties de l'un des sous-contentieux ont été saisies dans cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+        return 'Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé ».'
       case 'stock': {
         if (value !== null) {
           const isMainActivity =
