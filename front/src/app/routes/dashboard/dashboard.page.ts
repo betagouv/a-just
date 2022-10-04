@@ -27,6 +27,7 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   export() {
     this.isLoading = true
     this.excelService.exportExcel().then(() => (this.isLoading = false))
+    alert('Le téléchargement va démarrer dans quelques secondes !')
   }
 
   selectDate(dateType: string, value: any): void {
