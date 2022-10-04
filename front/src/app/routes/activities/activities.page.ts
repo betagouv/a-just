@@ -305,34 +305,32 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     switch (type) {
       case 'entrees':
+        case 'sorties':
         if (level === 3) {
           if(modifyBy) {
-            return "Dès lors que des entrées sont saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'} sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'} de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           } else {
-            return "Dès lors que des entrées seront saisies dans l'un des sous-contentieux de cette colonne, le total des entrées de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'} seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'} de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           }
         } else {
-          return "Dès lors que cette donnée d'entrées mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé »."
-        }
-      case 'sorties':
-        if (level === 3) {
           if(modifyBy) {
-            return "Dès lors que des sorties sont saisies dans l'un des sous-contentieux de cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+            return `Dès lors que cette donnée d'${type === 'entrees' ? 'entrées' : 'sorties'} mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
           } else {
-            return "Dès lors que des sorties de l'un des sous-contentieux ont été saisies dans cette colonne, le total des sorties de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+            return `Dès lors que cette donnée d'${type === 'entrees' ? 'entrées' : 'sorties'} mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
           }
-        } else {
-          return 'Dès lors que cette donnée de sorties mensuelles est modifiée manuellement, votre stock est recalculé en prenant en compte cette valeur dans « Stock A-JUSTé ».'
         }
       case 'stock': {
         if (level === 3) {
-          return "Dès lors que des données de stock ont été saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+          if(modifyBy) {
+            return "Dès lors que des données de stock ont été saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+          } else {
+            return "Dès lors que des données de stock seront saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTera automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
+          }
         } else {
           return 'Dès lors que cette donnée d\'entrées/sorties mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".'
         }
       }
     }
-    return ''
   }
 
   getTooltipFooter(
