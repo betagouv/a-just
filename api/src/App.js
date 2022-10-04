@@ -62,7 +62,7 @@ export default class App extends AppBase {
     ]
 
     if(config.forceSSL) {
-      middlewares.push(sslify())
+      // middlewares.push(sslify())
     }
 
     super.addMiddlewares(middlewares)
