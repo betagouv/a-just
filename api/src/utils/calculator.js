@@ -212,6 +212,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     list[c.id] = new Object({
       etpt: 0,
       indispo: 0,
+      reelEtp: 0,
       ...c,
     });
   });
@@ -222,10 +223,11 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     let nextDateFinded = null;
     let lastEtpAdded = null;
     let lastSituationId = null;
+
     // only working day
     if (workingDay(now)) {
       nbDay++;
-      const { etp, situation, indispoFiltred, nextDeltaDate } = getEtpByDateAndPerson(
+      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(
         referentielId,
         now,
         hr
@@ -237,7 +239,9 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       if (etp !== null) {
         lastEtpAdded = etp;
         lastSituationId = situation.category.id;
+        list[situation.category.id].reelEtp += reelEtp;
         list[situation.category.id].etpt += etp;
+        //if (hr.id === 2030) console.log({ list1: list[situation.category.id].reelEtp }); // list: list[situation.category.id].reelEtp });
       }
 
       const sumByInd = sumBy(indispoFiltred, 'percent');
@@ -275,6 +279,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay;
     list[property].indispo = list[property].indispo / nbDay;
+    list[property].reelEtp = list[property].reelEtp / nbDay;
   }
 
   return list;
