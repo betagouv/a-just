@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   serverUrl: 'http://localhost:8080/api/',
   nbDaysByMagistrat: 208,
-  nbHoursPerDay: 8,
+  nbHoursPerDayAndMagistrat: 8,
 };
 
 /*

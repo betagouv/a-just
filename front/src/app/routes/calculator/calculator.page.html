@@ -124,20 +124,20 @@
           </div>
         </div>
         <div class="item calculate">
-          <div class="tooltip" (click)="onSortBy('calculateCoverage')"
-            [ngClass]="{'selected': sortBy === 'calculateCoverage'}">
+          <div class="tooltip" (click)="onSortBy('magCalculateCoverage')"
+            [ngClass]="{'selected': sortBy === 'magCalculateCoverage'}">
             <div class="flex-1"></div>
             <p>Taux de<br />couverture</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'calculateCoverage'}"></i>
+            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateCoverage'}"></i>
             <aj-tooltips title="Taux de couverture" class="medium"
               content="SORTIES possibles/ENTREES de la période en %">
             </aj-tooltips>
           </div>
-          <div class="tooltip large last" (click)="onSortBy('calculateDTESInMonths')"
-            [ngClass]="{'selected': sortBy === 'calculateDTESInMonths'}">
+          <div class="tooltip large last" (click)="onSortBy('magCalculateDTESInMonths')"
+            [ngClass]="{'selected': sortBy === 'magCalculateDTESInMonths'}">
             <div class="flex-1"></div>
             <p>DTES<br />calculé</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'calculateDTESInMonths'}"></i>
+            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateDTESInMonths'}"></i>
             <aj-tooltips title="DTES calculé" class="large left"
               content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties possibles sur la période."
               footer="Mode de calcul :<br/><b>STOCK/SORTIES POSSIBLES</b>">

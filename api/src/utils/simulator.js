@@ -21,7 +21,7 @@ import { getEtpByDateAndPersonSimu } from './human-resource'
 export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
   nbDaysByMagistratPerMonth: config.nbDaysByMagistrat / 12,
-  nbHoursPerDay: config.nbHoursPerDay,
+  nbHoursPerDayAndMagistrat: config.nbHoursPerDayAndMagistrat,
 }
 
 const emptySituation = {
@@ -227,8 +227,9 @@ export async function getSituation (
         etpAffected: etpAffectedStartToEndToCompute,
         etpFon: etpFonStartToEndToCompute,
         etpCont: etpContStartToEndToCompute,
-        calculateCoverage: null,
-        calculateDTESInMonths: null,
+        magCalculateCoverage: null,
+        fonCalculateCoverage: null,
+        magCalculateDTESInMonths: null,
         magCalculateTimePerCase: null,
         nbMonthHistory,
         etpToCompute: etpMagStartToEndToCompute,
@@ -284,7 +285,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
       Math.floor(
         (countOfCalandarDays / (365 / 12)) *
           environment.nbDaysByMagistratPerMonth *
-          ((futurEtp * environment.nbHoursPerDay) / magRealTimePerCase)
+          ((futurEtp * environment.nbHoursPerDayAndMagistrat) / magRealTimePerCase)
       ) +
       Math.floor((countOfCalandarDays / (365 / 12)) * totalIn),
   })
@@ -294,7 +295,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
     Math.floor(
       (countOfCalandarDays / (365 / 12)) *
         environment.nbDaysByMagistratPerMonth *
-        ((futurEtp * environment.nbHoursPerDay) / magRealTimePerCase)
+        ((futurEtp * environment.nbHoursPerDayAndMagistrat) / magRealTimePerCase)
     ) +
     Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
   )
@@ -302,17 +303,17 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
 
 function computeTotalOut (magRealTimePerCase, etp) {
   return Math.floor(
-    (etp * environment.nbHoursPerDay * (environment.nbDaysByMagistrat / 12)) / magRealTimePerCase
+    (etp * environment.nbHoursPerDayAndMagistrat * (environment.nbDaysByMagistrat / 12)) / magRealTimePerCase
   )
 }
 
 function computeRealTimePerCase (totalOut, etp) {
   let realTimeCorrectValue = fixDecimal(
-    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) / (totalOut / etp),
+    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDayAndMagistrat) / (totalOut / etp),
     100
   )
   let realTimeCorrectvalueNotRounded =
-    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDay) / (totalOut / etp)
+    ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDayAndMagistrat) / (totalOut / etp)
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
 

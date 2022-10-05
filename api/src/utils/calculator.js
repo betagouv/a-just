@@ -18,15 +18,17 @@ export const emptyCalulatorValues = (referentiels) => {
         magRealTimePerCase: null,
         magCalculateTimePerCase: null,
         magCalculateOut: null,
+        magCalculateCoverage: null,
+        magCalculateDTESInMonths: null,
         etpFon: null,
         fonRealTimePerCase: null,
         fonCalculateTimePerCase: null,
         fonCalculateOut: null,
+        fonCalculateCoverage: null,
+        fonCalculateDTESInMonths: null,
         etpCont: null,
         realCoverage: null,
         realDTESInMonths: null,
-        calculateCoverage: null,
-        calculateDTESInMonths: null,
         etpAffected: [],
         childrens: [],
         contentieux: cont,
@@ -42,15 +44,17 @@ export const emptyCalulatorValues = (referentiels) => {
       magRealTimePerCase: null,
       magCalculateTimePerCase: null,
       magCalculateOut: null,
+      magCalculateCoverage: null,
+      magCalculateDTESInMonths: null,
       etpFon: null,
       fonRealTimePerCase: null,
       fonCalculateTimePerCase: null,
       fonCalculateOut: null,
+      fonCalculateCoverage: null,
+      fonCalculateDTESInMonths: null,
       etpCont: null,
       realCoverage: null,
       realDTESInMonths: null,
-      calculateCoverage: null,
-      calculateDTESInMonths: null,
       etpAffected: [],
       childrens,
       contentieux: referentiels[i],
@@ -152,13 +156,15 @@ const getActivityValues = (
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(
-    ((config.nbDaysByMagistrat / 12) * config.nbHoursPerDay) / (totalOut / etpMag)
+    ((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (totalOut / etpMag)
   )
 
-  const fonRealTimePerCase = 330 // TODO ICI
+  const fonRealTimePerCase = fixDecimal(
+    ((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (totalOut / etpFon)
+  )
 
   return {
-    ...calculateActivities(referentielId, totalIn, lastStock, etpMag, optionsBackups),
+    ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
     totalIn,
     totalOut,
     lastStock,
@@ -294,34 +300,43 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   return list
 }
 
-const calculateActivities = (referentielId, totalIn, lastStock, etpAffected, optionsBackups) => {
+const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, fonEtpAffected, optionsBackups) => {
   let magCalculateTimePerCase = null
   let fonCalculateTimePerCase = null
   let magCalculateOut = null
   let fonCalculateOut = null
-  let calculateCoverage = null
-  let calculateDTESInMonths = null
+  let magCalculateCoverage = null
+  let fonCalculateCoverage = null
+  let magCalculateDTESInMonths = null
+  let fonCalculateDTESInMonths = null
 
   const findIndexOption = optionsBackups.findIndex((o) => o.contentieux.id === referentielId)
 
-  fonCalculateTimePerCase = 10 // TODO ICI
-  fonCalculateOut = 300 // TODO ICI
-
   if (findIndexOption !== -1) {
     magCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
+    fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime // TODO pour JImmy a changer ici
   }
 
   if (magCalculateTimePerCase) {
     magCalculateOut = Math.floor(
-      (((etpAffected * config.nbHoursPerDay) / magCalculateTimePerCase) * config.nbDaysByMagistrat) /
+      (((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) /
         12
     )
-    calculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
-    calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
+    fonCalculateOut = Math.floor(
+      (((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) /
+        12
+    )
+    magCalculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
+    fonCalculateCoverage = fixDecimal(fonCalculateOut / (totalIn || 0))
+    magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
+    fonCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / fonCalculateOut)
   } else {
     magCalculateOut = null
-    calculateCoverage = null
-    calculateDTESInMonths = null
+    fonCalculateOut = null
+    magCalculateCoverage = null
+    fonCalculateCoverage = null
+    magCalculateDTESInMonths = null
+    fonCalculateDTESInMonths = null
   }
 
   return {
@@ -329,7 +344,9 @@ const calculateActivities = (referentielId, totalIn, lastStock, etpAffected, opt
     fonCalculateTimePerCase,
     magCalculateOut,
     fonCalculateOut,
-    calculateCoverage,
-    calculateDTESInMonths,
+    magCalculateCoverage,
+    fonCalculateCoverage,
+    magCalculateDTESInMonths,
+    fonCalculateDTESInMonths,
   }
 }

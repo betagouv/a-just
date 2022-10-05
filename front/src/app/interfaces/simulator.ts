@@ -10,8 +10,10 @@ export interface SimulatorInterface {
   realCoverage: number | null
   realDTESInMonths: number | null
   magRealTimePerCase: number | null
-  calculateCoverage: number | null
-  calculateDTESInMonths: number | null
+  magCalculateCoverage: number | null
+  fonCalculateCoverage: number | null
+  magCalculateDTESInMonths: number | null
+	fonCalculateDTESInMonths: number | null;
   magCalculateTimePerCase: number | null
   nbMonth: number
   etpAffected: etpAffectedInterface[] | null
