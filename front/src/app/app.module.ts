@@ -5,9 +5,10 @@ import { AppRoutingModule } from './routes/app-routing.module'
 import { AppComponent } from './app.component'
 import { HttpClientModule } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { AlertComponent } from './components/alert/alert.component'
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [AppComponent, AlertComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,

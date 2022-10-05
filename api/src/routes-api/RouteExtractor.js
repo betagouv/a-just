@@ -12,10 +12,7 @@ import {
   replaceZeroByDash,
   sortByCatAndFct,
 } from '../utils/extractor';
-import { preformatHumanResources } from '../utils/ventilator';
 import { getHumanRessourceList } from '../utils/humanServices';
-import { findFonctionName } from '../utils/hr-fonctions';
-import { findCategoryName } from '../utils/hr-catagories';
 import { sumBy } from 'lodash';
 import { findSituation } from '../utils/human-resource';
 export default class RouteExtractor extends Route {
@@ -53,7 +50,6 @@ export default class RouteExtractor extends Route {
     console.time('extractor-4');
 
     const categories = await this.models.HRCategories.getAll();
-    const fonctions = await this.models.HRFonctions.getAll();
 
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop);
 
@@ -65,12 +61,19 @@ export default class RouteExtractor extends Route {
       allHuman.map(async (human) => {
         const { currentSituation } = findSituation(human);
 
-        let categoryName = findCategoryName(categories, currentSituation);
-        let fonctionName = findFonctionName(fonctions, currentSituation);
+        let categoryName =
+          currentSituation && currentSituation.category && currentSituation.category.label
+            ? currentSituation.category.label
+            : 'pas de catégorie';
+        let fonctionName =
+          currentSituation && currentSituation.fonction && currentSituation.fonction.label
+            ? currentSituation.fonction.label
+            : 'pas de fonction';
 
         let etpAffected = new Array();
         let refObj = { ...emptyRefObj(flatReferentielsList) };
         let totalEtpt = 0;
+        let reelEtp = 0;
 
         let indispoArray = new Array([]);
         const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList);
@@ -98,9 +101,18 @@ export default class RouteExtractor extends Route {
                   dateStop
                 );
 
-                const { counterEtpTotal, counterEtpSubTotal, counterIndispo } = {
+                const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 };
+
+                //if (human.id === 1730) console.log({ human: human.id, reelEtp }); // list: list[situation.category.id].reelEtp });
+
+                /**if (human.id === 1837)
+                  console.log({
+                    counterReelEtp,
+                  });*/
+
+                reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp;
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id);
 
@@ -127,16 +139,21 @@ export default class RouteExtractor extends Route {
 
         refObj[key] = sumBy(indispoArray, 'indispo');
 
-        if (categoryName === categoryFilter || categoryFilter === 'tous')
-          data.push({
-            Numéro_A_JUST: human.id,
-            Prénom: human.firstName,
-            Nom: human.lastName,
-            Catégorie: categoryName,
-            Fonction: fonctionName,
-            ETPT: totalEtpt,
-            ...refObj,
-          });
+        if (
+          categoryName.toUpperCase() === categoryFilter.toUpperCase() ||
+          categoryFilter === 'tous'
+        )
+          if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
+            data.push({
+              ['Numéro A-JUST']: human.id,
+              Prénom: human.firstName,
+              Nom: human.lastName,
+              Catégorie: categoryName,
+              Fonction: fonctionName,
+              ['ETPT sur la période']: reelEtp,
+              ['Temps ventilés sur la période  ']: totalEtpt,
+              ...refObj,
+            });
       })
     );
     console.timeEnd('extractor-5');

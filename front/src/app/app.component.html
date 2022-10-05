@@ -1,1 +1,3 @@
+<aj-alert *ngIf="alertMessage" [alertMessage]="alertMessage.text" [delay]="alertMessage.delay"
+  (onClose)="onCloseAlert()"></aj-alert>
 <router-outlet></router-outlet>

@@ -44,19 +44,23 @@ export const countEtp = (etpAffected, referentiel) => {
   let counterEtpTotal = 0;
   let counterEtpSubTotal = 0;
   let counterIndispo = 0;
+  let counterReelEtp = 0;
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
       counterEtpTotal += etpAffected[key].etpt;
+      counterReelEtp = counterReelEtp === 0 ? etpAffected[key].reelEtp : counterReelEtp;
     } else {
       counterEtpSubTotal += etpAffected[key].etpt;
       counterIndispo += etpAffected[key].indispo;
     }
   });
+
   return {
     counterEtpTotal,
     counterEtpSubTotal,
     counterIndispo,
+    counterReelEtp,
   };
 };
 
@@ -84,7 +88,7 @@ export const getIndispoDetails = (referentiels) => {
 };
 
 export const addSumLine = (data, selectedCategory) => {
-  if (selectedCategory !== 'tous') {
+  if (selectedCategory !== 'tous' && data.length !== 0) {
     let headerSum = new Object({});
     Object.keys(data[0]).map((key) => {
       const sum = sumBy(data, key);
@@ -97,32 +101,34 @@ export const addSumLine = (data, selectedCategory) => {
 };
 
 export const autofitColumns = (json) => {
-  const jsonKeys = Object.keys(json[0]);
+  if (json.length !== 0) {
+    const jsonKeys = Object.keys(json[0]);
 
-  let objectMaxLength = [];
-  for (let i = 0; i < json.length; i++) {
-    let value = json[i];
-    for (let j = 0; j < jsonKeys.length; j++) {
-      if (typeof value[jsonKeys[j]] == 'number') {
-        objectMaxLength[j] = 10;
-      } else {
-        const l = value[jsonKeys[j]] ? value[jsonKeys[j]].length : 0;
-        objectMaxLength[j] = objectMaxLength[j] >= l ? objectMaxLength[j] : l;
+    let objectMaxLength = [];
+    for (let i = 0; i < json.length; i++) {
+      let value = json[i];
+      for (let j = 0; j < jsonKeys.length; j++) {
+        if (typeof value[jsonKeys[j]] == 'number') {
+          objectMaxLength[j] = 10;
+        } else {
+          const l = value[jsonKeys[j]] ? value[jsonKeys[j]].length : 0;
+          objectMaxLength[j] = objectMaxLength[j] >= l ? objectMaxLength[j] : l;
+        }
+      }
+
+      let key = jsonKeys;
+      for (let j = 0; j < key.length; j++) {
+        objectMaxLength[j] =
+          objectMaxLength[j] >= key[j].length ? objectMaxLength[j] : key[j].length + 1.5;
       }
     }
 
-    let key = jsonKeys;
-    for (let j = 0; j < key.length; j++) {
-      objectMaxLength[j] =
-        objectMaxLength[j] >= key[j].length ? objectMaxLength[j] : key[j].length + 1.5;
-    }
-  }
+    const wscols = objectMaxLength.map((w) => {
+      return { width: w };
+    });
 
-  const wscols = objectMaxLength.map((w) => {
-    return { width: w };
-  });
-
-  return wscols;
+    return wscols;
+  } else return [];
 };
 
 export const replaceZeroByDash = (data) => {
