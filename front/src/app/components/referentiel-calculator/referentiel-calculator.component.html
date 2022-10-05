@@ -27,12 +27,18 @@
                 </div>
             </ng-template>
         </div>
-        <div [ngClass]="{ selected: sortBy === 'etpMag', 'bg-magistrats': categorySelected === MAGISTRATS }">
+        <div [ngClass]="{
+        selected: sortBy === 'etpMag',
+        'bg-magistrats': categorySelected === MAGISTRATS
+      }">
             <div>
                 <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
             </div>
         </div>
-        <div [ngClass]="{ selected: sortBy === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
+        <div [ngClass]="{
+        selected: sortBy === 'etpFon',
+        'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
+      }">
             <div>
                 <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
             </div>
@@ -58,13 +64,18 @@
                     </ng-template>
                 </div>
             </div>
-            <div
-                [ngClass]="{ selected: sortBy === 'magRealTimePerCase', 'bg-magistrats': categorySelected === MAGISTRATS, 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
+            <div [ngClass]="{
+          selected: sortBy === 'magRealTimePerCase',
+          'bg-magistrats': categorySelected === MAGISTRATS,
+          'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
+        }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
                         <ng-template [ngIf]="calculator.magRealTimePerCase !== null" [ngIfElse]="nr">
                             <p>
-                                {{ this.decimalToStringDate(calculator.magRealTimePerCase) || 0 }}
+                                {{
+                                this.decimalToStringDate(calculator.magRealTimePerCase) || 0
+                                }}
                             </p>
                             <p class="unity">heures</p>
                         </ng-template>
@@ -72,7 +83,9 @@
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
                         <ng-template [ngIf]="calculator.fonRealTimePerCase !== null" [ngIfElse]="nr">
                             <p>
-                                {{ this.decimalToStringDate(calculator.fonRealTimePerCase) || 0 }}
+                                {{
+                                this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
+                                }}
                             </p>
                             <p class="unity">heures</p>
                         </ng-template>
@@ -96,28 +109,60 @@
                     </ng-template>
                 </div>
             </div>
-            <div
-                [ngClass]="{ selected: sortBy === 'calculateTimePerCase', 'bg-magistrats': categorySelected === MAGISTRATS, 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
+            <div [ngClass]="{
+          selected: sortBy === 'magCalculateTimePerCase',
+          'bg-magistrats': categorySelected === MAGISTRATS,
+          'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
+        }">
                 <div class="block">
-                    <ng-template [ngIf]="calculator.calculateTimePerCase !== null" [ngIfElse]="nr">
-                        <p>
-                            {{ this.decimalToStringDate(calculator.calculateTimePerCase) }}
-                        </p>
-                        <p class="unity">heures</p>
+                    <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                        <ng-template [ngIf]="calculator.magCalculateTimePerCase !== null" [ngIfElse]="nr">
+                            <p>
+                                {{
+                                this.decimalToStringDate(calculator.magCalculateTimePerCase)
+                                }}
+                            </p>
+                            <p class="unity">heures</p>
+                        </ng-template>
+                    </ng-template>
+                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                        <ng-template [ngIf]="calculator.fonCalculateTimePerCase !== null" [ngIfElse]="nr">
+                            <p>
+                                {{
+                                this.decimalToStringDate(calculator.fonCalculateTimePerCase)
+                                }}
+                            </p>
+                            <p class="unity">heures</p>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>
-            <div
-                [ngClass]="{ selected: sortBy === 'calculateOut','bg-magistrats': categorySelected === MAGISTRATS, 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
+            <div [ngClass]="{
+          selected: sortBy === 'magCalculateOut',
+          'bg-magistrats': categorySelected === MAGISTRATS,
+          'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
+        }">
                 <div class="block">
-                    <p>{{ calculator.calculateOut || 0 }}</p>
-                    <p class="unity">
-                        {{
-                        calculator.calculateOut && calculator.calculateOut > 1
-                        ? 'dossiers'
-                        : 'dossier'
-                        }}
-                    </p>
+                    <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                        <p>{{ calculator.magCalculateOut || 0 }}</p>
+                        <p class="unity">
+                            {{
+                            calculator.magCalculateOut && calculator.magCalculateOut > 1
+                            ? 'dossiers'
+                            : 'dossier'
+                            }}
+                        </p>
+                    </ng-template>
+                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                        <p>{{ calculator.fonCalculateOut || 0 }}</p>
+                        <p class="unity">
+                            {{
+                            calculator.fonCalculateOut && calculator.fonCalculateOut > 1
+                            ? 'dossiers'
+                            : 'dossier'
+                            }}
+                        </p>
+                    </ng-template>
                 </div>
             </div>
         </div>

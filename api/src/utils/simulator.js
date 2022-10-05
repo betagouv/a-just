@@ -229,7 +229,7 @@ export async function getSituation (
         etpCont: etpContStartToEndToCompute,
         calculateCoverage: null,
         calculateDTESInMonths: null,
-        calculateTimePerCase: null,
+        magCalculateTimePerCase: null,
         nbMonthHistory,
         etpToCompute: etpMagStartToEndToCompute,
         monthlyReport: monthlyReport,
