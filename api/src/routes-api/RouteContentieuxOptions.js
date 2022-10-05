@@ -92,6 +92,7 @@ export default class RouteContentieuxOptions extends Route {
         juridictionId
       );
 
+      await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId);
       this.sendOk(ctx, newId);
     } else {
       this.sendOk(ctx, null);
@@ -169,16 +170,17 @@ export default class RouteContentieuxOptions extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),
-      contentieuxId: Types.number().required(),
       juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async getLastUpdate(ctx) {
-    const { backupId, contentieuxId, juridictionId } = this.body(ctx);
+    const { backupId, juridictionId } = this.body(ctx);
 
     if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
-      this.sendOk(ctx, newId);
+      const result = await this.model.models.HistoriesContentieuxUpdate.getLastUpdate(backupId);
+
+      this.sendOk(ctx, result);
     } else {
       this.sendOk(ctx, null);
     }

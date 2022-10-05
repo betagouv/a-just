@@ -1,11 +1,6 @@
-import Sequelize from 'sequelize';
-
-const tableName = 'HistoriesContentieuxUpdate';
-
-export default (sequelizeInstance) => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('HistoriesContentieuxUpdate', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -34,21 +29,10 @@ export default (sequelizeInstance) => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-    }
-  );
-
-  Model.associate = function (models) {
-    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' });
-    Model.hasOne(models.OptionsBackupJuridictions, { foreignKey: 'id', sourceKey: 'backup_id' });
-
-    return models;
-  };
-
-  return Model;
+    });
+  },
+  down: async (queryInterface /*, Sequelize*/) => {
+    await queryInterface.dropTable('HistoriesContentieuxUpdate');
+    return;
+  },
 };
