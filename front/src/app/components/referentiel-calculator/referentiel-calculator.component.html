@@ -59,13 +59,23 @@
                 </div>
             </div>
             <div
-                [ngClass]="{ selected: sortBy === 'realTimePerCase', 'bg-magistrats': categorySelected === MAGISTRATS, 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
+                [ngClass]="{ selected: sortBy === 'magRealTimePerCase', 'bg-magistrats': categorySelected === MAGISTRATS, 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES }">
                 <div class="block">
-                    <ng-template [ngIf]="calculator.realTimePerCase !== null" [ngIfElse]="nr">
-                        <p>
-                            {{ this.decimalToStringDate(calculator.realTimePerCase) || 0 }}
-                        </p>
-                        <p class="unity">heures</p>
+                    <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                        <ng-template [ngIf]="calculator.magRealTimePerCase !== null" [ngIfElse]="nr">
+                            <p>
+                                {{ this.decimalToStringDate(calculator.magRealTimePerCase) || 0 }}
+                            </p>
+                            <p class="unity">heures</p>
+                        </ng-template>
+                    </ng-template>
+                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                        <ng-template [ngIf]="calculator.fonRealTimePerCase !== null" [ngIfElse]="nr">
+                            <p>
+                                {{ this.decimalToStringDate(calculator.fonRealTimePerCase) || 0 }}
+                            </p>
+                            <p class="unity">heures</p>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>

@@ -11,11 +11,12 @@ export interface CalculatorInterface {
 	totalOut: number | null;
 	lastStock: number | null;
 	etpMag: number | null;
+	magRealTimePerCase: number | null;
 	etpFon: number | null;
+	fonRealTimePerCase: number | null;
 	etpCont: number | null;
 	realCoverage: number | null;
 	realDTESInMonths: number | null;
-	realTimePerCase: number | null;
 	calculateCoverage: number | null;
 	calculateDTESInMonths: number | null;
 	calculateTimePerCase: number | null;
