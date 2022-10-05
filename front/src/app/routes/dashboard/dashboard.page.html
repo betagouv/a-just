@@ -11,14 +11,13 @@
       title="Pour la période du"
       [value]="dateStart"
       (valueChange)="selectDate('start',$event)"
-      [max]="dateStop || today"
+      [max]="dateStop"
     >
     </aj-date-select>
     <aj-date-select
       title="À"
       [value]="dateStop"
       (valueChange)="selectDate('stop',$event)"
-      [max]="today"
       [min]="dateStart"
     >
     </aj-date-select>
