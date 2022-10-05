@@ -96,16 +96,29 @@
     </div>
     <div class="item calculate">
         <div>
-            <div [ngClass]="{ selected: sortBy === 'calculateCoverage' }">
+            <div [ngClass]="{ selected: sortBy === 'magCalculateCoverage' }">
                 <div class="block">
-                    <aj-speedometer [percent]="(calculator.calculateCoverage || 0) * 100"></aj-speedometer>
+                    <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                        <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>
+                    </ng-template>
+                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                        <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>
+                    </ng-template>
                 </div>
             </div>
-            <div [ngClass]="{ selected: sortBy === 'calculateDTESInMonths' }">
+            <div [ngClass]="{ selected: sortBy === 'magCalculateDTESInMonths' }">
                 <div class="block">
-                    <ng-template [ngIf]="calculator.calculateDTESInMonths !== null" [ngIfElse]="nr">
-                        <p>{{ calculator.calculateDTESInMonths | number: '0.2-2' || 0 }}</p>
-                        <p class="unity">mois</p>
+                    <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                        <ng-template [ngIf]="calculator.magCalculateDTESInMonths !== null" [ngIfElse]="nr">
+                            <p>{{ calculator.magCalculateDTESInMonths | number: '0.2-2' || 0 }}</p>
+                            <p class="unity">mois</p>
+                        </ng-template>
+                    </ng-template>
+                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                        <ng-template [ngIf]="calculator.fonCalculateDTESInMonths !== null" [ngIfElse]="nr">
+                            <p>{{ calculator.fonCalculateDTESInMonths | number: '0.2-2' || 0 }}</p>
+                            <p class="unity">mois</p>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>
