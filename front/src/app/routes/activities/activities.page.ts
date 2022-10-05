@@ -149,7 +149,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         date: new Date(),
         user: this.userService.user.getValue(),
       }
-    }, 500)
+    }, 100)
   }
 
   changeMonth(date: Date) {
@@ -302,10 +302,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       value !== null && activityUpdated && activityUpdated[type]
         ? activityUpdated[type]
         : null
-
-    if(type === 'entrees' && level === 3) {
-      console.log({contentieux, type, value, modifyBy, level})
-    }
 
     switch (type) {
       case 'entrees':
