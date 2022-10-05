@@ -23,6 +23,7 @@ export class AppComponent {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private appService: AppService
   ) {
+    this.onControlSSL()
     router.events.subscribe(() => {
       const user = this.userService.user.getValue()
       if (user && this.dbReady === false) {
@@ -33,7 +34,7 @@ export class AppComponent {
       }
     })
 
-    this.appService.alert.subscribe((a) => this.alertMessage = a)
+    this.appService.alert.subscribe((a) => (this.alertMessage = a))
 
     if (environment.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
@@ -52,6 +53,14 @@ export class AppComponent {
           s.parentNode.insertBefore(g, s)
         }
       })()
+    }
+  }
+
+  onControlSSL() {
+    if (location.protocol !== 'https:' && environment.forceSSL) {
+      location.replace(
+        `https:${location.href.substring(location.protocol.length)}`
+      )
     }
   }
 
