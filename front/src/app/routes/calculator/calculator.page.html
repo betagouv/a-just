@@ -166,7 +166,8 @@
       </div>
     </div>
     <div class="content-list">
-      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy">
+      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy"
+        [categorySelected]="categorySelected">
       </aj-referentiel-calculator>
     </div>
   </div>
@@ -174,14 +175,14 @@
 
 <ng-template #actions>
   <div class="categories-switch">
-    <div class="magistrats" [ngClass]="{'selected': categorySelected === 'magistrats'}"
-      (click)="$event.stopPropagation(); categorySelected = 'magistrats'">
-      <input type="radio" [checked]="categorySelected === 'magistrats'" />
+    <div class="magistrats" [ngClass]="{'selected': categorySelected === MAGISTRATS}"
+      (click)="$event.stopPropagation(); categorySelected = MAGISTRATS">
+      <input type="radio" [checked]="categorySelected === MAGISTRATS" />
       <p>Magistrats</p>
     </div>
-    <div class="fonctionnaires" [ngClass]="{'selected': categorySelected === 'fonctionnaires'}" class="fonctionnaires"
-      (click)="$event.stopPropagation(); categorySelected = 'fonctionnaires'">
-      <input type="radio" [checked]="categorySelected === 'fonctionnaires'" />
+    <div class="fonctionnaires" [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}" class="fonctionnaires"
+      (click)="$event.stopPropagation(); categorySelected = FONCTIONNAIRES">
+      <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
       <p>Fonctionnaires</p>
     </div>
   </div>
