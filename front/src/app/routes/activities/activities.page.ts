@@ -303,25 +303,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         ? activityUpdated[type]
         : null
 
+    if(type === 'entrees' && level === 3) {
+      console.log({contentieux, type, value, modifyBy, level})
+    }
+
     switch (type) {
       case 'entrees':
         case 'sorties':
         if (level === 3) {
-          if(modifyBy) {
+          if(value !== null) {
             return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'} sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'} de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           } else {
             return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'} seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'} de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           }
         } else {
           if(modifyBy) {
-            return `Dès lors que cette donnée d'${type === 'entrees' ? 'entrées' : 'sorties'} mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
+            return `Dès lors que cette donnée ${type === 'entrees' ? 'd\'entrées' : 'de sorties'} mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
           } else {
-            return `Dès lors que cette donnée d'${type === 'entrees' ? 'entrées' : 'sorties'} mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
+            return `Dès lors que cette donnée ${type === 'entrees' ? 'd\'entrées' : 'de sorties'} mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
           }
         }
       case 'stock': {
         if (level === 3) {
-          if(modifyBy) {
+          if(value !== null) {
             return "Dès lors que des données de stock ont été saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
           } else {
             return "Dès lors que des données de stock seront saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTera automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
