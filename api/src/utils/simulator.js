@@ -273,6 +273,7 @@ function computeDTES(lastStock, totalOut) {
 }
 
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, realTimePerCase, totalIn) {
+  console.log('########');
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
