@@ -9,7 +9,7 @@ export interface SimulatorInterface {
   etpCont: number | null
   realCoverage: number | null
   realDTESInMonths: number | null
-  realTimePerCase: number | null
+  magRealTimePerCase: number | null
   calculateCoverage: number | null
   calculateDTESInMonths: number | null
   calculateTimePerCase: number | null

@@ -409,7 +409,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     // if result
     if (result > -1) {
       // affect the value to the editable input
-      if (inputField.id === 'realTimePerCase' && result)
+      if (inputField.id === 'magRealTimePerCase' && result)
         inputField.value = decimalToStringDate(result)
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
@@ -483,7 +483,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     id: string,
     projectedValue: string | number | undefined
   ) {
-    if (id === 'realTimePerCase' && projectedValue === -100) return ''
+    if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param1.label === 'realCoverage'
@@ -614,7 +614,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   valueChange(button: any, event: any) {
-    if (this.buttonSelected.id === 'realTimePerCase' && event === 0)
+    if (this.buttonSelected.id === 'magRealTimePerCase' && event === 0)
       button.value = 'Ajuster'
     else button.value = event
   }
@@ -825,7 +825,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       etpMag: null,
       etpFon: null,
       etpCont: null,
-      realTimePerCase: null,
+      magRealTimePerCase: null,
       realDTESInMonths: null,
       realCoverage: null,
     }

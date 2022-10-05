@@ -112,11 +112,11 @@
               footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
             </aj-tooltips>
           </div>
-          <div class="tooltip large" (click)="onSortBy('realTimePerCase')"
-            [ngClass]="{'selected': sortBy === 'realTimePerCase'}">
+          <div class="tooltip large" (click)="onSortBy('magRealTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
             <div class="flex-1"></div>
             <p>Tps moyen {{ categorySelected }}<br />/ dossier observé</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realTimePerCase'}"></i>
+            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
             <aj-tooltips title="Temps moyen par dossier observé" class="large"
               content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
               footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
