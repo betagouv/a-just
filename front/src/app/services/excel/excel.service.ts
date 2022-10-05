@@ -63,6 +63,7 @@ export class ExcelService extends MainClass implements OnInit {
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
+        console.log(data.data.values)
         this.data = data.data.values
         this.columnSize = data.data.columnSize
         import('xlsx').then((xlsx) => {
