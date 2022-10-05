@@ -82,11 +82,10 @@ export class ExcelService extends MainClass implements OnInit {
 
           const filename = this.getFileName()
           const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
-          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
           this.appService.alert.next({
-            text: 'Le téléchargement va démarrer dans quelques secondes.',
-            delay: 5,
+            text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement",
           })
+          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
         })
       })
   }
