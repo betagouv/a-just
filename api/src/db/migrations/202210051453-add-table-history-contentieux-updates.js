@@ -8,7 +8,7 @@ module.exports = {
         autoIncrement: true,
         unique: true,
       },
-      contentieux_id: {
+      backup_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

@@ -14,6 +14,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   referentiel: ContentieuReferentielInterface[] = []
   perUnity: string = 'hour'
   isLoading: boolean = false
+  subTitle: string = ''
 
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
@@ -27,8 +28,33 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
         if (backupId !== null) {
           this.onLoad(backupId)
+          console.log('On charge')
+          this.contentieuxOptionsService.getLastUpdate()
         }
       })
+    )
+
+    this.watch(
+      this.contentieuxOptionsService.contentieuxLastUpdate.subscribe(
+        (lastUpdate) => {
+          if (lastUpdate !== null) {
+            console.log(
+              'valeur chargé',
+              this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
+            )
+            const res =
+              this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
+            if (res !== undefined)
+              this.subTitle =
+                'Mis à jour, le' +
+                res.date +
+                ', par' +
+                res.user.firstName +
+                ' ' +
+                res.user.lastName
+          }
+        }
+      )
     )
   }
 
@@ -38,7 +64,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   onLoad(backupId: number) {
     let res = this.activitiesService.loadMonthActivities(new Date())
-    console.log(res)
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
@@ -88,9 +113,5 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeUnity(unit: string) {
     this.perUnity = unit
-  }
-
-  getSubtitle() {
-    return '' //return 'Mis à jour, le ' + '' + ', par'
   }
 }
