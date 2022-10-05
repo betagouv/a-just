@@ -170,29 +170,14 @@ export default class RouteContentieuxOptions extends Route {
     bodyType: Types.object().keys({
       backupId: Types.number(),
       contentieuxId: Types.number().required(),
-      //Types.number().required(),
+      juridictionId: Types.number().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async getLastUpdate(ctx) {
     const { backupId, contentieuxId, juridictionId } = this.body(ctx);
 
-    if (
-      (backupId &&
-        (await this.models.OptionsBackups.haveAccess(
-          backupId,
-          juridictionId,
-          ctx.state.user.id
-        ))) ||
-      (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
-    ) {
-      const newId = await this.model.models.OptionsBackups.saveBackup(
-        list,
-        backupId,
-        backupName,
-        juridictionId
-      );
-
+    if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, newId);
     } else {
       this.sendOk(ctx, null);
