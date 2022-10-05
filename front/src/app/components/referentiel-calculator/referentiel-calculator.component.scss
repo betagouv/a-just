@@ -78,8 +78,13 @@
       &.actual {
         >div {
           align-self: stretch;
-          margin: 4px 2px;
+          margin: 0 2px;
           width: calc(100% - 4px);
+        }
+
+        .ref-nr {
+          margin: 4px 0;
+          height: calc(100% - 8px);
         }
       }
 
@@ -109,13 +114,6 @@
 
               &.unity {
                 font-size: 16px;
-              }
-            }
-
-            .ref-nr {
-              p {
-                font-size: 16px;
-                color: fColor(redNRColor);
               }
             }
           }
