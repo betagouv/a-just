@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
@@ -17,7 +18,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private activitiesService: ActivitiesService
   ) {
     super()
 
@@ -35,6 +37,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   }
 
   onLoad(backupId: number) {
+    let res = this.activitiesService.loadMonthActivities(new Date())
+    console.log(res)
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
@@ -84,5 +88,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeUnity(unit: string) {
     this.perUnity = unit
+  }
+
+  getSubtitle() {
+    return '' //return 'Mis à jour, le ' + '' + ', par'
   }
 }
