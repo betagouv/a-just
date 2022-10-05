@@ -16,15 +16,17 @@ export const emptyCalulatorValues = (referentiels) => {
         lastStock: null,
         etpMag: null,
         magRealTimePerCase: null,
+        magCalculateTimePerCase: null,
+        magCalculateOut: null,
         etpFon: null,
         fonRealTimePerCase: null,
+        fonCalculateTimePerCase: null,
+        fonCalculateOut: null,
         etpCont: null,
         realCoverage: null,
         realDTESInMonths: null,
         calculateCoverage: null,
         calculateDTESInMonths: null,
-        calculateTimePerCase: null,
-        calculateOut: null,
         etpAffected: [],
         childrens: [],
         contentieux: cont,
@@ -38,15 +40,17 @@ export const emptyCalulatorValues = (referentiels) => {
       lastStock: null,
       etpMag: null,
       magRealTimePerCase: null,
+      magCalculateTimePerCase: null,
+      magCalculateOut: null,
       etpFon: null,
       fonRealTimePerCase: null,
+      fonCalculateTimePerCase: null,
+      fonCalculateOut: null,
       etpCont: null,
       realCoverage: null,
       realDTESInMonths: null,
       calculateCoverage: null,
       calculateDTESInMonths: null,
-      calculateTimePerCase: null,
-      calculateOut: null,
       etpAffected: [],
       childrens,
       contentieux: referentiels[i],
@@ -291,33 +295,40 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 }
 
 const calculateActivities = (referentielId, totalIn, lastStock, etpAffected, optionsBackups) => {
-  let calculateTimePerCase = null
-  let calculateOut = null
+  let magCalculateTimePerCase = null
+  let fonCalculateTimePerCase = null
+  let magCalculateOut = null
+  let fonCalculateOut = null
   let calculateCoverage = null
   let calculateDTESInMonths = null
 
   const findIndexOption = optionsBackups.findIndex((o) => o.contentieux.id === referentielId)
 
+  fonCalculateTimePerCase = 10 // TODO ICI
+  fonCalculateOut = 300 // TODO ICI
+
   if (findIndexOption !== -1) {
-    calculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
+    magCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
   }
 
-  if (calculateTimePerCase) {
-    calculateOut = Math.floor(
-      (((etpAffected * config.nbHoursPerDay) / calculateTimePerCase) * config.nbDaysByMagistrat) /
+  if (magCalculateTimePerCase) {
+    magCalculateOut = Math.floor(
+      (((etpAffected * config.nbHoursPerDay) / magCalculateTimePerCase) * config.nbDaysByMagistrat) /
         12
     )
-    calculateCoverage = fixDecimal(calculateOut / (totalIn || 0))
-    calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / calculateOut)
+    calculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
+    calculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
   } else {
-    calculateOut = null
+    magCalculateOut = null
     calculateCoverage = null
     calculateDTESInMonths = null
   }
 
   return {
-    calculateTimePerCase,
-    calculateOut,
+    magCalculateTimePerCase,
+    fonCalculateTimePerCase,
+    magCalculateOut,
+    fonCalculateOut,
     calculateCoverage,
     calculateDTESInMonths,
   }

@@ -143,20 +143,20 @@
               footer="Mode de calcul :<br/><b>STOCK/SORTIES POSSIBLES</b>">
             </aj-tooltips>
           </div>
-          <div class="tooltip large last" (click)="onSortBy('calculateTimePerCase')"
-            [ngClass]="{'selected': sortBy === 'calculateTimePerCase'}">
+          <div class="tooltip large last" (click)="onSortBy('magCalculateTimePerCase')"
+            [ngClass]="{'selected': sortBy === 'magCalculateTimePerCase'}">
             <div class="flex-1"></div>
             <p>Temps moyen {{ categorySelected }}<br />/ dossier saisi</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'calculateTimePerCase'}"></i>
+            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateTimePerCase'}"></i>
             <aj-tooltips title="Temps moyen par dossier saisi" class="medium left"
               content="Donnée saisie dans le jeu de données choisi dans «Mes temps moyens de comparaison»">
             </aj-tooltips>
           </div>
-          <div class="tooltip large last" (click)="onSortBy('calculateOut')"
-            [ngClass]="{'selected': sortBy === 'calculateOut'}">
+          <div class="tooltip large last" (click)="onSortBy('magCalculateOut')"
+            [ngClass]="{'selected': sortBy === 'magCalculateOut'}">
             <div class="flex-1"></div>
             <p>Sorties {{ categorySelected }}<br />possibles</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'calculateOut'}"></i>
+            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateOut'}"></i>
             <aj-tooltips title="Sorties possibles" class="large left"
               content="Nombre moyen de dossiers pouvant être traités mensuellement par les ETPT affectés en fonction du temps moyen de traitement par dossier choisi."
               footer="Mode de calcul :<br/><b>NOMBRE DE DOSSIERS PAR ETPT x ETPT MAGISTRATS</b>">
