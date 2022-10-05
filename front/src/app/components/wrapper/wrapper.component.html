@@ -49,7 +49,11 @@
         </a>
       </li>
       <li>
-        <a [href]="CALCULATE_DOWNLOAD_URL" download>
+        <a
+          [href]="CALCULATE_DOWNLOAD_URL"
+          (click)="onDownloadCalculator()"
+          download
+        >
           <p>Calculatrice de ventilation</p>
         </a>
       </li>
