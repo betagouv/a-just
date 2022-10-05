@@ -1,6 +1,8 @@
 import { Component } from '@angular/core'
 import { Router } from '@angular/router'
 import { environment } from 'src/environments/environment'
+import { AlertInterface } from './interfaces/alert'
+import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
 
@@ -13,12 +15,15 @@ declare const window: any
 })
 export class AppComponent {
   dbReady: boolean = false
+  alertMessage: AlertInterface | null = null
 
   constructor(
     router: Router,
     private userService: UserService,
-    private contentieuxOptionsService: ContentieuxOptionsService
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private appService: AppService
   ) {
+    this.onControlSSL()
     router.events.subscribe(() => {
       const user = this.userService.user.getValue()
       if (user && this.dbReady === false) {
@@ -28,6 +33,8 @@ export class AppComponent {
         this.contentieuxOptionsService.initDatas()
       }
     })
+
+    this.appService.alert.subscribe((a) => (this.alertMessage = a))
 
     if (environment.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
@@ -47,5 +54,17 @@ export class AppComponent {
         }
       })()
     }
+  }
+
+  onControlSSL() {
+    if (location.protocol !== 'https:' && environment.forceSSL) {
+      location.replace(
+        `https:${location.href.substring(location.protocol.length)}`
+      )
+    }
+  }
+
+  onCloseAlert() {
+    this.appService.alert.next(null)
   }
 }

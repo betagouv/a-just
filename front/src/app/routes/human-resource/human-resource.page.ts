@@ -209,6 +209,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.indisponibilities &&
       this.currentHR.indisponibilities.length
     ) {
+      maxDate = today(maxDate) // stop reference
       maxDate.setDate(maxDate.getDate() + 1)
     }
 

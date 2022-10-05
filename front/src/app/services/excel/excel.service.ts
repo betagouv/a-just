@@ -14,6 +14,7 @@ import { sumBy } from 'lodash'
 import { UserService } from '../user/user.service'
 import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
+import { AppService } from '../app/app.service'
 
 const startCurrentSituation = month(new Date(), -12)
 const endCurrentSituation = month(new Date(), -1, 'lastday')
@@ -41,7 +42,8 @@ export class ExcelService extends MainClass implements OnInit {
   constructor(
     private humanResourceService: HumanResourceService,
     private serverService: ServerService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
 
@@ -61,6 +63,7 @@ export class ExcelService extends MainClass implements OnInit {
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
+        console.log(data.data.values)
         this.data = data.data.values
         this.columnSize = data.data.columnSize
         import('xlsx').then((xlsx) => {
@@ -80,6 +83,10 @@ export class ExcelService extends MainClass implements OnInit {
           const filename = this.getFileName()
           const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
           FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+          this.appService.alert.next({
+            text: 'Le téléchargement va démarrer dans quelques secondes.',
+            delay: 5,
+          })
         })
       })
   }

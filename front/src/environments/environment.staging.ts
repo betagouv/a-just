@@ -8,4 +8,5 @@ export const environment = {
   nbHoursPerDay: 8,
   version: packageJSON.version,
   matomo: 261,
+  forceSSL: true,
 };
