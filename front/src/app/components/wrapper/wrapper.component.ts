@@ -94,9 +94,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     this.watcherDestroy()
   }
 
-  downloadComing() {
-    alert('Le téléchargement va démarrer dans quelques secondes !')
-  }
+
 
   onDisconnect() {
     this.authService.onLogout().then(() => {
