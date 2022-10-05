@@ -87,6 +87,14 @@
     display: flex;
     align-items: stretch;
 
+    &.activity, &.calculate {
+      border-left: 1px solid fColor(bgTag);
+    }
+
+    &.activity, &.datas {
+      border-right: 1px solid fColor(bgTag);
+    }
+
     > div {
       flex: 1;
       display: flex;
