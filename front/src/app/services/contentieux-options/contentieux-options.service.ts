@@ -16,6 +16,7 @@ export class ContentieuxOptionsService extends MainClass {
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
     BackupInterface[]
   >([])
+  contentieuxLastUpdate: BehaviorSubject<any> = new BehaviorSubject<any>({})
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
     null
   )
@@ -188,5 +189,20 @@ export class ContentieuxOptionsService extends MainClass {
     }
 
     return Promise.resolve()
+  }
+
+  getLastUpdate() {
+    console.log('le backup Id', this.backupId.getValue())
+    if (this.backupId.getValue() !== undefined)
+      return this.serverService
+        .post(`contentieux-options/get-last-update`, {
+          backupId: this.backupId.getValue(),
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then((r) => {
+          console.log(r.data)
+          this.contentieuxLastUpdate.next(r.data)
+        })
+    else return {}
   }
 }

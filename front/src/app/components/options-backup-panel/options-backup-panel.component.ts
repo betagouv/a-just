@@ -47,7 +47,11 @@ export class OptionsBackupPanelComponent
   }
 
   formatDatas() {
-    if(this.selectedIds && this.selectedIds.length && !this.backups.find(b => b.id === this.selectedIds[0])) {
+    if (
+      this.selectedIds &&
+      this.selectedIds.length &&
+      !this.backups.find((b) => b.id === this.selectedIds[0])
+    ) {
       this.selectedIds = []
     }
 
