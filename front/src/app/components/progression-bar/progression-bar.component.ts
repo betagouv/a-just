@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 
 @Component({
   selector: 'progression-bar',
@@ -6,11 +6,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./progression-bar.component.scss'],
 })
 export class ProgressionBarComponent {
-  @Input() percent: number | undefined = 0;
-  @Input() color: string = '#005500';
-  @Input() enable: boolean = true;
-  @Input() selected: boolean = true;
-  @Output() percentChange: EventEmitter<number> = new EventEmitter<number>();
+  @Input() percent: number | undefined = 0
+  @Input() color: string = '#005500'
+  @Input() enable: boolean = true
+  @Input() selected: boolean = true
+  @Output() percentChange: EventEmitter<number> = new EventEmitter()
 
   constructor() {}
 
@@ -19,13 +19,12 @@ export class ProgressionBarComponent {
       const newPercent = prompt(
         'Nouveau pourcentage ?',
         '' + (this.percent || 0)
-      );
+      )
 
-      const valueFormated = parseFloat((newPercent || '').replace(/,/, '.'));
-      if (valueFormated !== NaN) {
-        this.percent = valueFormated;
-        this.percentChange.emit(this.percent);
-      }
+      const valueFormated =
+        parseFloat((newPercent || '').replace(/,/, '.')) || 0
+      this.percent = valueFormated
+      this.percentChange.emit(this.percent)
     }
   }
 }
