@@ -128,6 +128,8 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
+    console.log('percent', percent)
+
     // memorise list
     const activity = this.activities.find(
       (a) => a.contentieux.id === referentiel.id
