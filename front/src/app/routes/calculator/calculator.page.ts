@@ -3,6 +3,7 @@ import { orderBy } from 'lodash'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
@@ -19,13 +20,17 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
   dateStart: Date | null = null
   dateStop: Date | null = null
-  formReferentiel: dataInterface[] = []
   sortBy: string = ''
   datas: CalculatorInterface[] = []
   datasFilted: CalculatorInterface[] = []
   isLoading: boolean = false
   maxDateSelectionDate: Date | null = null
   isLoadingLastMonth: boolean = false
+  categorySelected: string = 'magistrats'
+  documentation: DocumentationInterface = {
+    title: 'Calculator',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/quest-ce-que-cest',
+  }
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -74,7 +79,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
             this.referentielService.idsSoutien.indexOf(r.id) === -1
         )
-        this.formatReferentiel()
 
         if (this.referentielIds.length === 0) {
           this.calculatorService.referentielIds.next(
@@ -146,13 +150,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     this.datasFilted = list
-  }
-
-  formatReferentiel() {
-    this.formReferentiel = this.referentiel.map((r) => ({
-      id: r.id,
-      value: this.referentielMappingName(r.label),
-    }))
   }
 
   updateReferentielSelected(type: string = '', event: any = null) {

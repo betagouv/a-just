@@ -9,6 +9,10 @@
   position: relative;
   cursor: pointer;
 
+  &.bg-white {
+    background-color: white;
+  }
+
   &.dark-mode {
     background-color: fColor(darkModeBgMenu);
     border: 1px solid fColor(darkModeTitle);

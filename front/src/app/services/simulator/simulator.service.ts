@@ -162,7 +162,7 @@ export class SimulatorService extends MainClass {
         return 'DTES'
       case 'realCoverage':
         return 'taux de couverture'
-      case 'realTimePerCase':
+      case 'magRealTimePerCase':
         return 'temps moyen par dossier'
     }
     return ''
@@ -218,10 +218,10 @@ export class SimulatorService extends MainClass {
           } else return data?.realDTESInMonths + ' mois' || '0'
         }
         return '0'
-      case 'realTimePerCase':
-        if (initialValue) return data?.realTimePerCase || '0'
+      case 'magRealTimePerCase':
+        if (initialValue) return data?.magRealTimePerCase || '0'
         else {
-          return decimalToStringDate(data?.realTimePerCase) || '0'
+          return decimalToStringDate(data?.magRealTimePerCase) || '0'
         }
       case 'ETPTGreffe':
         return data?.etpCont || '0'

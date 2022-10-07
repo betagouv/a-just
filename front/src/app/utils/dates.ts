@@ -262,7 +262,7 @@ export function nbHourInMonth(date: Date = new Date()) {
     dateStart.setDate(dateStart.getDate() + 1)
   } while (dateStart.getTime() < dateStop.getTime())
 
-  return nbDay * environment.nbHoursPerDay
+  return nbDay * environment.nbHoursPerDayAndMagistrat
 }
 
 export function generalizeTimeZone(date: Date | undefined) {
