@@ -522,12 +522,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             : 0
 
         let averageWorkingProcess = fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
+          (nbDaysByMonthForMagistrat * environment.nbHoursPerDayAndMagistrat) /
             (averageOut / etpToComputeLast12Months)
         )
 
         let outValue = Math.floor(
-          (etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat) /
+          (etpt * environment.nbHoursPerDayAndMagistrat * nbDaysByMonthForMagistrat) /
             averageWorkingProcess
         )
 
@@ -550,7 +550,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           Math.floor(
             (nbDayCalendar / (365 / 12)) *
               nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDay) /
+              ((etpMagDelta * environment.nbHoursPerDayAndMagistrat) /
                 averageWorkingProcess)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)

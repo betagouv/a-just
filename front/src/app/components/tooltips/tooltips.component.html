@@ -4,7 +4,10 @@
     <div class="triangle"></div>
     <mat-icon (click)="tooltipsIsVisible = false; $event.stopPropagation();">close</mat-icon>
     <div class="title" *ngIf="title" [innerHTML]="title | sanitizeHtml"></div>
-    <div class="content" *ngIf="content" [innerHTML]="content | sanitizeHtml"></div>
+    <div class="content">
+      <div [innerHTML]="content | sanitizeHtml"></div>
+      <ng-content></ng-content>
+    </div>
     <div class="footer" *ngIf="footer" [innerHTML]="footer | sanitizeHtml"></div>
   </div>
 </div>
