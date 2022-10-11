@@ -4,6 +4,12 @@
   display: flex;
   height: 100%;
 
+  .subtitle-name {
+    border-radius: 12px;
+    background-color: #eee;
+    padding: 3px 6px;
+  }
+
   .dark-mode {
     display: none;
   }
@@ -75,6 +81,7 @@
       margin-right: 0px;
 
       .menu-item {
+
         &.disconnect,
         a,
         p {
@@ -127,7 +134,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    > div {
+    >div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -171,6 +178,7 @@
     }
 
     &.selected {
+
       a,
       p {
         color: fColor(cbluedark);
@@ -279,12 +287,12 @@
     &:hover {
       width: 190px;
 
-      > span {
+      >span {
         display: inline;
       }
     }
 
-    > span {
+    >span {
       display: none;
       white-space: nowrap;
       margin-left: 4px;
@@ -337,7 +345,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  > div.panel-header {
+  >div.panel-header {
     background-color: fColor(bgHelper);
     padding: 14px 0 84px 0;
 
@@ -375,7 +383,7 @@
     }
   }
 
-  > iframe {
+  >iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
