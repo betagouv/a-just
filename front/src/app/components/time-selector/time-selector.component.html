@@ -1,12 +1,18 @@
 <div>
-    <form [formGroup]="timeForm">
-        <input formControlName="hour" type="number" style="width: 100px" />
-        h
-        <input
-            formControlName="minute"
-            type="number"
-            style="width: 100px"
-            (ngModelChange)="(value)"
-        />
-    </form>
+  <form [formGroup]="timeForm">
+    <input
+      [ngClass]="{ disabled: disabled === true }"
+      formControlName="hour"
+      type="number"
+      style="width: 100px"
+    />
+    h
+    <input
+      [ngClass]="{ disabled: disabled === true }"
+      formControlName="minute"
+      type="number"
+      style="width: 100px"
+      (ngModelChange)="(value)"
+    />
+  </form>
 </div>

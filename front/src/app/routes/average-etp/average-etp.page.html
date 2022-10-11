@@ -8,7 +8,12 @@
 >
   <div class="container">
     <div class="header-list">
-      <div class="label month">Temps moyens / contentieux</div>
+      <div class="label empty"></div>
+      <div class="label col">Temps moyens en heures</div>
+      <div class="label col">Nombre de dossiers par jour</div>
+      <div class="label col">Nombre de dossiers par mois</div>
+
+      <!-- 
       <div class="column-item">
         <mat-button-toggle-group [value]="perUnity">
           <mat-button-toggle value="hour" (click)="changeUnity('hour')"
@@ -19,28 +24,31 @@
           </mat-button-toggle>
         </mat-button-toggle-group>
       </div>
+      -->
     </div>
     <div class="content-list">
       <div *ngFor="let ref of referentiel" class="item-grouped">
-        <div class="item">
-          <div class="label">
+        <div
+          class="item"
+          (click)="ref.showOptionGroup = !ref.showOptionGroup"
+          [class.selectable]="(ref.childrens || []).length"
+        >
+          <div class="label head">
+            <div
+              class="color-border"
+              [style.backgroundColor]="ref.showOptionGroup ? null : referentielMappingColor(ref.label)"
+            ></div>
+            <mat-icon *ngIf="(ref.childrens || []).length"
+              >{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
             <p>{{ref.label}}</p>
-            <button
-              *ngIf="(ref.childrens || []).length"
-              (click)="ref.showOptionGroup = !ref.showOptionGroup"
-              mat-icon-button
-            >
-              <mat-icon
-                >{{ ref.showOptionGroup ? 'expand_less' : 'expand_more'
-                }}</mat-icon
-              >
-            </button>
           </div>
           <div class="column-item">
             <app-time-selector
               *ngIf="perUnity === 'hour'"
               [value]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : 0"
               (valueChange)="onUpdateOptions(ref, $event)"
+              [disabled]="true"
             ></app-time-selector>
             <input
               *ngIf="perUnity !== 'hour'"
@@ -87,90 +95,9 @@
           </div>
         </div>
       </div>
+      <div class="separator"></div>
     </div>
   </div>
-
-  <div
-    *ngFor="let ref of referentiel"
-    class="item-grouped"
-    [class.maximize]="ref.showActivityGroup"
-  >
-    <div
-      class="item"
-      (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
-      [class.selectable]="(ref.childrens || []).length"
-    >
-      <div class="label">
-        <div
-          class="color-border"
-          [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"
-        ></div>
-        <mat-icon *ngIf="(ref.childrens || []).length"
-          >{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}
-        </mat-icon>
-        <p>{{ref.label}}</p>
-      </div>
-      <div class="column-item">
-        <div></div>
-        <div></div>
-      </div>
-      <div class="column-item">
-        <div></div>
-      </div>
-      <div class="column-item">
-        <div></div>
-      </div>
-    </div>
-    <div class="group">
-      <div class="color-border">
-        <div [style.backgroundColor]="referentielMappingColor(ref.label)"></div>
-      </div>
-      <div>
-        <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
-          <div class="label">
-            <p>{{itemGroup.label}}</p>
-          </div>
-          <div class="column-item">
-            <div>
-              <input
-                type="number"
-                [ngModel]="itemGroup.originalIn"
-                [attr.disabled]="true"
-                placeholder="-"
-              />
-            </div>
-            <div>
-              <span> </span>
-            </div>
-          </div>
-          <div class="column-item">
-            <div>
-              <input
-                type="number"
-                [ngModel]="itemGroup.originalOut"
-                [attr.disabled]="true"
-                placeholder="-"
-              />
-            </div>
-            <div></div>
-          </div>
-          <div class="column-item">
-            <div>
-              <input
-                type="number"
-                [ngModel]="itemGroup.originalStock"
-                [attr.disabled]="true"
-                placeholder="-"
-              />
-            </div>
-            <div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="flex-1"></div>
 
   <div class="sticky-action-footer">
     <aj-options-backup-panel></aj-options-backup-panel>
