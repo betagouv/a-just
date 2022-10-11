@@ -79,6 +79,7 @@
       background-color: fColor(darkModeBgMenuSelected);
       border-right: 1px solid fColor(darkModeBgMenu);
       margin-right: 0px;
+      z-index: 200;
 
       .menu-item {
 
