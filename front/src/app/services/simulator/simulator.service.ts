@@ -138,6 +138,10 @@ export class SimulatorService extends MainClass {
         dateStop: generalizeTimeZone(this.dateStop.getValue()),
       })
       .then((data) => {
+        console.log({
+          start: this.dateStart.getValue(),
+          end: this.dateStop.getValue(),
+        })
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })

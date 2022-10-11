@@ -585,7 +585,15 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
             )
           )
           console.log('########')
-          console.log({ calcul1, calcul2: simulation.lastStock, nbDays: nbOfDays(dateStart, dateStop), inTotal: simulation.totalIn, out: simulation.totalOut })
+          console.log({
+            calcul1,
+            calcul2: simulation.lastStock,
+            dateStart,
+            dateStop,
+            nbDays: nbOfDays(dateStart, dateStop),
+            inTotal: simulation.totalIn,
+            out: simulation.totalOut,
+          })
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
           simulation.lastStock = Math.floor(simulation.realDTESInMonths * Math.floor(simulation.totalOut))
         }
