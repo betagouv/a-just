@@ -205,7 +205,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onDownloadCalculator() {
     this.appService.alert.next({
-      text: 'Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu\'à l\'ouverture de votre fenêtre de téléchargement',
+      text: 'Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu\'à l\'ouverture de votre fenêtre de téléchargement.',
     })
   }
 }
