@@ -3,6 +3,70 @@
 :host {
     position: relative;
 
+    .separator {
+        display: block;
+        height: 100px
+    }
+
+    .item-grouped {
+        margin: 8px 16px 0 16px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        padding: 15px;
+
+        &.maximize {
+            .item {
+                position: relative;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+                    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            }
+
+            .group {
+                height: inherit;
+                overflow: inherit;
+            }
+        }
+
+        .group {
+            height: 0;
+            overflow: hidden;
+            display: flex;
+
+            >div:last-child {
+                flex: 1;
+            }
+
+            .color-border {
+                padding: 12px;
+                margin-right: 19px;
+
+                >div {
+                    width: 3px;
+                    border-radius: 3px;
+                    height: 100%;
+                }
+            }
+
+            .group-item {
+                display: flex;
+                align-items: center;
+                height: 67px;
+
+                .label {
+                    width: 254px;
+                }
+
+                .column-item {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-self: stretch;
+                }
+            }
+        }
+    }
+
     aj-select {
         margin-left: 8px;
     }
@@ -14,24 +78,22 @@
 
         .content-list {
             flex: 1;
-            overflow: auto;
         }
     }
 
     .sticky-action-footer {
         height: 80px;
-        padding: 16px;
         box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.04),
             0 -20px 25px -5px rgba(0, 0, 0, 0.1);
         background-color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: sticky;
+        position: fixed;
+        padding: 0px 0px 0px 222px;
+        left: 0px;
         bottom: 0;
-        left: 0;
         width: 100%;
-        z-index: 102;
 
         button:first-child {
             margin-right: 16px;
@@ -82,21 +144,44 @@
     .header-list,
     .content-list {
         .label {
-            width: 300px;
+            position: relative;
+            display: flex;
 
-            &.month {
+            &.empty {
+                width: 331px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+
+            &.col {
+                font-size: 14px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.71;
+                flex: 1;
+                border-bottom: solid 2px black;
+                background-color: #eee;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 54px;
+                margin-right: 8px;
+            }
+
+            mat-icon {
+                vertical-align: initial;
             }
         }
     }
 
     .header-list {
+        padding: 0px 8px 0px 0px;
         border-bottom: 1px solid rgba(fColor(cblack), 0.2);
-        padding: 8px 0;
         display: flex;
         align-items: center;
+        background-color: white;
 
         .current-month {
             margin: 0 16px;
@@ -111,9 +196,33 @@
         padding: 8px 0;
         display: flex;
 
+        &.selectable {
+            cursor: pointer;
+
+            input {
+                cursor: pointer;
+            }
+        }
+
         .label {
             display: flex;
             align-items: center;
+
+            &.head {
+                padding-left: 6px;
+                width: 300px;
+            }
+
+            .color-border {
+                width: 3px;
+                height: 4px;
+                border-radius: 3px;
+                position: absolute;
+                left: 0.5px;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+            }
 
             p {
                 flex: 1;
@@ -130,6 +239,7 @@
         p,
         input {
             margin-right: 16px;
+            width: auto;
         }
     }
 
@@ -137,11 +247,13 @@
         .group {
             height: 0;
             overflow: hidden;
+            display: grid;
 
             &.enable {
                 height: inherit;
                 overflow: inherit;
                 margin-bottom: 16px;
+                display: table;
             }
 
             .group-item {

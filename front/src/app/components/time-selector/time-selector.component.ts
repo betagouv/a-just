@@ -14,6 +14,7 @@ import { FormControl, FormGroup } from '@angular/forms'
 })
 export class TimeSelectorComponent implements OnChanges {
   @Input() value: number = 0
+  @Input() disabled: boolean = false
   @Output() valueChange = new EventEmitter()
   toChange: boolean = true
 
@@ -23,6 +24,8 @@ export class TimeSelectorComponent implements OnChanges {
   })
 
   constructor() {
+    if (this.disabled) {
+    }
     this.timeForm.controls.minute.valueChanges.subscribe((value) => {
       if (value && parseInt(value) <= 59 && this.toChange === true)
         this.onChangeHour(this.getFormString())
