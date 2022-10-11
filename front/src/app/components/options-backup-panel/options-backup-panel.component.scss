@@ -8,8 +8,13 @@
     font-weight: bold;
   }
 
+  .blue-button {
+    background-color: #000091;
+    color: white;
+  }
+
   .list {
-    > p {
+    >p {
       cursor: pointer;
 
       &.selected {
