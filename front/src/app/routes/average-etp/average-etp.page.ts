@@ -5,6 +5,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { findRealValue } from 'src/app/utils/dates'
 
 @Component({
   templateUrl: './average-etp.page.html',
@@ -14,8 +15,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   referentiel: ContentieuReferentielInterface[] = []
   perUnity: string = 'hour'
   isLoading: boolean = false
-  subTitle: string = ''
-
+  subTitleDate: string = ''
+  subTitleName: string = ''
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
@@ -37,27 +38,26 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.watch(
       this.contentieuxOptionsService.contentieuxLastUpdate.subscribe(
         (lastUpdate) => {
-          if (lastUpdate !== null) {
-            console.log(
-              'valeur chargé',
-              this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
-            )
+          console.log('on subscribe', lastUpdate)
+          if (lastUpdate !== null && lastUpdate !== undefined) {
             const res =
               this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
-            if (res !== undefined)
-              this.subTitle =
-                'Mis à jour, le' +
-                res.date +
-                ', par' +
-                res.user.firstName +
-                ' ' +
-                res.user.lastName
+            if (res !== undefined && res.date) {
+              let strDate = findRealValue(new Date(res.date))
+              strDate = strDate === '' ? " aujourd'hui" : ', le ' + strDate
+              this.subTitleDate = 'Mis à jour' + strDate + ', par '
+              this.subTitleName = res.user.firstName + ' ' + res.user.lastName
+            }
+          } else {
+            this.subTitleDate = ''
+            this.subTitleName = ''
           }
         }
       )
     )
   }
 
+  getLogOfLastUpdate() {}
   ngOnDestroy() {
     this.watcherDestroy()
   }
