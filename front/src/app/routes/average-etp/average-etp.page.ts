@@ -1,4 +1,6 @@
 import { Component, OnDestroy } from '@angular/core'
+import { dataInterface } from 'src/app/components/select/select.component'
+import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
@@ -17,6 +19,11 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   isLoading: boolean = false
   subTitleDate: string = ''
   subTitleName: string = ''
+  categorySelected: string = 'magistrats'
+  backups: BackupInterface[] = []
+  selectedIds: any[] = []
+  formDatas: dataInterface[] = []
+
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
@@ -26,10 +33,23 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     super()
 
     this.watch(
+      this.contentieuxOptionsService.backups.subscribe((b) => {
+        this.backups = b
+        this.formatDatas()
+      })
+    )
+    this.watch(
+      this.contentieuxOptionsService.backupId.subscribe(
+        (b) => (this.selectedIds = [b])
+      )
+    )
+
+    this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
         if (backupId !== null) {
           this.onLoad(backupId)
           console.log('On charge')
+          console.log(this.referentiel)
           this.contentieuxOptionsService.getLastUpdate()
         }
       })
@@ -44,7 +64,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
               this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
             if (res !== undefined && res.date) {
               let strDate = findRealValue(new Date(res.date))
-              strDate = strDate === '' ? " aujourd'hui" : ', le ' + strDate
+              strDate = strDate === '' ? " aujourd'hui" : ' le ' + strDate
               this.subTitleDate = 'Mis à jour' + strDate + ', par '
               this.subTitleName = res.user.firstName + ' ' + res.user.lastName
             }
@@ -55,6 +75,42 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         }
       )
     )
+  }
+
+  onChangeBackup(id: any[]) {
+    if (
+      this.contentieuxOptionsService.optionsIsModify.getValue() &&
+      !confirm('Vous avez des modifications en cours. Supprimer ?')
+    ) {
+      this.selectedIds = [this.contentieuxOptionsService.backupId.getValue()]
+      return
+    }
+
+    if (id.length) {
+      this.contentieuxOptionsService.backupId.next(id[0])
+    }
+  }
+
+  formatDatas() {
+    if (
+      this.selectedIds &&
+      this.selectedIds.length &&
+      !this.backups.find((b) => b.id === this.selectedIds[0])
+    ) {
+      this.selectedIds = []
+    }
+
+    this.formDatas = this.backups.map((back) => {
+      const date = new Date(back.date)
+
+      return {
+        id: back.id,
+        value: `${back.label} du ${(date.getDate() + '').padStart(
+          2,
+          '0'
+        )} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
+      }
+    })
   }
 
   getLogOfLastUpdate() {}
@@ -113,5 +169,11 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeUnity(unit: string) {
     this.perUnity = unit
+  }
+
+  changeCategorySelected(category: string) {
+    this.categorySelected = category
+
+    //this.onLoad()
   }
 }
