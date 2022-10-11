@@ -1,10 +1,10 @@
-import Route, { Access } from './Route';
-import { Types } from '../utils/types';
-import { execSimulation, getSituation } from '../utils/simulator';
+import Route, { Access } from './Route'
+import { Types } from '../utils/types'
+import { execSimulation, getSituation } from '../utils/simulator'
 
 export default class RouteSimulator extends Route {
-  constructor(params) {
-    super({ ...params, model: 'HumanResources' });
+  constructor (params) {
+    super({ ...params, model: 'HumanResources' })
   }
 
   @Route.Post({
@@ -16,37 +16,30 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async getSituation(ctx) {
-    let { backupId, referentielId, dateStart, dateStop } = this.body(ctx);
+  async getSituation (ctx) {
+    let { backupId, referentielId, dateStart, dateStop } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    console.time('simulator-1');
-    const hr = await this.model.getCache(backupId);
-    console.timeEnd('simulator-1');
+    console.time('simulator-1')
+    const hr = await this.model.getCache(backupId)
+    console.timeEnd('simulator-1')
 
-    console.time('simulator-2');
-    const categories = await this.models.HRCategories.getAll();
-    console.timeEnd('simulator-2');
+    console.time('simulator-2')
+    const categories = await this.models.HRCategories.getAll()
+    console.timeEnd('simulator-2')
 
-    console.time('simulator-3');
-    const activities = await this.models.Activities.getAll(backupId);
-    console.timeEnd('simulator-3');
+    console.time('simulator-3')
+    const activities = await this.models.Activities.getAll(backupId)
+    console.timeEnd('simulator-3')
 
-    console.time('simulator-4');
-    const situation = await getSituation(
-      referentielId,
-      hr,
-      activities,
-      categories,
-      dateStart,
-      dateStop
-    );
-    console.timeEnd('simulator-4');
+    console.time('simulator-4')
+    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop)
+    console.timeEnd('simulator-4')
 
-    this.sendOk(ctx, { situation, categories, hr });
+    this.sendOk(ctx, { situation, categories, hr })
   }
 
   @Route.Post({
@@ -59,14 +52,14 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async toSimulate(ctx) {
-    let { backupId, params, simulation, dateStart, dateStop } = this.body(ctx);
+  async toSimulate (ctx) {
+    let { backupId, params, simulation, dateStart, dateStop } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop);
-    this.sendOk(ctx, simulatedSituation);
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop)
+    this.sendOk(ctx, simulatedSituation)
   }
 }
