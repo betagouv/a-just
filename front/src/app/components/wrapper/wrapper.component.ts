@@ -38,6 +38,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() titleTemplate: TemplateRef<any> | undefined
   @Input() title: string = ''
   @Input() subtitle: string = ''
+  @Input() subtitleName: string = ''
   @Input() subtitleTemplate: TemplateRef<any> | undefined | null
   @Input() backUrl: string = ''
   @Input() backAnchor: string | undefined
@@ -93,8 +94,6 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.watcherDestroy()
   }
-
-
 
   onDisconnect() {
     this.authService.onLogout().then(() => {
@@ -205,7 +204,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onDownloadCalculator() {
     this.appService.alert.next({
-      text: 'Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu\'à l\'ouverture de votre fenêtre de téléchargement.',
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement",
     })
   }
 }
