@@ -542,7 +542,8 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) /
+              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
               Math.floor(simulation.totalOut)
           )
         } else if (simulation.totalOut && simulation.realCoverage) {
@@ -554,7 +555,8 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
           simulation.totalOut = Math.floor(Math.floor(simulation.etpMag * 8 * 17.3333) / simulation.realTimePerCase)
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
-            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
+              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
               simulation.totalIn
           )
         } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
@@ -563,8 +565,8 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(dateStart, dateStop) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(dateStart, dateStop) / (365 / 12))
+            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))) /
+              (simulation.realDTESInMonths + nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
           )
         }
       }
@@ -574,14 +576,14 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
         } else if (simulation.totalIn && simulation.totalOut) {
           const calcul1 =
             Math.floor(params.beginSituation.lastStock) +
-            Math.floor((nbOfDays(dateStart, dateStop) / (365 / 12)) * simulation.totalIn) -
-            Math.floor((nbOfDays(dateStart, dateStop) / (365 / 12)) * simulation.totalOut)
+            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
+            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
 
           simulation.lastStock = Math.floor(
             Math.floor(
               Math.floor(params.beginSituation.lastStock) +
-                Math.floor(simulation.totalIn) * (nbOfDays(dateStart, dateStop) / (365 / 12)) -
-                Math.floor(simulation.totalOut) * (nbOfDays(dateStart, dateStop) / (365 / 12))
+                Math.floor(simulation.totalIn) * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) -
+                Math.floor(simulation.totalOut) * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
             )
           )
           console.log('########')
@@ -590,7 +592,7 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
             calcul2: simulation.lastStock,
             dateStart,
             dateStop,
-            nbDays: nbOfDays(dateStart, dateStop),
+            nbDays: nbOfDays(new Date(dateStart), new Date(dateStop)),
             inTotal: simulation.totalIn,
             out: simulation.totalOut,
           })
