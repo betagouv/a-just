@@ -52,8 +52,6 @@ export class PanelActivitiesComponent
       this.etp = 0
     }
 
-    console.log('new etp', this.etp)
-
     // copy list of activities
     this.activities = JSON.parse(
       JSON.stringify(this.activities)
@@ -62,7 +60,7 @@ export class PanelActivitiesComponent
     this.onLoadReferentiel()
   }
 
-  ngOnDestroy() {
+  ngOnDestroy() { 
     this.watcherDestroy()
   }
 
@@ -130,6 +128,8 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
+    console.log('percent', percent)
+
     // memorise list
     const activity = this.activities.find(
       (a) => a.contentieux.id === referentiel.id

@@ -18,5 +18,7 @@ module.exports = {
   contactEmail: process.env.CONTACT_EMAIL,
   preloadHumanResourcesDatas: false,
   nbDaysByMagistrat: 208,
-  nbHoursPerDay: 8,
+  nbDaysByFonctionnaire: 229.57, // 1607 heures / an
+  nbHoursPerDayAndMagistrat: 8,
+  nbHoursPerDayAndFonctionnaire: 7,
 }

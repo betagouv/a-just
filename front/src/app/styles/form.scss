@@ -5,7 +5,10 @@
   margin-bottom: 8px;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
+input[type='text'],
+input[type='number'],
+input[type='password'],
+input[type='email'] {
   padding: 8px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -43,4 +46,37 @@ textarea {
 
 [contenteditable] {
   cursor: text;
+}
+
+input[type='radio'] {
+  width: 24px;
+  height: 24px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  position: relative;
+
+  &:after {
+    width: 22px;
+    height: 22px;
+    border-radius: 22px;
+    position: absolute;
+    content: ' ';
+    display: inline-block;
+    border: 1px solid fColor(cbluedark);
+  }
+
+  &:checked:before {
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    top: 6px;
+    left: 6px;
+    position: absolute;
+    background-color: fColor(cbluedark);
+    content: ' ';
+    display: inline-block;
+  }
 }

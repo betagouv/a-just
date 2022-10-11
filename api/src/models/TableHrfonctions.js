@@ -3,6 +3,7 @@ export default (sequelizeInstance, Model) => {
     return await Model.findAll({
       attributes: ['id', 'code', 'label', 'rank', ['category_id', 'categoryId']],
       order: ['category_id', 'rank'],
+      raw: true,
     })
   }
 
