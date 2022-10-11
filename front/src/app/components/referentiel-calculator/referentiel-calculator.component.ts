@@ -12,6 +12,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 export class ReferentielCalculatorComponent extends MainClass {
   @Input() calculator: CalculatorInterface | null = null
   @Input() sortBy: string = ''
+  @Input() categorySelected: string = ''
   @HostBinding('class.show-children') showChildren: boolean =
     (this.calculator && this.calculator.childIsVisible) || false
 

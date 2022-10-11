@@ -5,7 +5,7 @@ export const environment = {
   production: true,
   serverUrl: '/api/',
   nbDaysByMagistrat: 208,
-  nbHoursPerDay: 8,
+  nbHoursPerDayAndMagistrat: 8,
   version: packageJSON.version,
   matomo: 261,
   forceSSL: true,
