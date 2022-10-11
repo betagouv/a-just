@@ -4,6 +4,7 @@ import { dataInterface } from 'src/app/components/select/select.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
@@ -31,6 +32,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     title: 'Calculator',
     path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/quest-ce-que-cest',
   }
+  lastCategorySelected: string = ''
+  selectedFonctionsIds: number[] = []
+  fonctions: dataInterface[] = []
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -120,10 +124,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     ) {
       this.isLoading = true
       this.calculatorService
-        .filterList()
-        .then((list) => {
+        .filterList(this.categorySelected, this.lastCategorySelected === this.categorySelected ? this.selectedFonctionsIds : null)
+        .then(({ list, fonctions }) => {
+          if (this.lastCategorySelected !== this.categorySelected) {
+            this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
+              id: f.id,
+              value: f.code,
+            }))
+            this.selectedFonctionsIds = fonctions.map(
+              (f: HRFonctionInterface) => f.id
+            )
+          }
           this.formatDatas(list)
           this.isLoading = false
+          this.lastCategorySelected = this.categorySelected
         })
         .catch(() => (this.isLoading = false))
     }
@@ -178,5 +192,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     this.filtredDatas()
+  }
+
+  changeCategorySelected(category: string) {
+    this.categorySelected = category
+
+    this.onLoad()
+  }
+
+  onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
+    this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.onLoad()
   }
 }

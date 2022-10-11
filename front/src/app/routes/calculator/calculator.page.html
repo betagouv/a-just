@@ -176,15 +176,20 @@
 <ng-template #actions>
   <div class="categories-switch">
     <div class="magistrats" [ngClass]="{'selected': categorySelected === MAGISTRATS}"
-      (click)="$event.stopPropagation(); categorySelected = MAGISTRATS">
+      (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
       <input type="radio" [checked]="categorySelected === MAGISTRATS" />
       <p>Magistrats</p>
     </div>
     <div class="fonctionnaires" [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}" class="fonctionnaires"
-      (click)="$event.stopPropagation(); categorySelected = FONCTIONNAIRES">
+      (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
       <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
       <p>Fonctionnaires</p>
     </div>
   </div>
+
+  <aj-select title="Fonctions" [value]="selectedFonctionsIds" [datas]="fonctions"
+    (valueChange)="onChangeFonctionsSelected($event)">
+  </aj-select>
+
   <div class="flex-1"></div>
 </ng-template>
