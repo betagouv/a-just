@@ -579,13 +579,11 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
             Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
             Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
 
-          simulation.lastStock = Math.floor(
-            Math.floor(
-              Math.floor(params.beginSituation.lastStock) +
-                Math.floor(simulation.totalIn) * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) -
-                Math.floor(simulation.totalOut) * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
-            )
-          )
+          simulation.lastStock =
+            Math.floor(params.beginSituation.lastStock) +
+            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
+            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
+
           console.log('########')
           console.log({
             calcul1,
@@ -597,7 +595,7 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
             out: simulation.totalOut,
           })
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
-          simulation.lastStock = Math.floor(simulation.realDTESInMonths * Math.floor(simulation.totalOut))
+          simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
           simulation.lastStock = 0
