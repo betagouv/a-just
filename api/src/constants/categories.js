@@ -12,3 +12,6 @@ export const getCategoryColor = (label, opacity) => {
 
   return `rgba(239, 203, 58, ${opacity})`
 }
+
+export const MAGISTRATS = 'magistrats'
+export const FONCTIONNAIRES = 'fonctionnaires'
