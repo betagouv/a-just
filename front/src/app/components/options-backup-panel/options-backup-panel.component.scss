@@ -3,14 +3,37 @@
 :host {
   display: flex;
   align-items: center;
+  width: 100%;
 
   .header-selection {
     font-weight: bold;
   }
 
+  button {
+    border-radius: 0px;
+    height: 48px;
+    padding: 0px 24px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .options {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    line-height: 34px;
+    font-size: 18px;
+    font-weight: 500;
+    background-color: white;
+    color: #000091;
+    border: solid 1px #000091;
+  }
+
+  .no-margin {
+    margin-right: 0px !important
+  }
+
   .blue-button {
-    background-color: #000091;
-    color: white;
+    //background-color: #000091;
+    //color: white;
   }
 
   .list {
@@ -21,6 +44,19 @@
         font-weight: bold;
       }
     }
+  }
+}
+
+.enable {
+  background-color: #000091 !important;
+  color: white;
+
+  border: solid 1px;
+
+  &.empty {
+    background-color: white !important;
+    color: #000091;
+    border: solid 1px #000091;
   }
 }
 
