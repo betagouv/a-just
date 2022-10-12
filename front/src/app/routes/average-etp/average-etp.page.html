@@ -44,6 +44,18 @@
             <p>{{ref.label}}</p>
           </div>
           <div class="column-item">
+            <div class="label col">
+              <app-time-selector
+                *ngIf="perUnity === 'hour'"
+                [value]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : 0"
+                (valueChange)="onUpdateOptions(ref, $event)"
+                [disabled]="true"
+              ></app-time-selector>
+            </div>
+            <div class="label col">Nombre de dossiers par jour</div>
+            <div class="label col no-margin">Nombre de dossiers par mois</div>
+
+            <!-- 
             <app-time-selector
               *ngIf="perUnity === 'hour'"
               [value]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : 0"
@@ -62,6 +74,7 @@
               {{perUnity === 'hour' ? '&nbsp; temps moyen en heure:minute' :
               'nombre de dossiers par jour'}}
             </p>
+            -->
           </div>
         </div>
         <div class="group" [class.enable]="ref.showOptionGroup">
@@ -74,6 +87,7 @@
               <p>{{itemGroup.label}}</p>
             </div>
             <div class="column-item">
+              <!-- 
               <app-time-selector
                 *ngIf="perUnity === 'hour'"
                 [value]="itemGroup.averageProcessingTime ? (perUnity === 'hour' ? itemGroup.averageProcessingTime : fixDecimal(8 / itemGroup.averageProcessingTime)) : 0"
@@ -91,7 +105,7 @@
                 {{perUnity === 'hour' ? '&nbsp; temps moyen en heure:minute' :
                 'nombre de dossiers par jour'}}
               </p>
-            </div>
+            --></div>
           </div>
         </div>
       </div>
