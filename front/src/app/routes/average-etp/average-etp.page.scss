@@ -3,6 +3,7 @@
 :host {
     position: relative;
 
+
     .separator {
         display: block;
         height: 100px
@@ -13,7 +14,11 @@
         background-color: white;
         border-radius: 8px;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        padding: 15px;
+        //padding: 15px;
+
+        .no-margin {
+            margin-right: 0px !important;
+        }
 
         &.maximize {
             .item {
@@ -141,19 +146,8 @@
         }
     }
 
-    .header-list,
-    .content-list {
+    .header-list {
         .label {
-            position: relative;
-            display: flex;
-
-            &.empty {
-                width: 331px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
             &.col {
                 font-size: 14px;
                 font-weight: bold;
@@ -169,6 +163,43 @@
                 height: 54px;
                 margin-right: 8px;
             }
+        }
+    }
+
+    .content-list {
+        .label {
+            &.col {
+                font-size: 14px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.71;
+                flex: 1;
+                background-color: #f6f6f6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                margin-right: 8px;
+                padding: 0px 16px;
+            }
+        }
+    }
+
+    .header-list,
+    .content-list {
+        .label {
+            position: relative;
+            display: flex;
+
+            &.empty {
+                width: 331px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+
 
             mat-icon {
                 vertical-align: initial;
@@ -177,7 +208,7 @@
     }
 
     .header-list {
-        padding: 0px 8px 0px 0px;
+        padding: 0px 22px 0px 0px;
         border-bottom: 1px solid rgba(fColor(cblack), 0.2);
         display: flex;
         align-items: center;
@@ -193,7 +224,7 @@
     }
 
     .item {
-        padding: 8px 0;
+        //padding: 8px 0;
         display: flex;
 
         &.selectable {
@@ -211,6 +242,7 @@
             &.head {
                 padding-left: 6px;
                 width: 300px;
+                margin: 25px 0px 25px 15px;
             }
 
             .color-border {
@@ -241,9 +273,13 @@
             margin-right: 16px;
             width: auto;
         }
+
     }
 
     .item-grouped {
+
+        padding-right: 14px;
+
         .group {
             height: 0;
             overflow: hidden;
@@ -254,6 +290,8 @@
                 overflow: inherit;
                 margin-bottom: 16px;
                 display: table;
+                margin-left: 15px;
+                padding-bottom: 16px;
             }
 
             .group-item {

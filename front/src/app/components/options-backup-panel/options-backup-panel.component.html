@@ -1,29 +1,25 @@
 <ng-template [ngIf]="readOnly === false">
   <button
-    [disabled]="!optionsIsModify"
-    mat-stroked-button
-    class="left-margin blue-button"
-    (click)="onSaveHR(true)"
-  >
-    Enregistrer sous
-  </button>
-  <button
     *ngIf="selectedIds.length"
     [disabled]="!optionsIsModify"
+    [ngClass]="{ enable: optionsIsModify }"
     mat-stroked-button
     class="left-margin blue-button"
-    (click)="onSaveHR(false)"
   >
-    Enregister
+    Retour
   </button>
+  <div class="flex-1"></div>
 
   <button
-    mat-icon-button
-    class="left-margin"
+    class="left-margin blue-button options"
     [matMenuTriggerFor]="menu"
+    #t="matMenuTrigger"
     aria-label="Example icon-button with a menu"
   >
-    <mat-icon>more_vert</mat-icon>
+    Options
+    <mat-icon class="no-margin"
+      >{{ !t.menuOpen ? 'expand_less' : 'expand_more' }}
+    </mat-icon>
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="onRenameBackup()">
@@ -43,4 +39,24 @@
       <span>Créer une sauvegarde vierge</span>
     </button>
   </mat-menu>
+
+  <button
+    [disabled]="!optionsIsModify"
+    [ngClass]="{ enable: optionsIsModify }"
+    mat-stroked-button
+    class="left-margin blue-button empty"
+    (click)="onSaveHR(true)"
+  >
+    Enregistrer sous
+  </button>
+  <button
+    *ngIf="selectedIds.length"
+    [disabled]="!optionsIsModify"
+    [ngClass]="{ enable: optionsIsModify }"
+    mat-stroked-button
+    class="left-margin blue-button"
+    (click)="onSaveHR(false)"
+  >
+    Enregister
+  </button>
 </ng-template>
