@@ -3,7 +3,7 @@
 .header-list {
   display: flex;
   width: 100%;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgHeader);
   z-index: 1;
   position: sticky;
   top: 0;
@@ -43,6 +43,7 @@
         text-align: right;
         font-size: 12px;
         color: fColor(grayRow);
+        white-space: nowrap;
       }
 
       > div {
@@ -200,8 +201,7 @@
       align-self: stretch;
       display: flex;
       width: 125px;
-      height: calc(100% - 8px);
-      margin: 4px 0;
+      height: 100%;
 
       > .text {
         flex: 1;
@@ -215,18 +215,20 @@
           text-align: right;
           font-size: 12px;
           color: fColor(grayRow);
+          white-space: nowrap;
         }
 
         > div {
           display: flex;
           align-items: center;
 
-          &:first-child {
-            flex: 1;
+          &.taux-row {
+            height: 48px;
           }
 
-          &:last-child {
-            height: 50px;
+          &.dtes-row {
+            height: 24px;
+            margin-top: 2px;
           }
         }
       }
@@ -238,7 +240,6 @@
     flex: 1;
 
     > .sub-item {
-      margin: 4px 0;
       flex: 1;
       align-self: stretch;
       display: flex;
@@ -247,19 +248,18 @@
       > div {
         margin-right: 3px;
 
-        &:first-child {
-          flex: 1;
+        &.taux-row {
+          height: 48px;
         }
 
-        &:last-child {
-          height: 50px;
+        &.dtes-row {
+          height: 24px;
+          margin-top: 2px;
         }
 
         > div.taux {
-          background-color: fColor(darkModeBgMenuSelected);
+          background-color: fColor(darkModeBgMenu);
           border-radius: 3.7px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
           position: relative;
 
           > aj-speedometer {
@@ -270,8 +270,7 @@
         > div.dtes {
           background-color: fColor(darkModeBgMenu);
           border-radius: 4px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -500,8 +499,8 @@
 .title {
   display: flex;
   align-items: center;
-  background-color: fColor(darkModeBgMenu);
-  padding: 0 32px 24px 32px;
+  background-color: fColor(darkModeBgHeader);
+  padding: 0 16px 16px 16px;
 
   aj-select,
   aj-date-select {
@@ -539,15 +538,6 @@ progression-bar {
 .reaffectator-page {
   margin-right: 8px;
   text-decoration: none;
-
-  > button {
-    display: flex;
-    align-items: center;
-
-    aj-radio-button {
-      margin-left: 16px;
-    }
-  }
 }
 
 .check-item {

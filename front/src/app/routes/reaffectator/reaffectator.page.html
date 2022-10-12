@@ -33,15 +33,15 @@
         <div class="label-container">
           <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
           <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
-          <p>Indicateurs</p>
+          <p>Compteurs</p>
         </div>
         <ng-template [ngIf]="showIndicatorPanel">
           <div class="contentieux-label">
             <div class="text">
-              <div>
-                <p>Taux de<br />couverture ajusté :</p>
+              <div class="taux-row">
+                <p>Taux de couverture :</p>
               </div>
-              <div>
+              <div class="dtes-row">
                 <p class="etp-header">DTES (en mois) :</p>
               </div>
             </div>
@@ -51,12 +51,12 @@
       <ng-template [ngIf]="showIndicatorPanel">
         <div class="activities">
           <div class="sub-item" *ngFor="let ref of referentiel">
-            <div>
+            <div class="taux-row">
               <div class="taux">
                 <aj-speedometer class="with-auto" [percent]="ref.coverage"></aj-speedometer>
               </div>
             </div>
-            <div>
+            <div class="dtes-row">
               <div class="dtes">
                 <p>{{ref.dtes | number:".2-2"}}</p>
               </div>
@@ -175,15 +175,12 @@
 
 <ng-template #actions>
   <a routerLink="/ventilations" class="reaffectator-page">
-    <button class="blue-light light outline">
-      Simuler des affectations
-      <aj-radio-button [title]="'title'" width="40px" height="20px" bgColor="#8585f6" switchColor="white"
-        [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line" [readOnly]="true">
-      </aj-radio-button>
+    <button class="blue-light small light outline">
+      Retour aux ventilations
     </button>
   </a>
 
-  <button class="primary light" (click)="onExport()">
+  <button class="blue-light light small" (click)="onExport()">
     <mat-icon>save</mat-icon>
     Exporter en PDF
   </button>
