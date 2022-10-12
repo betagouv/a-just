@@ -7,7 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
-import { maxBy, minBy, sumBy } from 'lodash'
+import { sumBy } from 'lodash'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -80,8 +80,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   onStart() {
-    const situation = this.humanResourceService.findSituation(this.human)
-
+    const situation = this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
     this.etp = (situation && situation.etp) || 0
 
     this.form
