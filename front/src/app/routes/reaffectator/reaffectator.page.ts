@@ -2,12 +2,9 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { meanBy, orderBy, sumBy } from 'lodash'
+import { flatten, meanBy, orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
-import {
-  HRCategoryInterface,
-  HRCategorySelectedInterface,
-} from 'src/app/interfaces/hr-category'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { fixDecimal } from 'src/app/utils/numbers'
@@ -22,6 +19,7 @@ import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
 import { ActivityInterface } from 'src/app/interfaces/activity'
+import { copyArray } from 'src/app/utils/array'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -43,8 +41,6 @@ interface listFormatedInterface {
   allHr: HumanResourceSelectedInterface[]
   hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
-  firstETPTargetValue: number[]
-  headerPanel: boolean
   personSelected: number[]
   categoryId: number
 }
@@ -53,11 +49,7 @@ interface ContentieuReferentielCalculateInterface
   extends ContentieuReferentielInterface {
   dtes: number
   coverage: number
-}
-
-interface FirstETPTargetValueInterface {
-  groupId: number
-  list: number[]
+  realEtp: number
 }
 
 @Component({
@@ -82,9 +74,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
   showIndicatorPanel: boolean = true
-  objectOfFirstETPTargetValue: FirstETPTargetValueInterface[] = []
-  timeoutUpdateETPTargetAfterDelay: any
   actualActivities: ActivityInterface[] = []
+  firstETPTargetValue: (number | null)[] = []
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -108,11 +99,18 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           .filter(
             (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
           )
-          .map((r) => ({ ...r, selected: true, dtes: 0, coverage: 0 }))
+          .map((r) => ({
+            ...r,
+            selected: true,
+            dtes: 0,
+            coverage: 0,
+            realEtp: 0,
+          }))
         this.formReferentiel = this.referentiel.map((r) => ({
           id: r.id,
           value: this.referentielMappingName(r.label),
         }))
+        this.firstETPTargetValue = this.referentiel.map(() => null)
 
         this.reaffectatorService.selectedReferentielIds = this
           .reaffectatorService.selectedReferentielIds.length
@@ -146,11 +144,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    this.formFilterSelect = this.formFilterSelect.map(c => {
-      const itemBlock = this.listFormated.find(l => l.categoryId === c.id)
-      c.value = (c.orignalValue + '')
+    this.formFilterSelect = this.formFilterSelect.map((c) => {
+      const itemBlock = this.listFormated.find((l) => l.categoryId === c.id)
+      c.value = c.orignalValue + ''
 
-      if(itemBlock && itemBlock.hrFiltered.length > 1) {
+      if (itemBlock && itemBlock.hrFiltered.length > 1) {
         c.value = `${c.value}s`
       }
 
@@ -205,11 +203,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    // init datas
-    this.objectOfFirstETPTargetValue = []
-
     let selectedReferentielIds: number[] | null = null
-    if (this.formReferentiel.length !== this.reaffectatorService.selectedReferentielIds.length) {
+    if (
+      this.formReferentiel.length !==
+      this.reaffectatorService.selectedReferentielIds.length
+    ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
@@ -228,9 +226,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           (i: listFormatedInterface) => ({
             ...i,
             hrFiltered: [...i.allHr],
-            headerPanel: true,
             personSelected: [],
-            firstETPTargetValue: [],
+            referentiel: copyArray(this.referentiel),
           })
         )
 
@@ -374,7 +371,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.filterSelected = null
     }
 
-    this.onFilterList()
+    this.orderListWithFiltersParams()
   }
 
   onExport() {
@@ -412,6 +409,29 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onCalculETPAffected() {
+    this.referentiel.map((ref) => {
+      ref.realEtp = 0
+      return ref
+    })
+
+    flatten(this.listFormated.map((l) => l.allHr)).map((hr) => {
+      this.referentiel = this.referentiel.map((ref) => {
+        const timeAffected = sumBy(
+          hr.currentActivities.filter(
+            (r) => r.contentieux && r.contentieux.id === ref.id
+          ),
+          'percent'
+        )
+        let realETP = (hr.etp || 0) - hr.hasIndisponibility
+        if (realETP < 0) {
+          realETP = 0
+        }
+        ref.realEtp = (ref.realEtp || 0) + (timeAffected / 100) * realETP
+
+        return ref
+      })
+    })
+
     this.listFormated = this.listFormated.map((list) => {
       list.referentiel.map((ref) => {
         ref.totalAffected = 0
@@ -419,22 +439,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
 
       list.hrFiltered = list.hrFiltered.map((hr) => {
-        hr.tmpActivities = {}
-
         list.referentiel = list.referentiel.map((ref) => {
-          hr.tmpActivities[ref.id] = hr.currentActivities.filter(
-            (r) => r.contentieux && r.contentieux.id === ref.id
+          const timeAffected = sumBy(
+            hr.currentActivities.filter(
+              (r) => r.contentieux && r.contentieux.id === ref.id
+            ),
+            'percent'
           )
-          if (hr.tmpActivities[ref.id].length) {
-            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
-            if (timeAffected) {
-              let realETP = (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP < 0) {
-                realETP = 0
-              }
-              ref.totalAffected =
-                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+          if (timeAffected) {
+            let realETP = (hr.etp || 0) - hr.hasIndisponibility
+            if (realETP < 0) {
+              realETP = 0
             }
+            ref.totalAffected =
+              (ref.totalAffected || 0) + (timeAffected / 100) * realETP
           }
 
           return ref
@@ -442,21 +460,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         return hr
       })
-
-      if (list.hrFiltered.length > 1) {
-        if (list.originalLabel.indexOf('agistrat') !== -1) {
-          list.label = list.originalLabel.replace(
-            'agistrat',
-            'agistrats du siège'
-          )
-        } else {
-          list.label = list.originalLabel + 's'
-        }
-      } else if (list.originalLabel.indexOf('agistrat') !== -1) {
-        list.label = list.originalLabel.replace('agistrat', 'agistrat du siège')
-      } else {
-        list.label = list.originalLabel
-      }
 
       return list
     })
@@ -527,7 +530,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         )
 
         let outValue = Math.floor(
-          (etpt * environment.nbHoursPerDayAndMagistrat * nbDaysByMonthForMagistrat) /
+          (etpt *
+            environment.nbHoursPerDayAndMagistrat *
+            nbDaysByMonthForMagistrat) /
             averageWorkingProcess
         )
 
@@ -622,17 +627,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       this.orderListWithFiltersParams()
     }
-  }
-
-  updateETPTargetAfterDelay(list: number[], index: number, value: number) {
-    if (this.timeoutUpdateETPTargetAfterDelay) {
-      clearTimeout(this.timeoutUpdateETPTargetAfterDelay)
-      this.timeoutUpdateETPTargetAfterDelay = null
-    }
-
-    this.timeoutUpdateETPTargetAfterDelay = setTimeout(() => {
-      list[index] = value || 0
-    }, 500)
   }
 
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
