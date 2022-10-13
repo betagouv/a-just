@@ -10,28 +10,42 @@
 
   .profil {
     display: flex;
-    width: 416px;
+    width: 349px;
 
     > .label-container {
       display: flex;
-      padding: 8px 32px;
+      align-items: flex-end;
+      padding: 8px 0 8px 32px;
       flex: 1;
 
-      i {
-        width: 32px;
-        height: 32px;
-        margin-right: 8px;
-        border: 1px solid fColor(darkModeTitle);
-        color: white;
+      .check-item {
+        width: 24px;
+        height: 24px;
+        margin-right: 4px;
         text-align: center;
-        line-height: 32px;
-        cursor: pointer;
+        line-height: 24px;
+
+        &.selected {
+          background-color: fColor(darkModeTitle);
+          color: white;
+        }
+
+        &.selected::before {
+          position: relative;
+          content: '';
+        }
       }
 
-      p {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
+      p.label {
+        flex: 1;
+        color: fColor(darkModeTitle);
+      }
+
+      p.btn {
+        border: 1px solid fColor(darkModeTitle);
+        color: fColor(darkModeTitle);
+        padding: 4px 12px;
+        cursor: pointer;
       }
     }
 
@@ -55,22 +69,16 @@
           height: 40px;
           margin-top: 3px;
           align-items: flex-end;
-        }
-
-        &.etp-target {
-          margin-top: 17px;
-          height: 38px;
-          align-items: center;
+          margin-bottom: 2px;
         }
 
         &.etp {
-          height: 38px;
-          align-items: flex-end;
+          height: 23px;
+          align-items: center;
         }
 
         &.filter {
-          height: 39px;
-          margin-bottom: 11px;
+          height: 32px;
           align-items: center;
         }
 
@@ -95,8 +103,12 @@
       &.selected {
         background-color: fColor(darkModeBgMenu);
 
-        > div.text .filter mat-icon {
-          color: fColor(sortIconHeaderSelected);
+        .etp {
+          background-color: fColor(darkModeBgHeader);
+        }
+
+        .filter i {
+          color: fColor(tooltipBgTitleColor);
         }
       }
 
@@ -105,6 +117,7 @@
         display: flex;
         align-items: flex-end;
         height: 40px;
+        margin-bottom: 2px;
 
         p {
           text-transform: uppercase;
@@ -116,43 +129,26 @@
         }
       }
 
-      > .etp-target {
-        margin-top: 17px;
-        height: 38px;
-
-        input {
-          width: 100%;
-          height: 100%;
-          text-align: center;
-          border: none;
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
-        }
-      }
-
       > .etp {
-        height: 38px;
-        display: flex;
-        align-items: flex-end;
+        height: 23px;
+        border-radius: 4px;
+        background-color: fColor(darkModeBgMenu);
+        margin: 0 4px;
 
         p {
-          color: fColor(headerNumberColor);
+          color: fColor(tooltipBgTitleColor);
           width: 100%;
           text-align: center;
         }
       }
 
       .filter {
-        height: 39px;
-        margin-bottom: 11px;
+        height: 32px;
         align-items: center;
         display: flex;
         justify-content: center;
 
-        p {
-          color: #161616;
-        }
-        mat-icon {
+        i {
           width: 16px;
           height: 16px;
           font-size: 16px;
@@ -172,7 +168,7 @@
   .profil {
     display: flex;
     align-items: stretch;
-    width: 416px;
+    width: 349px;
 
     > .label-container {
       flex: 1;
@@ -184,7 +180,7 @@
         height: 32px;
         margin-right: 8px;
         border: 1px solid fColor(darkModeTitle);
-        color: white;
+        color: fColor(darkModeTitle);
         text-align: center;
         line-height: 32px;
         cursor: pointer;
@@ -230,6 +226,17 @@
             height: 24px;
             margin-top: 2px;
           }
+
+          &.etp-target-row {
+            height: 23px;
+            margin-top: 4px;
+          }
+
+          &.total-etp-row {
+            margin-top: 7px;
+            margin-bottom: 11px;
+            height: 20px;
+          }
         }
       }
     }
@@ -257,13 +264,39 @@
           margin-top: 2px;
         }
 
+        &.etp-target-row {
+          height: 23px;
+          margin-top: 4px;
+
+          > input {
+            text-align: center;
+            border: none;
+            width: 100%;
+          }
+        }
+
+        &.total-etp-row {
+          margin-top: 7px;
+          margin-bottom: 11px;
+          height: 20px;
+
+          > p {
+            text-align: center;
+            font-weight: bold;
+            color: fColor(headerNumberColor);
+          }
+        }
+
         > div.taux {
           background-color: fColor(darkModeBgMenu);
           border-radius: 3.7px;
-          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
 
           > aj-speedometer {
-            width: 100%;
+            width: 48px;
           }
         }
 
@@ -307,32 +340,7 @@
     .sub-content-list {
       display: inline-block;
       width: 100%;
-      padding: 4px 18px;
-
-      .header-item {
-        height: 65px;
-        padding: 0 16px;
-        display: flex;
-        align-items: center;
-        background-color: fColor(darkModeBgLight);
-        border-radius: 8px;
-
-        .check-item {
-          margin-right: 10px;
-        }
-
-        p.label {
-          margin-right: 56px;
-          color: fColor(darkModeTitle);
-        }
-
-        p.btn {
-          border: 1px solid fColor(darkModeTitle);
-          color: fColor(darkModeTitle);
-          padding: 4px 12px;
-          cursor: pointer;
-        }
-      }
+      padding: 1px 2px;
     }
   }
 }
@@ -363,7 +371,7 @@
 }
 
 .profil {
-  width: 400px;
+  width: 349px;
 
   &.item {
     display: flex;
@@ -378,6 +386,10 @@
       .name {
         margin-bottom: 8px;
         display: flex;
+
+        .check-item {
+          margin-top: 3px;
+        }
 
         p {
           font-weight: bold;
@@ -541,8 +553,8 @@ progression-bar {
 }
 
 .check-item {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   border: 1px solid fColor(darkModeTitle);
   border-radius: 4px;
   cursor: pointer;
@@ -557,6 +569,11 @@ progression-bar {
     right: 0;
     top: 0;
     bottom: 0;
+    font-size: 10px;
     background-color: fColor(darkModeTitle);
   }
+}
+
+.category-select {
+  width: 235px;
 }

@@ -5,8 +5,9 @@
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
         (valueChange)="onDateChanged($event)">
       </aj-date-select>
-      <aj-select title="Filtrer par catégorie" class="dark-mode" [value]="reaffectatorService.selectedCategoriesIds"
-        [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdsChanged($event)">
+      <aj-select title="Filtrer par catégorie" class="dark-mode category-select"
+        [value]="reaffectatorService.selectedCategoriesIds" [datas]="formFilterSelect"
+        (valueChange)="onSelectedCategoriesIdsChanged($event)">
       </aj-select>
       <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
         [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)">
@@ -42,7 +43,13 @@
                 <p>Taux de couverture :</p>
               </div>
               <div class="dtes-row">
-                <p class="etp-header">DTES (en mois) :</p>
+                <p>DTES (en mois) :</p>
+              </div>
+              <div class="etp-target-row">
+                <p>ETPT cibles :</p>
+              </div>
+              <div class="total-etp-row">
+                <p>ETPT ventilés :</p>
               </div>
             </div>
           </div>
@@ -50,16 +57,23 @@
       </div>
       <ng-template [ngIf]="showIndicatorPanel">
         <div class="activities">
-          <div class="sub-item" *ngFor="let ref of referentiel">
+          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
             <div class="taux-row">
               <div class="taux">
-                <aj-speedometer class="with-auto" [percent]="ref.coverage"></aj-speedometer>
+                <aj-speedometer class="with-auto small-text" [classDarkMode]="true" [percent]="ref.coverage">
+                </aj-speedometer>
               </div>
             </div>
             <div class="dtes-row">
               <div class="dtes">
                 <p>{{ref.dtes | number:".2-2"}}</p>
               </div>
+            </div>
+            <div class="etp-target-row">
+              <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
+            </div>
+            <div class="total-etp-row">
+              <p>{{ref.realEtp | number:".2-2"}}</p>
             </div>
           </div>
         </div>
@@ -72,42 +86,37 @@
         <div class="header-list">
           <div class="profil">
             <div class="label-container">
-              <i *ngIf="!list.headerPanel" class="ri-eye-line" (click)="list.headerPanel = true"></i>
-              <i *ngIf="list.headerPanel" class="ri-eye-off-line" (click)="list.headerPanel = false"></i>
-              <p>{{ list.label }}</p>
+              <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hrFiltered.length}"
+                (click)="toogleCheckAllPerson(i)">{{ list.personSelected.length ? list.personSelected.length : '' }}
+              </div>
+              <p class="label">{{ list.personSelected.length > 1 ? 'sélections' : 'sélection' }}</p>
+              <p class="btn" (click)="onInitList(list)">
+                Réinitialiser
+              </p>
             </div>
-            <div class="contentieux-label" *ngIf="list.headerPanel">
+            <div class="contentieux-label">
               <div class="label">
                 <p>Contentieux :</p>
               </div>
-              <div class="etp-target">
-                <p>ETPT cible :</p>
-              </div>
               <div class="etp">
-                <p>ETP affectés :</p>
+                <p>ETPT simulés :</p>
               </div>
               <div class="filter">
                 <p class="etp-header">Trier par :</p>
               </div>
             </div>
           </div>
-          <div class="activities" *ngIf="list.headerPanel">
+          <div class="activities">
             <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
-              [class.selected]="filterSelected && filterSelected.id === ref.id">
+              [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
               <div class="label">
                 <p>{{ referentielMappingName(ref.label) }}</p>
-              </div>
-              <div class="etp-target">
-                <input [ngModel]="list.firstETPTargetValue[index]"
-                  (ngModelChange)="updateETPTargetAfterDelay(list.firstETPTargetValue, index, parseFloat($event))" />
               </div>
               <div class="etp">
                 <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
               </div>
-              <div class="filter" (click)="onFilterBy(ref)">
-                <mat-icon>{{ filterSelected && filterSelected.id === ref.id ?
-                  'filter_list' : 'filter_list_off' }}
-                </mat-icon>
+              <div class="filter">
+                <i class="ri-sort-desc"></i>
               </div>
             </div>
           </div>
@@ -115,15 +124,6 @@
         </div>
 
         <div class="sub-content-list">
-          <div class="header-item">
-            <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hrFiltered.length}"
-              (click)="toogleCheckAllPerson(i)"></div>
-            <p class="label">Tout sélectionner</p>
-            <p class="btn" (click)="onInitList(list)">
-              Retour à la ventilation actuelle des fiches sélectionnées
-            </p>
-          </div>
-
           <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById; let index = index"
             [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
             <div class="profil item">
