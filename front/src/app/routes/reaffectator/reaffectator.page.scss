@@ -10,12 +10,12 @@
 
   .profil {
     display: flex;
-    width: 349px;
+    width: 369px;
 
     > .label-container {
       display: flex;
       align-items: flex-end;
-      padding: 8px 0 8px 32px;
+      padding: 8px 0 8px 16px;
       flex: 1;
 
       .check-item {
@@ -168,12 +168,12 @@
   .profil {
     display: flex;
     align-items: stretch;
-    width: 349px;
+    width: 369px;
 
     > .label-container {
       flex: 1;
       display: flex;
-      padding: 8px 32px;
+      padding: 8px 16px;
 
       i {
         width: 32px;
@@ -371,7 +371,7 @@
 }
 
 .profil {
-  width: 349px;
+  width: 369px;
 
   &.item {
     display: flex;
