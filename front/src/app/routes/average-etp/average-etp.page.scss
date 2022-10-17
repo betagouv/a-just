@@ -3,6 +3,11 @@
 :host {
     position: relative;
 
+    input {
+        &.modified {
+            color: #000091
+        }
+    }
 
     .separator {
         display: block;

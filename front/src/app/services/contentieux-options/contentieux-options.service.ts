@@ -23,6 +23,7 @@ export class ContentieuxOptionsService extends MainClass {
   optionsIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   )
+  initValue: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   constructor(
     private serverService: ServerService,
@@ -65,10 +66,10 @@ export class ContentieuxOptionsService extends MainClass {
 
   updateOptions(referentiel: ContentieuReferentielInterface) {
     const options = this.contentieuxOptions.getValue()
+
     const findIndexOptions = options.findIndex(
       (a) => a.contentieux.id === referentiel.id
     )
-
     if (referentiel.averageProcessingTime) {
       if (findIndexOptions === -1) {
         // add
@@ -132,7 +133,7 @@ export class ContentieuxOptionsService extends MainClass {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-
+    console.log({ list: this.contentieuxOptions.getValue() })
     return this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
@@ -143,6 +144,7 @@ export class ContentieuxOptionsService extends MainClass {
       .then((r) => {
         this.backupId.next(r.data)
         this.loadBackupsAndId()
+        this.setInitValue()
       })
   }
 
@@ -200,9 +202,13 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          console.log(r.data)
           this.contentieuxLastUpdate.next(r.data)
         })
     else return {}
+  }
+
+  setInitValue() {
+    this.initValue.next(true)
+    this.optionsIsModify.next(false)
   }
 }
