@@ -1,4 +1,32 @@
-.disabled {
-    pointer-events: none;
-    cursor: none;
+:host {
+    form {
+        position: relative;
+
+        input {
+            &.changed {
+                color: #000091
+            }
+        }
+
+        img {
+            position: absolute;
+            right: 8px;
+            margin: auto;
+            top: 0px;
+            bottom: 0px;
+        }
+
+        input:invalid {
+            background: rgba(255, 0, 0, 0.282);
+        }
+
+        input:valid {
+            //background: rgba(0, 128, 0, 0.2);
+        }
+    }
+
+    .disabled {
+        pointer-events: none;
+        cursor: none;
+    }
 }

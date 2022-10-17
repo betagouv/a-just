@@ -49,10 +49,25 @@
                 *ngIf="perUnity === 'hour'"
                 [value]="ref.averageProcessingTime ? (perUnity === 'hour' ? ref.averageProcessingTime : fixDecimal(8 / ref.averageProcessingTime)) : 0"
                 (valueChange)="onUpdateOptions(ref, $event)"
-                [disabled]="true"
+                (click)="$event.stopPropagation();"
               ></app-time-selector>
             </div>
-            <div class="label col">Nombre de dossiers par jour</div>
+            <div class="label col">
+              <!-- 
+              <form [formGroup]="nbFolderDay">
+          
+        [ngClass]="{ changed: changed === true }"
+
+                <input
+                  type="text"
+                  pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                  formControlName="time"
+                  placeholder="Nb de dossiers"
+                  style="width: 100px"
+                />
+              </form>
+                     -->
+            </div>
             <div class="label col no-margin">Nombre de dossiers par mois</div>
 
             <!-- 
