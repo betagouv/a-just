@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -8,6 +9,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { findRealValue } from 'src/app/utils/dates'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
   templateUrl: './average-etp.page.html',
@@ -23,6 +25,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   backups: BackupInterface[] = []
   selectedIds: any[] = []
   formDatas: dataInterface[] = []
+  initValue: boolean = false
 
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
@@ -45,12 +48,34 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     )
 
     this.watch(
+      this.contentieuxOptionsService.optionsIsModify.subscribe((b) => {
+        if (b === false) {
+        }
+      })
+    )
+    this.watch(
+      this.contentieuxOptionsService.initValue.subscribe((b) => {
+        if (b === true) {
+          this.referentiel.map((v) => {
+            v.isModified = false
+            v.averageProcessingTime = v.defaultValue
+          })
+
+          //this.contentieuxOptionsService.initValue.next(false)
+        }
+      })
+    )
+
+    this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
         if (backupId !== null) {
           this.onLoad(backupId)
-          console.log('On charge')
-          console.log(this.referentiel)
           this.contentieuxOptionsService.getLastUpdate()
+          this.referentiel.map((v) => {
+            v.defaultValue = v.averageProcessingTime
+            v.isModified = false
+          })
+          //this.contentieuxOptionsService.optionsIsModify.next(false)
         }
       })
     )
@@ -58,7 +83,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.watch(
       this.contentieuxOptionsService.contentieuxLastUpdate.subscribe(
         (lastUpdate) => {
-          console.log('on subscribe', lastUpdate)
           if (lastUpdate !== null && lastUpdate !== undefined) {
             const res =
               this.contentieuxOptionsService.contentieuxLastUpdate.getValue()
@@ -123,6 +147,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
+      console.log('pt', options)
 
       const referentiels = [
         ...this.humanResourceService.contentieuxReferentiel.getValue(),
@@ -137,6 +162,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         const getOption = options.find((a) => a.contentieux.id === ref.id)
         ref.averageProcessingTime =
           (getOption && getOption.averageProcessingTime) || null
+        ref.defaultValue = ref.averageProcessingTime
+        ref.isModified = false
 
         ref.childrens = (ref.childrens || []).map((c) => {
           const getOptionActivity = options.find(
@@ -145,7 +172,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           c.averageProcessingTime =
             (getOptionActivity && getOptionActivity.averageProcessingTime) ||
             null
-
           return c
         })
 
@@ -156,15 +182,19 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     })
   }
 
-  onUpdateOptions(referentiel: ContentieuReferentielInterface, value: number) {
+  onUpdateOptions(
+    referentiel: ContentieuReferentielInterface,
+    value: number,
+    unit: string
+  ) {
+    referentiel.averageProcessingTime = this.getInputValue(value, unit)
     this.contentieuxOptionsService.updateOptions({
       ...referentiel,
-      averageProcessingTime: !value
-        ? null
-        : this.perUnity === 'hour'
-        ? value
-        : 8 / value,
+      averageProcessingTime: referentiel.averageProcessingTime,
     })
+
+    console.log('res', referentiel.averageProcessingTime, unit)
+    referentiel.isModified = true
   }
 
   changeUnity(unit: string) {
@@ -173,7 +203,27 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeCategorySelected(category: string) {
     this.categorySelected = category
+  }
 
-    //this.onLoad()
+  getInputValue(avgProcessTime: any, unit: string) {
+    if (unit === 'hour') {
+      return avgProcessTime
+    } else if (unit === 'nbPerDay') {
+      console.log(avgProcessTime)
+      return 8 / avgProcessTime
+    } else if (unit === 'nbPerMonth') {
+      return (8 / avgProcessTime) * (208 / 12)
+    }
+    return '0'
+  }
+
+  getField(
+    referentiel: ContentieuReferentielInterface,
+    event: any,
+    unit: string
+  ) {
+    event.target.blur()
+    this.onUpdateOptions(referentiel, event.target.value, unit)
+    referentiel.isModified = true
   }
 }

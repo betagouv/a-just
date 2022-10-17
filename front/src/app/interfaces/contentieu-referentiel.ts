@@ -17,4 +17,6 @@ export interface ContentieuReferentielInterface {
   averageProcessingTime: number | null
   parent?: ContentieuReferentielInterface
   childIsVisible?: boolean
+  isModified?: boolean
+  defaultValue?: any
 }

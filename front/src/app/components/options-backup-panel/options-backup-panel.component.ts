@@ -105,4 +105,8 @@ export class OptionsBackupPanelComponent
   onRenameBackup() {
     this.contentieuxOptionsService.renameBackup()
   }
+
+  onBackBackup() {
+    this.contentieuxOptionsService.setInitValue()
+  }
 }
