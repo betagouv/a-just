@@ -1,12 +1,22 @@
 <div>
   <form [formGroup]="timeForm">
     <input
+      [ngClass]="{ disabled: disabled === true, changed: changed === true }"
+      type="text"
+      pattern="^([1-9]?[0-9]{1}|^100):[0-5][0-9]$"
+      formControlName="time"
+      placeholder="hh:mm"
+    />
+    <img class="no-margin" [src]="getImg()" />
+
+    <!--h
+          <input
       [ngClass]="{ disabled: disabled === true }"
       formControlName="hour"
       type="number"
       style="width: 100px"
     />
-    <!--h
+    
     <input
       [ngClass]="{ disabled: disabled === true }"
       formControlName="minute"

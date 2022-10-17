@@ -12,59 +12,24 @@ import { FormControl, FormGroup } from '@angular/forms'
   templateUrl: './time-selector.component.html',
   styleUrls: ['./time-selector.component.scss'],
 })
-export class TimeSelectorComponent implements OnChanges {
+export class TimeSelectorComponent {
   @Input() value: number = 0
   @Input() disabled: boolean = false
+  @Input() changed: boolean = false
   @Output() valueChange = new EventEmitter()
-  toChange: boolean = true
-
+  regex = '^([1-9]?[0-9]{1}|^100):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+  regexObj = new RegExp(this.regex)
   timeForm = new FormGroup({
-    hour: new FormControl(''),
-    minute: new FormControl(''),
+    time: new FormControl(''),
   })
 
   constructor() {
-    if (this.disabled) {
-    }
-    this.timeForm.controls.minute.valueChanges.subscribe((value) => {
-      if (value && parseInt(value) <= 59 && this.toChange === true)
-        this.onChangeHour(this.getFormString())
-      else if (value && parseInt(value) > 59 && this.toChange === true) {
-        this.toChange = false
-        this.timeForm.controls['minute'].setValue('59')
-        this.onChangeHour(this.getFormString('59'))
-      } else this.toChange = true
+    this.timeForm.controls.time.valueChanges.subscribe((value) => {
+      if (value !== null && this.regexObj.test(value)) {
+        this.changed = true
+        this.onChangeHour(value)
+      }
     })
-
-    this.timeForm.controls.hour.valueChanges.subscribe(() => {
-      if (this.toChange === true) this.onChangeHour(this.getFormString())
-    })
-  }
-
-  ngOnChanges() {
-    if (this.toChange === true) {
-      this.toChange = false
-      this.timeForm.controls['hour'].setValue(String(this.value).split('.')[0])
-      this.toChange = false
-      this.timeForm.controls['minute'].setValue(
-        this.decimalToStringDate(this.value).split(':')[1] || '00'
-      )
-    } else this.toChange = true
-  }
-
-  getFormString(minute?: string) {
-    return `${this.timeForm.controls['hour'].value}:${
-      minute ? minute : this.timeForm.controls['minute'].value
-    }`
-  }
-
-  decimalToStringDate(decimal: number) {
-    if (decimal != null) {
-      const n = new Date(0, 0)
-      n.setMinutes(Math.round(+decimal * 60))
-      return n.toTimeString().slice(0, 5)
-    }
-    return '0'
   }
 
   onChangeHour(str: string) {
@@ -81,5 +46,11 @@ export class TimeSelectorComponent implements OnChanges {
     return parseFloat(
       (parseInt(arr[0], 10) || 0) + '.' + (dec < 10 ? '0' : '') + fulldec
     )
+  }
+
+  getImg() {
+    return this.changed
+      ? '/assets/icons/time-line-blue.svg'
+      : '/assets/icons/time-line.svg'
   }
 }
