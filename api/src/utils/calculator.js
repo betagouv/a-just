@@ -65,16 +65,7 @@ export const emptyCalulatorValues = (referentiels) => {
   return list
 }
 
-export const syncCalculatorDatas = (
-  list,
-  nbMonth,
-  activities,
-  dateStart,
-  dateStop,
-  hr,
-  categories,
-  optionsBackups
-) => {
+export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
   console.log('syncCalculatorDatas')
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
@@ -82,16 +73,7 @@ export const syncCalculatorDatas = (
     const childrens = (list[i].childrens || []).map((c) => ({
       ...c,
       nbMonth,
-      ...getActivityValues(
-        dateStart,
-        dateStop,
-        prefiltersActivities[c.contentieux.id] || [],
-        c.contentieux.id,
-        nbMonth,
-        hr,
-        categories,
-        optionsBackups
-      ),
+      ...getActivityValues(dateStart, dateStop, prefiltersActivities[c.contentieux.id] || [], c.contentieux.id, nbMonth, hr, categories, optionsBackups),
     }))
 
     list[i] = {
@@ -113,31 +95,12 @@ export const syncCalculatorDatas = (
 
   return list
 }
-const getActivityValues = (
-  dateStart,
-  dateStop,
-  activities,
-  referentielId,
-  nbMonth,
-  hr,
-  categories,
-  optionsBackups
-) => {
-  activities = activities.filter(
-    (a) =>
-      month(a.periode).getTime() >= month(dateStart).getTime() &&
-      month(a.periode).getTime() <= month(dateStop).getTime()
-  )
+const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
+  activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
-  const totalIn =
-    (activities || []).filter((e) => e.entrees !== null).length !== 0
-      ? Math.floor(sumBy(activities, 'entrees') / nbMonth)
-      : null
+  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? Math.floor(sumBy(activities, 'entrees') / nbMonth) : null
 
-  const totalOut =
-    (activities || []).filter((e) => e.sorties !== null).length !== 0
-      ? Math.floor(sumBy(activities, 'sorties') / nbMonth)
-      : null
+  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? Math.floor(sumBy(activities, 'sorties') / nbMonth) : null
   let lastStock = null
   if (activities.length) {
     const lastActivities = activities[activities.length - 1]
@@ -155,13 +118,9 @@ const getActivityValues = (
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
-  const magRealTimePerCase = fixDecimal(
-    ((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (totalOut / etpMag)
-  )
+  const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (totalOut / etpMag))
 
-  const fonRealTimePerCase = fixDecimal(
-    ((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (totalOut / etpFon)
-  )
+  const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (totalOut / etpFon))
 
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
@@ -242,11 +201,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     // only working day
     if (workingDay(now)) {
       nbDay++
-      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(
-        referentielId,
-        now,
-        hr
-      )
+      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr)
       if (nextDeltaDate) {
         nextDateFinded = new Date(nextDeltaDate)
       }
@@ -314,18 +269,12 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
 
   if (findIndexOption !== -1) {
     magCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
-    fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime // TODO pour JImmy a changer ici
+    fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTimeFonc // TODO pour JImmy a changer ici
   }
 
   if (magCalculateTimePerCase) {
-    magCalculateOut = Math.floor(
-      (((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) /
-        12
-    )
-    fonCalculateOut = Math.floor(
-      (((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) /
-        12
-    )
+    magCalculateOut = Math.floor((((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) / 12)
+    fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
     magCalculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
     fonCalculateCoverage = fixDecimal(fonCalculateOut / (totalIn || 0))
     magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
