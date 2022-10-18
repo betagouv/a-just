@@ -599,6 +599,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
+            averageProcessingTimeFonc: null,
           },
         })
         ;(r.childrens || [])
@@ -611,6 +612,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
                 id: rc.id,
                 label: rc.label,
                 averageProcessingTime: null,
+                averageProcessingTimeFonc: null,
               },
             })
           })

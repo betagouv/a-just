@@ -60,7 +60,7 @@ export class PanelActivitiesComponent
     this.onLoadReferentiel()
   }
 
-  ngOnDestroy() { 
+  ngOnDestroy() {
     this.watcherDestroy()
   }
 
@@ -143,6 +143,7 @@ export class PanelActivitiesComponent
           id: referentiel.id,
           label: '',
           averageProcessingTime: 0,
+          averageProcessingTimeFonc: 0,
         },
         referentielId: referentiel.id,
         percent,
@@ -168,6 +169,7 @@ export class PanelActivitiesComponent
             id: parentReferentiel.id,
             label: '',
             averageProcessingTime: 0,
+            averageProcessingTimeFonc: 0,
           },
           referentielId: parentReferentiel.id,
           percent,
@@ -176,9 +178,10 @@ export class PanelActivitiesComponent
     } else {
       // remove activities of childs
       const childId = (referentiel.childrens || []).map((r) => r.id)
-      this.activities = this.activities.filter(a => childId.indexOf(a.contentieux.id) === -1)
+      this.activities = this.activities.filter(
+        (a) => childId.indexOf(a.contentieux.id) === -1
+      )
     }
-
 
     this.onLoadReferentiel()
     this.referentielChange.emit(this.referentiel)
