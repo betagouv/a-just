@@ -70,11 +70,16 @@ export class ContentieuxOptionsService extends MainClass {
     const findIndexOptions = options.findIndex(
       (a) => a.contentieux.id === referentiel.id
     )
-    if (referentiel.averageProcessingTime) {
+    if (
+      referentiel.averageProcessingTime ||
+      referentiel.averageProcessingTimeFonc
+    ) {
       if (findIndexOptions === -1) {
         // add
         options.push({
           averageProcessingTime: referentiel.averageProcessingTime || null,
+          averageProcessingTimeFonc:
+            referentiel.averageProcessingTimeFonc || null,
           contentieux: referentiel,
         })
       } else {
@@ -82,6 +87,8 @@ export class ContentieuxOptionsService extends MainClass {
         options[findIndexOptions] = {
           ...options[findIndexOptions],
           averageProcessingTime: referentiel.averageProcessingTime || null,
+          averageProcessingTimeFonc:
+            referentiel.averageProcessingTimeFonc || null,
         }
       }
     } else if (findIndexOptions !== -1) {
@@ -133,7 +140,6 @@ export class ContentieuxOptionsService extends MainClass {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-    console.log({ list: this.contentieuxOptions.getValue() })
     return this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
@@ -194,7 +200,6 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   getLastUpdate() {
-    console.log('le backup Id', this.backupId.getValue())
     if (this.backupId.getValue() !== undefined)
       return this.serverService
         .post(`contentieux-options/get-last-update`, {

@@ -146,11 +146,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    this.formFilterSelect = this.formFilterSelect.map(c => {
-      const itemBlock = this.listFormated.find(l => l.categoryId === c.id)
-      c.value = (c.orignalValue + '')
+    this.formFilterSelect = this.formFilterSelect.map((c) => {
+      const itemBlock = this.listFormated.find((l) => l.categoryId === c.id)
+      c.value = c.orignalValue + ''
 
-      if(itemBlock && itemBlock.hrFiltered.length > 1) {
+      if (itemBlock && itemBlock.hrFiltered.length > 1) {
         c.value = `${c.value}s`
       }
 
@@ -209,7 +209,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.objectOfFirstETPTargetValue = []
 
     let selectedReferentielIds: number[] | null = null
-    if (this.formReferentiel.length !== this.reaffectatorService.selectedReferentielIds.length) {
+    if (
+      this.formReferentiel.length !==
+      this.reaffectatorService.selectedReferentielIds.length
+    ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
@@ -527,7 +530,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         )
 
         let outValue = Math.floor(
-          (etpt * environment.nbHoursPerDayAndMagistrat * nbDaysByMonthForMagistrat) /
+          (etpt *
+            environment.nbHoursPerDayAndMagistrat *
+            nbDaysByMonthForMagistrat) /
             averageWorkingProcess
         )
 
@@ -594,6 +599,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
+            averageProcessingTimeFonc: null,
           },
         })
         ;(r.childrens || [])
@@ -606,6 +612,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
                 id: rc.id,
                 label: rc.label,
                 averageProcessingTime: null,
+                averageProcessingTimeFonc: null,
               },
             })
           })

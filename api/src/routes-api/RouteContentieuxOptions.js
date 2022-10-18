@@ -65,7 +65,6 @@ export default class RouteContentieuxOptions extends Route {
   })
   async saveBackup (ctx) {
     const { backupId, list, backupName, juridictionId } = this.body(ctx)
-
     if (
       (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
       (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
@@ -140,7 +139,6 @@ export default class RouteContentieuxOptions extends Route {
     const { backupId } = ctx.params
 
     if (await this.models.OptionsBackups.haveAccessWithoutJuridiction(backupId, ctx.state.user.id)) {
-      console.log(await this.model.getAllById(backupId))
       this.sendOk(ctx, await this.model.getAllById(backupId))
     } else {
       this.sendOk(ctx, null)
