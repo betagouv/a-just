@@ -79,3 +79,9 @@ body { margin: 0; font-family: Marianne; }
 .font-size-12 {
 	font-size: 12px;
 }
+
+// FOR WINDOWS ONLY
+
+body:not(.iIOS) .window-scrool-with-margin {
+	margin-right: 13px;
+}
