@@ -3,6 +3,18 @@
 :host {
     position: relative;
 
+    .empty-separator {
+        display: flex;
+        padding-left: 300px;
+        height: 8px;
+
+        .col {
+            .no-margin {
+                margin-right: 0px;
+            }
+        }
+    }
+
     input {
         &.modified {
             color: #000091
@@ -294,15 +306,15 @@
                 height: inherit;
                 overflow: inherit;
                 margin-bottom: 16px;
-                display: table;
+                //display: table;
                 margin-left: 15px;
-                padding-bottom: 16px;
+                //padding-bottom: 16px;
             }
 
             .group-item {
                 display: flex;
                 align-items: center;
-                padding: 8px 0;
+                //padding: 8px 0;
                 border-left: 4px solid gray;
 
                 .label {

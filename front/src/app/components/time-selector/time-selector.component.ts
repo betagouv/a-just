@@ -20,6 +20,8 @@ export class TimeSelectorComponent implements OnChanges {
   @Input() changed: boolean = false
   @Input() outsideChange: boolean | undefined = false
   @Input() defaultValue: number = 0
+  @Input() defaultValueFonc: number = 0
+  @Input() category: string = ''
   @Output() valueChange = new EventEmitter()
   regex = '^([0-9]?[0-9]{1}|^100):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
   regexObj = new RegExp(this.regex)
@@ -39,12 +41,6 @@ export class TimeSelectorComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    console.log(
-      'fullDecimale',
-      this.value,
-      this.decimalToStringDate(this.value)
-    )
-
     this.timeForm.controls['time'].setValue(
       this.decimalToStringDate(this.value) || ''
     )
@@ -56,7 +52,9 @@ export class TimeSelectorComponent implements OnChanges {
     const value = event.target.value
     if (value !== null && this.regexObj.test(value)) {
       if (this.firstChange === true) {
-        this.value = this.defaultValue
+        if (this.category === 'MAGISTRATS') this.value = this.defaultValue
+        else this.value = this.defaultValueFonc
+
         this.changed = false
         this.firstChange = false
       } else {

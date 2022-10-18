@@ -15,8 +15,10 @@ export interface ContentieuReferentielInterface {
   showActivityGroup?: boolean
   showOptionGroup?: boolean
   averageProcessingTime: number | null
+  averageProcessingTimeFonc: number | null
   parent?: ContentieuReferentielInterface
   childIsVisible?: boolean
   isModified?: boolean
   defaultValue?: any
+  defaultValueFonc?: any
 }
