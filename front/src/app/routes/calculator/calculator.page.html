@@ -1,4 +1,4 @@
-<aj-wrapper title="Calculateur" [documentation]="documentation" [actionTemplate]="actions"
+<aj-wrapper #wrapper title="Calculateur" [documentation]="documentation" [actionTemplate]="actions"
   class="content-margin-null action-fit-width" [isLoading]="isLoading">
   <div class="container">
     <div class="sub-main-header">
@@ -12,14 +12,14 @@
       <div class="flex-1"></div>
       <aj-options-backup-panel [readOnly]="true" class="bg-white"></aj-options-backup-panel>
     </div>
-    <div class="header-calculator">
+    <div class="header-calculator window-scrool-with-margin">
       <div class="title-header-calculator">
         <div class="width-contentieux"></div>
         <div class="item">
           <p>
             Données renseignées
-            <i class="ri-lightbulb-flash-line" #lightDatas></i>
-            <aj-tooltips [onOver]="false" [onClick]="lightDatas" title="Données renseignées" class="medium">
+            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('données renseignées')"></i>
+            <aj-tooltips title="Données renseignées" class="medium">
               Données renseignées depuis les écrans
               <a routerLink="/ventilations">Affectation des ETP</a> et
               <a routerLink="/donnees-d-activite">Données d’activité</a>
@@ -29,8 +29,8 @@
         <div class="item activity">
           <p>
             Activité constatée
-            <i class="ri-lightbulb-flash-line" #lightActivities></i>
-            <aj-tooltips [onOver]="false" [onClick]="lightActivities" title="Activité constatée" class="medium">
+            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('activité constatée')"></i>
+            <aj-tooltips title="Activité constatée" class="medium">
               Calculs effectués à partir des données constatées
             </aj-tooltips>
           </p>
@@ -38,16 +38,15 @@
         <div class="item calculate">
           <p>
             Activité calculée
-            <i class="ri-lightbulb-flash-line" #lightActivitiesCalculates></i>
-            <aj-tooltips [onOver]="false" [onClick]="lightActivitiesCalculates" title="Activité calculée"
-              class="medium left">
+            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('activité calculée')"></i>
+            <aj-tooltips title="Activité calculée" class="medium left">
               Calculs théoriques effectués à partir des temps moyens de
               comparaison sélectionnés dans « Mes temps moyens de comparaison »
             </aj-tooltips>
           </p>
         </div>
       </div>
-      <div class="contentieux-header-calculator" title="">
+      <div class="contentieux-header-calculator window-scrool-with-margin" title="">
         <div class="width-contentieux">
           <p>Contentieux</p>
         </div>
