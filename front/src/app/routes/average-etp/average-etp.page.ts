@@ -65,8 +65,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
               v.childrens.map((child) => {
                 if (child.isModified === true) {
                   child.isModified = false
-                  //child.averageProcessingTime = child.defaultValue
-                  //child.averageProcessingTimeFonc = child.defaultValueFonc
+                  child.averageProcessingTime = child.defaultValue
+                  child.averageProcessingTimeFonc = child.defaultValueFonc
                 }
               })
             }
@@ -83,9 +83,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           this.onLoad(backupId)
           this.contentieuxOptionsService.getLastUpdate()
           this.referentiel.map((v) => {
-            v.defaultValue = v.averageProcessingTime
-            v.defaultValueFonc = v.averageProcessingTimeFonc
-
             v.isModified = false
           })
           //this.contentieuxOptionsService.optionsIsModify.next(false)
@@ -236,19 +233,24 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   getInputValue(avgProcessTime: any, unit: string) {
     switch (this.getCategoryStr()) {
       case 'averageProcessingTime':
-        break
+        if (unit === 'hour') {
+          return avgProcessTime
+        } else if (unit === 'nbPerDay') {
+          return 8 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (8 / avgProcessTime) * (208 / 12)
+        }
+        return '0'
       case 'averageProcessingTimeFonc':
-        break
+        if (unit === 'hour') {
+          return avgProcessTime
+        } else if (unit === 'nbPerDay') {
+          return 7 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (7 / avgProcessTime) * (229.57 / 12)
+        }
+        return '0'
     }
-    //console.log(avgProcessTime)
-    if (unit === 'hour') {
-      return avgProcessTime
-    } else if (unit === 'nbPerDay') {
-      return 8 / avgProcessTime
-    } else if (unit === 'nbPerMonth') {
-      return (8 / avgProcessTime) * (208 / 12)
-    }
-    return '0'
   }
 
   getField(
