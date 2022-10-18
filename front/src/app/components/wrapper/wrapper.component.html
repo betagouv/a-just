@@ -98,7 +98,7 @@
   <div class="panel-header">
     <div class="over-title">
       <div class="panel-header-closing-row">
-        <h6>{{ documentation && documentation.title }}</h6>
+        <h6>{{ documentationToShow && documentationToShow.title }}</h6>
         <i class="ri-close-line" (click)="panelHelper = false"></i>
       </div>
       <p>
@@ -108,7 +108,7 @@
     </div>
   </div>
 
-  <iframe [src]="(documentation && documentation.path) || '' | sanitizeResourceUrl"></iframe>
+  <iframe [src]="(documentationToShow && documentationToShow.path) || '' | sanitizeResourceUrl"></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
