@@ -14,7 +14,7 @@ export class MainClass {
   MAGISTRATS = MAGISTRATS
   FONCTIONNAIRES = FONCTIONNAIRES
 
-  fixDecimal(n: number): number {
+  fixDecimal(n: number, base?: number): number {
     return fixDecimal(n)
   }
 
@@ -23,7 +23,7 @@ export class MainClass {
   }
 
   parseFloat(s: string): number {
-    return parseFloat(s.replace(/,/,'.'))
+    return parseFloat(s.replace(/,/, '.'))
   }
 
   watch(sub: any) {

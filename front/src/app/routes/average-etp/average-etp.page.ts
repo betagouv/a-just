@@ -21,7 +21,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   isLoading: boolean = false
   subTitleDate: string = ''
   subTitleName: string = ''
-  categorySelected: string = 'magistrats'
+  categorySelected: string = 'MAGISTRATS'
   backups: BackupInterface[] = []
   selectedIds: any[] = []
   formDatas: dataInterface[] = []
@@ -59,6 +59,17 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           this.referentiel.map((v) => {
             v.isModified = false
             v.averageProcessingTime = v.defaultValue
+            v.averageProcessingTimeFonc = v.defaultValueFonc
+
+            if (v.childrens !== undefined) {
+              v.childrens.map((child) => {
+                if (child.isModified === true) {
+                  child.isModified = false
+                  //child.averageProcessingTime = child.defaultValue
+                  //child.averageProcessingTimeFonc = child.defaultValueFonc
+                }
+              })
+            }
           })
 
           //this.contentieuxOptionsService.initValue.next(false)
@@ -73,6 +84,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           this.contentieuxOptionsService.getLastUpdate()
           this.referentiel.map((v) => {
             v.defaultValue = v.averageProcessingTime
+            v.defaultValueFonc = v.averageProcessingTimeFonc
+
             v.isModified = false
           })
           //this.contentieuxOptionsService.optionsIsModify.next(false)
@@ -147,7 +160,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
-      console.log('pt', options)
 
       const referentiels = [
         ...this.humanResourceService.contentieuxReferentiel.getValue(),
@@ -162,7 +174,13 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         const getOption = options.find((a) => a.contentieux.id === ref.id)
         ref.averageProcessingTime =
           (getOption && getOption.averageProcessingTime) || null
+
+        ref.averageProcessingTimeFonc =
+          (getOption && getOption.averageProcessingTimeFonc) || null
+
         ref.defaultValue = ref.averageProcessingTime
+        ref.defaultValueFonc = ref.averageProcessingTimeFonc
+
         ref.isModified = false
 
         ref.childrens = (ref.childrens || []).map((c) => {
@@ -172,6 +190,15 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           c.averageProcessingTime =
             (getOptionActivity && getOptionActivity.averageProcessingTime) ||
             null
+
+          c.averageProcessingTimeFonc =
+            (getOptionActivity &&
+              getOptionActivity.averageProcessingTimeFonc) ||
+            null
+          c.defaultValue = c.averageProcessingTime
+          c.defaultValueFonc = c.averageProcessingTimeFonc
+          c.isModified = false
+
           return c
         })
 
@@ -187,13 +214,13 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     value: number,
     unit: string
   ) {
-    referentiel.averageProcessingTime = this.getInputValue(value, unit)
+    referentiel[this.getCategoryStr()] = this.getInputValue(value, unit)
     this.contentieuxOptionsService.updateOptions({
       ...referentiel,
+      averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
       averageProcessingTime: referentiel.averageProcessingTime,
     })
 
-    console.log('res', referentiel.averageProcessingTime, unit)
     referentiel.isModified = true
   }
 
@@ -203,13 +230,20 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeCategorySelected(category: string) {
     this.categorySelected = category
+    console.log(this.categorySelected, this.getCategoryStr())
   }
 
   getInputValue(avgProcessTime: any, unit: string) {
+    switch (this.getCategoryStr()) {
+      case 'averageProcessingTime':
+        break
+      case 'averageProcessingTimeFonc':
+        break
+    }
+    //console.log(avgProcessTime)
     if (unit === 'hour') {
       return avgProcessTime
     } else if (unit === 'nbPerDay') {
-      console.log(avgProcessTime)
       return 8 / avgProcessTime
     } else if (unit === 'nbPerMonth') {
       return (8 / avgProcessTime) * (208 / 12)
@@ -225,5 +259,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     event.target.blur()
     this.onUpdateOptions(referentiel, event.target.value, unit)
     referentiel.isModified = true
+  }
+
+  getCategoryStr() {
+    if (this.categorySelected === 'MAGISTRATS') return 'averageProcessingTime'
+    else if (this.categorySelected === 'FONCTIONNAIRES')
+      return 'averageProcessingTimeFonc'
+    else return 'averageProcessingTime'
   }
 }

@@ -1,7 +1,8 @@
-import { ContentieuReferentielInterface } from "./contentieu-referentiel";
+import { ContentieuReferentielInterface } from './contentieu-referentiel'
 
 export interface ContentieuxOptionsInterface {
-	id?: number;
-	averageProcessingTime: number | null;
-  contentieux: ContentieuReferentielInterface;
+  id?: number
+  averageProcessingTime: number | null
+  averageProcessingTimeFonc: number | null
+  contentieux: ContentieuReferentielInterface
 }
