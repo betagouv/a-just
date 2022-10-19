@@ -150,7 +150,6 @@ export class ContentieuxOptionsService extends MainClass {
       .then((r) => {
         this.backupId.next(r.data)
         this.loadBackupsAndId()
-        this.setInitValue()
       })
   }
 

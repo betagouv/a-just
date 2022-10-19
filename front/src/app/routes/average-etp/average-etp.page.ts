@@ -74,8 +74,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
               })
             }
           })
-
-          //this.contentieuxOptionsService.initValue.next(false)
         }
       })
     )
@@ -89,7 +87,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
             v.isModified = false
             v.isModifiedFonc = false
           })
-          //this.contentieuxOptionsService.optionsIsModify.next(false)
         }
       })
     )
@@ -234,7 +231,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
       if (this.categorySelected === 'MAGISTRATS') referentiel.isModified = true
       else referentiel.isModifiedFonc = true
     }
-    console.log(referentiel)
   }
 
   changeUnity(unit: string) {
