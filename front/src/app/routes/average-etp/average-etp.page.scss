@@ -290,10 +290,14 @@
         align-items: center;
         justify-content: flex-start;
 
-        p,
-        input {
+        p {
             margin-right: 16px;
             width: auto;
+        }
+
+        input {
+            margin-right: 16px;
+            max-width: 140px;
         }
 
     }
