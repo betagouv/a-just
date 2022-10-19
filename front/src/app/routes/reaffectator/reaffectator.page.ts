@@ -129,10 +129,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalValue: f.label,
           }))
 
-          this.onSelectedCategoriesIdsChanged(
-            this.reaffectatorService.selectedCategoriesIds.length
-              ? this.reaffectatorService.selectedCategoriesIds
-              : categories.map((c) => c.id)
+          this.onSelectedCategoriesIdChanged(
+            this.reaffectatorService.selectedCategoriesId !== null
+              ? [this.reaffectatorService.selectedCategoriesId]
+              : this.formFilterSelect.length
+              ? [this.formFilterSelect[0].id]
+              : []
           )
         }
       )
@@ -198,7 +200,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (
       !this.formFilterSelect.length ||
       !this.referentiel.length ||
-      this.humanResourceService.backupId.getValue() === null
+      this.humanResourceService.backupId.getValue() === null ||
+      this.reaffectatorService.selectedCategoriesId === null
     ) {
       return
     }
@@ -216,7 +219,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         selectedReferentielIds,
-        this.reaffectatorService.selectedCategoriesIds,
+        this.reaffectatorService.selectedCategoriesId,
         this.reaffectatorService.selectedFonctionsIds
       )
       .then((returnValues) => {
@@ -383,23 +386,18 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  onSelectedCategoriesIdsChanged(list: string[] | number[]) {
-    this.reaffectatorService.selectedCategoriesIds = list.map((i) => +i)
+  onSelectedCategoriesIdChanged(item: string[] | number[]) {
+    /*this.reaffectatorService.selectedCategoriesId = +item
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
-    let fonctionList: HRFonctionInterface[] = []
-    this.reaffectatorService.selectedCategoriesIds.map((cId) => {
-      fonctionList = fonctionList.concat(
-        allFonctions.filter((f) => f.categoryId === cId)
-      )
-    })
+    let fonctionList: HRFonctionInterface[] = allFonctions.filter((f) => f.categoryId === this.reaffectatorService.selectedCategoriesId)
 
     this.formFilterFonctionsSelect = fonctionList.map((f) => ({
       id: f.id,
       value: f.label,
     }))
 
-    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
+    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))*/
   }
 
   onSelectedFonctionsIdsChanged(list: string[] | number[]) {
