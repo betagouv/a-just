@@ -58,18 +58,21 @@
             <div class="column-item">
               <div class="label col">
                 <app-time-selector [value]="getInputValue(itemGroup[getCategoryStr()],'hour')"
-                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')" [outsideChange]="itemGroup.isModified"
-                  [defaultValue]="itemGroup.defaultValue" [defaultValueFonc]="itemGroup.defaultValueFonc"
-                  [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
+                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')"
+                  [outsideChange]="itemGroup[getCategoryModifStr()]" [defaultValue]="itemGroup.defaultValue"
+                  [defaultValueFonc]="itemGroup.defaultValueFonc" [category]="categorySelected"
+                  (click)="$event.stopPropagation();"></app-time-selector>
               </div>
               <div class="label col">
-                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
+                <input type="number" placeholder="Nb de dossiers"
+                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerDay'))"
                   (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
                   (click)="$event.stopPropagation();" min="0" />
               </div>
               <div class="label col no-margin">
-                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
+                <input type="number" placeholder="Nb de dossiers"
+                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerMonth'))"
                   (blur)="getField(itemGroup,$event,'nbPerMonth')"
                   (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
