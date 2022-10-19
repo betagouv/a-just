@@ -106,9 +106,9 @@ export default (sequelizeInstance, Model) => {
         })
 
         // clean null values
-        csv[i].entrees = csv[i].entrees === 'null' ? null : csv[i].entrees
-        csv[i].sorties = csv[i].sorties === 'null' ? null : csv[i].sorties
-        csv[i].stock = csv[i].stock === 'null' ? null : csv[i].stock
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === ''  ? null : csv[i].stock
 
         // if existe update content
         if (
@@ -412,7 +412,6 @@ export default (sequelizeInstance, Model) => {
               [Op.gt]: endOfMonth(date),
             },
             hr_backup_id: hrBackupId,
-            contentieux_id: [ref.id].concat(ref.childrens.map((r) => r.id)),
           },
           raw: true,
           order: ['periode'],

@@ -549,11 +549,14 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
         }
       }
       if (x === 'totalOut') {
-        if (simulation.etpMag && simulation.magRealTimePerCase) {
-          simulation.totalOut = Math.floor(Math.floor(simulation.etpMag * 8 * 17.3333) / simulation.magRealTimePerCase)
+        if (simulation.etpMag && simulation.realTimePerCase) {
+          simulation.totalOut = Math.floor(
+            Math.floor(simulation.etpMag * environment.nbHoursPerDay * environment.nbDaysByMagistratPerMonth) / simulation.realTimePerCase
+          )
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
-            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
+              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
               simulation.totalIn
           )
         } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
@@ -562,11 +565,12 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(dateStart, dateStop) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(dateStart, dateStop) / (365 / 12))
+            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))) /
+              (simulation.realDTESInMonths + nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
           )
         }
       }
+
       if (x === 'lastStock') {
         if (simulation.realDTESInMonths === 0) {
           simulation.lastStock = 0

@@ -45,6 +45,7 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() alignLeft: boolean | undefined
   @Input() isLoading: boolean = false
   @Input() documentation: DocumentationInterface | undefined
+  documentationToShow: DocumentationInterface | undefined
   panelHelper: boolean = false
   versionNumber: string = environment.version
   hrBackup: BackupInterface | undefined
@@ -200,11 +201,19 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onTogglePanelHelper() {
     this.panelHelper = !this.panelHelper
+    if (this.documentation && this.panelHelper) {
+      this.onForcePanelHelperToShow(this.documentation)
+    }
+  }
+
+  onForcePanelHelperToShow(documentation: DocumentationInterface) {
+    this.documentationToShow = documentation
+    this.panelHelper = true
   }
 
   onDownloadCalculator() {
     this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement",
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
   }
 }

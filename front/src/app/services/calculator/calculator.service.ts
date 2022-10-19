@@ -27,6 +27,11 @@ export class CalculatorService extends MainClass {
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
+
+    this.humanResourceService.backupId.subscribe(() => {
+      this.dateStart.next(null)
+      this.dateStop.next(null)
+    })
   }
 
   filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {

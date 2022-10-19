@@ -5,6 +5,7 @@ import { AlertInterface } from './interfaces/alert'
 import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
+import { iIOS } from './utils/system'
 
 declare const window: any
 
@@ -23,6 +24,11 @@ export class AppComponent {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private appService: AppService
   ) {
+    if(iIOS()) {
+      document.body.classList.add('iIOS')
+    }
+
+
     this.onControlSSL()
     router.events.subscribe(() => {
       const user = this.userService.user.getValue()
