@@ -75,7 +75,7 @@ export class TimeSelectorComponent implements OnChanges {
     if (decimal != null) {
       const n = new Date(0, 0)
       n.setMinutes(Math.round(+decimal * 60))
-      return n.toTimeString().slice(0, 5)
+      return Math.trunc(decimal) + n.toTimeString().slice(2, 5)
     }
     return ''
   }
