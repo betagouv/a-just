@@ -1,4 +1,4 @@
-<aj-wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
+<aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation" class="content-margin-null">
   <div class="container">
     <div class="header-list">
@@ -12,10 +12,10 @@
         <div class="column-item">
           <p>Entrées</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Entrées logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Entrées A-JUSTées</p>
             </div>
           </div>
@@ -23,10 +23,10 @@
         <div class="column-item">
           <p>Sorties</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Sorties logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Sorties A-JUSTées</p>
             </div>
           </div>
@@ -34,10 +34,10 @@
         <div class="column-item">
           <p>Stock</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Stock logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Stock A-JUSTé</p>
             </div>
           </div>
