@@ -156,8 +156,8 @@ aj-referentiel-calculator:nth-child(even) {
   height: 71px;
   box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
     0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  border: solid 1px #eee4d9;
   background-color: fColor(bgSelect);
+  width: calc(100% - 2px);
 
   > aj-options-backup-panel {
     margin-right: 24px;
@@ -207,5 +207,5 @@ aj-referentiel-calculator:nth-child(even) {
 
 // class size
 .width-contentieux {
-  width: 161px;
+  width: 130px;
 }

@@ -1,4 +1,4 @@
-<aj-wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
+<aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation" class="content-margin-null">
   <div class="container">
     <div class="header-list">
@@ -12,10 +12,10 @@
         <div class="column-item">
           <p>Entrées</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Entrées logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Entrées A-JUSTées</p>
             </div>
           </div>
@@ -23,10 +23,10 @@
         <div class="column-item">
           <p>Sorties</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Sorties logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Sorties A-JUSTées</p>
             </div>
           </div>
@@ -34,10 +34,10 @@
         <div class="column-item">
           <p>Stock</p>
           <div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('logiciel')">
               <p>Stock logiciel</p>
             </div>
-            <div>
+            <div class="cursor-pointer" (click)="onShowPanel('saisie')">
               <p>Stock A-JUSTé</p>
             </div>
           </div>
@@ -181,7 +181,7 @@
 </ng-template>
 
 <ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level">
-  <i class="{{contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
+  <i class="{{value !== null && contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
     #light (click)="$event.stopPropagation()"></i>
   <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux, value)"
     [content]="getTooltipBody(type, contentieux, value, level)"

@@ -686,6 +686,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (h) => h.id === history.id && h.dateStart === history.dateStart
         )
       : -1
+
     if (this.onEditIndex === null) {
       if (index === -1) {
         // add situation

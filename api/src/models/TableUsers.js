@@ -1,6 +1,8 @@
 import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
+import { sentEmail } from '../utils/email'
+import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 
 export default (sequelizeInstance, Model) => {
   Model.userPreview = async (userId) => {
@@ -54,11 +56,23 @@ export default (sequelizeInstance, Model) => {
       where: { 
         id: userId, 
       },
+      raw: true,
     })
 
     if(user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
-      await Model.models.UserVentilations.updateVentilations(userId, ventilations)
+      const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
+
+      await sentEmail(
+        {
+          email: user.email,
+        },
+        TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+        {
+          user: `${user.first_name} ${user.last_name}`,
+          juridictionsList: ventilationsList.map(v => v.label).join(', '),
+        }
+      )
     } else {
       throw 'User not found'
     }
