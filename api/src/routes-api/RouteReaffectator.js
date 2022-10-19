@@ -14,13 +14,13 @@ export default class RouteReaffectator extends Route {
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
-      categoriesId: Types.number().required(),
+      categoryId: Types.number().required(),
       fonctionsIds: Types.array().required(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoriesId, contentieuxIds, fonctionsIds } =
+    let { backupId, date, categoryId, contentieuxIds, fonctionsIds } =
       this.body(ctx)
     if (
       !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
@@ -37,7 +37,7 @@ export default class RouteReaffectator extends Route {
     console.time('step3')
     let list = preformatedAllHumanResource.filter((hr) => {
       let isOk = true
-      if (hr.category && categoriesId === hr.category.id) {
+      if (hr.category && categoryId !== hr.category.id) {
         isOk = false
       }
 
@@ -78,6 +78,7 @@ export default class RouteReaffectator extends Route {
     const categories = await this.models.HRCategories.getAll()
 
     const listFormated = categories
+      .filter((c) => categoryId === c.id)
       .map((category) => ({
         originalLabel: category.label,
         allHr: listFiltered.filter(
