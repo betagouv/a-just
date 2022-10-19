@@ -168,6 +168,7 @@
     }
 
     .header-list {
+        margin-right: 15px;
 
         .label {
             &.col {
@@ -190,6 +191,8 @@
     }
 
     .content-list {
+        overflow: auto;
+
         .label {
             &.col {
                 font-size: 14px;
@@ -241,9 +244,10 @@
             margin: 0 16px;
         }
 
+        /** 
         .activities.is-not-ios {
             margin-right: 16px;
-        }
+        }*/
     }
 
     .item {
