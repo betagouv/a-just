@@ -181,7 +181,7 @@
 </ng-template>
 
 <ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level">
-  <i class="{{contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
+  <i class="{{value !== null && contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
     #light (click)="$event.stopPropagation()"></i>
   <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux, value)"
     [content]="getTooltipBody(type, contentieux, value, level)"
