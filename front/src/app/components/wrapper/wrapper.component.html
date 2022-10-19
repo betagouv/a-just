@@ -18,43 +18,45 @@
     </div>
   </div>
 
-  <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-    <a [routerLink]="['/' + item.path]">
-      {{ item.label }}
-    </a>
-  </div>
-  <div class="flex-1"></div>
-  <div class="menu-item tools">
-    <p>Outils</p>
-    <ul>
-      <li>
-        <a [href]="DOCUMENTATION_URL" target="_blank">
-          <p>
-            Documentation
-            <i class="ri-external-link-line"></i>
-          </p>
-        </a>
-      </li>
-      <li>
-        <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>
-          <p>Calculatrice de ventilation</p>
-        </a>
-      </li>
-      <li>
-        <a routerLink="/dashboard">
-          <p>Extraire des données</p>
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div class="menu-item">
-    <a href="mailto:support-utilisateurs@a-just.fr">
-      <p>Nous contacter</p>
-    </a>
-  </div>
-  <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
+  <div class="menu-scrollable">
+    <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
+      <a [routerLink]="['/' + item.path]">
+        {{ item.label }}
+      </a>
+    </div>
+    <div class="flex-1"></div>
+    <div class="menu-item tools">
+      <p>Outils</p>
+      <ul>
+        <li>
+          <a [href]="DOCUMENTATION_URL" target="_blank">
+            <p>
+              Documentation
+              <i class="ri-external-link-line"></i>
+            </p>
+          </a>
+        </li>
+        <li>
+          <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>
+            <p>Calculatrice de ventilation</p>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard">
+            <p>Extraire des données</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="menu-item">
+      <a href="mailto:support-utilisateurs@a-just.fr">
+        <p>Nous contacter</p>
+      </a>
+    </div>
+    <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
     <p>Déconnexion</p>
   </div> -->
+  </div>
 </div>
 
 <div class="contener" #contener title="">
