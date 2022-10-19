@@ -76,7 +76,11 @@
                 height: 67px;
 
                 .label {
-                    width: 254px;
+                    //width: 254px;
+
+                    &.head {
+                        width: 296px;
+                    }
                 }
 
                 .column-item {
@@ -198,7 +202,7 @@
                 justify-content: center;
                 height: 100%;
                 margin-right: 8px;
-                padding: 0px 16px;
+                //padding: 0px 16px;
             }
         }
     }
@@ -318,7 +322,7 @@
                 border-left: 4px solid gray;
 
                 .label {
-                    width: 296px;
+                    //width: 296px;
                     padding-left: 8px;
                 }
 
