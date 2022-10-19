@@ -6,8 +6,8 @@
         (valueChange)="onDateChanged($event)">
       </aj-date-select>
       <aj-select title="Filtrer par catégorie" class="dark-mode category-select"
-        [value]="reaffectatorService.selectedCategoriesId" [multiple]="false" [datas]="formFilterSelect"
-        (valueChange)="onSelectedCategoriesIdChanged($event)">
+        [value]="reaffectatorService.selectedCategoriesId !== null ? [reaffectatorService.selectedCategoriesId] : []"
+        [multiple]="false" [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdChanged($event)">
       </aj-select>
       <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
         [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)">

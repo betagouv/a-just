@@ -15,7 +15,7 @@ export class ReaffectatorService {
     backupId: number,
     date: Date,
     contentieuxIds: number[] | null,
-    categoriesId: number,
+    categoryId: number,
     fonctionsIds: number[]
   ) {
     return this.serverService
@@ -23,7 +23,7 @@ export class ReaffectatorService {
         backupId,
         date,
         contentieuxIds,
-        categoriesId,
+        categoryId,
         fonctionsIds,
       })
       .then((data) => {
