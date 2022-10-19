@@ -94,7 +94,7 @@
                 <app-time-selector
                   [value]="getInputValue(itemGroup[getCategoryStr()],'hour')"
                   (valueChange)="onUpdateOptions(itemGroup, $event,'hour')"
-                  [outsideChange]="itemGroup.isModified"
+                  [outsideChange]="itemGroup[getCategoryModifStr()]"
                   [defaultValue]="itemGroup.defaultValue"
                   [defaultValueFonc]="itemGroup.defaultValueFonc"
                   [category]="categorySelected"
@@ -105,7 +105,7 @@
                 <input
                   type="number"
                   placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup.isModified === true}"
+                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerDay'))"
                   (blur)="getField(itemGroup,$event,'nbPerDay')"
                   (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
@@ -117,7 +117,7 @@
                 <input
                   type="number"
                   placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup.isModified === true}"
+                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerMonth'))"
                   (blur)="getField(itemGroup,$event,'nbPerMonth')"
                   (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')"
