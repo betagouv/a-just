@@ -149,7 +149,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         date: new Date(),
         user: this.userService.user.getValue(),
       }
-    }, 1000)
+    }, 750)
   }
 
   changeMonth(date: Date) {
