@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
@@ -11,9 +11,10 @@ import { dataInterface } from '../select/select.component'
 })
 export class OptionsBackupPanelComponent
   extends MainClass
-  implements OnInit, OnDestroy
+  implements OnInit, OnDestroy, OnChanges
 {
   @Input() readOnly: boolean = false
+  @HostBinding("style.width") withLine!: string
   backups: BackupInterface[] = []
   optionsIsModify: boolean = false
   selectedIds: any[] = []
@@ -44,6 +45,11 @@ export class OptionsBackupPanelComponent
 
   ngOnDestroy() {
     this.watcherDestroy()
+  }
+
+  ngOnChanges() {
+    this.withLine = this.readOnly ? "fit-content" : "100%"  
+    console.log(this.withLine, this.readOnly)
   }
 
   formatDatas() {
