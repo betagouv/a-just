@@ -4,7 +4,6 @@ import {
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
 } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
@@ -26,7 +25,6 @@ export class TimeSelectorComponent implements OnChanges {
   regex = '^([0-9]?[0-9]{1}|^100):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
   regexObj = new RegExp(this.regex)
   firstChange = true
-  insideChange = false
   timeForm = new FormGroup({
     time: new FormControl(''),
   })
@@ -44,7 +42,6 @@ export class TimeSelectorComponent implements OnChanges {
     this.timeForm.controls['time'].setValue(
       this.decimalToStringDate(this.value) || ''
     )
-    console.log('OUTSIDE CHANGES', this.outsideChange)
     if (this.outsideChange === true) this.changed = true
     else this.changed = false
     this.firstChange = false
@@ -73,6 +70,7 @@ export class TimeSelectorComponent implements OnChanges {
       }
     }
   }
+
   decimalToStringDate(decimal: number) {
     if (decimal != null) {
       const n = new Date(0, 0)
