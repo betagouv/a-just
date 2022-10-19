@@ -149,7 +149,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         date: new Date(),
         user: this.userService.user.getValue(),
       }
-    }, 100)
+    }, 1000)
   }
 
   changeMonth(date: Date) {
@@ -277,7 +277,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
     string += '</p></div>'
 
-    if (modifyBy) {
+    if (value !== null && modifyBy) {
       const date = new Date(modifyBy.date)
       string += `<p class="color-white font-size-12">Modifié par <b>${
         modifyBy.user?.firstName
