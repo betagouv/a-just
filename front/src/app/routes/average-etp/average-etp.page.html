@@ -35,7 +35,7 @@
               <app-time-selector
                 [value]="getInputValue(ref[getCategoryStr()],'hour')"
                 (valueChange)="onUpdateOptions(ref, $event,'hour')"
-                [outsideChange]="ref.isModified"
+                [outsideChange]="ref[getCategoryModifStr()]"
                 [defaultValue]="ref.defaultValue"
                 [defaultValueFonc]="ref.defaultValueFonc"
                 [category]="categorySelected"
@@ -46,7 +46,7 @@
               <input
                 type="number"
                 placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref.isModified === true}"
+                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerDay'),100)"
                 (blur)="getField(ref,$event,'nbPerDay')"
                 (keydown.enter)="getField(ref,$event,'nbPerDay')"
@@ -58,7 +58,7 @@
               <input
                 type="number"
                 placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref.isModified === true}"
+                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerMonth'))"
                 (blur)="getField(ref,$event,'nbPerMonth')"
                 (keydown.enter)="getField(ref,$event,'nbPerMonth')"

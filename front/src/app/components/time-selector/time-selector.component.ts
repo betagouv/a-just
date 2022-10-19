@@ -44,7 +44,9 @@ export class TimeSelectorComponent implements OnChanges {
     this.timeForm.controls['time'].setValue(
       this.decimalToStringDate(this.value) || ''
     )
+    console.log('OUTSIDE CHANGES', this.outsideChange)
     if (this.outsideChange === true) this.changed = true
+    else this.changed = false
     this.firstChange = false
   }
 
@@ -54,10 +56,18 @@ export class TimeSelectorComponent implements OnChanges {
       if (this.firstChange === true) {
         if (this.category === 'MAGISTRATS') this.value = this.defaultValue
         else this.value = this.defaultValueFonc
-
         this.changed = false
         this.firstChange = false
-      } else {
+      } else if (
+        this.category === 'MAGISTRATS' &&
+        value !== this.decimalToStringDate(this.defaultValue)
+      ) {
+        this.onChangeHour(value)
+        this.changed = true
+      } else if (
+        this.category === 'FONCTIONNAIRES' &&
+        value !== this.decimalToStringDate(this.defaultValueFonc)
+      ) {
         this.onChangeHour(value)
         this.changed = true
       }
@@ -79,7 +89,6 @@ export class TimeSelectorComponent implements OnChanges {
   timeToDecimal(time: string) {
     var arr = time.split(':')
     var dec = (parseInt(arr[1], 10) / 6) * 10
-
     let fulldec = String(dec).split('.').join('')
 
     return parseFloat(
