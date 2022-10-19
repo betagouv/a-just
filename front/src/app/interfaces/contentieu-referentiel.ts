@@ -19,6 +19,7 @@ export interface ContentieuReferentielInterface {
   parent?: ContentieuReferentielInterface
   childIsVisible?: boolean
   isModified?: boolean
+  isModifiedFonc?: boolean
   defaultValue?: any
   defaultValueFonc?: any
 }
