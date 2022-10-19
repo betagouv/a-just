@@ -26,7 +26,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   selectedIds: any[] = []
   formDatas: dataInterface[] = []
   initValue: boolean = false
-
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
@@ -58,6 +57,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         if (b === true) {
           this.referentiel.map((v) => {
             v.isModified = false
+            v.isModifiedFonc = false
+
             v.averageProcessingTime = v.defaultValue
             v.averageProcessingTimeFonc = v.defaultValueFonc
 
@@ -65,6 +66,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
               v.childrens.map((child) => {
                 if (child.isModified === true) {
                   child.isModified = false
+                  child.isModifiedFonc = false
+
                   child.averageProcessingTime = child.defaultValue
                   child.averageProcessingTimeFonc = child.defaultValueFonc
                 }
@@ -84,6 +87,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           this.contentieuxOptionsService.getLastUpdate()
           this.referentiel.map((v) => {
             v.isModified = false
+            v.isModifiedFonc = false
           })
           //this.contentieuxOptionsService.optionsIsModify.next(false)
         }
@@ -179,6 +183,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         ref.defaultValueFonc = ref.averageProcessingTimeFonc
 
         ref.isModified = false
+        ref.isModifiedFonc = false
 
         ref.childrens = (ref.childrens || []).map((c) => {
           const getOptionActivity = options.find(
@@ -195,6 +200,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           c.defaultValue = c.averageProcessingTime
           c.defaultValueFonc = c.averageProcessingTimeFonc
           c.isModified = false
+          c.isModifiedFonc = false
 
           return c
         })
@@ -211,14 +217,24 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     value: number,
     unit: string
   ) {
-    referentiel[this.getCategoryStr()] = this.getInputValue(value, unit)
-    this.contentieuxOptionsService.updateOptions({
-      ...referentiel,
-      averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
-      averageProcessingTime: referentiel.averageProcessingTime,
-    })
+    if (
+      value !== null &&
+      fixDecimal(
+        this.getInputValue(referentiel[this.getCategoryStr()], unit),
+        100
+      ) !== value
+    ) {
+      referentiel[this.getCategoryStr()] = this.getInputValue(value, unit)
+      this.contentieuxOptionsService.updateOptions({
+        ...referentiel,
+        averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
+        averageProcessingTime: referentiel.averageProcessingTime,
+      })
 
-    referentiel.isModified = true
+      if (this.categorySelected === 'MAGISTRATS') referentiel.isModified = true
+      else referentiel.isModifiedFonc = true
+    }
+    console.log(referentiel)
   }
 
   changeUnity(unit: string) {
@@ -227,7 +243,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   changeCategorySelected(category: string) {
     this.categorySelected = category
-    console.log(this.categorySelected, this.getCategoryStr())
   }
 
   getInputValue(avgProcessTime: any, unit: string) {
@@ -240,7 +255,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         } else if (unit === 'nbPerMonth') {
           return (8 / avgProcessTime) * (208 / 12)
         }
-        return '0'
+        break
       case 'averageProcessingTimeFonc':
         if (unit === 'hour') {
           return avgProcessTime
@@ -249,8 +264,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         } else if (unit === 'nbPerMonth') {
           return (7 / avgProcessTime) * (229.57 / 12)
         }
-        return '0'
+        break
     }
+    return '0'
   }
 
   getField(
@@ -259,8 +275,17 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     unit: string
   ) {
     event.target.blur()
-    this.onUpdateOptions(referentiel, event.target.value, unit)
-    referentiel.isModified = true
+    if (
+      event.target.value !== '' &&
+      fixDecimal(
+        this.getInputValue(referentiel[this.getCategoryStr()], unit),
+        100
+      ) !== parseFloat(event.target.value)
+    ) {
+      this.onUpdateOptions(referentiel, event.target.value, unit)
+      if (this.categorySelected === 'MAGISTRATS') referentiel.isModified = true
+      else referentiel.isModifiedFonc = true
+    }
   }
 
   getCategoryStr() {
@@ -268,5 +293,17 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     else if (this.categorySelected === 'FONCTIONNAIRES')
       return 'averageProcessingTimeFonc'
     else return 'averageProcessingTime'
+  }
+
+  getCategoryDefaultStr() {
+    if (this.categorySelected === 'MAGISTRATS') return 'defaultValue'
+    else if (this.categorySelected === 'FONCTIONNAIRES')
+      return 'defaultValueFonc'
+    else return 'defaultValue'
+  }
+
+  getCategoryModifStr() {
+    if (this.categorySelected === 'MAGISTRATS') return 'isModified'
+    else return 'isModifiedFonc'
   }
 }
