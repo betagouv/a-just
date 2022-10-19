@@ -412,7 +412,6 @@ export default (sequelizeInstance, Model) => {
               [Op.gt]: endOfMonth(date),
             },
             hr_backup_id: hrBackupId,
-            contentieux_id: [ref.id].concat(ref.childrens.map((r) => r.id)),
           },
           raw: true,
           order: ['periode'],
