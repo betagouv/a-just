@@ -22,7 +22,7 @@ export class TimeSelectorComponent implements OnChanges {
   @Input() defaultValueFonc: number = 0
   @Input() category: string = ''
   @Output() valueChange = new EventEmitter()
-  regex = '^([0-9]?[0-9]{1}|^1000):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+  regex = '^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$' //'^([0-9]?[0-9]{1}|^1000):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
   regexObj = new RegExp(this.regex)
   firstChange = true
   timeForm = new FormGroup({
