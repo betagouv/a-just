@@ -110,7 +110,10 @@
     </div>
   </div>
 
-  <iframe [src]="(documentationToShow && documentationToShow.path) || '' | sanitizeResourceUrl"></iframe>
+  <iframe [src]="
+      (documentationToShow && documentationToShow.path) || ''
+        | sanitizeResourceUrl
+    "></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>

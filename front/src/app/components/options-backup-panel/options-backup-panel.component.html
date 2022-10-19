@@ -1,25 +1,18 @@
+<aj-select *ngIf="readOnly === true" title="Mes temps moyens de comparaison" [value]="selectedIds" [datas]="formDatas"
+  (valueChange)="onChangeBackup($event)" [multiple]="false" class="bg-white">
+</aj-select>
+
 <ng-template [ngIf]="readOnly === false">
-  <button
-    *ngIf="selectedIds.length"
-    [disabled]="!optionsIsModify"
-    [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button
-    class="left-margin blue-button"
-    (click)="onBackBackup()"
-  >
+  <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
+    mat-stroked-button class="left-margin blue-button" (click)="onBackBackup()">
     Retour
   </button>
   <div class="flex-1"></div>
 
-  <button
-    class="left-margin blue-button options"
-    [matMenuTriggerFor]="menu"
-    #t="matMenuTrigger"
-    aria-label="Example icon-button with a menu"
-  >
+  <button class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"
+    aria-label="Example icon-button with a menu">
     Options
-    <mat-icon class="no-margin"
-      >{{ !t.menuOpen ? 'expand_less' : 'expand_more' }}
+    <mat-icon class="no-margin">{{ !t.menuOpen ? 'expand_less' : 'expand_more' }}
     </mat-icon>
   </button>
   <mat-menu #menu="matMenu">
@@ -41,23 +34,12 @@
     </button>
   </mat-menu>
 
-  <button
-    [disabled]="!optionsIsModify"
-    [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button
-    class="left-margin blue-button empty"
-    (click)="onSaveHR(true)"
-  >
+  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" mat-stroked-button
+    class="left-margin blue-button empty" (click)="onSaveHR(true)">
     Enregistrer sous
   </button>
-  <button
-    *ngIf="selectedIds.length"
-    [disabled]="!optionsIsModify"
-    [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button
-    class="left-margin blue-button"
-    (click)="onSaveHR(false)"
-  >
+  <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
+    mat-stroked-button class="left-margin blue-button" (click)="onSaveHR(false)">
     Enregister
   </button>
 </ng-template>
