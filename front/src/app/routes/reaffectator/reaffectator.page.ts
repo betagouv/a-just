@@ -31,6 +31,7 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   category: HRCategoryInterface | null
   fonction: HRFonctionInterface | null
   currentSituation: HRSituationInterface | null
+  isModify: boolean
 }
 
 interface listFormatedInterface {
@@ -43,6 +44,7 @@ interface listFormatedInterface {
   referentiel: ContentieuReferentielCalculateInterface[]
   personSelected: number[]
   categoryId: number
+  totalRealETp: number
 }
 
 interface ContentieuReferentielCalculateInterface
@@ -150,8 +152,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       const itemBlock = this.listFormated.find((l) => l.categoryId === c.id)
       c.value = c.orignalValue + ''
 
-      if (itemBlock && itemBlock.hrFiltered.length > 1) {
-        c.value = `${c.value}s`
+      if (itemBlock && itemBlock.hrFiltered) {
+        c.value = `${itemBlock.hrFiltered.length} ${c.value}${
+          itemBlock.hrFiltered.length > 1 ? 's' : ''
+        } (${itemBlock.totalRealETp} ETPT)`
       }
 
       return c
@@ -226,12 +230,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         console.log(returnValues)
         this.actualActivities = returnValues.activities
         this.listFormated = returnValues.list.map(
-          (i: listFormatedInterface) => ({
-            ...i,
-            hrFiltered: [...i.allHr],
-            personSelected: [],
-            referentiel: copyArray(this.referentiel),
-          })
+          (i: listFormatedInterface) => {
+            const allHr = i.allHr.map((h) => ({
+              ...h,
+              isModify: false,
+            }))
+            return {
+              ...i,
+              allHr,
+              hrFiltered: [...i.allHr],
+              personSelected: [],
+              referentiel: copyArray(this.referentiel),
+            }
+          }
         )
 
         this.orderListWithFiltersParams()
@@ -258,9 +269,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    this.updateCategoryValues()
     this.onSearchBy()
     this.calculateReferentielValues()
+    this.updateCategoryValues()
   }
 
   onSearchBy() {
@@ -387,10 +398,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
-    this.reaffectatorService.selectedCategoriesId = item.length ? +item[0] : null
+    this.reaffectatorService.selectedCategoriesId = item.length
+      ? +item[0]
+      : null
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
-    let fonctionList: HRFonctionInterface[] = allFonctions.filter((f) => f.categoryId === this.reaffectatorService.selectedCategoriesId)
+    let fonctionList: HRFonctionInterface[] = allFonctions.filter(
+      (f) => f.categoryId === this.reaffectatorService.selectedCategoriesId
+    )
     this.formFilterFonctionsSelect = fonctionList.map((f) => ({
       id: f.id,
       value: f.label,
@@ -430,12 +445,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     })
 
     this.listFormated = this.listFormated.map((list) => {
+      list.totalRealETp = 0
       list.referentiel.map((ref) => {
         ref.totalAffected = 0
         return ref
       })
 
       list.hrFiltered = list.hrFiltered.map((hr) => {
+        let realETP = (hr.etp || 0) - hr.hasIndisponibility
+        if (realETP < 0) {
+          realETP = 0
+        }
+        list.totalRealETp += realETP
+
         list.referentiel = list.referentiel.map((ref) => {
           const timeAffected = sumBy(
             hr.currentActivities.filter(
@@ -444,10 +466,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             'percent'
           )
           if (timeAffected) {
-            let realETP = (hr.etp || 0) - hr.hasIndisponibility
-            if (realETP < 0) {
-              realETP = 0
-            }
             ref.totalAffected =
               (ref.totalAffected || 0) + (timeAffected / 100) * realETP
           }
@@ -623,6 +641,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (indexOfHR !== -1) {
       this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities =
         list
+      this.listFormated[indexList].hrFiltered[indexOfHR].isModify = true
 
       this.orderListWithFiltersParams()
     }
