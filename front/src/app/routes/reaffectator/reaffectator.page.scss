@@ -26,7 +26,7 @@
         line-height: 24px;
 
         &.selected {
-          background-color: fColor(darkModeTitle);
+          background-color: fColor(bgSelectSelected);
           color: white;
         }
 
@@ -347,13 +347,9 @@
 
 .item-list {
   margin-top: 4px;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgMenu);
   display: flex;
   border-radius: 4px;
-
-  &:hover {
-    background-color: fColor(darkModeBgMenu);
-  }
 
   &:last-child {
     margin-bottom: 16px;
@@ -368,6 +364,14 @@
       min-height: 16px;
     }
   }
+
+  &.is-modify {
+    background-color: fColor(cbluemiddle);
+
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+  }
 }
 
 .profil {
@@ -378,7 +382,7 @@
 
     .text {
       flex: 1;
-      padding: 24px 16px 20px 16px;
+      padding: 24px 16px 10px 16px;
       display: flex;
       flex-direction: column;
       text-decoration: none;
@@ -448,18 +452,6 @@
             background-color: fColor(darkModeBgMenu);
           }
 
-          &.unavailable {
-            font-size: 14px;
-            color: fColor(titleIndisponibilitiesPanel);
-
-            mat-icon {
-              font-size: 17px;
-              color: fColor(titleIndisponibilitiesPanel);
-              height: 17px;
-              width: 17px;
-            }
-          }
-
           mat-icon {
             font-size: 14px;
             width: 14px;
@@ -484,6 +476,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: fColor(darkModeBgHeader);
 
       .label {
         font-size: 12px;
@@ -570,10 +563,26 @@ progression-bar {
     top: 0;
     bottom: 0;
     font-size: 10px;
-    background-color: fColor(darkModeTitle);
+    background-color: fColor(bgSelectSelected);
+    border-radius: 3px;
   }
 }
 
 .category-select {
   width: 235px;
+}
+
+.unavailable {
+  font-size: 14px;
+  color: fColor(titleIndisponibilitiesPanel);
+  margin-bottom: 10px;
+
+  mat-icon {
+    font-size: 17px;
+    color: fColor(titleIndisponibilitiesPanel);
+    height: 17px;
+    width: 17px;
+    position: relative;
+    top: 3px;
+  }
 }

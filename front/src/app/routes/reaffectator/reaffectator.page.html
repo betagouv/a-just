@@ -86,7 +86,7 @@
         <div class="header-list">
           <div class="profil">
             <div class="label-container">
-              <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hrFiltered.length}"
+              <div class="check-item" [ngClass]="{selected: list.personSelected.length}"
                 (click)="toogleCheckAllPerson(i)">{{ list.personSelected.length ? list.personSelected.length : '' }}
               </div>
               <p class="label">{{ list.personSelected.length > 1 ? 'sélections' : 'sélection' }}</p>
@@ -125,7 +125,7 @@
 
         <div class="sub-content-list">
           <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById; let index = index"
-            [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
+            [class.is-modify]="hr.isModify" [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
             <div class="profil item">
               <div class="text">
                 <div class="name">
@@ -142,10 +142,8 @@
                     {{ hr.fonction && hr.fonction.code}}
                   </p>
                   <p class="etp">{{ hr.etpLabel }}</p>
-                  <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                    <mat-icon>error</mat-icon> Indispo
-                  </p>
                 </div>
+                <div class="flex-1"></div>
                 <div class="updated-at">
                   Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
                   getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY"
@@ -157,6 +155,10 @@
                 <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
                   [indisponibility]="hr.hasIndisponibility" class="dark-mode">
                 </etp-preview>
+                <div class="flex-1"></div>
+                <p class="unavailable" *ngIf="hr.hasIndisponibility">
+                  <mat-icon>error</mat-icon> Indispo
+                </p>
               </div>
             </div>
             <div class="activities">
