@@ -3,7 +3,6 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
-  nbOfDays,
 } from 'src/app/utils/dates'
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -133,8 +132,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-        this.simulatedSationData =
-          this.simulatorService.situationSimulated.getValue()
+        this.simulatedSationData = d
+        const findTitle = document.getElementsByClassName('simulation-title')
+        const findElement = document.getElementById('content')
+        if(d && findElement && findTitle.length) {
+          if (findElement) {
+            const { top } = findTitle[0].getBoundingClientRect()
+            findElement.scrollTo({
+              behavior: 'smooth',
+              top: top - 100,
+            })
+          }
+        }
       })
     )
     this.watch(
