@@ -146,11 +146,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    this.formFilterSelect = this.formFilterSelect.map(c => {
-      const itemBlock = this.listFormated.find(l => l.categoryId === c.id)
-      c.value = (c.orignalValue + '')
+    this.formFilterSelect = this.formFilterSelect.map((c) => {
+      const itemBlock = this.listFormated.find((l) => l.categoryId === c.id)
+      c.value = c.orignalValue + ''
 
-      if(itemBlock && itemBlock.hrFiltered.length > 1) {
+      if (itemBlock && itemBlock.hrFiltered.length > 1) {
         c.value = `${c.value}s`
       }
 
@@ -209,7 +209,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.objectOfFirstETPTargetValue = []
 
     let selectedReferentielIds: number[] | null = null
-    if (this.formReferentiel.length !== this.reaffectatorService.selectedReferentielIds.length) {
+    if (
+      this.formReferentiel.length !==
+      this.reaffectatorService.selectedReferentielIds.length
+    ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
@@ -522,12 +525,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             : 0
 
         let averageWorkingProcess = fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
+          (nbDaysByMonthForMagistrat * environment.nbHoursPerDayAndMagistrat) /
             (averageOut / etpToComputeLast12Months)
         )
 
         let outValue = Math.floor(
-          (etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat) /
+          (etpt *
+            environment.nbHoursPerDayAndMagistrat *
+            nbDaysByMonthForMagistrat) /
             averageWorkingProcess
         )
 
@@ -550,7 +555,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           Math.floor(
             (nbDayCalendar / (365 / 12)) *
               nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDay) /
+              ((etpMagDelta * environment.nbHoursPerDayAndMagistrat) /
                 averageWorkingProcess)
           ) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
@@ -594,6 +599,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
+            averageProcessingTimeFonc: null,
           },
         })
         ;(r.childrens || [])
@@ -606,6 +612,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
                 id: rc.id,
                 label: rc.label,
                 averageProcessingTime: null,
+                averageProcessingTimeFonc: null,
               },
             })
           })

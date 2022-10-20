@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
+import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 
 @Component({
   selector: 'app-time-selector',
@@ -14,69 +15,92 @@ import { FormControl, FormGroup } from '@angular/forms'
 })
 export class TimeSelectorComponent implements OnChanges {
   @Input() value: number = 0
+  @Input() disabled: boolean = false
+  @Input() changed: boolean = false
+  @Input() outsideChange: boolean | undefined = false
+  @Input() defaultValue: number = 0
+  @Input() defaultValueFonc: number = 0
+  @Input() category: string = ''
   @Output() valueChange = new EventEmitter()
-  toChange: boolean = true
-
+  regex = '^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$' //'^([0-9]?[0-9]{1}|^1000):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+  regexObj = new RegExp(this.regex)
+  firstChange = true
   timeForm = new FormGroup({
-    hour: new FormControl(''),
-    minute: new FormControl(''),
+    time: new FormControl(''),
   })
 
-  constructor() {
-    this.timeForm.controls.minute.valueChanges.subscribe((value) => {
-      if (value && parseInt(value) <= 59 && this.toChange === true)
-        this.onChangeHour(this.getFormString())
-      else if (value && parseInt(value) > 59 && this.toChange === true) {
-        this.toChange = false
-        this.timeForm.controls['minute'].setValue('59')
-        this.onChangeHour(this.getFormString('59'))
-      } else this.toChange = true
-    })
-
-    this.timeForm.controls.hour.valueChanges.subscribe(() => {
-      if (this.toChange === true) this.onChangeHour(this.getFormString())
+  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+    this.contentieuxOptionsService.initValue.subscribe((value) => {
+      if (value === true) {
+        this.changed = false
+        this.firstChange = true
+      }
     })
   }
 
   ngOnChanges() {
-    if (this.toChange === true) {
-      this.toChange = false
-      this.timeForm.controls['hour'].setValue(String(this.value).split('.')[0])
-      this.toChange = false
-      this.timeForm.controls['minute'].setValue(
-        this.decimalToStringDate(this.value).split(':')[1] || '00'
-      )
-    } else this.toChange = true
+    this.timeForm.controls['time'].setValue(
+      this.decimalToStringDate(this.value) || ''
+    )
+    if (this.outsideChange === true) this.changed = true
+    else this.changed = false
+    this.firstChange = false
   }
 
-  getFormString(minute?: string) {
-    return `${this.timeForm.controls['hour'].value}:${
-      minute ? minute : this.timeForm.controls['minute'].value
-    }`
+  updateVal(event: any) {
+    const value = event.target.value
+    if (value !== null && this.regexObj.test(value)) {
+      if (this.firstChange === true) {
+        if (this.category === 'MAGISTRATS') this.value = this.defaultValue
+        else this.value = this.defaultValueFonc
+        this.changed = false
+        this.firstChange = false
+      } else if (
+        this.category === 'MAGISTRATS' &&
+        value !== this.decimalToStringDate(this.defaultValue)
+      ) {
+        this.onChangeHour(value)
+        this.changed = true
+      } else if (
+        this.category === 'FONCTIONNAIRES' &&
+        value !== this.decimalToStringDate(this.defaultValueFonc)
+      ) {
+        this.onChangeHour(value)
+        this.changed = true
+      }
+    }
   }
 
   decimalToStringDate(decimal: number) {
     if (decimal != null) {
       const n = new Date(0, 0)
       n.setMinutes(Math.round(+decimal * 60))
-      return n.toTimeString().slice(0, 5)
+      return Math.trunc(decimal) + n.toTimeString().slice(2, 5)
     }
-    return '0'
+    return ''
   }
 
   onChangeHour(str: string) {
-    this.value = this.timeToDecimal(str)
     this.valueChange.emit(this.timeToDecimal(str))
   }
 
   timeToDecimal(time: string) {
     var arr = time.split(':')
     var dec = (parseInt(arr[1], 10) / 6) * 10
-
     let fulldec = String(dec).split('.').join('')
 
     return parseFloat(
       (parseInt(arr[0], 10) || 0) + '.' + (dec < 10 ? '0' : '') + fulldec
     )
+  }
+
+  getImg() {
+    return this.changed
+      ? '/assets/icons/time-line-blue.svg'
+      : '/assets/icons/time-line.svg'
+  }
+
+  blur(event: any) {
+    event.target.blur()
   }
 }

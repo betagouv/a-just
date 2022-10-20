@@ -3,7 +3,6 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
-  nbOfDays,
 } from 'src/app/utils/dates'
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -133,8 +132,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-        this.simulatedSationData =
-          this.simulatorService.situationSimulated.getValue()
+        this.simulatedSationData = d
+        const findTitle = document.getElementsByClassName('simulation-title')
+        const findElement = document.getElementById('content')
+        if(d && findElement && findTitle.length) {
+          if (findElement) {
+            const { top } = findTitle[0].getBoundingClientRect()
+            findElement.scrollTo({
+              behavior: 'smooth',
+              top: top - 100,
+            })
+          }
+        }
       })
     )
     this.watch(
@@ -409,7 +418,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     // if result
     if (result > -1) {
       // affect the value to the editable input
-      if (inputField.id === 'realTimePerCase' && result)
+      if (inputField.id === 'magRealTimePerCase' && result)
         inputField.value = decimalToStringDate(result)
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
@@ -483,7 +492,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     id: string,
     projectedValue: string | number | undefined
   ) {
-    if (id === 'realTimePerCase' && projectedValue === -100) return ''
+    if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param1.label === 'realCoverage'
@@ -614,7 +623,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   valueChange(button: any, event: any) {
-    if (this.buttonSelected.id === 'realTimePerCase' && event === 0)
+    if (this.buttonSelected.id === 'magRealTimePerCase' && event === 0)
       button.value = 'Ajuster'
     else button.value = event
   }
@@ -825,7 +834,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       etpMag: null,
       etpFon: null,
       etpCont: null,
-      realTimePerCase: null,
+      magRealTimePerCase: null,
       realDTESInMonths: null,
       realCoverage: null,
     }

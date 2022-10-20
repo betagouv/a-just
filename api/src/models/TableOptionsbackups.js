@@ -2,24 +2,28 @@ export default (sequelizeInstance, Model) => {
   Model.getBackup = async (userId, juridictionId) => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
-      include: [{
-        model: Model.models.OptionsBackupJuridictions,
-        required: true,
-        where: {
-          juridiction_id: juridictionId,
-        },
-        include: [{ 
-          model: Model.models.UserVentilations,
+      include: [
+        {
+          model: Model.models.OptionsBackupJuridictions,
           required: true,
           where: {
-            user_id: userId,
+            juridiction_id: juridictionId,
           },
-        }],
-      }],
+          include: [
+            {
+              model: Model.models.UserVentilations,
+              required: true,
+              where: {
+                user_id: userId,
+              },
+            },
+          ],
+        },
+      ],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         label: list[i].label,
@@ -58,7 +62,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if(backup) {
+    if (backup) {
       delete backup.id
       const backupCreated = await Model.create({ ...backup, label: backupName })
       const newBackupId = backupCreated.dataValues.id
@@ -69,7 +73,7 @@ export default (sequelizeInstance, Model) => {
         },
         raw: true,
       })
-      for(let x = 0; x < hrList.length; x++) {
+      for (let x = 0; x < hrList.length; x++) {
         delete hrList[x].id
         await Model.models.ContentieuxOptions.create({
           ...hrList[x],
@@ -92,7 +96,7 @@ export default (sequelizeInstance, Model) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
-    if(backupName) {
+    if (backupName) {
       const newBackup = await Model.create({
         label: backupName,
       })
@@ -102,17 +106,17 @@ export default (sequelizeInstance, Model) => {
         juridiction_id: juridictionId,
       })
     }
-
-    for(let x = 0; x < list.length; x++) {
+    for (let x = 0; x < list.length; x++) {
       const op = list[x]
 
       const options = {
         contentieux_id: op.contentieux.id,
         average_processing_time: op.averageProcessingTime,
+        average_processing_time_fonc: op.averageProcessingTimeFonc,
         backup_id: newBackupId,
       }
 
-      if(op.id && op.id > 0 && !backupName) {
+      if (op.id && op.id > 0 && !backupName) {
         // update
         await Model.models.ContentieuxOptions.updateById(op.id, options)
       } else {
@@ -125,15 +129,17 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove old
-    const oldNewList = (await Model.models.ContentieuxOptions.findAll({
-      attributes: ['id'],
-      where: {
-        backup_id: newBackupId,
-      },
-      raw: true,
-    })).map(h => (h.id))
-    for(let i = 0; i < oldNewList.length; i++) {
-      if(reelIds.indexOf(oldNewList[i]) === -1) {
+    const oldNewList = (
+      await Model.models.ContentieuxOptions.findAll({
+        attributes: ['id'],
+        where: {
+          backup_id: newBackupId,
+        },
+        raw: true,
+      })
+    ).map((h) => h.id)
+    for (let i = 0; i < oldNewList.length; i++) {
+      if (reelIds.indexOf(oldNewList[i]) === -1) {
         await Model.models.ContentieuxOptions.destroyById(oldNewList[i])
       }
     }
@@ -147,8 +153,8 @@ export default (sequelizeInstance, Model) => {
         id: backupId,
       },
     })
-      
-    if(backup) {
+
+    if (backup) {
       await backup.update({
         label: backupName,
       })
@@ -160,20 +166,24 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: optionBackupId,
       },
-      include: [{
-        model: Model.models.OptionsBackupJuridictions,
-        required: true,
-        where: {
-          juridiction_id: juridictionId,
-        },
-        include: [{ 
-          model: Model.models.UserVentilations,
+      include: [
+        {
+          model: Model.models.OptionsBackupJuridictions,
           required: true,
           where: {
-            user_id: userId,
+            juridiction_id: juridictionId,
           },
-        }],
-      }],
+          include: [
+            {
+              model: Model.models.UserVentilations,
+              required: true,
+              where: {
+                user_id: userId,
+              },
+            },
+          ],
+        },
+      ],
     })
 
     return find ? true : false
@@ -184,17 +194,21 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: optionBackupId,
       },
-      include: [{
-        model: Model.models.OptionsBackupJuridictions,
-        required: true,
-        include: [{ 
-          model: Model.models.UserVentilations,
+      include: [
+        {
+          model: Model.models.OptionsBackupJuridictions,
           required: true,
-          where: {
-            user_id: userId,
-          },
-        }],
-      }],
+          include: [
+            {
+              model: Model.models.UserVentilations,
+              required: true,
+              where: {
+                user_id: userId,
+              },
+            },
+          ],
+        },
+      ],
     })
 
     return find ? true : false
@@ -202,21 +216,23 @@ export default (sequelizeInstance, Model) => {
 
   Model.adminGetAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'label'], 
+      attributes: ['id', 'label'],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         label: list[i].label,
-        juridictions: (await Model.models.OptionsBackupJuridictions.findAll({
-          attributes: ['juridiction_id'],
-          where: {
-            option_backup_id: list[i].id, 
-          },
-          raw: true,
-        })).map(h => (h.juridiction_id)),
+        juridictions: (
+          await Model.models.OptionsBackupJuridictions.findAll({
+            attributes: ['juridiction_id'],
+            where: {
+              option_backup_id: list[i].id,
+            },
+            raw: true,
+          })
+        ).map((h) => h.juridiction_id),
       }
     }
 

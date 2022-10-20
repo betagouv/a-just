@@ -6,12 +6,15 @@ import {
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
 import { getMonthString, getShortMonthString, today } from '../utils/dates'
+import { FONCTIONNAIRES, MAGISTRATS } from '../constants/category'
 
 export class MainClass {
   watcherList: Subscription[] = []
   environment = environment
+  MAGISTRATS = MAGISTRATS
+  FONCTIONNAIRES = FONCTIONNAIRES
 
-  fixDecimal(n: number): number {
+  fixDecimal(n: number, base?: number): number {
     return fixDecimal(n)
   }
 
@@ -20,7 +23,7 @@ export class MainClass {
   }
 
   parseFloat(s: string): number {
-    return parseFloat(s.replace(/,/,'.'))
+    return parseFloat(s.replace(/,/, '.'))
   }
 
   watch(sub: any) {

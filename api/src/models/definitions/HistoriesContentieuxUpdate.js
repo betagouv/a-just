@@ -1,6 +1,6 @@
-import Sequelize from 'sequelize'
+import Sequelize from 'sequelize';
 
-const tableName = 'ContentieuxOptions'
+const tableName = 'HistoriesContentieuxUpdate';
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -13,21 +13,13 @@ export default (sequelizeInstance) => {
         autoIncrement: true,
         unique: true,
       },
-      contentieux_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      average_processing_time: {
-        type: Sequelize.DOUBLE(11),
-        allowNull: true,
-      },
-      average_processing_time_fonc: {
-        type: Sequelize.DOUBLE(11),
-        allowNull: true,
-      },
       backup_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,
@@ -49,14 +41,14 @@ export default (sequelizeInstance) => {
       underscored: true,
       tableName,
     }
-  )
+  );
 
   Model.associate = function (models) {
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' })
-    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'backup_id' })
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' });
+    Model.hasOne(models.OptionsBackupJuridictions, { foreignKey: 'id', sourceKey: 'backup_id' });
 
-    return models
-  }
+    return models;
+  };
 
-  return Model
-}
+  return Model;
+};

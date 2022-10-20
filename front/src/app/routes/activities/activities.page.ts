@@ -1,4 +1,5 @@
-import { Component, OnDestroy } from '@angular/core'
+import { Component, OnDestroy, ViewChild } from '@angular/core'
+import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import {
   ActivityInterface,
   NodeActivityUpdatedInterface,
@@ -22,6 +23,7 @@ interface ContentieuReferentielActivitiesInterface
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
+  @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   activities: ActivityInterface[] = []
   activityMonth: Date = new Date()
   referentiel: ContentieuReferentielActivitiesInterface[] = []
@@ -149,7 +151,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         date: new Date(),
         user: this.userService.user.getValue(),
       }
-    }, 100)
+    }, 750)
   }
 
   changeMonth(date: Date) {
@@ -277,7 +279,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
     string += '</p></div>'
 
-    if (modifyBy) {
+    if (value !== null && modifyBy) {
       const date = new Date(modifyBy.date)
       string += `<p class="color-white font-size-12">Modifié par <b>${
         modifyBy.user?.firstName
@@ -376,5 +378,22 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
 
     return ''
+  }
+
+  onShowPanel(type: string) {
+    switch (type) {
+      case 'logiciel':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Données d\'activité logiciel',
+          path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
+        })
+        break
+      case 'saisie':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Données d\'activité A-JUSTées',
+          path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
+        })
+        break
+    }
   }
 }

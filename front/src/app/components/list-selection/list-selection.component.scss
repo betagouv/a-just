@@ -8,6 +8,10 @@
   margin-bottom: 4px;
   position: relative;
 
+  &.bg-white {
+    background-color: white;
+  }
+
   &.large-drop {
     .select-area {
       width: 400px;
@@ -25,7 +29,7 @@
 
     .title-list {
       font-size: 16px;
-      color: fColor(cblack);
+      color: fColor(titleInput);
       margin-right: 8px;
     }
 
