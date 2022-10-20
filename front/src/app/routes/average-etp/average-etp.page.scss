@@ -1,95 +1,345 @@
 @import "../../styles/utils.scss";
 
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+:host {
+    position: relative;
 
-    .content-list {
-        flex: 1;
-        overflow: auto;
-    }
-}
+    .empty-separator {
+        display: flex;
+        padding-left: 300px;
+        height: 8px;
 
-.header-list,
-.content-list {
-    .label {
-        width: 300px;
-
-        &.month {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .col {
+            .no-margin {
+                margin-right: 0px;
+            }
         }
     }
-}
 
-.header-list {
-    border-bottom: 1px solid rgba(fColor(cblack), 0.2);
-    padding: 8px 0;
-    display: flex;
-    align-items: center;
-
-    .current-month {
-        margin: 0 16px;
+    input {
+        &.modified {
+            color: #000091
+        }
     }
 
-    .activities.is-not-ios {
-        margin-right: 16px;
+    .separator {
+        display: block;
+        height: 100px
     }
-}
 
-.item {
-    padding: 8px 0;
-    display: flex;
+    .item-grouped {
+        margin: 8px 16px 0 16px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        //padding: 15px;
 
-    .label {
+        .no-margin {
+            margin-right: 0px !important;
+        }
+
+        &.maximize {
+            .item {
+                position: relative;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+                    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            }
+
+            .group {
+                height: inherit;
+                overflow: inherit;
+            }
+        }
+
+        .group {
+            height: 0;
+            overflow: hidden;
+            display: flex;
+
+            >div:last-child {
+                flex: 1;
+            }
+
+            .color-border {
+                padding: 12px;
+                margin-right: 19px;
+
+                >div {
+                    width: 3px;
+                    border-radius: 3px;
+                    height: 100%;
+                }
+            }
+
+            .group-item {
+                display: flex;
+                align-items: center;
+                height: 67px;
+
+                .label {
+                    //width: 254px;
+
+                    &.head {
+                        width: 296px;
+                    }
+                }
+
+                .column-item {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-self: stretch;
+                }
+            }
+        }
+    }
+
+    aj-select {
+        margin-left: 8px;
+    }
+
+    .container {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        height: 100%;
 
-        p {
+        .content-list {
             flex: 1;
         }
     }
-}
 
-.column-item {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    .sticky-action-footer {
+        height: 80px;
+        box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.04),
+            0 -20px 25px -5px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 0px 46px 0px 258px;
+        left: 0px;
+        bottom: 0;
+        width: 100%;
 
-    p,
-    input {
-        margin-right: 16px;
-    }
-}
-
-.item-grouped {
-    .group {
-        height: 0;
-        overflow: hidden;
-
-        &.enable {
-            height: inherit;
-            overflow: inherit;
-            margin-bottom: 16px;
+        button:first-child {
+            margin-right: 16px;
         }
+    }
 
-        .group-item {
+    .categories-switch {
+        display: flex;
+        align-items: stretch;
+        height: 55px;
+
+        >div {
             display: flex;
             align-items: center;
-            padding: 8px 0;
-            border-left: 4px solid gray;
+            padding: 0 16px;
+            cursor: pointer;
+            border: solid 1px fColor(cgraylightv3);
 
-            .label {
-                width: 296px;
-                padding-left: 8px;
+            p {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-left: 8px;
+                color: fColor(colorTag);
+            }
+        }
+
+        >.magistrats {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+
+            &.selected {
+                border: solid 1px fColor(cbluedark);
+                background-color: fColor(cbluemiddle);
+            }
+        }
+
+        >.fonctionnaires {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+
+            &.selected {
+                border: solid 1px fColor(cpink);
+                background-color: fColor(cpinkmiddle);
+            }
+        }
+    }
+
+    .header-list {
+        margin-right: 15px;
+
+        .label {
+            &.col {
+                font-size: 14px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.71;
+                flex: 1;
+                border-bottom: solid 2px black;
+                background-color: #eee;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 54px;
+                margin-right: 8px;
+                text-align: center;
+            }
+        }
+    }
+
+    .content-list {
+        overflow: auto;
+
+        .label {
+            &.col {
+                font-size: 14px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.71;
+                flex: 1;
+                background-color: #f6f6f6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                margin-right: 8px;
+                //padding: 0px 16px;
+            }
+        }
+    }
+
+    .header-list,
+    .content-list {
+        .label {
+            position: relative;
+            display: flex;
+
+            &.empty {
+                width: 331px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .column-item {
+
+
+            mat-icon {
+                vertical-align: initial;
+            }
+        }
+    }
+
+    .header-list {
+        padding: 0px 22px 0px 0px;
+        border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+        display: flex;
+        align-items: center;
+        background-color: white;
+
+        .current-month {
+            margin: 0 16px;
+        }
+
+        /** 
+        .activities.is-not-ios {
+            margin-right: 16px;
+        }*/
+    }
+
+    .item {
+        //padding: 8px 0;
+        display: flex;
+
+        &.selectable {
+            cursor: pointer;
+
+            input {
+                cursor: pointer;
+            }
+        }
+
+        .label {
+            display: flex;
+            align-items: center;
+
+            &.head {
+                padding-left: 6px;
+                width: 300px;
+                margin: 25px 0px 25px 15px;
+            }
+
+            .color-border {
+                width: 3px;
+                height: 4px;
+                border-radius: 3px;
+                position: absolute;
+                left: 0.5px;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+            }
+
+            p {
                 flex: 1;
-                text-align: center;
+            }
+        }
+    }
+
+    .column-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        p {
+            margin-right: 16px;
+            width: auto;
+        }
+
+        input {
+            margin-right: 16px;
+            max-width: 140px;
+        }
+
+    }
+
+    .item-grouped {
+
+        padding-right: 14px;
+
+        .group {
+            height: 0;
+            overflow: hidden;
+            display: grid;
+
+            &.enable {
+                height: inherit;
+                overflow: inherit;
+                margin-bottom: 16px;
+                //display: table;
+                margin-left: 15px;
+                //padding-bottom: 16px;
+            }
+
+            .group-item {
+                display: flex;
+                align-items: center;
+                //padding: 8px 0;
+                border-left: 3px solid gray;
+
+                .label {
+                    //width: 296px;
+                    padding-left: 8px;
+                }
+
+                .column-item {
+                    flex: 1;
+                    text-align: center;
+                }
             }
         }
     }

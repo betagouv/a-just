@@ -4,6 +4,12 @@
   display: flex;
   height: 100%;
 
+  .subtitle-name {
+    border-radius: 12px;
+    background-color: #eee;
+    padding: 3px 6px;
+  }
+
   .dark-mode {
     display: none;
   }
@@ -73,8 +79,10 @@
       background-color: fColor(darkModeBgMenuSelected);
       border-right: 1px solid fColor(darkModeBgMenu);
       margin-right: 0px;
+      z-index: 200;
 
       .menu-item {
+
         &.disconnect,
         a,
         p {
@@ -106,6 +114,10 @@
       }
     }
   }
+
+  &.action-fit-width .actions {
+    width: 100%;
+  }
 }
 
 .menu {
@@ -123,7 +135,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    > div {
+    >div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -153,6 +165,20 @@
     }
   }
 
+  .menu-scrollable {
+    flex: 1;
+    overflow: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    display: flex;
+    flex-direction: column;
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   .menu-item {
     display: block;
     padding: 13px 4px 13px 13px;
@@ -167,6 +193,7 @@
     }
 
     &.selected {
+
       a,
       p {
         color: fColor(cbluedark);
@@ -186,12 +213,13 @@
     ul {
       padding-inline-start: 8px;
       list-style: none;
+      position: relative;
 
       li {
         &:before {
           content: '•';
           position: absolute;
-          left: 10px;
+          left: -3px;
           margin-top: -3px;
         }
 
@@ -218,6 +246,7 @@
   flex-direction: column;
 
   .content {
+    position: relative;
     padding: 24px;
     height: 100%;
     overflow: auto;
@@ -275,12 +304,12 @@
     &:hover {
       width: 190px;
 
-      > span {
+      >span {
         display: inline;
       }
     }
 
-    > span {
+    >span {
       display: none;
       white-space: nowrap;
       margin-left: 4px;
@@ -295,6 +324,7 @@
 .actions {
   display: flex;
   align-items: center;
+  margin-left: 34px;
 }
 
 .progress-bar {
@@ -332,7 +362,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  > div.panel-header {
+  >div.panel-header {
     background-color: fColor(bgHelper);
     padding: 14px 0 84px 0;
 
@@ -370,7 +400,7 @@
     }
   }
 
-  > iframe {
+  >iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);

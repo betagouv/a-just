@@ -27,9 +27,14 @@ export class CalculatorService extends MainClass {
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
+
+    this.humanResourceService.backupId.subscribe(() => {
+      this.dateStart.next(null)
+      this.dateStop.next(null)
+    })
   }
 
-  filterList() {
+  filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -37,6 +42,8 @@ export class CalculatorService extends MainClass {
         dateStop: this.dateStop.getValue(),
         contentieuxIds: this.referentielIds.getValue(),
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
+        categorySelected,
+        selectedFonctionsIds,
       })
       .then((data) => data.data || [])
   }

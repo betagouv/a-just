@@ -31,8 +31,7 @@
       }
 
       .triangle {
-        border-color: transparent transparent fColor(cblack)
-          transparent;
+        border-color: transparent transparent fColor(cblack) transparent;
       }
 
       .title {
@@ -59,7 +58,7 @@
     position: absolute;
     z-index: 1;
     visibility: hidden;
-    top: calc(75% + 4px);
+    top: calc(85% + 4px);
     left: 50%;
     cursor: auto;
 

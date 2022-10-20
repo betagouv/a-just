@@ -15,11 +15,8 @@ export default class RouteContentieuxOptions extends Route {
   })
   async getAll (ctx) {
     let { juridictionId, backupId } = this.body(ctx)
-    const backups = await this.model.models.OptionsBackups.getBackup(
-      ctx.state.user.id,
-      juridictionId
-    )
-    backupId = backups.find(b => b.id === backupId) ? backupId : (backups.length ? backups[backups.length - 1].id : null)
+    const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id, juridictionId)
+    backupId = backups.find((b) => b.id === backupId) ? backupId : backups.length ? backups[backups.length - 1].id : null
 
     this.sendOk(ctx, {
       backups,
@@ -50,21 +47,8 @@ export default class RouteContentieuxOptions extends Route {
   async duplicateBackup (ctx) {
     const { backupId, backupName, juridictionId } = this.body(ctx)
 
-    if (
-      await this.models.OptionsBackups.haveAccess(
-        backupId,
-        juridictionId,
-        ctx.state.user.id
-      )
-    ) {
-      this.sendOk(
-        ctx,
-        await this.model.models.OptionsBackups.duplicateBackup(
-          backupId,
-          backupName,
-          juridictionId
-        )
-      )
+    if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.models.OptionsBackups.duplicateBackup(backupId, backupName, juridictionId))
     } else {
       this.sendOk(ctx, null)
     }
@@ -81,26 +65,13 @@ export default class RouteContentieuxOptions extends Route {
   })
   async saveBackup (ctx) {
     const { backupId, list, backupName, juridictionId } = this.body(ctx)
-
     if (
-      (backupId &&
-        (await this.models.OptionsBackups.haveAccess(
-          backupId,
-          juridictionId,
-          ctx.state.user.id
-        ))) ||
-      (!backupId &&
-        (await this.models.HRBackups.haveAccess(
-          juridictionId,
-          ctx.state.user.id
-        )))
+      (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
+      (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
     ) {
-      const newId = await this.model.models.OptionsBackups.saveBackup(
-        list,
-        backupId,
-        backupName,
-        juridictionId
-      )
+      const newId = await this.model.models.OptionsBackups.saveBackup(list, backupId, backupName, juridictionId)
+
+      await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
 
       this.sendOk(ctx, newId)
     } else {
@@ -119,13 +90,7 @@ export default class RouteContentieuxOptions extends Route {
   async renameBackup (ctx) {
     const { backupId, backupName, juridictionId } = this.body(ctx)
 
-    if (
-      await this.models.OptionsBackups.haveAccess(
-        backupId,
-        juridictionId,
-        ctx.state.user.id
-      )
-    ) {
+    if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
       await this.model.models.OptionsBackups.renameBackup(backupId, backupName)
 
       this.sendOk(ctx, 'Ok')
@@ -161,10 +126,7 @@ export default class RouteContentieuxOptions extends Route {
   async updateBackup (ctx) {
     const { id, juridictions } = this.body(ctx)
 
-    await this.model.models.OptionsBackupJuridictions.changeRules(
-      id,
-      juridictions
-    )
+    await this.model.models.OptionsBackupJuridictions.changeRules(id, juridictions)
 
     this.sendOk(ctx, 'Ok')
   }
@@ -176,13 +138,27 @@ export default class RouteContentieuxOptions extends Route {
   async getBackupDetails (ctx) {
     const { backupId } = ctx.params
 
-    if (
-      await this.models.OptionsBackups.haveAccessWithoutJuridiction(
-        backupId,
-        ctx.state.user.id
-      )
-    ) {
+    if (await this.models.OptionsBackups.haveAccessWithoutJuridiction(backupId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getAllById(backupId))
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+      juridictionId: Types.number().required(),
+    }),
+    accesses: [Access.canVewContentieuxOptions],
+  })
+  async getLastUpdate (ctx) {
+    const { backupId, juridictionId } = this.body(ctx)
+
+    if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
+      const result = await this.model.models.HistoriesContentieuxUpdate.getLastUpdate(backupId)
+
+      this.sendOk(ctx, result)
     } else {
       this.sendOk(ctx, null)
     }

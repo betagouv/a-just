@@ -23,6 +23,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.updateVentilations = async (userId, ventilationsIds) => {
+    const list = []
     await Model.destroy({
       where: {
         user_id: userId,
@@ -31,12 +32,24 @@ export default (sequelizeInstance, Model) => {
     })
 
     for(let i = 0; i < ventilationsIds.length; i++) {
-      await Model.create({
-        user_id: userId,
-        hr_backup_id: ventilationsIds[i],
+      const backup = await Model.models.HRBackups.findOne({
+        attributes: ['id', 'label'],
+        where: {
+          id: ventilationsIds[i],
+        },
+        raw: true,
       })
+
+      if(backup) {
+        await Model.create({
+          user_id: userId,
+          hr_backup_id: ventilationsIds[i],
+        })
+        list.push(backup)
+      }
     }
 
+    return list
   }
 
 
