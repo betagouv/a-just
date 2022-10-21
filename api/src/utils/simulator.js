@@ -549,9 +549,9 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
         }
       }
       if (x === 'totalOut') {
-        if (simulation.etpMag && simulation.magRealTimePerCase) {
+        if (simulation.etpMag && simulation.realTimePerCase) {
           simulation.totalOut = Math.floor(
-            Math.floor(simulation.etpMag * environment.nbHoursPerDay * environment.nbDaysByMagistratPerMonth) / simulation.magRealTimePerCase
+            Math.floor(simulation.etpMag * environment.nbHoursPerDay * environment.nbDaysByMagistratPerMonth) / simulation.realTimePerCase
           )
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
