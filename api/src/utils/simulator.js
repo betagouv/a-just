@@ -514,7 +514,6 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
 export function execSimulation (params, simulation, dateStart, dateStop) {
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null)
-      //@ts-ignore
       simulation[x] = params.beginSituation[x]
   })
 
@@ -540,7 +539,7 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       params.modifiedParams.param2.label === 'realCoverage'
         ? parseFloat(params.modifiedParams.param2.value) / 100
         : parseFloat(params.modifiedParams.param2.value)
-
+        
   do {
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
@@ -554,9 +553,9 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
         }
       }
       if (x === 'totalOut') {
-        if (simulation.etpMag && simulation.realTimePerCase) {
+        if (simulation.etpMag && simulation.magRealTimePerCase) {
           simulation.totalOut = Math.floor(
-            Math.floor(simulation.etpMag * environment.nbHoursPerDay * environment.nbDaysByMagistratPerMonth) / simulation.realTimePerCase
+            Math.floor(simulation.etpMag * environment.nbHoursPerDayAndMagistrat * environment.nbDaysByMagistratPerMonth) / simulation.magRealTimePerCase
           )
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
@@ -628,5 +627,6 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       simulation.realCoverage !== null
     )
   )
+
   return simulation
 }
