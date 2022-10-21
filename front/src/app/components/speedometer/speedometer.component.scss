@@ -5,6 +5,24 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+
+  &.dark-mode {
+    .title {
+      color: white;
+
+      &.alert {
+        color: white;
+      }
+    
+      &.good {
+        color: white;
+      }
+    }    
+  }
+
+  &.small-text .title {  
+    font-size: 12px;
+  }
 }
 
 .title {
