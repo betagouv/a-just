@@ -3,35 +3,49 @@
 .header-list {
   display: flex;
   width: 100%;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgHeader);
   z-index: 1;
   position: sticky;
   top: 0;
 
   .profil {
     display: flex;
-    width: 416px;
+    width: 369px;
 
     > .label-container {
       display: flex;
-      padding: 8px 32px;
+      align-items: flex-end;
+      padding: 8px 0 8px 16px;
       flex: 1;
 
-      i {
-        width: 32px;
-        height: 32px;
-        margin-right: 8px;
-        border: 1px solid fColor(darkModeTitle);
-        color: white;
+      .check-item {
+        width: 24px;
+        height: 24px;
+        margin-right: 4px;
         text-align: center;
-        line-height: 32px;
-        cursor: pointer;
+        line-height: 24px;
+
+        &.selected {
+          background-color: fColor(bgSelectSelected);
+          color: white;
+        }
+
+        &.selected::before {
+          position: relative;
+          content: '';
+        }
       }
 
-      p {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
+      p.label {
+        flex: 1;
+        color: fColor(darkModeTitle);
+      }
+
+      p.btn {
+        border: 1px solid fColor(darkModeTitle);
+        color: fColor(darkModeTitle);
+        padding: 4px 12px;
+        cursor: pointer;
       }
     }
 
@@ -43,6 +57,7 @@
         text-align: right;
         font-size: 12px;
         color: fColor(grayRow);
+        white-space: nowrap;
       }
 
       > div {
@@ -54,22 +69,16 @@
           height: 40px;
           margin-top: 3px;
           align-items: flex-end;
-        }
-
-        &.etp-target {
-          margin-top: 17px;
-          height: 38px;
-          align-items: center;
+          margin-bottom: 2px;
         }
 
         &.etp {
-          height: 38px;
-          align-items: flex-end;
+          height: 23px;
+          align-items: center;
         }
 
         &.filter {
-          height: 39px;
-          margin-bottom: 11px;
+          height: 32px;
           align-items: center;
         }
 
@@ -94,8 +103,12 @@
       &.selected {
         background-color: fColor(darkModeBgMenu);
 
-        > div.text .filter mat-icon {
-          color: fColor(sortIconHeaderSelected);
+        .etp {
+          background-color: fColor(darkModeBgHeader);
+        }
+
+        .filter i {
+          color: fColor(tooltipBgTitleColor);
         }
       }
 
@@ -104,6 +117,7 @@
         display: flex;
         align-items: flex-end;
         height: 40px;
+        margin-bottom: 2px;
 
         p {
           text-transform: uppercase;
@@ -115,43 +129,26 @@
         }
       }
 
-      > .etp-target {
-        margin-top: 17px;
-        height: 38px;
-
-        input {
-          width: 100%;
-          height: 100%;
-          text-align: center;
-          border: none;
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
-        }
-      }
-
       > .etp {
-        height: 38px;
-        display: flex;
-        align-items: flex-end;
+        height: 23px;
+        border-radius: 4px;
+        background-color: fColor(darkModeBgMenu);
+        margin: 0 4px;
 
         p {
-          color: fColor(headerNumberColor);
+          color: fColor(tooltipBgTitleColor);
           width: 100%;
           text-align: center;
         }
       }
 
       .filter {
-        height: 39px;
-        margin-bottom: 11px;
+        height: 32px;
         align-items: center;
         display: flex;
         justify-content: center;
 
-        p {
-          color: #161616;
-        }
-        mat-icon {
+        i {
           width: 16px;
           height: 16px;
           font-size: 16px;
@@ -171,19 +168,19 @@
   .profil {
     display: flex;
     align-items: stretch;
-    width: 416px;
+    width: 369px;
 
     > .label-container {
       flex: 1;
       display: flex;
-      padding: 8px 32px;
+      padding: 8px 16px;
 
       i {
         width: 32px;
         height: 32px;
         margin-right: 8px;
         border: 1px solid fColor(darkModeTitle);
-        color: white;
+        color: fColor(darkModeTitle);
         text-align: center;
         line-height: 32px;
         cursor: pointer;
@@ -200,8 +197,7 @@
       align-self: stretch;
       display: flex;
       width: 125px;
-      height: calc(100% - 8px);
-      margin: 4px 0;
+      height: 100%;
 
       > .text {
         flex: 1;
@@ -215,18 +211,31 @@
           text-align: right;
           font-size: 12px;
           color: fColor(grayRow);
+          white-space: nowrap;
         }
 
         > div {
           display: flex;
           align-items: center;
 
-          &:first-child {
-            flex: 1;
+          &.taux-row {
+            height: 48px;
           }
 
-          &:last-child {
-            height: 50px;
+          &.dtes-row {
+            height: 24px;
+            margin-top: 2px;
+          }
+
+          &.etp-target-row {
+            height: 23px;
+            margin-top: 4px;
+          }
+
+          &.total-etp-row {
+            margin-top: 7px;
+            margin-bottom: 11px;
+            height: 20px;
           }
         }
       }
@@ -238,7 +247,6 @@
     flex: 1;
 
     > .sub-item {
-      margin: 4px 0;
       flex: 1;
       align-self: stretch;
       display: flex;
@@ -247,31 +255,55 @@
       > div {
         margin-right: 3px;
 
-        &:first-child {
-          flex: 1;
+        &.taux-row {
+          height: 48px;
         }
 
-        &:last-child {
-          height: 50px;
+        &.dtes-row {
+          height: 24px;
+          margin-top: 2px;
+        }
+
+        &.etp-target-row {
+          height: 23px;
+          margin-top: 4px;
+
+          > input {
+            text-align: center;
+            border: none;
+            width: 100%;
+          }
+        }
+
+        &.total-etp-row {
+          margin-top: 7px;
+          margin-bottom: 11px;
+          height: 20px;
+
+          > p {
+            text-align: center;
+            font-weight: bold;
+            color: fColor(headerNumberColor);
+          }
         }
 
         > div.taux {
-          background-color: fColor(darkModeBgMenuSelected);
+          background-color: fColor(darkModeBgMenu);
           border-radius: 3.7px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
-          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
 
           > aj-speedometer {
-            width: 100%;
+            width: 48px;
           }
         }
 
         > div.dtes {
           background-color: fColor(darkModeBgMenu);
           border-radius: 4px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -308,45 +340,16 @@
     .sub-content-list {
       display: inline-block;
       width: 100%;
-      padding: 4px 18px;
-
-      .header-item {
-        height: 65px;
-        padding: 0 16px;
-        display: flex;
-        align-items: center;
-        background-color: fColor(darkModeBgLight);
-        border-radius: 8px;
-
-        .check-item {
-          margin-right: 10px;
-        }
-
-        p.label {
-          margin-right: 56px;
-          color: fColor(darkModeTitle);
-        }
-
-        p.btn {
-          border: 1px solid fColor(darkModeTitle);
-          color: fColor(darkModeTitle);
-          padding: 4px 12px;
-          cursor: pointer;
-        }
-      }
+      padding: 1px 2px;
     }
   }
 }
 
 .item-list {
   margin-top: 4px;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgMenu);
   display: flex;
   border-radius: 4px;
-
-  &:hover {
-    background-color: fColor(darkModeBgMenu);
-  }
 
   &:last-child {
     margin-bottom: 16px;
@@ -361,17 +364,25 @@
       min-height: 16px;
     }
   }
+
+  &.is-modify {
+    background-color: fColor(cbluemiddle);
+
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+  }
 }
 
 .profil {
-  width: 400px;
+  width: 369px;
 
   &.item {
     display: flex;
 
     .text {
       flex: 1;
-      padding: 24px 16px 20px 16px;
+      padding: 24px 16px 10px 16px;
       display: flex;
       flex-direction: column;
       text-decoration: none;
@@ -379,6 +390,10 @@
       .name {
         margin-bottom: 8px;
         display: flex;
+
+        .check-item {
+          margin-top: 3px;
+        }
 
         p {
           font-weight: bold;
@@ -437,18 +452,6 @@
             background-color: fColor(darkModeBgMenu);
           }
 
-          &.unavailable {
-            font-size: 14px;
-            color: fColor(titleIndisponibilitiesPanel);
-
-            mat-icon {
-              font-size: 17px;
-              color: fColor(titleIndisponibilitiesPanel);
-              height: 17px;
-              width: 17px;
-            }
-          }
-
           mat-icon {
             font-size: 14px;
             width: 14px;
@@ -473,6 +476,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: fColor(darkModeBgHeader);
 
       .label {
         font-size: 12px;
@@ -500,8 +504,8 @@
 .title {
   display: flex;
   align-items: center;
-  background-color: fColor(darkModeBgMenu);
-  padding: 0 32px 24px 32px;
+  background-color: fColor(darkModeBgHeader);
+  padding: 0 16px 16px 16px;
 
   aj-select,
   aj-date-select {
@@ -539,20 +543,11 @@ progression-bar {
 .reaffectator-page {
   margin-right: 8px;
   text-decoration: none;
-
-  > button {
-    display: flex;
-    align-items: center;
-
-    aj-radio-button {
-      margin-left: 16px;
-    }
-  }
 }
 
 .check-item {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   border: 1px solid fColor(darkModeTitle);
   border-radius: 4px;
   cursor: pointer;
@@ -567,6 +562,27 @@ progression-bar {
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: fColor(darkModeTitle);
+    font-size: 10px;
+    background-color: fColor(bgSelectSelected);
+    border-radius: 3px;
+  }
+}
+
+.category-select {
+  width: 235px;
+}
+
+.unavailable {
+  font-size: 14px;
+  color: fColor(titleIndisponibilitiesPanel);
+  margin-bottom: 10px;
+
+  mat-icon {
+    font-size: 17px;
+    color: fColor(titleIndisponibilitiesPanel);
+    height: 17px;
+    width: 17px;
+    position: relative;
+    top: 3px;
   }
 }

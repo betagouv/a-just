@@ -15,7 +15,7 @@
 
   &.dark-mode {
     background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeTitle);
+    border: 1px solid fColor(darkModeBgMenu);
 
     p, mat-icon {
       color: white;

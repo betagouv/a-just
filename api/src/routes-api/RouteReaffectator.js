@@ -1,7 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
-import { copyArray } from '../utils/array'
 
 export default class RouteReaffectator extends Route {
   constructor (params) {
@@ -15,13 +14,13 @@ export default class RouteReaffectator extends Route {
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
-      categoriesIds: Types.array().required(),
+      categoryId: Types.number().required(),
       fonctionsIds: Types.array().required(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoriesIds, contentieuxIds, fonctionsIds } =
+    let { backupId, date, categoryId, contentieuxIds, fonctionsIds } =
       this.body(ctx)
     if (
       !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
@@ -38,7 +37,7 @@ export default class RouteReaffectator extends Route {
     console.time('step3')
     let list = preformatedAllHumanResource.filter((hr) => {
       let isOk = true
-      if (hr.category && categoriesIds.indexOf(hr.category.id) === -1) {
+      if (hr.category && categoryId !== hr.category.id) {
         isOk = false
       }
 
@@ -77,15 +76,11 @@ export default class RouteReaffectator extends Route {
 
     let listFiltered = [...list]
     const categories = await this.models.HRCategories.getAll()
-    const originalReferentiel = (
-      await this.models.ContentieuxReferentiels.getReferentiels()
-    ).filter((r) => !contentieuxIds || contentieuxIds.indexOf(r.id) !== -1)
 
     const listFormated = categories
-      .filter((c) => categoriesIds.indexOf(c.id) !== -1)
+      .filter((c) => categoryId === c.id)
       .map((category) => ({
         originalLabel: category.label,
-        referentiel: copyArray(originalReferentiel),
         allHr: listFiltered.filter(
           (h) => h.category && h.category.id === category.id
         ),

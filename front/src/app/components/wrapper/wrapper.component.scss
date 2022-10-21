@@ -101,7 +101,7 @@
     }
 
     .header {
-      background-color: fColor(darkModeBgMenu);
+      background-color: fColor(darkModeBgHeader);
 
       h3 {
         color: fColor(darkModeTitle);
@@ -110,7 +110,7 @@
 
     .contener {
       .content {
-        background-color: black;
+        background-color: fColor(cblackdark);
       }
     }
   }

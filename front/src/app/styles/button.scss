@@ -38,6 +38,11 @@ button {
     background-color: fColor(cred);
   }
 
+  &.blue-light {
+    color: fColor(primary);
+    background-color: fColor(darkModeTitle);
+  }
+
   &.outline {
     &.blue, &.primary {
       color: fColor(primary);
