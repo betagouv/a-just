@@ -42,7 +42,7 @@ export function getShortMonthString(date: Date | string) {
     'Févr.',
     'Mars',
     'Avr.',
-    'Mai.',
+    'Mai',
     'Juin',
     'Juil.',
     'Août',
@@ -59,17 +59,17 @@ export function getLongMonthString(shortString: string) {
       return 'Janvier'
     case 'Févr.':
       return 'Février'
-    case 'Mars.':
+    case 'Mars':
       return 'Mars'
     case 'Avr.':
       return 'Avril'
-    case 'Mai.':
+    case 'Mai':
       return 'Mai'
-    case 'Juin.':
+    case 'Juin':
       return 'Juin'
     case 'Juil.':
       return 'Juillet'
-    case 'Août.':
+    case 'Août':
       return 'Août'
     case 'Sept.':
       return 'Septembre'
