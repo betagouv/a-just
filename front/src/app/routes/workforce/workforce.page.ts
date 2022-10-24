@@ -233,8 +233,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
+       if (this.searchValue.length !== 0)
+         alert(
+           'La personne recherchée n’est pas présente à la date sélectionnée.'
+         )
+ 
     }
-  }
+    }
 
   onFilterList() {
     if (
@@ -272,7 +277,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
-
     console.log(this.filterParams)
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr]
