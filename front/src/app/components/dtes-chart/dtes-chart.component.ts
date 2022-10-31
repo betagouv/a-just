@@ -313,24 +313,37 @@ export class DtesChartComponent {
             }
           )
 
-          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+          const tooltipEl =
+            $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+          const tooltipElTriangle =
+            $this.myChart.canvas.parentNode.querySelector(
+              '#chartjs-tooltip-triangle'
+            )
 
           const yValues = items.map((object: any) => {
             return object.element.y
           })
 
           const min = Math.min(...yValues)
+
           tooltipEl.style.opacity = 1
-          tooltipEl.style.left = items[0].element.x + 'px'
+          tooltipEl.style.left =
+            (items[0].element.x > 175 ? items[0].element.x : 175) + 'px'
           tooltipEl.style.top = min - 130 + 'px'
+
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left = items[0].element.x + 4 + 'px'
+          tooltipElTriangle.style.top = min + 'px'
 
           $this.affectTooltipValues({
             projectedStock: projectedStock.data[firstPoint],
             simulatedStock: simulatedStock.data[firstPoint],
             projectedDTES: projectedDTES.data[firstPoint],
             simulatedDTES: simulatedDTES.data[firstPoint],
-            x: items[0].element.x + 'px',
+            x: (items[0].element.x > 175 ? items[0].element.x : 175) + 'px',
             y: min - 130 + 'px',
+            trianglex: items[0].element.x + 'px',
+            tirnagley: min - 2.5 + 'px',
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
             enableTooltip: false,
@@ -399,6 +412,7 @@ export class DtesChartComponent {
               undefined
             $this.updateAnnotationBox(false, 0, 0, undefined)
             tooltipEl.style.opacity = 0
+            tooltipElTriangle.style.opacity = 0
           }
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
@@ -562,7 +576,11 @@ export class DtesChartComponent {
         this.tooltip.projectedStock = value.projectedStock
         this.tooltip.simulatedStock = value.simulatedStock
 
-        const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+        const tooltipEl =
+          $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+        const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector(
+          '#chartjs-tooltip-triangle'
+        )
         const colorArray = []
 
         if (value.x) {
@@ -570,6 +588,12 @@ export class DtesChartComponent {
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
           tooltipEl.style.top = value.y
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left =
+            Number(String(value.trianglex).replace('px', '')) + 4 + 'px'
+          tooltipElTriangle.style.top =
+            Number(String(value.y).replace('px', '')) + 128 + 'px' //68
+
           this.tooltip.projectedStock =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
           this.tooltip.simulatedStock =
@@ -590,6 +614,8 @@ export class DtesChartComponent {
         }
         if (value.display === false) {
           tooltipEl.style.opacity = 0
+          tooltipElTriangle.style.opacity = 0
+
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             colorArray.push('rgb(109, 109, 109)')
           }

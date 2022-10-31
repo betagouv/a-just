@@ -9,6 +9,8 @@ export interface ChartAnnotationBoxInterface {
   simulatedStock?: number | null
   x?: number | null
   y?: number | null
+  trianglex?: number | null
+  triangley?: number | null
   pointIndex?: number | null
   projectedDTES?: number | null
   simulatedDTES?: number | null

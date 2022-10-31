@@ -269,7 +269,12 @@ export class InOutChartComponent implements OnDestroy {
             }
           )
 
-          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+          const tooltipEl =
+            $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+          const tooltipElTriangle =
+            $this.myChart.canvas.parentNode.querySelector(
+              '#chartjs-tooltip-triangle'
+            )
 
           const yValues = items.map((object: any) => {
             return object.element.y
@@ -277,16 +282,24 @@ export class InOutChartComponent implements OnDestroy {
 
           const min = Math.min(...yValues)
           tooltipEl.style.opacity = 1
-          tooltipEl.style.left = items[0].element.x + 'px'
+
+          tooltipEl.style.left =
+            (items[0].element.x > 175 ? items[0].element.x : 175) + 'px'
           tooltipEl.style.top = min - 130 + 'px'
+
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left = items[0].element.x + 4 + 'px'
+          tooltipElTriangle.style.top = min + 'px'
 
           $this.affectTooltipValues({
             projectedIn: projectedIn.data[firstPoint],
             simulatedIn: simulatedIn.data[firstPoint],
             projectedOut: projectedOut.data[firstPoint],
             simulatedOut: simulatedOut.data[firstPoint],
-            x: items[0].element.x + 'px',
+            x: (items[0].element.x > 175 ? items[0].element.x : 175) + 'px',
             y: min - 130 + 'px',
+            trianglex: items[0].element.x + 4 + 'px',
+            tirnagley: min + 'px',
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
             enableTooltip: false,
@@ -351,6 +364,7 @@ export class InOutChartComponent implements OnDestroy {
               undefined
             $this.updateAnnotationBox(false, 0, 0, undefined)
             tooltipEl.style.opacity = 0
+            tooltipElTriangle.style.opacity = 0
           }
           e.chart.config.options.scales.x.ticks.color = colorArray
           e.chart.update()
@@ -569,7 +583,11 @@ export class InOutChartComponent implements OnDestroy {
         this.tooltip.projectedOut = value.projectedOut
         this.tooltip.simulatedOut = value.simulatedOut
 
-        const tooltipEl = $this.myChart.canvas.parentNode.querySelector('div')
+        const tooltipEl =
+          $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+        const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector(
+          '#chartjs-tooltip-triangle'
+        )
         const colorArray = []
 
         if (value.x) {
@@ -578,6 +596,11 @@ export class InOutChartComponent implements OnDestroy {
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
           tooltipEl.style.top = value.y
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left =
+            Number(String(value.trianglex).replace('px', '')) + 4 + 'px'
+          tooltipElTriangle.style.top =
+            Number(String(value.y).replace('px', '')) + 128 + 'px'
           this.tooltip.projectedIn =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
           this.tooltip.simulatedIn =
@@ -598,6 +621,8 @@ export class InOutChartComponent implements OnDestroy {
         if (value.display === false) {
           this.myChart.tooltip.active = true
           tooltipEl.style.opacity = 0
+          tooltipElTriangle.style.opacity = 0
+
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             colorArray.push('rgb(109, 109, 109)')
           }
