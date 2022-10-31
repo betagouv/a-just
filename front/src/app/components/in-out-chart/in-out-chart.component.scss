@@ -2,6 +2,31 @@
     display: flex;
     margin-top: 1px;
 
+    position: relative;
+
+
+    #chartjs-tooltip-triangle {
+        position: absolute !important;
+        z-index: 200;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        height: 0;
+        width: 0;
+        border-bottom: 4px solid white;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        position: absolute;
+        bottom: -4px;
+        left: 195px;
+        transform: rotate(180deg) !important;
+        -webkit-transition: all .1s ease;
+        transition: all 1s ease;
+        pointer-events: none;
+        -webkit-transform: translate(-50%, 0);
+        transform: translate(-50%, 0);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        opacity: 0;
+    }
+
     #in-out-chart {
         height: 250px;
         width: content-box;
@@ -24,20 +49,6 @@
         transform: translate(-50%, 0);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-        &::before {
-            content: "";
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            height: 0;
-            width: 0;
-            border-bottom: 4px solid white;
-            border-right: 4px solid transparent;
-            border-left: 4px solid transparent;
-            position: absolute;
-            bottom: -4px;
-            left: 195px;
-            transform: rotate(180deg);
-
-        }
 
         .circle {
             margin: 8px 8px 8px 0px;
@@ -247,6 +258,7 @@
             justify-content: center;
 
             .canvas-container {
+                margin-left: 5px;
                 width: 100%;
             }
         }
