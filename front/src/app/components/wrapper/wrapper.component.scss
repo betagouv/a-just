@@ -261,7 +261,7 @@
 .header {
   height: 87px;
   min-height: 87px;
-  padding: 0 32px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   background-color: white;
@@ -330,7 +330,6 @@
 .actions {
   display: flex;
   align-items: center;
-  margin-left: 34px;
 }
 
 .progress-bar {
