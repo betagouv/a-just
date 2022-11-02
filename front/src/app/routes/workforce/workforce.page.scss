@@ -154,6 +154,10 @@
           //height: 40px;
           p {
             text-transform: uppercase;
+
+            b {
+              color: #161616;
+            }
           }
         }
 
@@ -161,7 +165,7 @@
 
           p {
             color: fColor(headerNumberColor);
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             letter-spacing: -0.53px;
           }
@@ -481,11 +485,12 @@
 }
 
 .add-collaborator {
-  margin-left: 8px;
   font-size: 14px;
   display: flex;
   align-items: center;
   height: 40px;
+  padding: 0px 8px;
+  border-radius: 4px;
 }
 
 .checkbox-button {
@@ -493,7 +498,7 @@
   align-items: center;
   border-radius: 4px;
   height: 55px;
-  padding: 4px 5px 4px 16px;
+  padding: 4px 16px 4px 16px;
   border-width: 1px;
   border-style: solid;
   margin-left: 8px;
@@ -593,12 +598,12 @@ progression-bar {
   text-decoration: none;
 
   >button {
+    border-radius: 4px;
     display: flex;
     align-items: center;
-
-    aj-radio-button {
-      margin-left: 16px;
-    }
+    height: 40px;
+    font-size: 14px;
+    padding: 0px 8px;
   }
 }
 

@@ -17,7 +17,8 @@
     background-color: fColor(darkModeBgMenu);
     border: 1px solid fColor(darkModeTitle);
 
-    p, mat-icon {
+    p,
+    mat-icon {
       color: white;
     }
 
@@ -47,7 +48,7 @@
       flex: 1;
       font-weight: bold;
       height: 24px;
-      width: 150px;
+      width: 100px;
       text-overflow: ellipsis;
       overflow: hidden;
     }

@@ -168,8 +168,10 @@
   .menu-scrollable {
     flex: 1;
     overflow: auto;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
     display: flex;
     flex-direction: column;
 
@@ -283,6 +285,10 @@
   .title-with-doc {
     display: flex;
     align-items: center;
+
+    h3 {
+      font-size: 20px;
+    }
   }
 
   .documentation {
