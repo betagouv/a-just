@@ -47,6 +47,9 @@ export default class App extends AppBase {
       proxy('/documentation', {
         target: 'https://a-just.gitbook.io/documentation-deploiement/presentation-da-just/avant-de-commencer',    
         changeOrigin: true,
+        logs: (ctx, target) => {
+          console.log('%s - %s %s proxy to -> %s', new Date().toISOString(), ctx.req.method, ctx.req.oldPath, new URL(ctx.req.url, target))
+        }, 
       }),
       // we add the relevant middlewares to our API
       cors({ credentials: true }), // add cors headers to the requests

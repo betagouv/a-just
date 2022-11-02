@@ -36,7 +36,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   isLoadedFirst: boolean = true
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
-    path: '/documentation' //https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
   }
 
   constructor(
