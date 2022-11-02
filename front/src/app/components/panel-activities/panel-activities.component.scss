@@ -5,7 +5,7 @@
 
   &.dark-mode {
     p {
-      color: white;
+      color: fColor(headerColor);
     }
 
     .progress-bar {
@@ -162,6 +162,7 @@
         background-color: var(--border-color);
         left: 2px;
         height: 4px;
+        border-top-left-radius: 3px;
       }
     }
   }
