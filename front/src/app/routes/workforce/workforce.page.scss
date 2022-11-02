@@ -605,6 +605,7 @@ progression-bar {
 .search-zone {
   background-color: white;
   display: flex;
+  align-items: center;
 
   >aj-input-button {
     margin-left: 8px;
