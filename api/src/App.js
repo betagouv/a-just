@@ -8,6 +8,7 @@ import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
+const proxy = require('koa-proxies')
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -43,6 +44,10 @@ export default class App extends AppBase {
     })
 
     super.addMiddlewares([
+      proxy('/documentation', {
+        target: 'https://a-just.gitbook.io/documentation-deploiement/presentation-da-just/avant-de-commencer',    
+        changeOrigin: true,
+      }),
       // we add the relevant middlewares to our API
       cors({ credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
