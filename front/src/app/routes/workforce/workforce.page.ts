@@ -160,6 +160,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         nbPersonal: personal.length,
       }
     })
+
+    this.calculateTotalAffected()
   }
 
   async addHR() {
@@ -276,7 +278,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
-    console.log(this.filterParams)
+    // console.log(this.filterParams)
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr]
       if (this.filterParams) {
@@ -435,5 +437,41 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.orderListWithFiltersParams()
+  }
+
+  calculateTotalAffected() {
+    this.listFormated = this.listFormated.map((group) => {
+      group.referentiel = group.referentiel.map((r) => ({
+        ...r,
+        totalAffected: 0,
+      }))
+
+      const listFiltered = group.hrFiltered || []
+      listFiltered.map((hr) => {
+        hr.tmpActivities = {}
+
+        group.referentiel = group.referentiel.map((ref) => {
+          hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+            (r) => r.contentieux && r.contentieux.id === ref.id
+          )
+          if (hr.tmpActivities[ref.id].length) {
+            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+            if (timeAffected) {
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP < 0) {
+                realETP = 0
+              }
+              ref.totalAffected = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+            }
+          }
+
+          return ref
+        })
+
+        return hr
+      })
+
+      return group
+    })
   }
 }
