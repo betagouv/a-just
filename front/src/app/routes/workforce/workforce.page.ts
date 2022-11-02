@@ -62,7 +62,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] = []
   filterSelected: ContentieuReferentielInterface | null = null
-  lastScrollTop: number = 0
   showFilterPanel: number = -1
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
   canViewReaffectator: boolean = false
@@ -325,33 +324,23 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (findElement) {
           const headers = findContainer.querySelectorAll('.header-list')
           const { top } = findElement.getBoundingClientRect()
-          let topDelta = findContainer.getBoundingClientRect().top + 8
+          const mainTop = findContainer.getBoundingClientRect().top
+          let topDelta = mainTop
           for (let i = 0; i < headers.length; i++) {
             const topHeader = headers[i].getBoundingClientRect().top
-            if (topHeader < top) {
+            if (topHeader === mainTop || topHeader < top) {
               topDelta += headers[i].getBoundingClientRect().height
+              break
             }
           }
 
-          let scrollTop = top - topDelta + findContainer.scrollTop
-          if (this.lastScrollTop && this.lastScrollTop > scrollTop) {
-            scrollTop -= 88
-          }
+          let scrollTop = top - topDelta + findContainer.scrollTop - 8
 
           isFinded = true
           findContainer.scroll({
             behavior: 'smooth',
             top: scrollTop,
           })
-
-          console.log({
-            scrollTop,
-            TopFindElemtGetBoundingClientRect: top,
-            DeltaFindContainerGetBoundingClientRect: topDelta,
-            lastScrollTop: this.lastScrollTop,
-          })
-
-          this.lastScrollTop = scrollTop
         } else {
         }
       } else {
