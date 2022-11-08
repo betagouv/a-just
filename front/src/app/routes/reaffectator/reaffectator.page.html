@@ -16,7 +16,7 @@
         [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
       <div class="flex-1"></div>
-      <aj-input-button class="dark-mode" title="Rechercher un collaborateur" placeholder="Indiquer le nom"
+      <aj-input-button class="dark-mode" title="Rechercher un agent" placeholder="Indiquer le nom"
         [ngModel]="searchValue" (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()"
         ngDefaultControl icon="">
       </aj-input-button>

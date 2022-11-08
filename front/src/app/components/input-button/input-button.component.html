@@ -1,15 +1,11 @@
 <div class="input">
-  <p *ngIf="title !== 'Rechercher un collaborateur'" class="title">
+  <p *ngIf="title !== 'Rechercher un agent'" class="title">
     {{ title }}
   </p>
   <div class="input-container">
     <img src="/assets/icons/search-line.svg" />
-    <input
-      [ngClass]="{ 'restrict-width': title === 'Rechercher un collaborateur' }"
-      [placeholder]="placeholder"
-      [(ngModel)]="value"
-      (ngModelChange)="onChange()"
-    />
+    <input [ngClass]="{ 'restrict-width': title === 'Rechercher un agent' }" [placeholder]="placeholder"
+      [(ngModel)]="value" (ngModelChange)="onChange()" />
   </div>
 </div>
 <div *ngIf="icon" class="button" (click)="onSearch()">
