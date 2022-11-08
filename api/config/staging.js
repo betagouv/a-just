@@ -4,6 +4,6 @@ module.exports = {
   frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   preloadHumanResourcesDatas: true,
   sendingBlue: {
-    usersListId: 8,
+    usersListId: 7,
   },
 }
