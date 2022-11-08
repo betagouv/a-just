@@ -389,12 +389,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onExport() {
-    this.duringPrint = true
+    /*this.duringPrint = true
     this.wrapper
       ?.exportAsPdf('simulation-d-affectation.pdf', false)
       .then(() => {
         this.duringPrint = false
-      })
+      })*/
+    alert('Cette fonctionnalité n\'est pas encore disponible.')
   }
 
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
@@ -484,6 +485,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     const activities = this.actualActivities
     const magistrats = this.listFormated.find((l) => l.categoryId === 1)
 
+    console.log(this.referentiel)
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
       const activitiesFiltered = orderBy(
@@ -496,6 +498,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         },
         ['desc']
       ).slice(0, 12)
+
+      if(r.id === 460) {
+      console.log(r, activitiesFiltered)
+      }
 
       // find new ETPT of today
       let etpt = 0

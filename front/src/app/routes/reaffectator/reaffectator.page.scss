@@ -375,6 +375,28 @@
     .activities {
       background-color: fColor(bgProgressBar);
     }
+
+    .profil.item .read-etp {
+      background-color: fColor(bgReadETPDark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
+  }
+
+  &.is-selected {
+    .profil.item {
+      background-color: fColor(cbluemiddle);    
+    }
+    
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
   }
 }
 
@@ -470,7 +492,7 @@
         margin-top: 10px;
         font-size: 12px;
         line-height: 20px;
-        color: fColor(grayRow);
+        color: white;
       }
     }
 
