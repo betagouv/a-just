@@ -59,7 +59,7 @@
 </div>
 
 <div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100 }">
-  <p>Taux d'affectation : {{ percentAffected | number: '0.0-2' }}%</p>
+  <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
   <div class="progress-bar-line">
     <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
   </div>

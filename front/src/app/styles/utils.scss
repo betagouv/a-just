@@ -62,6 +62,7 @@ $colors: (
 	tagText: #6e445a,
 	bgHelper: #33569e,
 	titleInput: #666666,
+	bgReadETPDark: #ececfe,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

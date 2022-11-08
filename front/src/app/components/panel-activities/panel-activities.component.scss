@@ -5,12 +5,12 @@
 
   &.dark-mode {
     p {
-      color: fColor(headerColor);
+      color: fColor(grayRow);
     }
 
     .progress-bar {
       p {
-        color: fColor(headerColor);
+        color: fColor(grayRow);
       }
     }
   }
@@ -109,7 +109,7 @@
   }
 
   p {
-    width: 155px;
+    width: 271px;
     font-size: 12px;
     color: fColor(cgray);
   }
