@@ -1,5 +1,6 @@
 var SibApiV3Sdk = require('sib-api-v3-sdk')
 import config from 'config'
+import { SENDING_BLUE_USER_LIST_ID } from '../constants/email'
 var defaultClient = SibApiV3Sdk.ApiClient.instance
 
 // Configure API key authorization: api-key
@@ -27,4 +28,55 @@ export function sentEmail (to, templateId, params) {
       }
     }
   )
+}
+
+export function sentEmailSendinblueUserList (user) {
+  let apiInstance = new SibApiV3Sdk.ContactsApi()
+
+  //if (user.newsletter) {
+  let requestContactImport = new SibApiV3Sdk.RequestContactImport()
+
+  requestContactImport.fileBody = `EMAIL;NOM;PRENOM;SMS;PUBLIC_TOKEN;\n${user.email};${user.first_name};${user.last_name};;`
+  requestContactImport.listIds = [SENDING_BLUE_USER_LIST_ID]
+  requestContactImport.emailBlacklist = false
+  requestContactImport.smsBlacklist = false
+  requestContactImport.updateExistingContacts = true
+  requestContactImport.emptyContactsAttributes = false
+
+  return apiInstance.importContacts(requestContactImport).then(
+    function (data) {
+      console.log(
+        'API called successfully. Returned data: ' + JSON.stringify(data)
+      )
+    },
+    function (err) {
+      if (err && err.response && err.response.body) {
+        console.log(err.response.body)
+      } else {
+        console.error(err.text || err)
+      }
+    }
+  )
+  /*} else {
+    let contactEmails = new SibApiV3Sdk.RemoveContactFromList()
+
+    contactEmails.emails = [user.email]
+
+    return apiInstance
+      .removeContactFromList(SENDING_BLUE_LIST_USERS, contactEmails)
+      .then(
+        function (data) {
+          console.log(
+            'API called successfully. Returned data: ' + JSON.stringify(data)
+          )
+        },
+        function (err) {
+          if (err && err.response && err.response.body) {
+            console.log(err.response.body)
+          } else {
+            console.error(err.text || err)
+          }
+        }
+      )
+  }*/
 }
