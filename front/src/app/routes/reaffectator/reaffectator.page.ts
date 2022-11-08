@@ -409,7 +409,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     )
     this.formFilterFonctionsSelect = fonctionList.map((f) => ({
       id: f.id,
-      value: f.label,
+      value: f.code || f.label,
     }))
 
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
