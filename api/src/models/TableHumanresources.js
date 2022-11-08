@@ -204,6 +204,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
+    await Model.onPreload()
     console.log(importSituation)
   } 
 
