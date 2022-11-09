@@ -78,6 +78,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showIndicatorPanel: boolean = true
   actualActivities: ActivityInterface[] = []
   firstETPTargetValue: (number | null)[] = []
+  isolatePersons: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -509,6 +510,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     const magistrats = this.listFormated.find(
       (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
     )
+    const fakeCategories = [{id: this.reaffectatorService.selectedCategoriesId, label: 'cat'}]
+    const nbDayByCategory = this.reaffectatorService.selectedCategoriesId === 1 ? environment.nbDaysByMagistrat : environment.nbDaysByFonctionnaire
+    const nbWorkingHours = this.reaffectatorService.selectedCategoriesId === 1 ? environment.nbHoursPerDayAndMagistrat : environment.nbHoursPerDayAndFonctionnaire
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
@@ -529,12 +533,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const ref = magistrats.referentiel.find(
           (referentiel) => referentiel.id === r.id
         )
-        if (ref) {
-          etpt = fixDecimal(ref.totalAffected!) || 0
+        if (ref && ref.totalAffected) {
+          etpt = ref.totalAffected
         }
       }
 
-      const nbDaysByMonthForMagistrat = environment.nbDaysByMagistrat / 12
+      const nbDaysByMonthForMagistrat = nbDayByCategory / 12
       const inValue = Math.floor(meanBy(activitiesFiltered, 'entrees')) || 0
       const averageOut = Math.floor(meanBy(activitiesFiltered, 'sorties')) || 0
       let lastStock = activitiesFiltered.length
@@ -555,7 +559,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
           (magistrats && magistrats.hrFiltered) || [],
           r.id,
-          this.humanResourceService.categories.getValue(),
+          fakeCategories,
           new Date(month(lastPeriode, -11)),
           true,
           new Date(month(lastPeriode, 0, 'lastday'))
@@ -565,14 +569,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             ? etpAffectedLast12Months[0].totalEtp
             : 0
 
-        let averageWorkingProcess = fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDayAndMagistrat) /
+        let averageWorkingProcess = etpToComputeLast12Months === 0 ? 0 : fixDecimal(
+          (nbDaysByMonthForMagistrat * nbWorkingHours) /
             (averageOut / etpToComputeLast12Months)
         )
 
-        let outValue = Math.floor(
+        let outValue = averageWorkingProcess === 0 ? 0 :  Math.floor(
           (etpt *
-            environment.nbHoursPerDayAndMagistrat *
+            nbWorkingHours *
             nbDaysByMonthForMagistrat) /
             averageWorkingProcess
         )
@@ -581,7 +585,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const etpAffected = this.simulatorService.getHRPositions(
           (magistrats && magistrats.hrFiltered) || [],
           r.id,
-          this.humanResourceService.categories.getValue(),
+          fakeCategories,
           lastPeriode,
           true,
           this.dateSelected
@@ -593,13 +597,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         // Compute stock projection until today
         lastStock =
           Math.floor(lastStock) -
-          Math.floor(
+          (etpMagDelta === 0 ? 0 : Math.floor(
             (nbDayCalendar / (365 / 12)) *
               nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDayAndMagistrat) /
+              ((etpMagDelta * nbWorkingHours) /
                 averageWorkingProcess)
-          ) +
+          )) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
+          if(lastStock < 0) {
+            lastStock = 0
+          }
 
         return {
           ...r,
@@ -607,7 +614,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           out: outValue,
           stock: lastStock,
           coverage: fixDecimal(outValue / inValue) * 100,
-          dtes: fixDecimal(lastStock / outValue),
+          dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue),
         }
       }
 
@@ -680,6 +687,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     } else {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
     }
+
+    if(this.listFormated[index].personSelected.length === 0) {
+      // force to reset isolate var
+      this.isolatePersons = false
+    }
   }
 
   toogleCheckAllPerson(index: number) {
@@ -709,5 +721,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       list.personSelected = []
       this.orderListWithFiltersParams()
     }
+  }
+
+  onToogleIsolation() {
+    this.isolatePersons = !this.isolatePersons
   }
 }
