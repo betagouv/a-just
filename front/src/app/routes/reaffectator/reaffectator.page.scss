@@ -14,9 +14,23 @@
 
     > .label-container {
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      justify-content: flex-end;
       padding: 8px 0 8px 16px;
       flex: 1;
+
+      .selection-row {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .buttons-row {
+        display: flex;
+
+        > *:first-child {
+          margin-right: 8px;
+        }
+      }
 
       .check-item {
         min-width: 24px;
