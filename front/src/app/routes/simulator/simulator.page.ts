@@ -16,6 +16,8 @@ import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -53,6 +55,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   valueToAjust = { value: '', percentage: null }
   currentNode: any | undefined = {}
   isLoading: boolean = false
+  categorySelected: string = 'MAGISTRAT'
+  functionsList: Array<any> = []
+  selectedFonctionsIds: number[] = []
+  documentation: DocumentationInterface = {
+    title: 'Simulateur A-JUST :',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/simulateur/quest-ce-que-cest',
+  }
 
   paramsToAjust = {
     param1: {
@@ -100,6 +109,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
           .slice(0, 10)}`
+      })
+    )
+    this.watch(
+      this.humanResourceService.categories.subscribe(() => {
+        this.loadFunctions()
       })
     )
   }
@@ -152,6 +166,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       })
     )
     if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
+
+    console.log(this.categorySelected)
+    this.loadFunctions()
   }
 
   ngOnDestroy() {}
@@ -880,5 +897,36 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       initButton.style.display = 'flex'
       title.style.display = 'none'
     })
+  }
+
+  changeCategorySelected(category: string) {
+    this.categorySelected = category
+    this.contentieuId = null
+    this.subList = []
+    this.loadFunctions()
+  }
+  loadFunctions() {
+    let categoryId = 0
+    console.log(this.humanResourceService.categories.getValue())
+    this.humanResourceService.categories.getValue().map((v) => {
+      if (v.label.toUpperCase() === this.categorySelected.toUpperCase())
+        categoryId = v.id
+    })
+
+    const finalList = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === categoryId)
+      .map((f: HRFonctionInterface) => ({
+        id: f.id,
+        value: f.code,
+      }))
+
+    this.selectedFonctionsIds = finalList.map((a) => a.id)
+
+    this.functionsList = finalList
+  }
+
+  onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
+    this.selectedFonctionsIds = fonctionsId.map((f) => +f)
   }
 }

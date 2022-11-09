@@ -34,6 +34,7 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() subList: number[] | null = null
   @Input() parent: number | string | null = null
   @Input() defaultRealValue: string = ''
+  @Input() defaultAllValue: string | null = null
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter()
   subReferentielData: dataInterface[] = []
   realValue: string = ''
@@ -92,16 +93,23 @@ export class SelectComponent extends MainClass implements OnChanges {
     } else if (Array.isArray(this.value) && this.value.length !== 0) {
       const arrayValues = Array.isArray(this.value) ? this.value : [this.value]
       this.realValue = ''
-      this.datas.map((v) => {
-        arrayValues.map((x) => {
-          if (v.id === x) {
-            tmpStr = tmpStr.concat(v.value, ', ')
-            this.realValue = tmpStr.slice(0, -2)
-          }
+
+      if (
+        this.value.length === this.datas.length &&
+        this.defaultAllValue !== null
+      ) {
+        this.realValue = this.defaultAllValue
+      } else
+        this.datas.map((v) => {
+          arrayValues.map((x) => {
+            if (v.id === x) {
+              tmpStr = tmpStr.concat(v.value, ', ')
+              this.realValue = tmpStr.slice(0, -2)
+            }
+          })
         })
-      })
     } else {
-        this.realValue = ''
+      this.realValue = ''
     }
   }
 
