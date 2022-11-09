@@ -510,9 +510,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     const magistrats = this.listFormated.find(
       (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
     )
-    const fakeCategories = [{id: this.reaffectatorService.selectedCategoriesId, label: 'cat'}]
-    const nbDayByCategory = this.reaffectatorService.selectedCategoriesId === 1 ? environment.nbDaysByMagistrat : environment.nbDaysByFonctionnaire
-    const nbWorkingHours = this.reaffectatorService.selectedCategoriesId === 1 ? environment.nbHoursPerDayAndMagistrat : environment.nbHoursPerDayAndFonctionnaire
+    const fakeCategories = [
+      { id: this.reaffectatorService.selectedCategoriesId, label: 'cat' },
+    ]
+    const nbDayByCategory =
+      this.reaffectatorService.selectedCategoriesId === 1
+        ? environment.nbDaysByMagistrat
+        : environment.nbDaysByFonctionnaire
+    const nbWorkingHours =
+      this.reaffectatorService.selectedCategoriesId === 1
+        ? environment.nbHoursPerDayAndMagistrat
+        : environment.nbHoursPerDayAndFonctionnaire
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
@@ -569,17 +577,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             ? etpAffectedLast12Months[0].totalEtp
             : 0
 
-        let averageWorkingProcess = etpToComputeLast12Months === 0 ? 0 : fixDecimal(
-          (nbDaysByMonthForMagistrat * nbWorkingHours) /
-            (averageOut / etpToComputeLast12Months)
-        )
+        let averageWorkingProcess =
+          etpToComputeLast12Months === 0
+            ? 0
+            : fixDecimal(
+                (nbDaysByMonthForMagistrat * nbWorkingHours) /
+                  (averageOut / etpToComputeLast12Months)
+              )
 
-        let outValue = averageWorkingProcess === 0 ? 0 :  Math.floor(
-          (etpt *
-            nbWorkingHours *
-            nbDaysByMonthForMagistrat) /
-            averageWorkingProcess
-        )
+        let outValue =
+          averageWorkingProcess === 0
+            ? 0
+            : (etpt * nbWorkingHours * nbDaysByMonthForMagistrat) /
+                  averageWorkingProcess
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
@@ -594,19 +604,40 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
         const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
 
+        if (r.id === 440) {
+          console.log('last stock ', {
+            lastStock,
+            etpMagDelta,
+            averageWorkingProcess,
+            calculDelta: Math.floor(
+              (nbDayCalendar / (365 / 12)) *
+                nbDaysByMonthForMagistrat *
+                ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
+            ),
+            plus: Math.floor((nbDayCalendar / (365 / 12)) * inValue),
+            inValue,
+            nbDayCalendar,
+          })
+        }
+
         // Compute stock projection until today
         lastStock =
           Math.floor(lastStock) -
-          (etpMagDelta === 0 ? 0 : Math.floor(
-            (nbDayCalendar / (365 / 12)) *
-              nbDaysByMonthForMagistrat *
-              ((etpMagDelta * nbWorkingHours) /
-                averageWorkingProcess)
-          )) +
+          (etpMagDelta === 0
+            ? 0
+            : Math.floor(
+                (nbDayCalendar / (365 / 12)) *
+                  nbDaysByMonthForMagistrat *
+                  ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
+              )) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
-          if(lastStock < 0) {
-            lastStock = 0
-          }
+        if (lastStock < 0) {
+          lastStock = 0
+        }
+
+        if (r.id === 440) {
+          console.log('last stock (2) ', lastStock)
+        }
 
         return {
           ...r,
@@ -614,7 +645,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           out: outValue,
           stock: lastStock,
           coverage: fixDecimal(outValue / inValue) * 100,
-          dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue),
+          dtes:
+            lastStock === 0 || outValue === 0
+              ? 0
+              : fixDecimal(lastStock / outValue),
         }
       }
 
@@ -624,7 +658,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         out: averageOut,
         stock: lastStock,
         coverage: averageOut === 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
-        dtes: lastStock === 0 ? 0 : fixDecimal(lastStock / averageOut),
+        dtes:
+          lastStock === 0 || averageOut === 0
+            ? 0
+            : fixDecimal(lastStock / averageOut),
       }
     })
   }
@@ -688,7 +725,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
     }
 
-    if(this.listFormated[index].personSelected.length === 0) {
+    if (this.listFormated[index].personSelected.length === 0) {
       // force to reset isolate var
       this.isolatePersons = false
     }
