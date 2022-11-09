@@ -222,8 +222,5 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onDownloadNomenclature() {
     window.open(this.NOMENCLATURE_DOWNLOAD_URL)
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
   }
 }
