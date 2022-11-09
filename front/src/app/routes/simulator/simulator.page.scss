@@ -47,11 +47,12 @@
     }
 
     .action-simulator-bar {
+        padding: 8px 0px;
         height: 72px;
         display: flex;
         align-items: center;
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        border: solid 1px #eee4d9;
+        //border: solid 1px #eee4d9;
         background-color: #f6f6f6;
         position: relative;
         top: -24px;
@@ -67,7 +68,7 @@
             bottom: -1px;
             top: 0px;
             right: -36px;
-            border: solid 1px #eee4d9;
+            //border: solid 1px #eee4d9;
             background-color: #f6f6f6;
             box-shadow: 0 10px 10px -5px rgb(0 0 0 / 4%), 0 20px 25px -5px rgb(0 0 0 / 10%);
         }
@@ -166,7 +167,7 @@
         background-color: fColor(bgColor);
         position: relative;
         margin-top: 83px;
-        padding-top: 48px;
+        //padding-top: 48px;
 
         &::before {
             content: '';
@@ -190,7 +191,7 @@
 
         .simulation-title {
 
-            padding-bottom: 18px;
+            padding-bottom: 30px;
             font-size: 22px;
             font-weight: bold;
             line-height: 1.27;
@@ -560,6 +561,7 @@
         background-color: #fef6e3;
         position: relative;
         display: flex;
+        top: -24px;
 
         &.color-white {
             background-color: white;
@@ -756,6 +758,7 @@
         background-color: #fff;
         display: flex;
         position: relative;
+        top: -24px;
 
         &.before-after {
             &::before {
@@ -815,7 +818,6 @@
     }
 
     .top-bar-container {
-        height: 86px !important;
         z-index: 8;
         display: flex;
         align-items: flex-start;
@@ -823,7 +825,7 @@
         border-bottom: 1px solid #f9f6f2;
         background-color: white;
         left: -24px;
-        padding: 0px 32px;
+        padding: 0px 0px 0px 32px;
         top: -24px;
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
@@ -851,7 +853,9 @@
         .container-timeline {
             display: block;
             flex: 1;
-            align-self: flex-start
+            align-self: flex-start;
+            margin-top: 16px;
+            margin-bottom: 16px;
         }
 
         .container-timeline-button {
@@ -1037,7 +1041,6 @@
         margin-left: 74px;
         margin-right: 74px;
         margin-top: 18px;
-        margin-bottom: 100px;
 
         .blue-line {
             display: none;

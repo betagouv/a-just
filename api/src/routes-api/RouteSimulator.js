@@ -13,18 +13,33 @@ export default class RouteSimulator extends Route {
       referentielId: Types.number().required(),
       dateStart: Types.date(),
       dateStop: Types.date(),
+      functionIds: Types.array(),
+      categoryId: Types.number(),
     }),
     accesses: [Access.canVewHR],
   })
   async getSituation (ctx) {
-    let { backupId, referentielId, dateStart, dateStop } = this.body(ctx)
+    let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     console.time('simulator-1')
-    const hr = await this.model.getCache(backupId)
+    const hr1 = await this.model.getCache(backupId)
+
+    const hr = await hr1.filter((human) => {
+      const situations = (human.situations || []).filter((s) => {
+        s.category && s.category.id === categoryId
+      })
+      console.log({ situations })
+      if (situations.length && situations.every((s) => s.fonction && functionIds.indexOf(s.fonction.id) === -1)) {
+        return false
+      }
+      return true
+    })
+    console.log({ hr: hr1.length, filteredHr: hr.length, functionIds: functionIds })
+
     console.timeEnd('simulator-1')
 
     console.time('simulator-2')
