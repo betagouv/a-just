@@ -28,6 +28,7 @@ export class PanelActivitiesComponent
   @Input() selected: boolean = false
   @Input() header: boolean = true
   @Input() updateRefentielOnLoad: boolean = true
+  @Input() canSelectedTopReferentiel: boolean = true
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter()
   referentiel: ContentieuReferentielInterface[] = []

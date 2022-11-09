@@ -167,7 +167,7 @@
                 <div class="flex-1"></div>
                 <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true"
                   class="dark-mode" (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)"
-                  [updateRefentielOnLoad]="false">
+                  [updateRefentielOnLoad]="false" [canSelectedTopReferentiel]="true">
                 </panel-activities>
                 <div class="flex-1"></div>
               </div>
