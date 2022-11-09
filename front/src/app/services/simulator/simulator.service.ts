@@ -15,9 +15,7 @@ import {
   generalizeTimeZone,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
-import { ActivitiesService } from '../activities/activities.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
-import { environment } from 'src/environments/environment'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -42,6 +40,12 @@ export class SimulatorService extends MainClass {
     new BehaviorSubject<number | null>(null)
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  selectedCategory: BehaviorSubject<HRCategoryInterface | null> =
+    new BehaviorSubject<HRCategoryInterface | null>(null)
+  selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<
+    number[]
+  >([])
+
   chartAnnotationBox: BehaviorSubject<ChartAnnotationBoxInterface> =
     new BehaviorSubject<ChartAnnotationBoxInterface>({
       display: false,
@@ -113,6 +117,8 @@ export class SimulatorService extends MainClass {
         referentielId: referentielId,
         dateStart: generalizeTimeZone(dateStart),
         dateStop: generalizeTimeZone(dateStop),
+        functionIds: this.selectedFonctionsIds.getValue(),
+        categoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
         if (dateStop) {

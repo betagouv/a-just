@@ -18,6 +18,7 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -113,7 +114,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     )
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
-        this.loadFunctions()
+        this.changeCategorySelected(this.categorySelected)
+        this.simulatorService.selectedFonctionsIds.next(
+          this.selectedFonctionsIds
+        )
       })
     )
   }
@@ -167,7 +171,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     )
     if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
 
-    console.log(this.categorySelected)
     this.loadFunctions()
   }
 
@@ -903,19 +906,26 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.categorySelected = category
     this.contentieuId = null
     this.subList = []
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find(
+          (c: HRCategoryInterface) =>
+            c.label.toUpperCase() === this.categorySelected.toUpperCase()
+        ) || null
+
+    this.simulatorService.selectedCategory.next(findCategory)
+
     this.loadFunctions()
   }
-  loadFunctions() {
-    let categoryId = 0
-    console.log(this.humanResourceService.categories.getValue())
-    this.humanResourceService.categories.getValue().map((v) => {
-      if (v.label.toUpperCase() === this.categorySelected.toUpperCase())
-        categoryId = v.id
-    })
 
+  loadFunctions() {
     const finalList = this.humanResourceService.fonctions
       .getValue()
-      .filter((v) => v.categoryId === categoryId)
+      .filter(
+        (v) =>
+          v.categoryId === this.simulatorService.selectedCategory.getValue()?.id
+      )
       .map((f: HRFonctionInterface) => ({
         id: f.id,
         value: f.code,
@@ -928,5 +938,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 }
