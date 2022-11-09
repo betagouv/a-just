@@ -162,6 +162,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     })
 
+    console.log(this.categoriesFilterList)
+
     this.calculateTotalAffected()
   }
 
@@ -221,14 +223,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (opacity === 1) {
           valuesFinded.push(h)
         }
-
+        console.log(l)
         return {
           ...h,
           opacity,
         }
       }),
     }))
-
+    console.log(this.listFormated)
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 

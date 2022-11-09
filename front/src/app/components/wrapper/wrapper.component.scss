@@ -259,9 +259,9 @@
 }
 
 .header {
-  height: 87px;
-  min-height: 87px;
-  padding: 0 16px;
+  //height: 87px;
+  //min-height: 87px;
+  padding: 16px 16px;
   display: flex;
   align-items: center;
   background-color: white;
@@ -288,6 +288,7 @@
 
     h3 {
       font-size: 20px;
+      font-family: 'Marianne-bold';
     }
   }
 

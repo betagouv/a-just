@@ -36,6 +36,10 @@
           margin-right: 8px;
         }
 
+        >.blue {
+          color: #000091;
+        }
+
         >.label {
           flex: 1;
         }
@@ -157,6 +161,7 @@
 
             b {
               color: #161616;
+              font-family: 'Marianne-bold' !important;
             }
           }
         }
@@ -168,6 +173,7 @@
             font-size: 14px;
             font-weight: bold;
             letter-spacing: -0.53px;
+            font-family: 'Marianne-bold';
           }
         }
 
@@ -255,7 +261,7 @@
 
     .text {
       flex: 1;
-      padding: 16px 24px 16px 24px;
+      padding: 8px 24px 8px 24px;
       display: flex;
       flex-direction: column;
       //justify-content: space-between;
@@ -266,9 +272,11 @@
         display: flex;
 
         p {
+          font-family: "Marianne-bold" !important;
           font-weight: bold;
-          color: fColor(titleSelect);
+          //color: fColor(titleSelect);
           flex: 1;
+          color: #161616;
         }
 
         .tooltip {
@@ -350,7 +358,6 @@
       }
 
       .updated-at {
-        margin-top: 10px;
         font-size: 12px;
         line-height: 20px;
         color: fColor(grayRow);
@@ -376,6 +383,7 @@
 
 .unavailable {
   color: fColor(titleIndisponibilitiesPanel);
+  margin-bottom: 8px;
 
   mat-icon {
     color: fColor(titleIndisponibilitiesPanel);
@@ -454,7 +462,7 @@
 .title {
   display: flex;
   align-items: center;
-  padding: 0 32px 8px 32px;
+  padding: 0 16px 8px 16px;
   background-color: white;
 
   &.border-bottom {
@@ -503,6 +511,11 @@
   border-style: solid;
   margin-left: 8px;
   cursor: pointer;
+
+  p.etp {
+    font-family: 'Marianne-bold' !important;
+
+  }
 
   &.blue {
     border-color: fColor(cbluedark);
@@ -581,6 +594,7 @@
 
   p.etp {
     font-weight: bold;
+
   }
 }
 
