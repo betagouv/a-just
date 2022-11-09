@@ -136,7 +136,8 @@
 
           <div class="sub-content-list">
             <ng-template ngFor let-hr let-index="index" [ngForOf]="list.hrFiltered" [ngForTrackBy]="trackById">
-              <ng-template [ngIf]="!isolatePersons || (isolatePersons && list.personSelected.indexOf(hr.id) !== -1)">
+              <ng-template
+                [ngIf]="!isolatePersons || (isolatePersons && (list.personSelected.indexOf(hr.id) !== -1 || hr.isModify))">
                 <div class="item-list" [class.is-modify]="hr.isModify"
                   [class.is-selected]="list.personSelected.indexOf(hr.id) !== -1" [style.opacity]="hr.opacity"
                   [id]="'human-'+hr.id">
