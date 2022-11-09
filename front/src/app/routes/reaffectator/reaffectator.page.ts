@@ -249,7 +249,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  orderListWithFiltersParams() {
+  orderListWithFiltersParams(onSearch: boolean = true) {
     this.onCalculETPAffected()
 
     this.listFormated = this.listFormated.map((list) => {
@@ -269,7 +269,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    this.onSearchBy()
+    if (onSearch) {
+      this.onSearchBy()
+    }
     this.calculateReferentielValues()
     this.updateCategoryValues()
   }
@@ -395,7 +397,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       .then(() => {
         this.duringPrint = false
       })*/
-    alert('Cette fonctionnalité n\'est pas encore disponible.')
+    alert("Cette fonctionnalité n'est pas encore disponible.")
   }
 
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
@@ -499,8 +501,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ['desc']
       ).slice(0, 12)
 
-      if(r.id === 460) {
-      console.log(r, activitiesFiltered)
+      if (r.id === 460) {
+        console.log(r, activitiesFiltered)
       }
 
       // find new ETPT of today
@@ -649,7 +651,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         list
       this.listFormated[indexList].hrFiltered[indexOfHR].isModify = true
 
-      this.orderListWithFiltersParams()
+      this.orderListWithFiltersParams(false)
     }
   }
 
