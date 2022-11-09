@@ -249,7 +249,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  orderListWithFiltersParams(search: boolean = true) {
+  orderListWithFiltersParams(onSearch: boolean = true) {
     this.onCalculETPAffected()
 
     this.listFormated = this.listFormated.map((list) => {
@@ -269,7 +269,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    if (search) {
+    if (onSearch) {
       this.onSearchBy()
     }
     this.calculateReferentielValues()
