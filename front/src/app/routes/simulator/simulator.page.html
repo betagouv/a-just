@@ -4,11 +4,69 @@
   title="Simulateur"
   [actionTemplate]="actions"
   [alignLeft]="true"
+  [documentation]="documentation"
 >
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
-
+  <div class="action-simulator-bar">
+    <div class="categories-switch">
+      <div
+        class="magistrats {{disabled}}"
+        [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+        (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); "
+      >
+        <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
+        <p>Magistrats</p>
+      </div>
+      <div
+        class="fonctionnaires {{disabled}}"
+        [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+        class="fonctionnaires"
+        (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRE')"
+      >
+        <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRE'" />
+        <p>Fonctionnaires</p>
+      </div>
+    </div>
+    <aj-select
+      class="contentieux {{disabled}}"
+      title="Choix des fonctions (option)"
+      [value]="selectedFonctionsIds"
+      [datas]="functionsList"
+      [defaultAllValue]="'Toutes'"
+      (valueChange)="onChangeFonctionsSelected($event)"
+    >
+    </aj-select>
+    <aj-select
+      title="Contentieux (obligatoire)"
+      class="contentieux {{disabled}}"
+      [defaultRealValue]="'Sélectionner un contentieux'"
+      [value]="contentieuId"
+      [datas]="formReferentiel"
+      (valueChange)="updateReferentielSelected('referentiel', $event)"
+      [multiple]="false"
+    >
+    </aj-select>
+    <aj-select
+      title="Sous Contentieux (obligatoire)"
+      class=" contentieux {{disabled}}"
+      [class.notSelectable]="contentieuId===null"
+      [value]="subList"
+      [datas]="formReferentiel"
+      [subList]="subList"
+      [parent]="contentieuId"
+      (valueChange)="updateReferentielSelected('subList', $event)"
+    >
+    </aj-select>
+    <div
+      id="main-init"
+      class="reset-button {{disabled}}"
+      (click)="resetParams()"
+    >
+      <p class="title">Reset</p>
+    </div>
+  </div>
   <div class="top-bar-container">
     <p>Période choisie :</p>
 
@@ -768,30 +826,6 @@
   </div>
 </aj-wrapper>
 <ng-template #actions>
-  <aj-select
-    title="Contentieux"
-    class="contentieux {{disabled}}"
-    [defaultRealValue]="'Sélectionner un contentieux'"
-    [value]="contentieuId"
-    [datas]="formReferentiel"
-    (valueChange)="updateReferentielSelected('referentiel', $event)"
-    [multiple]="false"
-  >
-  </aj-select>
-  <aj-select
-    title="Sous Contentieux"
-    class="{{disabled}}"
-    [class.notSelectable]="contentieuId===null"
-    [value]="subList"
-    [datas]="formReferentiel"
-    [subList]="subList"
-    [parent]="contentieuId"
-    (valueChange)="updateReferentielSelected('subList', $event)"
-  >
-  </aj-select>
-  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
-    <p class="title">Reset</p>
-  </div>
   <div id="print-title">
     <img
       width="60px"
