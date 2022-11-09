@@ -82,95 +82,98 @@
 
     <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-mainIndex="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
-        <div class="header-list">
-          <div class="profil">
-            <div class="label-container">
-              <div class="check-item" [ngClass]="{selected: list.personSelected.length}"
-                (click)="toogleCheckAllPerson(mainIndex)">{{ list.personSelected.length ? list.personSelected.length :
-                '' }}
-              </div>
-              <p class="label">{{ list.personSelected.length > 1 ? 'sélections' : 'sélection' }}</p>
-              <p class="btn" (click)="onInitList(list)">
-                Réinitialiser
-              </p>
-            </div>
-            <div class="contentieux-label">
-              <div class="label">
-                <p>Contentieux :</p>
-              </div>
-              <div class="etp">
-                <p>ETPT simulés :</p>
-              </div>
-              <div class="filter">
-                <p class="etp-header">Trier par :</p>
-              </div>
-            </div>
-          </div>
-          <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
-              [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
-              <div class="label">
-                <p>{{ referentielMappingName(ref.label) }}</p>
-              </div>
-              <div class="etp">
-                <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
-              </div>
-              <div class="filter">
-                <i class="ri-sort-desc"></i>
-              </div>
-            </div>
-          </div>
-          <div class="actions"></div>
-        </div>
-
-        <div class="sub-content-list">
-          <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById; let index = index"
-            [class.is-modify]="hr.isModify" [class.is-selected]="list.personSelected.indexOf(hr.id) !== -1"
-            [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
-            <div class="profil item">
-              <div class="text">
-                <div class="name">
-                  <div class="check-item" [ngClass]="{selected: list.personSelected.indexOf(hr.id) !== -1}"
-                    (click)="toogleCheckPerson(mainIndex, hr)"></div>
-                  <p>{{ hr.firstName}} {{ hr.lastName}}</p>
-                  <div *ngIf="hr.comment" class="tooltip">
-                    <mat-icon>message</mat-icon>
-                    <span class="tooltiptext">{{ hr.comment }}</span>
-                  </div>
+        <ng-template [ngIf]="list.categoryId === reaffectatorService.selectedCategoriesId">
+          <div class="header-list">
+            <div class="profil">
+              <div class="label-container">
+                <div class="check-item" [ngClass]="{selected: list.personSelected.length}"
+                  (click)="toogleCheckAllPerson(mainIndex)">{{ list.personSelected.length ? list.personSelected.length :
+                  '' }}
                 </div>
-                <div class="tags">
-                  <p *ngIf="hr.fonction && hr.fonction.code" class="function">
-                    {{ hr.fonction && hr.fonction.code}}
-                  </p>
-                  <p class="etp">{{ hr.etpLabel }}</p>
-                </div>
-                <div class="flex-1"></div>
-                <div class="updated-at">
-                  Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
-                  getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY"
-                  }}
-                </div>
-              </div>
-              <div class="read-etp">
-                <p class="label">ETP Travaillé :</p>
-                <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-                  [indisponibility]="hr.hasIndisponibility" [ngClass]="{'dark-mode': !hr.isModify}">
-                </etp-preview>
-                <div class="flex-1"></div>
-                <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                  <mat-icon>error</mat-icon> Indispo
+                <p class="label">{{ list.personSelected.length > 1 ? 'sélections' : 'sélection' }}</p>
+                <p class="btn" (click)="onInitList(list)">
+                  Réinitialiser
                 </p>
+              </div>
+              <div class="contentieux-label">
+                <div class="label">
+                  <p>Contentieux :</p>
+                </div>
+                <div class="etp">
+                  <p>ETPT simulés :</p>
+                </div>
+                <div class="filter">
+                  <p class="etp-header">Trier par :</p>
+                </div>
               </div>
             </div>
             <div class="activities">
-              <div class="flex-1"></div>
-              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"
-                (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)" [updateRefentielOnLoad]="false">
-              </panel-activities>
-              <div class="flex-1"></div>
+              <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
+                [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
+                <div class="label">
+                  <p>{{ referentielMappingName(ref.label) }}</p>
+                </div>
+                <div class="etp">
+                  <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
+                </div>
+                <div class="filter">
+                  <i class="ri-sort-desc"></i>
+                </div>
+              </div>
+            </div>
+            <div class="actions"></div>
+          </div>
+
+          <div class="sub-content-list">
+            <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById; let index = index"
+              [class.is-modify]="hr.isModify" [class.is-selected]="list.personSelected.indexOf(hr.id) !== -1"
+              [style.opacity]="hr.opacity" [id]="'human-'+hr.id">
+              <div class="profil item">
+                <div class="text">
+                  <div class="name">
+                    <div class="check-item" [ngClass]="{selected: list.personSelected.indexOf(hr.id) !== -1}"
+                      (click)="toogleCheckPerson(mainIndex, hr)"></div>
+                    <p>{{ hr.firstName}} {{ hr.lastName}}</p>
+                    <div *ngIf="hr.comment" class="tooltip">
+                      <mat-icon>message</mat-icon>
+                      <span class="tooltiptext">{{ hr.comment }}</span>
+                    </div>
+                  </div>
+                  <div class="tags">
+                    <p *ngIf="hr.fonction && hr.fonction.code" class="function">
+                      {{ hr.fonction && hr.fonction.code}}
+                    </p>
+                    <p class="etp">{{ hr.etpLabel }}</p>
+                  </div>
+                  <div class="flex-1"></div>
+                  <div class="updated-at">
+                    MàJ le {{ hr.updatedAt | date:"dd" }} {{
+                    getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY"
+                    }}
+                  </div>
+                </div>
+                <div class="read-etp">
+                  <p class="label">ETP Travaillé :</p>
+                  <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
+                    [indisponibility]="hr.hasIndisponibility" [ngClass]="{'dark-mode': !hr.isModify}">
+                  </etp-preview>
+                  <div class="flex-1"></div>
+                  <p class="unavailable" *ngIf="hr.hasIndisponibility">
+                    <mat-icon>error</mat-icon> Indispo
+                  </p>
+                </div>
+              </div>
+              <div class="activities">
+                <div class="flex-1"></div>
+                <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true"
+                  class="dark-mode" (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)"
+                  [updateRefentielOnLoad]="false">
+                </panel-activities>
+                <div class="flex-1"></div>
+              </div>
             </div>
           </div>
-        </div>
+        </ng-template>
       </ng-template>
     </div>
   </div>

@@ -155,7 +155,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       if (itemBlock && itemBlock.hrFiltered) {
         c.value = `${itemBlock.hrFiltered.length} ${c.value}${
           itemBlock.hrFiltered.length > 1 ? 's' : ''
-        } (${itemBlock.totalRealETp} ETPT)`
+        } (${fixDecimal(itemBlock.totalRealETp, 100)} ETPT)`
       }
 
       return c
@@ -218,13 +218,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
+    const allFonctions = this.humanResourceService.fonctions.getValue()
+
+    let selectedFonctionsIds = [
+      ...this.reaffectatorService.selectedFonctionsIds,
+    ]
+    selectedFonctionsIds = selectedFonctionsIds.concat(
+      allFonctions
+        .filter(
+          (f) => f.categoryId !== this.reaffectatorService.selectedCategoriesId
+        )
+        .map((f) => f.id)
+    )
+
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         selectedReferentielIds,
-        this.reaffectatorService.selectedCategoriesId,
-        this.reaffectatorService.selectedFonctionsIds
+        null,
+        selectedFonctionsIds
       )
       .then((returnValues) => {
         console.log(returnValues)
@@ -253,6 +266,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onCalculETPAffected()
 
     this.listFormated = this.listFormated.map((list) => {
+      list.hrFiltered = orderBy(list.hrFiltered, ['fonction.rank'], ['asc'])
+
       if (this.filterSelected) {
         list.hrFiltered = orderBy(
           list.hrFiltered,
@@ -429,7 +444,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return ref
     })
 
-    flatten(this.listFormated.map((l) => l.allHr)).map((hr) => {
+    flatten(
+      this.listFormated
+        .filter(
+          (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
+        )
+        .map((l) => l.allHr)
+    ).map((hr) => {
       this.referentiel = this.referentiel.map((ref) => {
         const timeAffected = sumBy(
           hr.currentActivities.filter(
@@ -485,9 +506,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   calculateReferentielValues() {
     const activities = this.actualActivities
-    const magistrats = this.listFormated.find((l) => l.categoryId === 1)
+    const magistrats = this.listFormated.find(
+      (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
+    )
 
-    console.log(this.referentiel)
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
       const activitiesFiltered = orderBy(
@@ -500,10 +522,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         },
         ['desc']
       ).slice(0, 12)
-
-      if (r.id === 460) {
-        console.log(r, activitiesFiltered)
-      }
 
       // find new ETPT of today
       let etpt = 0
