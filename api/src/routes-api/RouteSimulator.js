@@ -27,17 +27,14 @@ export default class RouteSimulator extends Route {
 
     console.time('simulator-1')
     let hr = await this.model.getCache(backupId)
+    console.timeEnd('simulator-1')
 
     console.log(functionIds, categoryId)
     console.log({ hr: hr.length })
 
-    hr = await filterByCategory(hr, categoryId)
-
-    hr.map((m) => {
-      console.log({ id: m.id })
-      //console.log(m.situations)
-      m.situations.map((s) => console.log({ fct: s.fonction.code, cat: s.category.label }))
-    })
+    console.time('simulator-1.1')
+    hr = await filterByCategory(hr, categoryId, functionIds)
+    console.timeEnd('simulator-1.1')
 
     let counter = 0
     hr.map((human) => {
@@ -46,26 +43,6 @@ export default class RouteSimulator extends Route {
 
     console.log({ counter })
     console.log({ filteredHr: hr.length })
-
-    /**
-     * 
-     * 
-     * for (let i = 0; i < hr.length; i++) {
-  if (hr[i].situations && hr[i].situations.length !== 0) {
-    //console.log(i, hr[i].situations)
-    hr[i].situations = [
-      ...hr[i].situations.filter((s) => {
-        if (s.fonction !== null && functionIds.includes(s.fonction.id)) return true
-        return false
-      }),
-    ]
-    //hr[i].situations = {}
-    //console.log('MAA###########', i, hr[i].situations)
-  }
-}
-
-     */
-    console.timeEnd('simulator-1')
 
     console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
