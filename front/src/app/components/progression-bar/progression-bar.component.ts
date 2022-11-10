@@ -8,7 +8,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
 export class ProgressionBarComponent {
   @Input() percent: number | undefined = 0
   @Input() color: string = '#005500'
-  @Input() enable: boolean = true
   @Input() selected: boolean = true
   @Output() percentChange: EventEmitter<number> = new EventEmitter()
 

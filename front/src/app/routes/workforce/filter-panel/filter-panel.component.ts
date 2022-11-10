@@ -26,6 +26,7 @@ export interface FilterPanelInterface {
   filterFunction: Function | null
   filterValues: (string | number)[] | null
   filterNames: string | null
+  display?: string | number | null
 }
 
 @Component({
@@ -61,7 +62,8 @@ export class FilterPanelComponent
       label: 'Date de mise à jour',
       sortFunction: (list: HumanResourceSelectedInterface[]) =>
         sortBy(list, [
-          (h: HumanResourceSelectedInterface) => new Date(h.updatedAt).getTime(),
+          (h: HumanResourceSelectedInterface) =>
+            new Date(h.updatedAt).getTime(),
         ]),
     },
     {
@@ -94,9 +96,22 @@ export class FilterPanelComponent
       label: 'Ordre descendant',
     },
   ]
+  displayList = [
+    {
+      id: 'nom/prénom',
+      icon: 'sort-desc',
+      label: 'nom/prénom',
+    },
+    {
+      id: 'prénom/nom',
+      icon: 'sort-asc',
+      label: 'prénom/nom',
+    },
+  ]
   @Input() filterValues: (string | number)[] | null = null
   @Input() sortValue: string | number | null = null
   @Input() orderValue: string | number | null = null
+  @Input() displayValue: string | number | null = 'prénom/nom'
   @ViewChild('popin') popin: ElementRef<HTMLElement> | null = null
   leftPosition: number = 0
   topPosition: number = 0
@@ -113,7 +128,7 @@ export class FilterPanelComponent
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
-    private referentielService: ReferentielService,
+    private referentielService: ReferentielService
   ) {
     super()
   }
@@ -139,7 +154,7 @@ export class FilterPanelComponent
 
       if (this.popin) {
         const popin = this.popin.nativeElement.getBoundingClientRect()
-        const windowHeight = window.innerHeight
+        const windowHeight = window.innerHeight - 50
 
         if (y + popin.height + bottomMargin > windowHeight) {
           y = windowHeight - popin.height - bottomMargin
@@ -154,23 +169,39 @@ export class FilterPanelComponent
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
     // tempory fix to load only Magistrat and Fonctionnaires fonctions
-    const listUsedFunctions = orderBy([...fonctions], ['categoryId', 'rank']).filter(f => f.categoryId === 1 || f.categoryId === 2)
+    const listUsedFunctions = orderBy(
+      [...fonctions],
+      ['categoryId', 'rank']
+    ).filter((f) => f.categoryId === 1 || f.categoryId === 2)
 
-    this.filterList = listUsedFunctions.map(f => ({id: f.id, label: f.code || ''}))
-    this.filterValues = this.filterValues === null ? listUsedFunctions.map(f => (f.id)) : this.filterValues
-    this.defaultFilterValues = listUsedFunctions.map(f => (f.id))
+    this.filterList = listUsedFunctions.map((f) => ({
+      id: f.id,
+      label: f.code || '',
+    }))
+    this.filterValues =
+      this.filterValues === null
+        ? listUsedFunctions.map((f) => f.id)
+        : this.filterValues
+    this.defaultFilterValues = listUsedFunctions.map((f) => f.id)
   }
 
   updateParams() {
     const sortItem = this.sortList.find((o) => o.id === this.sortValue)
     const orderItem = this.orderList.find((o) => o.id === this.orderValue)
-    let filterNames = '';
-    if(this.filterValues && this.filterValues.length !== this.defaultFilterValues?.length) {
+    let filterNames = ''
+    if (
+      this.filterValues &&
+      this.filterValues.length !== this.defaultFilterValues?.length
+    ) {
       const nbStringToAdd = 3
       let stringAdd = 0
       filterNames += this.filterList.reduce((acc, cur) => {
-        if(this.filterValues && this.filterValues.indexOf(cur.id) !== -1 && stringAdd < nbStringToAdd) {
-          if(stringAdd > 0) {
+        if (
+          this.filterValues &&
+          this.filterValues.indexOf(cur.id) !== -1 &&
+          stringAdd < nbStringToAdd
+        ) {
+          if (stringAdd > 0) {
             acc += ', '
           }
           acc += cur.label
@@ -179,25 +210,37 @@ export class FilterPanelComponent
         return acc
       }, '')
 
-      if(this.filterValues.length > nbStringToAdd) {
+      if (this.filterValues.length > nbStringToAdd) {
         filterNames += ' ...'
       }
     }
 
     this.update.next({
       sort: this.sortValue,
-      sortName: sortItem && sortItem.label && this.sortValue !== this.defaultSortValue ? sortItem.label : null,
+      sortName:
+        sortItem && sortItem.label && this.sortValue !== this.defaultSortValue
+          ? sortItem.label
+          : null,
       sortFunction:
         (sortItem && sortItem.sortFunction) ||
         ((l: HumanResourceSelectedInterface) => l),
       order: this.orderValue,
       orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
       filterValues: this.filterValues,
+      display: this.displayValue,
       filterFunction: (list: HumanResourceSelectedInterface[]) => {
-        if(this.filterValues === null || this.filterValues.length === this.filterList.length) {
+        if (
+          this.filterValues === null ||
+          this.filterValues.length === this.filterList.length
+        ) {
           return list
         } else {
-          return list.filter(h => h.fonction && this.filterValues && this.filterValues.indexOf(h.fonction.id) !== -1)
+          return list.filter(
+            (h) =>
+              h.fonction &&
+              this.filterValues &&
+              this.filterValues.indexOf(h.fonction.id) !== -1
+          )
         }
       },
       filterNames,

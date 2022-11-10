@@ -1,3 +1,5 @@
+import { fixDecimal } from '../utils/number'
+
 export function referentielMappingName (name) {
   switch(name) {
   case 'Soutien': return 'Soutien'
@@ -62,5 +64,5 @@ export function etpLabel (value) {
   case 0: return 'Ne travaille pas'
   }
 
-  return `${value * 100}%`
+  return `${fixDecimal(value * 100)}%`
 }

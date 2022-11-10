@@ -11,7 +11,7 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
 
 @Component({
@@ -28,6 +28,7 @@ export class PanelActivitiesComponent
   @Input() selected: boolean = false
   @Input() header: boolean = true
   @Input() updateRefentielOnLoad: boolean = true
+  @Input() canSelectedTopReferentiel: boolean = false
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter()
   referentiel: ContentieuReferentielInterface[] = []
@@ -35,16 +36,9 @@ export class PanelActivitiesComponent
   refIndexSelected: number = -1
 
   constructor(
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private humanResourceService: HumanResourceService
   ) {
     super()
-
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe(() =>
-        this.onLoadReferentiel()
-      )
-    )
   }
 
   ngOnChanges() {
@@ -79,36 +73,25 @@ export class PanelActivitiesComponent
   }
 
   onLoadReferentiel() {
-    this.referentiel = (
-      this.referentiel.length
-        ? this.referentiel
-        : (
-            JSON.parse(
-              JSON.stringify(
-                this.humanResourceService.contentieuxReferentiel.getValue()
-              )
-            ) as ContentieuReferentielInterface[]
-          ).filter(
-            (r) => this.referentielService.idsIndispo.indexOf(r.id) === -1
-          )
-    ).map((ref) => {
-      const { percent, totalAffected } = this.getPercentAffected(ref)
-      ref.percent = percent
-      ref.totalAffected = totalAffected
-
-      ref.childrens = (ref.childrens || []).map((c) => {
-        const { percent, totalAffected } = this.getPercentAffected(c)
-        c.percent = percent
-        c.totalAffected = totalAffected
-        return c
+      this.referentiel = copyArray(this.humanResourceService.contentieuxReferentielOnly.getValue())
+      this.referentiel = this.referentiel.map((ref) => {
+        const { percent, totalAffected } = this.getPercentAffected(ref)
+        ref.percent = percent
+        ref.totalAffected = totalAffected
+  
+        ref.childrens = (ref.childrens || []).map((c) => {
+          const { percent, totalAffected } = this.getPercentAffected(c)
+          c.percent = percent
+          c.totalAffected = totalAffected
+          return c
+        })
+        return ref
       })
-      return ref
-    })
-
-    if (this.updateRefentielOnLoad) {
-      this.referentielChange.emit(this.referentiel)
-    }
-    this.onTotalAffected()
+  
+      if (this.updateRefentielOnLoad) {
+        this.referentielChange.emit(this.referentiel)
+      }
+      this.onTotalAffected()
   }
 
   onTotalAffected() {
@@ -186,5 +169,9 @@ export class PanelActivitiesComponent
     this.onLoadReferentiel()
     this.referentielChange.emit(this.referentiel)
     this.onTotalAffected()
+  }
+
+  trackById(index: number, item: any) {
+    return item.id
   }
 }

@@ -2,7 +2,7 @@
 
 :host {
   display: block;
-  border-radius: 8px;
+  border-radius: 4px;
   background-color: fColor(bgSelect);
   border: 1px solid fColor(borderSelect);
   height: 55px;
@@ -12,9 +12,11 @@
 
   &.dark-mode {
     background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeTitle);
+    border: 1px solid fColor(darkModeBgMenu);
 
-    p, mat-icon, input {
+    p,
+    mat-icon,
+    input {
       color: white;
     }
 
@@ -26,7 +28,9 @@
   div {
     &.input {
       padding: 2px 8px;
-      min-width: 189px;
+      //min-width: 189px;
+      display: flex;
+      align-items: center;
 
       p {
         white-space: nowrap;
@@ -39,10 +43,28 @@
         background: none;
         border: none;
         font-size: 16px;
-        width: 100%;
+        //width: 100%;
+
+        &::placeholder {
+          color: #929292;
+        }
 
         &:focus {
           outline: none;
+        }
+
+        &.restrict-width {
+          width: 100px;
+          font-size: 14px;
+        }
+      }
+
+      .input-container {
+        display: flex;
+
+        img {
+          width: 22px;
+          margin: 0px 4px 0px 0px;
         }
       }
     }
@@ -56,7 +78,7 @@
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
       border: 1px solid fColor(cbluedark);
-      
+
       mat-icon {
         color: fColor(cbluedark);
       }

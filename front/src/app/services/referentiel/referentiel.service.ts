@@ -59,5 +59,8 @@ export class ReferentielService {
       .map((r) => r.id)
 
     this.humanResourceService.contentieuxReferentiel.next(list)
+    this.humanResourceService.contentieuxReferentielOnly.next(list.filter(
+      (r) => idsIndispo.indexOf(r.id) === -1
+    ))
   }
 }

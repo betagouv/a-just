@@ -1,24 +1,16 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
   display: block;
 
   &.dark-mode {
     p {
-      color: white;
+      color: fColor(grayRow);
     }
 
     .progress-bar {
       p {
-        color: fColor(headerColor);
-      }
-    }
-
-    .sub-panel-activites {
-      .arrow-block {
-        .arrow {
-          background-color: fColor(darkModeBgLight);
-        }
+        color: fColor(grayRow);
       }
     }
   }
@@ -63,7 +55,7 @@
         &.etp {
           flex: 1;
 
-          >p {
+          > p {
             color: fColor(headerNumberColor) !important;
           }
         }
@@ -87,7 +79,7 @@
 .activities-panel {
   display: flex;
 
-  >div {
+  > div {
     flex: 1;
     display: flex;
     align-items: center;
@@ -111,13 +103,13 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line>div {
+    .progress-bar-line > div {
       background-color: fColor(cred);
     }
   }
 
   p {
-    width: 155px;
+    width: 271px;
     font-size: 12px;
     color: fColor(cgray);
   }
@@ -129,7 +121,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    >div {
+    > div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
@@ -154,13 +146,24 @@
     justify-content: center;
 
     .arrow {
-      border: solid black;
+      border: solid var(--border-color);
       border-width: 0 2px 2px 0;
       display: inline-block;
       padding: 3px;
       transform: rotate(-135deg);
       -webkit-transform: rotate(-135deg);
-      background-color: white;
+      position: relative;
+
+      &::before {
+        content: " ";
+        position: absolute;
+        top: 2px;
+        width: 5px;
+        background-color: var(--border-color);
+        left: 2px;
+        height: 4px;
+        border-top-left-radius: 3px;
+      }
     }
   }
 
@@ -169,7 +172,7 @@
     display: grid;
     grid-template-columns: repeat(4, 25%);
 
-    >div.sub-item {
+    > div.sub-item {
       width: 100%;
       margin-bottom: 4px;
     }
@@ -191,7 +194,7 @@
       height: 62px;
     }
 
-    >p {
+    > p {
       text-align: center;
       font-size: 10px;
       font-weight: 500;

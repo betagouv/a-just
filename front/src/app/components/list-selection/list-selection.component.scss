@@ -18,12 +18,12 @@
     }
   }
 
-  > .list-selection {
+  >.list-selection {
     display: flex;
     align-items: center;
     cursor: pointer;
 
-    > .title-icon {
+    >.title-icon {
       margin-right: 4px;
     }
 
@@ -44,7 +44,7 @@
         position: relative;
         align-self: stretch;
 
-        > p {
+        >p {
           position: absolute;
           left: 0;
           top: 0;
@@ -61,12 +61,12 @@
       &.normal {
         flex: 1;
 
-        > div {
+        >div {
           margin-left: 0;
           cursor: pointer;
           flex: 1;
 
-          > p,
+          >p,
           i {
             color: fColor(cblack);
           }
@@ -81,12 +81,12 @@
         text-align: right;
       }
 
-      > div {
+      >div {
         display: flex;
         align-items: center;
         flex: 1;
 
-        > p,
+        >p,
         i {
           color: fColor(titleEtpGraph);
         }
@@ -115,7 +115,7 @@
     width: 260px;
   }
 
-  > div {
+  >div {
     display: flex;
     align-items: center;
     height: 40px;
@@ -123,17 +123,18 @@
     color: fColor(cblack);
     cursor: pointer;
 
-    > div {
+    >div {
       display: flex;
       align-items: center;
     }
 
     &:hover {
       background-color: rgba(fColor(bgSelectSelected), 0.2);
-      color: white;
+      color: #0063cb;
 
       p {
-        color: white;
+
+        color: #0063cb; //white;
       }
     }
 

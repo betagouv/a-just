@@ -53,6 +53,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   hrBackups: BackupInterface[] = []
   DOCUMENTATION_URL = DOCUMENTATION_URL
   CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL
+  NOMENCLATURE_DOWNLOAD_URL =
+    '/assets/Nomenclature_A-JUST_20221019_utilisateurs.html'
+
   menu = [
     {
       label: 'Panorama',
@@ -215,5 +218,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
+  }
+
+  onDownloadNomenclature() {
+    window.open(this.NOMENCLATURE_DOWNLOAD_URL)
   }
 }

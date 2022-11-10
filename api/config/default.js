@@ -21,4 +21,7 @@ module.exports = {
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndMagistrat: 8,
   nbHoursPerDayAndFonctionnaire: 7,
+  sendingBlue: {
+    usersListId: 6,
+  },
 }

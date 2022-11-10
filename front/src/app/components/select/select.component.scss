@@ -9,15 +9,20 @@
   padding: 4px 8px;
   cursor: pointer;
 
+  .bold-family {
+    font-family: "Marianne-bold";
+  }
+
   &.bg-white {
     background-color: white;
   }
 
   &.dark-mode {
     background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeTitle);
+    border: 1px solid fColor(darkModeBgMenu);
 
-    p, mat-icon {
+    p,
+    mat-icon {
       color: white;
     }
 
