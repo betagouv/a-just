@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { execSimulation, getSituation } from '../utils/simulator'
+import { execSimulation, filterByCategory, getSituation } from '../utils/simulator'
 
 export default class RouteSimulator extends Route {
   constructor (params) {
@@ -26,20 +26,45 @@ export default class RouteSimulator extends Route {
     }
 
     console.time('simulator-1')
-    const hr1 = await this.model.getCache(backupId)
+    let hr = await this.model.getCache(backupId)
 
-    const hr = await hr1.filter((human) => {
-      const situations = (human.situations || []).filter((s) => {
-        s.category && s.category.id === categoryId
-      })
-      console.log({ situations })
-      if (situations.length && situations.every((s) => s.fonction && functionIds.indexOf(s.fonction.id) === -1)) {
-        return false
-      }
-      return true
+    console.log(functionIds, categoryId)
+    console.log({ hr: hr.length })
+
+    hr = await filterByCategory(hr, categoryId)
+
+    hr.map((m) => {
+      console.log({ id: m.id })
+      //console.log(m.situations)
+      m.situations.map((s) => console.log({ fct: s.fonction.code, cat: s.category.label }))
     })
-    console.log({ hr: hr1.length, filteredHr: hr.length, functionIds: functionIds })
 
+    let counter = 0
+    hr.map((human) => {
+      counter += human.situations.length
+    })
+
+    console.log({ counter })
+    console.log({ filteredHr: hr.length })
+
+    /**
+     * 
+     * 
+     * for (let i = 0; i < hr.length; i++) {
+  if (hr[i].situations && hr[i].situations.length !== 0) {
+    //console.log(i, hr[i].situations)
+    hr[i].situations = [
+      ...hr[i].situations.filter((s) => {
+        if (s.fonction !== null && functionIds.includes(s.fonction.id)) return true
+        return false
+      }),
+    ]
+    //hr[i].situations = {}
+    //console.log('MAA###########', i, hr[i].situations)
+  }
+}
+
+     */
     console.timeEnd('simulator-1')
 
     console.time('simulator-2')
