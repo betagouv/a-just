@@ -18,6 +18,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
+import { AppService } from 'src/app/services/app/app.service'
 
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -62,7 +63,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] = []
   filterSelected: ContentieuReferentielInterface | null = null
-  lastScrollTop: number = 0
   showFilterPanel: number = -1
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
   canViewReaffectator: boolean = false
@@ -73,7 +73,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
   }
@@ -160,6 +161,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         nbPersonal: personal.length,
       }
     })
+
+    console.log(this.categoriesFilterList)
+
+    this.calculateTotalAffected()
   }
 
   async addHR() {
@@ -218,14 +223,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (opacity === 1) {
           valuesFinded.push(h)
         }
-
+        console.log(l)
         return {
           ...h,
           opacity,
         }
       }),
     }))
-
+    console.log(this.listFormated)
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 
@@ -233,6 +238,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
+      if (this.searchValue.length !== 0)
+        this.appService.alert.next({
+          text: 'La personne recherchée n’est pas présente à la date sélectionnée.',
+        })
     }
   }
 
@@ -272,8 +281,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
-
-    console.log(this.filterParams)
+    // console.log(this.filterParams)
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr]
       if (this.filterParams) {
@@ -320,26 +328,23 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (findElement) {
           const headers = findContainer.querySelectorAll('.header-list')
           const { top } = findElement.getBoundingClientRect()
-          let topDelta = findContainer.getBoundingClientRect().top + 8
+          const mainTop = findContainer.getBoundingClientRect().top
+          let topDelta = mainTop
           for (let i = 0; i < headers.length; i++) {
             const topHeader = headers[i].getBoundingClientRect().top
-            if (topHeader < top) {
+            if (topHeader === mainTop || topHeader < top) {
               topDelta += headers[i].getBoundingClientRect().height
+              break
             }
           }
 
-          let scrollTop = top - topDelta + findContainer.scrollTop
-          if (this.lastScrollTop && this.lastScrollTop > scrollTop) {
-            scrollTop -= 88
-          }
+          let scrollTop = top - topDelta + findContainer.scrollTop - 8
 
           isFinded = true
           findContainer.scroll({
             behavior: 'smooth',
             top: scrollTop,
           })
-
-          this.lastScrollTop = scrollTop
         } else {
         }
       } else {
@@ -425,5 +430,42 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.orderListWithFiltersParams()
+  }
+
+  calculateTotalAffected() {
+    this.listFormated = this.listFormated.map((group) => {
+      group.referentiel = group.referentiel.map((r) => ({
+        ...r,
+        totalAffected: 0,
+      }))
+
+      const listFiltered = group.hrFiltered || []
+      listFiltered.map((hr) => {
+        hr.tmpActivities = {}
+
+        group.referentiel = group.referentiel.map((ref) => {
+          hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+            (r) => r.contentieux && r.contentieux.id === ref.id
+          )
+          if (hr.tmpActivities[ref.id].length) {
+            const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
+            if (timeAffected) {
+              let realETP = (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP < 0) {
+                realETP = 0
+              }
+              ref.totalAffected =
+                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+            }
+          }
+
+          return ref
+        })
+
+        return hr
+      })
+
+      return group
+    })
   }
 }

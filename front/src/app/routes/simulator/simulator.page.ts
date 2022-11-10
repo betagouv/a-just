@@ -135,7 +135,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
         const findElement = document.getElementById('content')
-        if(d && findElement && findTitle.length) {
+        if (d && findElement && findTitle.length) {
           if (findElement) {
             const { top } = findTitle[0].getBoundingClientRect()
             findElement.scrollTo({

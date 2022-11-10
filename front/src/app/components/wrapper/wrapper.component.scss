@@ -101,7 +101,7 @@
     }
 
     .header {
-      background-color: fColor(darkModeBgMenu);
+      background-color: fColor(darkModeBgHeader);
 
       h3 {
         color: fColor(darkModeTitle);
@@ -110,7 +110,7 @@
 
     .contener {
       .content {
-        background-color: black;
+        background-color: fColor(cblackdark);
       }
     }
   }
@@ -168,8 +168,10 @@
   .menu-scrollable {
     flex: 1;
     overflow: auto;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
     display: flex;
     flex-direction: column;
 
@@ -257,9 +259,9 @@
 }
 
 .header {
-  height: 87px;
-  min-height: 87px;
-  padding: 0 32px;
+  //height: 87px;
+  //min-height: 87px;
+  padding: 16px 16px;
   display: flex;
   align-items: center;
   background-color: white;
@@ -283,6 +285,11 @@
   .title-with-doc {
     display: flex;
     align-items: center;
+
+    h3 {
+      font-size: 20px;
+      font-family: 'Marianne-bold';
+    }
   }
 
   .documentation {
@@ -324,7 +331,6 @@
 .actions {
   display: flex;
   align-items: center;
-  margin-left: 34px;
 }
 
 .progress-bar {

@@ -25,6 +25,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   @Input() percent: number = 0
   @ViewChild('canvas') domCanvas: ElementRef | null = null
   @HostBinding('style.height') styleHeight: string = ''
+  @Input() @HostBinding('class.dark-mode') classDarkMode: boolean = false
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
   )
@@ -127,7 +128,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     }
     const radiusAngle = this.getRadiusPosition(percent)
 
-    ctx.strokeStyle = 'black'
+    ctx.strokeStyle = this.classDarkMode ? 'white' : 'black'
     ctx.lineWidth = 1
     ctx.moveTo(this.canvasWidth / 2 + this.lineWidth / 2, this.canvasWidth / 2 + this.lineWidth / 2)
     ctx.lineTo(

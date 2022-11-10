@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize'
 import { controlPassword, validateEmail } from '../../utils/utils'
 import { crypt } from '../../utils'
+import { sentEmailSendinblueUserList } from '../../utils/email'
 
 const tableName = 'Users'
 
@@ -83,6 +84,10 @@ export default (sequelizeInstance) => {
       throw 'Mot de passe trop faible!'
     }
     user.password = crypt.encryptPassword(user.password)
+  })
+
+  Model.addHook('afterCreate', (user) => {
+    sentEmailSendinblueUserList(user.dataValues)
   })
 
   Model.addHook('beforeUpdate', async (user) => {

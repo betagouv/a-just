@@ -6,7 +6,7 @@ import { ServerService } from '../http-server/server.service'
 })
 export class ReaffectatorService {
   selectedReferentielIds: number[] = []
-  selectedCategoriesIds: number[] = []
+  selectedCategoriesId: number | null = null
   selectedFonctionsIds: number[] = []
 
   constructor(private serverService: ServerService) {}
@@ -15,7 +15,7 @@ export class ReaffectatorService {
     backupId: number,
     date: Date,
     contentieuxIds: number[] | null,
-    categoriesIds: number[],
+    categoryId: number | null,
     fonctionsIds: number[]
   ) {
     return this.serverService
@@ -23,7 +23,7 @@ export class ReaffectatorService {
         backupId,
         date,
         contentieuxIds,
-        categoriesIds,
+        categoryId,
         fonctionsIds,
       })
       .then((data) => {

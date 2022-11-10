@@ -7,7 +7,7 @@
         </p>
       </div>
       <div class="etp">
-        <p>{{ ref.totalAffected | number: "0.2-2" }}</p>
+        <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
       </div>
       <div class="flex-1"></div>
     </div>
@@ -16,9 +16,10 @@
 </div>
 
 <div class="activities-panel">
-  <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
-    <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)"
-      (click)="onTogglePanel(index)" class="dark-mode">
+  <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
+    <progression-bar [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
+      [color]="referentielMappingColor(ref.label)" (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
+      (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
     </progression-bar>
   </div>
 </div>
@@ -41,8 +42,9 @@
   <div class="group-sub-item">
     <div class="sub-item" *ngFor="let ref of referentiel[refIndexSelected].childrens || []">
       <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(referentiel[refIndexSelected].label)"
-        [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
-        class="dark-mode">
+        [selected]="selected" (percentChange)="
+          onChangePercent(ref, $event, referentiel[refIndexSelected])
+        " class="dark-mode">
       </progression-bar>
       <p>{{ referentielMappingName(ref.label) }}</p>
     </div>
@@ -51,16 +53,14 @@
       left: (refIndexSelected * 100) / referentiel.length + '%',
       width: 100 / referentiel.length + '%'
     }">
-    <div class="arrow" [ngStyle]="{
-        'border-color': referentielMappingColor(
+    <div class="arrow" [style.--border-color]="referentielMappingColor(
           referentiel[refIndexSelected].label
-        )
-      }"></div>
+        )"></div>
   </div>
 </div>
 
-<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100}">
-  <p>Taux d'affectation : {{ percentAffected | number: "0.0-2" }}%</p>
+<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100 }">
+  <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
   <div class="progress-bar-line">
     <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
   </div>

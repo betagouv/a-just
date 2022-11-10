@@ -49,6 +49,7 @@ export class TimeSelectorComponent implements OnChanges {
 
   updateVal(event: any) {
     const value = event.target.value
+
     if (value !== null && this.regexObj.test(value)) {
       if (this.firstChange === true) {
         if (this.category === 'MAGISTRATS') this.value = this.defaultValue
