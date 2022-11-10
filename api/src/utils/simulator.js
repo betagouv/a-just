@@ -38,6 +38,33 @@ const emptySituation = {
   etpToCompute: null,
 }
 
+export function filterByCategory (hr, categoryId) {
+  let tmpHr = [...hr]
+  let res = new Array()
+  console.log('LEN-1', res.length)
+
+  for (let i = 0; i < tmpHr.length; i++) {
+    let tmpSituations = new Array()
+    //console.log('0', tmpHr[i].situations.length)
+    for (let y = 0; y < tmpHr[i].situations.length; y++) {
+      //console.log('1', tmpHr[i].situations[y].category)
+
+      if (tmpHr[i].situations[y].category && tmpHr[i].situations[y].category.id === categoryId) tmpSituations.push({ ...tmpHr[i].situations[y] })
+    }
+    //if (tmpHr[i].situations.length === 0) tmpHr = [...tmpHr.splice(i + 1, 1)]
+    //console.log('2', tmpHr[i].situations.length)
+
+    if (tmpSituations.length !== 0) res.push({ ...tmpHr[i], situations: tmpSituations })
+    //tmpHr = [...tmpHr.splice(i + 1, 1)]
+  }
+  //console.log('LEN0', res)
+
+  console.log('LEN1', tmpHr.length)
+  //const res = [...tmpHr].filter(({ ...h }) => h.situations.length !== 0)
+  console.log('LEN2', res.length)
+
+  return res
+}
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined) {
   const nbMonthHistory = 12
   const { activities, lastActivities, deltaOfMonths, startDateCs, endDateCs } = await getCSActivities(
@@ -307,6 +334,7 @@ export function appearOneTimeAtLeast (situations, referentielId) {
     return activities.some((a) => a.contentieux.id === referentielId)
   })
 }
+
 export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
   const hrCategories = {}
   let hrCategoriesMonthly = new Object({})
@@ -508,8 +536,7 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
 
 export function execSimulation (params, simulation, dateStart, dateStop) {
   params.toDisplay.map((x) => {
-    if (params.beginSituation !== null)
-      simulation[x] = params.beginSituation[x]
+    if (params.beginSituation !== null) simulation[x] = params.beginSituation[x]
   })
 
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
@@ -534,7 +561,7 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       params.modifiedParams.param2.label === 'realCoverage'
         ? parseFloat(params.modifiedParams.param2.value) / 100
         : parseFloat(params.modifiedParams.param2.value)
-        
+
   do {
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
