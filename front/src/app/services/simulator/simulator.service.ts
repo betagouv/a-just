@@ -73,6 +73,14 @@ export class SimulatorService extends MainClass {
     )
 
     this.watch(
+      this.selectedFonctionsIds.subscribe(() => {
+        if (this.contentieuOrSubContentieuId.getValue() !== null) {
+          this.getSituation(this.contentieuOrSubContentieuId.getValue())
+        }
+      })
+    )
+
+    this.watch(
       this.dateStart.subscribe(() => {
         if (this.contentieuOrSubContentieuId.getValue() !== null) {
           this.getSituation(
