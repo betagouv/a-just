@@ -19,6 +19,15 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
+
+const etpMag = 'etpMag'
+const etpMagTitle = 'des ETPT magistrat'
+const etpMagToDefine = '[un volume moyen de]'
+
+const etpFon = 'etpFon'
+const etpFonTitle = 'des ETPT greffe'
+const etpFonToDefine = '[un volume moyen de]'
+
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -85,7 +94,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     param1: { label: '', value: '' },
     param2: { label: '', value: '' },
   }
-  decisionTree = tree
+  decisionTreeMag = tree
+  decisionTreeFon = this.FonTree()
 
   toSimulate: boolean = false
   toDisplaySimulation: boolean = false
@@ -120,6 +130,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
         )
       })
     )
+    const originalMsg = JSON.stringify(this.currentNode)
+    let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
+    updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
+    updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
   ngOnInit(): void {
@@ -300,10 +314,34 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   //passer en back maybe ??????
   openPopupWithParams(button: any): void {
     this.buttonSelected = button
-    const find = this.decisionTree.find((item) => item.label === button.id)
+    let buttonToFind = button.id
 
-    if (this.paramsToAjust.param1.input === 0) this.currentNode = find
+    const treeToUse =
+      this.categorySelected === 'MAGISTRAT'
+        ? this.decisionTreeMag
+        : this.decisionTreeFon
+
+    const find = treeToUse.find((item: any) => item.label === buttonToFind)
+
+    console.log(button, find, this.categorySelected)
+
+    if (this.paramsToAjust.param1.input === 0) {
+      this.currentNode = find
+    }
+
+    console.log('Salade', this.currentNode)
     this.openPopup = true
+  }
+
+  FonTree(): any {
+    const originalMsg = JSON.stringify([...tree])
+    let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
+    updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
+    updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
+    return JSON.parse(updatedMsg)
+  }
+  replaceAll(string: string, search: string, replace: string) {
+    return string.split(search).join(replace)
   }
 
   setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
@@ -654,6 +692,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   simulate(allButton: any): void {
+    console.log(this.paramsToAjust)
     if (
       this.paramsToAjust.param1.input !== 0 &&
       this.paramsToAjust.param2.input !== 0

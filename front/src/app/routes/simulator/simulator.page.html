@@ -115,10 +115,16 @@
     <div class="item blue-bg">
       <p>Stock</p>
     </div>
-    <div class="item">
+    <div
+      class="item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <p>ETPT magistrat</p>
     </div>
-    <div class="item blue-bg">
+    <div
+      class="item blue-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>ETPT greffe</p>
     </div>
     <div class="item">
@@ -127,10 +133,16 @@
     <div class="item blue-bg">
       <p>Taux de couverture</p>
     </div>
-    <div class="item">
+    <div
+      class="item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>DTES</p>
     </div>
-    <div class="item blue-bg">
+    <div
+      class="item blue-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>Temps moyen / dossier</p>
     </div>
   </div>
@@ -155,17 +167,20 @@
     <div class="line-item orange-bg">
       <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
     </div>
-    <div class="line-item orange-bg">
-      <input
-        [value]="getFieldValue('ETPTGreffe',firstSituationData)"
-        disabled
-      />
+    <div
+      class="line-item orange-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
+      <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
     </div>
     <div class="line-item">
-      <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
+      <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
     </div>
     <div class="line-item orange-bg">
       <input
@@ -173,13 +188,19 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('realDTESInMonths',firstSituationData)"
         disabled
       />
     </div>
-    <div class="line-item orange-bg">
+    <div
+      class="line-item orange-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('magRealTimePerCase',firstSituationData)"
         disabled
@@ -217,21 +238,27 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <input
         [value]="getFieldValue('etpMag',projectedSituationData)"
         disabled
       />
     </div>
-    <div class="line-item grey-bg">
+    <div
+      class="line-item grey-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
-        [value]="getFieldValue('ETPTGreffe',projectedSituationData)"
+        [value]="getFieldValue('etpFon',projectedSituationData)"
         disabled
       />
     </div>
     <div class="line-item">
       <input
-        [value]="getFieldValue('etpFon',projectedSituationData)"
+        [value]="getFieldValue('etpCont',projectedSituationData)"
         disabled
       />
     </div>
@@ -241,13 +268,19 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('realDTESInMonths',projectedSituationData)"
         disabled
       />
     </div>
-    <div class="line-item grey-bg">
+    <div
+      class="line-item grey-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('magRealTimePerCase',projectedSituationData)"
         disabled
@@ -263,13 +296,13 @@
       <div
         id="init-button"
         class="init-button"
-        (click)="initParams([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Réinitialiser</p>
       </div>
       <div
         class="simulate-button {{simulateButton}}"
-        (click)="simulate([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Simuler</p>
       </div>
@@ -293,7 +326,7 @@
       <div class="choices">
         <div
           class="choice"
-          (click)="selectParamToLock(0,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+          (click)="selectParamToLock(0,[totalIn, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
         >
           à {{getLockedParamLabel(0)}}
           <br />constant{{getLockedParamLabel(0)!=='entrées
@@ -301,7 +334,7 @@
         </div>
         <div
           class="choice"
-          (click)="selectParamToLock(1,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+          (click)="selectParamToLock(1,[totalIn, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
         >
           à {{getLockedParamLabel(1)}}
           <br />constant{{getLockedParamLabel(1)!=='entrées
@@ -339,8 +372,9 @@
           *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'magRealTimePerCase'"
         >
           Appliquer sur la période {{startRealValue? "du":"d'"}}
-          {{startRealValue||"aujourd'hui"}} au {{stopRealValue}}
-          {{buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT magistrat":
+          {{startRealValue||"aujourd'hui"}} au {{stopRealValue}} {{
+          buttonSelected.id==='etpFon' ? "un volume moyen d'ETPT greffe":
+          buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT magistrat":
           buttonSelected.id === 'totalOut'?"un volume moyen de sorties
           mensuelles": buttonSelected.id === 'totalIn'? "un volume moyen
           d'entrées mensuelles":"un temps moyen par dossier"}} de :
@@ -446,6 +480,7 @@
         (click)="openPopupWithParams(etpMag)"
         value="Ajuster"
         readonly="readonly"
+        [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}"
         #etpMag
       />
       <div
@@ -460,31 +495,13 @@
     </div>
     <div class="line-item blue-bg">
       <input
-        class="ajusted-button disable"
-        id="ETPTGreffe"
-        [class.filled]="ETPTGreffe.value!=='Ajuster'"
-        (click)="openPopupWithParams(ETPTGreffe)"
-        value="Ajuster"
-        readonly="readonly"
-        #ETPTGreffe
-      />
-      <div
-        class="modified-label"
-        *ngIf="paramsToAjust.param1.label===ETPTGreffe.id  || paramsToAjust.param2.label===ETPTGreffe.id"
-        [@fadeInOut]
-      >
-        {{percentageModifiedInputText(ETPTGreffe.id,getFieldValue('ETPTGreffe',firstSituationData))}}%
-        <div class="triangle"></div>
-      </div>
-    </div>
-    <div class="line-item">
-      <input
-        class="ajusted-button disable"
+        class="ajusted-button"
         id="etpFon"
         [class.filled]="etpFon.value!=='Ajuster'"
         (click)="openPopupWithParams(etpFon)"
         value="Ajuster"
         readonly="readonly"
+        [ngClass]="{disable: categorySelected !== 'FONCTIONNAIRE'}"
         #etpFon
       />
       <div
@@ -493,6 +510,25 @@
         [@fadeInOut]
       >
         {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',firstSituationData))}}%
+        <div class="triangle"></div>
+      </div>
+    </div>
+    <div class="line-item">
+      <input
+        class="ajusted-button disable"
+        id="etpCont"
+        [class.filled]="etpCont.value!=='Ajuster'"
+        (click)="openPopupWithParams(etpCont)"
+        value="Ajuster"
+        readonly="readonly"
+        #etpCont
+      />
+      <div
+        class="modified-label"
+        *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id"
+        [@fadeInOut]
+      >
+        {{percentageModifiedInputText(etpCont.id,getFieldValue('etpCont',firstSituationData))}}%
 
         <div class="triangle"></div>
       </div>
@@ -701,7 +737,28 @@
           </div>
         </div>
         <div class="line-item">
-          <input [value]="getFieldValue('',simulatedSationData)" disabled />
+          <input
+            [value]="getFieldValue('etpFon',simulatedSationData)"
+            disabled
+          />
+          <div
+            class="modified-label simulated"
+            *ngIf="paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon'"
+            [@fadeInOut]
+          >
+            {{percentageModifiedInputText('etpFon',getFieldValue('etpFon',firstSituationData))}}%
+
+            <div class="triangle simulated"></div>
+          </div>
+          <div
+            class="modified-label simulated blue"
+            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData)"
+            [@fadeInOut]
+          >
+            {{ratio(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}%
+
+            <div class="triangle simulated blue"></div>
+          </div>
         </div>
         <div class="line-item">
           <input [value]="getFieldValue('',simulatedSationData)" disabled />

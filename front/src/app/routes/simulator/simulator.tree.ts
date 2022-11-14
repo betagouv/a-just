@@ -2,6 +2,10 @@ const etpMag = 'etpMag'
 const etpMagTitle = 'des ETPT magistrat'
 const etpMagToDefine = ['un volume moyen de']
 
+const etpFon = 'etpFon'
+const etpFonTitle = 'des ETPT greffe'
+const etpFonToDefine = ['un volume moyen de']
+
 const magRealTimePerCase = 'magRealTimePerCase'
 const magRealTimePerCaseTitle = 'du Temps moyen / Dossier'
 const magRealTimePerCaseToDefine = ['un temps moyen par dossier de']
@@ -94,7 +98,12 @@ const tree = [
         toSimulate: [
           {
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
         ],
       },
@@ -311,7 +320,12 @@ const tree = [
           {
             locked: etpMag,
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
           {
             locked: magRealTimePerCase,
@@ -335,7 +349,12 @@ const tree = [
           {
             locked: etpMag,
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
           {
             locked: magRealTimePerCase,
@@ -353,7 +372,12 @@ const tree = [
           {
             locked: '',
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
         ],
       },
@@ -641,7 +665,12 @@ const tree = [
           {
             locked: etpMag,
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
 
           {
@@ -660,7 +689,12 @@ const tree = [
           {
             locked: etpMag,
             toDisplay: [totalIn, etpMag, realDTESInMonths],
-            toCalculate: [totalOut, lastStock, realCoverage, magRealTimePerCase],
+            toCalculate: [
+              totalOut,
+              lastStock,
+              realCoverage,
+              magRealTimePerCase,
+            ],
           },
 
           {
@@ -692,4 +726,4 @@ const tree = [
     ],
   },
 ]
-export { tree }
+export { tree, etpFon, etpFonTitle, etpFonToDefine }
