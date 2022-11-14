@@ -118,10 +118,6 @@ export class SimulatorService extends MainClass {
     dateStop?: Date
   ) {
     console.log('getSituation')
-    console.log(
-      this.selectedFonctionsIds.getValue(),
-      this.selectedCategory.getValue()?.id
-    )
 
     this.isLoading.next(true)
     return this.serverService
@@ -155,8 +151,10 @@ export class SimulatorService extends MainClass {
         simulation: simulation,
         dateStart: generalizeTimeZone(this.dateStart.getValue()),
         dateStop: generalizeTimeZone(this.dateStop.getValue()),
+        selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
+        console.log(data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })
@@ -171,6 +169,8 @@ export class SimulatorService extends MainClass {
     switch (value) {
       case 'etpMag':
         return 'ETPT magistrat'
+      case 'etpFon':
+        return 'ETPT greffe'
       case 'totalIn':
         return 'entrées mensuelles'
       case 'totalOut':
@@ -219,6 +219,8 @@ export class SimulatorService extends MainClass {
           return data?.lastStock
         } else return '0'
       }
+      case 'etpCont':
+        return data?.etpCont || '0'
       case 'etpFon':
         return data?.etpFon || '0'
       case 'realCoverage': {
@@ -242,8 +244,6 @@ export class SimulatorService extends MainClass {
         else {
           return decimalToStringDate(data?.magRealTimePerCase) || '0'
         }
-      case 'ETPTGreffe':
-        return data?.etpCont || '0'
     }
     return ''
   }

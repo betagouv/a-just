@@ -213,6 +213,11 @@
                 padding-top: 6px;
                 position: relative;
 
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #ececfe !important;
+                }
+
                 input {
                     width: 98%;
                 }
@@ -276,10 +281,25 @@
 
             &.orange-bg {
                 background-color: #feecc2;
+
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #ececfe !important;
+                }
+            }
+
+            &.selected {
+                mix-blend-mode: multiply;
+                background-color: #9b9bff !important;
             }
 
             &.grey-bg {
                 background-color: #e9edfe;
+
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #ececfe !important;
+                }
             }
 
             &.blue-bg {
@@ -588,6 +608,7 @@
             &::after {
                 background-color: #f4f6fe;
             }
+
         }
 
         &::before {
@@ -632,12 +653,30 @@
             color: #161616;
             position: relative;
 
+
+
             &.orange-bg {
                 background-color: #feecc2;
+
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #dcdcfb !important;
+                }
+            }
+
+            &.selected {
+                mix-blend-mode: multiply;
+                background-color: #ececfe !important;
+
             }
 
             &.grey-bg {
                 background-color: #e9edfe;
+
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #dcdcfb !important;
+                }
             }
 
             &.blue-bg {
@@ -796,8 +835,20 @@
             align-items: center;
             justify-content: center;
 
+
+
             &.blue-bg {
                 background-color: #f5f5fe;
+
+                &.selected {
+                    mix-blend-mode: multiply;
+                    background-color: #dcdcfb !important;
+                }
+            }
+
+            &.selected {
+                mix-blend-mode: multiply;
+                background-color: #e8e5fa !important;
             }
 
             p {
