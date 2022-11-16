@@ -1,4 +1,4 @@
-import { isFirstDayOfMonth } from 'date-fns'
+import { endOfYesterday, isFirstDayOfMonth } from 'date-fns'
 import { sortBy, sumBy } from 'lodash'
 import { filterActivitiesByDateAndContentieuxId } from './activities'
 import {
@@ -9,7 +9,6 @@ import {
   getShortMonthString,
   isSameMonthAndYear,
   month,
-  monthJimmy,
   nbOfDays,
   stringToDecimalDate,
   workingDay,
@@ -44,8 +43,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
     referentielId,
     allActivities,
     'InOutStock',
-    monthJimmy(new Date(), -nbMonthHistory),
-    monthJimmy(new Date())
+    month(new Date(), -nbMonthHistory),
+    month(new Date())
   )
 
   let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonthHistory)
@@ -77,11 +76,12 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
-
+    
     ;({ etpMagToCompute, etpFonToCompute, etpContToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     magRealTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute)
+    console.log(totalOut, etpAffectedLast12MonthsToCompute, etpMagToCompute, magRealTimePerCase)
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(magRealTimePerCase, etpMag)
@@ -91,7 +91,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpContFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
 
-    const countOfCalandarDays = nbOfDays(month(endDateCs, 0), monthJimmy(new Date(), 0))
+    const countOfCalandarDays = nbOfDays(month(endDateCs), month(new Date(), -1, true))
 
     // Compute stock projection until today
     lastStock = computeLastStock(lastStock, countOfCalandarDays, etpMagFuturToCompute, magRealTimePerCase, totalIn)
@@ -239,9 +239,9 @@ function computeRealTimePerCase (totalOut, etp) {
 }
 
 export function getEtpByCategory (etpAffected, sufix = '') {
-  let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-  let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-  let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+  let etpMag = etpAffected.length > 0 ? etpAffected[0].totalEtp : 0
+  let etpCont = etpAffected.length > 1 ? etpAffected[1].totalEtp : 0
+  let etpFon = etpAffected.length > 2 ? etpAffected[2].totalEtp : 0
 
   return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCont' + sufix]: etpCont }
 }
@@ -267,11 +267,13 @@ export async function getCSActivities (referentielId, allActivities, filter, dat
   if (filter === 'InOutStock') {
     do {
       deltaOfMonths--
-      lastActivities = activities.filter((a) => isSameMonthAndYear(a.periode, monthJimmy(dateStop, deltaOfMonths)))
+      lastActivities = activities.filter((a) => isSameMonthAndYear(a.periode, month(dateStop, deltaOfMonths)))
     } while (hasInOutOrStock(lastActivities) === false && deltaOfMonths >= -12)
   }
-  const startDateCs = monthJimmy(dateStart, deltaOfMonths)
-  const endDateCs = generalizeTimeZone(month(dateStop, deltaOfMonths, 'lastday'))
+  const startDateCs = month(dateStart, deltaOfMonths)
+  const endDateCs = month(dateStop, deltaOfMonths, 'lastday')
+  endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
+  endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
   if (deltaOfMonths !== -12 && deltaOfMonths <= 0) {
     activivitiesFiltered = await filterActivitiesByDateAndContentieuxId(activities, referentielId, startDateCs, endDateCs)
