@@ -14,7 +14,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { month, nbOfDays } from 'src/app/utils/dates'
+import { month, nbOfDays, today } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -507,12 +507,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   calculateReferentielValues() {
     const activities = this.actualActivities
-    const magistrats = this.listFormated.find(
+    const itemList = this.listFormated.find(
       (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
     )
     const fakeCategories = [
       { id: this.reaffectatorService.selectedCategoriesId, label: 'cat' },
     ]
+    const dateSelected = month(this.dateSelected, -1, 'lastday')
     const nbDayByCategory =
       this.reaffectatorService.selectedCategoriesId === 1
         ? environment.nbDaysByMagistrat
@@ -537,8 +538,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       // find new ETPT of today
       let etpt = 0
-      if (magistrats) {
-        const ref = magistrats.referentiel.find(
+      if (itemList) {
+        const ref = itemList.referentiel.find(
           (referentiel) => referentiel.id === r.id
         )
         if (ref && ref.totalAffected) {
@@ -561,16 +562,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       if (
         lastStock &&
         lastPeriode &&
-        lastPeriode.getTime() < month(this.dateSelected).getTime()
+        lastPeriode.getTime() < today(this.dateSelected).getTime()
       ) {
         // ETPT of the last 12 months
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hrFiltered) || [],
+          (itemList && itemList.hrFiltered) || [],
           r.id,
           fakeCategories,
-          new Date(month(lastPeriode, -11)),
+          month(lastPeriode, -12),
           true,
-          new Date(month(lastPeriode, 0, 'lastday'))
+          lastPeriode
         ) as Array<etpAffectedInterface>
         let etpToComputeLast12Months =
           etpAffectedLast12Months.length >= 0
@@ -580,32 +581,36 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let averageWorkingProcess =
           etpToComputeLast12Months === 0
             ? 0
-            : fixDecimal(
-                (nbDaysByMonthForMagistrat * nbWorkingHours) /
-                  (averageOut / etpToComputeLast12Months)
-              )
-
+            : (nbDaysByMonthForMagistrat * nbWorkingHours) /
+              (averageOut / etpToComputeLast12Months)
+              
         let outValue =
           averageWorkingProcess === 0
             ? 0
             : (etpt * nbWorkingHours * nbDaysByMonthForMagistrat) /
-                  averageWorkingProcess
+              averageWorkingProcess
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hrFiltered) || [],
+          (itemList && itemList.hrFiltered) || [],
           r.id,
           fakeCategories,
           lastPeriode,
           true,
-          this.dateSelected
+          dateSelected
         ) as Array<etpAffectedInterface>
         const etpMagDelta =
           etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-        const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
+        const nbDayCalendar = nbOfDays(lastPeriode, dateSelected)
 
         if (r.id === 440) {
           console.log('last stock ', {
+            etpToComputeLast12Months,
+            nbWorkingHours,
+            nbDayByCategory,
+            averageOut,
+            lastPeriode,
+            dateSelected,
             lastStock,
             etpMagDelta,
             averageWorkingProcess,
