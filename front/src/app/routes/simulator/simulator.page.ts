@@ -16,6 +16,7 @@ import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -53,6 +54,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   valueToAjust = { value: '', percentage: null }
   currentNode: any | undefined = {}
   isLoading: boolean = false
+  documentation: DocumentationInterface = {
+    title: 'Simulateur',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/quest-ce-que-cest',
+  }
 
   paramsToAjust = {
     param1: {
