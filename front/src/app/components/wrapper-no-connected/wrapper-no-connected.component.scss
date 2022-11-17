@@ -1,0 +1,45 @@
+@import '../../styles/utils.scss';
+
+:host {
+  display: flex;
+  height: 100%;
+  align-self: stretch;
+  justify-content: stretch;
+}
+
+.main-container {
+  min-height: 100vh;
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+
+  > .title-panel {
+    flex: 56;
+  }
+
+  > .content-panel {
+    flex: 44;
+  }
+}
+
+.title-panel {
+  background-image: url(../../../assets/img_SignIn.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: flex-end;
+  padding: 56px;
+
+  > h2 {
+    margin-top: 264px;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-align: right;
+  }
+}
+
+.content-panel {
+  padding: 40px 64px;
+}
