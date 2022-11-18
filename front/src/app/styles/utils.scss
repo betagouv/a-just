@@ -63,6 +63,7 @@ $colors: (
 	bgHelper: #33569e,
 	titleInput: #666666,
 	bgReadETPDark: #ececfe,
+	lightBorder: #dddddd,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

@@ -1,10 +1,8 @@
 @import '../../styles/utils.scss';
 
 :host {
-  display: flex;
-  height: 100%;
-  align-self: stretch;
-  justify-content: stretch;
+  display: block;
+  width: 100%;
 }
 
 .main-container {
