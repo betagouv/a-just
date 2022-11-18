@@ -54,3 +54,30 @@
     }
   }
 }
+
+.signup {
+  margin-top: 68px;
+
+  b {
+    font-size: 20px;
+  }
+
+  a {
+    margin-top: 16px;
+    display: block;
+  }
+
+  button {
+    width: 100%;
+    font-weight: bold;
+    font-size: 20px;
+    height: 48px;
+    line-height: 48px;
+
+    i {
+      margin-right: 12px;
+      position: relative;
+      top: 3px;
+    }
+  }
+}

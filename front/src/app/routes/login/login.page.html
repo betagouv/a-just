@@ -4,6 +4,7 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <p>Vous avez déjà un compte</p>
     <h3>Se connecter</h3>
     <label>Email</label>
     <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
@@ -18,8 +19,11 @@
     <input type="submit" class="big-button" value="Se connecter" />
 
 
-    <div class="actions">
-      <p><a routerLink="/signup">Inscription</a></p>
+    <div class="signup">
+      <p>Vous n’avez pas encore de compte</p>
+      <p><b>Rejoindre A-JUST</b></p>
+      <a routerLink="/inscription"><button class="outline white strict-border"><i class="ri-login-box-line"></i>Demander
+          votre embarquement</button></a>
     </div>
   </form>
 </aj-wrapper-no-connected>
