@@ -47,6 +47,14 @@ export default (sequelizeInstance) => {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
+      tj: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      fonction: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
