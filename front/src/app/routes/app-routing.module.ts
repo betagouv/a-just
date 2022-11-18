@@ -4,12 +4,17 @@ import { AuthGuard } from './auth-guard.service';
 
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: '/login',
+    path: 'login',
+    redirectTo: '/connexion',
     pathMatch: 'full',
   },
   {
-    path: 'login',
+    path: '',
+    redirectTo: '/connexion',
+    pathMatch: 'full',
+  },
+  {
+    path: 'connexion',
     loadChildren: () =>
       import('./login/login.module').then((mod) => mod.LoginModule),
   },
@@ -59,6 +64,11 @@ const routes: Routes = [
   },
   {
     path: 'signup',
+    redirectTo: '/inscription',
+    pathMatch: 'full',
+  },
+  {
+    path: 'inscription',
     loadChildren: () =>
       import('./signup/signup.module').then((mod) => mod.SignupModule),
   },
