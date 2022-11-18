@@ -1,21 +1,41 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Inscription</h2>
-  <p class="label">Prénom</p>
-  <input class="ethics-ui" placeholder="Prénom" formControlName="firstName" />
-  <p class="label">Nom</p>
-  <input class="ethics-ui" placeholder="Nom" formControlName="lastName" />
-  <p class="label">Email</p>
-  <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
-  <p class="label">Mot de passe</p>
-  <input class="ethics-ui" placeholder="Mot de passe" formControlName="password" type="password" />
-  <p class="label">Confirmation du mot de passe</p>
-  <input class="ethics-ui" placeholder="Mot de passe" formControlName="passwordConf" type="password" />
-  <div>
-    <input type="submit" class="big" value="Inscription" />
+<aj-wrapper-no-connected title="Simulateur de vol<br/>pour le pilotage<br/>de votre juridiciton">
+  <div class="logo">
+    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
+    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h3>Embarquement A-JUST</h3>
+    <div class="grid-double">
+      <div>
+        <label>Prénom* :</label>
+        <input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text" />
+      </div>
+      <div>
+        <label>Nom* :</label>
+        <input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text" />
+      </div>
+    </div>
+    <label>Votre tribunal de rattachement :</label>
+    <input class="ethics-ui" formControlName="tj" type="text" />
+    <label>Votre fonction :</label>
+    <input class="ethics-ui" placeholder="ex. chargée de mission statistiques" formControlName="fonction" type="text" />
+    <label>Email professionnel* :</label>
+    <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
+    <label>Mot de passe* :</label>
+    <input class="ethics-ui" placeholder="Mot de passe" formControlName="password" type="password" />
+    <label>Confirmation du mot de passe* :</label>
+    <input class="ethics-ui" placeholder="Mot de passe" formControlName="passwordConf" type="password" />
+    <p class="asterisque">Les champs avec un astérisque * sont obligatoires.</p>
+    <div>
+      <input type="submit" class="big-button" value="Valider son embarquement" />
+    </div>
 
-  <div class="actions">
-    <p><a routerLink="/login">Connexion</a></p>
-    <p><a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a></p>
-  </div>
-</form>
+
+
+    <div class="login">
+      <p><b>Vous avez déjà un compte</b></p>
+      <a routerLink="/inscription"><button class="outline white strict-border"><i class="ri-login-box-line"></i>Se
+          connecter</button></a>
+    </div>
+  </form>
+</aj-wrapper-no-connected>
