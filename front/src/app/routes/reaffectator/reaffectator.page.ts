@@ -20,6 +20,7 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
 import { ActivityInterface } from 'src/app/interfaces/activity'
 import { copyArray } from 'src/app/utils/array'
+import { AppService } from 'src/app/services/app/app.service'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -85,7 +86,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private appService: AppService,
   ) {
     super()
   }
@@ -407,13 +409,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onExport() {
-    /*this.duringPrint = true
+    this.duringPrint = true
     this.wrapper
-      ?.exportAsPdf('simulation-d-affectation.pdf', false)
+      ?.exportAsPdf('simulation-d-affectation.pdf')
       .then(() => {
         this.duringPrint = false
-      })*/
-    alert("Cette fonctionnalité n'est pas encore disponible.")
+        this.appService.alert.next({
+          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+        })
+      })
   }
 
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
@@ -767,5 +771,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   onToogleIsolation() {
     this.isolatePersons = !this.isolatePersons
+  }
+
+  getOrignalHuman(hr: HumanResourceSelectedInterface, itemObject: listFormatedInterface) {
+    return itemObject.allHr.find(h => h.id === hr.id)
   }
 }

@@ -90,6 +90,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
   hrBackup: BackupInterface | undefined
   hrBackups: BackupInterface[] = []
+  backupId: number | null = null
 
   constructor(
     private humanResourceService: HumanResourceService,
@@ -100,14 +101,28 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
-        this.hrBackups = this.humanResourceService.backups.getValue()
-        this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`
+        this.backupId = backupId
+        this.generatePrintTitle()
+      })
+    )
+
+    this.watch(
+      this.humanResourceService.backups.subscribe((backups) => {
+        this.hrBackups = backups
+        this.generatePrintTitle()
       })
     )
   }
+
+  generatePrintTitle() {
+    if(this.backupId && this.hrBackups) {
+      this.hrBackup = this.hrBackups.find((b) => b.id === this.backupId)
+      this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
+        .toJSON()
+        .slice(0, 10)}`
+    }
+  }
+  
 
   ngOnInit(): void {
     this.dateStop = null
