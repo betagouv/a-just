@@ -60,7 +60,7 @@
     "sequelize-transforms": "^2.0.0",
     "sib-api-v3-sdk": "^8.3.0",
     "slugify": "^1.6.1",
-    "socket.io": "^4.1.2",
+    "socket.io": "^4.5.3",
     "stream": "^0.0.2",
     "string-strip-html": "^6.3.0",
     "stripe": "^8.132.0",
