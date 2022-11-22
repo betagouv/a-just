@@ -223,7 +223,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (opacity === 1) {
           valuesFinded.push(h)
         }
-        console.log(l)
         return {
           ...h,
           opacity,
