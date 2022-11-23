@@ -46,7 +46,7 @@
             </div>
           </div>
         </div>
-        <!--
+
         <div class="popin-raw" style="display: flex">
           <div class="popin-title">
             <div
@@ -56,14 +56,27 @@
             ></div>
             <b>Agents</b> &nbsp;
           </div>
-          <p class="low-value"></p>
-          <p class="hard-value"></p>
+          <p class="low-value">
+            {{ getRounded(tooltip.projectedFon) || '' }}
+          </p>
+          <p class="hard-value">
+            {{ getRounded(tooltip.simulatedFon) || '' }}
+          </p>
           <div class="white-value">
             <div class="rounded-label">
-              <label></label>
+              <label>
+                {{
+                  getDeltaInPercent(
+                    tooltip.simulatedFon,
+                    tooltip.projectedFon
+                  ) || 0
+                }}
+                %
+              </label>
             </div>
           </div>
         </div>
+        <!--
         <div class="popin-raw" style="display: flex">
           <div class="popin-title">
             <div
@@ -101,6 +114,8 @@
     [dotColor]="'#fdc0f8'"
     [bgColor]="'#e07dd8'"
     (value)="display($event)"
+    [disabledEl]="categorySelected === 'FONCTIONNAIRE' ? true : false"
+    [ngClass]="{ 'disabled-label': categorySelected === 'FONCTIONNAIRE' }"
   ></aj-legend-label>
   <div class="space"></div>
   <aj-legend-label
@@ -117,7 +132,8 @@
     [dotColor]="'#ffcade'"
     [bgColor]="'#f083a0'"
     (value)="display($event)"
-    class="disabled-label"
+    [disabledEl]="categorySelected === 'MAGISTRAT' ? true : false"
+    [ngClass]="{ 'disabled-label': categorySelected === 'MAGISTRAT' }"
   ></aj-legend-label>
 
   <div class="space"></div>
@@ -127,6 +143,8 @@
     [dotColor]="'#fdbfb7'"
     [bgColor]="'#fcd7d3'"
     (value)="display($event)"
+    [disabledEl]="true"
+    class="disabled-label"
   ></aj-legend-label>
 
   <aj-legend-label
@@ -135,6 +153,7 @@
     [dotColor]="'#fcd7d3'"
     [bgColor]="'#eba89f'"
     (value)="display($event)"
+    [disabledEl]="true"
     class="disabled-label"
   ></aj-legend-label>
 </div>

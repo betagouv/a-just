@@ -119,6 +119,7 @@ export class SimulatorService extends MainClass {
   ) {
     console.log('getSituation')
 
+    console.log('Fonctions selected', this.selectedFonctionsIds.getValue())
     this.isLoading.next(true)
     return this.serverService
       .post(`simulator/get-situation`, {
@@ -133,6 +134,8 @@ export class SimulatorService extends MainClass {
         if (dateStop) {
           this.situationProjected.next(data.data.situation.endSituation)
         } else this.situationActuelle.next(data.data.situation)
+
+        console.log('Situation result', data)
       })
       .then(() => this.isLoading.next(false))
   }
@@ -154,7 +157,7 @@ export class SimulatorService extends MainClass {
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
-        console.log(data.data)
+        console.log('Simulation result', data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })

@@ -5,6 +5,8 @@ export interface ChartAnnotationBoxInterface {
   content?: string | undefined
   projectedMag?: number | null
   simulatedMag?: number | null
+  projectedFon?: number | null
+  simulatedFon?: number | null
   projectedStock?: number | null
   simulatedStock?: number | null
   x?: number | null

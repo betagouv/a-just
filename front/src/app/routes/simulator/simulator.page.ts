@@ -323,13 +323,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
 
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
-    console.log(button, find, this.categorySelected)
-
     if (this.paramsToAjust.param1.input === 0) {
       this.currentNode = find
     }
 
-    console.log('Salade', this.currentNode)
     this.openPopup = true
   }
 
@@ -568,6 +565,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           parseFloat(projectedValue as string)
       )
 
+    if (id === 'etpFon') {
+      console.log(this.paramsToAjust, projectedValue)
+    }
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -692,7 +692,6 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   simulate(allButton: any): void {
-    console.log(this.paramsToAjust)
     if (
       this.paramsToAjust.param1.input !== 0 &&
       this.paramsToAjust.param2.input !== 0
@@ -953,8 +952,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             c.label.toUpperCase() === this.categorySelected.toUpperCase()
         ) || null
 
+    console.log('findCategory', findCategory)
     this.simulatorService.selectedCategory.next(findCategory)
-
+    console.log('fonctions', this.humanResourceService.fonctions.getValue())
     this.loadFunctions()
   }
 
@@ -973,6 +973,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.selectedFonctionsIds = finalList.map((a) => a.id)
 
     this.functionsList = finalList
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
