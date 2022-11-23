@@ -21,8 +21,9 @@ export class HumanResourceService {
   >([]) // TODO REMOVE
   contentieuxReferentiel: BehaviorSubject<ContentieuReferentielInterface[]> =
     new BehaviorSubject<ContentieuReferentielInterface[]>([])
-    contentieuxReferentielOnly: BehaviorSubject<ContentieuReferentielInterface[]> =
-    new BehaviorSubject<ContentieuReferentielInterface[]>([])
+  contentieuxReferentielOnly: BehaviorSubject<
+    ContentieuReferentielInterface[]
+  > = new BehaviorSubject<ContentieuReferentielInterface[]>([])
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
     BackupInterface[]
   >([])
@@ -627,6 +628,8 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
+        console.log(data.data.list)
+
         return data.data.list
       })
   }

@@ -1,11 +1,30 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2>Connexion</h2>
-  <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
-  <input class="ethics-ui" placeholder="Mot de passe" formControlName="password" type="password" />
-  <input type="submit" class="big" value="Connexion" />
-
-  <div class="actions">
-    <p><a routerLink="/signup">Inscription</a></p>
-    <p><a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a></p>
+<aj-wrapper-no-connected [title]="'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiciton'">
+  <div class="logo">
+    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
+    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
-</form>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <p>Vous avez déjà un compte</p>
+    <h3>Se connecter</h3>
+    <label>Email</label>
+    <input class="ethics-ui" placeholder="Email" formControlName="email" type="email" />
+    <label>Mot de passe</label>
+    <input class="ethics-ui" placeholder="Mot de passe" formControlName="password" type="password" />
+    <div class="remember-row">
+      <!--<div><input type="checkbox">
+        <p>Se souvenir de moi</p>
+      </div>-->
+      <div></div>
+      <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>
+    </div>
+    <input type="submit" class="big-button" value="Se connecter" />
+
+
+    <div class="signup">
+      <p>Vous n’avez pas encore de compte</p>
+      <p><b>Rejoindre A-JUST</b></p>
+      <a routerLink="/inscription"><button class="outline white strict-border"><i class="ri-login-box-line"></i>Demander
+          votre embarquement</button></a>
+    </div>
+  </form>
+</aj-wrapper-no-connected>

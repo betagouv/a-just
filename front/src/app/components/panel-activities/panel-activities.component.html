@@ -17,8 +17,9 @@
 
 <div class="activities-panel">
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
-    <progression-bar [percent]="ref.percent" [selected]="false" [color]="referentielMappingColor(ref.label)"
-      (click)="onTogglePanel(index)" class="dark-mode">
+    <progression-bar [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
+      [color]="referentielMappingColor(ref.label)" (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
+      (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
     </progression-bar>
   </div>
 </div>
@@ -59,7 +60,7 @@
 </div>
 
 <div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100 }">
-  <p>Taux d'affectation : {{ percentAffected | number: '0.0-2' }}%</p>
+  <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
   <div class="progress-bar-line">
     <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
   </div>

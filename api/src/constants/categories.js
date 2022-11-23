@@ -1,4 +1,4 @@
-export const getCategoryColor = (label, opacity) => {
+export const getCategoryColor = (label, opacity = 1) => {
   switch (label) {
   case 'Magistrat':
   case 'Magistrats':

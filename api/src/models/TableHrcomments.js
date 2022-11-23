@@ -29,6 +29,9 @@ export default (sequelizeInstance, Model) => {
       updated_at: new Date(),
     })
 
+    // save cache
+    await Model.models.HumanResources.getHr(hrId)
+
     return com.dataValues.updatedAt
   }
 

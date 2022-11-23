@@ -171,33 +171,35 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     document.body.classList.add('remove-height')
 
     return new Promise((resolve) => {
-      html2canvas(element, {
-        scale: 1.5,
-      }).then((canvas) => {
-        var width = element.offsetWidth
-        var height = element.offsetHeight
+      setTimeout(() => {
+        html2canvas(element, {
+          scale: 1.5,
+        }).then((canvas) => {
+          var width = canvas.width
+          var height = canvas.height
 
-        var doc = new jsPDF(
-          'p',
-          'px',
-          [width / 2, element.scrollHeight / 2],
-          true
-        )
-        doc.addImage(
-          canvas.toDataURL('image/jpeg', 1),
-          'JPEG',
-          0,
-          0,
-          width / 2,
-          height / 2,
-          '',
-          'FAST'
-        )
-        doc.save(filename)
+          var doc = new jsPDF(
+            width > height ? 'l' : 'p',
+            'px',
+            [width / 2, height / 2],
+            true
+          )
+          doc.addImage(
+            canvas.toDataURL('image/jpeg', 1),
+            'JPEG',
+            0,
+            0,
+            width / 2,
+            height / 2,
+            '',
+            'FAST'
+          )
+          doc.save(filename)
 
-        this.duringPrint = false
-        document.body.classList.remove('remove-height')
-        resolve(true)
+          this.duringPrint = false
+          document.body.classList.remove('remove-height')
+          resolve(true)
+        })
       })
     })
   }
@@ -222,8 +224,5 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
 
   onDownloadNomenclature() {
     window.open(this.NOMENCLATURE_DOWNLOAD_URL)
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
   }
 }

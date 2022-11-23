@@ -29,10 +29,12 @@ export default class RouteUsers extends Route {
       password: Types.string().required(),
       firstName: Types.string(),
       lastName: Types.string(),
+      tj: Types.string(),
+      fonction: Types.string(),
     }),
   })
   async createAccount (ctx) {
-    const { email, firstName, lastName } = this.body(ctx)
+    const { email, firstName, lastName, tj, fonction } = this.body(ctx)
     try {
       await this.model.createAccount(this.body(ctx))
       await sentEmail(
@@ -43,6 +45,8 @@ export default class RouteUsers extends Route {
         {
           email,
           serverUrl: config.frontUrl,
+          tj, 
+          fonction,
         }
       )
       await sentEmail(
@@ -54,7 +58,7 @@ export default class RouteUsers extends Route {
           serverUrl: config.frontUrl,
         }
       )
-      await this.models.Logs.addLog(USER_USER_SIGN_IN, null, { email, firstName, lastName })
+      await this.models.Logs.addLog(USER_USER_SIGN_IN, null, { email, firstName, lastName, tj, fonction })
       this.sendOk(ctx, 'OK')
     } catch (err) {
       ctx.throw(401, err)

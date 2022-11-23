@@ -11,7 +11,6 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
 
@@ -29,6 +28,7 @@ export class PanelActivitiesComponent
   @Input() selected: boolean = false
   @Input() header: boolean = true
   @Input() updateRefentielOnLoad: boolean = true
+  @Input() canSelectedTopReferentiel: boolean = false
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter()
   referentiel: ContentieuReferentielInterface[] = []
@@ -36,8 +36,7 @@ export class PanelActivitiesComponent
   refIndexSelected: number = -1
 
   constructor(
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private humanResourceService: HumanResourceService
   ) {
     super()
   }

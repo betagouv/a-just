@@ -23,4 +23,12 @@ export const I_ELST_LIST = {
   '00100132': 'TJ_NANCY', // Nancy
   '00963018': 'TJ_NANCY', // Lunéville
   '00100150': 'TJ_SENLIS', // Senlis
+  '00100112': 'TJ_SAINT-ETIENNE', // Saint-Etienne
+  '00963031': 'TJ_SAINT-ETIENNE', // Montbrison
+  '00100039': 'TJ_BOURG-EN-BRESSE', // Bourg-en-Bresse
+  '00963071': 'TJ_BOURG-EN-BRESSE', // Trevoux
+  '00962970': 'TJ_BOURG-EN-BRESSE', // Belley
+  '00963038': 'TJ_BOURG-EN-BRESSE', // Nantua
+  '00100168': 'TJ_VILLEFRANCHE-SUR-SAONE', // Villefranche-sur-Saone
+  '00100111': 'TJ_ROANNE', // Roanne
 }

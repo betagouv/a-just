@@ -62,5 +62,5 @@ export function etpLabel(value: number): string {
     case 0: return 'Ne travaille pas';
   }
 
-  return `${value * 100}%`;
+  return `${Math.floor(value * 100)}%`;
 }

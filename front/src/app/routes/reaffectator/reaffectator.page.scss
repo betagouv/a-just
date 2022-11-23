@@ -14,16 +14,32 @@
 
     > .label-container {
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      justify-content: flex-end;
       padding: 8px 0 8px 16px;
       flex: 1;
 
+      .selection-row {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .buttons-row {
+        display: flex;
+
+        > *:first-child {
+          margin-right: 8px;
+        }
+      }
+
       .check-item {
-        width: 24px;
+        min-width: 24px;
         height: 24px;
         margin-right: 4px;
         text-align: center;
         line-height: 24px;
+        padding: 0 4px;
+        width: fit-content;
 
         &.selected {
           background-color: fColor(bgSelectSelected);
@@ -173,7 +189,7 @@
     > .label-container {
       flex: 1;
       display: flex;
-      padding: 8px 16px;
+      padding: 0px 16px;
 
       i {
         width: 32px;
@@ -375,6 +391,28 @@
     .activities {
       background-color: fColor(bgProgressBar);
     }
+
+    .profil.item .read-etp {
+      background-color: fColor(bgReadETPDark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
+  }
+
+  &.is-selected {
+    .profil.item {
+      background-color: fColor(cbluemiddle);    
+    }
+    
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
   }
 }
 
@@ -386,7 +424,7 @@
 
     .text {
       flex: 1;
-      padding: 24px 16px 10px 16px;
+      padding: 16px 16px 10px 16px;
       display: flex;
       flex-direction: column;
       text-decoration: none;
@@ -470,7 +508,7 @@
         margin-top: 10px;
         font-size: 12px;
         line-height: 20px;
-        color: fColor(grayRow);
+        color: white;
       }
     }
 

@@ -19,7 +19,7 @@ export default (sequelizeInstance, Model) => {
     return null
   }
 
-  Model.createAccount = async ({ email, password, firstName, lastName }) => {
+  Model.createAccount = async ({ email, password, firstName, lastName, tj, fonction }) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
@@ -28,6 +28,8 @@ export default (sequelizeInstance, Model) => {
         password,
         first_name: firstName,
         last_name: lastName,
+        tj, 
+        fonction,
         status: 1,
       })
     } else {
@@ -37,7 +39,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role'],
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction'],
       raw: true,
     })
 

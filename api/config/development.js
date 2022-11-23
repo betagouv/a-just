@@ -1,4 +1,4 @@
 module.exports = {
-  envName: '[DEV] ',
+  envName: 'DEV',
   logsPassword: 'FXM',
 }
