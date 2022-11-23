@@ -5,10 +5,10 @@ import { Router } from '@angular/router'
 import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
-  templateUrl: './signup.page.html',
-  styleUrls: ['./signup.page.scss'],
+  templateUrl: './about-us.page.html',
+  styleUrls: ['./about-us.page.scss'],
 })
-export class SignupPage {
+export class AboutUsPage {
   form = new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
@@ -20,7 +20,7 @@ export class SignupPage {
   })
 
   constructor(private userService: UserService, private router: Router, private title: Title) {
-    this.title.setTitle('Embarquement | A-Just')
+    this.title.setTitle('Qui sommes-nous ? | A-Just')
   }
 
   ngOnInit() {}
