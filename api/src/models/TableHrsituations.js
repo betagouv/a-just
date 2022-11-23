@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 import { today } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
-  Model.getListByHumanId = async (humanId) => {
+  Model.getListByHumanId = async (humanId, dateStart) => {
     const list = await Model.findAll({
       attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
       where: {
@@ -42,6 +42,18 @@ export default (sequelizeInstance, Model) => {
         },
         activities: await Model.models.HRActivities.getAll(list[i].id),
       }
+    }
+
+    // create artificial situation if date start if before the first situation
+    if(dateStart && list.length && today(dateStart) < today(list[0].dateStart)) {
+      list.splice(0, 0, {
+        etp: 1,
+        dateStart: today(dateStart),
+        dateStartTimesTamps: today(dateStart).getTime(),
+        category: list[0],
+        fonction: list[0],
+        activities: [],
+      })
     }
 
     return list
