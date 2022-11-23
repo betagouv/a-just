@@ -67,6 +67,7 @@ export const emptyCalulatorValues = (referentiels) => {
 
 export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
   console.log('syncCalculatorDatas')
+  console.log('list hr', hr.map(h => `${h.firstName} ${h.lastName}`).join(', '))
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
@@ -116,6 +117,9 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
+  /*if(referentielId === 440) {
+    console.log(referentielId, etpAffected)
+  }*/
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (totalOut / etpMag))

@@ -14,7 +14,7 @@ export default class RouteReaffectator extends Route {
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
-      categoryId: Types.number().required(),
+      categoryId: Types.number(),
       fonctionsIds: Types.array().required(),
     }),
     accesses: [Access.canVewHR],
@@ -37,7 +37,7 @@ export default class RouteReaffectator extends Route {
     console.time('step3')
     let list = preformatedAllHumanResource.filter((hr) => {
       let isOk = true
-      if (hr.category && categoryId !== hr.category.id) {
+      if (hr.category && categoryId && categoryId !== hr.category.id) {
         isOk = false
       }
 
@@ -77,15 +77,19 @@ export default class RouteReaffectator extends Route {
     let listFiltered = [...list]
     const categories = await this.models.HRCategories.getAll()
 
-    const listFormated = categories
-      .filter((c) => categoryId === c.id)
-      .map((category) => ({
-        originalLabel: category.label,
-        allHr: listFiltered.filter(
-          (h) => h.category && h.category.id === category.id
-        ),
-        categoryId: category.id,
-      }))
+    let listFormated = categories
+
+    if(categoryId) {
+      listFormated = listFormated.filter((c) => categoryId === c.id)
+    }
+      
+    listFormated = listFormated.map((category) => ({
+      originalLabel: category.label,
+      allHr: listFiltered.filter(
+        (h) => h.category && h.category.id === category.id
+      ),
+      categoryId: category.id,
+    }))
 
     const activities = await this.models.Activities.getAll(backupId, date)
 

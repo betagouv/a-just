@@ -8,6 +8,8 @@ export interface UserInterface {
 	status?: number;
 	firstName?: string;
 	lastName?: string;
+	tj?: string;
+	fonction?: string;
 	token?: string;
 	access?: number[];
 	accessName?: string;

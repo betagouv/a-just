@@ -131,8 +131,7 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, extractor } =
-      this.body(ctx)
+    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, extractor } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -143,13 +142,7 @@ export default class RouteHumanResources extends Route {
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
-    let list = await getHumanRessourceList(
-      preformatedAllHumanResource,
-      contentieuxIds,
-      categoriesIds,
-      date,
-      endPeriodToCheck
-    )
+    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
 
     if (extractor === false) {
       let listFiltered = [...list]
@@ -161,17 +154,18 @@ export default class RouteHumanResources extends Route {
         .map((category) => {
           let label = category.label
 
-          let referentiel = copyArray(originalReferentiel).filter(r => r.label !== 'Indisponibilité').map((ref) => {
-            ref.totalAffected = 0
-            return ref
-          })
+          let referentiel = copyArray(originalReferentiel)
+            .filter((r) => r.label !== 'Indisponibilité')
+            .map((ref) => {
+              ref.totalAffected = 0
+              return ref
+            })
 
-          let group = listFiltered
-            .filter((h) => h.category && h.category.id === category.id)
+          let group = listFiltered.filter((h) => h.category && h.category.id === category.id)
 
           if (group.length > 1) {
             if (label.indexOf('agistrat') !== -1) {
-              label = label.replace('agistrat', 'agistrats')
+              label = label.replace('agistrat', 'agistrats du siège')
             } else {
               label += 's'
             }

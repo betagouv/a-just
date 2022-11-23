@@ -1,3 +1,5 @@
+import { endOfMonth, startOfMonth } from 'date-fns'
+
 export const MONTH_LABEL = [
   'janvier',
   'février',
@@ -79,37 +81,17 @@ export function today (date = new Date()) {
 }
 
 export function month (date = new Date(), monthToAdd, lastDay) {
-  const now = new Date(date)
-  now.setUTCHours(0, 0, 0, 0)
+  if(lastDay) {
+    date = endOfMonth(date)
+  } else {
+    date = startOfMonth(date)
+  }
 
   if (monthToAdd && monthToAdd !== 0) {
-    now.setDate(1)
-    now.setMonth(now.getMonth() + monthToAdd)
+    date.setMonth(date.getMonth() + monthToAdd)
   }
-  if (lastDay) {
-    now.setMonth(now.getMonth() + 1)
-    now.setHours(-1)
-    return now
-  } else {
-    return new Date(date.getFullYear(), date.getMonth())
-  }
-}
 
-export function monthJimmy (date = new Date(), monthToAdd, lastDay) {
-  const now = new Date(date)
-  now.setUTCHours(0, 0, 0, 0)
-
-  if (monthToAdd && monthToAdd !== 0) {
-    now.setDate(1)
-    now.setMonth(now.getMonth() + monthToAdd)
-  }
-  if (lastDay) {
-    now.setMonth(now.getMonth() + 1)
-    now.setHours(-1)
-    return now
-  } else {
-    return generalizeTimeZone(new Date(now))
-  }
+  return date
 }
 
 export function generalizeTimeZone (date) {
@@ -201,20 +183,29 @@ export function getShortMonthString (date) {
   ][date.getMonth()]
 }
 
+const convertMsToDays = ms => {
+  const msInOneSecond = 1000
+  const secondsInOneMinute = 60
+  const minutesInOneHour = 60
+  const hoursInOneDay = 24
+
+  const minutesInOneDay = hoursInOneDay * minutesInOneHour
+  const secondsInOneDay = secondsInOneMinute * minutesInOneDay
+  const msInOneDay = msInOneSecond * secondsInOneDay
+
+  return Math.ceil(ms / msInOneDay)
+}
+
 export function nbOfDays (startDate, endDate) {
-  startDate.setHours(0, 0, 0, 0)
-  endDate.setHours(0, 0, 0, 0)
-  const start = startDate
+  startDate = new Date(startDate)
+  endDate = new Date(endDate)
+  let differenceInMs = startDate.getTime() - endDate.getTime()
 
-  if (start.getTime() === endDate.getTime()) return 0
+  if (differenceInMs < 0) {
+    differenceInMs *= -1
+  }
 
-  let nbOfDay = 0
-
-  do {
-    nbOfDay++
-    start.setDate(start.getDate() + 1)
-  } while (start.getTime() < endDate.getTime())
-  return nbOfDay
+  return convertMsToDays(differenceInMs)
 }
 
 export function nbWorkingDays (startDate, endDate) {

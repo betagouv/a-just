@@ -32,12 +32,14 @@ export default class RouteCalculator extends Route {
       selectedFonctionsIds,
     } = this.body(ctx)
     let fonctions = await this.models.HRFonctions.getAll()
-
-    if (categorySelected === MAGISTRATS) {
-      fonctions = fonctions.filter((f) => f.categoryId === 1)
-    } else if (categorySelected === FONCTIONNAIRES) {
-      fonctions = fonctions.filter((f) => f.categoryId === 2)
+    let categoryIdSelected = -1
+    switch(categorySelected) {
+    case MAGISTRATS: categoryIdSelected = 1; break
+    case FONCTIONNAIRES: categoryIdSelected = 2; break
+    default: categoryIdSelected = 3; break
     }
+
+    fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
 
     if (
       !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
@@ -75,31 +77,29 @@ export default class RouteCalculator extends Route {
 
     console.time('calculator-6-2')
     // filter by fonctions
-    hr = hr.filter((human) => {
-      if (
-        (categorySelected === MAGISTRATS ||
-          categorySelected === FONCTIONNAIRES) &&
-        selectedFonctionsIds
-      ) {
-        const situations = (human.situations || []).filter(
+    hr = hr
+      .map((human) => {
+        let situations = human.situations || []
+
+        situations = situations.filter(
           (s) =>
-            s.category &&
-            s.category.id === (categorySelected === MAGISTRATS ? 1 : 2)
+            (s.category && s.category.id !== categoryIdSelected) ||
+            (selectedFonctionsIds &&
+              selectedFonctionsIds.length &&
+              s.fonction &&
+              selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
+            (!selectedFonctionsIds &&
+              s.category &&
+              s.category.id === categoryIdSelected)
         )
 
-        if (
-          situations.length &&
-          situations.every(
-            (s) =>
-              s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) === -1
-          )
-        ) {
-          return false
+        return {
+          ...human,
+          situations,
         }
-      }
+      })
+      .filter((h) => h.situations.length)
 
-      return true
-    })
     console.timeEnd('calculator-6-2')
 
     console.time('calculator-7')

@@ -1,4 +1,4 @@
-import { toInteger } from 'lodash'
+import { endOfMonth, startOfMonth } from 'date-fns'
 import { environment } from 'src/environments/environment'
 
 export function monthDiff(d1: Date, d2: Date) {
@@ -91,18 +91,22 @@ export function today(date: Date | null | undefined = new Date()): Date {
 }
 
 export function month(
-  date: Date | null = new Date(),
+  date: Date = new Date(),
   monthToAdd?: number,
   lastDay?: string
 ) {
-  const now = new Date(date ? date : '')
-  if (monthToAdd) {
-    now.setDate(1)
-    now.setMonth(now.getMonth() + monthToAdd)
+  date = new Date(date)
+  if(lastDay) {
+    date = endOfMonth(date)
+  } else {
+    date = startOfMonth(date)
   }
-  return lastDay
-    ? new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    : new Date(now.getFullYear(), now.getMonth())
+
+  if (monthToAdd && monthToAdd !== 0) {
+    date.setMonth(date.getMonth() + monthToAdd)
+  }
+
+  return date
 }
 
 export function nbOfWorkingDays(startDate: Date, endDate: Date) {
@@ -115,16 +119,29 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
   return nbOfWorkingDays
 }
 
+const convertMsToDays = (ms: number) => {
+  const msInOneSecond = 1000
+  const secondsInOneMinute = 60
+  const minutesInOneHour = 60
+  const hoursInOneDay = 24
+
+  const minutesInOneDay = hoursInOneDay * minutesInOneHour
+  const secondsInOneDay = secondsInOneMinute * minutesInOneDay
+  const msInOneDay = msInOneSecond * secondsInOneDay
+
+  return Math.ceil(ms / msInOneDay)
+}
+
 export function nbOfDays(startDate: Date, endDate: Date) {
-  startDate.setHours(0, 0, 0, 0)
-  endDate.setHours(0, 0, 0, 0)
-  const start = new Date(startDate)
-  let nbOfDay = 0
-  do {
-    nbOfDay++
-    start.setDate(start.getDate() + 1)
-  } while (start.getTime() <= endDate.getTime())
-  return nbOfDay
+  startDate = new Date(startDate)
+  endDate = new Date(endDate)
+  let differenceInMs = startDate.getTime() - endDate.getTime()
+
+  if (differenceInMs < 0) {
+    differenceInMs *= -1
+  }
+
+  return convertMsToDays(differenceInMs)
 }
 
 export function dateAddDays(date: Date, nbDays: number = 0) {

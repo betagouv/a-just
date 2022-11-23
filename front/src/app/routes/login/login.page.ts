@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
+import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth/auth.service";
 import { UserService } from "src/app/services/user/user.service";
@@ -14,7 +15,9 @@ export class LoginPage {
     password: new FormControl(),
   });
 
-  constructor(private authService: AuthService, private userService: UserService, private router: Router) {}
+  constructor(private authService: AuthService, private userService: UserService, private router: Router, private title: Title) {
+    this.title.setTitle('Se connecter | A-Just')
+  }
 
   ngOnInit() {
     this.userService.me().then((data) => {

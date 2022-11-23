@@ -12,7 +12,7 @@ body {
 	height: 100vh;
 	padding: 0;
 	margin: 0;
-	background-color: fColor(bgColor);
+	background-color: white;
 
 	&.remove-height {
 		height: fit-content;
@@ -30,6 +30,10 @@ body {
 
 .flex-1 {
 	flex: 1;
+}
+
+.flex-2 {
+	flex: 2;
 }
 
 .cursor-pointer {

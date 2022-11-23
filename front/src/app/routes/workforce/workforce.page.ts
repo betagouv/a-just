@@ -18,6 +18,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
+import { AppService } from 'src/app/services/app/app.service'
 
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -72,7 +73,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
   }
@@ -160,6 +162,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     })
 
+    console.log(this.categoriesFilterList)
+
     this.calculateTotalAffected()
   }
 
@@ -219,14 +223,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (opacity === 1) {
           valuesFinded.push(h)
         }
-
         return {
           ...h,
           opacity,
         }
       }),
     }))
-
+    console.log(this.listFormated)
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 
@@ -235,9 +238,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     } else {
       this.onGoTo(null)
       if (this.searchValue.length !== 0)
-        alert(
-          'La personne recherchée n’est pas présente à la date sélectionnée.'
-        )
+        this.appService.alert.next({
+          text: 'La personne recherchée n’est pas présente à la date sélectionnée.',
+        })
     }
   }
 
@@ -450,7 +453,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               if (realETP < 0) {
                 realETP = 0
               }
-              ref.totalAffected = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+              ref.totalAffected =
+                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
             }
           }
 

@@ -14,12 +14,13 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { month, nbOfDays } from 'src/app/utils/dates'
+import { month, nbOfDays, today } from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
 import { ActivityInterface } from 'src/app/interfaces/activity'
 import { copyArray } from 'src/app/utils/array'
+import { AppService } from 'src/app/services/app/app.service'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -78,13 +79,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showIndicatorPanel: boolean = true
   actualActivities: ActivityInterface[] = []
   firstETPTargetValue: (number | null)[] = []
+  isolatePersons: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private appService: AppService,
   ) {
     super()
   }
@@ -155,7 +158,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       if (itemBlock && itemBlock.hrFiltered) {
         c.value = `${itemBlock.hrFiltered.length} ${c.value}${
           itemBlock.hrFiltered.length > 1 ? 's' : ''
-        } (${itemBlock.totalRealETp} ETPT)`
+        } (${fixDecimal(itemBlock.totalRealETp, 100)} ETPT)`
       }
 
       return c
@@ -218,13 +221,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
+    const allFonctions = this.humanResourceService.fonctions.getValue()
+
+    let selectedFonctionsIds = [
+      ...this.reaffectatorService.selectedFonctionsIds,
+    ]
+    selectedFonctionsIds = selectedFonctionsIds.concat(
+      allFonctions
+        .filter(
+          (f) => f.categoryId !== this.reaffectatorService.selectedCategoriesId
+        )
+        .map((f) => f.id)
+    )
+
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         selectedReferentielIds,
-        this.reaffectatorService.selectedCategoriesId,
-        this.reaffectatorService.selectedFonctionsIds
+        null,
+        selectedFonctionsIds
       )
       .then((returnValues) => {
         console.log(returnValues)
@@ -249,10 +265,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  orderListWithFiltersParams() {
+  orderListWithFiltersParams(onSearch: boolean = true) {
     this.onCalculETPAffected()
 
     this.listFormated = this.listFormated.map((list) => {
+      list.hrFiltered = orderBy(list.hrFiltered, ['fonction.rank'], ['asc'])
+
       if (this.filterSelected) {
         list.hrFiltered = orderBy(
           list.hrFiltered,
@@ -269,7 +287,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    this.onSearchBy()
+    if (onSearch) {
+      this.onSearchBy()
+    }
     this.calculateReferentielValues()
     this.updateCategoryValues()
   }
@@ -391,9 +411,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onExport() {
     this.duringPrint = true
     this.wrapper
-      ?.exportAsPdf('simulation-d-affectation.pdf', false)
+      ?.exportAsPdf('simulation-d-affectation.pdf')
       .then(() => {
         this.duringPrint = false
+        this.appService.alert.next({
+          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+        })
       })
   }
 
@@ -408,7 +431,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     )
     this.formFilterFonctionsSelect = fonctionList.map((f) => ({
       id: f.id,
-      value: f.label,
+      value: f.code || f.label,
     }))
 
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
@@ -426,7 +449,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return ref
     })
 
-    flatten(this.listFormated.map((l) => l.allHr)).map((hr) => {
+    flatten(
+      this.listFormated
+        .filter(
+          (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
+        )
+        .map((l) => l.allHr)
+    ).map((hr) => {
       this.referentiel = this.referentiel.map((ref) => {
         const timeAffected = sumBy(
           hr.currentActivities.filter(
@@ -482,7 +511,21 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   calculateReferentielValues() {
     const activities = this.actualActivities
-    const magistrats = this.listFormated.find((l) => l.categoryId === 1)
+    const itemList = this.listFormated.find(
+      (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
+    )
+    const fakeCategories = [
+      { id: this.reaffectatorService.selectedCategoriesId, label: 'cat' },
+    ]
+    const dateSelected = month(this.dateSelected, -1, 'lastday')
+    const nbDayByCategory =
+      this.reaffectatorService.selectedCategoriesId === 1
+        ? environment.nbDaysByMagistrat
+        : environment.nbDaysByFonctionnaire
+    const nbWorkingHours =
+      this.reaffectatorService.selectedCategoriesId === 1
+        ? environment.nbHoursPerDayAndMagistrat
+        : environment.nbHoursPerDayAndFonctionnaire
 
     this.referentiel = this.referentiel.map((r) => {
       // list all activities
@@ -499,16 +542,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       // find new ETPT of today
       let etpt = 0
-      if (magistrats) {
-        const ref = magistrats.referentiel.find(
+      if (itemList) {
+        const ref = itemList.referentiel.find(
           (referentiel) => referentiel.id === r.id
         )
-        if (ref) {
-          etpt = fixDecimal(ref.totalAffected!) || 0
+        if (ref && ref.totalAffected) {
+          etpt = ref.totalAffected
         }
       }
 
-      const nbDaysByMonthForMagistrat = environment.nbDaysByMagistrat / 12
+      const nbDaysByMonthForMagistrat = nbDayByCategory / 12
       const inValue = Math.floor(meanBy(activitiesFiltered, 'entrees')) || 0
       const averageOut = Math.floor(meanBy(activitiesFiltered, 'sorties')) || 0
       let lastStock = activitiesFiltered.length
@@ -523,57 +566,87 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       if (
         lastStock &&
         lastPeriode &&
-        lastPeriode.getTime() < month(this.dateSelected).getTime()
+        lastPeriode.getTime() < today(this.dateSelected).getTime()
       ) {
         // ETPT of the last 12 months
         let etpAffectedLast12Months = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hrFiltered) || [],
+          (itemList && itemList.hrFiltered) || [],
           r.id,
-          this.humanResourceService.categories.getValue(),
-          new Date(month(lastPeriode, -11)),
+          fakeCategories,
+          month(lastPeriode, -12),
           true,
-          new Date(month(lastPeriode, 0, 'lastday'))
+          lastPeriode
         ) as Array<etpAffectedInterface>
         let etpToComputeLast12Months =
           etpAffectedLast12Months.length >= 0
             ? etpAffectedLast12Months[0].totalEtp
             : 0
 
-        let averageWorkingProcess = fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDayAndMagistrat) /
-            (averageOut / etpToComputeLast12Months)
-        )
-
-        let outValue = Math.floor(
-          (etpt *
-            environment.nbHoursPerDayAndMagistrat *
-            nbDaysByMonthForMagistrat) /
-            averageWorkingProcess
-        )
+        let averageWorkingProcess =
+          etpToComputeLast12Months === 0
+            ? 0
+            : (nbDaysByMonthForMagistrat * nbWorkingHours) /
+              (averageOut / etpToComputeLast12Months)
+              
+        let outValue =
+          averageWorkingProcess === 0
+            ? 0
+            : (etpt * nbWorkingHours * nbDaysByMonthForMagistrat) /
+              averageWorkingProcess
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
-          (magistrats && magistrats.hrFiltered) || [],
+          (itemList && itemList.hrFiltered) || [],
           r.id,
-          this.humanResourceService.categories.getValue(),
+          fakeCategories,
           lastPeriode,
           true,
-          this.dateSelected
+          dateSelected
         ) as Array<etpAffectedInterface>
         const etpMagDelta =
           etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-        const nbDayCalendar = nbOfDays(lastPeriode, this.dateSelected)
+        const nbDayCalendar = nbOfDays(lastPeriode, dateSelected)
+
+        if (r.id === 440) {
+          console.log('last stock ', {
+            etpToComputeLast12Months,
+            nbWorkingHours,
+            nbDayByCategory,
+            averageOut,
+            lastPeriode,
+            dateSelected,
+            lastStock,
+            etpMagDelta,
+            averageWorkingProcess,
+            calculDelta: Math.floor(
+              (nbDayCalendar / (365 / 12)) *
+                nbDaysByMonthForMagistrat *
+                ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
+            ),
+            plus: Math.floor((nbDayCalendar / (365 / 12)) * inValue),
+            inValue,
+            nbDayCalendar,
+          })
+        }
 
         // Compute stock projection until today
         lastStock =
           Math.floor(lastStock) -
-          Math.floor(
-            (nbDayCalendar / (365 / 12)) *
-              nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDayAndMagistrat) /
-                averageWorkingProcess)
-          ) +
+          (etpMagDelta === 0
+            ? 0
+            : Math.floor(
+                (nbDayCalendar / (365 / 12)) *
+                  nbDaysByMonthForMagistrat *
+                  ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
+              )) +
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
+        if (lastStock < 0) {
+          lastStock = 0
+        }
+
+        if (r.id === 440) {
+          console.log('last stock (2) ', lastStock)
+        }
 
         return {
           ...r,
@@ -581,7 +654,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           out: outValue,
           stock: lastStock,
           coverage: fixDecimal(outValue / inValue) * 100,
-          dtes: fixDecimal(lastStock / outValue),
+          dtes:
+            lastStock === 0 || outValue === 0
+              ? 0
+              : fixDecimal(lastStock / outValue),
         }
       }
 
@@ -591,7 +667,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         out: averageOut,
         stock: lastStock,
         coverage: averageOut === 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
-        dtes: lastStock === 0 ? 0 : fixDecimal(lastStock / averageOut),
+        dtes:
+          lastStock === 0 || averageOut === 0
+            ? 0
+            : fixDecimal(lastStock / averageOut),
       }
     })
   }
@@ -643,7 +722,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         list
       this.listFormated[indexList].hrFiltered[indexOfHR].isModify = true
 
-      this.orderListWithFiltersParams()
+      this.orderListWithFiltersParams(false)
     }
   }
 
@@ -653,6 +732,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.listFormated[index].personSelected.push(hr.id)
     } else {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
+    }
+
+    if (this.listFormated[index].personSelected.length === 0) {
+      // force to reset isolate var
+      this.isolatePersons = false
     }
   }
 
@@ -683,5 +767,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       list.personSelected = []
       this.orderListWithFiltersParams()
     }
+  }
+
+  onToogleIsolation() {
+    this.isolatePersons = !this.isolatePersons
+  }
+
+  getOrignalHuman(hr: HumanResourceSelectedInterface, itemObject: listFormatedInterface) {
+    return itemObject.allHr.find(h => h.id === hr.id)
   }
 }
