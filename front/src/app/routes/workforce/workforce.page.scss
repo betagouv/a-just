@@ -161,7 +161,6 @@
 
             b {
               color: #161616;
-              font-family: 'Marianne-bold' !important;
             }
           }
         }
@@ -173,7 +172,6 @@
             font-size: 14px;
             font-weight: bold;
             letter-spacing: -0.53px;
-            font-family: 'Marianne-bold';
           }
         }
 
@@ -272,7 +270,6 @@
         display: flex;
 
         p {
-          font-family: "Marianne-bold" !important;
           font-weight: bold;
           //color: fColor(titleSelect);
           flex: 1;
@@ -513,7 +510,7 @@
   cursor: pointer;
 
   p.etp {
-    font-family: 'Marianne-bold' !important;
+    font-weight: bold;
 
   }
 
