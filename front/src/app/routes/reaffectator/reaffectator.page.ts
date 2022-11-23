@@ -14,7 +14,13 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { month, nbOfDays, today } from 'src/app/utils/dates'
+import {
+  decimalToStringDate,
+  month,
+  nbOfDays,
+  stringToDecimalDate,
+  today,
+} from 'src/app/utils/dates'
 import { environment } from 'src/environments/environment'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { etpAffectedInterface } from 'src/app/interfaces/calculator'
@@ -87,7 +93,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
     private simulatorService: SimulatorService,
-    private appService: AppService,
+    private appService: AppService
   ) {
     super()
   }
@@ -410,14 +416,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   onExport() {
     this.duringPrint = true
-    this.wrapper
-      ?.exportAsPdf('simulation-d-affectation.pdf')
-      .then(() => {
-        this.duringPrint = false
-        this.appService.alert.next({
-          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-        })
+    this.wrapper?.exportAsPdf('simulation-d-affectation.pdf').then(() => {
+      this.duringPrint = false
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
+    })
   }
 
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
@@ -587,7 +591,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             ? 0
             : (nbDaysByMonthForMagistrat * nbWorkingHours) /
               (averageOut / etpToComputeLast12Months)
-              
+
+        // arrondi pour correspondre au simulateur qui calcul par rapport au front
+        const averageWorkingProcessInString = decimalToStringDate(
+          averageWorkingProcess
+        )
+        averageWorkingProcess = stringToDecimalDate(
+          averageWorkingProcessInString
+        )
+
         let outValue =
           averageWorkingProcess === 0
             ? 0
@@ -773,7 +785,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.isolatePersons = !this.isolatePersons
   }
 
-  getOrignalHuman(hr: HumanResourceSelectedInterface, itemObject: listFormatedInterface) {
-    return itemObject.allHr.find(h => h.id === hr.id)
+  getOrignalHuman(
+    hr: HumanResourceSelectedInterface,
+    itemObject: listFormatedInterface
+  ) {
+    return itemObject.allHr.find((h) => h.id === hr.id)
   }
 }

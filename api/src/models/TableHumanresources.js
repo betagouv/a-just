@@ -69,12 +69,12 @@ export default (sequelizeInstance, Model) => {
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
         comment: list[i]['HRComment.comment'],
-        situations: await Model.models.HRSituations.getListByHumanId(list[i].id),
+        situations: await Model.models.HRSituations.getListByHumanId(list[i].id, list[i].date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
       }
     }
 
-    return list
+    return list.map(h => h.situations && h.situations.length) // remove hr without situation
   }
 
   Model.getHrDetails = async (hrId) => {

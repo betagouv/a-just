@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
+import { copyArray } from '../utils/array'
 
 export default class RouteCalculator extends Route {
   constructor (params) {
@@ -33,10 +34,16 @@ export default class RouteCalculator extends Route {
     } = this.body(ctx)
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
-    switch(categorySelected) {
-    case MAGISTRATS: categoryIdSelected = 1; break
-    case FONCTIONNAIRES: categoryIdSelected = 2; break
-    default: categoryIdSelected = 3; break
+    switch (categorySelected) {
+    case MAGISTRATS:
+      categoryIdSelected = 1
+      break
+    case FONCTIONNAIRES:
+      categoryIdSelected = 2
+      break
+    default:
+      categoryIdSelected = 3
+      break
     }
 
     fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
@@ -81,17 +88,20 @@ export default class RouteCalculator extends Route {
       .map((human) => {
         let situations = human.situations || []
 
-        situations = situations.filter(
-          (s) =>
-            (s.category && s.category.id !== categoryIdSelected) ||
-            (selectedFonctionsIds &&
-              selectedFonctionsIds.length &&
-              s.fonction &&
-              selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
-            (!selectedFonctionsIds &&
-              s.category &&
-              s.category.id === categoryIdSelected)
-        )
+        situations = copyArray(situations).map((s) => {
+          if (
+            selectedFonctionsIds &&
+            selectedFonctionsIds.length &&
+            s.fonction &&
+            selectedFonctionsIds.indexOf(s.fonction.id) === -1 &&
+            s.category &&
+            s.category.id === categoryIdSelected
+          ) {
+            s.etp = 0
+          }
+
+          return s
+        })
 
         return {
           ...human,

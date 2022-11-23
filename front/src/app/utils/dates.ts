@@ -177,6 +177,15 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
   else return []
 }
 
+export function stringToDecimalDate (str: string) {
+  if (str !== null || str !== '') {
+    const strArray = str.split('h')
+    return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
+  }
+
+  return 0
+}
+
 export function decimalToStringDate(decimal: number | null | undefined) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
