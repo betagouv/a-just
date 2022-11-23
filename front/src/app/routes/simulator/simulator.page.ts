@@ -56,7 +56,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   isLoading: boolean = false
   documentation: DocumentationInterface = {
     title: 'Simulateur',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/quest-ce-que-cest',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
   paramsToAjust = {
