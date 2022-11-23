@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './auth-guard.service';
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+import { AuthGuard } from './auth-guard.service'
 
 const routes: Routes = [
   {
@@ -17,6 +17,11 @@ const routes: Routes = [
     path: 'connexion',
     loadChildren: () =>
       import('./login/login.module').then((mod) => mod.LoginModule),
+  },
+  {
+    path: 'qui-sommes-nous',
+    loadChildren: () =>
+      import('./about-us/about-us.module').then((mod) => mod.AboutUsModule),
   },
   {
     path: 'dashboard',
@@ -100,10 +105,10 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
-];
+]
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   providers: [AuthGuard],
   exports: [RouterModule],
 })
