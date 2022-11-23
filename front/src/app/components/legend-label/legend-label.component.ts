@@ -21,6 +21,7 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   @Input() dotColor: string = ''
   @Input() bgColor: string = ''
   @Input() label: string = ''
+  @Input() disabledEl: boolean = false
   @Output() value = new EventEmitter()
   toogle = {
     label: '',
@@ -32,7 +33,9 @@ export class LegendLabelComponent implements OnInit, OnChanges {
     this.elementRef = element.nativeElement
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.disabledEl === true) this.toogle.checked = !this.toogle.checked
+  }
 
   ngOnChanges(): void {
     const circleElement = (
