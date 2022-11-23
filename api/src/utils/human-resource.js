@@ -2,7 +2,7 @@ import { minBy, sumBy } from 'lodash'
 import { today } from '../utils/date'
 
 export function getEtpByDateAndPerson (referentielId, date, hr) {
-  if(hr.dateEnd && today(hr.dateEnd) <= today(date)) {
+  if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
     return {
       etp: null,
       situation: null,
@@ -16,9 +16,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
   const situation = currentSituation
 
   if (situation && situation.category && situation.category.id) {
-    const activitiesFiltred = (situation.activities || []).filter(
-      (a) => a.contentieux && a.contentieux.id === referentielId
-    )
+    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {
@@ -56,9 +54,7 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    const activitiesFiltred = (situation.activities || []).filter(
-      (a) => a.contentieux && a.contentieux.id === referentielId
-    )
+    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
@@ -71,10 +67,7 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
     if (nextSituation) {
       nextDeltaDate = today(nextSituation.dateStart)
     }
-    if (
-      nextIndispoDate &&
-      (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())
-    ) {
+    if (nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())) {
       nextDeltaDate = nextIndispoDate
     }
 
@@ -98,12 +91,8 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
 export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   dateSelected = today(dateSelected).getTime()
   const indispos = hr.indisponibilities || []
-  let listAllDates = indispos
-    .filter((i) => i.dateStartTimesTamps)
-    .map((i) => i.dateStartTimesTamps)
-  listAllDates = listAllDates.concat(
-    indispos.filter((i) => i.dateStopTimesTamps).map((i) => i.dateStopTimesTamps)
-  )
+  let listAllDates = indispos.filter((i) => i.dateStartTimesTamps).map((i) => i.dateStartTimesTamps)
+  listAllDates = listAllDates.concat(indispos.filter((i) => i.dateStopTimesTamps).map((i) => i.dateStopTimesTamps))
 
   listAllDates = listAllDates.filter((date) => date > dateSelected)
 
@@ -154,10 +143,7 @@ export const findAllFuturSituations = (hr, date) => {
     })
 
     if (situations.length !== findedSituations.length) {
-      if (
-        findedSituations.length &&
-        today(findedSituations[0].dateStart).getTime() !== date.getTime()
-      ) {
+      if (findedSituations.length && today(findedSituations[0].dateStart).getTime() !== date.getTime()) {
         situations = findedSituations.slice(0)
       } else {
         situations = situations.slice(0, findedSituations.length + 1)
@@ -182,8 +168,7 @@ export const findAllSituations = (hr, date) => {
 }
 
 const findAllIndisponibilities = (hr, date) => {
-  let indisponibilities =
-    hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
+  let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
   //if (indisponibilities.length > 0) console.log('here 1', date, indisponibilities);
   if (date instanceof Date) {
     date = today(date)
