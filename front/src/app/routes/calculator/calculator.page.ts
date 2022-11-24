@@ -8,6 +8,7 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { AppService } from 'src/app/services/app/app.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -36,13 +37,15 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   lastCategorySelected: string = ''
   selectedFonctionsIds: number[] = []
   fonctions: dataInterface[] = []
+  duringPrint: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private appService: AppService,
   ) {
     super()
   }
@@ -244,5 +247,15 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         })
         break
     }
+  }
+
+  onExport() {
+    this.duringPrint = true
+    this.appService.alert.next({
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    })
+    this.wrapper?.exportAsPdf('calculateur.pdf', false).then(() => {
+      this.duringPrint = false
+    })
   }
 }
