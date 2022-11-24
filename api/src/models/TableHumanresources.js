@@ -6,21 +6,20 @@ const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 let cacheJuridictionPeoples = {}
 
-
 export default (sequelizeInstance, Model) => {
   Model.onPreload = async () => {
-    if(config.preloadHumanResourcesDatas) {
+    if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
-      for(let i = 0; i < allBackups.length; i++) {
+      for (let i = 0; i < allBackups.length; i++) {
         cacheJuridictionPeoples[allBackups[i].id] = await Model.getCurrentHr(allBackups[i].id)
       }
     }
   }
 
   Model.removeCacheByUser = async (humanId, backupId) => {
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex(h => h.id === humanId)
-  
-    if(cacheJuridictionPeoples[backupId] && index !== -1) {
+    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === humanId)
+
+    if (cacheJuridictionPeoples[backupId] && index !== -1) {
       cacheJuridictionPeoples[backupId].splice(index, 1)
     }
   }
@@ -28,9 +27,9 @@ export default (sequelizeInstance, Model) => {
   Model.updateCacheByUser = async (human) => {
     console.log(human)
     const backupId = human.backupId
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex(h => h.id === human.id)
-  
-    if(cacheJuridictionPeoples[backupId] && index !== -1) {
+    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
+
+    if (cacheJuridictionPeoples[backupId] && index !== -1) {
       cacheJuridictionPeoples[backupId][index] = human
     } else {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
@@ -38,10 +37,10 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.getCache = async (backupId) => {
-    if(!cacheJuridictionPeoples[backupId]) {
+    if (!cacheJuridictionPeoples[backupId]) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
     }
-    
+
     return cacheJuridictionPeoples[backupId]
   }
 
@@ -50,22 +49,24 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         backup_id: backupId,
-      }, 
-      include: [{
-        attributes: ['id', 'comment'],
-        model: Model.models.HRComments,
-      }],
+      },
+      include: [
+        {
+          attributes: ['id', 'comment'],
+          model: Model.models.HRComments,
+        },
+      ],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
-        coverUrl: list[i].cover_url, 
+        coverUrl: list[i].cover_url,
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
         comment: list[i]['HRComment.comment'],
@@ -74,7 +75,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return list.map(h => h.situations && h.situations.length) // remove hr without situation
+    return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
   }
 
   Model.getHrDetails = async (hrId) => {
@@ -82,22 +83,24 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         id: hrId,
-      }, 
-      include: [{
-        attributes: ['id', 'comment'],
-        model: Model.models.HRComments,
-      }],
+      },
+      include: [
+        {
+          attributes: ['id', 'comment'],
+          model: Model.models.HRComments,
+        },
+      ],
       raw: true,
     })
 
-    if(details) {
+    if (details) {
       return {
         id: details.id,
         firstName: details.first_name,
         lastName: details.last_name,
         dateStart: details.date_entree,
         dateEnd: details.date_sortie,
-        coverUrl: details.cover_url, 
+        coverUrl: details.cover_url,
         updatedAt: details.updated_at,
         backupId: details.backup_id,
         comment: details['HRComment.comment'],
@@ -111,7 +114,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.importList = async (list) => {
     const importSituation = []
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
 
       list[i].hmatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
@@ -124,8 +127,7 @@ export default (sequelizeInstance, Model) => {
         logging: false,
       })
 
-
-      if(!findHRToDB) {
+      if (!findHRToDB) {
         // prepare ventilation
         const situation = {
           fonction_id: null,
@@ -140,7 +142,7 @@ export default (sequelizeInstance, Model) => {
           },
           logging: false,
         })
-        if(findCategory) {
+        if (findCategory) {
           situation.category_id = findCategory.id
         }
 
@@ -150,33 +152,33 @@ export default (sequelizeInstance, Model) => {
           },
           logging: false,
         })
-        if(findFonction) {
+        if (findFonction) {
           situation.fonction_id = findFonction.id
-        } else if(list[i].statut === 'Magistrat') {
+        } else if (list[i].statut === 'Magistrat') {
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction')
           continue
         }
 
         const etp = posad[list[i].posad.toLowerCase()]
-        if(etp) {
+        if (etp) {
           situation.etp = etp
         } else {
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by etp')
           continue
         }
-        
+
         let updatedAt = new Date()
         const dateUpdatedSplited = (list[i].date_modif || '').split('/')
-        if(dateUpdatedSplited.length === 3) {
-          updatedAt = new Date(dateUpdatedSplited[2], +dateUpdatedSplited[1] - 1, dateUpdatedSplited[0]) 
+        if (dateUpdatedSplited.length === 3) {
+          updatedAt = new Date(dateUpdatedSplited[2], +dateUpdatedSplited[1] - 1, dateUpdatedSplited[0])
         }
 
         // prepare person
         const options = {
           first_name: list[i].prenom || '',
-          last_name: (list[i].nom_usage || list[i].nom_marital) || '',
+          last_name: list[i].nom_usage || list[i].nom_marital || '',
           backup_id: backupId,
           registration_number: list[i].hmatricule,
           updated_at: updatedAt,
@@ -184,11 +186,11 @@ export default (sequelizeInstance, Model) => {
 
         list[i].date_aff = list[i].date_aff.replace(/#/, '')
         const dateSplited = list[i].date_aff.split('/')
-        if(dateSplited.length === 3) {
-          options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0]) 
-          situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0]) 
+        if (dateSplited.length === 3) {
+          options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
+          situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
         }
-        
+
         // create person
         findHRToDB = await Model.create(options)
 
@@ -208,25 +210,29 @@ export default (sequelizeInstance, Model) => {
     cacheJuridictionPeoples = {}
     await Model.onPreload()
     console.log(importSituation)
-  } 
+  }
 
   Model.haveAccess = async (HRId, userId) => {
     const hr = await Model.findOne({
       attributes: ['id'],
-      where: { 
+      where: {
         id: HRId,
       },
-      include: [{
-        attributes: ['id'],
-        model: Model.models.HRBackups,
-        include: [{
+      include: [
+        {
           attributes: ['id'],
-          model: Model.models.UserVentilations,
-          where: {
-            user_id: userId,
-          },
-        }],
-      }],
+          model: Model.models.HRBackups,
+          include: [
+            {
+              attributes: ['id'],
+              model: Model.models.UserVentilations,
+              where: {
+                user_id: userId,
+              },
+            },
+          ],
+        },
+      ],
       raw: true,
     })
 
@@ -243,7 +249,7 @@ export default (sequelizeInstance, Model) => {
       updated_at: new Date(),
     }
 
-    if(hr.id && hr.id > 0) {
+    if (hr.id && hr.id > 0) {
       // update
       await Model.updateById(hr.id, options)
     } else {
@@ -264,22 +270,24 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', 'first_name', 'last_name', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         id: hrId,
-      }, 
-      include: [{
-        attributes: ['id', 'comment'],
-        model: Model.models.HRComments,
-      }],
+      },
+      include: [
+        {
+          attributes: ['id', 'comment'],
+          model: Model.models.HRComments,
+        },
+      ],
       raw: true,
     })
 
-    if(hr) {
+    if (hr) {
       hr = {
         id: hr.id,
         firstName: hr.first_name,
         lastName: hr.last_name,
         dateStart: hr.date_entree,
         dateEnd: hr.date_sortie,
-        coverUrl: hr.cover_url, 
+        coverUrl: hr.cover_url,
         updatedAt: hr.updated_at,
         comment: hr['HRComment.comment'],
         backupId: hr.backup_id,
@@ -294,23 +302,23 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.removeHR = async (hrId) => {
-    const hrFromDB = await Model.findOne({ 
+    const hrFromDB = await Model.findOne({
       attributes: ['id', 'backup_id'],
       where: {
         id: hrId,
       },
       raw: true,
     })
-    if(hrFromDB) {
+    if (hrFromDB) {
       const camelCaseReturn = snakeToCamelObject(hrFromDB)
       // control if have existing situations
       const situations = await Model.models.HRSituations.getListByHumanId(hrId)
-      if(situations.length) {
+      if (situations.length) {
         return false
       }
 
       await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
-    
+
       await Model.destroy({
         where: {
           id: hrId,
@@ -335,7 +343,7 @@ export default (sequelizeInstance, Model) => {
 
       // remove to cache
       await Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
-  
+
       return camelCaseReturn
     } else {
       return false
