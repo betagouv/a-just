@@ -258,10 +258,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     list[property].reelEtp = list[property].reelEtp / nbDay
   }
 
-  if (referentielId === 447) {
-    console.log(list)
-  }
-
   return list
 }
 
