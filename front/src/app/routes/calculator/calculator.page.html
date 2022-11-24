@@ -166,7 +166,7 @@
     </div>
     <div class="content-list">
       <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy"
-        [categorySelected]="categorySelected">
+        [categorySelected]="categorySelected" [forceToShowChildren]="duringPrint">
       </aj-referentiel-calculator>
     </div>
   </div>
@@ -191,4 +191,9 @@
   </aj-select>
 
   <div class="flex-1"></div>
+
+  <button class="primary light" (click)="onExport()">
+    <mat-icon>save</mat-icon>
+    Exporter en PDF
+  </button>
 </ng-template>

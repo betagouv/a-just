@@ -182,10 +182,9 @@
     </div>
 </div>
 <div *ngIf="
-    showChildren &&
-    calculator &&
+    ((showChildren || forceToShowChildren) && calculator &&
     calculator.childrens &&
-    calculator.childrens.length
+    calculator.childrens.length)
   " class="childrens">
     <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="r"
         [sortBy]="sortBy" class="is-child" [categorySelected]="categorySelected">
