@@ -46,7 +46,7 @@ export default (sequelizeInstance, Model) => {
 
     // create artificial situation if date start if before the first situation
     if (dateStart && list.length && today(dateStart) < today(list[0].dateStart)) {
-      list.splice(0, 0, {
+      list.push({
         etp: 1,
         dateStart: today(dateStart),
         dateStartTimesTamps: today(dateStart).getTime(),

@@ -104,7 +104,7 @@ export default (sequelizeInstance, Model) => {
         updatedAt: details.updated_at,
         backupId: details.backup_id,
         comment: details['HRComment.comment'],
-        situations: await Model.models.HRSituations.getListByHumanId(details.id),
+        situations: await Model.models.HRSituations.getListByHumanId(details.id, details.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(details.id),
       }
     }
