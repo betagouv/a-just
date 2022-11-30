@@ -540,14 +540,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       // list all activities
       const activitiesFiltered = orderBy(
         activities.filter(
-          (a) => a.contentieux.id === r.id && a.stock !== 0 && a.stock !== null
+          (a) =>
+            a.contentieux.id === r.id &&
+            month(a.periode).getTime() >= month(null, -12).getTime()
         ),
         (a) => {
           const p = new Date(a.periode)
           return p.getTime()
         },
         ['desc']
-      ).slice(0, 12)
+      )
 
       // find new ETPT of today
       let etpt = 0
@@ -567,13 +569,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ? activitiesFiltered[0].stock || 0
         : 0
 
+      if (r.id === 451) {
+        console.log(month(null, -12), month(null, -12).getTime(), activitiesFiltered)
+      }
+
       // simulate value if last datas are before selected month
       const lastPeriode = activitiesFiltered.length
         ? month(activitiesFiltered[0].periode, 0, 'lastday')
         : null
 
       if (
-        lastStock &&
         lastPeriode &&
         lastPeriode.getTime() < today(this.dateSelected).getTime()
       ) {
@@ -625,7 +630,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
         const nbDayCalendar = nbOfDays(lastPeriode, dateSelected)
 
-        if (r.id === 440) {
+        if (r.id === 451) {
           console.log('last stock ', {
             r,
             etpt,
@@ -649,31 +654,31 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             nbDayCalendar,
             outValue,
             newStock:
-              Math.floor(lastStock) -
-              (etpMagDelta === 0
-                ? 0
-                : Math.floor(
-                    (nbDayCalendar / (365 / 12)) *
-                      nbDaysByMonthForMagistrat *
-                      ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
-                  )) +
-              Math.floor((nbDayCalendar / (365 / 12)) * inValue),
+              Math.floor(lastStock -
+                (etpMagDelta === 0
+                  ? 0
+                  : (nbDayCalendar / (365 / 12)) *
+                    nbDaysByMonthForMagistrat *
+                    ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)) +
+                (nbDayCalendar / (365 / 12)) * inValue),
           })
         }
 
         // Compute stock projection until today
         lastStock =
-          Math.floor(lastStock) -
+          lastStock -
           (etpMagDelta === 0
             ? 0
-            : Math.floor(
-                (nbDayCalendar / (365 / 12)) *
-                  nbDaysByMonthForMagistrat *
-                  ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
-              )) +
-          Math.floor((nbDayCalendar / (365 / 12)) * inValue)
+            : (nbDayCalendar / (365 / 12)) *
+              nbDaysByMonthForMagistrat *
+              ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)) +
+          (nbDayCalendar / (365 / 12)) * inValue
         if (lastStock < 0) {
           lastStock = 0
+        }
+        lastStock = Math.floor(lastStock)
+        if (r.id === 451) {
+        console.log('lastStock', lastStock)
         }
 
         return {
