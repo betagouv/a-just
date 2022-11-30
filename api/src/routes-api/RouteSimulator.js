@@ -1,6 +1,7 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { execSimulation, filterByCategory, getSituation } from '../utils/simulator'
+import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
+import { copyArray } from '../utils/array'
 
 export default class RouteSimulator extends Route {
   constructor (params) {
@@ -29,9 +30,6 @@ export default class RouteSimulator extends Route {
     let hr = await this.model.getCache(backupId)
     console.timeEnd('simulator-1')
 
-    console.log(functionIds, categoryId)
-    console.log({ hr: hr.length })
-
     console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
     console.timeEnd('simulator-2')
@@ -45,55 +43,14 @@ export default class RouteSimulator extends Route {
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
 
     console.time('simulator-1.1')
-    const hrfiltered = await filterByCategory(hr, categoryId, functionIds)
+    const hrfiltered = await filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
     console.timeEnd('simulator-1.1')
 
     console.time('simulator-4')
-    const situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
+    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
     console.timeEnd('simulator-4')
 
-    let counter = 0
-    hr.map((human) => {
-      counter += human.situations.length
-    })
-
-    let counterfiltered = 0
-    hrfiltered.map((human) => {
-      counterfiltered += human.situations.length
-    })
-
-    console.log(situationFiltered, situation)
-
-    categories.map((x) => {
-      if (x.id !== categoryId) {
-        if (x.id === 1) situationFiltered.etpMag = situation.etpMag
-        if (x.id === 2) situationFiltered.etpFon = situation.etpFon
-        if (x.id === 3) situationFiltered.etpCont = situation.etpCont
-
-        if (situation.endSituation) {
-          situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
-          if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
-          if (x.id === 2) situationFiltered.endSituation.etpFon = situation.endSituation.etpFon
-          if (x.id === 3) situationFiltered.endSituation.etpCont = situation.endSituation.etpCont
-        }
-      }
-    })
-
-    /**
-    if (situation.endSituation) {
-      console.log('monthlyReportsituationFiltered')
-      situationFiltered.endSituation.monthlyReport.map((x) => console.log(x))
-      console.log('monthlyReportAllSituation')
-      situation.endSituation.monthlyReport.map((x) => console.log(x))
-
-      console.log('etpMag', situation.endSituation.etpMag, situationFiltered.endSituation.etpMag)
-      console.log('etpFon', situation.endSituation.etpFon, situationFiltered.endSituation.etpFon)
-      console.log('etpCont', situation.endSituation.etpCont, situationFiltered.endSituation.etpCont)
-    }
-
-    console.log({ allHr: hr.length, counter })
-    console.log({ filteredHr: hrfiltered.length, counterfiltered })
-    */
+    situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId)
 
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
