@@ -1,5 +1,5 @@
 import { isFirstDayOfMonth } from 'date-fns'
-import { sortBy, sumBy } from 'lodash'
+import { meanBy, orderBy, sortBy, sumBy } from 'lodash'
 import { filterActivitiesByDateAndContentieuxId } from './activities'
 import {
   checkIfDateIsNotToday,
@@ -78,19 +78,15 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   //console.log(selectedCategoryId, categories)
   const nbMonthHistory = 12
-  const { activities, lastActivities, deltaOfMonths, startDateCs, endDateCs } = await getCSActivities(
-    referentielId,
-    allActivities,
-    'InOutStock',
-    month(new Date(), -nbMonthHistory),
-    month(new Date())
-  )
+  const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
-  let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonthHistory)
+  console.log(lastActivities, startDateCs, endDateCs)
+  let totalIn = Math.floor(meanBy(lastActivities, 'entrees')) || 0
+  let totalOut = Math.floor(meanBy(lastActivities, 'sorties')) || 0
 
-  let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonthHistory)
   //console.log('TOTAL OUT 1', totalOut)
-  let lastStock = sumBy(lastActivities, 'stock')
+  let lastStock = lastActivities.length ? lastActivities[0].stock || 0 : 0
+
   let realTimePerCase = undefined
   let DTES = undefined
   let Coverage = undefined
@@ -110,7 +106,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
   const categoryLabel = categories.find((element) => element.id === selectedCategoryId).label
   let sufix = 'By' + categoryLabel
-  if (activities.length === 0) return emptySituation
+  if (lastActivities.length === 0) return emptySituation
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
@@ -140,6 +136,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     const countOfCalandarDays = nbOfDays(month(endDateCs), month(new Date(), -1, true))
 
     // Compute stock projection until today
+    // console.log(lastStock)
     lastStock = computeLastStock(
       lastStock,
       countOfCalandarDays,
@@ -148,6 +145,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       totalIn,
       sufix
     )
+    // console.log(lastStock)
 
     //console.log({ totalOut, lastStock })
 
@@ -243,7 +241,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       etpAffectedDeltaToCompute,
       etpMagToCompute,
       etpAffectedToday,
-      activities,
+      lastActivities,
       deltaOfMonths,
     }
     */
@@ -282,22 +280,24 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
     futurEtp,
     magRealTimePerCase,
     totalIn,
-    result:
-      Math.floor(lastStock) -
-      Math.floor(
-        (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase)
-      ) +
-      Math.floor((countOfCalandarDays / (365 / 12)) * totalIn),
+    ['nbDaysPerMonth' + sufix]: environment['nbDaysPerMonth' + sufix],
+    result: Math.floor(
+      lastStock -
+        (countOfCalandarDays / (365 / 12)) *
+          environment['nbDaysPerMonth' + sufix] *
+          ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
+        (countOfCalandarDays / (365 / 12)) * totalIn
+    ),
   })
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  return (
-    Math.floor(lastStock) -
-    Math.floor(
-      (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase)
-    ) +
-    Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+  let stock = Math.floor(
+    lastStock -
+      (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
+      (countOfCalandarDays / (365 / 12)) * totalIn
   )
+
+  return stock < 0 ? 0 : stock
 }
 
 function computeTotalOut (magRealTimePerCase, etp, sufix) {
@@ -331,35 +331,28 @@ export function getEtpByCategory (etpAffected, sufix = '') {
  * @param {*} dateStop
  * @returns
  */
-export async function getCSActivities (referentielId, allActivities, filter, dateStart, dateStop) {
-  const activities = sortBy(
-    allActivities.filter((activity) => activity.contentieux.id === referentielId),
-    'periode'
-  ).reverse()
+export async function getCSActivities (referentielId, allActivities, dateStart, dateStop) {
+  const lastActivities = orderBy(
+    allActivities.filter(
+      (a) =>
+        a.contentieux.id === referentielId &&
+        month(a.periode).getTime() >= month(dateStart).getTime() &&
+        month(a.periode).getTime() <= month(dateStop).getTime()
+    ),
+    (a) => {
+      const p = new Date(a.periode)
+      return p.getTime()
+    },
+    ['desc']
+  )
 
-  let deltaOfMonths = 0
-  let activivitiesFiltered = []
-  let lastActivities = []
-
-  if (filter === 'InOutStock') {
-    do {
-      deltaOfMonths--
-      lastActivities = activities.filter((a) => isSameMonthAndYear(a.periode, month(dateStop, deltaOfMonths)))
-    } while (hasInOutOrStock(lastActivities) === false && deltaOfMonths >= -12)
-  }
-  const startDateCs = month(dateStart, deltaOfMonths)
-  const endDateCs = month(dateStop, deltaOfMonths, 'lastday')
+  const startDateCs = month(lastActivities[lastActivities.length - 1].periode)
+  const endDateCs = month(lastActivities[0].periode, 0, 'lastday')
   endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
   endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
-  if (deltaOfMonths !== -12 && deltaOfMonths <= 0) {
-    activivitiesFiltered = await filterActivitiesByDateAndContentieuxId(activities, referentielId, startDateCs, endDateCs)
-  }
-
   return {
-    activities: activivitiesFiltered.reverse(),
     lastActivities,
-    deltaOfMonths,
     startDateCs,
     endDateCs,
   }

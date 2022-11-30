@@ -91,11 +91,12 @@ export function today(date: Date | null | undefined = new Date()): Date {
 }
 
 export function month(
-  date: Date = new Date(),
+  date: Date | null = new Date(),
   monthToAdd?: number,
   lastDay?: string
 ) {
-  date = new Date(date)
+  date = date ? new Date(date) : new Date()
+  
   if(lastDay) {
     date = endOfMonth(date)
   } else {
