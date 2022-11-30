@@ -82,6 +82,7 @@
       z-index: 200;
 
       .menu-item {
+
         &.disconnect,
         a,
         p {
@@ -134,7 +135,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    > div {
+    >div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -194,6 +195,7 @@
     }
 
     &.selected {
+
       a,
       p {
         color: fColor(cbluedark);
@@ -244,6 +246,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   .content {
     position: relative;
@@ -296,7 +299,7 @@
     margin-right: 8px;
     position: relative;
 
-    > div {
+    >div {
       background-color: fColor(bgHelper);
       position: absolute;
       z-index: 10;
@@ -318,12 +321,12 @@
       &:hover {
         width: 190px;
 
-        > span {
+        >span {
           display: inline;
         }
       }
 
-      > span {
+      >span {
         display: none;
         white-space: nowrap;
         margin-left: 4px;
@@ -376,7 +379,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  > div.panel-header {
+  >div.panel-header {
     background-color: fColor(bgHelper);
     padding: 14px 0 84px 0;
 
@@ -414,7 +417,7 @@
     }
   }
 
-  > iframe {
+  >iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);

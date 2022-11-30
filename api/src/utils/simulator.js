@@ -1,10 +1,9 @@
-import { endOfYesterday, isFirstDayOfMonth } from 'date-fns'
+import {  isFirstDayOfMonth } from 'date-fns'
 import { sortBy, sumBy } from 'lodash'
 import { filterActivitiesByDateAndContentieuxId } from './activities'
 import {
   checkIfDateIsNotToday,
   decimalToStringDate,
-  generalizeTimeZone,
   getRangeOfMonthsAsObject,
   getShortMonthString,
   isSameMonthAndYear,
