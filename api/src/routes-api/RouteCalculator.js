@@ -74,16 +74,12 @@ export default class RouteCalculator extends Route {
       .map((human) => {
         let situations = human.situations || []
 
-        situations = copyArray(situations).map((s) => {
-          if (
-            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) === -1) ||
-            ((!selectedFonctionsIds || selectedFonctionsIds.length === 0) && s.category && s.category.id !== categoryIdSelected)
-          ) {
-            s.etp = 0
-          }
-
-          return s
-        })
+        situations = situations.filter(
+          (s) =>
+            (s.category && s.category.id !== categoryIdSelected) ||
+            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
+            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected)
+        )
 
         return {
           ...human,
