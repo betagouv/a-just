@@ -95,13 +95,6 @@ export default class RouteExtractor extends Route {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 }
 
-                //if (human.id === 1730) console.log({ human: human.id, reelEtp }); // list: list[situation.category.id].reelEtp });
-
-                /**if (human.id === 1837)
-                  console.log({
-                    counterReelEtp,
-                  });*/
-
                 reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id)

@@ -92,7 +92,7 @@ export const addSumLine = (data, selectedCategory) => {
     let headerSum = new Object({})
     Object.keys(data[0]).map((key) => {
       const sum = sumBy(data, key)
-      headerSum[key] = typeof sum === 'string' || key === 'Numéro_A_JUST' ? '' : sum
+      headerSum[key] = typeof sum === 'string' || key === 'Numéro A-JUST' ? '' : sum
       if (key === 'Fonction') headerSum[key] = 'SOMME'
     })
     data.push(headerSum)

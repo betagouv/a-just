@@ -1,4 +1,4 @@
-import {  isFirstDayOfMonth } from 'date-fns'
+import { isFirstDayOfMonth } from 'date-fns'
 import { sortBy, sumBy } from 'lodash'
 import { filterActivitiesByDateAndContentieuxId } from './activities'
 import {
@@ -39,19 +39,41 @@ const emptySituation = {
   etpToCompute: null,
 }
 
-export function filterByCategory (hr, categoryId, functionIds) {
-  let tmpHr = [...hr]
-  let res = new Array()
+export function mergeSituations (situationFiltered, situation, categories, categoryId) {
+  categories.map((x) => {
+    if (x.id !== categoryId) {
+      if (x.id === 1) situationFiltered.etpMag = situation.etpMag
+      if (x.id === 2) situationFiltered.etpFon = situation.etpFon
+      if (x.id === 3) situationFiltered.etpCont = situation.etpCont
 
-  for (let i = 0; i < tmpHr.length; i++) {
-    let tmpSituations = new Array()
-    for (let y = 0; y < tmpHr[i].situations.length; y++)
-      if (tmpHr[i].situations[y].category && tmpHr[i].situations[y].category.id === categoryId)
-        if (functionIds.includes(tmpHr[i].situations[y].fonction.id)) tmpSituations.push({ ...tmpHr[i].situations[y] })
-    if (tmpSituations.length !== 0) res.push({ ...tmpHr[i], situations: tmpSituations })
-  }
+      if (situation.endSituation) {
+        situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
+        if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
+        if (x.id === 2) situationFiltered.endSituation.etpFon = situation.endSituation.etpFon
+        if (x.id === 3) situationFiltered.endSituation.etpCont = situation.endSituation.etpCont
+      }
+    }
+  })
 
-  return res
+  return situationFiltered
+}
+
+export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
+  return hr
+    .map((human) => {
+      let situations = human.situations.filter((situation) => {
+        if (situation.category && situation.category.id === categoryId && functionIds.includes(situation.fonction.id)) return true
+        else return false
+      })
+      if (situations.length !== 0) {
+        console.log(situations.length)
+        return {
+          ...human,
+          ...situations,
+        }
+      } else return { situations: [] }
+    })
+    .filter((x) => x.situations.length !== 0)
 }
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   //console.log(selectedCategoryId, categories)
