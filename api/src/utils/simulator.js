@@ -114,6 +114,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
+    // console.log(etpAffectedToday)
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
     //console.log('ETPMAG 1', etpMag)
 
@@ -122,13 +123,14 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
+    // console.log(etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
-    //console.log('REAL TIME 2', realTimePerCase)
+    // console.log('realTimePerCase', realTimePerCase)
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-    //console.log('TOTAL OUT 3', totalOut)
+    // console.log('totalOut', totalOut)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
@@ -162,6 +164,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       //console.log('CHECK IF DATE IS NOT TODAY', etpMag)
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
+      //console.log('totalOut', totalOut)
 
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart))
