@@ -5,8 +5,6 @@ import { preformatHumanResources } from '../utils/ventilator'
 export default class RouteReaffectator extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
-
-    this.model.onPreload()
   }
 
   @Route.Post({
@@ -20,11 +18,8 @@ export default class RouteReaffectator extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoryId, contentieuxIds, fonctionsIds } =
-      this.body(ctx)
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
+    let { backupId, date, categoryId, contentieuxIds, fonctionsIds } = this.body(ctx)
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
@@ -59,9 +54,7 @@ export default class RouteReaffectator extends Route {
     console.time('step4')
     if (contentieuxIds) {
       list = list.filter((h) => {
-        const idsOfactivities = h.currentActivities.map(
-          (a) => (a.contentieux && a.contentieux.id) || 0
-        )
+        const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
         for (let i = 0; i < idsOfactivities.length; i++) {
           if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
             return true
@@ -79,15 +72,13 @@ export default class RouteReaffectator extends Route {
 
     let listFormated = categories
 
-    if(categoryId) {
+    if (categoryId) {
       listFormated = listFormated.filter((c) => categoryId === c.id)
     }
-      
+
     listFormated = listFormated.map((category) => ({
       originalLabel: category.label,
-      allHr: listFiltered.filter(
-        (h) => h.category && h.category.id === category.id
-      ),
+      allHr: listFiltered.filter((h) => h.category && h.category.id === category.id),
       categoryId: category.id,
     }))
 

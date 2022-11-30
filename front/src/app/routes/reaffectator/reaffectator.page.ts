@@ -509,6 +509,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         return hr
       })
 
+      list.referentiel.map((ref) => {
+        ref.totalAffected = fixDecimal(ref.totalAffected || 0)
+        return ref
+      })
+
       return list
     })
   }
@@ -605,6 +610,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             ? 0
             : (etpt * nbWorkingHours * nbDaysByMonthForMagistrat) /
               averageWorkingProcess
+        outValue = Math.floor(outValue)
 
         // ETPT Delta between lastperiod and today/selected date in the futur
         const etpAffected = this.simulatorService.getHRPositions(
@@ -621,6 +627,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         if (r.id === 440) {
           console.log('last stock ', {
+            r,
+            etpt,
+            nbDaysByMonthForMagistrat,
             etpToComputeLast12Months,
             nbWorkingHours,
             nbDayByCategory,
@@ -638,6 +647,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             plus: Math.floor((nbDayCalendar / (365 / 12)) * inValue),
             inValue,
             nbDayCalendar,
+            outValue,
+            newStock:
+              Math.floor(lastStock) -
+              (etpMagDelta === 0
+                ? 0
+                : Math.floor(
+                    (nbDayCalendar / (365 / 12)) *
+                      nbDaysByMonthForMagistrat *
+                      ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
+                  )) +
+              Math.floor((nbDayCalendar / (365 / 12)) * inValue),
           })
         }
 
@@ -654,10 +674,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           Math.floor((nbDayCalendar / (365 / 12)) * inValue)
         if (lastStock < 0) {
           lastStock = 0
-        }
-
-        if (r.id === 440) {
-          console.log('last stock (2) ', lastStock)
         }
 
         return {
