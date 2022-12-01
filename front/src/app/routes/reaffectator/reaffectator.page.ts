@@ -587,7 +587,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           (itemList && itemList.hrFiltered) || [],
           r.id,
           fakeCategories,
-          month(lastPeriode, -12),
+          month(activitiesFiltered[activitiesFiltered.length - 1].periode),
           true,
           lastPeriode
         ) as Array<etpAffectedInterface>
@@ -599,13 +599,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let averageWorkingProcess =
           etpToComputeLast12Months === 0
             ? 0
-            : (nbDaysByMonthForMagistrat * nbWorkingHours) /
-              (averageOut / etpToComputeLast12Months)
-
+            : fixDecimal((nbDaysByMonthForMagistrat * nbWorkingHours) /
+              (averageOut / etpToComputeLast12Months), 100)
+              
+        if (r.id === 451) {
+          console.log('averageWorkingProcess', averageWorkingProcess)
+        }
         // arrondi pour correspondre au simulateur qui calcul par rapport au front
         const averageWorkingProcessInString = decimalToStringDate(
           averageWorkingProcess
         )
+        if (r.id === 451) {
+          console.log('averageWorkingProcessInString', averageWorkingProcessInString)
+        }
         averageWorkingProcess = stringToDecimalDate(
           averageWorkingProcessInString
         )
