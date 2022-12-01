@@ -80,7 +80,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
-  console.log(lastActivities, startDateCs, endDateCs)
   let totalIn = Math.floor(meanBy(lastActivities, 'entrees')) || 0
   let totalOut = Math.floor(meanBy(lastActivities, 'sorties')) || 0
 
@@ -110,13 +109,17 @@ export async function getSituation (referentielId, hr, allActivities, categories
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
+    console.log('etpAffectedToday', etpAffectedToday)
     // console.log(etpAffectedToday)
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
     //console.log('ETPMAG 1', etpMag)
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
+    console.log('startDateCs', startDateCs)
+    console.log('endDateCs', endDateCs)
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
+    console.log('etpAffectedLast12MonthsToCompute', etpAffectedLast12MonthsToCompute)
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
     // console.log(etpMagToCompute)
@@ -126,7 +129,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-    // console.log('totalOut', totalOut)
+    console.log('totalOut', totalOut)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
@@ -151,6 +154,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
+    console.log(Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
 
     if (checkIfDateIsNotToday(dateStart)) {
@@ -301,6 +305,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
 }
 
 function computeTotalOut (magRealTimePerCase, etp, sufix) {
+  console.log('etp', magRealTimePerCase, etp)
   return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
@@ -310,6 +315,16 @@ function computeRealTimePerCase (totalOut, etp, sufix) {
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
 
+  console.log(
+    'computeRealTimePerCase',
+    totalOut,
+    etp,
+    realTimeToUse,
+    environment['nbDays' + sufix],
+    environment['nbHoursPerDayAnd' + sufix],
+    realTimeCorrectValue,
+    realTimeDisplayed
+  )
   //console.log('REAL TIME PER CASE 1.1', etp, realTimeCorrectValue, realTimeDisplayed, realTimeToUse)
   return realTimeToUse
 }
