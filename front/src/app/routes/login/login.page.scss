@@ -57,6 +57,13 @@
 
 .signup {
   margin-top: 68px;
+  padding: 16px 24px;
+  background-color: fColor(bgProgressBar);
+
+  p:last-child {
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
 
   b {
     font-size: 20px;
