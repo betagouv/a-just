@@ -522,7 +522,12 @@ export class SimulatorService extends MainClass {
             hr
           )
 
-        if (etp !== null && situation && situation.category) {
+        if (
+          etp !== null &&
+          situation &&
+          situation.category &&
+          list[situation.category.id]
+        ) {
           list[situation.category.id].etpt += etp
 
           const str =
