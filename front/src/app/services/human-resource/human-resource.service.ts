@@ -530,6 +530,7 @@ export class HumanResourceService {
       if (reelEtp < 0) {
         reelEtp = 0
       }
+      
       return {
         etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
         situation,
