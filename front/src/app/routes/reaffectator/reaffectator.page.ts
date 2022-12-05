@@ -569,7 +569,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ? activitiesFiltered[0].stock || 0
         : 0
 
-      if (r.id === 440) {
+      if (r.id === 447) {
         console.log(month(null, -12), month(null, -12).getTime(), activitiesFiltered)
       }
 
@@ -605,14 +605,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             : fixDecimal((nbDaysByMonthForMagistrat * nbWorkingHours) /
               (averageOut / etpToComputeLast12Months), 100)
               
-        if (r.id === 440) {
+        if (r.id === 447) {
           console.log('averageWorkingProcess', averageWorkingProcess)
         }
         // arrondi pour correspondre au simulateur qui calcul par rapport au front
         const averageWorkingProcessInString = decimalToStringDate(
           averageWorkingProcess
         )
-        if (r.id === 440) {
+        if (r.id === 447) {
           console.log('averageWorkingProcessInString', averageWorkingProcessInString)
         }
         averageWorkingProcess = stringToDecimalDate(
@@ -639,7 +639,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
         const nbDayCalendar = nbOfDays(lastPeriode, month(dateSelected, -1, 'lastday'))
 
-        if (r.id === 440) {
+        if (r.id === 447) {
           console.log('last stock ', {
             list: (itemList && itemList.hrFiltered) || [],
             r,
@@ -688,7 +688,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           lastStock = 0
         }
         lastStock = Math.floor(lastStock)
-        if (r.id === 440) {
+        if (r.id === 447) {
         console.log('lastStock', lastStock)
         }
 
