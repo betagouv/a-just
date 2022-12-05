@@ -66,10 +66,9 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
         else return false
       })
       if (situations.length !== 0) {
-        console.log(situations.length)
         return {
           ...human,
-          ...situations,
+          situations: situations,
         }
       } else return { situations: [] }
     })
@@ -133,10 +132,9 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
-
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
-
-    const countOfCalandarDays = nbOfDays(month(endDateCs), month(new Date(), -1, true))
+    console.log('etpAffectedDeltaToCompute', etpAffectedDeltaToCompute)
+    const countOfCalandarDays = nbOfDays(endDateCs, month(new Date(), -1, true))
 
     // Compute stock projection until today
     // console.log(lastStock)
@@ -148,7 +146,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       totalIn,
       sufix
     )
-    // console.log(lastStock)
+    console.log('lastStock', lastStock)
 
     //console.log({ totalOut, lastStock })
 
@@ -156,6 +154,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     Coverage = computeCoverage(totalOut, totalIn)
     console.log(Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
+    console.log('DTES', DTES)
 
     if (checkIfDateIsNotToday(dateStart)) {
       const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart))
