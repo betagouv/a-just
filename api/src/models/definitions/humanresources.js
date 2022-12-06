@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'HumanResources'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -18,6 +18,10 @@ export default sequelizeInstance => {
         allowNull: true,
       },
       last_name: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      matricule: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
@@ -63,10 +67,10 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {   
-    Model.hasOne(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })  
-    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'backup_id' })       
-    
+  Model.associate = function (models) {
+    Model.hasOne(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })
+    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'backup_id' })
+
     return models
   }
 

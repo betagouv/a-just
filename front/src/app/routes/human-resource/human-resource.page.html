@@ -155,11 +155,22 @@
       <mat-icon>drive_file_rename_outline</mat-icon>
     </p>
   </div>
-  <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
-    {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-    getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt) + '
-    ' + getFullYear(currentHR.updatedAt) : '' }}
-  </p>
+  <div>
+    <p class="matricule">
+      <span
+        contenteditable
+        data-placeholder="Matricule"
+        (blur)="updateHuman('matricule', $event && $event.target ? $event.target : '',$event)"
+        >{{ (currentHR && currentHR.matricule)||'' }}</span
+      >
+      <mat-icon>drive_file_rename_outline</mat-icon>
+    </p>
+    <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
+      {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+      getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt) +
+      ' ' + getFullYear(currentHR.updatedAt) : '' }}
+    </p>
+  </div>
 </ng-template>
 
 <aj-popup

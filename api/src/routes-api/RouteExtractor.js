@@ -126,6 +126,7 @@ export default class RouteExtractor extends Route {
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             data.push({
               ['Numéro A-JUST']: human.id,
+              Matricule: human.matricule,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,
