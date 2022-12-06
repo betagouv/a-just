@@ -23,6 +23,9 @@ export const environment = {
   nbDaysByFonctionnaire: 229.57,
   nbDaysPerMonthByFonctionnaire: 229.57 / 12,
   nbHoursPerDayAndByFonctionnaire: 7,
+  nbDaysByContractuel: 229.57,
+  nbDaysPerMonthByContractuel: 229.57 / 12,
+  nbHoursPerDayAndByContractuel: 7,
 }
 
 const emptySituation = {
@@ -61,18 +64,24 @@ export function mergeSituations (situationFiltered, situation, categories, categ
 export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
   return hr
     .map((human) => {
-      let situations = human.situations.filter((situation) => {
-        if (situation.category && situation.category.id === categoryId && functionIds.includes(situation.fonction.id)) return true
-        else return false
-      })
-      if (situations.length !== 0) {
-        return {
-          ...human,
-          situations: situations,
+      const situations = (human.situations || []).map((situation) => {
+        if (categoryId && situation.category && situation.category.id !== categoryId) {
+          situation.etp = 0
         }
-      } else return { situations: [] }
+
+        if (functionIds && !functionIds.includes(situation.fonction.id)) {
+          situation.etp = 0
+        }
+
+        return situation
+      })
+
+      return {
+        ...human,
+        situations,
+      }
     })
-    .filter((x) => x.situations.length !== 0)
+    .filter((x) => (x.situations || []).some((s) => s.etp !== 0))
 }
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   //console.log(selectedCategoryId, categories)
@@ -90,6 +99,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
   let Coverage = undefined
   let etpAffectedAtStartDate = undefined
   let etpAffectedToday = undefined
+  let etpUseToday = undefined
   let etpMagToCompute = undefined
   let etpFonToCompute = undefined
   let etpConToCompute = undefined
@@ -108,17 +118,13 @@ export async function getSituation (referentielId, hr, allActivities, categories
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
-    console.log('etpAffectedToday', etpAffectedToday)
     // console.log(etpAffectedToday)
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
     //console.log('ETPMAG 1', etpMag)
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
-    console.log('startDateCs', startDateCs)
-    console.log('endDateCs', endDateCs)
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
-    console.log('etpAffectedLast12MonthsToCompute', etpAffectedLast12MonthsToCompute)
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
     // console.log(etpMagToCompute)
@@ -128,12 +134,10 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-    console.log('totalOut', totalOut)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
-    console.log('etpAffectedDeltaToCompute', etpAffectedDeltaToCompute)
     const countOfCalandarDays = nbOfDays(endDateCs, month(new Date(), -1, true))
 
     // Compute stock projection until today
@@ -146,15 +150,12 @@ export async function getSituation (referentielId, hr, allActivities, categories
       totalIn,
       sufix
     )
-    console.log('lastStock', lastStock)
 
     //console.log({ totalOut, lastStock })
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
-    console.log(Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
-    console.log('DTES', DTES)
 
     if (checkIfDateIsNotToday(dateStart)) {
       const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart))
@@ -253,6 +254,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     return {
       //...tmpList,
       endSituation,
+      countOfCalandarDays,
       totalIn,
       totalOut,
       lastStock,
@@ -263,7 +265,10 @@ export async function getSituation (referentielId, hr, allActivities, categories
       etpFon,
       etpCont: etpCon,
       etpAffected: etpAffectedAtStartDate || etpAffectedToday,
+      etpUseToday: selectedCategoryId === 1 ? etpMag : selectedCategoryId === 2 ? etpFon : etpCon,
       etpToCompute: etpMagToCompute,
+      nbWorkingHours: environment['nbHoursPerDayAnd' + sufix],
+      nbWorkingDays: environment['nbDaysPerMonth' + sufix],
     }
   }
 }
@@ -304,7 +309,6 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
 }
 
 function computeTotalOut (magRealTimePerCase, etp, sufix) {
-  console.log('etp', magRealTimePerCase, etp)
   return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
@@ -314,16 +318,6 @@ function computeRealTimePerCase (totalOut, etp, sufix) {
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
 
-  console.log(
-    'computeRealTimePerCase',
-    totalOut,
-    etp,
-    realTimeToUse,
-    environment['nbDays' + sufix],
-    environment['nbHoursPerDayAnd' + sufix],
-    realTimeCorrectValue,
-    realTimeDisplayed
-  )
   //console.log('REAL TIME PER CASE 1.1', etp, realTimeCorrectValue, realTimeDisplayed, realTimeToUse)
   return realTimeToUse
 }

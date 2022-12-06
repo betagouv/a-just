@@ -3,7 +3,6 @@ import { Types } from '../utils/types'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
-import { copyArray } from '../utils/array'
 
 export default class RouteCalculator extends Route {
   constructor (params) {

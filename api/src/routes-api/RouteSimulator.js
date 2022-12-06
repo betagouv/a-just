@@ -43,7 +43,7 @@ export default class RouteSimulator extends Route {
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
 
     console.time('simulator-1.1')
-    const hrfiltered = await filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
+    const hrfiltered = filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
     console.timeEnd('simulator-1.1')
 
     console.time('simulator-4')

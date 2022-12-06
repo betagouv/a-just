@@ -58,7 +58,15 @@ interface ContentieuReferentielCalculateInterface
   extends ContentieuReferentielInterface {
   dtes: number
   coverage: number
-  realEtp: number
+  realDTESInMonths: number
+  realCoverage: number
+  etpToCompute: number
+  etpUseToday: number
+  magRealTimePerCase: number | null
+  nbWorkingHours: number
+  nbWorkingDays: number
+  totalIn: number
+  lastStock: number
 }
 
 @Component({
@@ -83,7 +91,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   lastScrollTop: number = 0
   isFirstLoad: boolean = true
   showIndicatorPanel: boolean = true
-  actualActivities: ActivityInterface[] = []
   firstETPTargetValue: (number | null)[] = []
   isolatePersons: boolean = false
 
@@ -101,33 +108,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
-        this.onFilterList()
-      })
-    )
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref) => {
-        this.referentiel = ref
-          .filter(
-            (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
-          )
-          .map((r) => ({
-            ...r,
-            selected: true,
-            dtes: 0,
-            coverage: 0,
-            realEtp: 0,
-          }))
-        this.formReferentiel = this.referentiel.map((r) => ({
-          id: r.id,
-          value: this.referentielMappingName(r.label),
-        }))
-        this.firstETPTargetValue = this.referentiel.map(() => null)
-
-        this.reaffectatorService.selectedReferentielIds = this
-          .reaffectatorService.selectedReferentielIds.length
-          ? this.reaffectatorService.selectedReferentielIds
-          : this.formReferentiel.map((c) => c.id)
-
         this.onFilterList()
       })
     )
@@ -164,7 +144,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       if (itemBlock && itemBlock.hrFiltered) {
         c.value = `${itemBlock.hrFiltered.length} ${c.value}${
           itemBlock.hrFiltered.length > 1 ? 's' : ''
-        } (${fixDecimal(itemBlock.totalRealETp, 100)} ETPT)`
+        } (${fixDecimal(
+          sumBy(itemBlock.referentiel || [], 'totalAffected'),
+          100
+        )} ETPT)`
       }
 
       return c
@@ -212,7 +195,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onFilterList() {
     if (
       !this.formFilterSelect.length ||
-      !this.referentiel.length ||
       this.humanResourceService.backupId.getValue() === null ||
       this.reaffectatorService.selectedCategoriesId === null
     ) {
@@ -244,15 +226,32 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
-        selectedReferentielIds,
-        null,
+        this.reaffectatorService.selectedCategoriesId || 0,
         selectedFonctionsIds
       )
       .then((returnValues) => {
         console.log(returnValues)
-        this.actualActivities = returnValues.activities
         this.listFormated = returnValues.list.map(
-          (i: listFormatedInterface) => {
+          (i: listFormatedInterface, index: number) => {
+            if (index === 0) {
+              this.referentiel = i.referentiel.map((r) => ({
+                ...r,
+                selected: true,
+              }))
+              this.formReferentiel = i.referentiel.map((r) => ({
+                id: r.id,
+                value: this.referentielMappingName(r.label),
+              }))
+              if (this.firstETPTargetValue.length === 0) {
+                this.firstETPTargetValue = i.referentiel.map(() => null)
+              }
+
+              this.reaffectatorService.selectedReferentielIds = this
+                .reaffectatorService.selectedReferentielIds.length
+                ? this.reaffectatorService.selectedReferentielIds
+                : this.formReferentiel.map((c) => c.id)
+            }
+
             const allHr = i.allHr.map((h) => ({
               ...h,
               isModify: false,
@@ -262,7 +261,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               allHr,
               hrFiltered: [...i.allHr],
               personSelected: [],
-              referentiel: copyArray(this.referentiel),
+              referentiel: i.referentiel.map((r) => ({
+                ...r,
+                dtes: 0,
+                coverage: 0,
+              })),
             }
           }
         )
@@ -272,8 +275,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams(onSearch: boolean = true) {
-    this.onCalculETPAffected()
-
     this.listFormated = this.listFormated.map((list) => {
       list.hrFiltered = orderBy(list.hrFiltered, ['fonction.rank'], ['asc'])
 
@@ -447,276 +448,77 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  onCalculETPAffected() {
-    this.referentiel.map((ref) => {
-      ref.realEtp = 0
-      return ref
+  onCalculETPAffected(
+    referentielId: number,
+    hrList: HumanResourceSelectedInterface[]
+  ) {
+    let etpCalculate = 0
+
+    hrList.map((hr) => {
+      const timeAffected = sumBy(
+        hr.currentActivities.filter(
+          (r) => r.contentieux && r.contentieux.id === referentielId
+        ),
+        'percent'
+      )
+      let realETP = (hr.etp || 0) - hr.hasIndisponibility
+      if (realETP < 0) {
+        realETP = 0
+      }
+      etpCalculate += (timeAffected / 100) * realETP
     })
 
-    flatten(
-      this.listFormated
-        .filter(
-          (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
-        )
-        .map((l) => l.allHr)
-    ).map((hr) => {
-      this.referentiel = this.referentiel.map((ref) => {
-        const timeAffected = sumBy(
-          hr.currentActivities.filter(
-            (r) => r.contentieux && r.contentieux.id === ref.id
-          ),
-          'percent'
-        )
-        let realETP = (hr.etp || 0) - hr.hasIndisponibility
-        if (realETP < 0) {
-          realETP = 0
-        }
-        ref.realEtp = (ref.realEtp || 0) + (timeAffected / 100) * realETP
-
-        return ref
-      })
-    })
-
-    this.listFormated = this.listFormated.map((list) => {
-      list.totalRealETp = 0
-      list.referentiel.map((ref) => {
-        ref.totalAffected = 0
-        return ref
-      })
-
-      list.hrFiltered = list.hrFiltered.map((hr) => {
-        let realETP = (hr.etp || 0) - hr.hasIndisponibility
-        if (realETP < 0) {
-          realETP = 0
-        }
-        list.totalRealETp += realETP
-
-        list.referentiel = list.referentiel.map((ref) => {
-          const timeAffected = sumBy(
-            hr.currentActivities.filter(
-              (r) => r.contentieux && r.contentieux.id === ref.id
-            ),
-            'percent'
-          )
-          if (timeAffected) {
-            ref.totalAffected =
-              (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-          }
-
-          return ref
-        })
-
-        return hr
-      })
-
-      list.referentiel.map((ref) => {
-        ref.totalAffected = fixDecimal(ref.totalAffected || 0)
-        return ref
-      })
-
-      return list
-    })
+    return fixDecimal(etpCalculate)
   }
 
   calculateReferentielValues() {
-    const activities = this.actualActivities
+    this.listFormated = this.listFormated.map((itemList) => {
+      return {
+        ...itemList,
+        referentiel: itemList.referentiel.map((r) => ({
+          ...r,
+          totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
+        })),
+      }
+    })
+
     const itemList = this.listFormated.find(
-      (l) => l.categoryId === this.reaffectatorService.selectedCategoriesId
+      (i) => i.categoryId === this.reaffectatorService.selectedCategoriesId
     )
-    const fakeCategories = [
-      { id: this.reaffectatorService.selectedCategoriesId, label: 'cat' },
-    ]
-    const dateSelected = new Date(this.dateSelected)
-    const nbDayByCategory =
-      this.reaffectatorService.selectedCategoriesId === 1
-        ? environment.nbDaysByMagistrat
-        : environment.nbDaysByFonctionnaire
-    const nbWorkingHours =
-      this.reaffectatorService.selectedCategoriesId === 1
-        ? environment.nbHoursPerDayAndMagistrat
-        : environment.nbHoursPerDayAndFonctionnaire
 
-    this.referentiel = this.referentiel.map((r) => {
-      // list all activities
-      const activitiesFiltered = orderBy(
-        activities.filter(
-          (a) =>
-            a.contentieux.id === r.id &&
-            month(a.periode).getTime() >= month(null, -12).getTime()
-        ),
-        (a) => {
-          const p = new Date(a.periode)
-          return p.getTime()
-        },
-        ['desc']
-      )
-
-      // find new ETPT of today
-      let etpt = 0
-      if (itemList) {
-        const ref = itemList.referentiel.find(
-          (referentiel) => referentiel.id === r.id
+    if (itemList) {
+      this.referentiel = this.referentiel.map((ref) => {
+        const refFromItemList = (itemList.referentiel || []).find(
+          (r) => r.id === ref.id
         )
-        if (ref && ref.totalAffected) {
-          etpt = ref.totalAffected
+
+        if (!refFromItemList) {
+          return ref
         }
-      }
 
-      const nbDaysByMonthForMagistrat = nbDayByCategory / 12
-      const inValue = Math.floor(meanBy(activitiesFiltered, 'entrees')) || 0
-      const averageOut = Math.floor(meanBy(activitiesFiltered, 'sorties')) || 0
-      let lastStock = activitiesFiltered.length
-        ? activitiesFiltered[0].stock || 0
-        : 0
-
-      if (r.id === 447) {
-        console.log(month(null, -12), month(null, -12).getTime(), activitiesFiltered)
-      }
-
-      // simulate value if last datas are before selected month
-      const lastPeriode = activitiesFiltered.length
-        ? month(activitiesFiltered[0].periode, 0, 'lastday')
-        : null
-
-      if (
-        lastPeriode &&
-        lastPeriode.getTime() < today(this.dateSelected).getTime()
-      ) {
-        lastPeriode.setDate(lastPeriode.getDate() + 1) // start to the first day of the next month
-        lastPeriode.setMinutes(lastPeriode.getMinutes() + 1) // to fix JS bug
-
-        // ETPT of the last 12 months
-        let etpAffectedLast12Months = this.simulatorService.getHRPositions(
-          (itemList && itemList.hrFiltered) || [],
-          r.id,
-          fakeCategories,
-          month(activitiesFiltered[activitiesFiltered.length - 1].periode),
-          true,
-          lastPeriode
-        ) as Array<etpAffectedInterface>
-        let etpToComputeLast12Months =
-          etpAffectedLast12Months.length >= 0
-            ? etpAffectedLast12Months[0].totalEtp
-            : 0
-
-        let averageWorkingProcess =
-          etpToComputeLast12Months === 0
-            ? 0
-            : fixDecimal((nbDaysByMonthForMagistrat * nbWorkingHours) /
-              (averageOut / etpToComputeLast12Months), 100)
-              
-        if (r.id === 447) {
-          console.log('averageWorkingProcess', averageWorkingProcess)
-        }
-        // arrondi pour correspondre au simulateur qui calcul par rapport au front
-        const averageWorkingProcessInString = decimalToStringDate(
-          averageWorkingProcess
-        )
-        if (r.id === 447) {
-          console.log('averageWorkingProcessInString', averageWorkingProcessInString)
-        }
-        averageWorkingProcess = stringToDecimalDate(
-          averageWorkingProcessInString
-        )
+        const averageWorkingProcess = refFromItemList.magRealTimePerCase || 0
+        const etpt = refFromItemList.totalAffected || 0
+        const nbWorkingHours = refFromItemList.nbWorkingHours || 0
+        const nbWorkingDays = refFromItemList.nbWorkingDays || 0
+        const lastStock = refFromItemList.lastStock || 0
+        const inValue = refFromItemList.totalIn || 0
 
         let outValue =
           averageWorkingProcess === 0
             ? 0
-            : (etpt * nbWorkingHours * nbDaysByMonthForMagistrat) /
-              averageWorkingProcess
+            : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
         outValue = Math.floor(outValue)
 
-        // ETPT Delta between lastperiod and today/selected date in the futur
-        const etpAffected = this.simulatorService.getHRPositions(
-          (itemList && itemList.hrFiltered) || [],
-          r.id,
-          fakeCategories,
-          lastPeriode,
-          true,
-          dateSelected
-        ) as Array<etpAffectedInterface>
-        const etpMagDelta =
-          etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-        const nbDayCalendar = nbOfDays(lastPeriode, month(dateSelected, -1, 'lastday'))
-
-        if (r.id === 447) {
-          console.log('last stock ', {
-            list: (itemList && itemList.hrFiltered) || [],
-            r,
-            etpt,
-            etpAffected,
-            nbDaysByMonthForMagistrat,
-            etpToComputeLast12Months,
-            nbWorkingHours,
-            nbDayByCategory,
-            averageOut,
-            lastPeriode,
-            dateSelected,
-            lastStock,
-            etpMagDelta,
-            averageWorkingProcess,
-            calculDelta: Math.floor(
-              (nbDayCalendar / (365 / 12)) *
-                nbDaysByMonthForMagistrat *
-                ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)
-            ),
-            plus: Math.floor((nbDayCalendar / (365 / 12)) * inValue),
-            inValue,
-            nbDayCalendar,
-            outValue,
-            newStock:
-              Math.floor(lastStock -
-                (etpMagDelta === 0
-                  ? 0
-                  : (nbDayCalendar / (365 / 12)) *
-                    nbDaysByMonthForMagistrat *
-                    ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)) +
-                (nbDayCalendar / (365 / 12)) * inValue),
-          })
-        }
-
-        // Compute stock projection until today
-        lastStock =
-          lastStock -
-          (etpMagDelta === 0
-            ? 0
-            : (nbDayCalendar / (365 / 12)) *
-              nbDaysByMonthForMagistrat *
-              ((etpMagDelta * nbWorkingHours) / averageWorkingProcess)) +
-          (nbDayCalendar / (365 / 12)) * inValue
-        if (lastStock < 0) {
-          lastStock = 0
-        }
-        lastStock = Math.floor(lastStock)
-        if (r.id === 447) {
-        console.log('lastStock', lastStock)
-        }
-
         return {
-          ...r,
-          in: inValue,
-          out: outValue,
-          stock: lastStock,
+          ...ref,
           coverage: fixDecimal(outValue / inValue) * 100,
           dtes:
             lastStock === 0 || outValue === 0
               ? 0
               : fixDecimal(lastStock / outValue),
         }
-      }
-
-      return {
-        ...r,
-        in: inValue,
-        out: averageOut,
-        stock: lastStock,
-        coverage: averageOut === 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
-        dtes:
-          lastStock === 0 || averageOut === 0
-            ? 0
-            : fixDecimal(lastStock / averageOut),
-      }
-    })
+      })
+    }
   }
 
   updateHRReferentiel(

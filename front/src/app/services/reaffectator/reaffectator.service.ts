@@ -14,15 +14,13 @@ export class ReaffectatorService {
   onFilterList(
     backupId: number,
     date: Date,
-    contentieuxIds: number[] | null,
-    categoryId: number | null,
+    categoryId: number,
     fonctionsIds: number[]
   ) {
     return this.serverService
       .post(`reaffectator/filter-list`, {
         backupId,
         date,
-        contentieuxIds,
         categoryId,
         fonctionsIds,
       })
