@@ -364,7 +364,6 @@ export class HumanResourceService {
       ...orignalObject,
       ...params,
     }
-
     return await this.updateRemoteHR(orignalObject)
   }
 
@@ -457,13 +456,17 @@ export class HumanResourceService {
   }
 
   updateRemoteHR(hr: any) {
+    console.log(hr)
     return this.serverService
       .post(`human-resources/update-hr`, {
         hr,
         backupId: this.backupId.getValue(),
       })
       .then((response) => {
+        console.log(response)
+
         const newHR = this.formatHR(response.data)
+        console.log(response.data)
 
         const hrBackups = this.backups.getValue()
         const backupIndex = hrBackups.findIndex(
@@ -530,7 +533,7 @@ export class HumanResourceService {
       if (reelEtp < 0) {
         reelEtp = 0
       }
-      
+
       return {
         etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
         situation,
