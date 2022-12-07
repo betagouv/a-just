@@ -31,22 +31,6 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importHrMatricule (ctx) {
-    const { file } = this.body(ctx)
-    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
-      delimiter: ';',
-    })
-
-    await this.model.importListMatricule(arrayOfHR)
-    this.sendOk(ctx, 'OK')
-  }
-
-  @Route.Post({
-    bodyType: Types.object().keys({
-      file: Types.string(),
-    }),
-    accesses: [Access.isAdmin],
-  })
   async importReferentiel (ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {

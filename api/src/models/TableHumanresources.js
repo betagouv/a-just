@@ -119,12 +119,11 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
 
-      list[i].hmatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
-
+      list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
         where: {
           backup_id: backupId,
-          registration_number: list[i].hmatricule,
+          registration_number: list[i].hRegMatricule,
         },
         logging: false,
       })
@@ -181,9 +180,9 @@ export default (sequelizeInstance, Model) => {
         const options = {
           first_name: list[i].prenom || '',
           last_name: list[i].nom_usage || list[i].nom_marital || '',
-          matricule: list[i].matricule || '',
+          matricule: list[i].hmatricule || '',
           backup_id: backupId,
-          registration_number: list[i].hmatricule,
+          registration_number: list[i].hRegMatricule,
           updated_at: updatedAt,
         }
 
