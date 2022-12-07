@@ -32,11 +32,7 @@ export class ImportsPage {
       return;
     }
 
-    if (
-      !confirm(
-        'Confirmer la modification du référentiel ?'
-      )
-    ) {
+    if (!confirm('Confirmer la modification du référentiel ?')) {
       return;
     }
 
@@ -62,6 +58,25 @@ export class ImportsPage {
     };
 
     this.importService.importHR(options).then(() => {
+      alert('OK !');
+      form.reset();
+      this.onLoad();
+    });
+  }
+
+  async onSendHRMatricule(form: any) {
+    const file = form.file.files[0];
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    const options = {
+      file: await exportFileToString(file),
+    };
+
+    this.importService.importHRMatricule(options).then(() => {
       alert('OK !');
       form.reset();
       this.onLoad();

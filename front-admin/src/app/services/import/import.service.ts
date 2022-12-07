@@ -8,13 +8,18 @@ export class ImportService {
   constructor(private serverService: ServerService) {}
 
   importReferentiel(file: string): Promise<string> {
-    return this.serverService.post('imports/import-referentiel', { file }).then(d => d.data);
+    return this.serverService
+      .post('imports/import-referentiel', { file })
+      .then((d) => d.data);
   }
 
   importHR(params: any) {
     return this.serverService.post('imports/import-hr', params);
   }
 
+  importHRMatricule(params: any) {
+    return this.serverService.post('imports/import-hr-matricule', params);
+  }
   importActivities(params: any) {
     return this.serverService.post('imports/import-activities', params);
   }
