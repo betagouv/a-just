@@ -41,7 +41,6 @@ export const preformatHumanResources = (list, dateSelected, referentielList) => 
     ['fonction.rank', 'lastName'],
     ['asc', 'asc']
   ).filter((hr) => {
-    console.log(referentielList)
     if (referentielList) {
       const activities = hr.currentActivities || []
       return activities.some((a) => referentielList.includes(a.contentieux.id))
