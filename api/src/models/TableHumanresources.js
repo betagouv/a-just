@@ -247,6 +247,7 @@ export default (sequelizeInstance, Model) => {
       first_name: hr.firstName || null,
       last_name: hr.lastName || null,
       matricule: hr.matricule || null,
+      registrationId: hr.registration_number || null,
       date_entree: hr.dateStart || null,
       date_sortie: hr.dateEnd || null,
       backup_id: backupId,
@@ -273,7 +274,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.getHr = async (hrId) => {
     let hr = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'registration_number', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         id: hrId,
       },
@@ -292,6 +293,7 @@ export default (sequelizeInstance, Model) => {
         firstName: hr.first_name,
         lastName: hr.last_name,
         matricule: hr.matricule,
+        registrationId: hr.registration_number,
         dateStart: hr.date_entree,
         dateEnd: hr.date_sortie,
         coverUrl: hr.cover_url,
