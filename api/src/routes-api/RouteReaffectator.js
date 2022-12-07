@@ -26,7 +26,6 @@ export default class RouteReaffectator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    console.log('referentielList', referentielList)
     console.time('step1')
     const hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
