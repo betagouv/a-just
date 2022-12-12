@@ -17,9 +17,6 @@ export class ImportService {
     return this.serverService.post('imports/import-hr', params);
   }
 
-  importHRMatricule(params: any) {
-    return this.serverService.post('imports/import-hr-matricule', params);
-  }
   importActivities(params: any) {
     return this.serverService.post('imports/import-activities', params);
   }
