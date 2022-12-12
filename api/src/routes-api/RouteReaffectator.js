@@ -16,11 +16,12 @@ export default class RouteReaffectator extends Route {
       contentieuxIds: Types.array(),
       categoryId: Types.number().required(),
       fonctionsIds: Types.array().required(),
+      referentielList: Types.array(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, fonctionsIds, categoryId } = this.body(ctx)
+    let { backupId, date, fonctionsIds, categoryId, referentielList } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -47,7 +48,7 @@ export default class RouteReaffectator extends Route {
     this.sendOk(ctx, {
       list: categories.map((category) => ({
         originalLabel: category.label,
-        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id), date),
+        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, null), date, referentielList),
         categoryId: category.id,
         referentiel,
       })),

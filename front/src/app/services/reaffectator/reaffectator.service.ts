@@ -15,7 +15,8 @@ export class ReaffectatorService {
     backupId: number,
     date: Date,
     categoryId: number,
-    fonctionsIds: number[]
+    fonctionsIds: number[],
+    referentielList: number[] | null
   ) {
     return this.serverService
       .post(`reaffectator/filter-list`, {
@@ -23,6 +24,7 @@ export class ReaffectatorService {
         date,
         categoryId,
         fonctionsIds,
+        referentielList,
       })
       .then((data) => {
         return data.data

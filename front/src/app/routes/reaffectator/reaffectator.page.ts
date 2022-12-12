@@ -227,7 +227,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         this.reaffectatorService.selectedCategoriesId || 0,
-        selectedFonctionsIds
+        selectedFonctionsIds,
+        selectedReferentielIds,
       )
       .then((returnValues) => {
         console.log(returnValues)
