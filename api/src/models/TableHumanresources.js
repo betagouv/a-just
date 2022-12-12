@@ -46,7 +46,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', /**'matricule',*/ 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         backup_id: backupId,
       },
@@ -64,7 +64,7 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         firstName: list[i].first_name,
         lastName: list[i].last_name,
-        matricule: list[i].matricule,
+        //matricule: list[i].matricule,
         dateStart: list[i].date_entree,
         dateEnd: list[i].date_sortie,
         coverUrl: list[i].cover_url,
@@ -81,7 +81,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.getHrDetails = async (hrId) => {
     const details = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', /**'matricule',*/ 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
       where: {
         id: hrId,
       },
@@ -99,7 +99,7 @@ export default (sequelizeInstance, Model) => {
         id: details.id,
         firstName: details.first_name,
         lastName: details.last_name,
-        matricule: details.matricule,
+        //matricule: details.matricule,
         dateStart: details.date_entree,
         dateEnd: details.date_sortie,
         coverUrl: details.cover_url,
@@ -180,7 +180,7 @@ export default (sequelizeInstance, Model) => {
         const options = {
           first_name: list[i].prenom || '',
           last_name: list[i].nom_usage || list[i].nom_marital || '',
-          matricule: list[i].hmatricule || '',
+          //matricule: list[i].hmatricule || '',
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
           updated_at: updatedAt,
@@ -245,7 +245,7 @@ export default (sequelizeInstance, Model) => {
     const options = {
       first_name: hr.firstName || null,
       last_name: hr.lastName || null,
-      matricule: hr.matricule || null,
+      //matricule: hr.matricule || null,
       registrationId: hr.registration_number || null,
       date_entree: hr.dateStart || null,
       date_sortie: hr.dateEnd || null,
@@ -273,7 +273,17 @@ export default (sequelizeInstance, Model) => {
 
   Model.getHr = async (hrId) => {
     let hr = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'registration_number', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: [
+        'id',
+        'first_name',
+        'last_name',
+        /**'matricule',*/ 'registration_number',
+        'date_entree',
+        'date_sortie',
+        'backup_id',
+        'cover_url',
+        'updated_at',
+      ],
       where: {
         id: hrId,
       },
@@ -291,7 +301,7 @@ export default (sequelizeInstance, Model) => {
         id: hr.id,
         firstName: hr.first_name,
         lastName: hr.last_name,
-        matricule: hr.matricule,
+        //matricule: hr.matricule,
         registrationId: hr.registration_number,
         dateStart: hr.date_entree,
         dateEnd: hr.date_sortie,
