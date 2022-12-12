@@ -362,14 +362,14 @@
       <div class="rectangle">
         <div
           class="title"
-          *ngIf="buttonSelected.id !== 'etpMag' && buttonSelected.id !== 'totalOut' && buttonSelected.id !== 'totalIn'&& buttonSelected.id !== 'magRealTimePerCase'"
+          *ngIf="buttonSelected.id !== 'etpMag' && buttonSelected.id !== 'etpFon' &&buttonSelected.id !== 'totalOut' && buttonSelected.id !== 'totalIn'&& buttonSelected.id !== 'magRealTimePerCase'"
         >
           Atteindre au {{stopRealValue}} <br />
           {{getText('firstInput')}} :
         </div>
         <div
           class="title"
-          *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'magRealTimePerCase'"
+          *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'etpFon' ||buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'magRealTimePerCase'"
         >
           Appliquer sur la période {{startRealValue? "du":"d'"}}
           {{startRealValue||"aujourd'hui"}} au {{stopRealValue}} {{

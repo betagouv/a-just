@@ -28,7 +28,7 @@ export default (sequelizeInstance, Model) => {
         password,
         first_name: firstName,
         last_name: lastName,
-        tj, 
+        tj,
         fonction,
         status: 1,
       })
@@ -43,9 +43,9 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i].access = await Model.models.UsersAccess.getUserAccess(list[i].id)
-      list[i].accessName = list[i].access.map(a => accessToString(a)).join(', ')
+      list[i].accessName = list[i].access.map((a) => accessToString(a)).join(', ')
       list[i].roleName = roleToString(list[i].role)
       list[i].ventilations = await Model.models.UserVentilations.getUserVentilations(list[i].id)
     }
@@ -54,27 +54,29 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.updateAccount = async ({ userId, access, ventilations }) => {
-    const user = await Model.findOne({ 
-      where: { 
-        id: userId, 
+    const user = await Model.findOne({
+      where: {
+        id: userId,
       },
       raw: true,
     })
 
-    if(user) {
+    if (user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
       const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
 
-      await sentEmail(
-        {
-          email: user.email,
-        },
-        TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
-        {
-          user: `${user.first_name} ${user.last_name}`,
-          juridictionsList: ventilationsList.map(v => v.label).join(', '),
-        }
-      )
+      if (ventilationsList.length) {
+        await sentEmail(
+          {
+            email: user.email,
+          },
+          TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+          {
+            user: `${user.first_name} ${user.last_name}`,
+            juridictionsList: ventilationsList.map((v) => v.label).join(', '),
+          }
+        )
+      }
     } else {
       throw 'User not found'
     }
