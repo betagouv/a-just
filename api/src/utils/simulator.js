@@ -588,7 +588,6 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
 }
 
 export function execSimulation (params, simulation, dateStart, dateStop, sufix) {
-  //console.log(params, simulation)
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
@@ -681,10 +680,20 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
       }
 
       if (x === 'magRealTimePerCase') {
-        simulation.magRealTimePerCase =
-          Math.round(
-            ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
-          ) / 100
+        if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
+          console.log({ etpMag: simulation.etpMag || params.beginSituation.etpMag, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          simulation.magRealTimePerCase =
+            Math.round(
+              ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
+            ) / 100
+        } else {
+          console.log({ etpFon: simulation.etpFon || params.beginSituation.etpFon, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          simulation.magRealTimePerCase =
+            Math.round(
+              (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+                100
+            ) / 100
+        }
       }
 
       if (x === 'etpMag') {
@@ -713,7 +722,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
       simulation.totalIn !== null &&
       simulation.totalOut !== null &&
       simulation.lastStock !== null &&
-      (simulation.etpMag !== null || simulation.etpFon !== null) &&
+      simulation.etpMag !== null &&
+      simulation.etpFon !== null &&
       simulation.magRealTimePerCase !== null &&
       simulation.realDTESInMonths !== null &&
       simulation.realCoverage !== null
