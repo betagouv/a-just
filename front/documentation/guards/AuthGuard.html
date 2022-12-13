@@ -64,6 +64,13 @@
             </p>
 
 
+                <p class="comment">
+                <h3>Description</h3>
+                </p>
+                <p class="comment">
+                    <p>Guard de protection qui demande un token utilisateur et confirme avec le serveur qu&#39;il est valide.</p>
+
+                </p>
 
 
 
@@ -114,12 +121,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/routes/auth-guard.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/auth-guard.service.ts:17</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -189,14 +198,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/app/routes/auth-guard.service.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">src/app/routes/auth-guard.service.ts:31</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Check route access</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -207,6 +218,7 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -221,6 +233,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Route from</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>state</td>
@@ -233,6 +249,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>State of url</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -244,7 +264,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>true of false if the user is connected</p>
+
                     </div>
                 </td>
             </tr>
@@ -270,14 +291,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="25"
-                            class="link-to-prism">src/app/routes/auth-guard.service.ts:25</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="46"
+                            class="link-to-prism">src/app/routes/auth-guard.service.ts:46</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Check child route access and make parent rule access</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -288,6 +311,7 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -302,6 +326,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Route from</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>state</td>
@@ -314,6 +342,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>State of url</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -325,7 +357,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>true of false if the user is connected</p>
+
                     </div>
                 </td>
             </tr>
@@ -353,14 +386,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">src/app/routes/auth-guard.service.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="58"
+                            class="link-to-prism">src/app/routes/auth-guard.service.ts:58</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Assync fonction who connect to server and check the user token value</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -371,6 +406,7 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -385,6 +421,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>to redirect if not authorise to access</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -396,7 +436,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>true of false if the user is connected</p>
+
                     </div>
                 </td>
             </tr>
@@ -407,47 +448,73 @@
 
 
         <div class="tab-pane fade  tab-source-code" id="c-source">
-            <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
+            <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
 import {
   CanActivate,
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   CanActivateChild,
-} from &#x27;@angular/router&#x27;;
-import { Observable } from &#x27;rxjs&#x27;;
-import { AuthService } from &#x27;../services/auth/auth.service&#x27;;
+} from &#x27;@angular/router&#x27;
+import { Observable } from &#x27;rxjs&#x27;
+import { AuthService } from &#x27;../services/auth/auth.service&#x27;  
+
+/**
+* Guard de protection qui demande un token utilisateur et confirme avec le serveur qu&#x27;il est valide.
+*/
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild {
+  /**
+   * Constructeur
+   * @param authService 
+   * @param _router 
+   */
   constructor(private authService: AuthService, private _router: Router) {}
 
+  /**
+   * Check route access
+   * @param {ActivatedRouteSnapshot} route  Route from
+   * @param {RouterStateSnapshot} state  State of url
+   * @returns true of false if the user is connected
+   */
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable&lt;boolean&gt; | Promise&lt;boolean&gt; | boolean {
-    const url: string &#x3D; state.url;
+    const url: string &#x3D; state.url
 
-    return this.checkLogin(url);
+    return this.checkLogin(url)
   }
 
+  /**
+   * Check child route access and make parent rule access
+   * @param {ActivatedRouteSnapshot} route  Route from
+   * @param {RouterStateSnapshot} state  State of url
+   * @returns true of false if the user is connected
+   */
   canActivateChild(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable&lt;boolean&gt; | Promise&lt;boolean&gt; | boolean {
-    return this.canActivate(route, state);
+    return this.canActivate(route, state)
   }
 
+  /**
+   * Assync fonction who connect to server and check the user token value
+   * @param {string} url to redirect if not authorise to access
+   * @returns true of false if the user is connected
+   */
   async checkLogin(url: string) {
     if (await this.authService.userConnected()) {
-      return true;
+      return true
     }
 
-    this.authService.redirectUrl &#x3D; url;
+    this.authService.redirectUrl &#x3D; url
 
     // Navigate to the login page with extras
-    this._router.navigate([&#x27;/login&#x27;]);
-    return false;
+    this._router.navigate([&#x27;/login&#x27;])
+    return false
   }
 }
 </code></pre>

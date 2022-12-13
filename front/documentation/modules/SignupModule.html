@@ -162,12 +162,13 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;;
 import { FormsModule, ReactiveFormsModule } from &#x27;@angular/forms&#x27;;
 import { RouterModule } from &#x27;@angular/router&#x27;;
+import { ComponentsModule } from &#x27;src/app/components/components.module&#x27;;
 import { SignupPage } from &#x27;./signup.page&#x27;;
 import { SignupPageModule } from &#x27;./signup.routing&#x27;;
 
 @NgModule({
 	declarations: [ SignupPage ],
-	imports: [ SignupPageModule, FormsModule, ReactiveFormsModule, RouterModule ]
+	imports: [ SignupPageModule, FormsModule, ReactiveFormsModule, RouterModule, ComponentsModule ]
 })
 export class SignupModule {}
 </code></pre>

@@ -258,6 +258,7 @@ export class SelectComponent extends MainClass implements OnChanges {
   @Input() subList: number[] | null &#x3D; null
   @Input() parent: number | string | null &#x3D; null
   @Input() defaultRealValue: string &#x3D; &#x27;&#x27;
+  @Input() defaultAllValue: string | null &#x3D; null
   @Output() valueChange: EventEmitter&lt;number[] | string[]&gt; &#x3D; new EventEmitter()
   subReferentielData: dataInterface[] &#x3D; []
   realValue: string &#x3D; &#x27;&#x27;
@@ -316,16 +317,23 @@ export class SelectComponent extends MainClass implements OnChanges {
     } else if (Array.isArray(this.value) &amp;&amp; this.value.length !&#x3D;&#x3D; 0) {
       const arrayValues &#x3D; Array.isArray(this.value) ? this.value : [this.value]
       this.realValue &#x3D; &#x27;&#x27;
-      this.datas.map((v) &#x3D;&gt; {
-        arrayValues.map((x) &#x3D;&gt; {
-          if (v.id &#x3D;&#x3D;&#x3D; x) {
-            tmpStr &#x3D; tmpStr.concat(v.value, &#x27;, &#x27;)
-            this.realValue &#x3D; tmpStr.slice(0, -2)
-          }
+
+      if (
+        this.value.length &#x3D;&#x3D;&#x3D; this.datas.length &amp;&amp;
+        this.defaultAllValue !&#x3D;&#x3D; null
+      ) {
+        this.realValue &#x3D; this.defaultAllValue
+      } else
+        this.datas.map((v) &#x3D;&gt; {
+          arrayValues.map((x) &#x3D;&gt; {
+            if (v.id &#x3D;&#x3D;&#x3D; x) {
+              tmpStr &#x3D; tmpStr.concat(v.value, &#x27;, &#x27;)
+              this.realValue &#x3D; tmpStr.slice(0, -2)
+            }
+          })
         })
-      })
     } else {
-        this.realValue &#x3D; &#x27;&#x27;
+      this.realValue &#x3D; &#x27;&#x27;
     }
   }
 

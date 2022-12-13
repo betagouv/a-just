@@ -150,12 +150,6 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   }
 
   onChangeHRBackup(id: number) {
-    if (
-      this.humanResourceService.hrIsModify.getValue() &&
-      !confirm('Vous avez des modifications en cours. Supprimer ?')
-    ) {
-      return
-    }
     this.humanResourceService.backupId.next(id)
   }
 

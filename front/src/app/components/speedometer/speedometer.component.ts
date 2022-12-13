@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from '@angular/core'
 import { degreesToRadians } from 'src/app/utils/geometry'
 import { ngResizeObserverProviders, NgResizeObserver } from 'ng-resize-observer'
-import { BehaviorSubject, map, Observable } from 'rxjs'
+import { map, Observable } from 'rxjs'
 import { MainClass } from 'src/app/libs/main-class'
 /**
  * Rose : #E64B85
@@ -58,12 +58,19 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     this.watcherDestroy()
   }
 
+  /**
+   * Réadapter la taille des éléments en fonction de la largeur dispo au composant
+   * @param width Largeur disponible au composant
+   */
   prepareComponent(width: number) {
     this.styleHeight = convertWidthToheight(width)+'px'
     this.width = convertWidthToheight(width)
     this.onDraw()
   }
 
+  /**
+   * Préparation de l'espace nécéssaire au canvas
+   */
   onDraw() {
     const canvas = this.domCanvas?.nativeElement
     if (canvas) {
@@ -81,6 +88,9 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     }
   }
 
+  /**
+   * Génération du fond avec les 3 niveaux de couleurs
+   */
   generateBackground() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     ctx.beginPath()
@@ -117,6 +127,9 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     ctx.stroke()
   }
 
+  /**
+   * Génération de la fléche. C'est le seul élement qui bouge
+   */
   drawArrows() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     ctx.beginPath()
@@ -138,6 +151,11 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     ctx.stroke()
   }
 
+  /**
+   * Conversion d'un pourcentage en degrées
+   * @param percent Pourcentage affiché dans l'interface donc varie entre 0 et 200% environ
+   * @returns Radius number
+   */
   getRadiusPosition(percent: number) {
     // calcul pro rata 100% = 160 degrees
     const degrees = (percent * (180 - this.bottomSpaceDegrees / 2)) / 100

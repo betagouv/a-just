@@ -1,6 +1,9 @@
 // @ts-ignore
 import packageJSON from '../../../package.json';
 
+/**
+ * Variables global avec url serveur différent ou matomo qui change
+ */
 export const environment = {
   production: true,
   serverUrl: '/api/',

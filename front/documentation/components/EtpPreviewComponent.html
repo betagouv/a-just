@@ -355,8 +355,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="45"
-                            class="link-to-prism">src/app/components/etp-preview/etp-preview.component.ts:45</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="50"
+                            class="link-to-prism">src/app/components/etp-preview/etp-preview.component.ts:50</a></div>
                 </td>
             </tr>
 
@@ -392,8 +392,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="102"
-                            class="link-to-prism">src/app/components/etp-preview/etp-preview.component.ts:102</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="116"
+                            class="link-to-prism">src/app/components/etp-preview/etp-preview.component.ts:116</a></div>
                 </td>
             </tr>
 
@@ -635,9 +635,9 @@
   Input,
   ViewChild,
   OnChanges,
-} from &#x27;@angular/core&#x27;;
-import { degreesToRadians } from &#x27;src/app/utils/geometry&#x27;;
-import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;;
+} from &#x27;@angular/core&#x27;
+import { degreesToRadians } from &#x27;src/app/utils/geometry&#x27;
+import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
 
 @Component({
   selector: &#x27;etp-preview&#x27;,
@@ -645,93 +645,107 @@ import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;;
   styleUrls: [&#x27;./etp-preview.component.scss&#x27;],
 })
 export class EtpPreviewComponent implements OnChanges {
-  @Input() etp: number &#x3D; 0;
-  @Input() indisponibility: number &#x3D; 0;
-  @Input() width: number &#x3D; 40;
-  @Input() height: number &#x3D; 40;
-  @ViewChild(&#x27;canvas&#x27;) domCanvas: ElementRef | null &#x3D; null;
-  margin: number &#x3D; 8;
-  borderWidth: number &#x3D; 6;
+  @Input() etp: number &#x3D; 0
+  @Input() indisponibility: number &#x3D; 0
+  @Input() width: number &#x3D; 40
+  @Input() height: number &#x3D; 40
+  @ViewChild(&#x27;canvas&#x27;) domCanvas: ElementRef | null &#x3D; null
+  margin: number &#x3D; 8
+  borderWidth: number &#x3D; 6
 
   constructor() {}
 
   ngOnChanges() {
-    const fixDec &#x3D; fixDecimal(this.etp);
-    this.etp &#x3D; fixDec &lt; 0 ? 0 : fixDec;
-    this.onDraw();
+    const fixDec &#x3D; fixDecimal(this.etp)
+    this.etp &#x3D; fixDec &lt; 0 ? 0 : fixDec
+    this.onDraw()
   }
 
   onDraw() {
-    const ctx &#x3D; this.domCanvas?.nativeElement.getContext(&#x27;2d&#x27;);
+    const ctx &#x3D; this.domCanvas?.nativeElement.getContext(&#x27;2d&#x27;)
     if (ctx) {
-      ctx.clearRect(0, 0, this.width + this.margin * 2, this.height + this.margin * 2);
-      this.generateBackground();
+      ctx.clearRect(
+        0,
+        0,
+        this.width + this.margin * 2,
+        this.height + this.margin * 2
+      )
+      this.generateBackground()
     } else {
       setTimeout(() &#x3D;&gt; {
-        this.onDraw();
-      }, 200);
+        this.onDraw()
+      }, 200)
     }
   }
 
   generateBackground() {
-    const canvas &#x3D; this.domCanvas?.nativeElement;
-    const ctx &#x3D; canvas.getContext(&#x27;2d&#x27;);
+    const canvas &#x3D; this.domCanvas?.nativeElement
+    const ctx &#x3D; canvas.getContext(&#x27;2d&#x27;)
 
     // fix resolution of arc
-    canvas.style.width &#x3D; (this.width + this.margin * 2) + &quot;px&quot;;
-    canvas.style.height &#x3D; (this.height + this.margin * 2) + &quot;px&quot;;
-    const scale &#x3D; window.devicePixelRatio * 2;
-    canvas.width &#x3D; Math.floor((this.width + this.margin * 2) * scale);
-    canvas.height &#x3D; Math.floor((this.height + this.margin * 2) * scale);
-    ctx.scale(scale, scale);
+    canvas.style.width &#x3D; this.width + this.margin * 2 + &#x27;px&#x27;
+    canvas.style.height &#x3D; this.height + this.margin * 2 + &#x27;px&#x27;
+    const scale &#x3D; window.devicePixelRatio * 2
+    canvas.width &#x3D; Math.floor((this.width + this.margin * 2) * scale)
+    canvas.height &#x3D; Math.floor((this.height + this.margin * 2) * scale)
+    ctx.scale(scale, scale)
 
-    ctx.beginPath();
-    ctx.lineCap &#x3D; &#x27;round&#x27;;
-    ctx.lineWidth &#x3D; this.borderWidth;
-    ctx.strokeStyle &#x3D; &#x27;#e3e3fd&#x27;;
+    ctx.beginPath()
+    ctx.lineCap &#x3D; &#x27;round&#x27;
+    ctx.lineWidth &#x3D; this.borderWidth
+    ctx.strokeStyle &#x3D; &#x27;#e3e3fd&#x27;
     ctx.arc(
       this.width / 2 + this.margin,
       this.height / 2 + this.margin,
       this.width / 2,
       this.getRadiusPosition(0),
       this.getRadiusPosition(100)
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.strokeStyle &#x3D; &#x27;#e4794a&#x27;;
+    )
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.strokeStyle &#x3D; &#x27;#e4794a&#x27;
     ctx.arc(
       this.width / 2 + this.margin,
       this.height / 2 + this.margin,
       this.width / 2,
       this.getRadiusPosition(0),
       this.getRadiusPosition((this.etp + this.indisponibility) * 100)
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.strokeStyle &#x3D; &#x27;#1dd884&#x27;;
+    )
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.strokeStyle &#x3D; &#x27;#1dd884&#x27;
     ctx.arc(
       this.width / 2 + this.margin,
       this.height / 2 + this.margin,
       this.width / 2,
       this.getRadiusPosition(0),
       this.getRadiusPosition(this.etp * 100)
-    );
-    ctx.stroke();
+    )
+    ctx.stroke()
 
-    ctx.beginPath();
-    ctx.fillStyle &#x3D; &#x27;#ffffff&#x27;;
+    ctx.beginPath()
+    ctx.fillStyle &#x3D; &#x27;#ffffff&#x27;
     ctx.arc(
       this.margin,
       this.height / 2 + this.margin,
       this.borderWidth / 4,
       0,
       2 * Math.PI
-    );
-    ctx.fill();
+    )
+
+    ctx.beginPath()
+    ctx.lineWidth &#x3D; 2
+    ctx.moveTo(this.width + this.margin - 4, this.height / 2 + this.margin)
+    ctx.lineTo(this.width + this.margin + 4, this.height / 2 + this.margin)
+    ctx.strokeStyle &#x3D; &#x27;#49835e&#x27;
+    ctx.lineCap &#x3D; &#x27;round&#x27;
+    ctx.stroke()
+
+    ctx.fill()
   }
 
   getRadiusPosition(degree: number) {
-    return degreesToRadians(180 + degree * (180 / 100));
+    return degreesToRadians(180 + degree * (180 / 100))
   }
 }
 </code></pre>
@@ -807,7 +821,7 @@ export class EtpPreviewComponent implements OnChanges {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="preview" [style.width.px]="width" [style.height.px]="height" [style.line-height.px]="height"  [style.font-size.px]="height * 12 / 40">{{ etp }}</div><canvas #canvas [width]="width" [height]="height"></canvas></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'EtpPreviewComponent'};
 </script>

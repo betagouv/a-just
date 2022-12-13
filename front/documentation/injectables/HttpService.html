@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de simplification des appels à un serveur</p>
+
+            </p>
 
 
 
@@ -116,12 +123,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/services/http-server/http.service.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/http-server/http.service.ts:11</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -179,14 +188,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="11"
-                            class="link-to-prism">src/app/services/http-server/http.service.ts:11</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="23"
+                            class="link-to-prism">src/app/services/http-server/http.service.ts:23</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Préformatage des retours</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -248,14 +259,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="28"
-                            class="link-to-prism">src/app/services/http-server/http.service.ts:28</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">src/app/services/http-server/http.service.ts:65</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Transformation d&#39;un DELETE observable en promise</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -335,14 +348,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/app/services/http-server/http.service.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/app/services/http-server/http.service.ts:33</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Transformation d&#39;un GET observable en promise</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -422,14 +437,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="20"
-                            class="link-to-prism">src/app/services/http-server/http.service.ts:20</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="44"
+                            class="link-to-prism">src/app/services/http-server/http.service.ts:44</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Transformation d&#39;un POST observable en promise</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -524,14 +541,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="24"
-                            class="link-to-prism">src/app/services/http-server/http.service.ts:24</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="55"
+                            class="link-to-prism">src/app/services/http-server/http.service.ts:55</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Transformation d&#39;un PUT observable en promise</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -613,32 +632,69 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-
 import { HttpClient } from &#x27;@angular/common/http&#x27;;
+
+/**
+ * Service de simplification des appels à un serveur
+ */
 
 @Injectable({
 	providedIn: &#x27;root&#x27;
 })
 export class HttpService {
+	/**
+	 * Constructeur
+	 * @param _http 
+	 */
 	constructor(private _http: HttpClient) {}
 
+	/**
+	 * Préformatage des retours
+	 * @param val 
+	 * @returns 
+	 */
 	consoleResult(val: any) {
 		return val;
 	}
 
-	/* HTTPs request */
+	/**
+	 * Transformation d&#x27;un GET observable en promise
+	 * @param url 
+	 * @param options 
+	 * @returns 
+	 */
 	get(url: string, options &#x3D; {}): Promise&lt;any&gt; {
 		return this._http.get(url, options).toPromise().then(this.consoleResult);
 	}
 
+	/**
+	 * Transformation d&#x27;un POST observable en promise
+	 * @param url 
+	 * @param params 
+	 * @param options 
+	 * @returns 
+	 */
 	post(url: string, params &#x3D; {}, options &#x3D; {}): Promise&lt;any&gt; {
 		return this._http.post(url, params, options).toPromise().then(this.consoleResult);
 	}
 
+	/**
+	 * Transformation d&#x27;un PUT observable en promise
+	 * @param url 
+	 * @param params 
+	 * @param options 
+	 * @returns 
+	 */
 	put(url: string, params &#x3D; {}, options &#x3D; {}): Promise&lt;any&gt; {
 		return this._http.put(url, params, options).toPromise().then(this.consoleResult);
 	}
 
+	/**
+	 * Transformation d&#x27;un DELETE observable en promise
+	 * @param url 
+	 * @param options 
+	 * @returns 
+	 */
 	delete(url: string, options &#x3D; {}): Promise&lt;any&gt; {
 		return this._http.delete(url, options).toPromise();
 	}
