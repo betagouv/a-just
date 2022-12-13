@@ -1,6 +1,12 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { environment } from 'src/environments/environment'
 
+/**
+ * Calcul du nombre de mois entre deux dates
+ * @param d1 
+ * @param d2 
+ * @returns 
+ */
 export function monthDiff(d1: Date, d2: Date) {
   var months
   months = (d2.getFullYear() - d1.getFullYear()) * 12
@@ -9,10 +15,20 @@ export function monthDiff(d1: Date, d2: Date) {
   return months <= 0 ? 0 : months
 }
 
+/**
+ * Retourne si la date est une journée de travail
+ * @param date 
+ * @returns 
+ */
 export function workingDay(date: Date) {
   return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
 }
 
+/**
+ * Recupération du mois en texte d'une date
+ * @param date 
+ * @returns 
+ */
 export function getMonthString(date: Date | string) {
   if (typeof date === 'string') {
     date = new Date(date)
@@ -33,6 +49,11 @@ export function getMonthString(date: Date | string) {
   ][date.getMonth()]
 }
 
+/**
+ * Récupération du mois en texte d'une date en version raccourcie 
+ * @param date 
+ * @returns 
+ */
 export function getShortMonthString(date: Date | string) {
   if (typeof date === 'string') {
     date = new Date(date)
@@ -53,6 +74,11 @@ export function getShortMonthString(date: Date | string) {
   ][date.getMonth()]
 }
 
+/**
+ * Conversion d'une mois raccourcie en mois réel
+ * @param shortString 
+ * @returns 
+ */
 export function getLongMonthString(shortString: string) {
   switch (shortString) {
     case 'Janv.':
@@ -82,6 +108,12 @@ export function getLongMonthString(shortString: string) {
   }
   return
 }
+
+/**
+ * Conversion d'une date à l'heure 00 de la journée
+ * @param date 
+ * @returns 
+ */
 export function today(date: Date | null | undefined = new Date()): Date {
   let now = new Date()
   if (date) {
@@ -90,6 +122,13 @@ export function today(date: Date | null | undefined = new Date()): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate())
 }
 
+/**
+ * Conversion d'une date au jour 0 et l'heure 0
+ * @param date 
+ * @param monthToAdd 
+ * @param lastDay prendre le dernier jour du mois
+ * @returns 
+ */
 export function month(
   date: Date | null = new Date(),
   monthToAdd?: number,
@@ -110,6 +149,12 @@ export function month(
   return date
 }
 
+/**
+ * Calcul du nombre de jours travaillés entre 2 dates
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 export function nbOfWorkingDays(startDate: Date, endDate: Date) {
   const start = new Date(startDate)
   let nbOfWorkingDays = 0
@@ -120,6 +165,11 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
   return nbOfWorkingDays
 }
 
+/**
+ * Conversion des millieseconds en jours
+ * @param ms 
+ * @returns 
+ */
 const convertMsToDays = (ms: number) => {
   const msInOneSecond = 1000
   const secondsInOneMinute = 60
@@ -133,6 +183,12 @@ const convertMsToDays = (ms: number) => {
   return Math.ceil(ms / msInOneDay)
 }
 
+/**
+ * Calcul du nombre de jours entre 2 dates
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 export function nbOfDays(startDate: Date, endDate: Date) {
   startDate = new Date(startDate)
   endDate = new Date(endDate)
@@ -145,12 +201,23 @@ export function nbOfDays(startDate: Date, endDate: Date) {
   return convertMsToDays(differenceInMs)
 }
 
+/**
+ * Ajout ou soustraction d'un nombre de jour à une date
+ * @param date 
+ * @param nbDays 
+ * @returns 
+ */
 export function dateAddDays(date: Date, nbDays: number = 0) {
   date = new Date(date)
   date.setDate(date.getDate() + nbDays)
   return date
 }
 
+/**
+ * Conversion d'une date en date string complête sauf si aujourd'hui
+ * @param date 
+ * @returns 
+ */
 export function findRealValue(date: Date) {
   const today = new Date()
   if (
@@ -166,6 +233,12 @@ export function findRealValue(date: Date) {
   } else return ''
 }
 
+/**
+ * Génération d'un tableau qui liste chaque mois entre deux dates sous forme de tableau
+ * @param dateFrom 
+ * @param dateTo 
+ * @returns 
+ */
 export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
   if (dateTo)
     return [
@@ -178,6 +251,11 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
   else return []
 }
 
+/**
+ * Conversion d'une date en HH:MM en date fonction
+ * @param str 
+ * @returns 
+ */
 export function stringToDecimalDate (str: string) {
   if (str !== null || str !== '') {
     const strArray = str.split('h')
@@ -187,6 +265,11 @@ export function stringToDecimalDate (str: string) {
   return 0
 }
 
+/**
+ * Conversion d'une date en HH:MM
+ * @param decimal 
+ * @returns 
+ */
 export function decimalToStringDate(decimal: number | null | undefined) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
@@ -198,6 +281,12 @@ export function decimalToStringDate(decimal: number | null | undefined) {
   return '0'
 }
 
+/**
+ * Création d'un tableau de mois différents entre 2 dates en string
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 export function getRangeOfMonths(startDate: Date, endDate: Date) {
   const dates = new Array<string>()
   const dateCounter = new Date(startDate)
@@ -223,6 +312,13 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
   return dates
 }
 
+/**
+ * Création d'un objet de mois différents entre 2 dates
+ * @param startDate 
+ * @param endDate 
+ * @param asObject 
+ * @returns 
+ */
 export function getRangeOfMonthsAsObject(
   startDate: Date,
   endDate: Date,
@@ -261,10 +357,21 @@ export function getRangeOfMonthsAsObject(
   return dates
 }
 
+/**
+ * Retourne si c'est le premier jour du mois
+ * @param date 
+ * @returns 
+ */
 export function isFirstDayOfMonth(date = new Date()) {
   return date.getDate() === 1
 }
 
+/**
+ * Compare si la premiere date est plus ancienne que la seconde
+ * @param firstDate 
+ * @param secondDate 
+ * @returns 
+ */
 export function isDateBiggerThan(
   firstDate: string | Date,
   secondDate: string | Date
@@ -275,6 +382,11 @@ export function isDateBiggerThan(
   return firstDate.getTime() >= secondDate.getTime()
 }
 
+/**
+ * Calcul du nombre d'heure travaillé par un magistrat dans un mois
+ * @param date 
+ * @returns 
+ */
 export function nbHourInMonth(date: Date = new Date()) {
   const dateStart = new Date(date.getFullYear(), date.getMonth())
   const dateStop = new Date(dateStart)
@@ -292,6 +404,11 @@ export function nbHourInMonth(date: Date = new Date()) {
   return nbDay * environment.nbHoursPerDayAndMagistrat
 }
 
+/**
+ * Suppression de la time zone à une date
+ * @param date 
+ * @returns 
+ */
 export function generalizeTimeZone(date: Date | undefined) {
   if (date === undefined) return undefined
   else return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())

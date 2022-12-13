@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service du calculateur</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -97,6 +104,12 @@
                             </li>
                             <li>
                                 <a href="#environment" >environment</a>
+                            </li>
+                            <li>
+                                <a href="#FONCTIONNAIRES" >FONCTIONNAIRES</a>
+                            </li>
+                            <li>
+                                <a href="#MAGISTRATS" >MAGISTRATS</a>
                             </li>
                             <li>
                                 <a href="#watcherList" >watcherList</a>
@@ -210,12 +223,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/calculator/calculator.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/calculator/calculator.service.ts:37</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -290,25 +305,71 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>filterList()</code>
+<code>filterList(categorySelected: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, selectedFonctionsIds: number[] | null)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">src/app/services/calculator/calculator.service.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="64"
+                            class="link-to-prism">src/app/services/calculator/calculator.service.ts:64</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API retourne la liste du tableau du calculateur pour une juridiction et une date choisie</p>
+</div>
 
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>categorySelected</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>selectedFonctionsIds</td>
+                                    <td>
+                                            <code>number[] | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -327,7 +388,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, base?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
 
@@ -340,7 +401,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:17</a></code>
 </div>
                 </td>
             </tr>
@@ -369,6 +430,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>base</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -417,7 +490,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:83</a></code>
 </div>
                 </td>
             </tr>
@@ -494,7 +567,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
 </div>
                 </td>
             </tr>
@@ -589,7 +662,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:139</a></code>
 </div>
                 </td>
             </tr>
@@ -666,7 +739,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:131</a></code>
 </div>
                 </td>
             </tr>
@@ -743,7 +816,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:61</a></code>
 </div>
                 </td>
             </tr>
@@ -820,7 +893,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:65</a></code>
 </div>
                 </td>
             </tr>
@@ -897,7 +970,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:127</a></code>
 </div>
                 </td>
             </tr>
@@ -978,7 +1051,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:53</a></code>
 </div>
                 </td>
             </tr>
@@ -1023,7 +1096,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:49</a></code>
 </div>
                 </td>
             </tr>
@@ -1068,7 +1141,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:147</a></code>
 </div>
                 </td>
             </tr>
@@ -1157,7 +1230,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
 </div>
                 </td>
             </tr>
@@ -1232,7 +1305,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:25</a></code>
 </div>
                 </td>
             </tr>
@@ -1307,7 +1380,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:21</a></code>
 </div>
                 </td>
             </tr>
@@ -1384,7 +1457,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:45</a></code>
 </div>
                 </td>
             </tr>
@@ -1461,7 +1534,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:41</a></code>
 </div>
                 </td>
             </tr>
@@ -1538,7 +1611,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:57</a></code>
 </div>
                 </td>
             </tr>
@@ -1625,7 +1698,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:29</a></code>
 </div>
                 </td>
             </tr>
@@ -1700,7 +1773,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:33</a></code>
 </div>
                 </td>
             </tr>
@@ -1749,10 +1822,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/calculator/calculator.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/calculator/calculator.service.ts:19</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des datas d&#39;un resultat de calculateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1782,10 +1861,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/calculator/calculator.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/calculator/calculator.service.ts:25</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date de début du calculateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1815,10 +1900,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/calculator/calculator.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/calculator/calculator.service.ts:31</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date de fin du calculateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1846,10 +1937,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/calculator/calculator.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/calculator/calculator.service.ts:37</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des réferentiels sélectionnées</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1877,7 +1974,71 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:13</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FONCTIONNAIRES"></a>
+                    <span class="name">
+                        <span ><b>FONCTIONNAIRES</b></span>
+                        <a href="#FONCTIONNAIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>FONCTIONNAIRES</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAGISTRATS"></a>
+                    <span class="name">
+                        <span ><b>MAGISTRATS</b></span>
+                        <a href="#MAGISTRATS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MAGISTRATS</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -1915,7 +2076,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -1937,30 +2098,62 @@ import { ContentieuxOptionsService } from &#x27;../contentieux-options/contentie
 import { ServerService } from &#x27;../http-server/server.service&#x27;
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
 
+/**
+ * Service du calculateur
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class CalculatorService extends MainClass {
+  /**
+   * Liste des datas d&#x27;un resultat de calculateur
+   */
   calculatorDatas: BehaviorSubject&lt;CalculatorInterface[]&gt; &#x3D; new BehaviorSubject&lt;
     CalculatorInterface[]
   &gt;([])
+  /**
+   * Date de début du calculateur
+   */
   dateStart: BehaviorSubject&lt;Date | null&gt; &#x3D; new BehaviorSubject&lt;Date | null&gt;(
     null
   )
+  /**
+   * Date de fin du calculateur
+   */
   dateStop: BehaviorSubject&lt;Date | null&gt; &#x3D; new BehaviorSubject&lt;Date | null&gt;(
     null
   )
+  /**
+   * Liste des réferentiels sélectionnées
+   */
   referentielIds: BehaviorSubject&lt;number[]&gt; &#x3D; new BehaviorSubject&lt;number[]&gt;([])
 
+  /**
+   * Constructeur
+   * @param serverService 
+   * @param humanResourceService 
+   * @param contentieuxOptionsService 
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
+
+    this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
+      this.dateStart.next(null)
+      this.dateStop.next(null)
+    })
   }
 
-  filterList() {
+  /**
+   * API retourne la liste du tableau du calculateur pour une juridiction et une date choisie
+   * @param categorySelected 
+   * @param selectedFonctionsIds 
+   * @returns 
+   */
+  filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
     return this.serverService
       .post(&#x60;calculator/filter-list&#x60;, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -1968,6 +2161,8 @@ export class CalculatorService extends MainClass {
         dateStop: this.dateStop.getValue(),
         contentieuxIds: this.referentielIds.getValue(),
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
+        categorySelected,
+        selectedFonctionsIds,
       })
       .then((data) &#x3D;&gt; data.data || [])
   }

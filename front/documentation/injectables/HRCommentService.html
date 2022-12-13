@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de gestion des commentaires d&#39;un magistrat, greffier....</p>
+
+            </p>
 
 
 
@@ -107,12 +114,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:11</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -182,14 +191,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="14"
-                            class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:14</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="27"
+                            class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:27</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API appel au serveur pour récuperer le commentaire d&#39;une fiche</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -251,14 +262,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:41</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API mise à jour du commentaire d&#39;une fiche</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -322,15 +335,28 @@
 import { ServerService } from &#x27;../http-server/server.service&#x27;;
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;;
 
+/**
+ * Service de gestion des commentaires d&#x27;un magistrat, greffier....
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class HRCommentService {
+  /**
+   * Constructeur
+   * @param serverService 
+   * @param humanResourceService 
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService
   ) {}
 
+  /**
+   * API appel au serveur pour récuperer le commentaire d&#x27;une fiche
+   * @param id 
+   * @returns 
+   */
   getHRComment(id: number) {
     return this.serverService
       .post(&#x27;hr-comment/get-hr-comment&#x27;, {
@@ -339,6 +365,12 @@ export class HRCommentService {
       .then((r) &#x3D;&gt; r.data);
   }
 
+  /**
+   * API mise à jour du commentaire d&#x27;une fiche
+   * @param id 
+   * @param comment 
+   * @returns 
+   */
   updateHRComment(id: number, comment: string) {
     return this.serverService
       .post(&#x27;hr-comment/update-hr-comment&#x27;, {
@@ -347,14 +379,6 @@ export class HRCommentService {
       })
       .then((r) &#x3D;&gt; {
         const updateAt &#x3D; new Date(r.data);
-        const list &#x3D; this.humanResourceService.hr.getValue();
-        const index &#x3D; list.findIndex((hr) &#x3D;&gt; hr.id &#x3D;&#x3D;&#x3D; id);
-        if (index !&#x3D;&#x3D; -1) {
-          list[index].comment &#x3D; comment;
-          list[index].updatedAt &#x3D; updateAt;
-          this.humanResourceService.hr.next(list);
-        }
-
         return updateAt;
       });
   }

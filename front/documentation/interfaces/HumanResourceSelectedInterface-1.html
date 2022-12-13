@@ -482,6 +482,7 @@ import { HRSituationInterface } from &#x27;src/app/interfaces/hr-situation&#x27;
 import { WorkforceService } from &#x27;src/app/services/workforce/workforce.service&#x27;
 import { FilterPanelInterface } from &#x27;./filter-panel/filter-panel.component&#x27;
 import { UserService } from &#x27;src/app/services/user/user.service&#x27;
+import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -526,7 +527,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   dateSelected: Date &#x3D; this.workforceService.dateSelected.getValue()
   listFormated: listFormatedInterface[] &#x3D; []
   filterSelected: ContentieuReferentielInterface | null &#x3D; null
-  lastScrollTop: number &#x3D; 0
   showFilterPanel: number &#x3D; -1
   filterParams: FilterPanelInterface | null &#x3D; this.workforceService.filterParams
   canViewReaffectator: boolean &#x3D; false
@@ -537,7 +537,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
   }
@@ -624,6 +625,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         nbPersonal: personal.length,
       }
     })
+
+    console.log(this.categoriesFilterList)
+
+    this.calculateTotalAffected()
   }
 
   async addHR() {
@@ -682,14 +687,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (opacity &#x3D;&#x3D;&#x3D; 1) {
           valuesFinded.push(h)
         }
-
         return {
           ...h,
           opacity,
         }
       }),
     }))
-
+    console.log(this.listFormated)
     this.valuesFinded &#x3D; valuesFinded.length &#x3D;&#x3D;&#x3D; nbPerson ? null : valuesFinded
     this.indexValuesFinded &#x3D; 0
 
@@ -697,6 +701,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
+      if (this.searchValue.length !&#x3D;&#x3D; 0)
+        this.appService.alert.next({
+          text: &#x27;La personne recherchée n’est pas présente à la date sélectionnée.&#x27;,
+        })
     }
   }
 
@@ -736,8 +744,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   orderListWithFiltersParams() {
-
-    console.log(this.filterParams)
+    // console.log(this.filterParams)
     this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
       let listFiltered &#x3D; [...list.hr]
       if (this.filterParams) {
@@ -784,26 +791,23 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (findElement) {
           const headers &#x3D; findContainer.querySelectorAll(&#x27;.header-list&#x27;)
           const { top } &#x3D; findElement.getBoundingClientRect()
-          let topDelta &#x3D; findContainer.getBoundingClientRect().top + 8
+          const mainTop &#x3D; findContainer.getBoundingClientRect().top
+          let topDelta &#x3D; mainTop
           for (let i &#x3D; 0; i &lt; headers.length; i++) {
             const topHeader &#x3D; headers[i].getBoundingClientRect().top
-            if (topHeader &lt; top) {
+            if (topHeader &#x3D;&#x3D;&#x3D; mainTop || topHeader &lt; top) {
               topDelta +&#x3D; headers[i].getBoundingClientRect().height
+              break
             }
           }
 
-          let scrollTop &#x3D; top - topDelta + findContainer.scrollTop
-          if (this.lastScrollTop &amp;&amp; this.lastScrollTop &gt; scrollTop) {
-            scrollTop -&#x3D; 88
-          }
+          let scrollTop &#x3D; top - topDelta + findContainer.scrollTop - 8
 
           isFinded &#x3D; true
           findContainer.scroll({
             behavior: &#x27;smooth&#x27;,
             top: scrollTop,
           })
-
-          this.lastScrollTop &#x3D; scrollTop
         } else {
         }
       } else {
@@ -889,6 +893,43 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.orderListWithFiltersParams()
+  }
+
+  calculateTotalAffected() {
+    this.listFormated &#x3D; this.listFormated.map((group) &#x3D;&gt; {
+      group.referentiel &#x3D; group.referentiel.map((r) &#x3D;&gt; ({
+        ...r,
+        totalAffected: 0,
+      }))
+
+      const listFiltered &#x3D; group.hrFiltered || []
+      listFiltered.map((hr) &#x3D;&gt; {
+        hr.tmpActivities &#x3D; {}
+
+        group.referentiel &#x3D; group.referentiel.map((ref) &#x3D;&gt; {
+          hr.tmpActivities[ref.id] &#x3D; hr.currentActivities.filter(
+            (r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; ref.id
+          )
+          if (hr.tmpActivities[ref.id].length) {
+            const timeAffected &#x3D; sumBy(hr.tmpActivities[ref.id], &#x27;percent&#x27;)
+            if (timeAffected) {
+              let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP &lt; 0) {
+                realETP &#x3D; 0
+              }
+              ref.totalAffected &#x3D;
+                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+            }
+          }
+
+          return ref
+        })
+
+        return hr
+      })
+
+      return group
+    })
   }
 }
 </code></pre>

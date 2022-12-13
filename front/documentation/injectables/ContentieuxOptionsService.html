@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service des options des contentieux donc aujourd&#39;hui le temps moyens / dossier</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -90,13 +97,25 @@
                                 <a href="#backups" >backups</a>
                             </li>
                             <li>
+                                <a href="#contentieuxLastUpdate" >contentieuxLastUpdate</a>
+                            </li>
+                            <li>
                                 <a href="#contentieuxOptions" >contentieuxOptions</a>
+                            </li>
+                            <li>
+                                <a href="#initValue" >initValue</a>
                             </li>
                             <li>
                                 <a href="#optionsIsModify" >optionsIsModify</a>
                             </li>
                             <li>
                                 <a href="#environment" >environment</a>
+                            </li>
+                            <li>
+                                <a href="#FONCTIONNAIRES" >FONCTIONNAIRES</a>
+                            </li>
+                            <li>
+                                <a href="#MAGISTRATS" >MAGISTRATS</a>
                             </li>
                             <li>
                                 <a href="#watcherList" >watcherList</a>
@@ -123,6 +142,9 @@
                                 <a href="#getAllContentieuxOptions" >getAllContentieuxOptions</a>
                             </li>
                             <li>
+                                <a href="#getLastUpdate" >getLastUpdate</a>
+                            </li>
+                            <li>
                                 <a href="#initDatas" >initDatas</a>
                             </li>
                             <li>
@@ -139,6 +161,9 @@
                             </li>
                             <li>
                                 <a href="#renameBackup" >renameBackup</a>
+                            </li>
+                            <li>
+                                <a href="#setInitValue" >setInitValue</a>
                             </li>
                             <li>
                                 <a href="#updateOptions" >updateOptions</a>
@@ -237,12 +262,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:24</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:47</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -312,18 +339,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="148"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:148</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="221"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:221</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API création d&#39;une base vide</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -349,18 +383,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="107"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:107</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="172"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:172</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Recopie d&#39;options dans un nouveau jeux de données</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -386,14 +427,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="56"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:56</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="102"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:102</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Récupération de l&#39;ensemble des juridictions des informations de la juridiction sélectionnée</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -439,6 +482,50 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getLastUpdate"></a>
+                    <span class="name">
+                        <span ><b>getLastUpdate</b></span>
+                        <a href="#getLastUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getLastUpdate()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="274"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:274</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Récupération de la dernière mise à jour des options d&#39;une juridiction</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="initDatas"></a>
                     <span class="name">
                         <span ><b>initDatas</b></span>
@@ -455,18 +542,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="33"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:33</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:65</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Récupération des données générales pour un utilisateur</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -492,18 +586,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="39"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:39</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="75"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:75</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Récuparation des informations générales d&#39;une juridiction</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -529,14 +630,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="50"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:50</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="91"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:91</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API récupération des temps moyens par dossier d&#39;une juridiction</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -598,14 +701,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="129"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:129</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="199"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:199</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Sauvegarde d&#39;un jeux de données dans la même ou une autre base</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -667,18 +772,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="94"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:94</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="155"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:155</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API suppréssion d&#39;une sauvegarde d&#39;options</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -704,18 +816,69 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="167"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:167</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="244"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:244</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API rénommage d&#39;un jeu de données</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setInitValue"></a>
+                    <span class="name">
+                        <span ><b>setInitValue</b></span>
+                        <a href="#setInitValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setInitValue()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="291"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:291</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Passage des valeurs par défaut</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -741,14 +904,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="65"
-                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:65</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="115"
+                            class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:115</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Formatage des données pour les temps moyens / dossier d&#39;un référentiel</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -803,7 +968,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, base?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
 
@@ -816,7 +981,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:17</a></code>
 </div>
                 </td>
             </tr>
@@ -845,6 +1010,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>base</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -893,7 +1070,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:83</a></code>
 </div>
                 </td>
             </tr>
@@ -970,7 +1147,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
 </div>
                 </td>
             </tr>
@@ -1065,7 +1242,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:139</a></code>
 </div>
                 </td>
             </tr>
@@ -1142,7 +1319,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:131</a></code>
 </div>
                 </td>
             </tr>
@@ -1219,7 +1396,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:61</a></code>
 </div>
                 </td>
             </tr>
@@ -1296,7 +1473,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:65</a></code>
 </div>
                 </td>
             </tr>
@@ -1373,7 +1550,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:127</a></code>
 </div>
                 </td>
             </tr>
@@ -1454,7 +1631,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:53</a></code>
 </div>
                 </td>
             </tr>
@@ -1499,7 +1676,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:49</a></code>
 </div>
                 </td>
             </tr>
@@ -1544,7 +1721,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:147</a></code>
 </div>
                 </td>
             </tr>
@@ -1633,7 +1810,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
 </div>
                 </td>
             </tr>
@@ -1708,7 +1885,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:25</a></code>
 </div>
                 </td>
             </tr>
@@ -1783,7 +1960,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:21</a></code>
 </div>
                 </td>
             </tr>
@@ -1860,7 +2037,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:45</a></code>
 </div>
                 </td>
             </tr>
@@ -1937,7 +2114,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:41</a></code>
 </div>
                 </td>
             </tr>
@@ -2014,7 +2191,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:57</a></code>
 </div>
                 </td>
             </tr>
@@ -2101,7 +2278,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:29</a></code>
 </div>
                 </td>
             </tr>
@@ -2176,7 +2353,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:33</a></code>
 </div>
                 </td>
             </tr>
@@ -2225,10 +2402,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:35</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Id du jeu de donnée en cours d&#39;utilisation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2258,10 +2441,53 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:25</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des jeux de données avec des valeurs</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="contentieuxLastUpdate"></a>
+                    <span class="name">
+                        <span ><b>contentieuxLastUpdate</b></span>
+                        <a href="#contentieuxLastUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;any&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;any&gt;({})</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date de dernière modification d&#39;un contentieux</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2289,10 +2515,53 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:20</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des temps moyens par jeux de données</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initValue"></a>
+                    <span class="name">
+                        <span ><b>initValue</b></span>
+                        <a href="#initValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;boolean&gt;(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Si c&#39;est la première fois que l&#39;on charge les données</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2322,10 +2591,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/services/contentieux-options/contentieux-options.service.ts:41</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Si un temps à été modifié mais non sauvegardé</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2353,7 +2628,71 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:13</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FONCTIONNAIRES"></a>
+                    <span class="name">
+                        <span ><b>FONCTIONNAIRES</b></span>
+                        <a href="#FONCTIONNAIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>FONCTIONNAIRES</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAGISTRATS"></a>
+                    <span class="name">
+                        <span ><b>MAGISTRATS</b></span>
+                        <a href="#MAGISTRATS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MAGISTRATS</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -2391,7 +2730,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -2414,22 +2753,50 @@ import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 import { ServerService } from &#x27;../http-server/server.service&#x27;
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
 
+/**
+ * Service des options des contentieux donc aujourd&#x27;hui le temps moyens / dossier
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class ContentieuxOptionsService extends MainClass {
+  /**
+   * Liste des temps moyens par jeux de données
+   */
   contentieuxOptions: BehaviorSubject&lt;ContentieuxOptionsInterface[]&gt; &#x3D;
     new BehaviorSubject&lt;ContentieuxOptionsInterface[]&gt;([])
+  /**
+   * Liste des jeux de données avec des valeurs
+   */
   backups: BehaviorSubject&lt;BackupInterface[]&gt; &#x3D; new BehaviorSubject&lt;
     BackupInterface[]
   &gt;([])
+  /**
+   * Date de dernière modification d&#x27;un contentieux
+   */
+  contentieuxLastUpdate: BehaviorSubject&lt;any&gt; &#x3D; new BehaviorSubject&lt;any&gt;({})
+  /**
+   * Id du jeu de donnée en cours d&#x27;utilisation
+   */
   backupId: BehaviorSubject&lt;number | null&gt; &#x3D; new BehaviorSubject&lt;number | null&gt;(
     null
   )
+  /**
+   * Si un temps à été modifié mais non sauvegardé
+   */
   optionsIsModify: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(
     false
   )
+  /**
+   * Si c&#x27;est la première fois que l&#x27;on charge les données
+   */
+  initValue: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(false)
 
+  /**
+   * Constructeur
+   * @param serverService
+   * @param humanResourceService
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService
@@ -2437,12 +2804,20 @@ export class ContentieuxOptionsService extends MainClass {
     super()
   }
 
+  /**
+   * Récupération des données générales pour un utilisateur
+   * @returns
+   */
   initDatas() {
     this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
       this.loadBackupsAndId()
     })
   }
 
+  /**
+   * Récuparation des informations générales d&#x27;une juridiction
+   * @returns
+   */
   loadBackupsAndId() {
     const juridictionId &#x3D; this.humanResourceService.backupId.getValue()
     if (juridictionId !&#x3D;&#x3D; null) {
@@ -2454,12 +2829,22 @@ export class ContentieuxOptionsService extends MainClass {
     }
   }
 
+  /**
+   * API récupération des temps moyens par dossier d&#x27;une juridiction
+   * @param backupId
+   * @returns
+   */
   loadDetails(backupId: number): Promise&lt;ContentieuxOptionsInterface[]&gt; {
     return this.serverService
       .get(&#x60;contentieux-options/get-backup-details/${backupId}&#x60;)
       .then((r) &#x3D;&gt; r.data || [])
   }
 
+  /**
+   * Récupération de l&#x27;ensemble des juridictions des informations de la juridiction sélectionnée
+   * @param juridictionId
+   * @returns
+   */
   getAllContentieuxOptions(juridictionId: number) {
     return this.serverService
       .post(&#x27;contentieux-options/get-all&#x27;, {
@@ -2469,17 +2854,26 @@ export class ContentieuxOptionsService extends MainClass {
       .then((r) &#x3D;&gt; r.data)
   }
 
+  /**
+   * Formatage des données pour les temps moyens / dossier d&#x27;un référentiel
+   * @param referentiel
+   */
   updateOptions(referentiel: ContentieuReferentielInterface) {
     const options &#x3D; this.contentieuxOptions.getValue()
+
     const findIndexOptions &#x3D; options.findIndex(
       (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; referentiel.id
     )
-
-    if (referentiel.averageProcessingTime) {
+    if (
+      referentiel.averageProcessingTime ||
+      referentiel.averageProcessingTimeFonc
+    ) {
       if (findIndexOptions &#x3D;&#x3D;&#x3D; -1) {
         // add
         options.push({
           averageProcessingTime: referentiel.averageProcessingTime || null,
+          averageProcessingTimeFonc:
+            referentiel.averageProcessingTimeFonc || null,
           contentieux: referentiel,
         })
       } else {
@@ -2487,6 +2881,8 @@ export class ContentieuxOptionsService extends MainClass {
         options[findIndexOptions] &#x3D; {
           ...options[findIndexOptions],
           averageProcessingTime: referentiel.averageProcessingTime || null,
+          averageProcessingTimeFonc:
+            referentiel.averageProcessingTimeFonc || null,
         }
       }
     } else if (findIndexOptions !&#x3D;&#x3D; -1) {
@@ -2498,6 +2894,10 @@ export class ContentieuxOptionsService extends MainClass {
     this.optionsIsModify.next(true)
   }
 
+  /**
+   * API suppréssion d&#x27;une sauvegarde d&#x27;options
+   * @returns
+   */
   removeBackup() {
     if (confirm(&#x27;Êtes-vous sûr de vouloir supprimer cette sauvegarde?&#x27;)) {
       return this.serverService
@@ -2511,6 +2911,10 @@ export class ContentieuxOptionsService extends MainClass {
     return Promise.resolve()
   }
 
+  /**
+   * Recopie d&#x27;options dans un nouveau jeux de données
+   * @returns
+   */
   duplicateBackup() {
     const backup &#x3D; this.backups
       .getValue()
@@ -2533,12 +2937,16 @@ export class ContentieuxOptionsService extends MainClass {
     return Promise.resolve()
   }
 
+  /**
+   * Sauvegarde d&#x27;un jeux de données dans la même ou une autre base
+   * @param isCopy
+   * @returns
+   */
   onSaveDatas(isCopy: boolean) {
     let backupName &#x3D; null
     if (isCopy) {
       backupName &#x3D; prompt(&#x27;Sous quel nom ?&#x27;)
     }
-
     return this.serverService
       .post(&#x60;contentieux-options/save-backup&#x60;, {
         list: this.contentieuxOptions.getValue(),
@@ -2552,6 +2960,10 @@ export class ContentieuxOptionsService extends MainClass {
       })
   }
 
+  /**
+   * API création d&#x27;une base vide
+   * @returns
+   */
   createEmpy() {
     let backupName &#x3D; prompt(&#x27;Sous quel nom ?&#x27;)
 
@@ -2571,6 +2983,10 @@ export class ContentieuxOptionsService extends MainClass {
     return Promise.resolve()
   }
 
+  /**
+   * API rénommage d&#x27;un jeu de données
+   * @returns
+   */
   renameBackup() {
     const getBackup &#x3D; this.backups
       .getValue()
@@ -2595,6 +3011,32 @@ export class ContentieuxOptionsService extends MainClass {
     }
 
     return Promise.resolve()
+  }
+
+  /**
+   * Récupération de la dernière mise à jour des options d&#x27;une juridiction
+   * @returns
+   */
+  getLastUpdate() {
+    if (this.backupId.getValue() !&#x3D;&#x3D; undefined)
+      return this.serverService
+        .post(&#x60;contentieux-options/get-last-update&#x60;, {
+          backupId: this.backupId.getValue(),
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then((r) &#x3D;&gt; {
+          this.contentieuxLastUpdate.next(r.data)
+        })
+    else return {}
+  }
+
+  /**
+   * Passage des valeurs par défaut
+   * @returns
+   */
+  setInitValue() {
+    this.initValue.next(true)
+    this.optionsIsModify.next(false)
   }
 }
 </code></pre>

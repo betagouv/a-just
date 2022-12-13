@@ -433,6 +433,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR.indisponibilities &amp;&amp;
       this.currentHR.indisponibilities.length
     ) {
+      maxDate &#x3D; today(maxDate) // stop reference
       maxDate.setDate(maxDate.getDate() + 1)
     }
 
@@ -909,6 +910,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; history.id &amp;&amp; h.dateStart &#x3D;&#x3D;&#x3D; history.dateStart
         )
       : -1
+
     if (this.onEditIndex &#x3D;&#x3D;&#x3D; null) {
       if (index &#x3D;&#x3D;&#x3D; -1) {
         // add situation

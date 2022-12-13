@@ -12,40 +12,76 @@ import { getShortMonthString, today } from 'src/app/utils/dates'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
 
+/**
+ * Service de récupération des fiches +
+ */
+
 @Injectable({
   providedIn: 'root',
 })
 export class HumanResourceService {
-  hr: BehaviorSubject<HumanResourceInterface[]> = new BehaviorSubject<
-    HumanResourceInterface[]
-  >([]) // TODO REMOVE
+  /**
+   * Liste des contentieux + soutien + indispo
+   */
   contentieuxReferentiel: BehaviorSubject<ContentieuReferentielInterface[]> =
     new BehaviorSubject<ContentieuReferentielInterface[]>([])
+  /**
+   * Liste des contentieux uniquement
+   */
   contentieuxReferentielOnly: BehaviorSubject<
     ContentieuReferentielInterface[]
   > = new BehaviorSubject<ContentieuReferentielInterface[]>([])
+  /**
+   * Liste des juridictions dont à accès l'utilisateur
+   */
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<
     BackupInterface[]
   >([])
+  /**
+   * Id de la juridiction selectionnée
+   */
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
     null
   )
+  /**
+   * Juridiction selectionnée
+   */
   hrBackup: BehaviorSubject<BackupInterface | null> =
     new BehaviorSubject<BackupInterface | null>(null)
-  hrIsModify: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
+   * Liste des catégories
+   */
   categories: BehaviorSubject<HRCategoryInterface[]> = new BehaviorSubject<
     HRCategoryInterface[]
   >([])
+  /**
+   * Liste des fonctions
+   */
   fonctions: BehaviorSubject<HRFonctionInterface[]> = new BehaviorSubject<
     HRFonctionInterface[]
   >([])
+  /**
+   * Liste du référentiels des indispos
+   */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Liste des id du référentiels des indispos
+   */
   allIndisponibilityReferentielIds: Array<number> = []
-  copyOfIdsIndispo: number[] = []
+  /**
+   * Liste des catégories sélectionnée dans l'écran du ventilateur en cache
+   */
   categoriesFilterListIds: number[] = []
+  /**
+   * Liste des référentiels sélectionnée dans l'écran du ventilateur en cache
+   */
   selectedReferentielIds: number[] = []
-  selectedCategoriesIds: number[] = []
 
+  /**
+   * Constructeur qui lance le chargement d'une juridiction au chargement de la page
+   * @param serverService
+   * @param activitiesService
+   */
   constructor(
     private serverService: ServerService,
     private activitiesService: ActivitiesService
@@ -80,6 +116,11 @@ export class HumanResourceService {
     })
   }
 
+  /**
+   * Pour transformer les dates en vrais objets date
+   * @param h
+   * @returns
+   */
   formatHR(h: HumanResourceInterface) {
     return {
       ...h,
@@ -89,6 +130,11 @@ export class HumanResourceService {
     }
   }
 
+  /**
+   * Liste des fiches d'une juridiction
+   * @param id
+   * @returns
+   */
   getCurrentHR(id: number | null) {
     return this.serverService
       .post('human-resources/get-current-hr', {
@@ -97,11 +143,16 @@ export class HumanResourceService {
       .then((r) => r.data)
   }
 
+  /**
+   * Création d'une fiche vide
+   * @param date
+   * @returns
+   */
   async createHumanResource(date: Date) {
     const activities: RHActivityInterface[] = []
 
     const hr = {
-      id: this.hr.getValue().length * -1,
+      id: -1,
       firstName: null,
       lastName: null,
       activities,
@@ -117,16 +168,10 @@ export class HumanResourceService {
     //} else return null
   }
 
-  deleteHRById(HRId: number) {
-    const hr = this.hr.getValue()
-    const index = hr.findIndex((h) => h.id === HRId)
-
-    if (index !== -1) {
-      hr.splice(index, 1)
-      this.hr.next(hr)
-    }
-  }
-
+  /**
+   * Suppression d'un jeu de donnée d'une juridiction
+   * @returns
+   */
   removeBackup() {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
       return this.serverService
@@ -139,6 +184,10 @@ export class HumanResourceService {
     return Promise.resolve()
   }
 
+  /**
+   * Dupplication d'une juridiciton
+   * @returns
+   */
   duplicateBackup() {
     const backup = this.backups
       .getValue()
@@ -159,6 +208,11 @@ export class HumanResourceService {
     return Promise.resolve()
   }
 
+  /**
+   * Suppression d'une fiche d'une juridiction
+   * @param id
+   * @returns
+   */
   async removeHrById(id: number) {
     if (confirm('Supprimer cette personne ?')) {
       return this.serverService
@@ -180,6 +234,10 @@ export class HumanResourceService {
     return false
   }
 
+  /**
+   * Création d'une juridiction vide
+   * @returns
+   */
   createEmpyHR() {
     let backupName = prompt('Sous quel nom ?')
 
@@ -197,23 +255,12 @@ export class HumanResourceService {
     return Promise.resolve()
   }
 
-  duplicateHR(rhId: number) {
-    if (confirm('Dupliquer cette personne ?')) {
-      const list = this.hr.getValue()
-      const findIndex = list.findIndex((r) => r.id === rhId)
-      if (findIndex !== -1) {
-        const person = JSON.parse(JSON.stringify(list[findIndex]))
-        person.id = list.length * -1
-        list.push(person)
-        this.hr.next(list)
-        this.hrIsModify.next(true)
-        return true
-      }
-    }
-
-    return false
-  }
-
+  /**
+   * Filtre des activités saisies à une date précise
+   * @param list
+   * @param date
+   * @returns
+   */
   filterActivitiesByDate(
     list: RHActivityInterface[],
     date: Date
@@ -241,6 +288,11 @@ export class HumanResourceService {
     return uniqBy(list, 'referentielId')
   }
 
+  /**
+   * Suppression des doublons de situations
+   * @param situations
+   * @returns
+   */
   distinctSituations(situations: HRSituationInterface[]) {
     const listTimeTamps: number[] = []
 
@@ -262,11 +314,16 @@ export class HumanResourceService {
     )
   }
 
+  /**
+   * Filtre d'une situation d'une fiche à une date précise
+   * @param hr
+   * @param date
+   * @param order
+   * @returns
+   */
   findSituation(
     hr: HumanResourceInterface | null,
-
     date?: Date,
-
     order = 'desc'
   ) {
     if (date) {
@@ -291,11 +348,16 @@ export class HumanResourceService {
     return situations.length ? situations[0] : null
   }
 
+  /**
+   * Liste de toutes les situations jusqu'à une date saisie
+   * @param hr 
+   * @param date 
+   * @param order 
+   * @returns 
+   */
   findAllSituations(
     hr: HumanResourceInterface | null,
-
     date?: Date,
-
     order: string | boolean = 'desc'
   ) {
     let situations = orderBy(
@@ -320,6 +382,12 @@ export class HumanResourceService {
     return situations
   }
 
+  /**
+   * Filtre des indispos d'une fiche
+   * @param hr 
+   * @param date 
+   * @returns 
+   */
   findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
     let indisponibilities = orderBy(
       hr?.indisponibilities || [],
@@ -356,6 +424,12 @@ export class HumanResourceService {
     return indisponibilities
   }
 
+  /**
+   * Mise à jour d'une fiche avec son ID et sur le serveur
+   * @param orignalObject 
+   * @param params 
+   * @returns 
+   */
   async updatePersonById(
     orignalObject: HumanResourceInterface,
     params: Object
@@ -367,94 +441,11 @@ export class HumanResourceService {
     return await this.updateRemoteHR(orignalObject)
   }
 
-  async pushHRUpdate(
-    humanId: number,
-    profil: any,
-    newReferentiel: ContentieuReferentielInterface[],
-    indisponibilities: RHActivityInterface[]
-  ) {
-    const list = this.hr.getValue()
-    const index = list.findIndex((h) => h.id === humanId)
-    const categories = this.categories.getValue()
-    const fonctions = this.fonctions.getValue()
-
-    if (index !== -1) {
-      const activitiesStartDate = today(profil.activitiesStartDate)
-
-      // update situation
-      let situations = list[index].situations || []
-      const cat = categories.find((c) => c.id == profil.categoryId)
-      const fonct = fonctions.find((c) => c.id == profil.fonctionId)
-      if (!fonct) {
-        alert('Vous devez saisir une fonction !')
-        return
-      }
-
-      if (!cat) {
-        alert('Vous devez saisir une catégorie !')
-        return
-      }
-
-      const activities: any[] = []
-      newReferentiel
-        .filter((r) => r.percent && r.percent > 0)
-        .map((r) => {
-          activities.push({
-            percent: r.percent || 0,
-            contentieux: r,
-          })
-          ;(r.childrens || [])
-            .filter((r) => r.percent && r.percent > 0)
-            .map((child) => {
-              activities.push({
-                percent: child.percent || 0,
-                contentieux: child,
-              })
-            })
-        })
-
-      // find if situation is in same date
-      const isSameDate = situations.findIndex((s) => {
-        const day = today(s.dateStart)
-        return activitiesStartDate.getTime() === day.getTime()
-      })
-
-      if (isSameDate !== -1) {
-        situations[isSameDate] = {
-          ...situations[isSameDate],
-          etp: profil.etp / 100,
-          category: cat,
-          fonction: fonct,
-          activities,
-        }
-      } else {
-        situations.splice(0, 0, {
-          id: -1,
-          etp: profil.etp / 100,
-          category: cat,
-          fonction: fonct,
-          dateStart: activitiesStartDate,
-          activities,
-        })
-      }
-
-      list[index] = {
-        ...list[index],
-        firstName: profil.firstName,
-        lastName: profil.lastName,
-        dateStart: profil.dateStart ? new Date(profil.dateStart) : undefined,
-        dateEnd: profil.dateEnd ? new Date(profil.dateEnd) : undefined,
-        situations: this.distinctSituations(situations),
-        indisponibilities,
-      }
-
-      await this.updateRemoteHR(list[index])
-      return true
-    }
-
-    return false
-  }
-
+  /**
+   * API mise à jour d'une fiche sur le serveur
+   * @param hr 
+   * @returns 
+   */
   updateRemoteHR(hr: any) {
     console.log(hr)
     return this.serverService
@@ -480,6 +471,11 @@ export class HumanResourceService {
       })
   }
 
+  /**
+   * API Suppression d'une situation d'une fiche
+   * @param situationId 
+   * @returns 
+   */
   removeSituation(situationId: number) {
     if (confirm('Supprimer cette situation ?')) {
       return this.serverService
@@ -503,6 +499,13 @@ export class HumanResourceService {
     return false
   }
 
+  /**
+   * Calcul de l'ETP à une date d'une fiche (etp - indispos)
+   * @param referentielId 
+   * @param date 
+   * @param hr 
+   * @returns 
+   */
   getEtpByDateAndPerson(
     referentielId: number,
     date: Date,
@@ -546,6 +549,13 @@ export class HumanResourceService {
       situation: null,
     }
   }
+
+  /**
+   * Control de l'ensemble des indispo qu'il n'y ai pas plus de 100% à une date donnée
+   * @param human 
+   * @param indisponibilities 
+   * @returns 
+   */
   controlIndisponibilities(
     human: HumanResourceInterface,
     indisponibilities: RHActivityInterface[]
@@ -612,6 +622,16 @@ export class HumanResourceService {
       : null
   }
 
+  /**
+   * API appel au serveur pour lister les effectifs d'une juridiction à une date précise
+   * @param backupId 
+   * @param date 
+   * @param contentieuxIds 
+   * @param categoriesIds 
+   * @param endPeriodToCheck 
+   * @param extractor 
+   * @returns 
+   */
   onFilterList(
     backupId: number,
     date: Date,
@@ -620,8 +640,6 @@ export class HumanResourceService {
     endPeriodToCheck?: Date,
     extractor?: boolean
   ) {
-    console.log('extra', extractor ? extractor : false)
-
     return this.serverService
       .post(`human-resources/filter-list`, {
         backupId,
@@ -638,6 +656,11 @@ export class HumanResourceService {
       })
   }
 
+  /**
+   * API appel au serveur pour retourner les détails d'une fiche
+   * @param hrId 
+   * @returns 
+   */
   loadRemoteHR(hrId: number): Promise<HumanResourceInterface | null> {
     return this.serverService
       .get(`human-resources/read-hr/${hrId}`)
