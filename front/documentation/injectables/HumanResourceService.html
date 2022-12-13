@@ -289,8 +289,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="556"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:556</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="559"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:559</a></div>
                 </td>
             </tr>
 
@@ -1118,8 +1118,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="506"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:506</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="509"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:509</a></div>
                 </td>
             </tr>
 
@@ -1213,8 +1213,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="661"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:661</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="664"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:664</a></div>
                 </td>
             </tr>
 
@@ -1284,8 +1284,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="632"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:632</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="635"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:635</a></div>
                 </td>
             </tr>
 
@@ -1532,8 +1532,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="476"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:476</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="479"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:479</a></div>
                 </td>
             </tr>
 
@@ -1688,8 +1688,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="450"
-                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:450</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="449"
+                            class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:449</a></div>
                 </td>
             </tr>
 
@@ -2606,7 +2606,6 @@ export class HumanResourceService {
       ...orignalObject,
       ...params,
     }
-
     return await this.updateRemoteHR(orignalObject)
   }
 
@@ -2616,13 +2615,17 @@ export class HumanResourceService {
    * @returns 
    */
   updateRemoteHR(hr: any) {
+    console.log(hr)
     return this.serverService
       .post(&#x60;human-resources/update-hr&#x60;, {
         hr,
         backupId: this.backupId.getValue(),
       })
       .then((response) &#x3D;&gt; {
+        console.log(response)
+
         const newHR &#x3D; this.formatHR(response.data)
+        console.log(response.data)
 
         const hrBackups &#x3D; this.backups.getValue()
         const backupIndex &#x3D; hrBackups.findIndex(
