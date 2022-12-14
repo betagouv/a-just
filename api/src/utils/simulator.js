@@ -346,7 +346,8 @@ export async function getCSActivities (referentielId, allActivities, dateStart, 
         (a) =>
           a.contentieux.id === referentielId &&
           month(a.periode).getTime() >= month(dateStart).getTime() &&
-          month(a.periode).getTime() <= month(dateStop).getTime()
+          month(a.periode).getTime() <= month(dateStop).getTime() &&
+          a.stock !== null
       ),
       (a) => {
         const p = new Date(a.periode)
@@ -355,8 +356,8 @@ export async function getCSActivities (referentielId, allActivities, dateStart, 
       ['desc']
     )
 
-    const startDateCs = month(lastActivities[lastActivities.length - 1].periode)
-    const endDateCs = month(lastActivities[0].periode, 0, 'lastday')
+    const startDateCs = month(lastActivities.length ? lastActivities[lastActivities.length - 1].periode : new Date())
+    const endDateCs = month(lastActivities.length ? lastActivities[0].periode : new Date(), 0, 'lastday')
     endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
     endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
