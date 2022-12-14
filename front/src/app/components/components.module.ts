@@ -8,7 +8,6 @@ import { ListSelectionComponent } from './list-selection/list-selection.componen
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MaterialModule } from '../libs/material.module'
 import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component'
-import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component'
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component'
 import { SelectComponent } from './select/select.component'
 import { DateSelectComponent } from './date-select/date-select.component'
@@ -40,7 +39,6 @@ const list = [
   PopupComponent,
   ListSelectionComponent,
   OptionsBackupPanelComponent,
-  ReferentielCalculatorComponent,
   SelectCheckAllComponent,
   SelectComponent,
   DateSelectComponent,
