@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
 
+/**
+ * Liste des routes
+ */
 const routes: Routes = [
   {
     path: 'login',
@@ -107,6 +110,9 @@ const routes: Routes = [
   },
 ]
 
+/**
+ * Module d'export des routes
+ */
 @NgModule({
   imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   providers: [AuthGuard],
