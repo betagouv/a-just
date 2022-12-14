@@ -531,7 +531,7 @@ export class LoadersWidgetComponent implements OnInit, OnChanges {
           parseFloat(this.valueProjected.split(&#x27; &#x27;)[0])) /
           parseFloat(this.valueAt.split(&#x27; &#x27;)[0])) *
         100
-      this.valueBar1 &#x3D; delta &lt;&#x3D; 100 ? delta : 100
+      this.valueBar1 &#x3D; delta &lt;&#x3D; 100 &amp;&amp; delta &gt;&#x3D; 0 ? delta : 0
     }
     if (this.valueSimulated !&#x3D;&#x3D; &#x27;&#x27;) {
       const delta &#x3D;
@@ -539,7 +539,7 @@ export class LoadersWidgetComponent implements OnInit, OnChanges {
           parseFloat(this.valueSimulated.split(&#x27; &#x27;)[0])) /
           parseFloat(this.valueAt.split(&#x27; &#x27;)[0])) *
         100
-      this.valueBar2 &#x3D; delta &lt;&#x3D; 100 ? delta : 100
+      this.valueBar2 &#x3D; delta &lt;&#x3D; 100 &amp;&amp; delta &gt;&#x3D; 0 ? delta : 0
     }
   }
 }

@@ -25,7 +25,7 @@ export class LoadersWidgetComponent implements OnInit, OnChanges {
           parseFloat(this.valueProjected.split(' ')[0])) /
           parseFloat(this.valueAt.split(' ')[0])) *
         100
-      this.valueBar1 = delta <= 100 ? delta : 100
+      this.valueBar1 = delta <= 100 && delta >= 0 ? delta : 0
     }
     if (this.valueSimulated !== '') {
       const delta =
@@ -33,7 +33,7 @@ export class LoadersWidgetComponent implements OnInit, OnChanges {
           parseFloat(this.valueSimulated.split(' ')[0])) /
           parseFloat(this.valueAt.split(' ')[0])) *
         100
-      this.valueBar2 = delta <= 100 ? delta : 100
+      this.valueBar2 = delta <= 100 && delta >= 0 ? delta : 0
     }
   }
 }

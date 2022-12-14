@@ -49,7 +49,7 @@
     >
     </aj-select>
     <aj-select
-      title="Sous Contentieux (obligatoire)"
+      title="Sous-contentieux (option)"
       class=" contentieux {{disabled}}"
       [class.notSelectable]="contentieuId===null"
       [value]="subList"
@@ -59,13 +59,6 @@
       (valueChange)="updateReferentielSelected('subList', $event)"
     >
     </aj-select>
-    <div
-      id="main-init"
-      class="reset-button {{disabled}}"
-      (click)="resetParams()"
-    >
-      <p class="title">Reset</p>
-    </div>
   </div>
   <div class="top-bar-container">
     <p>Période choisie :</p>
@@ -901,5 +894,9 @@
   >
     <div class="shape">D</div>
     <p class="title">Exporter en PDF</p>
+  </div>
+
+  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
+    <p class="title">Reset</p>
   </div>
 </ng-template>
