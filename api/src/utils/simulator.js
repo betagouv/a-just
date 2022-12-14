@@ -340,30 +340,32 @@ export function getEtpByCategory (etpAffected, sufix = '') {
  * @returns
  */
 export async function getCSActivities (referentielId, allActivities, dateStart, dateStop) {
-  const lastActivities = orderBy(
-    allActivities.filter(
-      (a) =>
-        a.contentieux.id === referentielId &&
-        month(a.periode).getTime() >= month(dateStart).getTime() &&
-        month(a.periode).getTime() <= month(dateStop).getTime()
-    ),
-    (a) => {
-      const p = new Date(a.periode)
-      return p.getTime()
-    },
-    ['desc']
-  )
+  if (allActivities.length !== 0) {
+    const lastActivities = orderBy(
+      allActivities.filter(
+        (a) =>
+          a.contentieux.id === referentielId &&
+          month(a.periode).getTime() >= month(dateStart).getTime() &&
+          month(a.periode).getTime() <= month(dateStop).getTime()
+      ),
+      (a) => {
+        const p = new Date(a.periode)
+        return p.getTime()
+      },
+      ['desc']
+    )
 
-  const startDateCs = month(lastActivities[lastActivities.length - 1].periode)
-  const endDateCs = month(lastActivities[0].periode, 0, 'lastday')
-  endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
-  endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
+    const startDateCs = month(lastActivities[lastActivities.length - 1].periode)
+    const endDateCs = month(lastActivities[0].periode, 0, 'lastday')
+    endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
+    endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
-  return {
-    lastActivities,
-    startDateCs,
-    endDateCs,
-  }
+    return {
+      lastActivities,
+      startDateCs,
+      endDateCs,
+    }
+  } else return { lastActivities: [], dateStart, dateStop }
 }
 
 export function hasInOutOrStock (activities) {
