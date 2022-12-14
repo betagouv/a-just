@@ -8,28 +8,66 @@ import { fixDecimal } from '../utils/numbers'
 import { decimalToStringDate, getMonthString, getShortMonthString, today } from '../utils/dates'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/category'
 
+/**
+ * Class principal pour simplifier les doublons de méthodes générales
+ */
 export class MainClass {
+  /**
+   * Liste des watch pour les détruires après
+   */
   watcherList: Subscription[] = []
+  /**
+   * Config d'environment 
+   */
   environment = environment
+  /**
+   * Variable global de string magistrat
+   */
   MAGISTRATS = MAGISTRATS
+  /**
+   * Variable global de string fonctionnaires
+   */
   FONCTIONNAIRES = FONCTIONNAIRES
 
+  /**
+   * Methode d'arrondi
+   * @param n 
+   * @param base 
+   * @returns 
+   */
   fixDecimal(n: number, base?: number): number {
     return fixDecimal(n)
   }
 
+  /**
+   * Transformation d'une string en entirer
+   * @param s 
+   * @returns 
+   */
   parseInt(s: string): number {
     return parseInt(s)
   }
 
+  /**
+   * Transformation d'une string en chiffre à virgule
+   * @param s 
+   * @returns 
+   */
   parseFloat(s: string): number {
     return parseFloat(s.replace(/,/, '.'))
   }
 
+  /**
+   * Ajout d'un observable à la liste des observables à supprimer après
+   * @param sub 
+   */
   watch(sub: any) {
     this.watcherList.push(sub)
   }
 
+  /**
+   * Methode de suppression des observables
+   */
   watcherDestroy() {
     this.watcherList.map((w) => {
       try {
@@ -38,34 +76,72 @@ export class MainClass {
     })
   }
 
+  /** 
+   * Methode de reprise des noms de référentiel
+   */
   public referentielMappingName(name: string): string {
     return referentielMappingName(name)
   }
 
+  /**
+   * Methode de reprise des couleur des référentiel
+   * @param name 
+   * @returns 
+   */
   public referentielMappingColor(name: string): string {
     return referentielMappingColor(name)
   }
 
+  /**
+   * Méthode de reconnaissance si c'est un IOS
+   * @returns 
+   */
   public isOS() {
     return navigator.userAgent.indexOf('AppleWebKit') !== -1
   }
 
+  /**
+   * Méthode d'exclusion si c'est un IOS
+   * @returns 
+   */
   public isNotOS() {
     return !this.isOS()
   }
 
+  /**
+   * Méthode d'accélaration des liste
+   * @param index 
+   * @param item 
+   * @returns 
+   */
   public trackBy(index: number, item: any) {
     return item.id
   }
 
+  /**
+   * Récupération du mois à partir d'une date
+   * @param date 
+   * @returns 
+   */
   public getMonthString(date: Date | undefined): string {
     return date ? getMonthString(date) : ''
   }
 
+  /**
+   * Récupération du diminutif du mois à partir d'une date
+   * @param date 
+   * @returns 
+   */
   public getShortMonthString(date: Date | undefined): string {
     return date ? getShortMonthString(date) : ''
   }
 
+  /**
+   * Récupération d'une coleur d'une catégorie
+   * @param label 
+   * @param opacity 
+   * @returns 
+   */
   public getCategoryColor(label: string, opacity: number = 1) {
     switch (label) {
       case 'Magistrat':
@@ -80,6 +156,11 @@ export class MainClass {
     return `rgba(239, 203, 58, ${opacity})`
   }
 
+  /**
+   * Transforme une date en text
+   * @param date 
+   * @returns 
+   */
   public formatDate(date: Date) {
     if (!date) {
       return ''
@@ -114,6 +195,11 @@ export class MainClass {
     ).padStart(2, '0')}`
   }
 
+  /**
+   * Vérification si une date est la meme que aujourd'hui
+   * @param date 
+   * @returns 
+   */
   public isToday(date: Date) {
     const now = new Date()
 
@@ -124,10 +210,20 @@ export class MainClass {
     )
   }
 
+  /**
+   * Retourne la date d'aujourd'hui sinon du jour de la date choisie
+   * @param date 
+   * @returns 
+   */
   public getToday(date: Date | null | undefined = new Date()): Date {
     return today(date)
   }
 
+  /**
+   * Retourne l'année d'une date en string ou objet
+   * @param date 
+   * @returns 
+   */
   public getFullYear(date: Date | string) {
     if (typeof date === 'string') {
       date = new Date(date)
@@ -136,6 +232,11 @@ export class MainClass {
     return date.getFullYear()
   }
 
+  /**
+   * Transforme une date string en date objet
+   * @param date 
+   * @returns 
+   */
   public getDate(date: Date | string) {
     if (typeof date === 'string') {
       date = new Date(date)
@@ -144,6 +245,12 @@ export class MainClass {
     return date.getDate()
   }
 
+  /**
+   * Compare deux dates et regarde si c'est le même mois
+   * @param date1 
+   * @param date2 
+   * @returns 
+   */
   public isSameMonthAndYear(date1: Date | null, date2: Date | null) {
     date1 = new Date(date1 ? date1 : '')
     date2 = new Date(date2 ? date2 : '')
@@ -154,6 +261,11 @@ export class MainClass {
     )
   }
   
+  /**
+   * Converti un chiffre en heure humaine
+   * @param decimal 
+   * @returns 
+   */
   public decimalToStringDate(decimal: number | null) {
     return decimalToStringDate(decimal)
   }
