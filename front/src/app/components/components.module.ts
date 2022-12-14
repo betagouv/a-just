@@ -63,6 +63,10 @@ const list = [
   FooterNoConnectedComponent,
 ]
 
+/**
+ * Module général des composants partagés
+ */
+
 @NgModule({
   declarations: [...list],
   imports: [

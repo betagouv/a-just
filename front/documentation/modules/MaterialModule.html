@@ -60,6 +60,13 @@
 
 
 
+        <p class="comment">
+            <h3>Description</h3>
+        </p>
+        <p class="comment">
+            <p>Module avec les élements materials qui nous intéresses</p>
+
+        </p>
 
 
         <div class="container-fluid module">
@@ -112,12 +119,18 @@ import {
 } from &#x27;@angular/material-moment-adapter&#x27;
 import { MatProgressBarModule } from &#x27;@angular/material/progress-bar&#x27;
 
+/**
+ * Paramétrage du tooltips par défaut de matérial
+ */
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions &#x3D; {
   showDelay: 1000,
   hideDelay: 1000,
   touchendHideDelay: 1000,
 }
 
+/**
+ * Paramétrage du format de la date du composant date de matérial
+ */
 export const MY_FORMATS &#x3D; {
   parse: {
     dateInput: &#x27;DD/MM/YYYY&#x27;,
@@ -130,6 +143,9 @@ export const MY_FORMATS &#x3D; {
   },
 }
 
+/**
+ * Module avec les élements materials qui nous intéresses
+ */
 @NgModule({
   exports: [
     MatButtonToggleModule,

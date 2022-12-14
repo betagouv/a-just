@@ -79,9 +79,6 @@
                             <a href="#end" title="src/app/services/simulator/simulator.service.ts" ><b>end</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.service.ts)</a>
                         </li>
                         <li>
-                            <a href="#endCurrentSituation" title="src/app/services/excel/excel.service.ts" ><b>endCurrentSituation</b>&nbsp;&nbsp;&nbsp;(src/.../excel.service.ts)</a>
-                        </li>
-                        <li>
                             <a href="#environment" title="src/environments/environment.prod.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.prod.ts)</a>
                         </li>
                         <li>
@@ -190,9 +187,6 @@
                             <a href="#start" title="src/app/services/simulator/simulator.service.ts" ><b>start</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.service.ts)</a>
                         </li>
                         <li>
-                            <a href="#startCurrentSituation" title="src/app/services/excel/excel.service.ts" ><b>startCurrentSituation</b>&nbsp;&nbsp;&nbsp;(src/.../excel.service.ts)</a>
-                        </li>
-                        <li>
                             <a href="#totalIn" title="src/app/routes/simulator/simulator.tree.ts" ><b>totalIn</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.tree.ts)</a>
                         </li>
                         <li>
@@ -269,6 +263,12 @@
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien de la calculate</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -295,6 +295,12 @@
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien de la documentation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -440,101 +446,6 @@ Gris : #999999</p>
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>new Date()</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/services/excel/excel.service.ts</h3>
-    <section>
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="endCurrentSituation"></a>
-                    <span class="name">
-                        <span ><b>endCurrentSituation</b></span>
-                        <a href="#endCurrentSituation"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>month(new Date(), -1, &#x27;lastday&#x27;)</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="EXCEL_EXTENSION"></a>
-                    <span class="name">
-                        <span ><b>EXCEL_EXTENSION</b></span>
-                        <a href="#EXCEL_EXTENSION"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;.xlsx&#x27;</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="EXCEL_TYPE"></a>
-                    <span class="name">
-                        <span ><b>EXCEL_TYPE</b></span>
-                        <a href="#EXCEL_TYPE"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset&#x3D;UTF-8&#x27;</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="startCurrentSituation"></a>
-                    <span class="name">
-                        <span ><b>startCurrentSituation</b></span>
-                        <a href="#startCurrentSituation"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>month(new Date(), -12)</code>
                     </td>
                 </tr>
 
@@ -2184,6 +2095,61 @@ Gris : #999999</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/services/excel/excel.service.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EXCEL_EXTENSION"></a>
+                    <span class="name">
+                        <span ><b>EXCEL_EXTENSION</b></span>
+                        <a href="#EXCEL_EXTENSION"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;.xlsx&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EXCEL_TYPE"></a>
+                    <span class="name">
+                        <span ><b>EXCEL_TYPE</b></span>
+                        <a href="#EXCEL_TYPE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset&#x3D;UTF-8&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/constants/category.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -2209,6 +2175,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante des fonctionnes</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2235,6 +2207,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante des magistrats</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2321,6 +2299,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des pipes</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2360,6 +2344,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Paramétrage du format de la date du composant date de matérial</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2390,6 +2380,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Paramétrage du tooltips par défaut de matérial</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2419,6 +2415,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au données d&#39;activité</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2445,6 +2447,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au temps moyens</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2471,6 +2479,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au calculateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2497,6 +2511,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au dasboard</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2523,6 +2543,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au réaffectateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2549,6 +2575,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au simulateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2575,6 +2607,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au ventilateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
