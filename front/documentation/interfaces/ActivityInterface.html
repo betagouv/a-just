@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Entrées / Sorties / Stock d&#39;un contentieux à un mois donnée</p>
+
+            </p>
 
 
         <section>
@@ -183,6 +190,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Contentieux concerné</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -216,6 +229,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées d&#39;une activité</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -254,6 +273,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées venant de la SDSE</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -292,6 +317,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties venant de la SDSE</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -330,6 +361,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Stock de la SDSE</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -363,6 +400,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Mois d&#39;une activité</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -396,6 +439,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties d&#39;une activité</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -429,6 +478,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Stock calculé</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -467,6 +522,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Node qui précise qui à mise à jour et quand</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -474,25 +535,68 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &quot;./contentieu-referentiel&quot;;
-import { UserInterface } from &quot;./user-interface&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &#x27;./contentieu-referentiel&#x27;
+import { UserInterface } from &#x27;./user-interface&#x27;
 
+/**
+ * Entrées / Sorties / Stock d&#x27;un contentieux à un mois donnée
+ */
 export interface ActivityInterface {
-	periode: Date;
-	entrees: number;
-	originalEntrees?: number;
-	sorties: number;
-	originalSorties?: number;
-	stock: number;
-	originalStock?: number;
-	contentieux: ContentieuReferentielInterface;
-	updatedBy?: NodeActivityUpdatedInterface;
+  /**
+   * Mois d&#x27;une activité
+   */
+  periode: Date
+  /**
+   * Entrées d&#x27;une activité
+   */
+  entrees: number
+  /**
+   * Entrées venant de la SDSE
+   */
+  originalEntrees?: number
+  /**
+   * Sorties d&#x27;une activité
+   */
+  sorties: number
+  /**
+   * Sorties venant de la SDSE
+   */
+  originalSorties?: number
+  /**
+   * Stock calculé
+   */
+  stock: number
+  /**
+   * Stock de la SDSE
+   */
+  originalStock?: number
+  /**
+   * Contentieux concerné
+   */
+  contentieux: ContentieuReferentielInterface
+  /**
+   * Node qui précise qui à mise à jour et quand
+   */
+  updatedBy?: NodeActivityUpdatedInterface
 }
 
+
+  /**
+   * Node qui précise qui à mise à jour et quand
+   */
 export interface NodeActivityUpdatedInterface {
-	entrees: {user: UserInterface | null, date: Date};
-	sorties: {user: UserInterface | null, date: Date};
-	stock: {user: UserInterface | null, date: Date};
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  entrees: { user: UserInterface | null; date: Date }
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  sorties: { user: UserInterface | null; date: Date }
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  stock: { user: UserInterface | null; date: Date }
 }
 </code></pre>
     </div>
