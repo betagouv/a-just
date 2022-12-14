@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
+import { DOCUMENTATION_CREATE_NEW_PERSON, DOCUMENTATION_UPDATE_PERSON } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -48,7 +49,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   indexOfTheFuture: number | null = null
   documentation: DocumentationInterface = {
     title: 'Fiche individuelle :',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+    path: DOCUMENTATION_CREATE_NEW_PERSON,
   }
 
   constructor(
@@ -124,12 +125,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (c) => c.id === currentSituation.category.id
         )
         this.categoryName = findCategory ? findCategory.label.toLowerCase() : ''
+        this.documentation.path = DOCUMENTATION_UPDATE_PERSON
       } else {
         this.categoryName = ''
+        this.documentation.path = DOCUMENTATION_CREATE_NEW_PERSON
       }
     } else {
       this.currentHR = null
       this.categoryName = ''
+      this.documentation.path = DOCUMENTATION_CREATE_NEW_PERSON
     }
 
     this.formatHRHistory()
