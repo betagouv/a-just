@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { Router } from '@angular/router'
 import { environment } from 'src/environments/environment'
+import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
 import { AlertInterface } from './interfaces/alert'
 import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
@@ -24,10 +25,9 @@ export class AppComponent {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private appService: AppService
   ) {
-    if(iIOS()) {
+    if (iIOS()) {
       document.body.classList.add('iIOS')
     }
-
 
     this.onControlSSL()
     router.events.subscribe(() => {
@@ -36,7 +36,9 @@ export class AppComponent {
         this.dbReady = true
 
         this.userService.initDatas()
-        this.contentieuxOptionsService.initDatas()
+        if (user.access && user.access.includes(USER_ACCESS_AVERAGE_TIME)) {
+          this.contentieuxOptionsService.initDatas()
+        }
       }
     })
 
