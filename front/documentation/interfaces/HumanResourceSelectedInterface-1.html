@@ -483,6 +483,7 @@ import { WorkforceService } from &#x27;src/app/services/workforce/workforce.serv
 import { FilterPanelInterface } from &#x27;./filter-panel/filter-panel.component&#x27;
 import { UserService } from &#x27;src/app/services/user/user.service&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
+import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
 
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -530,6 +531,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   showFilterPanel: number &#x3D; -1
   filterParams: FilterPanelInterface | null &#x3D; this.workforceService.filterParams
   canViewReaffectator: boolean &#x3D; false
+  documentation: DocumentationInterface &#x3D; {
+    title: &#x27;Le ventilateur :&#x27;,
+    path: &#x27;https://a-just.gitbook.io/documentation-deploiement/ventilateur/quest-ce-que-cest&#x27;,
+  }
 
   constructor(
     private humanResourceService: HumanResourceService,

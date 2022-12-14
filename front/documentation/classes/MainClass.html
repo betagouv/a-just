@@ -107,6 +107,10 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#decimalToStringDate" >decimalToStringDate</a>
+                            </li>
+                            <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
                             </li>
                             <li>
@@ -308,6 +312,77 @@
     <h3 id="methods">
         Methods
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="decimalToStringDate"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span ><b>decimalToStringDate</b></span>
+                        <a href="#decimalToStringDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>decimalToStringDate(decimal: number | null)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="157"
+                            class="link-to-prism">src/app/libs/main-class.ts:157</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>decimal</td>
+                                    <td>
+                                            <code>number | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -1626,7 +1701,7 @@ import {
 } from &#x27;../utils/referentiel&#x27;
 import { environment } from &#x27;../../environments/environment&#x27;
 import { fixDecimal } from &#x27;../utils/numbers&#x27;
-import { getMonthString, getShortMonthString, today } from &#x27;../utils/dates&#x27;
+import { decimalToStringDate, getMonthString, getShortMonthString, today } from &#x27;../utils/dates&#x27;
 import { FONCTIONNAIRES, MAGISTRATS } from &#x27;../constants/category&#x27;
 
 export class MainClass {
@@ -1773,6 +1848,10 @@ export class MainClass {
       date1.getMonth() &#x3D;&#x3D;&#x3D; date2.getMonth() &amp;&amp;
       date1.getFullYear() &#x3D;&#x3D;&#x3D; date2.getFullYear()
     )
+  }
+  
+  public decimalToStringDate(decimal: number | null) {
+    return decimalToStringDate(decimal)
   }
 }
 </code></pre>
