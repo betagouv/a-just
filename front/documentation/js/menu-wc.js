@@ -142,15 +142,18 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/CalculatorModule.html" data-type="entity-link" >CalculatorModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-CalculatorModule-86a59bdd5c921aefcdc10718472f52d002892e97b7d848fac8bc60ece8a36103bdcb0764e0940364055d6bec57f63cd30ea523b731de448c828f0055c261ee1f"' : 'data-target="#xs-components-links-module-CalculatorModule-86a59bdd5c921aefcdc10718472f52d002892e97b7d848fac8bc60ece8a36103bdcb0764e0940364055d6bec57f63cd30ea523b731de448c828f0055c261ee1f"' }>
+                                            'data-target="#components-links-module-CalculatorModule-cb39c013699b833366291bd1b9efe74fda837c7f1bd8dd3f7a56e16dde6b3cfd8386fc462a9f2cda08917f5c7173dae2e3674d030e98292b999112c5eeed5276"' : 'data-target="#xs-components-links-module-CalculatorModule-cb39c013699b833366291bd1b9efe74fda837c7f1bd8dd3f7a56e16dde6b3cfd8386fc462a9f2cda08917f5c7173dae2e3674d030e98292b999112c5eeed5276"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-CalculatorModule-86a59bdd5c921aefcdc10718472f52d002892e97b7d848fac8bc60ece8a36103bdcb0764e0940364055d6bec57f63cd30ea523b731de448c828f0055c261ee1f"' :
-                                            'id="xs-components-links-module-CalculatorModule-86a59bdd5c921aefcdc10718472f52d002892e97b7d848fac8bc60ece8a36103bdcb0764e0940364055d6bec57f63cd30ea523b731de448c828f0055c261ee1f"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-CalculatorModule-cb39c013699b833366291bd1b9efe74fda837c7f1bd8dd3f7a56e16dde6b3cfd8386fc462a9f2cda08917f5c7173dae2e3674d030e98292b999112c5eeed5276"' :
+                                            'id="xs-components-links-module-CalculatorModule-cb39c013699b833366291bd1b9efe74fda837c7f1bd8dd3f7a56e16dde6b3cfd8386fc462a9f2cda08917f5c7173dae2e3674d030e98292b999112c5eeed5276"' }>
                                             <li class="link">
                                                 <a href="components/CalculatorPage.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >CalculatorPage</a>
+                                            </li>
+                                            <li class="link">
+                                                <a href="components/ReferentielCalculatorComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ReferentielCalculatorComponent</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -182,13 +185,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/ComponentsModule.html" data-type="entity-link" >ComponentsModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-ComponentsModule-b4fdb4d93aa53a99ae6a3cfc81641f8478426f9cc452f560e4409cc09ab7beb53147c0c11d674d016e03d51e9bdc5cdf52fefc0f907621d49482ae50a2d668af"' : 'data-target="#xs-components-links-module-ComponentsModule-b4fdb4d93aa53a99ae6a3cfc81641f8478426f9cc452f560e4409cc09ab7beb53147c0c11d674d016e03d51e9bdc5cdf52fefc0f907621d49482ae50a2d668af"' }>
+                                            'data-target="#components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' : 'data-target="#xs-components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-b4fdb4d93aa53a99ae6a3cfc81641f8478426f9cc452f560e4409cc09ab7beb53147c0c11d674d016e03d51e9bdc5cdf52fefc0f907621d49482ae50a2d668af"' :
-                                            'id="xs-components-links-module-ComponentsModule-b4fdb4d93aa53a99ae6a3cfc81641f8478426f9cc452f560e4409cc09ab7beb53147c0c11d674d016e03d51e9bdc5cdf52fefc0f907621d49482ae50a2d668af"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' :
+                                            'id="xs-components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' }>
                                             <li class="link">
                                                 <a href="components/CoveragePreviewComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >CoveragePreviewComponent</a>
                                             </li>
@@ -248,9 +251,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link">
                                                 <a href="components/RadioButtonComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >RadioButtonComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/ReferentielCalculatorComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ReferentielCalculatorComponent</a>
                                             </li>
                                             <li class="link">
                                                 <a href="components/SelectCheckAllComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SelectCheckAllComponent</a>
@@ -460,9 +460,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="components/RadioButtonComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >RadioButtonComponent</a>
                                             </li>
                                             <li class="link">
-                                                <a href="components/ReferentielCalculatorComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ReferentielCalculatorComponent</a>
-                                            </li>
-                                            <li class="link">
                                                 <a href="components/SelectCheckAllComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SelectCheckAllComponent</a>
                                             </li>
                                             <li class="link">
@@ -580,25 +577,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                         </div>
                         <ul class="links collapse " ${ isNormalMode ? 'id="components-links"' : 'id="xs-components-links"' }>
                             <li class="link">
-                                <a href="components/FooterNoConnectedComponent.html" data-type="entity-link" >FooterNoConnectedComponent</a>
+                                <a href="components/SelectCheckAllComponent.html" data-type="entity-link" >SelectCheckAllComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/InputButtonComponent.html" data-type="entity-link" >InputButtonComponent</a>
+                                <a href="components/SelectComponent.html" data-type="entity-link" >SelectComponent</a>
                             </li>
                             <li class="link">
-                                <a href="components/LegendLabelComponent.html" data-type="entity-link" >LegendLabelComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/ListSelectionComponent.html" data-type="entity-link" >ListSelectionComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/OptionsBackupPanelComponent.html" data-type="entity-link" >OptionsBackupPanelComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/PanelActivitiesComponent.html" data-type="entity-link" >PanelActivitiesComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/PopupComponent.html" data-type="entity-link" >PopupComponent</a>
+                                <a href="components/SpeedometerComponent.html" data-type="entity-link" >SpeedometerComponent</a>
                             </li>
                         </ul>
                     </li>

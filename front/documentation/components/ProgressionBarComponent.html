@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Component stylé d&#39;une barre de progression en rectangle</p>
+
+    </p>
 
 
 
@@ -177,24 +184,6 @@
     </table>
 </section>
 
-    <section>
-    <h3 id="constructor">Constructor</h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-<code>constructor()</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:12</a></div>
-                            </td>
-                        </tr>
-
-            </tbody>
-        </table>
-</section>
 
     <section>
     <h3 id="inputs">Inputs</h3>
@@ -219,9 +208,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:20</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Couleur du fond</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -245,9 +240,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:9</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:16</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Pourcentage de la progression, 0 - 100</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -271,9 +272,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:11</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:24</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Selectionnable</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -295,9 +302,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:28</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Remonté au parent du nouveau pourcentage</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -328,14 +341,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/app/components/progression-bar/progression-bar.component.ts:33</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Changement du pourcentage avec une saisie utilisateur</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -353,19 +368,36 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, EventEmitter, Input, Output } from &#x27;@angular/core&#x27;
 
+/**
+ * Component stylé d&#x27;une barre de progression en rectangle
+ */
+
 @Component({
   selector: &#x27;progression-bar&#x27;,
   templateUrl: &#x27;./progression-bar.component.html&#x27;,
   styleUrls: [&#x27;./progression-bar.component.scss&#x27;],
 })
 export class ProgressionBarComponent {
+  /**
+   * Pourcentage de la progression, 0 - 100
+   */
   @Input() percent: number | undefined &#x3D; 0
+  /**
+   * Couleur du fond
+   */
   @Input() color: string &#x3D; &#x27;#005500&#x27;
+  /**
+   * Selectionnable
+   */
   @Input() selected: boolean &#x3D; true
+  /**
+   * Remonté au parent du nouveau pourcentage
+   */
   @Output() percentChange: EventEmitter&lt;number&gt; &#x3D; new EventEmitter()
 
-  constructor() {}
-
+  /**
+   * Changement du pourcentage avec une saisie utilisateur
+   */
   changePercent() {
     if (this.selected) {
       const newPercent &#x3D; prompt(

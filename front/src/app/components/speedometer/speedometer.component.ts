@@ -15,6 +15,10 @@ Rouge logo A-JUST : #FF0000
 
 const convertWidthToheight = (width: number) => (width * 55 / 70)
 
+/**
+ * Composant affichant un cadran de 0 à 200%
+ */
+
 @Component({
   selector: 'aj-speedometer',
   templateUrl: './speedometer.component.html',
@@ -22,38 +26,87 @@ const convertWidthToheight = (width: number) => (width * 55 / 70)
   providers: [...ngResizeObserverProviders],
 })
 export class SpeedometerComponent extends MainClass implements OnInit {
+  /**
+   * Pourcentage affiché
+   */
   @Input() percent: number = 0
+  /**
+   * Canvas sur lequel on va dessiner
+   */
   @ViewChild('canvas') domCanvas: ElementRef | null = null
+  /**
+   * Connection au style de la haute du composant
+   */
   @HostBinding('style.height') styleHeight: string = ''
+  /**
+   * Paramétrage du mode sombre
+   */
   @Input() @HostBinding('class.dark-mode') classDarkMode: boolean = false
+  /**
+   * Variable d'écoute de la largeur dynamique
+   */
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
   )
+  /**
+   * Position 0% en degré
+   */
   bottomSpaceDegrees: number = 135
+  /**
+   * Rayon du cercle
+   */
   radius: number = 25
+  /**
+   * Largeur du composant
+   */
   width: number = 55
+  /**
+   * Largeur du dessin
+   */
   canvasWidth: number = 55 - 4
+  /**
+   * Conversion d'un pourcent en stfing
+   */
   percentString: number = 0
+  /**
+   * Epaisseur du trai du cercle
+   */
   lineWidth: number = 4
 
+  /**
+   * Constructeur
+   * @param resize$ 
+   */
   constructor(private resize$: NgResizeObserver) {
     super()
   }
 
+  /**
+   * A l'inialisation écouter la variable qui écoute la largeur
+   */
   ngOnInit() {
     this.watch(this.width$.subscribe((w) => this.prepareComponent(w)))
   }
 
+  /**
+   * Après le rendu HTML, dessiner
+   */
   ngAfterViewInit() {
     this.onDraw()
   }
 
+  /**
+   * Ecoute de la variable pourcent puis redessiner
+   */
   ngOnChanges() {
     this.percentString = Math.floor(this.percent)
 
     this.onDraw()
   }
 
+  /**
+   * A la suppression du composant supprimer les watcher
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
