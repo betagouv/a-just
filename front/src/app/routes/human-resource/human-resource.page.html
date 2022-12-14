@@ -91,20 +91,20 @@
   <div class="title">
     <p class="page-name">Fiche individuelle de</p>
     <p class="user-name">
-      <span contenteditable data-placeholder="Prénom"
+      <span contenteditable #domName data-placeholder="Prénom"
         (blur)="updateHuman('firstName', $event && $event.target ? $event.target : '',$event)">{{ (currentHR &&
         currentHR.firstName)||'' }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
         (blur)="updateHuman('lastName', $event && $event.target ? $event.target : '',$event)">{{ (currentHR &&
         currentHR.lastName) }}</span>
-      <mat-icon>drive_file_rename_outline</mat-icon>
+      <mat-icon class="cursor-pointer" (click)="domName.focus()">drive_file_rename_outline</mat-icon>
     </p>
   </div>
   <div>
     <p class="matricule">
-      <span contenteditable data-placeholder="Matricule"
+      <span contenteditable #domMatricule data-placeholder="Matricule"
         (blur)="updateHuman('matricule', $event && $event.target ? $event.target : '',$event)">{{ (currentHR &&
         currentHR.matricule)||'' }}</span>
-      <mat-icon>drive_file_rename_outline</mat-icon>
+      <mat-icon class="cursor-pointer" (click)="domMatricule.focus()">drive_file_rename_outline</mat-icon>
     </p>
     <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
       {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
