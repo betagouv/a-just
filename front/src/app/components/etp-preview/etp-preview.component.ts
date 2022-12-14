@@ -150,7 +150,7 @@ export class EtpPreviewComponent implements OnChanges {
   }
 
   /**
-   * Conversion des degrées en Radisu
+   * Conversion des degrées en Radius
    * @param degree 
    * @returns 
    */

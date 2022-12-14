@@ -1,8 +1,18 @@
-import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core'
+import {
+  Component,
+  HostBinding,
+  Input,
+  OnChanges,
+  OnDestroy,
+} from '@angular/core'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { dataInterface } from '../select/select.component'
+
+/**
+ * Composant de la liste des sauvegardes des options (temps moyens / dossier)
+ */
 
 @Component({
   selector: 'aj-options-backup-panel',
@@ -11,15 +21,37 @@ import { dataInterface } from '../select/select.component'
 })
 export class OptionsBackupPanelComponent
   extends MainClass
-  implements OnInit, OnDestroy, OnChanges
+  implements OnDestroy, OnChanges
 {
+  /**
+   * Autoriser à changer ou non la sauvergarde actuelle
+   */
   @Input() readOnly: boolean = false
-  @HostBinding("style.width") withLine!: string
+  /**
+   * Ecoute de la variable de largeur du composant
+   */
+  @HostBinding('style.width') withLine!: string
+  /**
+   * Liste des sauvegardes
+   */
   backups: BackupInterface[] = []
+  /**
+   * Mémorisation s'il y a eu une modificiation avant sauvegarde
+   */
   optionsIsModify: boolean = false
+  /**
+   * Id de sauvegarde sélectionnée
+   */
   selectedIds: any[] = []
+  /**
+   * Formateur de la liste des backups
+   */
   formDatas: dataInterface[] = []
 
+  /**
+   * Constructeur qui écoute tous les changements
+   * @param contentieuxOptionsService 
+   */
   constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
     super()
 
@@ -41,17 +73,23 @@ export class OptionsBackupPanelComponent
     )
   }
 
-  ngOnInit() {}
-
+  /**
+   * A la destruction supprimer les watcher
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Écoute du changement la variable readOnly
+   */
   ngOnChanges() {
-    this.withLine = this.readOnly ? "fit-content" : "100%"  
-    console.log(this.withLine, this.readOnly)
+    this.withLine = this.readOnly ? 'fit-content' : '100%'
   }
 
+  /**
+   * Formatage de la liste des sauvegardes en liste utilisable
+   */
   formatDatas() {
     if (
       this.selectedIds &&
@@ -74,6 +112,11 @@ export class OptionsBackupPanelComponent
     })
   }
 
+  /**
+   * Sélection d'une nouvelle sauvegarde
+   * @param id 
+   * @returns 
+   */
   onChangeBackup(id: any[]) {
     if (
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
@@ -88,30 +131,55 @@ export class OptionsBackupPanelComponent
     }
   }
 
+  /**
+   * Demande de suppresion d'une sauvegarde
+   */
   onRemoveBackup() {
     this.contentieuxOptionsService.removeBackup()
   }
 
+  /**
+   * Demande de duplicate une sauvegarde
+   */
   onDuplicateBackup() {
     this.contentieuxOptionsService.duplicateBackup()
   }
 
+  /**
+   * Demande de sauvegarde des nouvelles données saisies
+   * @param isCopy 
+   */
   onSaveHR(isCopy: boolean = false) {
     this.contentieuxOptionsService.onSaveDatas(isCopy)
   }
 
+  /**
+   * Accélérateur de l'affichage de la liste
+   * @param index 
+   * @param item 
+   * @returns 
+   */
   trackBy(index: number, item: any) {
     return item.id
   }
 
+  /**
+   * Demande de création d'une sauvegarde vide
+   */
   onCreateEmptyBackup() {
     this.contentieuxOptionsService.createEmpy()
   }
 
+  /**
+   * Demande de renommage de la sauvegarde actuelle
+   */
   onRenameBackup() {
     this.contentieuxOptionsService.renameBackup()
   }
 
+  /**
+   * Demande de réinitilisation des données de bases
+   */
   onBackBackup() {
     this.contentieuxOptionsService.setInitValue()
   }

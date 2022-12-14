@@ -1,13 +1,14 @@
 import {
     Component,
-    OnInit,
-    OnDestroy,
     Input,
     Output,
     EventEmitter,
     HostBinding,
 } from '@angular/core'
 
+/**
+ * Interface des boutons d'actions de la popup
+ */
 export interface ActionsInterface {
     type?: string
     red?: boolean
@@ -16,53 +17,83 @@ export interface ActionsInterface {
     id: string
 }
 
+/**
+ * Composant générique des popin qui affiche un titre, contenu et des boutons d'actions
+ */
+
 @Component({
     selector: 'aj-popup',
     templateUrl: './popup.component.html',
     styleUrls: ['./popup.component.scss'],
 })
-export class PopupComponent implements OnInit, OnDestroy {
+export class PopupComponent {
+    /**
+     * Class css qui donne une rendu mobile au besoin
+     */
     @HostBinding('class.is-mobile') isMobile = false
+    /**
+     * setter du changement de visibilité du contenu
+     */
     @Input()
     set visible(d) {
         this._visible = d
     }
+    /**
+     * getter du changement de visibilité du contenu
+     */
     get visible() {
         return this._visible
     }
+    /**
+     * Titre de la fenetre
+     */
     @Input() title: string = ''
+    /**
+     * Liste des actions possibles données par le parent
+     */
     @Input() actions: ActionsInterface[] = []
+    /**
+     * Liste des actions mais sur la gauche
+     */
     @Input() actionsLeft: ActionsInterface[] = []
+    /**
+     * Affichage ou non du bouton fermeture icone
+     */
     @Input() closeIcon = false
+    /**
+     * Saisie d'une hauteur minimal
+     */
     @Input() minHeight: string = ''
+    /**
+     * Suppression ou non de l'ombre si saisie de "noShadow"
+     */
     @Input() removeShadow: string = ''
+    /**
+     * Remoté au parent de l'action choisie, que ce soit à gauche ou non
+     */
     @Output() selectedAction = new EventEmitter()
+    /**
+     * Remonté au parent de l'envie de fermer la popin
+     */
     @Output() onClose = new EventEmitter()
-
+    /**
+     * Visible ou non
+     */
     _visible = true
+    /**
+     * Index de l'option selectionnée
+     */
     selectedOptions = 0
 
+    /**
+     * Constructeur
+     */
     constructor() {}
 
-    ngOnInit() {
-        const element = document.getElementById(
-            'hubspot-messages-iframe-container'
-        )
-
-        if (element) {
-            element.style.visibility = 'hidden'
-        }
-    }
-
-    ngOnDestroy() {
-        const element = document.getElementById(
-            'hubspot-messages-iframe-container'
-        )
-        if (element) {
-            element.style.visibility = 'visible'
-        }
-    }
-
+    /**
+     * Saisie d'une action
+     * @param action 
+     */
     onSelectAction(action: any) {
         this.selectedAction.emit({
             ...action,
@@ -70,22 +101,11 @@ export class PopupComponent implements OnInit, OnDestroy {
         })
     }
 
+    /**
+     * Changement de l'index de l'option selectionnée 
+     * @param val 
+     */
     onChangeOption(val: any) {
         this.selectedOptions = val
-    }
-
-    getInternetExplorerVersion() {
-        var rv = -1
-        if (navigator.appName == 'Microsoft Internet Explorer') {
-            var ua = navigator.userAgent
-            var re = new RegExp('MSIE ([0-9]{1,}[\\.0-9]{0,})')
-            if (re.exec(ua) != null) rv = parseFloat(RegExp.$1)
-        } else if (navigator.appName == 'Netscape') {
-            var ua = navigator.userAgent
-            var re = new RegExp('Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})')
-            if (re.exec(ua) != null) rv = parseFloat(RegExp.$1)
-        }
-
-        return rv
     }
 }

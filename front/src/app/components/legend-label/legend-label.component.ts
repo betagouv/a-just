@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -7,9 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core'
-import { RadioButtonComponent } from '../radio-button/radio-button.component'
 
 @Component({
   selector: 'aj-legend-label',

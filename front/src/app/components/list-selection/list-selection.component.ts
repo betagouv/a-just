@@ -3,46 +3,99 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
   OnChanges,
   SimpleChanges,
 } from '@angular/core'
 import { ItemInterface } from 'src/app/interfaces/item'
 
+/**
+ * Comoposant liste 
+ */
+
 @Component({
   selector: 'aj-list-selection',
   templateUrl: './list-selection.component.html',
   styleUrls: ['./list-selection.component.scss'],
 })
-export class ListSelectionComponent implements OnInit, OnChanges {
+export class ListSelectionComponent implements OnChanges {
+  /**
+   * Dom de selection
+   */
   @ViewChild('selectArea') selectArea: ElementRef<HTMLElement> | null = null
+  /**
+   * Titre du bouton
+   */
   @Input() title: string = ''
+  /**
+   * Icon affiché sur la droite
+   */
   @Input() icon: string = ''
+  /**
+   * Liste des éléments de la liste
+   */
   @Input() list: ItemInterface[] = []
+  /**
+   * Id de l'élement selectionné
+   */
   @Input() value: string | number | null = null
+  /**
+   * Liste des id des élements selectionnés
+   */
   @Input() values: (string | number)[] = []
+  /**
+   * Autorisation de la selection multiple 
+   */
   @Input() multiple: boolean = false
+  /**
+   * Valeur de l'ID selectionnée changée
+   */
   @Output() valueChanged: EventEmitter<string | number | null> =
     new EventEmitter<string | number | null>()
+    /**
+     * Valeurs des ID sélectionnées changées
+     */
   @Output() valuesChanged: EventEmitter<(string | number)[]> = new EventEmitter<
     (string | number)[]
   >()
+  /**
+   * Information au parent de l'ouverture du panneau de la liste
+   */
   @Output() onOpen: EventEmitter<string> = new EventEmitter<string>()
+  /**
+   * Valeures internes des ids sélectionnées
+   */
   itemsSelected: ItemInterface[] = []
+  /**
+   * Boolean de la popin ouverte ou fermée
+   */
   onOpenDropdown: boolean = false
+  /**
+   * Limite de hauteur de la liste
+   */
   maxHeightDropdown: number | null = null
+  /**
+   * Renvu visuel des la liste des ID sélectionnées
+   */
   labelPreview: string = ''
 
+  /**
+   * Détection d'un click n'importe où pour fermer
+   */
   @HostListener('document:click', ['$event'])
   onClick() {
     this.onOpenDropdown = false
   }
 
+  /**
+   * Construteur
+   */
   constructor() {}
 
-  ngOnInit() {}
-
+  /**
+   * Detection de la valeure selectionnée et formatage des données pour un rendu visuel
+   * @param changes 
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (changes.value || changes.list || changes.values) {
       if (this.multiple === false) {
@@ -67,12 +120,20 @@ export class ListSelectionComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Remonter au parent le changement d'état de l'élement sélectionné
+   * @param item 
+   */
   onSelect(item: string | number) {
     this.onOpenDropdown = false
     this.value = item
     this.valueChanged.next(this.value)
   }
 
+  /**
+   * Remonter au parent le changement d'état des élements sélectionnés
+   * @param item 
+   */
   onSelectMultiple(item: string | number) {
     const findIndex = this.values.findIndex((v) => v === item)
     if (findIndex === -1) {
@@ -83,6 +144,9 @@ export class ListSelectionComponent implements OnInit, OnChanges {
     this.valuesChanged.next(this.values)
   }
 
+  /**
+   * Ouvre ou ferme la liste
+   */
   onToggleDropdown() {
     this.onOpenDropdown = !this.onOpenDropdown
     this.maxHeightDropdown = null
@@ -105,11 +169,17 @@ export class ListSelectionComponent implements OnInit, OnChanges {
     }, 10)
   }
 
+  /**
+   * Ferme la liste
+   */
   close() {
     this.onOpenDropdown = false
     this.maxHeightDropdown = null
   }
 
+  /**
+   * Force la sélection de tout les éléments
+   */
   onSelectAll() {
     if(this.values.length === this.list.length) {
       this.values = []
