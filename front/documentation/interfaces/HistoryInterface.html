@@ -226,6 +226,7 @@
 import { ActivatedRoute, Router } from &#x27;@angular/router&#x27;
 import { maxBy, minBy, orderBy, sumBy } from &#x27;lodash&#x27;
 import { ActionsInterface } from &#x27;src/app/components/popup/popup.component&#x27;
+import { DOCUMENTATION_CREATE_NEW_PERSON, DOCUMENTATION_UPDATE_PERSON } from &#x27;src/app/constants/documentation&#x27;
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
@@ -272,7 +273,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   indexOfTheFuture: number | null &#x3D; null
   documentation: DocumentationInterface &#x3D; {
     title: &#x27;Fiche individuelle :&#x27;,
-    path: &#x27;https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation&#x27;,
+    path: DOCUMENTATION_CREATE_NEW_PERSON,
   }
 
   constructor(
@@ -348,12 +349,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; currentSituation.category.id
         )
         this.categoryName &#x3D; findCategory ? findCategory.label.toLowerCase() : &#x27;&#x27;
+        this.documentation.path &#x3D; DOCUMENTATION_UPDATE_PERSON
       } else {
         this.categoryName &#x3D; &#x27;&#x27;
+        this.documentation.path &#x3D; DOCUMENTATION_CREATE_NEW_PERSON
       }
     } else {
       this.currentHR &#x3D; null
       this.categoryName &#x3D; &#x27;&#x27;
+      this.documentation.path &#x3D; DOCUMENTATION_CREATE_NEW_PERSON
     }
 
     this.formatHRHistory()
