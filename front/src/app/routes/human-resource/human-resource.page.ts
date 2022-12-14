@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
@@ -45,6 +46,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   actualHistoryDateStart: Date | null = null
   actualHistoryDateStop: Date | null = null
   indexOfTheFuture: number | null = null
+  documentation: DocumentationInterface = {
+    title: 'Fiche individuelle :',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+  }
 
   constructor(
     private humanResourceService: HumanResourceService,
