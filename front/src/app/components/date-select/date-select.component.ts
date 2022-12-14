@@ -11,35 +11,86 @@ import { MatDatepicker } from '@angular/material/datepicker'
 import { Moment } from 'moment'
 import { MainClass } from 'src/app/libs/main-class'
 
+/**
+ * Bouton de selection de date prédesigner
+ */
 @Component({
   selector: 'aj-date-select',
   templateUrl: './date-select.component.html',
   styleUrls: ['./date-select.component.scss'],
 })
 export class DateSelectComponent extends MainClass implements OnChanges {
+  /**
+   * Titre du bouton
+   */
   @Input() title: string | null = null
+  /**
+   * Icon affichée sur la droite
+   */
   @Input() icon: string = 'calendar_today'
+  /**
+   * Type de sélection par défaut de date
+   */
   @Input() dateType: string = 'date' // date | month
+  /**
+   * Valeure par défaut
+   */
   @Input() value: Date | string | undefined | null = null
+  /**
+   * Est éditable ou non
+   */
   @Input() readOnly: boolean = false
+  /**
+   * Affiche "aujourd'hui" quand la date est de aujourd'hui
+   */
   @Input() showToday: boolean = true
+  /**
+   * Possibilité d'avoir une date nule
+   */
   @Input() clearable: boolean = false
+  /**
+   * Date minimal
+   */
   @Input() min: Date | null = null
+  /**
+   * Date maximal
+   */
   @Input() max: Date | null = null
+  /**
+   * Rémontée au parent en cas de changement de date sélectionnée
+   */
   @Output() valueChange = new EventEmitter()
+  /**
+   * Class host qui permet d'afficher un design de read only
+   */
   @HostBinding('class.read-only') onReadOnly: boolean = false
+  /**
+   * Composant de selection de date de material
+   */
   @ViewChild('picker') picker: any
+  /**
+   * Conversion du champs date en un champs date humaine
+   */
   realValue: string = ''
 
+  /**
+   * Constructeur
+   */
   constructor() {
     super()
   }
 
+  /**
+   * Détection en cas de change de date via le père
+   */
   ngOnChanges() {
     this.findRealValue()
     this.onReadOnly = this.readOnly
   }
 
+  /**
+   * Conversion du champs date en un champs date humaine
+   */
   findRealValue() {
     const now = new Date()
 
@@ -77,6 +128,10 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Conversion du champ date material en date JS
+   * @param event 
+   */
   onDateChanged(event: any) {
     if (event && event._i.year) {
       const date = new Date(event._i.year, event._i.month, event._i.date)
@@ -89,10 +144,18 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     this.findRealValue()
   }
 
+  /**
+   * Ouverture du selecteur de date de material
+   */
   onClick() {
     this.readOnly === false ? this.picker.open() : null
   }
 
+  /**
+   * Forcer ou non de fermer le selecteur de date de material en fonction du type de date
+   * @param normalizedMonthAndYear 
+   * @param datepicker 
+   */
   setMonthAndYear(
     normalizedMonthAndYear: Moment,
     datepicker: MatDatepicker<Moment>
