@@ -14,6 +14,10 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Composant d'affichage de la liste des ventilations en grilles
+ */
+
 @Component({
   selector: 'panel-activities',
   templateUrl: './panel-activities.component.html',
@@ -23,24 +27,61 @@ export class PanelActivitiesComponent
   extends MainClass
   implements OnChanges, OnDestroy
 {
+  /**
+   * Valeure de l'ETP
+   */
   @Input() etp: number = 1
+  /**
+   * Liste des activités à trier
+   */
   @Input() activities: RHActivityInterface[] = []
+  /**
+   * Affichage du panneau des sous contentieux ou non
+   */
   @Input() selected: boolean = false
+  /**
+   * Affichage du header ou non
+   */
   @Input() header: boolean = true
+  /**
+   * Autorise ou non la mise à jour du parent dès le premir chagement
+   */
   @Input() updateRefentielOnLoad: boolean = true
+  /**
+   * Authorise la modification des % sélectionné
+   */
   @Input() canSelectedTopReferentiel: boolean = false
+  /**
+   * Informe le parent d'une modification
+   */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
     new EventEmitter()
+  /**
+   * Liste du référentiel
+   */
   referentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Total pourcent affecté
+   */
   percentAffected: number = 0
+  /**
+   * Contientieux sélectionné
+   */
   refIndexSelected: number = -1
 
+  /**
+   * Constructeur
+   * @param humanResourceService 
+   */
   constructor(
     private humanResourceService: HumanResourceService
   ) {
     super()
   }
 
+  /**
+   * Détection d'un changement et génération des données du rendu
+   */
   ngOnChanges() {
     if (this.etp < 0) {
       this.etp = 0
@@ -54,10 +95,18 @@ export class PanelActivitiesComponent
     this.onLoadReferentiel()
   }
 
+  /**
+   * Destruction des watcher
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Total de la ventilation affectée
+   * @param ref 
+   * @returns 
+   */
   getPercentAffected(ref: ContentieuReferentielInterface) {
     const activity = this.activities.find((a) =>
       a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id
@@ -72,6 +121,9 @@ export class PanelActivitiesComponent
     }
   }
 
+  /**
+   * Chargement du référentiel et calcul des pourcents
+   */
   onLoadReferentiel() {
       this.referentiel = copyArray(this.humanResourceService.contentieuxReferentielOnly.getValue())
       this.referentiel = this.referentiel.map((ref) => {
@@ -94,10 +146,17 @@ export class PanelActivitiesComponent
       this.onTotalAffected()
   }
 
+  /**
+   * Conversion de la somme des réferentiel en pourcent
+   */
   onTotalAffected() {
     this.percentAffected = fixDecimal(sumBy(this.referentiel, 'percent'), 1000)
   }
 
+  /**
+   * Ouverture et fermeture du paneau des sous contentieux
+   * @param index 
+   */
   onTogglePanel(index: number) {
     if (index !== this.refIndexSelected) {
       this.refIndexSelected = index
@@ -106,6 +165,12 @@ export class PanelActivitiesComponent
     }
   }
 
+  /**
+   * Changement du pourcentage d'une activitié
+   * @param referentiel 
+   * @param percent 
+   * @param parentReferentiel 
+   */
   onChangePercent(
     referentiel: ContentieuReferentielInterface,
     percent: number,
@@ -171,6 +236,12 @@ export class PanelActivitiesComponent
     this.onTotalAffected()
   }
 
+  /**
+   * Accélaration du rendu de la liste
+   * @param index 
+   * @param item 
+   * @returns 
+   */
   trackById(index: number, item: any) {
     return item.id
   }
