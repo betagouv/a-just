@@ -10,9 +10,9 @@ import * as _ from 'lodash'
 import { ChartAnnotationBoxInterface } from 'src/app/interfaces/chart-annotation-box'
 import { ServerService } from '../http-server/server.service'
 
-const start = new Date()
-const end = new Date()
-
+/**
+ * Service de la page du simulateur
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -44,11 +44,11 @@ export class SimulatorService extends MainClass {
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
+  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
   /**
    * Date de fin de situation selectionnée par l'utilisateur
    */
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
   /**
    * Categorie selectionnée par l'utilisateur (Magistrat/Fonctionnaire)
    */
@@ -275,10 +275,9 @@ export class SimulatorService extends MainClass {
    * @param start
    * @param end
    * @param length
-   * @param offset
    * @returns Array of values between start and end value using a defined step
    */
-  range(start: number, end: number, length: number, offset?: number) {
+  range(start: number, end: number, length: number) {
     const step = (end - start) / (length - 1)
     return Array(length)
       .fill(0)

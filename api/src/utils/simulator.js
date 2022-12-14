@@ -1,12 +1,10 @@
 import { isFirstDayOfMonth } from 'date-fns'
-import { meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import { filterActivitiesByDateAndContentieuxId } from './activities'
+import { meanBy, orderBy, sortBy } from 'lodash'
 import {
   checkIfDateIsNotToday,
   decimalToStringDate,
   getRangeOfMonthsAsObject,
   getShortMonthString,
-  isSameMonthAndYear,
   month,
   nbOfDays,
   stringToDecimalDate,
@@ -138,8 +136,9 @@ export async function getSituation (referentielId, hr, allActivities, categories
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
-    const countOfCalandarDays = nbOfDays(endDateCs, month(new Date(), -1, true))
+    const countOfCalandarDays = nbOfDays(endDateCs, new Date())
 
+    console.log({ countOfCalandarDays, start: endDateCs, end: new Date() })
     // Compute stock projection until today
     // console.log(lastStock)
     lastStock = computeLastStock(
