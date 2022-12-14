@@ -1,20 +1,9 @@
 import { Injectable } from '@angular/core'
-import { sortBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
-import {
-  month,
-  nbOfDays,
-  workingDay,
-  decimalToStringDate,
-  getRangeOfMonthsAsObject,
-  isFirstDayOfMonth,
-  generalizeTimeZone,
-} from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
+import { decimalToStringDate, generalizeTimeZone } from 'src/app/utils/dates'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
@@ -28,23 +17,52 @@ const end = new Date()
   providedIn: 'root',
 })
 export class SimulatorService extends MainClass {
+  /**
+   * Loader display boolean
+   */
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
+   * Object contenant les données propres à la situation actuelle (aujourd'hui ou date de début selectionnée)
+   */
   situationActuelle: BehaviorSubject<SimulatorInterface | null> =
     new BehaviorSubject<SimulatorInterface | null>(null)
+  /**
+   * Object contenant les données propres à la situation projetée à une date de fin choisie
+   */
   situationProjected: BehaviorSubject<SimulatorInterface | null> =
     new BehaviorSubject<SimulatorInterface | null>(null)
+  /**
+   * Object contenant les données propres à la situation simulée à une date de fin choisie
+   */
   situationSimulated: BehaviorSubject<SimulationInterface | null> =
     new BehaviorSubject<SimulationInterface | null>(null)
+  /**
+   * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
+   */
   contentieuOrSubContentieuId: BehaviorSubject<number | null> =
     new BehaviorSubject<number | null>(null)
+  /**
+   * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
+   */
   dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(start)
+  /**
+   * Date de fin de situation selectionnée par l'utilisateur
+   */
   dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(end)
+  /**
+   * Categorie selectionnée par l'utilisateur (Magistrat/Fonctionnaire)
+   */
   selectedCategory: BehaviorSubject<HRCategoryInterface | null> =
     new BehaviorSubject<HRCategoryInterface | null>(null)
+  /**
+   * Fonction(s) selectionnées par l'utilisateur
+   */
   selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<
     number[]
   >([])
-
+  /**
+   * Popin pour graphiques de simulation
+   */
   chartAnnotationBox: BehaviorSubject<ChartAnnotationBoxInterface> =
     new BehaviorSubject<ChartAnnotationBoxInterface>({
       display: false,
@@ -52,9 +70,12 @@ export class SimulatorService extends MainClass {
       xMax: null,
       content: undefined,
     })
-  startCurrentSituation = month(new Date(), -12)
-  endCurrentSituation = month(new Date(), -1, 'lastday')
 
+  /**
+   * Constructeur
+   * @param serverService
+   * @param humanResourceService
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService
@@ -108,7 +129,6 @@ export class SimulatorService extends MainClass {
    * @param {number | null} referentielId contentieux ID
    * @param {Date} dateStart optional start date of the situation
    * @param {Date} dateStop optional end date of the situation
-   *
    * @returns Situation data interface
    */
   getSituation(
@@ -251,7 +271,7 @@ export class SimulatorService extends MainClass {
   }
 
   /**
-   * Function to compute steps between a start and stop value
+   * Function to compute equal steps between a start and stop value
    * @param start
    * @param end
    * @param length
@@ -303,253 +323,5 @@ export class SimulatorService extends MainClass {
   generateData(value1: number, size: number) {
     if (value1 < 0) value1 = 0
     return Array(size).fill(value1)
-  }
-
-  /**
-   * Function used to get the formated positions (etp by category) of a human ressources
-   * @param hr human ressource object
-   * @param referentiel contentieux object
-   * @param categories categories concerned
-   * @param date date of the position
-   * @param onPeriod tel if the function need to return a ponctual situation or on a period
-   * @param dateStop indicate the end date if a on period is true
-   * @param monthlyReport indicate if the function need to return a monthly report used on charts
-   * @returns Object containing etp by category affected to a human ressource
-   */
-  getHRPositions(
-    hr: HumanResourceInterface[],
-    referentiel: number,
-    categories: any,
-    date?: Date,
-    onPeriod?: boolean,
-    dateStop?: Date,
-    monthlyReport = false
-  ) {
-    const hrCategories: any = {}
-    let hrCategoriesMonthly: { [key: string]: any } = new Object({})
-    let emptyList: { [key: string]: any } = new Object({})
-    emptyList = { ...getRangeOfMonthsAsObject(date!, dateStop!, true) }
-
-    Object.keys(emptyList).map((x: any) => {
-      emptyList[x] = {
-        ...{
-          etpt: 0,
-        },
-      }
-    })
-
-    categories.map((c: any) => {
-      hrCategories[c.label] = hrCategories[c.label] || {
-        totalEtp: 0,
-        list: [],
-        rank: c.rank,
-      }
-
-      hrCategoriesMonthly[c.label] = {
-        ...JSON.parse(JSON.stringify(emptyList)),
-      }
-    })
-
-    for (let i = 0; i < hr.length; i++) {
-      let etptAll,
-        monthlyList: any = null
-      if (onPeriod === true) {
-        ;({ etptAll, monthlyList } = {
-          ...this.getHRVentilationOnPeriod(
-            hr[i],
-            referentiel,
-            categories,
-            date instanceof Date ? date : undefined,
-            dateStop instanceof Date ? dateStop : undefined
-          ),
-        })
-      } else
-        etptAll = this.getHRVentilation(hr[i], referentiel, categories, date)
-
-      Object.values(etptAll).map((c: any) => {
-        if (c.etpt) {
-          hrCategories[c.label].list.push(hr[i])
-          hrCategories[c.label].totalEtp += c.etpt
-        }
-
-        if (onPeriod === true && dateStop) {
-          Object.keys(monthlyList).map((month: any) => {
-            if (c.label === monthlyList[month][c.id].name)
-              hrCategoriesMonthly[c.label][month].etpt +=
-                monthlyList[month][c.id].etpt
-          })
-        }
-      })
-    }
-
-    const list = []
-    const listMonthly = []
-    for (const [key, value] of Object.entries(hrCategories)) {
-      list.push({
-        name: key,
-        // @ts-ignore
-        totalEtp: fixDecimal(value.totalEtp || 0),
-        // @ts-ignore
-        rank: value.rank,
-      })
-
-      let tmpObj: any = []
-
-      Object.keys(hrCategoriesMonthly[key]).map((x) => {
-        hrCategoriesMonthly[key][x].etpt = fixDecimal(
-          hrCategoriesMonthly[key][x].etpt || 0
-        )
-
-        tmpObj.push({
-          ...{
-            name: x,
-            // @ts-ignore
-            etpt: fixDecimal(hrCategoriesMonthly[key][x].etpt || 0),
-          },
-        })
-      })
-
-      listMonthly.push({
-        name: key,
-        // @ts-ignore
-        values: { ...tmpObj },
-      })
-    }
-
-    if (monthlyReport) {
-      return {
-        fururEtpAffectedToCompute: sortBy(list, 'rank'),
-        monthlyReport: listMonthly,
-      }
-    } else return sortBy(list, 'rank')
-  }
-
-  /**
-   * Function used to get the positions (etp by category) of a human ressources at a specific date
-   * @param hr human ressource object
-   * @param referentielId contentieux ID
-   * @param categories object of categories concerned
-   * @param date date of the ventilations returned
-   * @returns return a list of categories with etp affected for a specific human ressource
-   */
-  getHRVentilation(
-    hr: HumanResourceInterface,
-    referentielId: number,
-    categories: HRCategoryInterface[],
-    date?: Date
-  ): number {
-    const list: any = {}
-    categories.map((c) => {
-      list[c.id] = {
-        etpt: 0,
-        ...c,
-      }
-    })
-
-    const now = date ? date : new Date()
-    const { etp, situation } = this.humanResourceService.getEtpByDateAndPerson(
-      referentielId,
-      now,
-      hr
-    )
-
-    if (etp !== null) {
-      // @ts-ignore
-      list[situation.category.id].etpt += etp
-    }
-
-    // format render
-    for (const property in list) {
-      list[property].etpt = list[property].etpt / 1
-    }
-
-    return list
-  }
-
-  /**
-   * Function used to get the positions (etp by category) of a human ressources during a period
-   * @param hr human ressource object
-   * @param referentielId contentieux ID
-   * @param categories object of categories concerned
-   * @param date start date of the ventilations returned
-   * @param dateStop end date of the ventilations returned
-   * @returns return a list of categories with etp affected for a specific human ressource
-   */
-  getHRVentilationOnPeriod(
-    hr: HumanResourceInterface,
-    referentielId: number,
-    categories: HRCategoryInterface[],
-    dateStart: Date | undefined,
-    dateStop: Date | undefined
-  ) {
-    const list: any = {}
-
-    let monthlyList: { [key: string]: any } = {
-      ...getRangeOfMonthsAsObject(dateStart!, dateStop!, true),
-    }
-
-    categories.map((c) => {
-      list[c.id] = {
-        etpt: 0,
-        ...c,
-      }
-      Object.keys(monthlyList).map((x: any) => {
-        monthlyList[x][c.id] = {
-          name: c.label,
-          etpt: 0,
-          nbOfDays: 0,
-        }
-      })
-    })
-
-    const now = dateStart instanceof Date ? new Date(dateStart) : new Date()
-    const stop = dateStop instanceof Date ? new Date(dateStop) : new Date()
-
-    let nbDay = 0
-    let monthDaysCounter = 0
-    do {
-      if (isFirstDayOfMonth(now)) monthDaysCounter = 0
-
-      if (workingDay(now)) {
-        // only working day
-        nbDay++
-        monthDaysCounter++
-        const { etp, situation } =
-          this.humanResourceService.getEtpByDateAndPerson(
-            referentielId,
-            now,
-            hr
-          )
-
-        if (
-          etp !== null &&
-          situation &&
-          situation.category &&
-          list[situation.category.id]
-        ) {
-          list[situation.category.id].etpt += etp
-
-          const str =
-            this.getShortMonthString(now) +
-            now.getFullYear().toString().slice(-2)
-
-          monthlyList[str][situation.category.id].etpt += etp
-          monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
-        }
-      }
-      now.setDate(now.getDate() + 1)
-    } while (now.getTime() <= stop.getTime())
-
-    // format render
-    for (const property in list) {
-      list[property].etpt = list[property].etpt / nbDay
-      Object.keys(monthlyList).map((x: any) => {
-        if (monthlyList[x][property].nbOfDays !== 0)
-          monthlyList[x][property].etpt =
-            monthlyList[x][property].etpt / monthlyList[x][property].nbOfDays
-      })
-    }
-
-    return { etptAll: list, monthlyList: { ...monthlyList } }
   }
 }
