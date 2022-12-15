@@ -147,9 +147,14 @@ export default (sequelizeInstance, Model) => {
           situation.category_id = findCategory.id
         }
 
+        let code = list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie']
+        switch (code) {
+        case 'B':
+          code = 'B greffier'
+        }
         const findFonction = await Model.models.HRFonctions.findOne({
           where: {
-            code: list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie'],
+            code,
           },
           logging: false,
         })
@@ -211,7 +216,7 @@ export default (sequelizeInstance, Model) => {
     // remove cache
     cacheJuridictionPeoples = {}
     await Model.onPreload()
-    console.log(importSituation)
+    //console.log(importSituation)
   }
 
   Model.haveAccess = async (HRId, userId) => {
