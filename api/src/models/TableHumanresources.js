@@ -162,7 +162,7 @@ export default (sequelizeInstance, Model) => {
           situation.fonction_id = findFonction.id
         } else if (list[i].statut === 'Magistrat') {
           // dont save this profil
-          importSituation.push(list[i].nom_usage + ' no add by fonction')
+          importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
         }
 
