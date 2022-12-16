@@ -295,8 +295,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="617"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:617</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="643"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:643</a></div>
                 </td>
             </tr>
 
@@ -364,8 +364,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="604"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:604</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="630"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:630</a></div>
                 </td>
             </tr>
 
@@ -433,8 +433,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="639"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:639</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="665"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:665</a></div>
                 </td>
             </tr>
 
@@ -514,8 +514,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="650"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:650</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="676"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:676</a></div>
                 </td>
             </tr>
 
@@ -583,8 +583,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="646"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:646</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="672"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:672</a></div>
                 </td>
             </tr>
 
@@ -743,8 +743,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="624"
-                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:624</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="650"
+                            class="link-to-prism">src/app/components/dtes-chart/dtes-chart.component.ts:650</a></div>
                 </td>
             </tr>
 
@@ -1473,24 +1473,37 @@ export class DtesChartComponent {
             }
           )
 
-          const tooltipEl &#x3D; $this.myChart.canvas.parentNode.querySelector(&#x27;div&#x27;)
+          const tooltipEl &#x3D;
+            $this.myChart.canvas.parentNode.querySelector(&#x27;#chartjs-tooltip&#x27;)
+          const tooltipElTriangle &#x3D;
+            $this.myChart.canvas.parentNode.querySelector(
+              &#x27;#chartjs-tooltip-triangle&#x27;
+            )
 
           const yValues &#x3D; items.map((object: any) &#x3D;&gt; {
             return object.element.y
           })
 
           const min &#x3D; Math.min(...yValues)
+
           tooltipEl.style.opacity &#x3D; 1
-          tooltipEl.style.left &#x3D; items[0].element.x + &#x27;px&#x27;
+          tooltipEl.style.left &#x3D;
+            (items[0].element.x &gt; 175 ? items[0].element.x : 175) + &#x27;px&#x27;
           tooltipEl.style.top &#x3D; min - 130 + &#x27;px&#x27;
+
+          tooltipElTriangle.style.opacity &#x3D; 1
+          tooltipElTriangle.style.left &#x3D; items[0].element.x + 4 + &#x27;px&#x27;
+          tooltipElTriangle.style.top &#x3D; min + &#x27;px&#x27;
 
           $this.affectTooltipValues({
             projectedStock: projectedStock.data[firstPoint],
             simulatedStock: simulatedStock.data[firstPoint],
             projectedDTES: projectedDTES.data[firstPoint],
             simulatedDTES: simulatedDTES.data[firstPoint],
-            x: items[0].element.x + &#x27;px&#x27;,
+            x: (items[0].element.x &gt; 175 ? items[0].element.x : 175) + &#x27;px&#x27;,
             y: min - 130 + &#x27;px&#x27;,
+            trianglex: items[0].element.x + &#x27;px&#x27;,
+            tirnagley: min - 2.5 + &#x27;px&#x27;,
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
             enableTooltip: false,
@@ -1559,6 +1572,7 @@ export class DtesChartComponent {
               undefined
             $this.updateAnnotationBox(false, 0, 0, undefined)
             tooltipEl.style.opacity &#x3D; 0
+            tooltipElTriangle.style.opacity &#x3D; 0
           }
           e.chart.config.options.scales.x.ticks.color &#x3D; colorArray
           e.chart.update()
@@ -1722,7 +1736,11 @@ export class DtesChartComponent {
         this.tooltip.projectedStock &#x3D; value.projectedStock
         this.tooltip.simulatedStock &#x3D; value.simulatedStock
 
-        const tooltipEl &#x3D; $this.myChart.canvas.parentNode.querySelector(&#x27;div&#x27;)
+        const tooltipEl &#x3D;
+          $this.myChart.canvas.parentNode.querySelector(&#x27;#chartjs-tooltip&#x27;)
+        const tooltipElTriangle &#x3D; $this.myChart.canvas.parentNode.querySelector(
+          &#x27;#chartjs-tooltip-triangle&#x27;
+        )
         const colorArray &#x3D; []
 
         if (value.x) {
@@ -1730,6 +1748,12 @@ export class DtesChartComponent {
           tooltipEl.style.opacity &#x3D; 1
           tooltipEl.style.left &#x3D; value.x
           tooltipEl.style.top &#x3D; value.y
+          tooltipElTriangle.style.opacity &#x3D; 1
+          tooltipElTriangle.style.left &#x3D;
+            Number(String(value.trianglex).replace(&#x27;px&#x27;, &#x27;&#x27;)) + 4 + &#x27;px&#x27;
+          tooltipElTriangle.style.top &#x3D;
+            Number(String(value.y).replace(&#x27;px&#x27;, &#x27;&#x27;)) + 128 + &#x27;px&#x27; //68
+
           this.tooltip.projectedStock &#x3D;
             this.myChart.data.datasets[0].data[value.pointIndex as number]
           this.tooltip.simulatedStock &#x3D;
@@ -1750,6 +1774,8 @@ export class DtesChartComponent {
         }
         if (value.display &#x3D;&#x3D;&#x3D; false) {
           tooltipEl.style.opacity &#x3D; 0
+          tooltipElTriangle.style.opacity &#x3D; 0
+
           for (let i &#x3D; 0; i &lt; this.myChart.data.datasets[0].data.length; i++) {
             colorArray.push(&#x27;rgb(109, 109, 109)&#x27;)
           }
@@ -1887,6 +1913,7 @@ export class DtesChartComponent {
           &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
+      &lt;div id&#x3D;&quot;chartjs-tooltip-triangle&quot;&gt;&lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -1933,6 +1960,30 @@ export class DtesChartComponent {
                 <pre class="line-numbers"><code class="language-scss">:host {
     display: flex;
     margin-top: 1px;
+    position: relative;
+
+
+    #chartjs-tooltip-triangle {
+        position: absolute !important;
+        z-index: 200;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        height: 0;
+        width: 0;
+        border-bottom: 4px solid white;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        position: absolute;
+        bottom: -4px;
+        left: 195px;
+        transform: rotate(180deg) !important;
+        -webkit-transition: all .1s ease;
+        transition: all 1s ease;
+        pointer-events: none;
+        -webkit-transform: translate(-50%, 0);
+        transform: translate(-50%, 0);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        opacity: 0;
+    }
 
     #chartjs-tooltip {
         text-align: center;
@@ -1951,20 +2002,8 @@ export class DtesChartComponent {
         transform: translate(-50%, 0);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-        &amp;::before {
-            content: &quot;&quot;;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            height: 0;
-            width: 0;
-            border-bottom: 4px solid white;
-            border-right: 4px solid transparent;
-            border-left: 4px solid transparent;
-            position: absolute;
-            bottom: -4px;
-            left: 195px;
-            transform: rotate(180deg);
 
-        }
+
 
         .circle {
             margin: 8px 8px 8px 0px;
@@ -1981,6 +2020,7 @@ export class DtesChartComponent {
             }
 
         }
+
 
         .popin-raw {
             display: flex;
@@ -2231,8 +2271,8 @@ export class DtesChartComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="left-side">  <div class="title">    <p>      Evolution du stock et DTES &nbsp;      <label        >{{ startRealValue === \'\' ? "d\'aujourd\'hui" : \'du\' }}        {{ startRealValue }} au {{ stopRealValue }}</label      >    </p>  </div>  <div class="container">    <div class="canvas-container">      <canvas id="dtes-chart"></canvas>      <div id="chartjs-tooltip">        <div class="popin-title-content">          <p class="popin-title">            <b>Stocks</b> <br />            à {{ getRealMonth(realSelectedMonth) }}          </p>          <div class="low">Projetés</div>          <p class="hard">Simulés</p>          <p class="white">Variation</p>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle green"></div>            <b> Affaires</b>          </div>          <p class="low-value first">            {{ getRounded(tooltip.projectedStock, true) || \'\' }}          </p>          <p class="hard-value first">            {{ getRounded(tooltip.simulatedStock, true) || \'\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label                >{{                  getDeltaInPercent(                    tooltip.simulatedStock,                    tooltip.projectedStock                  ) || 0                }}                %</label              >            </div>          </div>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle light-blue"></div>            <b>DTES</b> &nbsp; en mois          </div>          <p class="low-value">{{ getRounded(tooltip.projectedDTES) || \'\' }}</p>          <p class="hard-value">            {{ getRounded(tooltip.simulatedDTES) || \'\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label                >{{                  getDeltaInPercent(                    tooltip.simulatedDTES,                    tooltip.projectedDTES                  ) || 0                }}                %</label              >            </div>          </div>        </div>      </div>    </div>  </div></div><div class="right-side">  <aj-legend-label    [title]="\'projectedStock\'"    [label]="\'Stock (projeté)\'"    [dotColor]="\'#62dda7\'"    [bgColor]="\'#c3fad5\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedStock\'"    [label]="\'Stock (simulé)\'"    [dotColor]="\'#00a95f\'"    [bgColor]="\'#6fe49d\'"    (value)="display($event)"  ></aj-legend-label>  <div class="space"></div>  <aj-legend-label    [title]="\'projectedDTES\'"    [label]="\'DTES (projeté)\'"    [dotColor]="\'#869ece\'"    [bgColor]="\'#bfcdff\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedDTES\'"    [label]="\'DTES (simulé)\'"    [dotColor]="\'#dee5fd\'"    [bgColor]="\'#7b99e4\'"    (value)="display($event)"  ></aj-legend-label></div></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><div class="left-side">  <div class="title">    <p>      Evolution du stock et DTES &nbsp;      <label        >{{ startRealValue === \'\' ? "d\'aujourd\'hui" : \'du\' }}        {{ startRealValue }} au {{ stopRealValue }}</label      >    </p>  </div>  <div class="container">    <div class="canvas-container">      <canvas id="dtes-chart"></canvas>      <div id="chartjs-tooltip">        <div class="popin-title-content">          <p class="popin-title">            <b>Stocks</b> <br />            à {{ getRealMonth(realSelectedMonth) }}          </p>          <div class="low">Projetés</div>          <p class="hard">Simulés</p>          <p class="white">Variation</p>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle green"></div>            <b> Affaires</b>          </div>          <p class="low-value first">            {{ getRounded(tooltip.projectedStock, true) || \'\' }}          </p>          <p class="hard-value first">            {{ getRounded(tooltip.simulatedStock, true) || \'\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label                >{{                  getDeltaInPercent(                    tooltip.simulatedStock,                    tooltip.projectedStock                  ) || 0                }}                %</label              >            </div>          </div>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle light-blue"></div>            <b>DTES</b> &nbsp; en mois          </div>          <p class="low-value">{{ getRounded(tooltip.projectedDTES) || \'\' }}</p>          <p class="hard-value">            {{ getRounded(tooltip.simulatedDTES) || \'\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label                >{{                  getDeltaInPercent(                    tooltip.simulatedDTES,                    tooltip.projectedDTES                  ) || 0                }}                %</label              >            </div>          </div>        </div>      </div>      <div id="chartjs-tooltip-triangle"></div>    </div>  </div></div><div class="right-side">  <aj-legend-label    [title]="\'projectedStock\'"    [label]="\'Stock (projeté)\'"    [dotColor]="\'#62dda7\'"    [bgColor]="\'#c3fad5\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedStock\'"    [label]="\'Stock (simulé)\'"    [dotColor]="\'#00a95f\'"    [bgColor]="\'#6fe49d\'"    (value)="display($event)"  ></aj-legend-label>  <div class="space"></div>  <aj-legend-label    [title]="\'projectedDTES\'"    [label]="\'DTES (projeté)\'"    [dotColor]="\'#869ece\'"    [bgColor]="\'#bfcdff\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedDTES\'"    [label]="\'DTES (simulé)\'"    [dotColor]="\'#dee5fd\'"    [bgColor]="\'#7b99e4\'"    (value)="display($event)"  ></aj-legend-label></div></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'DtesChartComponent'};
 </script>

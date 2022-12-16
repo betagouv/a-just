@@ -67,6 +67,7 @@ export const emptyCalulatorValues = (referentiels) => {
 
 export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
   console.log('syncCalculatorDatas')
+  console.log('list hr', hr.map((h) => `${h.firstName} ${h.lastName}`).join(', '))
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
@@ -206,18 +207,19 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         nextDateFinded = new Date(nextDeltaDate)
       }
 
-      if (etp !== null) {
+      const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
+
+      if (situation && etp !== null) {
         lastEtpAdded = etp
-        lastSituationId = situation.category.id
-        list[situation.category.id].reelEtp += reelEtp
-        list[situation.category.id].etpt += etp
-        //if (hr.id === 2030) console.log({ list1: list[situation.category.id].reelEtp }); // list: list[situation.category.id].reelEtp });
+        lastSituationId = categoryId
+        list[categoryId].reelEtp += reelEtp
+        list[categoryId].etpt += etp
       }
 
       const sumByInd = sumBy(indispoFiltred, 'percent')
       if (sumByInd !== 0) {
         indispoFiltred.map((c) => {
-          if (c.contentieux.id === referentielId) list[situation.category.id].indispo += c.percent
+          if (c.contentieux.id === referentielId) list[categoryId].indispo += c.percent
         })
       }
     }
@@ -244,6 +246,10 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       now.setDate(now.getDate() + 1)
     }
   } while (now.getTime() <= dateStop.getTime())
+
+  if (nbDay === 0) {
+    nbDay = 1
+  }
 
   // format render
   for (const property in list) {

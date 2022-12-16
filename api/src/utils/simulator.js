@@ -1,15 +1,11 @@
 import { isFirstDayOfMonth } from 'date-fns'
-import { sortBy, sumBy } from 'lodash'
-import { filterActivitiesByDateAndContentieuxId } from './activities'
+import { meanBy, orderBy, sortBy } from 'lodash'
 import {
   checkIfDateIsNotToday,
   decimalToStringDate,
-  generalizeTimeZone,
   getRangeOfMonthsAsObject,
   getShortMonthString,
-  isSameMonthAndYear,
   month,
-  monthJimmy,
   nbOfDays,
   stringToDecimalDate,
   workingDay,
@@ -20,8 +16,14 @@ import { getEtpByDateAndPersonSimu } from './human-resource'
 
 export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
-  nbDaysByMagistratPerMonth: config.nbDaysByMagistrat / 12,
-  nbHoursPerDayAndMagistrat: config.nbHoursPerDayAndMagistrat,
+  nbDaysPerMonthByMagistrat: config.nbDaysByMagistrat / 12,
+  nbHoursPerDayAndByMagistrat: config.nbHoursPerDayAndMagistrat,
+  nbDaysByFonctionnaire: 229.57,
+  nbDaysPerMonthByFonctionnaire: 229.57 / 12,
+  nbHoursPerDayAndByFonctionnaire: 7,
+  nbDaysByContractuel: 229.57,
+  nbDaysPerMonthByContractuel: 229.57 / 12,
+  nbHoursPerDayAndByContractuel: 7,
 }
 
 const emptySituation = {
@@ -38,63 +40,117 @@ const emptySituation = {
   etpToCompute: null,
 }
 
-export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined) {
+export function mergeSituations (situationFiltered, situation, categories, categoryId) {
+  categories.map((x) => {
+    if (x.id !== categoryId) {
+      if (x.id === 1) situationFiltered.etpMag = situation.etpMag
+      if (x.id === 2) situationFiltered.etpFon = situation.etpFon
+      if (x.id === 3) situationFiltered.etpCont = situation.etpCont
+
+      if (situation.endSituation) {
+        situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
+        if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
+        if (x.id === 2) situationFiltered.endSituation.etpFon = situation.endSituation.etpFon
+        if (x.id === 3) situationFiltered.endSituation.etpCont = situation.endSituation.etpCont
+      }
+    }
+  })
+
+  return situationFiltered
+}
+
+export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
+  return hr
+    .map((human) => {
+      const situations = (human.situations || []).map((situation) => {
+        if (categoryId && situation.category && situation.category.id !== categoryId) {
+          situation.etp = 0
+        }
+
+        if (functionIds && !functionIds.includes(situation.fonction.id)) {
+          situation.etp = 0
+        }
+
+        return situation
+      })
+
+      return {
+        ...human,
+        situations,
+      }
+    })
+    .filter((x) => (x.situations || []).some((s) => s.etp !== 0))
+}
+export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
+  //console.log(selectedCategoryId, categories)
   const nbMonthHistory = 12
-  const { activities, lastActivities, deltaOfMonths, startDateCs, endDateCs } = await getCSActivities(
-    referentielId,
-    allActivities,
-    'InOutStock',
-    monthJimmy(new Date(), -nbMonthHistory),
-    monthJimmy(new Date())
-  )
+  const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
-  let totalIn = Math.floor(sumBy(activities, 'entrees') / nbMonthHistory)
+  let totalIn = Math.floor(meanBy(lastActivities, 'entrees')) || 0
+  let totalOut = Math.floor(meanBy(lastActivities, 'sorties')) || 0
 
-  let totalOut = Math.floor(sumBy(activities, 'sorties') / nbMonthHistory)
-  let lastStock = sumBy(lastActivities, 'stock')
-  let magRealTimePerCase = undefined
+  //console.log('TOTAL OUT 1', totalOut)
+  let lastStock = lastActivities.length ? lastActivities[0].stock || 0 : 0
+
+  let realTimePerCase = undefined
   let DTES = undefined
   let Coverage = undefined
   let etpAffectedAtStartDate = undefined
   let etpAffectedToday = undefined
+  let etpUseToday = undefined
   let etpMagToCompute = undefined
   let etpFonToCompute = undefined
-  let etpContToCompute = undefined
+  let etpConToCompute = undefined
   let endSituation = undefined
   let etpAffectedDeltaToCompute = undefined
   let etpMagFuturToCompute = undefined
   let etpFonFuturToCompute = undefined
-  let etpContFuturToCompute = undefined
+  let etpConFuturToCompute = undefined
   let etpMagUntilStartDate = undefined
   let etpFonUntilStartDate = undefined
-  let etpContUntilStartDate = undefined
+  let etpConUntilStartDate = undefined
 
-  if (activities.length === 0) return emptySituation
+  const categoryLabel = categories.find((element) => element.id === selectedCategoryId).label
+  let sufix = 'By' + categoryLabel
+  if (lastActivities.length === 0) return emptySituation
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
-    let { etpMag, etpFon, etpCont } = getEtpByCategory(etpAffectedToday)
+    // console.log(etpAffectedToday)
+    let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
+    //console.log('ETPMAG 1', etpMag)
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
-    ;({ etpMagToCompute, etpFonToCompute, etpContToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
+    ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
+    // console.log(etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
-    magRealTimePerCase = computeRealTimePerCase(totalOut, etpMagToCompute)
+    realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
+    // console.log('realTimePerCase', realTimePerCase)
 
     // Compute totalOut with etp today (specific date) to display
-    totalOut = computeTotalOut(magRealTimePerCase, etpMag)
+    totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
+    ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
+    const countOfCalandarDays = nbOfDays(endDateCs, new Date())
 
-    ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpContFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
-
-    const countOfCalandarDays = nbOfDays(month(endDateCs, 0), monthJimmy(new Date(), 0))
-
+    console.log({ countOfCalandarDays, start: endDateCs, end: new Date() })
     // Compute stock projection until today
-    lastStock = computeLastStock(lastStock, countOfCalandarDays, etpMagFuturToCompute, magRealTimePerCase, totalIn)
+    // console.log(lastStock)
+    lastStock = computeLastStock(
+      lastStock,
+      countOfCalandarDays,
+      selectedCategoryId === 1 ? etpMagFuturToCompute : etpFonFuturToCompute,
+      realTimePerCase,
+      totalIn,
+      sufix
+    )
+
+    //console.log({ totalOut, lastStock })
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
@@ -105,17 +161,26 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
       // Compute etpAffected & etpMag at dateStart (specific date) to display
       etpAffectedAtStartDate = await getHRPositions(hr, referentielId, categories, new Date(dateStart))
-      ;({ etpMag, etpFon, etpCont } = getEtpByCategory(etpAffectedAtStartDate))
-
+      ;({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
+      //console.log('CHECK IF DATE IS NOT TODAY', etpMag)
       // Compute totalOut with etp at dateStart (specific date) to display
-      totalOut = computeTotalOut(magRealTimePerCase, etpMag)
+      totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
+      //console.log('totalOut', totalOut)
 
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart))
-      ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpContUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
+      //console.log('DELTAAAAAA', etpAffectedDeltaToCompute)
+      ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
 
       // Compute stock, coverage, dtes projection until dateStart
-      lastStock = computeLastStock(lastStock, nbDayCalendar, etpMagUntilStartDate, magRealTimePerCase, totalIn)
+      lastStock = computeLastStock(
+        lastStock,
+        nbDayCalendar,
+        selectedCategoryId === 1 ? etpMagUntilStartDate : etpFonUntilStartDate,
+        realTimePerCase,
+        totalIn,
+        sufix
+      )
 
       Coverage = computeCoverage(totalOut, totalIn)
       DTES = computeDTES(lastStock, totalOut)
@@ -126,23 +191,31 @@ export async function getSituation (referentielId, hr, allActivities, categories
       // Compute projected etp at stop date (specific date) to display
       const projectedEtpAffected = await getHRPositions(hr, referentielId, categories, dateStop)
 
-      let { etpMagProjected, etpFonProjected, etpContProjected } = getEtpByCategory(projectedEtpAffected, 'Projected')
+      let { etpMagProjected, etpFonProjected, etpConProjected } = getEtpByCategory(projectedEtpAffected, 'Projected')
 
       // Compute projected out flow with projected etp at stop date (specific date)
-      const projectedTotalOut = computeTotalOut(magRealTimePerCase, etpMagProjected)
+      const projectedTotalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMagProjected : etpFonProjected, sufix)
 
       // Projection of etpAffected between start and stop date to compute stock
       let { etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(hr, referentielId, categories, dateStart, true, dateStop, true)
 
-      let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpContStartToEndToCompute } = getEtpByCategory(
+      let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpConStartToEndToCompute } = getEtpByCategory(
         etpAffectedStartToEndToCompute,
         'StartToEndToCompute'
       )
 
       // Compute projectedStock with etp at datestop
-      const projectedLastStock = computeLastStock(lastStock, nbDayCalendarProjected, etpMagStartToEndToCompute, magRealTimePerCase, totalIn)
+      const projectedLastStock = computeLastStock(
+        lastStock,
+        nbDayCalendarProjected,
+        selectedCategoryId === 1 ? etpMagStartToEndToCompute : etpFonStartToEndToCompute,
+        realTimePerCase,
+        totalIn,
+        sufix
+      )
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn)
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
+      console.log({ monthlyReport: monthlyReport[2] })
 
       endSituation = {
         totalIn,
@@ -150,11 +223,11 @@ export async function getSituation (referentielId, hr, allActivities, categories
         lastStock: projectedLastStock,
         realCoverage: projectedCoverage,
         realDTESInMonths: projectedDTES,
-        magRealTimePerCase,
+        magRealTimePerCase: realTimePerCase,
         etpMag: etpMagProjected,
         etpAffected: etpAffectedStartToEndToCompute,
-        etpFon: etpFonStartToEndToCompute,
-        etpCont: etpContStartToEndToCompute,
+        etpFon: etpFonProjected,
+        etpCont: etpConProjected,
         magCalculateCoverage: null,
         fonCalculateCoverage: null,
         magCalculateDTESInMonths: null,
@@ -164,31 +237,37 @@ export async function getSituation (referentielId, hr, allActivities, categories
         monthlyReport: monthlyReport,
       }
     }
-
+    /**
     const tmpList = {
       etpMagFuturToCompute,
       countOfCalandarDays,
       etpAffectedDeltaToCompute,
       etpMagToCompute,
       etpAffectedToday,
-      activities,
+      lastActivities,
       deltaOfMonths,
     }
+    */
 
+    //console.log('TOTAL ETPMAG', etpMag)
     return {
       //...tmpList,
       endSituation,
+      countOfCalandarDays,
       totalIn,
       totalOut,
       lastStock,
       realCoverage: Coverage,
       realDTESInMonths: DTES,
-      magRealTimePerCase,
+      magRealTimePerCase: realTimePerCase,
       etpMag,
       etpFon,
-      etpCont,
+      etpCont: etpCon,
       etpAffected: etpAffectedAtStartDate || etpAffectedToday,
+      etpUseToday: selectedCategoryId === 1 ? etpMag : selectedCategoryId === 2 ? etpFon : etpCon,
       etpToCompute: etpMagToCompute,
+      nbWorkingHours: environment['nbHoursPerDayAnd' + sufix],
+      nbWorkingDays: environment['nbDaysPerMonth' + sufix],
     }
   }
 }
@@ -201,54 +280,54 @@ function computeDTES (lastStock, totalOut) {
   return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null
 }
 
-function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn) {
+function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
     futurEtp,
     magRealTimePerCase,
     totalIn,
-    result:
-      Math.floor(lastStock) -
-      Math.floor(
-        (countOfCalandarDays / (365 / 12)) * environment.nbDaysByMagistratPerMonth * ((futurEtp * environment.nbHoursPerDayAndMagistrat) / magRealTimePerCase)
-      ) +
-      Math.floor((countOfCalandarDays / (365 / 12)) * totalIn),
+    ['nbDaysPerMonth' + sufix]: environment['nbDaysPerMonth' + sufix],
+    result: Math.floor(
+      lastStock -
+        (countOfCalandarDays / (365 / 12)) *
+          environment['nbDaysPerMonth' + sufix] *
+          ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
+        (countOfCalandarDays / (365 / 12)) * totalIn
+    ),
   })
+  if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  /**
-   * 
-   * 
-
-   */
-  return (
-    Math.floor(lastStock) -
-    Math.floor(
-      (countOfCalandarDays / (365 / 12)) * environment.nbDaysByMagistratPerMonth * ((futurEtp * environment.nbHoursPerDayAndMagistrat) / magRealTimePerCase)
-    ) +
-    Math.floor((countOfCalandarDays / (365 / 12)) * totalIn)
+  let stock = Math.floor(
+    lastStock -
+      (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
+      (countOfCalandarDays / (365 / 12)) * totalIn
   )
+
+  return stock < 0 ? 0 : stock
 }
 
-function computeTotalOut (magRealTimePerCase, etp) {
-  return Math.floor((etp * environment.nbHoursPerDayAndMagistrat * (environment.nbDaysByMagistrat / 12)) / magRealTimePerCase)
+function computeTotalOut (magRealTimePerCase, etp, sufix) {
+  return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
-function computeRealTimePerCase (totalOut, etp) {
-  let realTimeCorrectValue = fixDecimal(((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDayAndMagistrat) / (totalOut / etp), 100)
-  let realTimeCorrectvalueNotRounded = ((environment.nbDaysByMagistrat / 12) * environment.nbHoursPerDayAndMagistrat) / (totalOut / etp)
+function computeRealTimePerCase (totalOut, etp, sufix) {
+  let realTimeCorrectValue = fixDecimal(((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp), 100)
+  let realTimeCorrectvalueNotRounded = ((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp)
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
 
+  //console.log('REAL TIME PER CASE 1.1', etp, realTimeCorrectValue, realTimeDisplayed, realTimeToUse)
   return realTimeToUse
 }
 
 export function getEtpByCategory (etpAffected, sufix = '') {
+  //console.log(etpAffected)
   let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
-  let etpCont = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
-  let etpFon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
-
-  return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCont' + sufix]: etpCont }
+  let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
+  let etpCon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
+  //console.log({ ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCon' + sufix]: etpCon })
+  return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCon' + sufix]: etpCon }
 }
 /**
  * Get the Current Situations Activities of the last 12 months available
@@ -259,36 +338,34 @@ export function getEtpByCategory (etpAffected, sufix = '') {
  * @param {*} dateStop
  * @returns
  */
-export async function getCSActivities (referentielId, allActivities, filter, dateStart, dateStop) {
-  const activities = sortBy(
-    allActivities.filter((activity) => activity.contentieux.id === referentielId),
-    'periode'
-  ).reverse()
+export async function getCSActivities (referentielId, allActivities, dateStart, dateStop) {
+  if (allActivities.length !== 0) {
+    const lastActivities = orderBy(
+      allActivities.filter(
+        (a) =>
+          a.contentieux.id === referentielId &&
+          month(a.periode).getTime() >= month(dateStart).getTime() &&
+          month(a.periode).getTime() <= month(dateStop).getTime() &&
+          a.stock !== null
+      ),
+      (a) => {
+        const p = new Date(a.periode)
+        return p.getTime()
+      },
+      ['desc']
+    )
 
-  let deltaOfMonths = 0
-  let activivitiesFiltered = []
-  let lastActivities = []
+    const startDateCs = month(lastActivities.length ? lastActivities[lastActivities.length - 1].periode : new Date())
+    const endDateCs = month(lastActivities.length ? lastActivities[0].periode : new Date(), 0, 'lastday')
+    endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
+    endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
-  if (filter === 'InOutStock') {
-    do {
-      deltaOfMonths--
-      lastActivities = activities.filter((a) => isSameMonthAndYear(a.periode, monthJimmy(dateStop, deltaOfMonths)))
-    } while (hasInOutOrStock(lastActivities) === false && deltaOfMonths >= -12)
-  }
-  const startDateCs = monthJimmy(dateStart, deltaOfMonths)
-  const endDateCs = generalizeTimeZone(month(dateStop, deltaOfMonths, 'lastday'))
-
-  if (deltaOfMonths !== -12 && deltaOfMonths <= 0) {
-    activivitiesFiltered = await filterActivitiesByDateAndContentieuxId(activities, referentielId, startDateCs, endDateCs)
-  }
-
-  return {
-    activities: activivitiesFiltered.reverse(),
-    lastActivities,
-    deltaOfMonths,
-    startDateCs,
-    endDateCs,
-  }
+    return {
+      lastActivities,
+      startDateCs,
+      endDateCs,
+    }
+  } else return { lastActivities: [], dateStart, dateStop }
 }
 
 export function hasInOutOrStock (activities) {
@@ -312,6 +389,7 @@ export function appearOneTimeAtLeast (situations, referentielId) {
     return activities.some((a) => a.contentieux.id === referentielId)
   })
 }
+
 export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
   const hrCategories = {}
   let hrCategoriesMonthly = new Object({})
@@ -511,10 +589,13 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
   return list
 }
 
-export function execSimulation (params, simulation, dateStart, dateStop) {
+export function execSimulation (params, simulation, dateStart, dateStop, sufix) {
   params.toDisplay.map((x) => {
-    if (params.beginSituation !== null)
+    if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
+      if (x === 'etpMag') simulation.etpFon = params.beginSituation.etpFon
+      if (x === 'etpFon') simulation.etpMag = params.beginSituation.etpMag
+    }
   })
 
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
@@ -539,7 +620,7 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       params.modifiedParams.param2.label === 'realCoverage'
         ? parseFloat(params.modifiedParams.param2.value) / 100
         : parseFloat(params.modifiedParams.param2.value)
-        
+
   do {
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
@@ -553,10 +634,15 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
         }
       }
       if (x === 'totalOut') {
-        if (simulation.etpMag && simulation.magRealTimePerCase) {
-          simulation.totalOut = Math.floor(
-            Math.floor(simulation.etpMag * environment.nbHoursPerDayAndMagistrat * environment.nbDaysByMagistratPerMonth) / simulation.magRealTimePerCase
-          )
+        if ((simulation.etpMag || simulation.etpFon) && simulation.magRealTimePerCase) {
+          if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
+            simulation.totalOut = Math.floor(
+              Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
+            )
+          } else
+            simulation.totalOut = Math.floor(
+              Math.floor(simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
+            )
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
             Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
@@ -601,17 +687,39 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       }
 
       if (x === 'magRealTimePerCase') {
-        simulation.magRealTimePerCase =
-          Math.round(
-            ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
-          ) / 100
+        if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
+          console.log({ etpMag: simulation.etpMag || params.beginSituation.etpMag, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          simulation.magRealTimePerCase =
+            Math.round(
+              ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
+            ) / 100
+        } else {
+          console.log({ etpFon: simulation.etpFon || params.beginSituation.etpFon, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          simulation.magRealTimePerCase =
+            Math.round(
+              (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+                100
+            ) / 100
+        }
       }
 
       if (x === 'etpMag') {
+        simulation.etpFon = params.beginSituation.etpFon
+
         simulation.etpMag =
           Math.round(
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
               (17.333 * 8)) *
+              100
+          ) / 100
+      }
+      if (x === 'etpFon') {
+        simulation.etpMag = params.beginSituation.etpMag
+
+        simulation.etpFon =
+          Math.round(
+            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
+              ((229.57 / 12) * 7)) *
               100
           ) / 100
       }
@@ -622,11 +730,13 @@ export function execSimulation (params, simulation, dateStart, dateStop) {
       simulation.totalOut !== null &&
       simulation.lastStock !== null &&
       simulation.etpMag !== null &&
+      simulation.etpFon !== null &&
       simulation.magRealTimePerCase !== null &&
       simulation.realDTESInMonths !== null &&
       simulation.realCoverage !== null
     )
   )
 
+  //console.log('$$$$$$$$$$$', simulation)
   return simulation
 }

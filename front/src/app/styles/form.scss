@@ -80,3 +80,18 @@ input[type='radio'] {
     display: inline-block;
   }
 }
+
+input[type=submit]{
+  &.big-button {
+    height: 48px;
+    color: white;
+    text-align: center;
+    display: block;
+    width: 100%;
+    background-color: fColor(primary);
+    border: none;
+    outline: none;
+    font-size: 18px;
+    font-weight: 500;
+  }
+}

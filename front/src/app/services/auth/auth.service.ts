@@ -2,17 +2,32 @@ import { Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { UserService } from '../user/user.service';
 
+/**
+ * Service en lien avec l'authentification
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  /**
+   * URL de redirection si quelqu'un cherche à accéder à une page mais n'est pas connecté
+   */
   redirectUrl: string = '';
 
+  /**
+   * Constructeur
+   * @param serverService 
+   * @param userService 
+   */
   constructor(
     private serverService: ServerService,
     private userService: UserService
   ) {}
 
+  /**
+   * Retour si un utilisateur est connecté
+   * @returns 
+   */
   async userConnected() {
     const jwToken = this.serverService.getToken();
     const tmpUser = this.userService.user.getValue();
@@ -34,12 +49,20 @@ export class AuthService {
     }
   }
 
+  /**
+   * API retourne les informations rapide d'un utilisateur connecté
+   * @returns 
+   */
   userInfos() {
     return this.serverService.get('auths/auto-login').then((data) => {
       return data;
     });
   }
 
+  /**
+   * API vérification si un utilisateur est connecté sans message d'erreur
+   * @returns 
+   */
   userInfosWithoutError() {
     return this.serverService
       .getWithoutError('auths/auto-login')
@@ -48,6 +71,11 @@ export class AuthService {
       });
   }
 
+  /**
+   * API Tentative de connexion
+   * @param params 
+   * @returns 
+   */
   login(params = {}): Promise<any> {
     return this.serverService.post('auths/login', params).then((data) => {
       this.serverService.setToken(data.token);
@@ -55,6 +83,10 @@ export class AuthService {
     });
   }
 
+  /**
+   * Déconnection d'un utilisateur
+   * @returns 
+   */
   onLogout() {
     return this.userService.logout();
   }

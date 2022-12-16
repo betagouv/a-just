@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 import { today } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
-  Model.getListByHumanId = async (humanId) => {
+  Model.getListByHumanId = async (humanId, dateStart) => {
     const list = await Model.findAll({
       attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
       where: {
@@ -44,20 +44,31 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
+    // create artificial situation if date start if before the first situation
+    if (dateStart && list.length && today(dateStart) < today(list[0].dateStart)) {
+      list.push({
+        etp: 1,
+        dateStart: today(dateStart),
+        dateStartTimesTamps: today(dateStart).getTime(),
+        category: list[0].category,
+        fonction: list[0].fonction,
+        activities: [],
+      })
+    }
+
     return list
   }
 
   Model.syncSituations = async (list, humanId, cleanOldSituation = false) => {
     let reelHRIds = []
 
-    if(cleanOldSituation) {
+    if (cleanOldSituation) {
       await Model.destroy({
         where: {
           human_id: humanId,
         },
       })
     }
-
 
     for (let i = 0; i < list.length; i++) {
       const situation = list[i]
@@ -82,30 +93,32 @@ export default (sequelizeInstance, Model) => {
       if (findToBdd) {
         await findToBdd.update(options)
       } else {
-        console.log(options,humanId)
+        console.log(options, humanId)
         findToBdd = await Model.create({
           ...options,
           human_id: humanId,
         })
       }
-  
+
       reelHRIds.push(findToBdd.id)
 
       await Model.models.HRActivities.syncHRActivities(situation.activities || [], findToBdd.id)
     }
 
     // remove old HR
-    const oldNewHRList = (await Model.findAll({
-      attributes: ['id'],
-      where: {
-        human_id: humanId,
-        id: {
-          [Op.notIn]: reelHRIds,
+    const oldNewHRList = (
+      await Model.findAll({
+        attributes: ['id'],
+        where: {
+          human_id: humanId,
+          id: {
+            [Op.notIn]: reelHRIds,
+          },
         },
-      },
-      raw: true,
-    })).map(h => (h.id))
-    for(let i = 0; i < oldNewHRList.length; i++) {
+        raw: true,
+      })
+    ).map((h) => h.id)
+    for (let i = 0; i < oldNewHRList.length; i++) {
       await Model.destroyById(oldNewHRList[i])
     }
   }
@@ -113,24 +126,30 @@ export default (sequelizeInstance, Model) => {
   Model.haveHRId = async (situationId, userId) => {
     const hr = await Model.findOne({
       attributes: ['id'],
-      where: { 
+      where: {
         id: situationId,
       },
-      include: [{
-        attributes: ['id'],
-        model: Model.models.HumanResources,
-        include: [{
+      include: [
+        {
           attributes: ['id'],
-          model: Model.models.HRBackups,
-          include: [{
-            attributes: ['id'],
-            model: Model.models.UserVentilations,
-            where: {
-              user_id: userId,
+          model: Model.models.HumanResources,
+          include: [
+            {
+              attributes: ['id'],
+              model: Model.models.HRBackups,
+              include: [
+                {
+                  attributes: ['id'],
+                  model: Model.models.UserVentilations,
+                  where: {
+                    user_id: userId,
+                  },
+                },
+              ],
             },
-          }],
-        }],
-      }],
+          ],
+        },
+      ],
       raw: true,
     })
 

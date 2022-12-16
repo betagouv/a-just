@@ -7,6 +7,10 @@ import {
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
+/**
+ * Interface d'un item de la liste
+ */
+
 export interface dataInterface {
   id: number
   value: string
@@ -14,11 +18,19 @@ export interface dataInterface {
   childrens?: childrenInterface[]
 }
 
+/**
+ * Interface d'un enfant 
+ */
+
 export interface childrenInterface {
   id: number
   value: string
   parentId?: number
 }
+
+/**
+ * Composant select designer pour le projet
+ */
 
 @Component({
   selector: 'aj-select',
@@ -26,26 +38,72 @@ export interface childrenInterface {
   styleUrls: ['./select.component.scss'],
 })
 export class SelectComponent extends MainClass implements OnChanges {
+  /**
+   * Titre du bouton
+   */
   @Input() title: string | null = null
+  /**
+   * Icon à droite
+   */
   @Input() icon: string = 'expand_more'
+  /**
+   * Valeures par défaut
+   */
   @Input() value: number | string | null | number[] | string[] = null
+  /**
+   * Liste des élements de la liste
+   */
   @Input() datas: dataInterface[] = []
+  /**
+   * Si c'est un choix multiple
+   */
   @Input() multiple: boolean = true
+  /**
+   * Sous liste, si il y a
+   */
   @Input() subList: number[] | null = null
+  /**
+   * Id du parent, s'il y a sous liste
+   */
   @Input() parent: number | string | null = null
+  /**
+   * Valeure par défaut
+   */
   @Input() defaultRealValue: string = ''
+  /**
+   * Valeur du champs visible par défaut
+   */
+  @Input() defaultAllValue: string | null = null
+  /**
+   * Remonte au parent la ou les valeurs selectionnée
+   */
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter()
+  /**
+   * Nouvelle sous liste
+   */
   subReferentielData: dataInterface[] = []
+  /**
+   * Valeure changé en visible par humain
+   */
   realValue: string = ''
 
+  /**
+   * Constructeur
+   */
   constructor() {
     super()
   }
 
+  /**
+   * Ecoute du changement d'une des valeures d'entrées
+   */
   ngOnChanges() {
     this.findRealValue()
   }
 
+  /**
+   * Création et recherche du champ visible par humain soit le realValue
+   */
   findRealValue() {
     let find = !this.parent
       ? this.datas.find((d) => d.id === this.value)
@@ -92,19 +150,30 @@ export class SelectComponent extends MainClass implements OnChanges {
     } else if (Array.isArray(this.value) && this.value.length !== 0) {
       const arrayValues = Array.isArray(this.value) ? this.value : [this.value]
       this.realValue = ''
-      this.datas.map((v) => {
-        arrayValues.map((x) => {
-          if (v.id === x) {
-            tmpStr = tmpStr.concat(v.value, ', ')
-            this.realValue = tmpStr.slice(0, -2)
-          }
+
+      if (
+        this.value.length === this.datas.length &&
+        this.defaultAllValue !== null
+      ) {
+        this.realValue = this.defaultAllValue
+      } else
+        this.datas.map((v) => {
+          arrayValues.map((x) => {
+            if (v.id === x) {
+              tmpStr = tmpStr.concat(v.value, ', ')
+              this.realValue = tmpStr.slice(0, -2)
+            }
+          })
         })
-      })
     } else {
-        this.realValue = ''
+      this.realValue = ''
     }
   }
 
+  /**
+   * Nouvelle liste ou item sélectionnée
+   * @param list 
+   */
   onSelectedChanged(list: number[] | number) {
     if (this.parent && Array.isArray(list)) {
       if (list.length === 0) this.value = this.subList = []

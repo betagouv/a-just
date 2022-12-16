@@ -7,19 +7,35 @@ import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ReferentielService } from '../referentiel/referentiel.service'
 
+/**
+ * Service de sauvegarde de l'utilisateur actuel
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  /**
+   * Format de l'utilisateur connecté
+   */
   user: BehaviorSubject<UserInterface | null> =
     new BehaviorSubject<UserInterface | null>(null)
 
+  /**
+   * Constructeur
+   * @param serverService
+   * @param humanResourceService
+   * @param referentielService
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
+    private referentielService: ReferentielService
   ) {}
 
+  /**
+   * Sauvegarde d'une utilisateur
+   * @param user
+   */
   setUser(user: UserInterface | null) {
     this.user.next(user)
 
@@ -30,28 +46,51 @@ export class UserService {
     }
   }
 
+  /**
+   * API Identification de qui est l'utilisateur connecté
+   * @returns
+   */
   me() {
     return this.serverService.get('users/me').then((data) => data.data || null)
   }
 
+  /**
+   * API Inscription d'un nouveau utilisateur
+   * @param params
+   * @returns
+   */
   register(params = {}): Promise<any> {
     return this.serverService
       .post('users/create-account', params)
       .then((data) => data.data || null)
   }
 
+  /**
+   * API demande de nouveau mot de passe
+   * @param params
+   * @returns
+   */
   forgotPassword(params = {}): Promise<any> {
     return this.serverService
       .post('users/forgot-password', params)
       .then((data) => data.data || null)
   }
 
+  /**
+   * API changement du mot de passe avec code
+   * @param params
+   * @returns
+   */
   changePassword(params = {}): Promise<any> {
     return this.serverService
       .post('users/change-password', params)
       .then((data) => data.data || null)
   }
 
+  /**
+   * API Logout avec suppression du token coté serveur
+   * @returns
+   */
   logout() {
     return this.serverService.get('auths/logout').then(() => {
       this.user.next(null)
@@ -59,21 +98,19 @@ export class UserService {
     })
   }
 
-  isAdmin() {
-    const user = this.user.getValue()
-    if (user && user.role === 1) {
-      return true
-    } else {
-      return false
-    }
-  }
-
+  /**
+   * API demande des informations générale
+   * @returns
+   */
   getInitDatas() {
     return this.serverService
       .get('users/get-user-datas')
       .then((data) => data.data || null)
   }
 
+  /**
+   * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
+   */
   initDatas() {
     this.getInitDatas().then((result) => {
       this.humanResourceService.categoriesFilterListIds = result.categories.map(

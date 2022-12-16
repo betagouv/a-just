@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -7,9 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core'
-import { RadioButtonComponent } from '../radio-button/radio-button.component'
 
 @Component({
   selector: 'aj-legend-label',
@@ -21,6 +18,7 @@ export class LegendLabelComponent implements OnInit, OnChanges {
   @Input() dotColor: string = ''
   @Input() bgColor: string = ''
   @Input() label: string = ''
+  @Input() disabledEl: boolean = false
   @Output() value = new EventEmitter()
   toogle = {
     label: '',
@@ -32,7 +30,9 @@ export class LegendLabelComponent implements OnInit, OnChanges {
     this.elementRef = element.nativeElement
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.disabledEl === true) this.toogle.checked = !this.toogle.checked
+  }
 
   ngOnChanges(): void {
     const circleElement = (

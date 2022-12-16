@@ -1,5 +1,9 @@
 @import "../../styles/utils.scss";
 
+.contener {
+    overflow: hidden;
+}
+
 :host {
     position: relative;
 

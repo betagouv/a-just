@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de centralisation des traitements lié au référentiel</p>
+
+            </p>
 
 
 
@@ -127,12 +134,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:27</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructor</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -190,14 +199,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="39"
+                            class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:39</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -269,10 +280,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:15</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Ids du référentiels des indispo</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -300,10 +317,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:19</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Id du référentiels niveau 3 des indispo</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -331,10 +354,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:11</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:23</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Ids des contentieux de type soutien et ses enfants</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -362,10 +391,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/services/referentiel/referentiel.service.ts:27</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Ids des contentieux niveau 3</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -379,17 +414,40 @@
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
 
+/**
+ * Service de centralisation des traitements lié au référentiel
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class ReferentielService {
+  /**
+   * Ids du référentiels des indispo
+   */
   idsIndispo: number[] &#x3D; []
+  /**
+   * Id du référentiels niveau 3 des indispo
+   */
   idsMainIndispo: number &#x3D; 0
+  /**
+   * Ids des contentieux de type soutien et ses enfants
+   */
   idsSoutien: number[] &#x3D; []
+  /**
+   * Ids des contentieux niveau 3
+   */
   mainActivitiesId: number[] &#x3D; []
 
+  /**
+   * Constructor
+   * @param humanResourceService 
+   */
   constructor(private humanResourceService: HumanResourceService) {}
 
+  /**
+   * Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts
+   * @param list 
+   */
   formatDatas(list: ContentieuReferentielInterface[]) {
     const refIndispo &#x3D; list.find((r) &#x3D;&gt; r.label &#x3D;&#x3D;&#x3D; &#x27;Indisponibilité&#x27;)
     const idsIndispo: number[] &#x3D; []
@@ -411,7 +469,6 @@ export class ReferentielService {
       })
 
     this.idsIndispo &#x3D; idsIndispo
-    this.humanResourceService.copyOfIdsIndispo &#x3D; idsIndispo
 
     const refSoutien &#x3D; list.find((r) &#x3D;&gt; r.label &#x3D;&#x3D;&#x3D; &#x27;Soutien&#x27;)
     const idsSoutien &#x3D; []
@@ -436,6 +493,9 @@ export class ReferentielService {
       .map((r) &#x3D;&gt; r.id)
 
     this.humanResourceService.contentieuxReferentiel.next(list)
+    this.humanResourceService.contentieuxReferentielOnly.next(list.filter(
+      (r) &#x3D;&gt; idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1
+    ))
   }
 }
 </code></pre>

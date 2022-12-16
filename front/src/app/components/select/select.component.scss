@@ -3,14 +3,14 @@
 :host {
   display: block;
   height: 55px;
-  border-radius: 8px;
+  border-radius: 4px;
   background-color: fColor(bgSelect);
   border: 1px solid fColor(borderSelect);
   padding: 4px 8px;
   cursor: pointer;
 
   .bold-family {
-    font-family: "Marianne-bold";
+    font-weight: bold;
   }
 
   &.bg-white {
@@ -34,20 +34,20 @@
   p.title {
     color: fColor(titleSelect);
     white-space: nowrap;
-    margin-right: 28px;
     font-size: 14px;
   }
 
   div {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     p {
       white-space: nowrap;
       flex: 1;
       font-weight: bold;
       height: 24px;
-      width: 150px;
+      max-width: 150px;
       text-overflow: ellipsis;
       overflow: hidden;
     }

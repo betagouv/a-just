@@ -22,39 +22,33 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    const {
-      backupId,
-      dateStart,
-      dateStop,
-      contentieuxIds,
-      optionBackupId,
-      categorySelected,
-      selectedFonctionsIds,
-    } = this.body(ctx)
+    const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
     let fonctions = await this.models.HRFonctions.getAll()
-
-    if (categorySelected === MAGISTRATS) {
-      fonctions = fonctions.filter((f) => f.categoryId === 1)
-    } else if (categorySelected === FONCTIONNAIRES) {
-      fonctions = fonctions.filter((f) => f.categoryId === 2)
+    let categoryIdSelected = -1
+    switch (categorySelected) {
+    case MAGISTRATS:
+      categoryIdSelected = 1
+      break
+    case FONCTIONNAIRES:
+      categoryIdSelected = 2
+      break
+    default:
+      categoryIdSelected = 3
+      break
     }
 
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
+    fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     console.time('calculator-1')
-    const referentiels = (
-      await this.models.ContentieuxReferentiels.getReferentiels()
-    ).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
+    const referentiels = (await this.models.ContentieuxReferentiels.getReferentiels()).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')
-    const optionsBackups = await this.models.ContentieuxOptions.getAllById(
-      optionBackupId
-    )
+    const optionsBackups = await this.models.ContentieuxOptions.getAllById(optionBackupId)
     console.timeEnd('calculator-2')
 
     console.time('calculator-3')
@@ -75,31 +69,24 @@ export default class RouteCalculator extends Route {
 
     console.time('calculator-6-2')
     // filter by fonctions
-    hr = hr.filter((human) => {
-      if (
-        (categorySelected === MAGISTRATS ||
-          categorySelected === FONCTIONNAIRES) &&
-        selectedFonctionsIds
-      ) {
-        const situations = (human.situations || []).filter(
+    hr = hr
+      .map((human) => {
+        let situations = human.situations || []
+
+        situations = situations.filter(
           (s) =>
-            s.category &&
-            s.category.id === (categorySelected === MAGISTRATS ? 1 : 2)
+            (s.category && s.category.id !== categoryIdSelected) ||
+            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
+            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected)
         )
 
-        if (
-          situations.length &&
-          situations.every(
-            (s) =>
-              s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) === -1
-          )
-        ) {
-          return false
+        return {
+          ...human,
+          situations,
         }
-      }
+      })
+      .filter((h) => h.situations.length)
 
-      return true
-    })
     console.timeEnd('calculator-6-2')
 
     console.time('calculator-7')
@@ -107,16 +94,7 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(
-      list,
-      nbMonth,
-      activities,
-      dateStart,
-      dateStop,
-      hr,
-      categories,
-      optionsBackups
-    )
+    list = syncCalculatorDatas(list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups)
     console.timeEnd('calculator-8')
 
     this.sendOk(ctx, { fonctions, list })

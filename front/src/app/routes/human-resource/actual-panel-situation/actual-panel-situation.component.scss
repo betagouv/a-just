@@ -69,16 +69,19 @@
       display: flex;
       align-items: center;
       margin: 2px 0 4px 24px;
+      flex-wrap: wrap;
 
       > p {
         color: fColor(cgreenstrong);
         font-size: 16px;
         font-weight: bold;
         margin-right: 16px;
+        white-space: nowrap;
+        margin: 8px 0;
       }
 
       > .tags {
-        display: flex;
+        display: inline-flex;
         justify-content: flex-end;
 
         p {

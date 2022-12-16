@@ -1,0 +1,615 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">a-just-front documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Interfaces</li>
+  <li
+  >
+  ContentieuReferentielActivitiesInterface</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/routes/activities/activities.page.ts</code>
+        </p>
+
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface</a></code>
+            </p>
+
+        <section>
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#activityUpdated" 
+>
+                                            activityUpdated
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section>
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="activityUpdated"></a>
+                                        <span class="name "><b>activityUpdated</b>
+                                            <a href="#activityUpdated">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>activityUpdated:         <code><a href="../interfaces/NodeActivityUpdatedInterface.html" target="_self" >NodeActivityUpdatedInterface | null</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/NodeActivityUpdatedInterface.html" target="_self" >NodeActivityUpdatedInterface | null</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnDestroy, ViewChild } from &#x27;@angular/core&#x27;
+import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
+import {
+  ActivityInterface,
+  NodeActivityUpdatedInterface,
+} from &#x27;src/app/interfaces/activity&#x27;
+import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
+import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
+import { UserInterface } from &#x27;src/app/interfaces/user-interface&#x27;
+import { MainClass } from &#x27;src/app/libs/main-class&#x27;
+import { ActivitiesService } from &#x27;src/app/services/activities/activities.service&#x27;
+import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
+import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
+import { UserService } from &#x27;src/app/services/user/user.service&#x27;
+
+interface ContentieuReferentielActivitiesInterface
+  extends ContentieuReferentielInterface {
+  activityUpdated: NodeActivityUpdatedInterface | null
+}
+
+@Component({
+  templateUrl: &#x27;./activities.page.html&#x27;,
+  styleUrls: [&#x27;./activities.page.scss&#x27;],
+})
+export class ActivitiesPage extends MainClass implements OnDestroy {
+  @ViewChild(&#x27;wrapper&#x27;) wrapper: WrapperComponent | undefined
+  activities: ActivityInterface[] &#x3D; []
+  activityMonth: Date &#x3D; new Date()
+  referentiel: ContentieuReferentielActivitiesInterface[] &#x3D; []
+  updatedBy: {
+    user: UserInterface | null
+    date: Date
+  } | null &#x3D; null
+  timeoutUpdateAcitity: any &#x3D; {}
+  canEditActivities: boolean &#x3D; false
+  isLoadedFirst: boolean &#x3D; true
+  documentation: DocumentationInterface &#x3D; {
+    title: &quot;Données d&#x27;activité A-JUST :&quot;,
+    path: &#x27;https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest&#x27;,
+  }
+
+  constructor(
+    private activitiesService: ActivitiesService,
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService,
+    private userService: UserService
+  ) {
+    super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) &#x3D;&gt; {
+        if (backupId) {
+          this.activitiesService.getLastMonthActivities().then((lastMonth) &#x3D;&gt; {
+            lastMonth &#x3D; new Date(lastMonth)
+            this.activitiesService.activityMonth.next(lastMonth)
+          })
+        }
+      })
+    )
+
+    this.watch(
+      this.activitiesService.activityMonth.subscribe((a) &#x3D;&gt; {
+        if (a !&#x3D;&#x3D; null) {
+          this.activityMonth &#x3D; a
+          this.onLoadMonthActivities()
+        }
+      })
+    )
+  }
+
+  ngOnDestroy() {
+    this.watcherDestroy()
+  }
+
+  onUpdateActivity(
+    referentiel: ContentieuReferentielInterface,
+    subRef: ContentieuReferentielInterface,
+    nodeUpdated: string
+  ) {
+    referentiel.childrens &#x3D; (referentiel.childrens || []).map(
+      (ref: ContentieuReferentielInterface) &#x3D;&gt; {
+        if (ref.id &#x3D;&#x3D;&#x3D; subRef.id) {
+          ref.in &#x3D; subRef.in
+          ref.out &#x3D; subRef.out
+          ref.stock &#x3D; subRef.stock
+        }
+
+        return ref
+      }
+    )
+
+    const preformatArray &#x3D; (list: any[], index: string[]) &#x3D;&gt; {
+      let total: number | null &#x3D; null
+      list.map((item) &#x3D;&gt; {
+        for (let i &#x3D; 0; i &lt; index.length; i++) {
+          if (item[index[i]] !&#x3D;&#x3D; null) {
+            total &#x3D; (total || 0) + item[index[i]]
+            break
+          }
+        }
+      })
+
+      return total !&#x3D;&#x3D; null &amp;&amp; total &lt; 0 ? 0 : total
+    }
+    const inValue &#x3D; preformatArray(referentiel.childrens, [&#x27;in&#x27;, &#x27;originalIn&#x27;])
+    const outValue &#x3D; preformatArray(referentiel.childrens, [
+      &#x27;out&#x27;,
+      &#x27;originalOut&#x27;,
+    ])
+    const stockValue &#x3D; preformatArray(referentiel.childrens, [
+      &#x27;stock&#x27;,
+      &#x27;originalStock&#x27;,
+    ])
+    referentiel.in &#x3D;
+      inValue &#x3D;&#x3D;&#x3D; referentiel.originalIn &amp;&amp;
+      referentiel.childrens.every((c) &#x3D;&gt; c.in &#x3D;&#x3D;&#x3D; null)
+        ? null
+        : inValue
+    referentiel.out &#x3D;
+      outValue &#x3D;&#x3D;&#x3D; referentiel.originalOut &amp;&amp;
+      referentiel.childrens.every((c) &#x3D;&gt; c.out &#x3D;&#x3D;&#x3D; null)
+        ? null
+        : outValue
+    referentiel.stock &#x3D;
+      outValue &#x3D;&#x3D;&#x3D; referentiel.originalStock &amp;&amp;
+      referentiel.childrens.every((c) &#x3D;&gt; c.stock &#x3D;&#x3D;&#x3D; null)
+        ? null
+        : stockValue
+
+    // save datas
+    if (this.timeoutUpdateAcitity[subRef.id]) {
+      clearTimeout(this.timeoutUpdateAcitity[subRef.id])
+      this.timeoutUpdateAcitity[subRef.id] &#x3D; null
+    }
+
+    this.timeoutUpdateAcitity[subRef.id] &#x3D; setTimeout(() &#x3D;&gt; {
+      this.activitiesService
+        .updateDatasAt(
+          subRef.id,
+          this.activityMonth,
+          {
+            entrees: subRef.in,
+            sorties: subRef.out,
+            stock: subRef.stock,
+          },
+          nodeUpdated
+        )
+        .then(() &#x3D;&gt; this.onLoadMonthActivities())
+
+      this.updatedBy &#x3D; {
+        date: new Date(),
+        user: this.userService.user.getValue(),
+      }
+    }, 750)
+  }
+
+  changeMonth(date: Date) {
+    this.activitiesService.activityMonth.next(date)
+  }
+
+  onLoadMonthActivities() {
+    this.activitiesService
+      .loadMonthActivities(this.activityMonth)
+      .then((monthValues) &#x3D;&gt; {
+        this.isLoadedFirst &#x3D; false
+        this.updatedBy &#x3D; monthValues.lastUpdate
+        const activities: ActivityInterface[] &#x3D; monthValues.list
+        this.activities &#x3D; activities
+
+        if (monthValues.list.length &#x3D;&#x3D;&#x3D; 0) {
+          this.canEditActivities &#x3D; false
+        } else {
+          this.canEditActivities &#x3D; true
+        }
+        console.log(monthValues.list)
+
+        const referentiels &#x3D; [
+          ...this.humanResourceService.contentieuxReferentiel.getValue(),
+        ]
+
+        const oldReferentielSetted &#x3D; [...this.referentiel]
+        // todo set in, out, stock for each
+        this.referentiel &#x3D; referentiels
+          .filter(
+            (r) &#x3D;&gt;
+              this.referentielService.idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1 &amp;&amp;
+              this.referentielService.idsSoutien.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1
+          )
+          .map((ref) &#x3D;&gt; {
+            const getActivity &#x3D; activities.find(
+              (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; ref.id
+            )
+            ref.in &#x3D; getActivity ? getActivity.entrees : null
+            ref.originalIn &#x3D; getActivity ? getActivity.originalEntrees : null
+            ref.out &#x3D; getActivity ? getActivity.sorties : null
+            ref.originalOut &#x3D; getActivity ? getActivity.originalSorties : null
+            ref.stock &#x3D; getActivity ? getActivity.stock : null
+            ref.originalStock &#x3D; getActivity ? getActivity.originalStock : null
+
+            ref.childrens &#x3D; (ref.childrens || []).map((c) &#x3D;&gt; {
+              const getChildrenActivity &#x3D; activities.find(
+                (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; c.id
+              )
+              c.in &#x3D; getChildrenActivity ? getChildrenActivity.entrees : null
+              c.originalIn &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalEntrees
+                : null
+              c.out &#x3D; getChildrenActivity ? getChildrenActivity.sorties : null
+              c.originalOut &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalSorties
+                : null
+              c.stock &#x3D; getChildrenActivity ? getChildrenActivity.stock : null
+              c.originalStock &#x3D; getChildrenActivity
+                ? getChildrenActivity.originalStock
+                : null
+
+              return {
+                ...c,
+                activityUpdated:
+                  (getChildrenActivity &amp;&amp; getChildrenActivity.updatedBy) ||
+                  null,
+              }
+            })
+
+            const oldReferentielFinded &#x3D; oldReferentielSetted.find(
+              (i) &#x3D;&gt; i.id &#x3D;&#x3D;&#x3D; ref.id
+            )
+            return {
+              ...ref,
+              activityUpdated: (getActivity &amp;&amp; getActivity.updatedBy) || null,
+              showActivityGroup: oldReferentielFinded
+                ? oldReferentielFinded.showActivityGroup
+                : false,
+            }
+          })
+      })
+  }
+
+  getTooltipTitle(
+    type: &#x27;entrees&#x27; | &#x27;sorties&#x27; | &#x27;stock&#x27;,
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null
+  ) {
+    const activityUpdated &#x3D; contentieux.activityUpdated
+    const modifyBy &#x3D;
+      activityUpdated &amp;&amp; activityUpdated[type] ? activityUpdated[type] : null
+    let string &#x3D; &#x60;&lt;div class&#x3D;&quot;flex-center&quot;&gt;&lt;i class&#x3D;&quot;margin-right-8 color-white ${
+      value !&#x3D;&#x3D; null
+        ? modifyBy
+          ? &#x27;ri-lightbulb-flash-fill&#x27;
+          : &#x27;ri-lightbulb-flash-line&#x27;
+        : &#x27;&#x27;
+    }&quot;&gt;&lt;/i&gt;&lt;p class&#x3D;&quot;color-white&quot;&gt;&#x60;
+
+    switch (type) {
+      case &#x27;entrees&#x27;:
+        string +&#x3D; &#x27;Entrées A-JUSTées&#x27;
+        break
+      case &#x27;sorties&#x27;:
+        string +&#x3D; &#x27;Sorties A-JUSTées&#x27;
+        break
+      case &#x27;stock&#x27;:
+        string +&#x3D; &#x27;Stock A-JUSTé&#x27;
+
+        if (value !&#x3D;&#x3D; null) {
+          const isMainActivity &#x3D;
+            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !&#x3D;&#x3D;
+            -1
+          const activityUpdated &#x3D; contentieux.activityUpdated
+          const modifyBy &#x3D;
+            activityUpdated &amp;&amp; activityUpdated[type]
+              ? activityUpdated[type]
+              : null
+          if (isMainActivity || !modifyBy) {
+            string +&#x3D; &#x27; - Calculé&#x27;
+          }
+        }
+        break
+    }
+    string +&#x3D; &#x27;&lt;/p&gt;&lt;/div&gt;&#x27;
+
+    if (value !&#x3D;&#x3D; null &amp;&amp; modifyBy) {
+      const date &#x3D; new Date(modifyBy.date)
+      string +&#x3D; &#x60;&lt;p class&#x3D;&quot;color-white font-size-12&quot;&gt;Modifié par &lt;b&gt;${
+        modifyBy.user?.firstName
+      } ${
+        modifyBy.user?.lastName
+      }&lt;/b&gt; le ${date.getDate()} ${this.getShortMonthString(
+        date
+      )} ${date.getFullYear()}&lt;/p&gt;&#x60;
+    }
+
+    return string
+  }
+
+  getTooltipBody(
+    type: &#x27;entrees&#x27; | &#x27;sorties&#x27; | &#x27;stock&#x27;,
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null,
+    level: number
+  ) {
+    const activityUpdated &#x3D; contentieux.activityUpdated
+    const modifyBy &#x3D;
+      value !&#x3D;&#x3D; null &amp;&amp; activityUpdated &amp;&amp; activityUpdated[type]
+        ? activityUpdated[type]
+        : null
+
+    switch (type) {
+      case &#x27;entrees&#x27;:
+      case &#x27;sorties&#x27;:
+        if (level &#x3D;&#x3D;&#x3D; 3) {
+          if (value !&#x3D;&#x3D; null) {
+            return &#x60;Dès lors que des ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &#x27;entrées&#x27; : &#x27;sorties&#x27;
+            } sont saisies dans l&#x27;un des sous-contentieux de cette colonne, le total des ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &#x27;entrées&#x27; : &#x27;sorties&#x27;
+            } de ce contentieux s&#x27;A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.&#x60;
+          } else {
+            return &#x60;Dès lors que des ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &#x27;entrées&#x27; : &#x27;sorties&#x27;
+            } seront saisies dans l&#x27;un des sous-contentieux de cette colonne, le total des ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &#x27;entrées&#x27; : &#x27;sorties&#x27;
+            } de ce contentieux s&#x27;A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.&#x60;
+          }
+        } else {
+          if (modifyBy) {
+            return &#x60;Dès lors que cette donnée ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &quot;d&#x27;entrées&quot; : &#x27;de sorties&#x27;
+            } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans &quot;Stock A-JUSTé&quot;.&#x60;
+          } else {
+            return &#x60;Dès lors que cette donnée ${
+              type &#x3D;&#x3D;&#x3D; &#x27;entrees&#x27; ? &quot;d&#x27;entrées&quot; : &#x27;de sorties&#x27;
+            } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans &quot;Stock A-JUSTé&quot;&#x60;
+          }
+        }
+      case &#x27;stock&#x27;: {
+        if (level &#x3D;&#x3D;&#x3D; 3) {
+          if (value !&#x3D;&#x3D; null) {
+            return &quot;Dès lors que des données de stock ont été saisies manuellement ou calculées dans l&#x27;un des sous-contentieux de cette colonne, le total du stock de ce contentieux s&#x27;A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.&quot;
+          } else {
+            return &quot;Dès lors que des données de stock seront saisies manuellement ou calculées dans l&#x27;un des sous-contentieux de cette colonne, le total du stock de ce contentieux s&#x27;A-JUSTera automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.&quot;
+          }
+        } else {
+          if (modifyBy) {
+            return &#x60;Cette donnée a été saisie manuellement et sera prise en compte pour le calcul du stock des mois prochains.&lt;br/&gt;Si vous modifiez les entrées et/ou les sorties ou données de stock des mois antérieurs, cette valeur ne sera pas modifiée.&#x60;
+          } else if (value !&#x3D;&#x3D; null) {
+            return &#x60;Cette valeur de stock a été recalculée automatiquement, car vous avez saisi des données d&#x27;entrées, sorties ou stock pour l&#x27;un des mois précédents, ou parce que vous avez A-JUSTé les entrées ou sorties du mois en cours. &lt;br/&gt;Les stocks des prochains mois seront également recalculés à partir de cette valeur.&lt;br/&gt;Vous pouvez modifier manuellement cette donnée. Le cas échéant, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.&lt;br/&gt;Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties du mois en cours ou des mois antérieurs.&#x60;
+          } else {
+            return &#x60;Cette valeur de stock sera recalculée automatiquement, dès lors que vous aurez saisi des données d&#x27;entrées, sorties ou stock pour l&#x27;un des mois précédents, ou si vous avez A-JUSTé les entrées ou sorties du mois en cours. Si vous modifiez manuellement cette donnée, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.&lt;br/&gt;Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties des mois antérieurs.&#x60;
+          }
+        }
+      }
+    }
+  }
+
+  getTooltipFooter(
+    type: string,
+    contentieux: ContentieuReferentielActivitiesInterface,
+    value: number | null,
+    level: number
+  ) {
+    if (type &#x3D;&#x3D;&#x3D; &#x27;stock&#x27; &amp;&amp; level &#x3D;&#x3D;&#x3D; 4) {
+      if (value !&#x3D;&#x3D; null) {
+        const activityUpdated &#x3D; contentieux.activityUpdated
+        const modifyBy &#x3D;
+          activityUpdated &amp;&amp; activityUpdated[type]
+            ? activityUpdated[type]
+            : null
+
+        if (modifyBy) {
+          return &#x27;&#x27;
+        }
+
+        return &#x60;Calcul :&lt;br/&gt;Stock A-JUSTé M &#x3D; stock* mois M-1 + entrées* mois M - sorties* mois M&lt;br/&gt;* le stock A-JUSTé se recalcule dès lors qu&#x27;au moins l&#x27;une de ces 3 valeurs a été A-JUSTée&#x60;
+      }
+
+      return &#x27;Calcul :&lt;br/&gt;Stock mois M &#x3D; Stock mois M-1 + Entrées mois M - Sorties mois M&#x27;
+    }
+
+    return &#x27;&#x27;
+  }
+
+  onShowPanel(type: string) {
+    switch (type) {
+      case &#x27;logiciel&#x27;:
+        this.wrapper?.onForcePanelHelperToShow({
+          title: &#x27;Données d\&#x27;activité logiciel&#x27;,
+          path: &#x27;https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel&#x27;,
+        })
+        break
+      case &#x27;saisie&#x27;:
+        this.wrapper?.onForcePanelHelperToShow({
+          title: &#x27;Données d\&#x27;activité A-JUSTées&#x27;,
+          path: &#x27;https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees&#x27;,
+        })
+        break
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ContentieuReferentielActivitiesInterface.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

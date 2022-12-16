@@ -8,28 +8,61 @@ import {
 import { degreesToRadians } from 'src/app/utils/geometry'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Composant de prévisualisation des ETP
+ */
 @Component({
   selector: 'etp-preview',
   templateUrl: './etp-preview.component.html',
   styleUrls: ['./etp-preview.component.scss'],
 })
 export class EtpPreviewComponent implements OnChanges {
+  /**
+   * Valeure d'ETP
+   */
   @Input() etp: number = 0
+  /**
+   * Total des indispo
+   */
   @Input() indisponibility: number = 0
+  /**
+   * Largeur du composant
+   */
   @Input() width: number = 40
+  /**
+   * Hauteur du composant
+   */
   @Input() height: number = 40
+  /**
+   * Dom HTML du canvas pour dessiner
+   */
   @ViewChild('canvas') domCanvas: ElementRef | null = null
+  /**
+   * Marge d'espacement exterieur pour dessiner 
+   */
   margin: number = 8
+  /**
+   * Largeur de la bordure du dessin
+   */
   borderWidth: number = 6
 
+  /**
+   * Constructeur
+   */
   constructor() {}
 
+  /**
+   * Détection du changement de variable pour rédessiner
+   */
   ngOnChanges() {
     const fixDec = fixDecimal(this.etp)
     this.etp = fixDec < 0 ? 0 : fixDec
     this.onDraw()
   }
 
+  /**
+   * Préparation d'espace du dessin
+   */
   onDraw() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     if (ctx) {
@@ -47,6 +80,9 @@ export class EtpPreviewComponent implements OnChanges {
     }
   }
 
+  /**
+   * Génération des arcs de cercles du fond
+   */
   generateBackground() {
     const canvas = this.domCanvas?.nativeElement
     const ctx = canvas.getContext('2d')
@@ -113,6 +149,11 @@ export class EtpPreviewComponent implements OnChanges {
     ctx.fill()
   }
 
+  /**
+   * Conversion des degrées en Radius
+   * @param degree 
+   * @returns 
+   */
   getRadiusPosition(degree: number) {
     return degreesToRadians(180 + degree * (180 / 100))
   }

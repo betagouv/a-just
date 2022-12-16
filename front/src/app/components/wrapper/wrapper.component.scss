@@ -190,7 +190,7 @@
     p {
       cursor: pointer;
       color: fColor(cblack);
-      font-weight: bold;
+      font-weight: semi-bold;
       text-decoration: none;
     }
 
@@ -246,6 +246,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   .content {
     position: relative;
@@ -274,7 +275,7 @@
   h3 {
     color: fColor(cblack);
     font-size: 22px;
-    margin-right: 16px;
+    margin-right: 8px;
   }
 
   .subtitle {
@@ -288,38 +289,48 @@
 
     h3 {
       font-size: 20px;
-      font-family: 'Marianne-bold';
+      font-weight: bold;
     }
   }
 
   .documentation {
-    background-color: fColor(bgHelper);
-    font-size: 14px;
-    color: white;
     height: 26px;
-    line-height: 26px;
-    padding: 0 6px;
-    border-radius: 26px;
-    -webkit-transition: width 0.25s ease;
-    transition: width 0.25s ease;
     width: 26px;
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    overflow: hidden;
+    margin-right: 8px;
+    position: relative;
 
-    &:hover {
-      width: 190px;
+    >div {
+      background-color: fColor(bgHelper);
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      font-size: 14px;
+      color: white;
+      line-height: 26px;
+      padding: 0 6px;
+      border-radius: 26px;
+      width: 26px;
+      -webkit-transition: width 0.25s ease;
+      transition: width 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      overflow: hidden;
+
+      &:hover {
+        width: 190px;
+
+        >span {
+          display: inline;
+        }
+      }
 
       >span {
-        display: inline;
+        display: none;
+        white-space: nowrap;
+        margin-left: 4px;
       }
-    }
-
-    >span {
-      display: none;
-      white-space: nowrap;
-      margin-left: 4px;
     }
   }
 }

@@ -64,10 +64,17 @@
     <h3>File</h3>
 </p>
 <p class="comment">
-    <code>src/app/components/referentiel-calculator/referentiel-calculator.component.ts</code>
+    <code>src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts</code>
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Composant d&#39;une ligne du calculateur</p>
+
+    </p>
 
     <p class="comment">
         <h3>Extends</h3>
@@ -140,6 +147,12 @@
                                 <a href="#environment" >environment</a>
                             </li>
                             <li>
+                                <a href="#FONCTIONNAIRES" >FONCTIONNAIRES</a>
+                            </li>
+                            <li>
+                                <a href="#MAGISTRATS" >MAGISTRATS</a>
+                            </li>
+                            <li>
                                 <a href="#watcherList" >watcherList</a>
                             </li>
                         </ul>
@@ -155,10 +168,11 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#decimalToStringDate" >decimalToStringDate</a>
+                                <a href="#onToggleChildren" >onToggleChildren</a>
                             </li>
                             <li>
-                                <a href="#onToggleChildren" >onToggleChildren</a>
+                                    <span class="modifier">Public</span>
+                                <a href="#decimalToStringDate" >decimalToStringDate</a>
                             </li>
                             <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
@@ -247,6 +261,12 @@
                                 <a href="#calculator" >calculator</a>
                             </li>
                             <li>
+                                <a href="#categorySelected" >categorySelected</a>
+                            </li>
+                            <li>
+                                <a href="#forceToShowChildren" >forceToShowChildren</a>
+                            </li>
+                            <li>
                                 <a href="#sortBy" >sortBy</a>
                             </li>
                         </ul>
@@ -285,10 +305,16 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:35</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -316,9 +342,79 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:13</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:18</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Un item de la liste du calculateur</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="categorySelected"></a>
+                        <b>categorySelected</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:26</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Type de catégorie choisie</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="forceToShowChildren"></a>
+                        <b>forceToShowChildren</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:30</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Affiche ou non les enfants de force</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -342,9 +438,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:22</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Champ qui est trié, purement visuel</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -374,10 +476,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:34</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Connexion au css pour forcer l&#39;affichage des enfants</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -393,8 +501,48 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="onToggleChildren"></a>
+                    <span class="name">
+                        <span ><b>onToggleChildren</b></span>
+                        <a href="#onToggleChildren"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onToggleChildren()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="47"
+                            class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:47</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Switch la visibilité des enfants</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="decimalToStringDate"></a>
                     <span class="name">
+                        <span class="modifier">Public</span>
                         <span ><b>decimalToStringDate</b></span>
                         <a href="#decimalToStringDate"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -402,15 +550,22 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>decimalToStringDate(decimal: number | null)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>decimalToStringDate(decimal: number | null)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="29"
-                            class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:29</a></div>
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:157</a></code>
+</div>
                 </td>
             </tr>
 
@@ -462,43 +617,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="onToggleChildren"></a>
-                    <span class="name">
-                        <span ><b>onToggleChildren</b></span>
-                        <a href="#onToggleChildren"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>onToggleChildren()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:22</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="fixDecimal"></a>
                     <span class="name">
                         <span ><b>fixDecimal</b></span>
@@ -508,7 +626,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, base?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
 
@@ -521,7 +639,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:17</a></code>
 </div>
                 </td>
             </tr>
@@ -550,6 +668,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>base</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -598,7 +728,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:83</a></code>
 </div>
                 </td>
             </tr>
@@ -675,7 +805,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
 </div>
                 </td>
             </tr>
@@ -770,7 +900,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:139</a></code>
 </div>
                 </td>
             </tr>
@@ -847,7 +977,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:131</a></code>
 </div>
                 </td>
             </tr>
@@ -924,7 +1054,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:61</a></code>
 </div>
                 </td>
             </tr>
@@ -1001,7 +1131,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:65</a></code>
 </div>
                 </td>
             </tr>
@@ -1078,7 +1208,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:127</a></code>
 </div>
                 </td>
             </tr>
@@ -1159,7 +1289,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:53</a></code>
 </div>
                 </td>
             </tr>
@@ -1204,7 +1334,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:49</a></code>
 </div>
                 </td>
             </tr>
@@ -1249,7 +1379,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:147</a></code>
 </div>
                 </td>
             </tr>
@@ -1338,7 +1468,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
 </div>
                 </td>
             </tr>
@@ -1413,7 +1543,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:25</a></code>
 </div>
                 </td>
             </tr>
@@ -1488,7 +1618,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:21</a></code>
 </div>
                 </td>
             </tr>
@@ -1565,7 +1695,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:45</a></code>
 </div>
                 </td>
             </tr>
@@ -1642,7 +1772,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:41</a></code>
 </div>
                 </td>
             </tr>
@@ -1719,7 +1849,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:57</a></code>
 </div>
                 </td>
             </tr>
@@ -1806,7 +1936,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:29</a></code>
 </div>
                 </td>
             </tr>
@@ -1881,7 +2011,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:33</a></code>
 </div>
                 </td>
             </tr>
@@ -1937,10 +2067,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/components/referentiel-calculator/referentiel-calculator.component.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/routes/calculator/referentiel-calculator/referentiel-calculator.component.ts:34</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Connexion au css pour forcer l&#39;affichage des enfants</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1968,7 +2104,71 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:13</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FONCTIONNAIRES"></a>
+                    <span class="name">
+                        <span ><b>FONCTIONNAIRES</b></span>
+                        <a href="#FONCTIONNAIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>FONCTIONNAIRES</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAGISTRATS"></a>
+                    <span class="name">
+                        <span ><b>MAGISTRATS</b></span>
+                        <a href="#MAGISTRATS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MAGISTRATS</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -2006,7 +2206,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -2023,8 +2223,10 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, HostBinding, Input } from &#x27;@angular/core&#x27;
 import { CalculatorInterface } from &#x27;src/app/interfaces/calculator&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
-import { decimalToStringDate } from &#x27;src/app/utils/dates&#x27;
-import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
+
+/**
+ * Composant d&#x27;une ligne du calculateur
+ */
 
 @Component({
   selector: &#x27;aj-referentiel-calculator&#x27;,
@@ -2032,24 +2234,43 @@ import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
   styleUrls: [&#x27;./referentiel-calculator.component.scss&#x27;],
 })
 export class ReferentielCalculatorComponent extends MainClass {
+  /**
+   * Un item de la liste du calculateur
+   */
   @Input() calculator: CalculatorInterface | null &#x3D; null
+  /**
+   * Champ qui est trié, purement visuel
+   */
   @Input() sortBy: string &#x3D; &#x27;&#x27;
+  /**
+   * Type de catégorie choisie
+   */
+  @Input() categorySelected: string &#x3D; &#x27;&#x27;
+  /**
+   * Affiche ou non les enfants de force
+   */
+  @Input() forceToShowChildren: boolean &#x3D; false
+  /**
+   * Connexion au css pour forcer l&#x27;affichage des enfants
+   */
   @HostBinding(&#x27;class.show-children&#x27;) showChildren: boolean &#x3D;
     (this.calculator &amp;&amp; this.calculator.childIsVisible) || false
 
+    /**
+     * Constructor
+     */
   constructor() {
     super()
   }
 
+  /**
+   * Switch la visibilité des enfants
+   */
   onToggleChildren() {
     if (this.calculator) {
       this.showChildren &#x3D; !this.showChildren
       this.calculator.childIsVisible &#x3D; this.showChildren
     }
-  }
-
-  decimalToStringDate(decimal: number | null) {
-    return decimalToStringDate(decimal)
   }
 }
 </code></pre>
@@ -2085,99 +2306,168 @@ export class ReferentielCalculatorComponent extends MainClass {
                 &lt;/div&gt;
             &lt;/ng-template&gt;
         &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpAffected&#x27; }&quot;&gt;
+        &lt;div [ngClass]&#x3D;&quot;{
+        selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpMag&#x27;,
+        &#x27;bg-magistrats&#x27;: categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS
+      }&quot;&gt;
             &lt;div&gt;
-                &lt;p&gt;{{ calculator.etpMag | number:&#x27;0.2-2&#x27; }}&lt;/p&gt;
+                &lt;p&gt;{{ calculator.etpMag | number: &#x27;0.2-2&#x27; }}&lt;/p&gt;
             &lt;/div&gt;
         &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpAffected&#x27; }&quot;&gt;
+        &lt;div [ngClass]&#x3D;&quot;{
+        selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpFon&#x27;,
+        &#x27;bg-fonctionnaires&#x27;: categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES
+      }&quot;&gt;
             &lt;div&gt;
-                &lt;p&gt;{{ calculator.etpFon | number:&#x27;0.2-2&#x27; }}&lt;/p&gt;
+                &lt;p&gt;{{ calculator.etpFon | number: &#x27;0.2-2&#x27; }}&lt;/p&gt;
             &lt;/div&gt;
         &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpAffected&#x27; }&quot;&gt;
+        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;etpCont&#x27; }&quot;&gt;
             &lt;div&gt;
-                &lt;p&gt;{{ calculator.etpCont | number:&#x27;0.2-2&#x27; }}&lt;/p&gt;
+                &lt;p&gt;{{ calculator.etpCont | number: &#x27;0.2-2&#x27; }}&lt;/p&gt;
             &lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class&#x3D;&quot;item activity&quot;&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;aj-speedometer [percent]&#x3D;&quot;(calculator.realCoverage || 0) * 100&quot;&gt;&lt;/aj-speedometer&gt;
+        &lt;div&gt;
+            &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;realCoverage&#x27; }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;aj-speedometer [percent]&#x3D;&quot;(calculator.realCoverage || 0) * 100&quot;&gt;&lt;/aj-speedometer&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;realDTESInMonths&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;ng-template [ngIf]&#x3D;&quot;calculator.realDTESInMonths !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
-                    &lt;p&gt;{{ calculator.realDTESInMonths | number:&#x27;0.2-2&#x27; || 0 }}&lt;/p&gt;
-                    &lt;p class&#x3D;&quot;unity&quot;&gt;mois&lt;/p&gt;
-                &lt;/ng-template&gt;
+            &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;realDTESInMonths&#x27; }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;calculator.realDTESInMonths !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                        &lt;p&gt;{{ calculator.realDTESInMonths | number: &#x27;0.2-2&#x27; || 0 }}&lt;/p&gt;
+                        &lt;p class&#x3D;&quot;unity&quot;&gt;mois&lt;/p&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;realTimePerCase&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;ng-template [ngIf]&#x3D;&quot;calculator.realTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
-                    &lt;p&gt;
-                        {{
-                        this.decimalToStringDate(
-                        calculator.realTimePerCase
-                        ) || 0
-                        }}
-                    &lt;/p&gt;
-                &lt;/ng-template&gt;
+            &lt;div [ngClass]&#x3D;&quot;{
+          selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;magRealTimePerCase&#x27;,
+          &#x27;bg-magistrats&#x27;: categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS,
+          &#x27;bg-fonctionnaires&#x27;: categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES
+        }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.magRealTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;
+                                {{
+                                this.decimalToStringDate(calculator.magRealTimePerCase) || 0
+                                }}
+                            &lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;heures&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.fonRealTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;
+                                {{
+                                this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
+                                }}
+                            &lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;heures&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class&#x3D;&quot;item calculate&quot;&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;calculateCoverage&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;aj-speedometer [percent]&#x3D;&quot;(calculator.calculateCoverage || 0) * 100&quot;&gt;&lt;/aj-speedometer&gt;
+        &lt;div&gt;
+            &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;magCalculateCoverage&#x27; }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS&quot;&gt;
+                        &lt;aj-speedometer [percent]&#x3D;&quot;(calculator.magCalculateCoverage || 0) * 100&quot;&gt;&lt;/aj-speedometer&gt;
+                    &lt;/ng-template&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES&quot;&gt;
+                        &lt;aj-speedometer [percent]&#x3D;&quot;(calculator.fonCalculateCoverage || 0) * 100&quot;&gt;&lt;/aj-speedometer&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;calculateDTESInMonths&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;ng-template [ngIf]&#x3D;&quot;calculator.calculateDTESInMonths !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
-                    &lt;p&gt;{{ calculator.calculateDTESInMonths | number:&#x27;0.2-2&#x27; || 0 }}&lt;/p&gt;
-                    &lt;p class&#x3D;&quot;unity&quot;&gt;mois&lt;/p&gt;
-                &lt;/ng-template&gt;
+            &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;magCalculateDTESInMonths&#x27; }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.magCalculateDTESInMonths !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;{{ calculator.magCalculateDTESInMonths | number: &#x27;0.2-2&#x27; || 0 }}&lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;mois&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.fonCalculateDTESInMonths !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;{{ calculator.fonCalculateDTESInMonths | number: &#x27;0.2-2&#x27; || 0 }}&lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;mois&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;calculateTimePerCase&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;ng-template [ngIf]&#x3D;&quot;calculator.calculateTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
-                    &lt;p&gt;
-                        {{
-                        this.decimalToStringDate(
-                        calculator.calculateTimePerCase
-                        )
-                        }}
-                    &lt;/p&gt;
-                &lt;/ng-template&gt;
+            &lt;div [ngClass]&#x3D;&quot;{
+          selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;magCalculateTimePerCase&#x27;,
+          &#x27;bg-magistrats&#x27;: categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS,
+          &#x27;bg-fonctionnaires&#x27;: categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES
+        }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.magCalculateTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;
+                                {{
+                                this.decimalToStringDate(calculator.magCalculateTimePerCase)
+                                }}
+                            &lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;heures&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES&quot;&gt;
+                        &lt;ng-template [ngIf]&#x3D;&quot;calculator.fonCalculateTimePerCase !&#x3D;&#x3D; null&quot; [ngIfElse]&#x3D;&quot;nr&quot;&gt;
+                            &lt;p&gt;
+                                {{
+                                this.decimalToStringDate(calculator.fonCalculateTimePerCase)
+                                }}
+                            &lt;/p&gt;
+                            &lt;p class&#x3D;&quot;unity&quot;&gt;heures&lt;/p&gt;
+                        &lt;/ng-template&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div [ngClass]&#x3D;&quot;{ selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;calculateOut&#x27; }&quot;&gt;
-            &lt;div class&#x3D;&quot;block&quot;&gt;
-                &lt;p&gt;{{ calculator.calculateOut || 0 }}&lt;/p&gt;
-                &lt;p class&#x3D;&quot;unity&quot;&gt;
-                    {{
-                    calculator.calculateOut &amp;&amp; calculator.calculateOut &gt; 1
-                    ? &#x27;dossiers&#x27;
-                    : &#x27;dossier&#x27;
-                    }}
-                &lt;/p&gt;
+            &lt;div [ngClass]&#x3D;&quot;{
+          selected: sortBy &#x3D;&#x3D;&#x3D; &#x27;magCalculateOut&#x27;,
+          &#x27;bg-magistrats&#x27;: categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS,
+          &#x27;bg-fonctionnaires&#x27;: categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES
+        }&quot;&gt;
+                &lt;div class&#x3D;&quot;block&quot;&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; MAGISTRATS&quot;&gt;
+                        &lt;p&gt;{{ calculator.magCalculateOut || 0 }}&lt;/p&gt;
+                        &lt;p class&#x3D;&quot;unity&quot;&gt;
+                            {{
+                            calculator.magCalculateOut &amp;&amp; calculator.magCalculateOut &gt; 1
+                            ? &#x27;dossiers&#x27;
+                            : &#x27;dossier&#x27;
+                            }}
+                        &lt;/p&gt;
+                    &lt;/ng-template&gt;
+                    &lt;ng-template [ngIf]&#x3D;&quot;categorySelected &#x3D;&#x3D;&#x3D; FONCTIONNAIRES&quot;&gt;
+                        &lt;p&gt;{{ calculator.fonCalculateOut || 0 }}&lt;/p&gt;
+                        &lt;p class&#x3D;&quot;unity&quot;&gt;
+                            {{
+                            calculator.fonCalculateOut &amp;&amp; calculator.fonCalculateOut &gt; 1
+                            ? &#x27;dossiers&#x27;
+                            : &#x27;dossier&#x27;
+                            }}
+                        &lt;/p&gt;
+                    &lt;/ng-template&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;
 &lt;div *ngIf&#x3D;&quot;
-        showChildren &amp;&amp;
-        calculator &amp;&amp;
-        calculator.childrens &amp;&amp;
-        calculator.childrens.length
-    &quot; class&#x3D;&quot;childrens&quot;&gt;
+    ((showChildren || forceToShowChildren) &amp;&amp; calculator &amp;&amp;
+    calculator.childrens &amp;&amp;
+    calculator.childrens.length)
+  &quot; class&#x3D;&quot;childrens&quot;&gt;
     &lt;aj-referentiel-calculator *ngFor&#x3D;&quot;let r of calculator.childrens; trackBy: trackBy&quot; [calculator]&#x3D;&quot;r&quot;
-        [sortBy]&#x3D;&quot;sortBy&quot; class&#x3D;&quot;is-child&quot;&gt;&lt;/aj-referentiel-calculator&gt;
+        [sortBy]&#x3D;&quot;sortBy&quot; class&#x3D;&quot;is-child&quot; [categorySelected]&#x3D;&quot;categorySelected&quot;&gt;
+    &lt;/aj-referentiel-calculator&gt;
 &lt;/div&gt;
 
 &lt;ng-template #nr&gt;
@@ -2191,58 +2481,57 @@ export class ReferentielCalculatorComponent extends MainClass {
                 <p class="comment">
                     <code>./referentiel-calculator.component.scss</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">@import &quot;../../styles/utils.scss&quot;;
+                <pre class="line-numbers"><code class="language-scss">@import &#x27;../../../styles/utils.scss&#x27;;
 
 :host {
   display: block;
 
-  &amp;.show-children&gt;.main-referentiel {
+  &amp;.show-children &gt; .main-referentiel {
     border-top: solid 1px fColor(bgRowBorderSelected);
-    border-bottom: solid 1px fColor(bgRowBorderSelected);
 
-    &gt;.contentieux {
-      background-color: fColor(bgRowSelected);
-
+    &gt; .contentieux {
       mat-icon,
       p {
         color: fColor(borderProgressBar);
       }
     }
 
-    &gt;.actual {
+    &gt; .actual {
       background-color: fColor(bgRowSelected);
     }
 
-    &gt;.item.activity {
-      background-color: #dce1d4;
+    &gt; .item.activity {
+      background-color: fColor(bgRowSelected);
     }
 
-    &gt;.item.calculate {
-      background-color: #d0dffc;
+    &gt; .item.calculate {
+      background-color: fColor(bgRowSelected);
     }
   }
 
   &amp;.is-child {
-    &gt;.main-referentiel {
-      &gt;.contentieux p {
+    &gt; .main-referentiel {
+      &gt; .contentieux p {
         text-align: right;
       }
 
-      &gt;.item.activity {
-        background-color: #dce1d4;
-      }
-
-      &gt;.item.calculate {
-        background-color: #d0dffc;
+      .item {
+        &amp;.activity,
+        &amp;.calculate {
+          &gt; div {
+            box-shadow: none;
+            border: solid 1px fColor(cgraylightv3);
+          }
+        }
       }
     }
   }
 
-  &gt;.main-referentiel {
+  &gt; .main-referentiel {
     display: flex;
     height: 64px;
 
-    &gt;.contentieux {
+    &gt; .contentieux {
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -2255,67 +2544,73 @@ export class ReferentielCalculatorComponent extends MainClass {
       }
     }
 
-    &gt;.item {
+    &gt; .item {
       flex: 1;
       display: flex;
       align-items: stretch;
 
-      &amp;.activity {
-        background-color: fColor(cyellowlight);
-      }
-
-      &amp;.calculate {
-        background-color: fColor(bgHeaderSelected);
-      }
-
       &amp;.actual {
-        &gt;div {
+        &gt; div {
           align-self: stretch;
-          margin: 4px 2px;
+          margin: 0 2px;
           width: calc(100% - 4px);
+        }
+
+        .ref-nr {
+          margin: 4px 0;
+          height: calc(100% - 8px);
         }
       }
 
       &amp;.activity,
       &amp;.calculate {
-        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-          0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        padding: 4px 2px;
 
-        &gt;div {
-          &gt;div {
-            align-self: stretch;
-            margin: 4px 8px;
-            width: calc(100% - 16px);
-            border-radius: 4px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-              0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            background-color: #fff;
+        &gt; div {
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+          border-radius: 4px;
+          align-items: stretch;
+
+          &gt; div {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
 
-            &gt;p {
-              color: fColor(grayRow);
-              font-weight: bold;
-              font-size: 16px;
+            &amp;:last-child {
+              border-top-right-radius: 4px;
+              border-bottom-right-radius: 4px;
+            }
 
-              &amp;.unity {
-                font-size: 16px;
+            &gt; div {
+              align-self: stretch;
+              padding: 2px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+
+              &gt; p {
+                color: fColor(cblack);
+                font-weight: bold;
+                font-size: 14px;
+
+                &amp;.unity {
+                  color: fColor(grayRow);
+                  font-size: 16px;
+                  font-weight: normal;
+                }
               }
             }
 
             .ref-nr {
-              p {
-                font-size: 16px;
-                color: fColor(redNRColor);
-              }
+              height: 52px;
             }
           }
         }
       }
 
-      &gt;div {
+      &gt; div {
         flex: 1;
         display: flex;
         align-items: center;
@@ -2332,11 +2627,11 @@ export class ReferentielCalculatorComponent extends MainClass {
     }
   }
 
-  &gt;.childrens {
-    background-color: fColor(cgrayDefault);
+  &gt; .childrens {
+    background-color: fColor(bgProgressBar);
 
-    &gt;aj-referentiel-calculator {
-      border-bottom: 1px solid rgba(fColor(bgRowEvent), 0.5);
+    &gt; aj-referentiel-calculator {
+      border-bottom: 1px solid fColor(cgrayDefault);
 
       &amp;:last-child {
         border-bottom: none;
@@ -2367,14 +2662,23 @@ p {
   }
 }
 
+.bg-magistrats {
+  background-color: fColor(cbluemiddle);
+}
+
+.bg-fonctionnaires {
+  background-color: fColor(cpinkmiddle);
+}
+
 // class size
 .width-contentieux {
-  width: 161px;
+  width: 130px;
 }
 
 aj-speedometer {
   width: 70px;
-}</code></pre>
+}
+</code></pre>
     </div>
 
     <div class="tab-pane fade " id="c-tree">
@@ -2402,8 +2706,8 @@ aj-speedometer {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div *ngIf="calculator" class="main-referentiel">    <div class="width-contentieux contentieux" (click)="onToggleChildren()">        <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{            showChildren ? \'arrow_drop_down\' : \'arrow_right\'            }}</mat-icon>        <p>{{ referentielMappingName(calculator.contentieux.label) }}</p>    </div>    <div class="item actual">        <div [ngClass]="{ selected: sortBy === \'totalIn\' }">            <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.totalIn }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{ selected: sortBy === \'totalOut\' }">            <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.totalOut }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{ selected: sortBy === \'lastStock\' }">            <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.lastStock }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{ selected: sortBy === \'etpAffected\' }">            <div>                <p>{{ calculator.etpMag | number:\'0.2-2\' }}</p>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'etpAffected\' }">            <div>                <p>{{ calculator.etpFon | number:\'0.2-2\' }}</p>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'etpAffected\' }">            <div>                <p>{{ calculator.etpCont | number:\'0.2-2\' }}</p>            </div>        </div>    </div>    <div class="item activity">        <div [ngClass]="{ selected: sortBy === \'realCoverage\' }">            <div class="block">                <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'realDTESInMonths\' }">            <div class="block">                <ng-template [ngIf]="calculator.realDTESInMonths !== null" [ngIfElse]="nr">                    <p>{{ calculator.realDTESInMonths | number:\'0.2-2\' || 0 }}</p>                    <p class="unity">mois</p>                </ng-template>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'realTimePerCase\' }">            <div class="block">                <ng-template [ngIf]="calculator.realTimePerCase !== null" [ngIfElse]="nr">                    <p>                        {{                        this.decimalToStringDate(                        calculator.realTimePerCase                        ) || 0                        }}                    </p>                </ng-template>            </div>        </div>    </div>    <div class="item calculate">        <div [ngClass]="{ selected: sortBy === \'calculateCoverage\' }">            <div class="block">                <aj-speedometer [percent]="(calculator.calculateCoverage || 0) * 100"></aj-speedometer>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'calculateDTESInMonths\' }">            <div class="block">                <ng-template [ngIf]="calculator.calculateDTESInMonths !== null" [ngIfElse]="nr">                    <p>{{ calculator.calculateDTESInMonths | number:\'0.2-2\' || 0 }}</p>                    <p class="unity">mois</p>                </ng-template>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'calculateTimePerCase\' }">            <div class="block">                <ng-template [ngIf]="calculator.calculateTimePerCase !== null" [ngIfElse]="nr">                    <p>                        {{                        this.decimalToStringDate(                        calculator.calculateTimePerCase                        )                        }}                    </p>                </ng-template>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'calculateOut\' }">            <div class="block">                <p>{{ calculator.calculateOut || 0 }}</p>                <p class="unity">                    {{                    calculator.calculateOut && calculator.calculateOut > 1                    ? \'dossiers\'                    : \'dossier\'                    }}                </p>            </div>        </div>    </div></div><div *ngIf="        showChildren &&        calculator &&        calculator.childrens &&        calculator.childrens.length    " class="childrens">    <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="r"        [sortBy]="sortBy" class="is-child"></aj-referentiel-calculator></div><ng-template #nr>    <div class="ref-nr">        <p>N/R</p>    </div></ng-template></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><div *ngIf="calculator" class="main-referentiel">    <div class="width-contentieux contentieux" (click)="onToggleChildren()">        <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{            showChildren ? \'arrow_drop_down\' : \'arrow_right\'            }}</mat-icon>        <p>{{ referentielMappingName(calculator.contentieux.label) }}</p>    </div>    <div class="item actual">        <div [ngClass]="{ selected: sortBy === \'totalIn\' }">            <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.totalIn }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{ selected: sortBy === \'totalOut\' }">            <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.totalOut }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{ selected: sortBy === \'lastStock\' }">            <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">                <div>                    <p>{{ calculator.lastStock }}</p>                </div>            </ng-template>        </div>        <div [ngClass]="{        selected: sortBy === \'etpMag\',        \'bg-magistrats\': categorySelected === MAGISTRATS      }">            <div>                <p>{{ calculator.etpMag | number: \'0.2-2\' }}</p>            </div>        </div>        <div [ngClass]="{        selected: sortBy === \'etpFon\',        \'bg-fonctionnaires\': categorySelected === FONCTIONNAIRES      }">            <div>                <p>{{ calculator.etpFon | number: \'0.2-2\' }}</p>            </div>        </div>        <div [ngClass]="{ selected: sortBy === \'etpCont\' }">            <div>                <p>{{ calculator.etpCont | number: \'0.2-2\' }}</p>            </div>        </div>    </div>    <div class="item activity">        <div>            <div [ngClass]="{ selected: sortBy === \'realCoverage\' }">                <div class="block">                    <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>                </div>            </div>            <div [ngClass]="{ selected: sortBy === \'realDTESInMonths\' }">                <div class="block">                    <ng-template [ngIf]="calculator.realDTESInMonths !== null" [ngIfElse]="nr">                        <p>{{ calculator.realDTESInMonths | number: \'0.2-2\' || 0 }}</p>                        <p class="unity">mois</p>                    </ng-template>                </div>            </div>            <div [ngClass]="{          selected: sortBy === \'magRealTimePerCase\',          \'bg-magistrats\': categorySelected === MAGISTRATS,          \'bg-fonctionnaires\': categorySelected === FONCTIONNAIRES        }">                <div class="block">                    <ng-template [ngIf]="categorySelected === MAGISTRATS">                        <ng-template [ngIf]="calculator.magRealTimePerCase !== null" [ngIfElse]="nr">                            <p>                                {{                                this.decimalToStringDate(calculator.magRealTimePerCase) || 0                                }}                            </p>                            <p class="unity">heures</p>                        </ng-template>                    </ng-template>                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">                        <ng-template [ngIf]="calculator.fonRealTimePerCase !== null" [ngIfElse]="nr">                            <p>                                {{                                this.decimalToStringDate(calculator.fonRealTimePerCase) || 0                                }}                            </p>                            <p class="unity">heures</p>                        </ng-template>                    </ng-template>                </div>            </div>        </div>    </div>    <div class="item calculate">        <div>            <div [ngClass]="{ selected: sortBy === \'magCalculateCoverage\' }">                <div class="block">                    <ng-template [ngIf]="categorySelected === MAGISTRATS">                        <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>                    </ng-template>                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">                        <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>                    </ng-template>                </div>            </div>            <div [ngClass]="{ selected: sortBy === \'magCalculateDTESInMonths\' }">                <div class="block">                    <ng-template [ngIf]="categorySelected === MAGISTRATS">                        <ng-template [ngIf]="calculator.magCalculateDTESInMonths !== null" [ngIfElse]="nr">                            <p>{{ calculator.magCalculateDTESInMonths | number: \'0.2-2\' || 0 }}</p>                            <p class="unity">mois</p>                        </ng-template>                    </ng-template>                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">                        <ng-template [ngIf]="calculator.fonCalculateDTESInMonths !== null" [ngIfElse]="nr">                            <p>{{ calculator.fonCalculateDTESInMonths | number: \'0.2-2\' || 0 }}</p>                            <p class="unity">mois</p>                        </ng-template>                    </ng-template>                </div>            </div>            <div [ngClass]="{          selected: sortBy === \'magCalculateTimePerCase\',          \'bg-magistrats\': categorySelected === MAGISTRATS,          \'bg-fonctionnaires\': categorySelected === FONCTIONNAIRES        }">                <div class="block">                    <ng-template [ngIf]="categorySelected === MAGISTRATS">                        <ng-template [ngIf]="calculator.magCalculateTimePerCase !== null" [ngIfElse]="nr">                            <p>                                {{                                this.decimalToStringDate(calculator.magCalculateTimePerCase)                                }}                            </p>                            <p class="unity">heures</p>                        </ng-template>                    </ng-template>                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">                        <ng-template [ngIf]="calculator.fonCalculateTimePerCase !== null" [ngIfElse]="nr">                            <p>                                {{                                this.decimalToStringDate(calculator.fonCalculateTimePerCase)                                }}                            </p>                            <p class="unity">heures</p>                        </ng-template>                    </ng-template>                </div>            </div>            <div [ngClass]="{          selected: sortBy === \'magCalculateOut\',          \'bg-magistrats\': categorySelected === MAGISTRATS,          \'bg-fonctionnaires\': categorySelected === FONCTIONNAIRES        }">                <div class="block">                    <ng-template [ngIf]="categorySelected === MAGISTRATS">                        <p>{{ calculator.magCalculateOut || 0 }}</p>                        <p class="unity">                            {{                            calculator.magCalculateOut && calculator.magCalculateOut > 1                            ? \'dossiers\'                            : \'dossier\'                            }}                        </p>                    </ng-template>                    <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">                        <p>{{ calculator.fonCalculateOut || 0 }}</p>                        <p class="unity">                            {{                            calculator.fonCalculateOut && calculator.fonCalculateOut > 1                            ? \'dossiers\'                            : \'dossier\'                            }}                        </p>                    </ng-template>                </div>            </div>        </div>    </div></div><div *ngIf="    ((showChildren || forceToShowChildren) && calculator &&    calculator.childrens &&    calculator.childrens.length)  " class="childrens">    <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="r"        [sortBy]="sortBy" class="is-child" [categorySelected]="categorySelected">    </aj-referentiel-calculator></div><ng-template #nr>    <div class="ref-nr">        <p>N/R</p>    </div></ng-template></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ReferentielCalculatorComponent'};
 </script>
