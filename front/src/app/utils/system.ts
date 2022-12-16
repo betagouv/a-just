@@ -1,3 +1,7 @@
+/**
+ * Détection si un navigateur est de la marque Apple
+ * @returns 
+ */
 export function iIOS() {
   return [
     'iPad Simulator',

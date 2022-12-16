@@ -8,7 +8,6 @@ import { ListSelectionComponent } from './list-selection/list-selection.componen
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MaterialModule } from '../libs/material.module'
 import { OptionsBackupPanelComponent } from './options-backup-panel/options-backup-panel.component'
-import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component'
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component'
 import { SelectComponent } from './select/select.component'
 import { DateSelectComponent } from './date-select/date-select.component'
@@ -31,6 +30,8 @@ import { RadioButtonComponent } from './radio-button/radio-button.component'
 import { LegendLabelComponent } from './legend-label/legend-label.component'
 import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
 import { EtpChartComponent } from './etp-chart/etp-chart.component'
+import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-connected.component'
+import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 
 const list = [
   WrapperComponent,
@@ -38,7 +39,6 @@ const list = [
   PopupComponent,
   ListSelectionComponent,
   OptionsBackupPanelComponent,
-  ReferentielCalculatorComponent,
   SelectCheckAllComponent,
   SelectComponent,
   DateSelectComponent,
@@ -59,6 +59,8 @@ const list = [
   LegendLabelComponent,
   InOutChartComponent,
   EtpChartComponent,
+  WrapperNoConnectedComponent,
+  FooterNoConnectedComponent,
 ]
 
 @NgModule({

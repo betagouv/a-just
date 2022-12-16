@@ -62,6 +62,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de la page du réaffectateur</p>
+
+            </p>
 
 
 
@@ -78,7 +85,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#selectedCategoriesIds" >selectedCategoriesIds</a>
+                                <a href="#selectedCategoriesId" >selectedCategoriesId</a>
                             </li>
                             <li>
                                 <a href="#selectedFonctionsIds" >selectedFonctionsIds</a>
@@ -124,12 +131,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:22</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -180,21 +189,23 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onFilterList(backupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, contentieuxIds: number[] | null, categoriesIds: number[], fonctionsIds: number[])</code>
+<code>onFilterList(backupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, categoryId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, fonctionsIds: number[], referentielList: number[] | null)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="14"
-                            class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:14</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="39"
+                            class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:39</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API Appel au serveur pour lister les fiches d&#39;une juridiction par catégorie</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -233,21 +244,9 @@
 
                                 </tr>
                                 <tr>
-                                    <td>contentieuxIds</td>
+                                    <td>categoryId</td>
                                     <td>
-                                            <code>number[] | null</code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>categoriesIds</td>
-                                    <td>
-                                            <code>number[]</code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
                                     </td>
 
                                     <td>
@@ -260,6 +259,18 @@
                                     <td>fonctionsIds</td>
                                     <td>
                                             <code>number[]</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>referentielList</td>
+                                    <td>
+                                            <code>number[] | null</code>
                                     </td>
 
                                     <td>
@@ -294,30 +305,36 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="selectedCategoriesIds"></a>
+                    <a name="selectedCategoriesId"></a>
                     <span class="name">
-                        <span ><b>selectedCategoriesIds</b></span>
-                        <a href="#selectedCategoriesIds"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>selectedCategoriesId</b></span>
+                        <a href="#selectedCategoriesId"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>number[]</code>
+                        <i>Type : </i>    <code>number | null</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
+                        <i>Default value : </i><code>null</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:18</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des catégories sélectionnées et mise en cache</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -345,10 +362,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:22</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des fonctions sélectionnées et mise en cache</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -376,10 +399,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/reaffectator/reaffectator.service.ts:14</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des référentiels sélectionnés et mise en cache</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -392,30 +421,55 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
 import { ServerService } from &#x27;../http-server/server.service&#x27;
 
+/**
+ * Service de la page du réaffectateur
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class ReaffectatorService {
+  /**
+   * Liste des référentiels sélectionnés et mise en cache
+   */
   selectedReferentielIds: number[] &#x3D; []
-  selectedCategoriesIds: number[] &#x3D; []
+  /**
+   * Liste des catégories sélectionnées et mise en cache
+   */
+  selectedCategoriesId: number | null &#x3D; null
+  /**
+   * Liste des fonctions sélectionnées et mise en cache
+   */
   selectedFonctionsIds: number[] &#x3D; []
 
+  /**
+   * Constructeur
+   * @param serverService 
+   */
   constructor(private serverService: ServerService) {}
 
+  /**
+   * API Appel au serveur pour lister les fiches d&#x27;une juridiction par catégorie
+   * @param backupId 
+   * @param date 
+   * @param categoryId 
+   * @param fonctionsIds 
+   * @param referentielList 
+   * @returns 
+   */
   onFilterList(
     backupId: number,
     date: Date,
-    contentieuxIds: number[] | null,
-    categoriesIds: number[],
-    fonctionsIds: number[]
+    categoryId: number,
+    fonctionsIds: number[],
+    referentielList: number[] | null
   ) {
     return this.serverService
       .post(&#x60;reaffectator/filter-list&#x60;, {
         backupId,
         date,
-        contentieuxIds,
-        categoriesIds,
+        categoryId,
         fonctionsIds,
+        referentielList,
       })
       .then((data) &#x3D;&gt; {
         return data.data

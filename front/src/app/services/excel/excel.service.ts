@@ -1,23 +1,16 @@
 import { Injectable, OnInit } from '@angular/core'
 import { HumanResourceService } from '../human-resource/human-resource.service'
-import { HRCategoryService } from '../hr-category/hr-category.service'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { generalizeTimeZone, month, workingDay } from 'src/app/utils/dates'
-import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
+import { generalizeTimeZone, month } from 'src/app/utils/dates'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { BehaviorSubject } from 'rxjs'
 import { MainClass } from 'src/app/libs/main-class'
-import { HRFonctionService } from '../hr-fonction/hr-function.service'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { ReferentielService } from '../referentiel/referentiel.service'
-import { sumBy } from 'lodash'
 import { UserService } from '../user/user.service'
 import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 
-const startCurrentSituation = month(new Date(), -12)
-const endCurrentSituation = month(new Date(), -1, 'lastday')
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
 const EXCEL_EXTENSION = '.xlsx'
@@ -26,19 +19,46 @@ const EXCEL_EXTENSION = '.xlsx'
   providedIn: 'root',
 })
 export class ExcelService extends MainClass implements OnInit {
+  /**
+   * Categories selectionnées par l'utilisateur
+   */
   categories: HRCategoryInterface[] = []
+  /**
+   * Fonctions selectionnées par l'utilisateur
+   */
   fonctions: HRFonctionInterface[] = []
+  /**
+   * Liste des referentiels
+   */
   allReferentiels: ContentieuReferentielInterface[] = []
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(
-    startCurrentSituation
-  )
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(
-    endCurrentSituation
-  )
+  /**
+   * Date de début d'extraction
+   */
+  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  /**
+   * Date de fin d'extraction
+   */
+  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  /**
+   * Catégories à extraire
+   */
   selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>('')
+  /**
+   * Données d'extraction
+   */
   data: Array<any> = []
+  /**
+   * Taille des colonnes dans le fichier excel extrait
+   */
   columnSize: Array<any> = []
 
+  /**
+   * Constructeur
+   * @param humanResourceService
+   * @param serverService
+   * @param userService
+   * @param appService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private serverService: ServerService,
@@ -46,14 +66,14 @@ export class ExcelService extends MainClass implements OnInit {
     private appService: AppService
   ) {
     super()
-
-    this.watch(this.dateStart.subscribe((value) => {}))
-
-    this.watch(this.dateStop.subscribe((value) => {}))
   }
 
   ngOnInit(): void {}
 
+  /**
+   * API retourne les données de ventilations aggrégées pour l'ensemble des ressources présentes sur une date choisie
+   * @returns
+   */
   exportExcel() {
     return this.serverService
       .post(`extractor/filter-list`, {
@@ -63,7 +83,6 @@ export class ExcelService extends MainClass implements OnInit {
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
-        console.log(data.data.values)
         this.data = data.data.values
         this.columnSize = data.data.columnSize
         import('xlsx').then((xlsx) => {
@@ -90,6 +109,10 @@ export class ExcelService extends MainClass implements OnInit {
       })
   }
 
+  /**
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
+   */
   getFileName() {
     return `Extraction-${
       this.userService.user.getValue()!.firstName

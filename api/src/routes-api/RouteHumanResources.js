@@ -74,7 +74,6 @@ export default class RouteHumanResources extends Route {
   async updateHr (ctx) {
     let { backupId, hr } = this.body(ctx)
 
-    console.log(hr, backupId)
     const responseUpdate = await this.model.updateHR(hr, backupId)
 
     this.sendOk(ctx, responseUpdate)

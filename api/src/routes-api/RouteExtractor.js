@@ -95,13 +95,6 @@ export default class RouteExtractor extends Route {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 }
 
-                //if (human.id === 1730) console.log({ human: human.id, reelEtp }); // list: list[situation.category.id].reelEtp });
-
-                /**if (human.id === 1837)
-                  console.log({
-                    counterReelEtp,
-                  });*/
-
                 reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
@@ -133,6 +126,7 @@ export default class RouteExtractor extends Route {
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             data.push({
               ['Numéro A-JUST']: human.id,
+              Matricule: human.matricule,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,

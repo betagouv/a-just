@@ -2,17 +2,40 @@ import { Injectable } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
+/**
+ * Service de centralisation des traitements lié au référentiel
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ReferentielService {
+  /**
+   * Ids du référentiels des indispo
+   */
   idsIndispo: number[] = []
+  /**
+   * Id du référentiels niveau 3 des indispo
+   */
   idsMainIndispo: number = 0
+  /**
+   * Ids des contentieux de type soutien et ses enfants
+   */
   idsSoutien: number[] = []
+  /**
+   * Ids des contentieux niveau 3
+   */
   mainActivitiesId: number[] = []
 
+  /**
+   * Constructor
+   * @param humanResourceService 
+   */
   constructor(private humanResourceService: HumanResourceService) {}
 
+  /**
+   * Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts
+   * @param list 
+   */
   formatDatas(list: ContentieuReferentielInterface[]) {
     const refIndispo = list.find((r) => r.label === 'Indisponibilité')
     const idsIndispo: number[] = []
@@ -34,7 +57,6 @@ export class ReferentielService {
       })
 
     this.idsIndispo = idsIndispo
-    this.humanResourceService.copyOfIdsIndispo = idsIndispo
 
     const refSoutien = list.find((r) => r.label === 'Soutien')
     const idsSoutien = []

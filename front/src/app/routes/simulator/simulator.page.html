@@ -4,11 +4,62 @@
   title="Simulateur"
   [actionTemplate]="actions"
   [alignLeft]="true"
+  [documentation]="documentation"
 >
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
-
+  <div class="action-simulator-bar">
+    <div class="categories-switch">
+      <div
+        class="magistrats {{disabled}}"
+        [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+        (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); "
+      >
+        <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
+        <p>Magistrats</p>
+      </div>
+      <div
+        class="fonctionnaires {{disabled}}"
+        [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+        class="fonctionnaires"
+        (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRE')"
+      >
+        <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRE'" />
+        <p>Fonctionnaires</p>
+      </div>
+    </div>
+    <aj-select
+      class="contentieux {{disabled}}"
+      title="Choix des fonctions (option)"
+      [value]="selectedFonctionsIds"
+      [datas]="functionsList"
+      [defaultAllValue]="'Toutes'"
+      (valueChange)="onChangeFonctionsSelected($event)"
+    >
+    </aj-select>
+    <aj-select
+      title="Contentieux (obligatoire)"
+      class="contentieux {{disabled}}"
+      [defaultRealValue]="'Sélectionner un contentieux'"
+      [value]="contentieuId"
+      [datas]="formReferentiel"
+      (valueChange)="updateReferentielSelected('referentiel', $event)"
+      [multiple]="false"
+    >
+    </aj-select>
+    <aj-select
+      title="Sous-contentieux (option)"
+      class=" contentieux {{disabled}}"
+      [class.notSelectable]="contentieuId===null"
+      [value]="subList"
+      [datas]="formReferentiel"
+      [subList]="subList"
+      [parent]="contentieuId"
+      (valueChange)="updateReferentielSelected('subList', $event)"
+    >
+    </aj-select>
+  </div>
   <div class="top-bar-container">
     <p>Période choisie :</p>
 
@@ -57,10 +108,16 @@
     <div class="item blue-bg">
       <p>Stock</p>
     </div>
-    <div class="item">
+    <div
+      class="item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <p>ETPT magistrat</p>
     </div>
-    <div class="item blue-bg">
+    <div
+      class="item blue-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>ETPT greffe</p>
     </div>
     <div class="item">
@@ -69,16 +126,22 @@
     <div class="item blue-bg">
       <p>Taux de couverture</p>
     </div>
-    <div class="item">
+    <div
+      class="item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>DTES</p>
     </div>
-    <div class="item blue-bg">
+    <div
+      class="item blue-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <p>Temps moyen / dossier</p>
     </div>
   </div>
   <div
     class="actual-situation"
-    *ngIf="(subList.length!==0 || this.getElementById(this.contentieuId)?.childrens?.length===0) &&  firstSituationData !== null"
+    *ngIf="((subList.length!==0 && selectedFonctionsIds.length!==0 ) || this.getElementById(this.contentieuId)?.childrens?.length===0) &&  firstSituationData !== null"
     [@fadeInOut]
   >
     <div class="line-title">
@@ -97,17 +160,20 @@
     <div class="line-item orange-bg">
       <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
     </div>
-    <div class="line-item orange-bg">
-      <input
-        [value]="getFieldValue('ETPTGreffe',firstSituationData)"
-        disabled
-      />
+    <div
+      class="line-item orange-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
+      <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
     </div>
     <div class="line-item">
-      <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
+      <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
     </div>
     <div class="line-item orange-bg">
       <input
@@ -115,13 +181,19 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('realDTESInMonths',firstSituationData)"
         disabled
       />
     </div>
-    <div class="line-item orange-bg">
+    <div
+      class="line-item orange-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('magRealTimePerCase',firstSituationData)"
         disabled
@@ -159,21 +231,27 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
+    >
       <input
         [value]="getFieldValue('etpMag',projectedSituationData)"
         disabled
       />
     </div>
-    <div class="line-item grey-bg">
+    <div
+      class="line-item grey-bg"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
-        [value]="getFieldValue('ETPTGreffe',projectedSituationData)"
+        [value]="getFieldValue('etpFon',projectedSituationData)"
         disabled
       />
     </div>
     <div class="line-item">
       <input
-        [value]="getFieldValue('etpFon',projectedSituationData)"
+        [value]="getFieldValue('etpCont',projectedSituationData)"
         disabled
       />
     </div>
@@ -183,13 +261,19 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div
+      class="line-item"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('realDTESInMonths',projectedSituationData)"
         disabled
       />
     </div>
-    <div class="line-item grey-bg">
+    <div
+      class="line-item grey-bg"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
+    >
       <input
         [value]="getFieldValue('magRealTimePerCase',projectedSituationData)"
         disabled
@@ -205,13 +289,13 @@
       <div
         id="init-button"
         class="init-button"
-        (click)="initParams([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Réinitialiser</p>
       </div>
       <div
         class="simulate-button {{simulateButton}}"
-        (click)="simulate([totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Simuler</p>
       </div>
@@ -235,7 +319,7 @@
       <div class="choices">
         <div
           class="choice"
-          (click)="selectParamToLock(0,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+          (click)="selectParamToLock(0,[totalIn, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
         >
           à {{getLockedParamLabel(0)}}
           <br />constant{{getLockedParamLabel(0)!=='entrées
@@ -243,7 +327,7 @@
         </div>
         <div
           class="choice"
-          (click)="selectParamToLock(1,[totalIn, totalOut, lastStock, etpMag, realCoverage, realDTESInMonths, magRealTimePerCase])"
+          (click)="selectParamToLock(1,[totalIn, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
         >
           à {{getLockedParamLabel(1)}}
           <br />constant{{getLockedParamLabel(1)!=='entrées
@@ -271,18 +355,19 @@
       <div class="rectangle">
         <div
           class="title"
-          *ngIf="buttonSelected.id !== 'etpMag' && buttonSelected.id !== 'totalOut' && buttonSelected.id !== 'totalIn'&& buttonSelected.id !== 'magRealTimePerCase'"
+          *ngIf="buttonSelected.id !== 'etpMag' && buttonSelected.id !== 'etpFon' &&buttonSelected.id !== 'totalOut' && buttonSelected.id !== 'totalIn'&& buttonSelected.id !== 'magRealTimePerCase'"
         >
           Atteindre au {{stopRealValue}} <br />
           {{getText('firstInput')}} :
         </div>
         <div
           class="title"
-          *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'magRealTimePerCase'"
+          *ngIf="buttonSelected.id === 'etpMag' || buttonSelected.id === 'etpFon' ||buttonSelected.id === 'totalOut'|| buttonSelected.id === 'totalIn'|| buttonSelected.id === 'magRealTimePerCase'"
         >
           Appliquer sur la période {{startRealValue? "du":"d'"}}
-          {{startRealValue||"aujourd'hui"}} au {{stopRealValue}}
-          {{buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT magistrat":
+          {{startRealValue||"aujourd'hui"}} au {{stopRealValue}} {{
+          buttonSelected.id==='etpFon' ? "un volume moyen d'ETPT greffe":
+          buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT magistrat":
           buttonSelected.id === 'totalOut'?"un volume moyen de sorties
           mensuelles": buttonSelected.id === 'totalIn'? "un volume moyen
           d'entrées mensuelles":"un temps moyen par dossier"}} de :
@@ -388,6 +473,7 @@
         (click)="openPopupWithParams(etpMag)"
         value="Ajuster"
         readonly="readonly"
+        [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}"
         #etpMag
       />
       <div
@@ -402,31 +488,13 @@
     </div>
     <div class="line-item blue-bg">
       <input
-        class="ajusted-button disable"
-        id="ETPTGreffe"
-        [class.filled]="ETPTGreffe.value!=='Ajuster'"
-        (click)="openPopupWithParams(ETPTGreffe)"
-        value="Ajuster"
-        readonly="readonly"
-        #ETPTGreffe
-      />
-      <div
-        class="modified-label"
-        *ngIf="paramsToAjust.param1.label===ETPTGreffe.id  || paramsToAjust.param2.label===ETPTGreffe.id"
-        [@fadeInOut]
-      >
-        {{percentageModifiedInputText(ETPTGreffe.id,getFieldValue('ETPTGreffe',firstSituationData))}}%
-        <div class="triangle"></div>
-      </div>
-    </div>
-    <div class="line-item">
-      <input
-        class="ajusted-button disable"
+        class="ajusted-button"
         id="etpFon"
         [class.filled]="etpFon.value!=='Ajuster'"
         (click)="openPopupWithParams(etpFon)"
         value="Ajuster"
         readonly="readonly"
+        [ngClass]="{disable: categorySelected !== 'FONCTIONNAIRE'}"
         #etpFon
       />
       <div
@@ -435,6 +503,25 @@
         [@fadeInOut]
       >
         {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',firstSituationData))}}%
+        <div class="triangle"></div>
+      </div>
+    </div>
+    <div class="line-item">
+      <input
+        class="ajusted-button disable"
+        id="etpCont"
+        [class.filled]="etpCont.value!=='Ajuster'"
+        (click)="openPopupWithParams(etpCont)"
+        value="Ajuster"
+        readonly="readonly"
+        #etpCont
+      />
+      <div
+        class="modified-label"
+        *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id"
+        [@fadeInOut]
+      >
+        {{percentageModifiedInputText(etpCont.id,getFieldValue('etpCont',firstSituationData))}}%
 
         <div class="triangle"></div>
       </div>
@@ -643,7 +730,28 @@
           </div>
         </div>
         <div class="line-item">
-          <input [value]="getFieldValue('',simulatedSationData)" disabled />
+          <input
+            [value]="getFieldValue('etpFon',simulatedSationData)"
+            disabled
+          />
+          <div
+            class="modified-label simulated"
+            *ngIf="paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon'"
+            [@fadeInOut]
+          >
+            {{percentageModifiedInputText('etpFon',getFieldValue('etpFon',firstSituationData))}}%
+
+            <div class="triangle simulated"></div>
+          </div>
+          <div
+            class="modified-label simulated blue"
+            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData)"
+            [@fadeInOut]
+          >
+            {{ratio(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}%
+
+            <div class="triangle simulated blue"></div>
+          </div>
         </div>
         <div class="line-item">
           <input [value]="getFieldValue('',simulatedSationData)" disabled />
@@ -729,7 +837,7 @@
     </div>
     <aj-dtes-chart></aj-dtes-chart>
 
-    <aj-etp-chart></aj-etp-chart>
+    <aj-etp-chart [categorySelected]="categorySelected"></aj-etp-chart>
 
     <aj-in-out-chart></aj-in-out-chart>
 
@@ -768,30 +876,6 @@
   </div>
 </aj-wrapper>
 <ng-template #actions>
-  <aj-select
-    title="Contentieux"
-    class="contentieux {{disabled}}"
-    [defaultRealValue]="'Sélectionner un contentieux'"
-    [value]="contentieuId"
-    [datas]="formReferentiel"
-    (valueChange)="updateReferentielSelected('referentiel', $event)"
-    [multiple]="false"
-  >
-  </aj-select>
-  <aj-select
-    title="Sous Contentieux"
-    class="{{disabled}}"
-    [class.notSelectable]="contentieuId===null"
-    [value]="subList"
-    [datas]="formReferentiel"
-    [subList]="subList"
-    [parent]="contentieuId"
-    (valueChange)="updateReferentielSelected('subList', $event)"
-  >
-  </aj-select>
-  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
-    <p class="title">Reset</p>
-  </div>
   <div id="print-title">
     <img
       width="60px"
@@ -810,5 +894,9 @@
   >
     <div class="shape">D</div>
     <p class="title">Exporter en PDF</p>
+  </div>
+
+  <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()">
+    <p class="title">Reset</p>
   </div>
 </ng-template>

@@ -111,6 +111,12 @@
                                 <a href="#environment" >environment</a>
                             </li>
                             <li>
+                                <a href="#FONCTIONNAIRES" >FONCTIONNAIRES</a>
+                            </li>
+                            <li>
+                                <a href="#MAGISTRATS" >MAGISTRATS</a>
+                            </li>
+                            <li>
                                 <a href="#watcherList" >watcherList</a>
                             </li>
                         </ul>
@@ -133,6 +139,10 @@
                             </li>
                             <li>
                                 <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#decimalToStringDate" >decimalToStringDate</a>
                             </li>
                             <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
@@ -223,17 +233,19 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, serverService: <a href="../injectables/ServerService.html" target="_self">ServerService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>)</code>
+<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, serverService: <a href="../injectables/ServerService.html" target="_self">ServerService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, appService: <a href="../injectables/AppService.html" target="_self">AppService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/excel/excel.service.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/services/excel/excel.service.ts:53</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -281,6 +293,18 @@
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>appService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppService.html" target="_self" >AppService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -315,18 +339,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="55"
-                            class="link-to-prism">src/app/services/excel/excel.service.ts:55</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="77"
+                            class="link-to-prism">src/app/services/excel/excel.service.ts:77</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>API retourne les données de ventilations aggrégées pour l&#39;ensemble des ressources présentes sur une date choisie</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -352,17 +383,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="87"
-                            class="link-to-prism">src/app/services/excel/excel.service.ts:87</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="116"
+                            class="link-to-prism">src/app/services/excel/excel.service.ts:116</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Fonction qui génère automatiquement le nom du fichier téléchargé</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        <p>String - Nom du fichier téléchargé</p>
 
                     </div>
                 </td>
@@ -389,8 +428,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="53"
-                            class="link-to-prism">src/app/services/excel/excel.service.ts:53</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="71"
+                            class="link-to-prism">src/app/services/excel/excel.service.ts:71</a></div>
                 </td>
             </tr>
 
@@ -410,16 +449,18 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="fixDecimal"></a>
+                    <a name="decimalToStringDate"></a>
                     <span class="name">
-                        <span ><b>fixDecimal</b></span>
-                        <a href="#fixDecimal"><span class="icon ion-ios-link"></span></a>
+                        <span class="modifier">Public</span>
+                        <span ><b>decimalToStringDate</b></span>
+                        <a href="#decimalToStringDate"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>decimalToStringDate(decimal: number | null)</code>
                 </td>
             </tr>
 
@@ -432,7 +473,82 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:157</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>decimal</td>
+                                    <td>
+                                            <code>number | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fixDecimal"></a>
+                    <span class="name">
+                        <span ><b>fixDecimal</b></span>
+                        <a href="#fixDecimal"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, base?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:17</a></code>
 </div>
                 </td>
             </tr>
@@ -461,6 +577,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>base</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -509,7 +637,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:83</a></code>
 </div>
                 </td>
             </tr>
@@ -586,7 +714,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
 </div>
                 </td>
             </tr>
@@ -681,7 +809,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:139</a></code>
 </div>
                 </td>
             </tr>
@@ -758,7 +886,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:131</a></code>
 </div>
                 </td>
             </tr>
@@ -835,7 +963,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:61</a></code>
 </div>
                 </td>
             </tr>
@@ -912,7 +1040,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:65</a></code>
 </div>
                 </td>
             </tr>
@@ -989,7 +1117,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:127</a></code>
 </div>
                 </td>
             </tr>
@@ -1070,7 +1198,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:53</a></code>
 </div>
                 </td>
             </tr>
@@ -1115,7 +1243,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:49</a></code>
 </div>
                 </td>
             </tr>
@@ -1160,7 +1288,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:147</a></code>
 </div>
                 </td>
             </tr>
@@ -1249,7 +1377,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
 </div>
                 </td>
             </tr>
@@ -1324,7 +1452,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:25</a></code>
 </div>
                 </td>
             </tr>
@@ -1399,7 +1527,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:21</a></code>
 </div>
                 </td>
             </tr>
@@ -1476,7 +1604,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:45</a></code>
 </div>
                 </td>
             </tr>
@@ -1553,7 +1681,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:41</a></code>
 </div>
                 </td>
             </tr>
@@ -1630,7 +1758,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:57</a></code>
 </div>
                 </td>
             </tr>
@@ -1717,7 +1845,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:29</a></code>
 </div>
                 </td>
             </tr>
@@ -1792,7 +1920,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:33</a></code>
 </div>
                 </td>
             </tr>
@@ -1839,10 +1967,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/services/excel/excel.service.ts:30</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/services/excel/excel.service.ts:33</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des referentiels</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1870,10 +2004,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/services/excel/excel.service.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/excel/excel.service.ts:25</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Categories selectionnées par l&#39;utilisateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1901,10 +2041,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/excel/excel.service.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/services/excel/excel.service.ts:53</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taille des colonnes dans le fichier excel extrait</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1932,10 +2078,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/services/excel/excel.service.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/services/excel/excel.service.ts:49</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Données d&#39;extraction</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1958,17 +2110,21 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(
-    startCurrentSituation
-  )</code>
+                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(new Date())</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/excel/excel.service.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/excel/excel.service.ts:37</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date de début d&#39;extraction</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1991,17 +2147,21 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(
-    endCurrentSituation
-  )</code>
+                        <i>Default value : </i><code>new BehaviorSubject&lt;Date&gt;(new Date())</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/services/excel/excel.service.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/services/excel/excel.service.ts:41</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date de fin d&#39;extraction</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2033,6 +2193,12 @@
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Fonctions selectionnées par l&#39;utilisateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2060,10 +2226,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/excel/excel.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/services/excel/excel.service.ts:45</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Catégories à extraire</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2091,7 +2263,71 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:13</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FONCTIONNAIRES"></a>
+                    <span class="name">
+                        <span ><b>FONCTIONNAIRES</b></span>
+                        <a href="#FONCTIONNAIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>FONCTIONNAIRES</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAGISTRATS"></a>
+                    <span class="name">
+                        <span ><b>MAGISTRATS</b></span>
+                        <a href="#MAGISTRATS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MAGISTRATS</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -2129,7 +2365,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -2145,23 +2381,17 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, OnInit } from &#x27;@angular/core&#x27;
 import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
-import { HRCategoryService } from &#x27;../hr-category/hr-category.service&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
-import { generalizeTimeZone, month, workingDay } from &#x27;src/app/utils/dates&#x27;
-import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
+import { generalizeTimeZone, month } from &#x27;src/app/utils/dates&#x27;
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { BehaviorSubject } from &#x27;rxjs&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
-import { HRFonctionService } from &#x27;../hr-fonction/hr-function.service&#x27;
 import { HRFonctionInterface } from &#x27;src/app/interfaces/hr-fonction&#x27;
-import { ReferentielService } from &#x27;../referentiel/referentiel.service&#x27;
-import { sumBy } from &#x27;lodash&#x27;
 import { UserService } from &#x27;../user/user.service&#x27;
 import * as FileSaver from &#x27;file-saver&#x27;
 import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { AppService } from &#x27;../app/app.service&#x27;
 
-const startCurrentSituation &#x3D; month(new Date(), -12)
-const endCurrentSituation &#x3D; month(new Date(), -1, &#x27;lastday&#x27;)
 const EXCEL_TYPE &#x3D;
   &#x27;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset&#x3D;UTF-8&#x27;
 const EXCEL_EXTENSION &#x3D; &#x27;.xlsx&#x27;
@@ -2170,33 +2400,61 @@ const EXCEL_EXTENSION &#x3D; &#x27;.xlsx&#x27;
   providedIn: &#x27;root&#x27;,
 })
 export class ExcelService extends MainClass implements OnInit {
+  /**
+   * Categories selectionnées par l&#x27;utilisateur
+   */
   categories: HRCategoryInterface[] &#x3D; []
+  /**
+   * Fonctions selectionnées par l&#x27;utilisateur
+   */
   fonctions: HRFonctionInterface[] &#x3D; []
+  /**
+   * Liste des referentiels
+   */
   allReferentiels: ContentieuReferentielInterface[] &#x3D; []
-  dateStart: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(
-    startCurrentSituation
-  )
-  dateStop: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(
-    endCurrentSituation
-  )
+  /**
+   * Date de début d&#x27;extraction
+   */
+  dateStart: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(new Date())
+  /**
+   * Date de fin d&#x27;extraction
+   */
+  dateStop: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(new Date())
+  /**
+   * Catégories à extraire
+   */
   selectedCategory: BehaviorSubject&lt;string&gt; &#x3D; new BehaviorSubject&lt;string&gt;(&#x27;&#x27;)
+  /**
+   * Données d&#x27;extraction
+   */
   data: Array&lt;any&gt; &#x3D; []
+  /**
+   * Taille des colonnes dans le fichier excel extrait
+   */
   columnSize: Array&lt;any&gt; &#x3D; []
 
+  /**
+   * Constructeur
+   * @param humanResourceService
+   * @param serverService
+   * @param userService
+   * @param appService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private serverService: ServerService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
-
-    this.watch(this.dateStart.subscribe((value) &#x3D;&gt; {}))
-
-    this.watch(this.dateStop.subscribe((value) &#x3D;&gt; {}))
   }
 
   ngOnInit(): void {}
 
+  /**
+   * API retourne les données de ventilations aggrégées pour l&#x27;ensemble des ressources présentes sur une date choisie
+   * @returns
+   */
   exportExcel() {
     return this.serverService
       .post(&#x60;extractor/filter-list&#x60;, {
@@ -2224,11 +2482,18 @@ export class ExcelService extends MainClass implements OnInit {
 
           const filename &#x3D; this.getFileName()
           const data: Blob &#x3D; new Blob([excelBuffer], { type: EXCEL_TYPE })
+          this.appService.alert.next({
+            text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
+          })
           FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
         })
       })
   }
 
+  /**
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
+   */
   getFileName() {
     return &#x60;Extraction-${
       this.userService.user.getValue()!.firstName

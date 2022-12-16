@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface des boutons d&#39;actions de la popup</p>
+
+            </p>
 
 
         <section>
@@ -314,14 +321,15 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
     Component,
-    OnInit,
-    OnDestroy,
     Input,
     Output,
     EventEmitter,
     HostBinding,
 } from &#x27;@angular/core&#x27;
 
+/**
+ * Interface des boutons d&#x27;actions de la popup
+ */
 export interface ActionsInterface {
     type?: string
     red?: boolean
@@ -330,53 +338,83 @@ export interface ActionsInterface {
     id: string
 }
 
+/**
+ * Composant générique des popin qui affiche un titre, contenu et des boutons d&#x27;actions
+ */
+
 @Component({
     selector: &#x27;aj-popup&#x27;,
     templateUrl: &#x27;./popup.component.html&#x27;,
     styleUrls: [&#x27;./popup.component.scss&#x27;],
 })
-export class PopupComponent implements OnInit, OnDestroy {
+export class PopupComponent {
+    /**
+     * Class css qui donne une rendu mobile au besoin
+     */
     @HostBinding(&#x27;class.is-mobile&#x27;) isMobile &#x3D; false
+    /**
+     * setter du changement de visibilité du contenu
+     */
     @Input()
     set visible(d) {
         this._visible &#x3D; d
     }
+    /**
+     * getter du changement de visibilité du contenu
+     */
     get visible() {
         return this._visible
     }
+    /**
+     * Titre de la fenetre
+     */
     @Input() title: string &#x3D; &#x27;&#x27;
+    /**
+     * Liste des actions possibles données par le parent
+     */
     @Input() actions: ActionsInterface[] &#x3D; []
+    /**
+     * Liste des actions mais sur la gauche
+     */
     @Input() actionsLeft: ActionsInterface[] &#x3D; []
+    /**
+     * Affichage ou non du bouton fermeture icone
+     */
     @Input() closeIcon &#x3D; false
+    /**
+     * Saisie d&#x27;une hauteur minimal
+     */
     @Input() minHeight: string &#x3D; &#x27;&#x27;
+    /**
+     * Suppression ou non de l&#x27;ombre si saisie de &quot;noShadow&quot;
+     */
     @Input() removeShadow: string &#x3D; &#x27;&#x27;
+    /**
+     * Remoté au parent de l&#x27;action choisie, que ce soit à gauche ou non
+     */
     @Output() selectedAction &#x3D; new EventEmitter()
+    /**
+     * Remonté au parent de l&#x27;envie de fermer la popin
+     */
     @Output() onClose &#x3D; new EventEmitter()
-
+    /**
+     * Visible ou non
+     */
     _visible &#x3D; true
+    /**
+     * Index de l&#x27;option selectionnée
+     */
     selectedOptions &#x3D; 0
 
+    /**
+     * Constructeur
+     */
     constructor() {}
 
-    ngOnInit() {
-        const element &#x3D; document.getElementById(
-            &#x27;hubspot-messages-iframe-container&#x27;
-        )
-
-        if (element) {
-            element.style.visibility &#x3D; &#x27;hidden&#x27;
-        }
-    }
-
-    ngOnDestroy() {
-        const element &#x3D; document.getElementById(
-            &#x27;hubspot-messages-iframe-container&#x27;
-        )
-        if (element) {
-            element.style.visibility &#x3D; &#x27;visible&#x27;
-        }
-    }
-
+    /**
+     * Saisie d&#x27;une action
+     * @param action 
+     */
     onSelectAction(action: any) {
         this.selectedAction.emit({
             ...action,
@@ -384,23 +422,12 @@ export class PopupComponent implements OnInit, OnDestroy {
         })
     }
 
+    /**
+     * Changement de l&#x27;index de l&#x27;option selectionnée 
+     * @param val 
+     */
     onChangeOption(val: any) {
         this.selectedOptions &#x3D; val
-    }
-
-    getInternetExplorerVersion() {
-        var rv &#x3D; -1
-        if (navigator.appName &#x3D;&#x3D; &#x27;Microsoft Internet Explorer&#x27;) {
-            var ua &#x3D; navigator.userAgent
-            var re &#x3D; new RegExp(&#x27;MSIE ([0-9]{1,}[\\.0-9]{0,})&#x27;)
-            if (re.exec(ua) !&#x3D; null) rv &#x3D; parseFloat(RegExp.$1)
-        } else if (navigator.appName &#x3D;&#x3D; &#x27;Netscape&#x27;) {
-            var ua &#x3D; navigator.userAgent
-            var re &#x3D; new RegExp(&#x27;Trident/.*rv:([0-9]{1,}[\\.0-9]{0,})&#x27;)
-            if (re.exec(ua) !&#x3D; null) rv &#x3D; parseFloat(RegExp.$1)
-        }
-
-        return rv
     }
 }
 </code></pre>

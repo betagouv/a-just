@@ -16,6 +16,18 @@ import { tree } from 'src/app/routes/simulator/simulator.tree'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
+import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
+import { DocumentationInterface } from 'src/app/interfaces/documentation'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
+
+const etpMag = 'etpMag'
+const etpMagTitle = 'des ETPT magistrat'
+const etpMagToDefine = '[un volume moyen de]'
+
+const etpFon = 'etpFon'
+const etpFonTitle = 'des ETPT greffe'
+const etpFonToDefine = '[un volume moyen de]'
+
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -53,6 +65,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   valueToAjust = { value: '', percentage: null }
   currentNode: any | undefined = {}
   isLoading: boolean = false
+  categorySelected: string = 'MAGISTRAT'
+  functionsList: Array<any> = []
+  selectedFonctionsIds: number[] = []
+  documentation: DocumentationInterface = {
+    title: 'Simulateur A-JUST :',
+    path: 'https://a-just.gitbook.io/documentation-deploiement/simulateur/quest-ce-que-cest',
+  }
 
   paramsToAjust = {
     param1: {
@@ -75,7 +94,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     param1: { label: '', value: '' },
     param2: { label: '', value: '' },
   }
-  decisionTree = tree
+  decisionTreeMag = tree
+  decisionTreeFon = this.FonTree()
 
   toSimulate: boolean = false
   toDisplaySimulation: boolean = false
@@ -102,6 +122,18 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           .slice(0, 10)}`
       })
     )
+    this.watch(
+      this.humanResourceService.categories.subscribe(() => {
+        this.changeCategorySelected(this.categorySelected)
+        this.simulatorService.selectedFonctionsIds.next(
+          this.selectedFonctionsIds
+        )
+      })
+    )
+    const originalMsg = JSON.stringify(this.currentNode)
+    let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
+    updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
+    updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
   ngOnInit(): void {
@@ -152,6 +184,8 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       })
     )
     if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
+
+    this.loadFunctions()
   }
 
   ngOnDestroy() {}
@@ -280,10 +314,31 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
   //passer en back maybe ??????
   openPopupWithParams(button: any): void {
     this.buttonSelected = button
-    const find = this.decisionTree.find((item) => item.label === button.id)
+    let buttonToFind = button.id
 
-    if (this.paramsToAjust.param1.input === 0) this.currentNode = find
+    const treeToUse =
+      this.categorySelected === 'MAGISTRAT'
+        ? this.decisionTreeMag
+        : this.decisionTreeFon
+
+    const find = treeToUse.find((item: any) => item.label === buttonToFind)
+
+    if (this.paramsToAjust.param1.input === 0) {
+      this.currentNode = find
+    }
+
     this.openPopup = true
+  }
+
+  FonTree(): any {
+    const originalMsg = JSON.stringify([...tree])
+    let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
+    updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
+    updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
+    return JSON.parse(updatedMsg)
+  }
+  replaceAll(string: string, search: string, replace: string) {
+    return string.split(search).join(replace)
   }
 
   setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
@@ -510,6 +565,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
           parseFloat(projectedValue as string)
       )
 
+    if (id === 'etpFon') {
+      console.log(this.paramsToAjust, projectedValue)
+    }
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -880,5 +938,46 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       initButton.style.display = 'flex'
       title.style.display = 'none'
     })
+  }
+
+  changeCategorySelected(category: string) {
+    this.categorySelected = category
+    this.contentieuId = null
+    this.subList = []
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find(
+          (c: HRCategoryInterface) =>
+            c.label.toUpperCase() === this.categorySelected.toUpperCase()
+        ) || null
+
+    console.log('findCategory', findCategory)
+    this.simulatorService.selectedCategory.next(findCategory)
+    console.log('fonctions', this.humanResourceService.fonctions.getValue())
+    this.loadFunctions()
+  }
+
+  loadFunctions() {
+    const finalList = this.humanResourceService.fonctions
+      .getValue()
+      .filter(
+        (v) =>
+          v.categoryId === this.simulatorService.selectedCategory.getValue()?.id
+      )
+      .map((f: HRFonctionInterface) => ({
+        id: f.id,
+        value: f.code,
+      }))
+
+    this.selectedFonctionsIds = finalList.map((a) => a.id)
+
+    this.functionsList = finalList
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+  }
+
+  onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
+    this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 }

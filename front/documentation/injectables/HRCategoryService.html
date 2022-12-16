@@ -62,6 +62,14 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service d&#39;appel au serveur des différentes catégories existantes.
+Exemple : Magistrat, Greffier....</p>
+
+            </p>
 
 
 
@@ -118,12 +126,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:16</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -181,18 +191,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="13"
-                            class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:13</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="28"
+                            class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:28</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Appel au serveur pour récupérer la liste de toutes les catégories</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >Promise&lt;HRCategoryInterface[]&gt;</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -228,10 +245,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:16</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des catégories gardés en cache</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -245,14 +268,29 @@
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;;
 import { ServerService } from &#x27;../http-server/server.service&#x27;;
 
+/**
+ * Service d&#x27;appel au serveur des différentes catégories existantes. 
+ * Exemple : Magistrat, Greffier....
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class HRCategoryService {
+  /**
+   * Liste des catégories gardés en cache
+   */
   categories: HRCategoryInterface[] &#x3D; [];
 
+  /**
+   * Constructeur
+   * @param serverService 
+   */
   constructor(private serverService: ServerService) {}
 
+  /**
+   * Appel au serveur pour récupérer la liste de toutes les catégories
+   * @returns 
+   */
   getAll(): Promise&lt;HRCategoryInterface[]&gt; {
     if(this.categories.length) {
       return new Promise((resolve) &#x3D;&gt; {

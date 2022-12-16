@@ -1,17 +1,27 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './auth-guard.service';
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+import { AuthGuard } from './auth-guard.service'
 
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: '/login',
+    path: 'login',
+    redirectTo: '/connexion',
     pathMatch: 'full',
   },
   {
-    path: 'login',
+    path: '',
+    redirectTo: '/connexion',
+    pathMatch: 'full',
+  },
+  {
+    path: 'connexion',
     loadChildren: () =>
       import('./login/login.module').then((mod) => mod.LoginModule),
+  },
+  {
+    path: 'qui-sommes-nous',
+    loadChildren: () =>
+      import('./about-us/about-us.module').then((mod) => mod.AboutUsModule),
   },
   {
     path: 'dashboard',
@@ -59,6 +69,11 @@ const routes: Routes = [
   },
   {
     path: 'signup',
+    redirectTo: '/inscription',
+    pathMatch: 'full',
+  },
+  {
+    path: 'inscription',
     loadChildren: () =>
       import('./signup/signup.module').then((mod) => mod.SignupModule),
   },
@@ -90,10 +105,10 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
-];
+]
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   providers: [AuthGuard],
   exports: [RouterModule],
 })

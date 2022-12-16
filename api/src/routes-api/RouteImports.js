@@ -16,7 +16,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importHr (ctx) {  
+  async importHr (ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
@@ -37,7 +37,7 @@ export default class RouteImports extends Route {
       delimiter: ';',
     })
     const result = await this.model.models.ContentieuxReferentiels.importList(arrayOfHR)
-    if (!existsSync(join(__dirname, '../public/tmp'))){
+    if (!existsSync(join(__dirname, '../public/tmp'))) {
       mkdirSync(join(__dirname, '../public/tmp'), { recursive: true })
     }
     writeFileSync(join(__dirname, '../public/tmp/update-referentiel.json'), JSON.stringify(result))
@@ -51,7 +51,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importActivities (ctx) { 
+  async importActivities (ctx) {
     const { backupId, file } = this.body(ctx)
 
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {

@@ -32,11 +32,7 @@ export class ImportsPage {
       return;
     }
 
-    if (
-      !confirm(
-        'Confirmer la modification du référentiel ?'
-      )
-    ) {
+    if (!confirm('Confirmer la modification du référentiel ?')) {
       return;
     }
 

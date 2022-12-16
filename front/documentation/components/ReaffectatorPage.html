@@ -137,9 +137,6 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#actualActivities" >actualActivities</a>
-                            </li>
-                            <li>
                                 <a href="#dateSelected" >dateSelected</a>
                             </li>
                             <li>
@@ -147,6 +144,9 @@
                             </li>
                             <li>
                                 <a href="#filterSelected" >filterSelected</a>
+                            </li>
+                            <li>
+                                <a href="#firstETPTargetValue" >firstETPTargetValue</a>
                             </li>
                             <li>
                                 <a href="#formFilterFonctionsSelect" >formFilterFonctionsSelect</a>
@@ -167,13 +167,13 @@
                                 <a href="#isFirstLoad" >isFirstLoad</a>
                             </li>
                             <li>
+                                <a href="#isolatePersons" >isolatePersons</a>
+                            </li>
+                            <li>
                                 <a href="#lastScrollTop" >lastScrollTop</a>
                             </li>
                             <li>
                                 <a href="#listFormated" >listFormated</a>
-                            </li>
-                            <li>
-                                <a href="#objectOfFirstETPTargetValue" >objectOfFirstETPTargetValue</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -189,9 +189,6 @@
                                 <a href="#showIndicatorPanel" >showIndicatorPanel</a>
                             </li>
                             <li>
-                                <a href="#timeoutUpdateETPTargetAfterDelay" >timeoutUpdateETPTargetAfterDelay</a>
-                            </li>
-                            <li>
                                 <a href="#timeoutUpdateSearch" >timeoutUpdateSearch</a>
                             </li>
                             <li>
@@ -202,6 +199,12 @@
                             </li>
                             <li>
                                 <a href="#environment" >environment</a>
+                            </li>
+                            <li>
+                                <a href="#FONCTIONNAIRES" >FONCTIONNAIRES</a>
+                            </li>
+                            <li>
+                                <a href="#MAGISTRATS" >MAGISTRATS</a>
                             </li>
                             <li>
                                 <a href="#watcherList" >watcherList</a>
@@ -226,6 +229,9 @@
                             </li>
                             <li>
                                 <a href="#checkHROpacity" >checkHROpacity</a>
+                            </li>
+                            <li>
+                                <a href="#getOrignalHuman" >getOrignalHuman</a>
                             </li>
                             <li>
                                 <a href="#ngOnDestroy" >ngOnDestroy</a>
@@ -261,13 +267,16 @@
                                 <a href="#onSearchBy" >onSearchBy</a>
                             </li>
                             <li>
-                                <a href="#onSelectedCategoriesIdsChanged" >onSelectedCategoriesIdsChanged</a>
+                                <a href="#onSelectedCategoriesIdChanged" >onSelectedCategoriesIdChanged</a>
                             </li>
                             <li>
                                 <a href="#onSelectedFonctionsIdsChanged" >onSelectedFonctionsIdsChanged</a>
                             </li>
                             <li>
                                 <a href="#onSelectedReferentielIdsChanged" >onSelectedReferentielIdsChanged</a>
+                            </li>
+                            <li>
+                                <a href="#onToogleIsolation" >onToogleIsolation</a>
                             </li>
                             <li>
                                 <a href="#orderListWithFiltersParams" >orderListWithFiltersParams</a>
@@ -285,10 +294,11 @@
                                 <a href="#updateCategoryValues" >updateCategoryValues</a>
                             </li>
                             <li>
-                                <a href="#updateETPTargetAfterDelay" >updateETPTargetAfterDelay</a>
+                                <a href="#updateHRReferentiel" >updateHRReferentiel</a>
                             </li>
                             <li>
-                                <a href="#updateHRReferentiel" >updateHRReferentiel</a>
+                                    <span class="modifier">Public</span>
+                                <a href="#decimalToStringDate" >decimalToStringDate</a>
                             </li>
                             <li>
                                 <a href="#fixDecimal" >fixDecimal</a>
@@ -379,12 +389,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, referentielService: <a href="../injectables/ReferentielService.html" target="_self">ReferentielService</a>, workforceService: <a href="../injectables/WorkforceService.html" target="_self">WorkforceService</a>, reaffectatorService: <a href="../injectables/ReaffectatorService.html" target="_self">ReaffectatorService</a>, simulatorService: <a href="../injectables/SimulatorService.html" target="_self">SimulatorService</a>)</code>
+<code>constructor(humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>, referentielService: <a href="../injectables/ReferentielService.html" target="_self">ReferentielService</a>, workforceService: <a href="../injectables/WorkforceService.html" target="_self">WorkforceService</a>, reaffectatorService: <a href="../injectables/ReaffectatorService.html" target="_self">ReaffectatorService</a>, simulatorService: <a href="../injectables/SimulatorService.html" target="_self">SimulatorService</a>, appService: <a href="../injectables/AppService.html" target="_self">AppService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:95</a></div>
                             </td>
                         </tr>
 
@@ -461,6 +471,18 @@
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>appService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppService.html" target="_self" >AppService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -499,8 +521,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="465"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:465</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="475"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:475</a></div>
                 </td>
             </tr>
 
@@ -536,8 +558,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="165"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:165</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="161"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:161</a></div>
                 </td>
             </tr>
 
@@ -617,8 +639,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="185"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:185</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="181"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:181</a></div>
                 </td>
             </tr>
 
@@ -670,6 +692,87 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getOrignalHuman"></a>
+                    <span class="name">
+                        <span ><b>getOrignalHuman</b></span>
+                        <a href="#getOrignalHuman"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getOrignalHuman(hr: <a href="../interfaces/HumanResourceSelectedInterface.html" target="_self">HumanResourceSelectedInterface</a>, itemObject: <a href="../interfaces/listFormatedInterface.html" target="_self">listFormatedInterface</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="623"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:623</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>hr</td>
+                                    <td>
+                                                <code><a href="../interfaces/HumanResourceSelectedInterface.html" target="_self" >HumanResourceSelectedInterface</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>itemObject</td>
+                                    <td>
+                                                <code><a href="../interfaces/listFormatedInterface.html" target="_self" >listFormatedInterface</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="ngOnDestroy"></a>
                     <span class="name">
                         <span ><b>ngOnDestroy</b></span>
@@ -686,8 +789,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="144"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:144</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="135"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:135</a></div>
                 </td>
             </tr>
 
@@ -723,8 +826,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="99"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:99</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="108"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:108</a></div>
                 </td>
             </tr>
 
@@ -753,15 +856,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onCalculETPAffected()</code>
+<code>onCalculETPAffected(referentielId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, hrList: HumanResourceSelectedInterface[])</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="414"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:414</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="452"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:452</a></div>
                 </td>
             </tr>
 
@@ -770,8 +873,52 @@
                 <td class="col-md-4">
 
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>referentielId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
 
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>hrList</td>
+                                    <td>
+                                            <code>HumanResourceSelectedInterface[]</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -797,8 +944,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="364"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:364</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="403"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:403</a></div>
                 </td>
             </tr>
 
@@ -866,8 +1013,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="380"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:380</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="419"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:419</a></div>
                 </td>
             </tr>
 
@@ -903,8 +1050,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="370"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:370</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="409"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:409</a></div>
                 </td>
             </tr>
 
@@ -972,8 +1119,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="199"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:199</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="195"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:195</a></div>
                 </td>
             </tr>
 
@@ -1009,8 +1156,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="340"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:340</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="379"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:379</a></div>
                 </td>
             </tr>
 
@@ -1082,8 +1229,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="295"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:295</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="334"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:334</a></div>
                 </td>
             </tr>
 
@@ -1151,8 +1298,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="660"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:660</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="603"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:603</a></div>
                 </td>
             </tr>
 
@@ -1220,8 +1367,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="266"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:266</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="305"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:305</a></div>
                 </td>
             </tr>
 
@@ -1241,24 +1388,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="onSelectedCategoriesIdsChanged"></a>
+                    <a name="onSelectedCategoriesIdChanged"></a>
                     <span class="name">
-                        <span ><b>onSelectedCategoriesIdsChanged</b></span>
-                        <a href="#onSelectedCategoriesIdsChanged"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>onSelectedCategoriesIdChanged</b></span>
+                        <a href="#onSelectedCategoriesIdChanged"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onSelectedCategoriesIdsChanged(list: string[] | number[])</code>
+<code>onSelectedCategoriesIdChanged(item: string[] | number[])</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="389"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:389</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="429"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:429</a></div>
                 </td>
             </tr>
 
@@ -1279,7 +1426,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>list</td>
+                                    <td>item</td>
                                     <td>
                                             <code>string[] | number[]</code>
                                     </td>
@@ -1326,8 +1473,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="408"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:408</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="446"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:446</a></div>
                 </td>
             </tr>
 
@@ -1395,8 +1542,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="353"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:353</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="392"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:392</a></div>
                 </td>
             </tr>
 
@@ -1448,24 +1595,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="orderListWithFiltersParams"></a>
+                    <a name="onToogleIsolation"></a>
                     <span class="name">
-                        <span ><b>orderListWithFiltersParams</b></span>
-                        <a href="#orderListWithFiltersParams"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>onToogleIsolation</b></span>
+                        <a href="#onToogleIsolation"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>orderListWithFiltersParams()</code>
+<code>onToogleIsolation()</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="241"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:241</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="619"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:619</a></div>
                 </td>
             </tr>
 
@@ -1476,6 +1623,79 @@
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="orderListWithFiltersParams"></a>
+                    <span class="name">
+                        <span ><b>orderListWithFiltersParams</b></span>
+                        <a href="#orderListWithFiltersParams"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>orderListWithFiltersParams(onSearch: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="278"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:278</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>onSearch</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>true</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -1501,8 +1721,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="647"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:647</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="590"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:590</a></div>
                 </td>
             </tr>
 
@@ -1570,8 +1790,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="638"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:638</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="576"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:576</a></div>
                 </td>
             </tr>
 
@@ -1651,8 +1871,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="161"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:161</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="157"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:157</a></div>
                 </td>
             </tr>
 
@@ -1732,8 +1952,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="148"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:148</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="139"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:139</a></div>
                 </td>
             </tr>
 
@@ -1744,99 +1964,6 @@
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="updateETPTargetAfterDelay"></a>
-                    <span class="name">
-                        <span ><b>updateETPTargetAfterDelay</b></span>
-                        <a href="#updateETPTargetAfterDelay"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>updateETPTargetAfterDelay(list: number[], index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="627"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:627</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Type</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>list</td>
-                                    <td>
-                                            <code>number[]</code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>index</td>
-                                    <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>value</td>
-                                    <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
                     </div>
                 </td>
             </tr>
@@ -1862,8 +1989,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="579"
-                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:579</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="525"
+                            class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:525</a></div>
                 </td>
             </tr>
 
@@ -1939,16 +2066,18 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="fixDecimal"></a>
+                    <a name="decimalToStringDate"></a>
                     <span class="name">
-                        <span ><b>fixDecimal</b></span>
-                        <a href="#fixDecimal"><span class="icon ion-ios-link"></span></a>
+                        <span class="modifier">Public</span>
+                        <span ><b>decimalToStringDate</b></span>
+                        <a href="#decimalToStringDate"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>decimalToStringDate(decimal: number | null)</code>
                 </td>
             </tr>
 
@@ -1961,7 +2090,82 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:157</a></code>
+</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>decimal</td>
+                                    <td>
+                                            <code>number | null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fixDecimal"></a>
+                    <span class="name">
+                        <span ><b>fixDecimal</b></span>
+                        <a href="#fixDecimal"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fixDecimal(n: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, base?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:17</a></code>
 </div>
                 </td>
             </tr>
@@ -1990,6 +2194,18 @@
 
                                     <td>
                                         No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>base</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
                                     </td>
 
 
@@ -2038,7 +2254,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:80</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:83</a></code>
 </div>
                 </td>
             </tr>
@@ -2115,7 +2331,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:66</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:69</a></code>
 </div>
                 </td>
             </tr>
@@ -2210,7 +2426,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:136</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:139</a></code>
 </div>
                 </td>
             </tr>
@@ -2287,7 +2503,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:128</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:131</a></code>
 </div>
                 </td>
             </tr>
@@ -2364,7 +2580,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:58</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:61</a></code>
 </div>
                 </td>
             </tr>
@@ -2441,7 +2657,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:62</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:65</a></code>
 </div>
                 </td>
             </tr>
@@ -2518,7 +2734,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:124</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:127</a></code>
 </div>
                 </td>
             </tr>
@@ -2599,7 +2815,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:50</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:53</a></code>
 </div>
                 </td>
             </tr>
@@ -2644,7 +2860,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:46</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:49</a></code>
 </div>
                 </td>
             </tr>
@@ -2689,7 +2905,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:144</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:147</a></code>
 </div>
                 </td>
             </tr>
@@ -2778,7 +2994,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:114</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:117</a></code>
 </div>
                 </td>
             </tr>
@@ -2853,7 +3069,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:22</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:25</a></code>
 </div>
                 </td>
             </tr>
@@ -2928,7 +3144,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:18</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:21</a></code>
 </div>
                 </td>
             </tr>
@@ -3005,7 +3221,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:42</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:45</a></code>
 </div>
                 </td>
             </tr>
@@ -3082,7 +3298,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:38</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:41</a></code>
 </div>
                 </td>
             </tr>
@@ -3159,7 +3375,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:54</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:57</a></code>
 </div>
                 </td>
             </tr>
@@ -3246,7 +3462,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:26</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:29</a></code>
 </div>
                 </td>
             </tr>
@@ -3321,7 +3537,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:30</a></code>
+                        <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:33</a></code>
 </div>
                 </td>
             </tr>
@@ -3348,37 +3564,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="actualActivities"></a>
-                    <span class="name">
-                        <span ><b>actualActivities</b></span>
-                        <a href="#actualActivities"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/ActivityInterface.html" target="_self" >ActivityInterface[]</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:87</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="dateSelected"></a>
                     <span class="name">
                         <span ><b>dateSelected</b></span>
@@ -3399,7 +3584,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:79</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -3430,7 +3615,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -3461,7 +3646,38 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:90</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="firstETPTargetValue"></a>
+                    <span class="name">
+                        <span ><b>firstETPTargetValue</b></span>
+                        <a href="#firstETPTargetValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>(number | null)[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -3492,7 +3708,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:74</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -3523,7 +3739,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -3554,7 +3770,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -3585,7 +3801,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -3616,7 +3832,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -3647,7 +3863,38 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:83</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:92</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isolatePersons"></a>
+                    <span class="name">
+                        <span ><b>isolatePersons</b></span>
+                        <a href="#isolatePersons"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:95</a></div>
                         </td>
                     </tr>
 
@@ -3678,7 +3925,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:82</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -3709,38 +3956,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:80</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="objectOfFirstETPTargetValue"></a>
-                    <span class="name">
-                        <span ><b>objectOfFirstETPTargetValue</b></span>
-                        <a href="#objectOfFirstETPTargetValue"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/FirstETPTargetValueInterface.html" target="_self" >FirstETPTargetValueInterface[]</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:85</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -3767,7 +3983,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:93</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -3798,7 +4014,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:71</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:80</a></div>
                         </td>
                     </tr>
 
@@ -3829,7 +4045,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -3860,33 +4076,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:84</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="timeoutUpdateETPTargetAfterDelay"></a>
-                    <span class="name">
-                        <span ><b>timeoutUpdateETPTargetAfterDelay</b></span>
-                        <a href="#timeoutUpdateETPTargetAfterDelay"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:86</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:93</a></div>
                         </td>
                     </tr>
 
@@ -3917,7 +4107,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -3948,7 +4138,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:76</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -3983,7 +4173,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/routes/reaffectator/reaffectator.page.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -4014,7 +4204,71 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:13</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FONCTIONNAIRES"></a>
+                    <span class="name">
+                        <span ><b>FONCTIONNAIRES</b></span>
+                        <a href="#FONCTIONNAIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>FONCTIONNAIRES</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MAGISTRATS"></a>
+                    <span class="name">
+                        <span ><b>MAGISTRATS</b></span>
+                        <a href="#MAGISTRATS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MAGISTRATS</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:14</a></code>
 </div>
                         </td>
                     </tr>
@@ -4052,7 +4306,7 @@
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:11</a></code>
+                                <div class="io-line">Defined in         <code><a href="../classes/MainClass.html#source" target="_self" >MainClass:12</a></code>
 </div>
                         </td>
                     </tr>
@@ -4070,12 +4324,9 @@
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
 import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
-import { meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
+import { flatten, meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
-import {
-  HRCategoryInterface,
-  HRCategorySelectedInterface,
-} from &#x27;src/app/interfaces/hr-category&#x27;
+import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
 import { RHActivityInterface } from &#x27;src/app/interfaces/rh-activity&#x27;
 import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
 import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
@@ -4085,11 +4336,19 @@ import { HRSituationInterface } from &#x27;src/app/interfaces/hr-situation&#x27;
 import { WorkforceService } from &#x27;src/app/services/workforce/workforce.service&#x27;
 import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
 import { ReaffectatorService } from &#x27;src/app/services/reaffectator/reaffectator.service&#x27;
-import { month, nbOfDays } from &#x27;src/app/utils/dates&#x27;
+import {
+  decimalToStringDate,
+  month,
+  nbOfDays,
+  stringToDecimalDate,
+  today,
+} from &#x27;src/app/utils/dates&#x27;
 import { environment } from &#x27;src/environments/environment&#x27;
 import { SimulatorService } from &#x27;src/app/services/simulator/simulator.service&#x27;
 import { etpAffectedInterface } from &#x27;src/app/interfaces/calculator&#x27;
 import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
+import { copyArray } from &#x27;src/app/utils/array&#x27;
+import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -4101,6 +4360,7 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   category: HRCategoryInterface | null
   fonction: HRFonctionInterface | null
   currentSituation: HRSituationInterface | null
+  isModify: boolean
 }
 
 interface listFormatedInterface {
@@ -4111,21 +4371,24 @@ interface listFormatedInterface {
   allHr: HumanResourceSelectedInterface[]
   hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
-  firstETPTargetValue: number[]
-  headerPanel: boolean
   personSelected: number[]
   categoryId: number
+  totalRealETp: number
 }
 
 interface ContentieuReferentielCalculateInterface
   extends ContentieuReferentielInterface {
   dtes: number
   coverage: number
-}
-
-interface FirstETPTargetValueInterface {
-  groupId: number
-  list: number[]
+  realDTESInMonths: number
+  realCoverage: number
+  etpToCompute: number
+  etpUseToday: number
+  magRealTimePerCase: number | null
+  nbWorkingHours: number
+  nbWorkingDays: number
+  totalIn: number
+  lastStock: number
 }
 
 @Component({
@@ -4150,16 +4413,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   lastScrollTop: number &#x3D; 0
   isFirstLoad: boolean &#x3D; true
   showIndicatorPanel: boolean &#x3D; true
-  objectOfFirstETPTargetValue: FirstETPTargetValueInterface[] &#x3D; []
-  timeoutUpdateETPTargetAfterDelay: any
-  actualActivities: ActivityInterface[] &#x3D; []
+  firstETPTargetValue: (number | null)[] &#x3D; []
+  isolatePersons: boolean &#x3D; false
 
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private appService: AppService
   ) {
     super()
   }
@@ -4167,26 +4430,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
-        this.onFilterList()
-      })
-    )
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref) &#x3D;&gt; {
-        this.referentiel &#x3D; ref
-          .filter(
-            (a) &#x3D;&gt; this.referentielService.idsIndispo.indexOf(a.id) &#x3D;&#x3D;&#x3D; -1
-          )
-          .map((r) &#x3D;&gt; ({ ...r, selected: true, dtes: 0, coverage: 0 }))
-        this.formReferentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; ({
-          id: r.id,
-          value: this.referentielMappingName(r.label),
-        }))
-
-        this.reaffectatorService.selectedReferentielIds &#x3D; this
-          .reaffectatorService.selectedReferentielIds.length
-          ? this.reaffectatorService.selectedReferentielIds
-          : this.formReferentiel.map((c) &#x3D;&gt; c.id)
-
         this.onFilterList()
       })
     )
@@ -4199,10 +4442,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalValue: f.label,
           }))
 
-          this.onSelectedCategoriesIdsChanged(
-            this.reaffectatorService.selectedCategoriesIds.length
-              ? this.reaffectatorService.selectedCategoriesIds
-              : categories.map((c) &#x3D;&gt; c.id)
+          this.onSelectedCategoriesIdChanged(
+            this.reaffectatorService.selectedCategoriesId !&#x3D;&#x3D; null
+              ? [this.reaffectatorService.selectedCategoriesId]
+              : this.formFilterSelect.length
+              ? [this.formFilterSelect[0].id]
+              : []
           )
         }
       )
@@ -4214,12 +4459,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    this.formFilterSelect &#x3D; this.formFilterSelect.map(c &#x3D;&gt; {
-      const itemBlock &#x3D; this.listFormated.find(l &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
-      c.value &#x3D; (c.orignalValue + &#x27;&#x27;)
+    this.formFilterSelect &#x3D; this.formFilterSelect.map((c) &#x3D;&gt; {
+      const itemBlock &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
+      c.value &#x3D; c.orignalValue + &#x27;&#x27;
 
-      if(itemBlock &amp;&amp; itemBlock.hrFiltered.length &gt; 1) {
-        c.value &#x3D; &#x60;${c.value}s&#x60;
+      if (itemBlock &amp;&amp; itemBlock.hrFiltered) {
+        c.value &#x3D; &#x60;${itemBlock.hrFiltered.length} ${c.value}${
+          itemBlock.hrFiltered.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;
+        } (${fixDecimal(
+          sumBy(itemBlock.referentiel || [], &#x27;totalAffected&#x27;),
+          100
+        )} ETPT)&#x60;
       }
 
       return c
@@ -4267,49 +4517,90 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onFilterList() {
     if (
       !this.formFilterSelect.length ||
-      !this.referentiel.length ||
-      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null
+      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null ||
+      this.reaffectatorService.selectedCategoriesId &#x3D;&#x3D;&#x3D; null
     ) {
       return
     }
 
-    // init datas
-    this.objectOfFirstETPTargetValue &#x3D; []
-
     let selectedReferentielIds: number[] | null &#x3D; null
-    if (this.formReferentiel.length !&#x3D;&#x3D; this.reaffectatorService.selectedReferentielIds.length) {
+    if (
+      this.formReferentiel.length !&#x3D;&#x3D;
+      this.reaffectatorService.selectedReferentielIds.length
+    ) {
       selectedReferentielIds &#x3D; this.reaffectatorService.selectedReferentielIds
     }
+
+    const allFonctions &#x3D; this.humanResourceService.fonctions.getValue()
+
+    let selectedFonctionsIds &#x3D; [
+      ...this.reaffectatorService.selectedFonctionsIds,
+    ]
+    selectedFonctionsIds &#x3D; selectedFonctionsIds.concat(
+      allFonctions
+        .filter(
+          (f) &#x3D;&gt; f.categoryId !&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+        )
+        .map((f) &#x3D;&gt; f.id)
+    )
 
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
+        this.reaffectatorService.selectedCategoriesId || 0,
+        selectedFonctionsIds,
         selectedReferentielIds,
-        this.reaffectatorService.selectedCategoriesIds,
-        this.reaffectatorService.selectedFonctionsIds
       )
       .then((returnValues) &#x3D;&gt; {
         console.log(returnValues)
-        this.actualActivities &#x3D; returnValues.activities
         this.listFormated &#x3D; returnValues.list.map(
-          (i: listFormatedInterface) &#x3D;&gt; ({
-            ...i,
-            hrFiltered: [...i.allHr],
-            headerPanel: true,
-            personSelected: [],
-            firstETPTargetValue: [],
-          })
+          (i: listFormatedInterface, index: number) &#x3D;&gt; {
+            if (index &#x3D;&#x3D;&#x3D; 0) {
+              this.referentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+                ...r,
+                selected: true,
+              }))
+              this.formReferentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+                id: r.id,
+                value: this.referentielMappingName(r.label),
+              }))
+              if (this.firstETPTargetValue.length &#x3D;&#x3D;&#x3D; 0) {
+                this.firstETPTargetValue &#x3D; i.referentiel.map(() &#x3D;&gt; null)
+              }
+
+              this.reaffectatorService.selectedReferentielIds &#x3D; this
+                .reaffectatorService.selectedReferentielIds.length
+                ? this.reaffectatorService.selectedReferentielIds
+                : this.formReferentiel.map((c) &#x3D;&gt; c.id)
+            }
+
+            const allHr &#x3D; i.allHr.map((h) &#x3D;&gt; ({
+              ...h,
+              isModify: false,
+            }))
+            return {
+              ...i,
+              allHr,
+              hrFiltered: [...i.allHr],
+              personSelected: [],
+              referentiel: i.referentiel.map((r) &#x3D;&gt; ({
+                ...r,
+                dtes: 0,
+                coverage: 0,
+              })),
+            }
+          }
         )
 
         this.orderListWithFiltersParams()
       })
   }
 
-  orderListWithFiltersParams() {
-    this.onCalculETPAffected()
-
+  orderListWithFiltersParams(onSearch: boolean &#x3D; true) {
     this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
+      list.hrFiltered &#x3D; orderBy(list.hrFiltered, [&#x27;fonction.rank&#x27;], [&#x27;asc&#x27;])
+
       if (this.filterSelected) {
         list.hrFiltered &#x3D; orderBy(
           list.hrFiltered,
@@ -4326,9 +4617,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    this.updateCategoryValues()
-    this.onSearchBy()
+    if (onSearch) {
+      this.onSearchBy()
+    }
     this.calculateReferentielValues()
+    this.updateCategoryValues()
   }
 
   onSearchBy() {
@@ -4442,32 +4735,31 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.filterSelected &#x3D; null
     }
 
-    this.onFilterList()
+    this.orderListWithFiltersParams()
   }
 
   onExport() {
     this.duringPrint &#x3D; true
-    this.wrapper
-      ?.exportAsPdf(&#x27;simulation-d-affectation.pdf&#x27;, false)
-      .then(() &#x3D;&gt; {
-        this.duringPrint &#x3D; false
+    this.wrapper?.exportAsPdf(&#x27;simulation-d-affectation.pdf&#x27;).then(() &#x3D;&gt; {
+      this.duringPrint &#x3D; false
+      this.appService.alert.next({
+        text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
       })
+    })
   }
 
-  onSelectedCategoriesIdsChanged(list: string[] | number[]) {
-    this.reaffectatorService.selectedCategoriesIds &#x3D; list.map((i) &#x3D;&gt; +i)
+  onSelectedCategoriesIdChanged(item: string[] | number[]) {
+    this.reaffectatorService.selectedCategoriesId &#x3D; item.length
+      ? +item[0]
+      : null
 
     const allFonctions &#x3D; this.humanResourceService.fonctions.getValue()
-    let fonctionList: HRFonctionInterface[] &#x3D; []
-    this.reaffectatorService.selectedCategoriesIds.map((cId) &#x3D;&gt; {
-      fonctionList &#x3D; fonctionList.concat(
-        allFonctions.filter((f) &#x3D;&gt; f.categoryId &#x3D;&#x3D;&#x3D; cId)
-      )
-    })
-
+    let fonctionList: HRFonctionInterface[] &#x3D; allFonctions.filter(
+      (f) &#x3D;&gt; f.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+    )
     this.formFilterFonctionsSelect &#x3D; fonctionList.map((f) &#x3D;&gt; ({
       id: f.id,
-      value: f.label,
+      value: f.code || f.label,
     }))
 
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) &#x3D;&gt; f.id))
@@ -4479,169 +4771,77 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  onCalculETPAffected() {
-    this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
-      list.referentiel.map((ref) &#x3D;&gt; {
-        ref.totalAffected &#x3D; 0
-        return ref
-      })
+  onCalculETPAffected(
+    referentielId: number,
+    hrList: HumanResourceSelectedInterface[]
+  ) {
+    let etpCalculate &#x3D; 0
 
-      list.hrFiltered &#x3D; list.hrFiltered.map((hr) &#x3D;&gt; {
-        hr.tmpActivities &#x3D; {}
-
-        list.referentiel &#x3D; list.referentiel.map((ref) &#x3D;&gt; {
-          hr.tmpActivities[ref.id] &#x3D; hr.currentActivities.filter(
-            (r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; ref.id
-          )
-          if (hr.tmpActivities[ref.id].length) {
-            const timeAffected &#x3D; sumBy(hr.tmpActivities[ref.id], &#x27;percent&#x27;)
-            if (timeAffected) {
-              let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP &lt; 0) {
-                realETP &#x3D; 0
-              }
-              ref.totalAffected &#x3D;
-                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-            }
-          }
-
-          return ref
-        })
-
-        return hr
-      })
-
-      if (list.hrFiltered.length &gt; 1) {
-        if (list.originalLabel.indexOf(&#x27;agistrat&#x27;) !&#x3D;&#x3D; -1) {
-          list.label &#x3D; list.originalLabel.replace(
-            &#x27;agistrat&#x27;,
-            &#x27;agistrats du siège&#x27;
-          )
-        } else {
-          list.label &#x3D; list.originalLabel + &#x27;s&#x27;
-        }
-      } else if (list.originalLabel.indexOf(&#x27;agistrat&#x27;) !&#x3D;&#x3D; -1) {
-        list.label &#x3D; list.originalLabel.replace(&#x27;agistrat&#x27;, &#x27;agistrat du siège&#x27;)
-      } else {
-        list.label &#x3D; list.originalLabel
+    hrList.map((hr) &#x3D;&gt; {
+      const timeAffected &#x3D; sumBy(
+        hr.currentActivities.filter(
+          (r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; referentielId
+        ),
+        &#x27;percent&#x27;
+      )
+      let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
+      if (realETP &lt; 0) {
+        realETP &#x3D; 0
       }
-
-      return list
+      etpCalculate +&#x3D; (timeAffected / 100) * realETP
     })
+
+    return fixDecimal(etpCalculate)
   }
 
   calculateReferentielValues() {
-    const activities &#x3D; this.actualActivities
-    const magistrats &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; 1)
-
-    this.referentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; {
-      // list all activities
-      const activitiesFiltered &#x3D; orderBy(
-        activities.filter(
-          (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; r.id &amp;&amp; a.stock !&#x3D;&#x3D; 0 &amp;&amp; a.stock !&#x3D;&#x3D; null
-        ),
-        (a) &#x3D;&gt; {
-          const p &#x3D; new Date(a.periode)
-          return p.getTime()
-        },
-        [&#x27;desc&#x27;]
-      ).slice(0, 12)
-
-      // find new ETPT of today
-      let etpt &#x3D; 0
-      if (magistrats) {
-        const ref &#x3D; magistrats.referentiel.find(
-          (referentiel) &#x3D;&gt; referentiel.id &#x3D;&#x3D;&#x3D; r.id
-        )
-        if (ref) {
-          etpt &#x3D; fixDecimal(ref.totalAffected!) || 0
-        }
-      }
-
-      const nbDaysByMonthForMagistrat &#x3D; environment.nbDaysByMagistrat / 12
-      const inValue &#x3D; Math.floor(meanBy(activitiesFiltered, &#x27;entrees&#x27;)) || 0
-      const averageOut &#x3D; Math.floor(meanBy(activitiesFiltered, &#x27;sorties&#x27;)) || 0
-      let lastStock &#x3D; activitiesFiltered.length
-        ? activitiesFiltered[0].stock || 0
-        : 0
-
-      // simulate value if last datas are before selected month
-      const lastPeriode &#x3D; activitiesFiltered.length
-        ? month(activitiesFiltered[0].periode, 0, &#x27;lastday&#x27;)
-        : null
-
-      if (
-        lastStock &amp;&amp;
-        lastPeriode &amp;&amp;
-        lastPeriode.getTime() &lt; month(this.dateSelected).getTime()
-      ) {
-        // ETPT of the last 12 months
-        let etpAffectedLast12Months &#x3D; this.simulatorService.getHRPositions(
-          (magistrats &amp;&amp; magistrats.hrFiltered) || [],
-          r.id,
-          this.humanResourceService.categories.getValue(),
-          new Date(month(lastPeriode, -11)),
-          true,
-          new Date(month(lastPeriode, 0, &#x27;lastday&#x27;))
-        ) as Array&lt;etpAffectedInterface&gt;
-        let etpToComputeLast12Months &#x3D;
-          etpAffectedLast12Months.length &gt;&#x3D; 0
-            ? etpAffectedLast12Months[0].totalEtp
-            : 0
-
-        let averageWorkingProcess &#x3D; fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
-            (averageOut / etpToComputeLast12Months)
-        )
-
-        let outValue &#x3D; Math.floor(
-          (etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat) /
-            averageWorkingProcess
-        )
-
-        // ETPT Delta between lastperiod and today/selected date in the futur
-        const etpAffected &#x3D; this.simulatorService.getHRPositions(
-          (magistrats &amp;&amp; magistrats.hrFiltered) || [],
-          r.id,
-          this.humanResourceService.categories.getValue(),
-          lastPeriode,
-          true,
-          this.dateSelected
-        ) as Array&lt;etpAffectedInterface&gt;
-        const etpMagDelta &#x3D;
-          etpAffected.length &gt;&#x3D; 0 ? etpAffected[0].totalEtp : 0
-        const nbDayCalendar &#x3D; nbOfDays(lastPeriode, this.dateSelected)
-
-        // Compute stock projection until today
-        lastStock &#x3D;
-          Math.floor(lastStock) -
-          Math.floor(
-            (nbDayCalendar / (365 / 12)) *
-              nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDay) /
-                averageWorkingProcess)
-          ) +
-          Math.floor((nbDayCalendar / (365 / 12)) * inValue)
-
-        return {
-          ...r,
-          in: inValue,
-          out: outValue,
-          stock: lastStock,
-          coverage: fixDecimal(outValue / inValue) * 100,
-          dtes: fixDecimal(lastStock / outValue),
-        }
-      }
-
+    this.listFormated &#x3D; this.listFormated.map((itemList) &#x3D;&gt; {
       return {
-        ...r,
-        in: inValue,
-        out: averageOut,
-        stock: lastStock,
-        coverage: averageOut &#x3D;&#x3D;&#x3D; 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
-        dtes: lastStock &#x3D;&#x3D;&#x3D; 0 ? 0 : fixDecimal(lastStock / averageOut),
+        ...itemList,
+        referentiel: itemList.referentiel.map((r) &#x3D;&gt; ({
+          ...r,
+          totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
+        })),
       }
     })
+
+    const itemList &#x3D; this.listFormated.find(
+      (i) &#x3D;&gt; i.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+    )
+
+    if (itemList) {
+      this.referentiel &#x3D; this.referentiel.map((ref) &#x3D;&gt; {
+        const refFromItemList &#x3D; (itemList.referentiel || []).find(
+          (r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ref.id
+        )
+
+        if (!refFromItemList) {
+          return ref
+        }
+
+        const averageWorkingProcess &#x3D; refFromItemList.magRealTimePerCase || 0
+        const etpt &#x3D; refFromItemList.totalAffected || 0
+        const nbWorkingHours &#x3D; refFromItemList.nbWorkingHours || 0
+        const nbWorkingDays &#x3D; refFromItemList.nbWorkingDays || 0
+        const lastStock &#x3D; refFromItemList.lastStock || 0
+        const inValue &#x3D; refFromItemList.totalIn || 0
+
+        let outValue &#x3D;
+          averageWorkingProcess &#x3D;&#x3D;&#x3D; 0
+            ? 0
+            : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
+        outValue &#x3D; Math.floor(outValue)
+
+        return {
+          ...ref,
+          coverage: fixDecimal(outValue / inValue) * 100,
+          dtes:
+            lastStock &#x3D;&#x3D;&#x3D; 0 || outValue &#x3D;&#x3D;&#x3D; 0
+              ? 0
+              : fixDecimal(lastStock / outValue),
+        }
+      })
+    }
   }
 
   updateHRReferentiel(
@@ -4662,6 +4862,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
+            averageProcessingTimeFonc: null,
           },
         })
         ;(r.childrens || [])
@@ -4674,6 +4875,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
                 id: rc.id,
                 label: rc.label,
                 averageProcessingTime: null,
+                averageProcessingTimeFonc: null,
               },
             })
           })
@@ -4687,20 +4889,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (indexOfHR !&#x3D;&#x3D; -1) {
       this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities &#x3D;
         list
+      this.listFormated[indexList].hrFiltered[indexOfHR].isModify &#x3D; true
 
-      this.orderListWithFiltersParams()
+      this.orderListWithFiltersParams(false)
     }
-  }
-
-  updateETPTargetAfterDelay(list: number[], index: number, value: number) {
-    if (this.timeoutUpdateETPTargetAfterDelay) {
-      clearTimeout(this.timeoutUpdateETPTargetAfterDelay)
-      this.timeoutUpdateETPTargetAfterDelay &#x3D; null
-    }
-
-    this.timeoutUpdateETPTargetAfterDelay &#x3D; setTimeout(() &#x3D;&gt; {
-      list[index] &#x3D; value || 0
-    }, 500)
   }
 
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
@@ -4709,6 +4901,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.listFormated[index].personSelected.push(hr.id)
     } else {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
+    }
+
+    if (this.listFormated[index].personSelected.length &#x3D;&#x3D;&#x3D; 0) {
+      // force to reset isolate var
+      this.isolatePersons &#x3D; false
     }
   }
 
@@ -4740,6 +4937,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.orderListWithFiltersParams()
     }
   }
+
+  onToogleIsolation() {
+    this.isolatePersons &#x3D; !this.isolatePersons
+  }
+
+  getOrignalHuman(
+    hr: HumanResourceSelectedInterface,
+    itemObject: listFormatedInterface
+  ) {
+    return itemObject.allHr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; hr.id)
+  }
 }
 </code></pre>
     </div>
@@ -4752,8 +4960,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       &lt;aj-date-select title&#x3D;&quot;A la date d&#x27;&quot; class&#x3D;&quot;dark-mode&quot; [value]&#x3D;&quot;dateSelected&quot;
         (valueChange)&#x3D;&quot;onDateChanged($event)&quot;&gt;
       &lt;/aj-date-select&gt;
-      &lt;aj-select title&#x3D;&quot;Filtrer par catégorie&quot; class&#x3D;&quot;dark-mode&quot; [value]&#x3D;&quot;reaffectatorService.selectedCategoriesIds&quot;
-        [datas]&#x3D;&quot;formFilterSelect&quot; (valueChange)&#x3D;&quot;onSelectedCategoriesIdsChanged($event)&quot;&gt;
+      &lt;aj-select title&#x3D;&quot;Choisir une catégorie&quot; class&#x3D;&quot;dark-mode category-select&quot;
+        [value]&#x3D;&quot;reaffectatorService.selectedCategoriesId !&#x3D;&#x3D; null ? [reaffectatorService.selectedCategoriesId] : []&quot;
+        [multiple]&#x3D;&quot;false&quot; [datas]&#x3D;&quot;formFilterSelect&quot; (valueChange)&#x3D;&quot;onSelectedCategoriesIdChanged($event)&quot;&gt;
       &lt;/aj-select&gt;
       &lt;aj-select title&#x3D;&quot;Filtrer par fonction&quot; class&#x3D;&quot;dark-mode&quot; [value]&#x3D;&quot;reaffectatorService.selectedFonctionsIds&quot;
         [datas]&#x3D;&quot;formFilterFonctionsSelect&quot; (valueChange)&#x3D;&quot;onSelectedFonctionsIdsChanged($event)&quot;&gt;
@@ -4762,9 +4971,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         [datas]&#x3D;&quot;formReferentiel&quot; (valueChange)&#x3D;&quot;onSelectedReferentielIdsChanged($event)&quot;&gt;
       &lt;/aj-select&gt;
       &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
-      &lt;aj-input-button class&#x3D;&quot;dark-mode&quot; title&#x3D;&quot;Rechercher un collaborateur&quot; placeholder&#x3D;&quot;Indiquer le nom&quot;
-        [ngModel]&#x3D;&quot;searchValue&quot; (valueChange)&#x3D;&quot;searchValue &#x3D; $event; onSearchBy()&quot; (search)&#x3D;&quot;onSearchBy()&quot;
-        ngDefaultControl icon&#x3D;&quot;&quot;&gt;
+      &lt;aj-input-button class&#x3D;&quot;dark-mode&quot; title&#x3D;&quot;Rechercher un agent&quot; placeholder&#x3D;&quot;Rechercher&quot; [ngModel]&#x3D;&quot;searchValue&quot;
+        (valueChange)&#x3D;&quot;searchValue &#x3D; $event; onSearchBy()&quot; (search)&#x3D;&quot;onSearchBy()&quot; ngDefaultControl icon&#x3D;&quot;&quot;&gt;
       &lt;/aj-input-button&gt;
       &lt;div class&#x3D;&quot;search-next&quot; *ngIf&#x3D;&quot;valuesFinded !&#x3D;&#x3D; null&quot;&gt;
         &lt;mat-icon matSuffix (click)&#x3D;&quot;onFindNext(-1)&quot; class&#x3D;&quot;cursor-pointer&quot;&gt;expand_less
@@ -4780,16 +4988,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         &lt;div class&#x3D;&quot;label-container&quot;&gt;
           &lt;i *ngIf&#x3D;&quot;!showIndicatorPanel&quot; class&#x3D;&quot;ri-eye-line&quot; (click)&#x3D;&quot;showIndicatorPanel &#x3D; true&quot;&gt;&lt;/i&gt;
           &lt;i *ngIf&#x3D;&quot;showIndicatorPanel&quot; class&#x3D;&quot;ri-eye-off-line&quot; (click)&#x3D;&quot;showIndicatorPanel &#x3D; false&quot;&gt;&lt;/i&gt;
-          &lt;p&gt;Indicateurs&lt;/p&gt;
+          &lt;p&gt;Compteurs&lt;/p&gt;
         &lt;/div&gt;
         &lt;ng-template [ngIf]&#x3D;&quot;showIndicatorPanel&quot;&gt;
           &lt;div class&#x3D;&quot;contentieux-label&quot;&gt;
             &lt;div class&#x3D;&quot;text&quot;&gt;
-              &lt;div&gt;
-                &lt;p&gt;Taux de&lt;br /&gt;couverture ajusté :&lt;/p&gt;
+              &lt;div class&#x3D;&quot;taux-row&quot;&gt;
+                &lt;p&gt;Taux de couverture :&lt;/p&gt;
               &lt;/div&gt;
-              &lt;div&gt;
-                &lt;p class&#x3D;&quot;etp-header&quot;&gt;DTES (en mois) :&lt;/p&gt;
+              &lt;div class&#x3D;&quot;dtes-row&quot;&gt;
+                &lt;p&gt;DTES (en mois) :&lt;/p&gt;
+              &lt;/div&gt;
+              &lt;div class&#x3D;&quot;etp-target-row&quot;&gt;
+                &lt;p&gt;ETPT cibles :&lt;/p&gt;
+              &lt;/div&gt;
+              &lt;div class&#x3D;&quot;total-etp-row&quot;&gt;
+                &lt;p&gt;ETPT ventilés :&lt;/p&gt;
               &lt;/div&gt;
             &lt;/div&gt;
           &lt;/div&gt;
@@ -4797,16 +5011,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       &lt;/div&gt;
       &lt;ng-template [ngIf]&#x3D;&quot;showIndicatorPanel&quot;&gt;
         &lt;div class&#x3D;&quot;activities&quot;&gt;
-          &lt;div class&#x3D;&quot;sub-item&quot; *ngFor&#x3D;&quot;let ref of referentiel&quot;&gt;
-            &lt;div&gt;
-              &lt;div class&#x3D;&quot;taux&quot;&gt;
-                &lt;aj-speedometer class&#x3D;&quot;with-auto&quot; [percent]&#x3D;&quot;ref.coverage&quot;&gt;&lt;/aj-speedometer&gt;
+          &lt;div class&#x3D;&quot;sub-item&quot; *ngFor&#x3D;&quot;let ref of referentiel; let index &#x3D; index&quot;&gt;
+            &lt;ng-template [ngIf]&#x3D;&quot;referentiel.length &gt; index + 1&quot;&gt;
+              &lt;div class&#x3D;&quot;taux-row&quot;&gt;
+                &lt;div class&#x3D;&quot;taux&quot;&gt;
+                  &lt;aj-speedometer class&#x3D;&quot;with-auto small-text&quot; [classDarkMode]&#x3D;&quot;true&quot; [percent]&#x3D;&quot;ref.coverage&quot;&gt;
+                  &lt;/aj-speedometer&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div&gt;
-              &lt;div class&#x3D;&quot;dtes&quot;&gt;
-                &lt;p&gt;{{ref.dtes | number:&quot;.2-2&quot;}}&lt;/p&gt;
+              &lt;div class&#x3D;&quot;dtes-row&quot;&gt;
+                &lt;div class&#x3D;&quot;dtes&quot;&gt;
+                  &lt;p&gt;{{ref.dtes | number:&quot;.2-2&quot;}}&lt;/p&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
+              &lt;div class&#x3D;&quot;etp-target-row&quot;&gt;
+                &lt;input [(ngModel)]&#x3D;&quot;firstETPTargetValue[index]&quot; placeholder&#x3D;&quot;-&quot; /&gt;
+              &lt;/div&gt;
+            &lt;/ng-template&gt;
+            &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+            &lt;div class&#x3D;&quot;total-etp-row&quot;&gt;
+              &lt;p&gt;{{ref.etpUseToday | number:&quot;.2-2&quot;}}&lt;/p&gt;
             &lt;/div&gt;
           &lt;/div&gt;
         &lt;/div&gt;
@@ -4815,106 +5039,71 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     &lt;/div&gt;
 
     &lt;div class&#x3D;&quot;content-list&quot; id&#x3D;&quot;container-list&quot;&gt;
-      &lt;ng-template ngFor let-list let-i&#x3D;&quot;index&quot; [ngForOf]&#x3D;&quot;listFormated&quot; [ngForTrackBy]&#x3D;&quot;trackById&quot;&gt;
-        &lt;div class&#x3D;&quot;header-list&quot;&gt;
-          &lt;div class&#x3D;&quot;profil&quot;&gt;
-            &lt;div class&#x3D;&quot;label-container&quot;&gt;
-              &lt;i *ngIf&#x3D;&quot;!list.headerPanel&quot; class&#x3D;&quot;ri-eye-line&quot; (click)&#x3D;&quot;list.headerPanel &#x3D; true&quot;&gt;&lt;/i&gt;
-              &lt;i *ngIf&#x3D;&quot;list.headerPanel&quot; class&#x3D;&quot;ri-eye-off-line&quot; (click)&#x3D;&quot;list.headerPanel &#x3D; false&quot;&gt;&lt;/i&gt;
-              &lt;p&gt;{{ list.label }}&lt;/p&gt;
-            &lt;/div&gt;
-            &lt;div class&#x3D;&quot;contentieux-label&quot; *ngIf&#x3D;&quot;list.headerPanel&quot;&gt;
-              &lt;div class&#x3D;&quot;label&quot;&gt;
-                &lt;p&gt;Contentieux :&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;etp-target&quot;&gt;
-                &lt;p&gt;ETPT cible :&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;etp&quot;&gt;
-                &lt;p&gt;ETP affectés :&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;filter&quot;&gt;
-                &lt;p class&#x3D;&quot;etp-header&quot;&gt;Trier par :&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-          &lt;div class&#x3D;&quot;activities&quot; *ngIf&#x3D;&quot;list.headerPanel&quot;&gt;
-            &lt;div class&#x3D;&quot;sub-item&quot; *ngFor&#x3D;&quot;let ref of list.referentiel; let index &#x3D; index&quot;
-              [class.selected]&#x3D;&quot;filterSelected &amp;&amp; filterSelected.id &#x3D;&#x3D;&#x3D; ref.id&quot;&gt;
-              &lt;div class&#x3D;&quot;label&quot;&gt;
-                &lt;p&gt;{{ referentielMappingName(ref.label) }}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;etp-target&quot;&gt;
-                &lt;input [ngModel]&#x3D;&quot;list.firstETPTargetValue[index]&quot;
-                  (ngModelChange)&#x3D;&quot;updateETPTargetAfterDelay(list.firstETPTargetValue, index, parseFloat($event))&quot; /&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;etp&quot;&gt;
-                &lt;p&gt;{{ ref.totalAffected | number:&#x27;0.2-2&#x27; }}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;div class&#x3D;&quot;filter&quot; (click)&#x3D;&quot;onFilterBy(ref)&quot;&gt;
-                &lt;mat-icon&gt;{{ filterSelected &amp;&amp; filterSelected.id &#x3D;&#x3D;&#x3D; ref.id ?
-                  &#x27;filter_list&#x27; : &#x27;filter_list_off&#x27; }}
-                &lt;/mat-icon&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-          &lt;div class&#x3D;&quot;actions&quot;&gt;&lt;/div&gt;
-        &lt;/div&gt;
-
-        &lt;div class&#x3D;&quot;sub-content-list&quot;&gt;
-          &lt;div class&#x3D;&quot;header-item&quot;&gt;
-            &lt;div class&#x3D;&quot;check-item&quot; [ngClass]&#x3D;&quot;{selected: list.personSelected.length &#x3D;&#x3D;&#x3D; list.hrFiltered.length}&quot;
-              (click)&#x3D;&quot;toogleCheckAllPerson(i)&quot;&gt;&lt;/div&gt;
-            &lt;p class&#x3D;&quot;label&quot;&gt;Tout sélectionner&lt;/p&gt;
-            &lt;p class&#x3D;&quot;btn&quot; (click)&#x3D;&quot;onInitList(list)&quot;&gt;
-              Retour à la ventilation actuelle des fiches sélectionnées
-            &lt;/p&gt;
-          &lt;/div&gt;
-
-          &lt;div class&#x3D;&quot;item-list&quot; *ngFor&#x3D;&quot;let hr of list.hrFiltered; trackBy: trackById; let index &#x3D; index&quot;
-            [style.opacity]&#x3D;&quot;hr.opacity&quot; [id]&#x3D;&quot;&#x27;human-&#x27;+hr.id&quot;&gt;
-            &lt;div class&#x3D;&quot;profil item&quot;&gt;
-              &lt;div class&#x3D;&quot;text&quot;&gt;
-                &lt;div class&#x3D;&quot;name&quot;&gt;
-                  &lt;div class&#x3D;&quot;check-item&quot; [ngClass]&#x3D;&quot;{selected: list.personSelected.indexOf(hr.id) !&#x3D;&#x3D; -1}&quot;
-                    (click)&#x3D;&quot;toogleCheckPerson(i, hr)&quot;&gt;&lt;/div&gt;
-                  &lt;p&gt;{{ hr.firstName}} {{ hr.lastName}}&lt;/p&gt;
-                  &lt;div *ngIf&#x3D;&quot;hr.comment&quot; class&#x3D;&quot;tooltip&quot;&gt;
-                    &lt;mat-icon&gt;message&lt;/mat-icon&gt;
-                    &lt;span class&#x3D;&quot;tooltiptext&quot;&gt;{{ hr.comment }}&lt;/span&gt;
+      &lt;ng-template ngFor let-list let-mainIndex&#x3D;&quot;index&quot; [ngForOf]&#x3D;&quot;listFormated&quot; [ngForTrackBy]&#x3D;&quot;trackById&quot;&gt;
+        &lt;ng-template [ngIf]&#x3D;&quot;list.categoryId &#x3D;&#x3D;&#x3D; reaffectatorService.selectedCategoriesId&quot;&gt;
+          &lt;div class&#x3D;&quot;header-list&quot;&gt;
+            &lt;div class&#x3D;&quot;profil&quot;&gt;
+              &lt;div class&#x3D;&quot;label-container&quot;&gt;
+                &lt;div class&#x3D;&quot;selection-row&quot; *ngIf&#x3D;&quot;!duringPrint&quot;&gt;
+                  &lt;div class&#x3D;&quot;check-item&quot; [ngClass]&#x3D;&quot;{selected: list.personSelected.length}&quot;
+                    (click)&#x3D;&quot;toogleCheckAllPerson(mainIndex)&quot;&gt;
+                    {{ list.personSelected.length ? list.personSelected.length :
+                    &#x27;&#x27; }}
                   &lt;/div&gt;
-                &lt;/div&gt;
-                &lt;div class&#x3D;&quot;tags&quot;&gt;
-                  &lt;p *ngIf&#x3D;&quot;hr.fonction &amp;&amp; hr.fonction.code&quot; class&#x3D;&quot;function&quot;&gt;
-                    {{ hr.fonction &amp;&amp; hr.fonction.code}}
-                  &lt;/p&gt;
-                  &lt;p class&#x3D;&quot;etp&quot;&gt;{{ hr.etpLabel }}&lt;/p&gt;
-                  &lt;p class&#x3D;&quot;unavailable&quot; *ngIf&#x3D;&quot;hr.hasIndisponibility&quot;&gt;
-                    &lt;mat-icon&gt;error&lt;/mat-icon&gt; Indispo
+                  &lt;p class&#x3D;&quot;label&quot;&gt;
+                    {{ list.personSelected.length &gt; 1 ? &#x27;sélections&#x27; :
+                    &#x27;sélection&#x27; }}
                   &lt;/p&gt;
                 &lt;/div&gt;
-                &lt;div class&#x3D;&quot;updated-at&quot;&gt;
-                  Dernière mise à jour le {{ hr.updatedAt | date:&quot;dd&quot; }} {{
-                  getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:&quot;YYYY&quot;
-                  }}
+                &lt;div class&#x3D;&quot;buttons-row&quot; *ngIf&#x3D;&quot;!duringPrint&quot;&gt;
+                  &lt;p class&#x3D;&quot;btn&quot; (click)&#x3D;&quot;onToogleIsolation()&quot;&gt;Isoler&lt;/p&gt;
+                  &lt;p class&#x3D;&quot;btn&quot; (click)&#x3D;&quot;onInitList(list)&quot;&gt;Réinitialiser&lt;/p&gt;
                 &lt;/div&gt;
               &lt;/div&gt;
-              &lt;div class&#x3D;&quot;read-etp&quot;&gt;
-                &lt;p class&#x3D;&quot;label&quot;&gt;ETP Travaillé :&lt;/p&gt;
-                &lt;etp-preview [width]&#x3D;&quot;56&quot; [height]&#x3D;&quot;56&quot; [etp]&#x3D;&quot;(hr.etp || 0) - hr.hasIndisponibility&quot;
-                  [indisponibility]&#x3D;&quot;hr.hasIndisponibility&quot; class&#x3D;&quot;dark-mode&quot;&gt;
-                &lt;/etp-preview&gt;
+              &lt;div class&#x3D;&quot;contentieux-label&quot;&gt;
+                &lt;div class&#x3D;&quot;label&quot;&gt;
+                  &lt;p&gt;Contentieux :&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;etp&quot;&gt;
+                  &lt;p&gt;ETPT simulés :&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;filter&quot;&gt;
+                  &lt;p class&#x3D;&quot;etp-header&quot;&gt;Trier par :&lt;/p&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
             &lt;/div&gt;
             &lt;div class&#x3D;&quot;activities&quot;&gt;
-              &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
-              &lt;panel-activities [activities]&#x3D;&quot;hr.currentActivities&quot; [header]&#x3D;&quot;false&quot; [selected]&#x3D;&quot;true&quot; class&#x3D;&quot;dark-mode&quot;
-                (referentielChange)&#x3D;&quot;updateHRReferentiel(hr, $event, index)&quot; [updateRefentielOnLoad]&#x3D;&quot;false&quot;&gt;
-              &lt;/panel-activities&gt;
-              &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+              &lt;div class&#x3D;&quot;sub-item&quot; *ngFor&#x3D;&quot;let ref of list.referentiel; let index &#x3D; index&quot;
+                [class.selected]&#x3D;&quot;filterSelected &amp;&amp; filterSelected.id &#x3D;&#x3D;&#x3D; ref.id&quot; (click)&#x3D;&quot;onFilterBy(ref)&quot;&gt;
+                &lt;div class&#x3D;&quot;label&quot;&gt;
+                  &lt;p&gt;{{ referentielMappingName(ref.label) }}&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;etp&quot;&gt;
+                  &lt;p&gt;{{ ref.totalAffected | number:&#x27;0.2-2&#x27; }}&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class&#x3D;&quot;filter&quot;&gt;
+                  &lt;i class&#x3D;&quot;ri-sort-desc&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
+            &lt;div class&#x3D;&quot;actions&quot;&gt;&lt;/div&gt;
           &lt;/div&gt;
-        &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;sub-content-list&quot;&gt;
+            &lt;ng-template ngFor let-hr let-index&#x3D;&quot;index&quot; [ngForOf]&#x3D;&quot;list.hrFiltered&quot; [ngForTrackBy]&#x3D;&quot;trackById&quot;&gt;
+              &lt;ng-template [ngIf]&#x3D;&quot;duringPrint &amp;&amp; hr.isModify&quot;&gt;
+                &lt;ng-container
+                  *ngTemplateOutlet&#x3D;&quot;rowPerson; context: { hr: getOrignalHuman(hr, list), list: list, mainIndex: mainIndex, isCheckable: !duringPrint }&quot;&gt;
+                &lt;/ng-container&gt;
+              &lt;/ng-template&gt;
+              &lt;ng-template [ngIf]&#x3D;&quot;(duringPrint &amp;&amp; hr.isModify) || !duringPrint&quot;&gt;
+                &lt;ng-container
+                  *ngTemplateOutlet&#x3D;&quot;rowPerson; context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }&quot;&gt;
+                &lt;/ng-container&gt;
+              &lt;/ng-template&gt;
+            &lt;/ng-template&gt;
+          &lt;/div&gt;
+        &lt;/ng-template&gt;
       &lt;/ng-template&gt;
     &lt;/div&gt;
   &lt;/div&gt;
@@ -4922,18 +5111,69 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
 &lt;ng-template #actions&gt;
   &lt;a routerLink&#x3D;&quot;/ventilations&quot; class&#x3D;&quot;reaffectator-page&quot;&gt;
-    &lt;button class&#x3D;&quot;blue-light light outline&quot;&gt;
-      Simuler des affectations
-      &lt;aj-radio-button [title]&#x3D;&quot;&#x27;title&#x27;&quot; width&#x3D;&quot;40px&quot; height&#x3D;&quot;20px&quot; bgColor&#x3D;&quot;#8585f6&quot; switchColor&#x3D;&quot;white&quot;
-        [indicatorWidth]&#x3D;&quot;20&quot; borderRadius&#x3D;&quot;20px&quot; [indicatorHeight]&#x3D;&quot;20&quot; icon&#x3D;&quot;check-line&quot; [readOnly]&#x3D;&quot;true&quot;&gt;
-      &lt;/aj-radio-button&gt;
+    &lt;button class&#x3D;&quot;blue-light small light outline&quot;&gt;
+      Retour aux ventilations
     &lt;/button&gt;
   &lt;/a&gt;
 
-  &lt;button class&#x3D;&quot;primary light&quot; (click)&#x3D;&quot;onExport()&quot;&gt;
+  &lt;button class&#x3D;&quot;blue-light light small&quot; (click)&#x3D;&quot;onExport()&quot;&gt;
     &lt;mat-icon&gt;save&lt;/mat-icon&gt;
     Exporter en PDF
   &lt;/button&gt;
+&lt;/ng-template&gt;
+
+&lt;ng-template #rowPerson let-hr&#x3D;&quot;hr&quot; let-list&#x3D;&quot;list&quot; let-mainIndex&#x3D;&quot;mainIndex&quot; let-isCheckable&#x3D;&quot;isCheckable&quot;&gt;
+  &lt;ng-template
+    [ngIf]&#x3D;&quot;!isolatePersons || (isolatePersons &amp;&amp; (list.personSelected.indexOf(hr.id) !&#x3D;&#x3D; -1 || hr.isModify))&quot;&gt;
+    &lt;div class&#x3D;&quot;item-list&quot; [class.is-modify]&#x3D;&quot;hr.isModify&quot;
+      [class.is-selected]&#x3D;&quot;isCheckable ? list.personSelected.indexOf(hr.id) !&#x3D;&#x3D; -1 : false&quot;
+      [style.opacity]&#x3D;&quot;isCheckable ? hr.opacity : 1&quot; [id]&#x3D;&quot;&#x27;human-&#x27;+hr.id&quot;&gt;
+      &lt;div class&#x3D;&quot;profil item&quot;&gt;
+        &lt;div class&#x3D;&quot;text&quot;&gt;
+          &lt;div class&#x3D;&quot;name&quot;&gt;
+            &lt;div class&#x3D;&quot;check-item&quot; [ngClass]&#x3D;&quot;{selected: isCheckable &amp;&amp; list.personSelected.indexOf(hr.id) !&#x3D;&#x3D; -1}&quot;
+              (click)&#x3D;&quot;toogleCheckPerson(mainIndex, hr)&quot;&gt;&lt;/div&gt;
+            &lt;p&gt;{{ hr.firstName}} {{ hr.lastName}}&lt;/p&gt;
+            &lt;div *ngIf&#x3D;&quot;hr.comment&quot; class&#x3D;&quot;tooltip&quot;&gt;
+              &lt;mat-icon&gt;message&lt;/mat-icon&gt;
+              &lt;span class&#x3D;&quot;tooltiptext&quot;&gt;{{ hr.comment }}&lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;tags&quot;&gt;
+            &lt;p *ngIf&#x3D;&quot;hr.fonction &amp;&amp; hr.fonction.code&quot; class&#x3D;&quot;function&quot;&gt;
+              {{ hr.fonction &amp;&amp; hr.fonction.code}}
+            &lt;/p&gt;
+            &lt;p class&#x3D;&quot;etp&quot;&gt;{{ hr.etpLabel }}&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+          &lt;div class&#x3D;&quot;updated-at&quot;&gt;
+            MàJ le {{ hr.updatedAt | date:&quot;dd&quot; }} {{
+            getMonthString(hr.updatedAt) }} {{ hr.updatedAt |
+            date:&quot;YYYY&quot; }}
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class&#x3D;&quot;read-etp&quot;&gt;
+          &lt;p class&#x3D;&quot;label&quot;&gt;ETP Travaillé :&lt;/p&gt;
+          &lt;etp-preview [width]&#x3D;&quot;56&quot; [height]&#x3D;&quot;56&quot; [etp]&#x3D;&quot;(hr.etp || 0) - hr.hasIndisponibility&quot;
+            [indisponibility]&#x3D;&quot;hr.hasIndisponibility&quot; [ngClass]&#x3D;&quot;{&#x27;dark-mode&#x27;: !hr.isModify}&quot;&gt;
+          &lt;/etp-preview&gt;
+          &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+          &lt;p class&#x3D;&quot;unavailable&quot; *ngIf&#x3D;&quot;hr.hasIndisponibility&quot;&gt;
+            &lt;mat-icon&gt;error&lt;/mat-icon&gt; Indispo
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class&#x3D;&quot;activities&quot;&gt;
+        &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+        &lt;panel-activities [activities]&#x3D;&quot;hr.currentActivities&quot; [header]&#x3D;&quot;false&quot; [selected]&#x3D;&quot;true&quot; class&#x3D;&quot;dark-mode&quot;
+          (referentielChange)&#x3D;&quot;updateHRReferentiel(hr, $event, mainIndex)&quot; [updateRefentielOnLoad]&#x3D;&quot;false&quot;
+          [canSelectedTopReferentiel]&#x3D;&quot;true&quot;&gt;
+        &lt;/panel-activities&gt;
+        &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/ng-template&gt;
+
 &lt;/ng-template&gt;</code></pre>
     </div>
 
@@ -4946,35 +5186,65 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 .header-list {
   display: flex;
   width: 100%;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgHeader);
   z-index: 1;
   position: sticky;
   top: 0;
 
   .profil {
     display: flex;
-    width: 416px;
+    width: 369px;
 
     &gt; .label-container {
       display: flex;
-      padding: 8px 32px;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 8px 0 8px 16px;
       flex: 1;
 
-      i {
-        width: 32px;
-        height: 32px;
-        margin-right: 8px;
-        border: 1px solid fColor(darkModeTitle);
-        color: white;
-        text-align: center;
-        line-height: 32px;
-        cursor: pointer;
+      .selection-row {
+        display: flex;
+        margin-bottom: 10px;
       }
 
-      p {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
+      .buttons-row {
+        display: flex;
+
+        &gt; *:first-child {
+          margin-right: 8px;
+        }
+      }
+
+      .check-item {
+        min-width: 24px;
+        height: 24px;
+        margin-right: 4px;
+        text-align: center;
+        line-height: 24px;
+        padding: 0 4px;
+        width: fit-content;
+
+        &amp;.selected {
+          background-color: fColor(bgSelectSelected);
+          color: white;
+        }
+
+        &amp;.selected::before {
+          position: relative;
+          content: &#x27;&#x27;;
+        }
+      }
+
+      p.label {
+        flex: 1;
+        color: fColor(darkModeTitle);
+      }
+
+      p.btn {
+        border: 1px solid fColor(darkModeTitle);
+        color: fColor(darkModeTitle);
+        padding: 4px 12px;
+        cursor: pointer;
       }
     }
 
@@ -4986,6 +5256,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         text-align: right;
         font-size: 12px;
         color: fColor(grayRow);
+        white-space: nowrap;
       }
 
       &gt; div {
@@ -4997,22 +5268,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           height: 40px;
           margin-top: 3px;
           align-items: flex-end;
-        }
-
-        &amp;.etp-target {
-          margin-top: 17px;
-          height: 38px;
-          align-items: center;
+          margin-bottom: 2px;
         }
 
         &amp;.etp {
-          height: 38px;
-          align-items: flex-end;
+          height: 23px;
+          align-items: center;
         }
 
         &amp;.filter {
-          height: 39px;
-          margin-bottom: 11px;
+          height: 32px;
           align-items: center;
         }
 
@@ -5037,8 +5302,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       &amp;.selected {
         background-color: fColor(darkModeBgMenu);
 
-        &gt; div.text .filter mat-icon {
-          color: fColor(sortIconHeaderSelected);
+        .etp {
+          background-color: fColor(darkModeBgHeader);
+        }
+
+        .filter i {
+          color: fColor(tooltipBgTitleColor);
         }
       }
 
@@ -5047,6 +5316,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         display: flex;
         align-items: flex-end;
         height: 40px;
+        margin-bottom: 2px;
 
         p {
           text-transform: uppercase;
@@ -5058,43 +5328,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         }
       }
 
-      &gt; .etp-target {
-        margin-top: 17px;
-        height: 38px;
-
-        input {
-          width: 100%;
-          height: 100%;
-          text-align: center;
-          border: none;
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
-        }
-      }
-
       &gt; .etp {
-        height: 38px;
-        display: flex;
-        align-items: flex-end;
+        height: 23px;
+        border-radius: 4px;
+        background-color: fColor(darkModeBgMenu);
+        margin: 0 4px;
 
         p {
-          color: fColor(headerNumberColor);
+          color: fColor(tooltipBgTitleColor);
           width: 100%;
           text-align: center;
         }
       }
 
       .filter {
-        height: 39px;
-        margin-bottom: 11px;
+        height: 32px;
         align-items: center;
         display: flex;
         justify-content: center;
 
-        p {
-          color: #161616;
-        }
-        mat-icon {
+        i {
           width: 16px;
           height: 16px;
           font-size: 16px;
@@ -5114,19 +5367,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   .profil {
     display: flex;
     align-items: stretch;
-    width: 416px;
+    width: 369px;
 
     &gt; .label-container {
       flex: 1;
       display: flex;
-      padding: 8px 32px;
+      padding: 0px 16px;
 
       i {
         width: 32px;
         height: 32px;
         margin-right: 8px;
         border: 1px solid fColor(darkModeTitle);
-        color: white;
+        color: fColor(darkModeTitle);
         text-align: center;
         line-height: 32px;
         cursor: pointer;
@@ -5143,8 +5396,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       align-self: stretch;
       display: flex;
       width: 125px;
-      height: calc(100% - 8px);
-      margin: 4px 0;
+      height: 100%;
 
       &gt; .text {
         flex: 1;
@@ -5158,18 +5410,31 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           text-align: right;
           font-size: 12px;
           color: fColor(grayRow);
+          white-space: nowrap;
         }
 
         &gt; div {
           display: flex;
           align-items: center;
 
-          &amp;:first-child {
-            flex: 1;
+          &amp;.taux-row {
+            height: 48px;
           }
 
-          &amp;:last-child {
-            height: 50px;
+          &amp;.dtes-row {
+            height: 24px;
+            margin-top: 2px;
+          }
+
+          &amp;.etp-target-row {
+            height: 23px;
+            margin-top: 4px;
+          }
+
+          &amp;.total-etp-row {
+            margin-top: 7px;
+            margin-bottom: 11px;
+            height: 20px;
           }
         }
       }
@@ -5181,7 +5446,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     flex: 1;
 
     &gt; .sub-item {
-      margin: 4px 0;
       flex: 1;
       align-self: stretch;
       display: flex;
@@ -5190,31 +5454,55 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       &gt; div {
         margin-right: 3px;
 
-        &amp;:first-child {
-          flex: 1;
+        &amp;.taux-row {
+          height: 48px;
         }
 
-        &amp;:last-child {
-          height: 50px;
+        &amp;.dtes-row {
+          height: 24px;
+          margin-top: 2px;
+        }
+
+        &amp;.etp-target-row {
+          height: 23px;
+          margin-top: 4px;
+
+          &gt; input {
+            text-align: center;
+            border: none;
+            width: 100%;
+          }
+        }
+
+        &amp;.total-etp-row {
+          margin-top: 7px;
+          margin-bottom: 11px;
+          height: 20px;
+
+          &gt; p {
+            text-align: center;
+            font-weight: bold;
+            color: fColor(headerNumberColor);
+          }
         }
 
         &gt; div.taux {
-          background-color: fColor(darkModeBgMenuSelected);
+          background-color: fColor(darkModeBgMenu);
           border-radius: 3.7px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
-          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
 
           &gt; aj-speedometer {
-            width: 100%;
+            width: 48px;
           }
         }
 
         &gt; div.dtes {
           background-color: fColor(darkModeBgMenu);
           border-radius: 4px;
-          height: calc(100% - 8px);
-          margin: 4px 0;
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -5251,45 +5539,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     .sub-content-list {
       display: inline-block;
       width: 100%;
-      padding: 4px 18px;
-
-      .header-item {
-        height: 65px;
-        padding: 0 16px;
-        display: flex;
-        align-items: center;
-        background-color: fColor(darkModeBgLight);
-        border-radius: 8px;
-
-        .check-item {
-          margin-right: 10px;
-        }
-
-        p.label {
-          margin-right: 56px;
-          color: fColor(darkModeTitle);
-        }
-
-        p.btn {
-          border: 1px solid fColor(darkModeTitle);
-          color: fColor(darkModeTitle);
-          padding: 4px 12px;
-          cursor: pointer;
-        }
-      }
+      padding: 1px 2px;
     }
   }
 }
 
 .item-list {
   margin-top: 4px;
-  background-color: fColor(darkModeBgLight);
+  background-color: fColor(darkModeBgMenu);
   display: flex;
   border-radius: 4px;
-
-  &amp;:hover {
-    background-color: fColor(darkModeBgMenu);
-  }
 
   &amp;:last-child {
     margin-bottom: 16px;
@@ -5304,17 +5563,51 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       min-height: 16px;
     }
   }
+
+  &amp;.is-modify {
+    background-color: fColor(cbluemiddle);
+
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+
+    .activities {
+      background-color: fColor(bgProgressBar);
+    }
+
+    .profil.item .read-etp {
+      background-color: fColor(bgReadETPDark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
+  }
+
+  &amp;.is-selected {
+    .profil.item {
+      background-color: fColor(cbluemiddle);    
+    }
+    
+    .profil.item .text .name p {
+      color: fColor(cbluedark);
+    }
+
+    .profil.item .text .updated-at {
+      color: fColor(cblack);
+    }
+  }
 }
 
 .profil {
-  width: 400px;
+  width: 369px;
 
   &amp;.item {
     display: flex;
 
     .text {
       flex: 1;
-      padding: 24px 16px 20px 16px;
+      padding: 16px 16px 10px 16px;
       display: flex;
       flex-direction: column;
       text-decoration: none;
@@ -5322,6 +5615,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       .name {
         margin-bottom: 8px;
         display: flex;
+
+        .check-item {
+          margin-top: 3px;
+        }
 
         p {
           font-weight: bold;
@@ -5380,18 +5677,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             background-color: fColor(darkModeBgMenu);
           }
 
-          &amp;.unavailable {
-            font-size: 14px;
-            color: fColor(titleIndisponibilitiesPanel);
-
-            mat-icon {
-              font-size: 17px;
-              color: fColor(titleIndisponibilitiesPanel);
-              height: 17px;
-              width: 17px;
-            }
-          }
-
           mat-icon {
             font-size: 14px;
             width: 14px;
@@ -5406,7 +5691,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         margin-top: 10px;
         font-size: 12px;
         line-height: 20px;
-        color: fColor(grayRow);
+        color: white;
       }
     }
 
@@ -5416,6 +5701,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: fColor(darkModeBgHeader);
 
       .label {
         font-size: 12px;
@@ -5443,8 +5729,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 .title {
   display: flex;
   align-items: center;
-  background-color: fColor(darkModeBgMenu);
-  padding: 0 32px 24px 32px;
+  background-color: fColor(darkModeBgHeader);
+  padding: 0 16px 16px 16px;
 
   aj-select,
   aj-date-select {
@@ -5482,20 +5768,11 @@ progression-bar {
 .reaffectator-page {
   margin-right: 8px;
   text-decoration: none;
-
-  &gt; button {
-    display: flex;
-    align-items: center;
-
-    aj-radio-button {
-      margin-left: 16px;
-    }
-  }
 }
 
 .check-item {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   border: 1px solid fColor(darkModeTitle);
   border-radius: 4px;
   cursor: pointer;
@@ -5510,7 +5787,28 @@ progression-bar {
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: fColor(darkModeTitle);
+    font-size: 10px;
+    background-color: fColor(bgSelectSelected);
+    border-radius: 3px;
+  }
+}
+
+.category-select {
+  width: 235px;
+}
+
+.unavailable {
+  font-size: 14px;
+  color: fColor(titleIndisponibilitiesPanel);
+  margin-bottom: 10px;
+
+  mat-icon {
+    font-size: 17px;
+    color: fColor(titleIndisponibilitiesPanel);
+    height: 17px;
+    width: 17px;
+    position: relative;
+    top: 3px;
   }
 }
 </code></pre>
@@ -5541,8 +5839,8 @@ progression-bar {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"  class="dark-screen content-margin-null header-border-none">  <div class="container" [ngClass]="{print: duringPrint}">    <div class="title">      <aj-date-select title="A la date d\'" class="dark-mode" [value]="dateSelected"        (valueChange)="onDateChanged($event)">      </aj-date-select>      <aj-select title="Filtrer par catégorie" class="dark-mode" [value]="reaffectatorService.selectedCategoriesIds"        [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdsChanged($event)">      </aj-select>      <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"        [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)">      </aj-select>      <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)">      </aj-select>      <div class="flex-1"></div>      <aj-input-button class="dark-mode" title="Rechercher un collaborateur" placeholder="Indiquer le nom"        [ngModel]="searchValue" (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()"        ngDefaultControl icon="">      </aj-input-button>      <div class="search-next" *ngIf="valuesFinded !== null">        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less        </mat-icon>        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">          expand_more        </mat-icon>      </div>    </div>    <div class="indicators">      <div class="profil">        <div class="label-container">          <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>          <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>          <p>Indicateurs</p>        </div>        <ng-template [ngIf]="showIndicatorPanel">          <div class="contentieux-label">            <div class="text">              <div>                <p>Taux de<br />couverture ajusté :</p>              </div>              <div>                <p class="etp-header">DTES (en mois) :</p>              </div>            </div>          </div>        </ng-template>      </div>      <ng-template [ngIf]="showIndicatorPanel">        <div class="activities">          <div class="sub-item" *ngFor="let ref of referentiel">            <div>              <div class="taux">                <aj-speedometer class="with-auto" [percent]="ref.coverage"></aj-speedometer>              </div>            </div>            <div>              <div class="dtes">                <p>{{ref.dtes | number:".2-2"}}</p>              </div>            </div>          </div>        </div>      </ng-template>      <div class="actions"></div>    </div>    <div class="content-list" id="container-list">      <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">        <div class="header-list">          <div class="profil">            <div class="label-container">              <i *ngIf="!list.headerPanel" class="ri-eye-line" (click)="list.headerPanel = true"></i>              <i *ngIf="list.headerPanel" class="ri-eye-off-line" (click)="list.headerPanel = false"></i>              <p>{{ list.label }}</p>            </div>            <div class="contentieux-label" *ngIf="list.headerPanel">              <div class="label">                <p>Contentieux :</p>              </div>              <div class="etp-target">                <p>ETPT cible :</p>              </div>              <div class="etp">                <p>ETP affectés :</p>              </div>              <div class="filter">                <p class="etp-header">Trier par :</p>              </div>            </div>          </div>          <div class="activities" *ngIf="list.headerPanel">            <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"              [class.selected]="filterSelected && filterSelected.id === ref.id">              <div class="label">                <p>{{ referentielMappingName(ref.label) }}</p>              </div>              <div class="etp-target">                <input [ngModel]="list.firstETPTargetValue[index]"                  (ngModelChange)="updateETPTargetAfterDelay(list.firstETPTargetValue, index, parseFloat($event))" />              </div>              <div class="etp">                <p>{{ ref.totalAffected | number:\'0.2-2\' }}</p>              </div>              <div class="filter" (click)="onFilterBy(ref)">                <mat-icon>{{ filterSelected && filterSelected.id === ref.id ?                  \'filter_list\' : \'filter_list_off\' }}                </mat-icon>              </div>            </div>          </div>          <div class="actions"></div>        </div>        <div class="sub-content-list">          <div class="header-item">            <div class="check-item" [ngClass]="{selected: list.personSelected.length === list.hrFiltered.length}"              (click)="toogleCheckAllPerson(i)"></div>            <p class="label">Tout sélectionner</p>            <p class="btn" (click)="onInitList(list)">              Retour à la ventilation actuelle des fiches sélectionnées            </p>          </div>          <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById; let index = index"            [style.opacity]="hr.opacity" [id]="\'human-\'+hr.id">            <div class="profil item">              <div class="text">                <div class="name">                  <div class="check-item" [ngClass]="{selected: list.personSelected.indexOf(hr.id) !== -1}"                    (click)="toogleCheckPerson(i, hr)"></div>                  <p>{{ hr.firstName}} {{ hr.lastName}}</p>                  <div *ngIf="hr.comment" class="tooltip">                    <mat-icon>message</mat-icon>                    <span class="tooltiptext">{{ hr.comment }}</span>                  </div>                </div>                <div class="tags">                  <p *ngIf="hr.fonction && hr.fonction.code" class="function">                    {{ hr.fonction && hr.fonction.code}}                  </p>                  <p class="etp">{{ hr.etpLabel }}</p>                  <p class="unavailable" *ngIf="hr.hasIndisponibility">                    <mat-icon>error</mat-icon> Indispo                  </p>                </div>                <div class="updated-at">                  Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{                  getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY"                  }}                </div>              </div>              <div class="read-etp">                <p class="label">ETP Travaillé :</p>                <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"                  [indisponibility]="hr.hasIndisponibility" class="dark-mode">                </etp-preview>              </div>            </div>            <div class="activities">              <div class="flex-1"></div>              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"                (referentielChange)="updateHRReferentiel(hr, $event, index)" [updateRefentielOnLoad]="false">              </panel-activities>              <div class="flex-1"></div>            </div>          </div>        </div>      </ng-template>    </div>  </div></aj-wrapper><ng-template #actions>  <a routerLink="/ventilations" class="reaffectator-page">    <button class="blue-light light outline">      Simuler des affectations      <aj-radio-button [title]="\'title\'" width="40px" height="20px" bgColor="#8585f6" switchColor="white"        [indicatorWidth]="20" borderRadius="20px" [indicatorHeight]="20" icon="check-line" [readOnly]="true">      </aj-radio-button>    </button>  </a>  <button class="primary light" (click)="onExport()">    <mat-icon>save</mat-icon>    Exporter en PDF  </button></ng-template></div>'
-    var COMPONENTS = [{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'}];
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"  class="dark-screen content-margin-null header-border-none">  <div class="container" [ngClass]="{print: duringPrint}">    <div class="title">      <aj-date-select title="A la date d\'" class="dark-mode" [value]="dateSelected"        (valueChange)="onDateChanged($event)">      </aj-date-select>      <aj-select title="Choisir une catégorie" class="dark-mode category-select"        [value]="reaffectatorService.selectedCategoriesId !== null ? [reaffectatorService.selectedCategoriesId] : []"        [multiple]="false" [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdChanged($event)">      </aj-select>      <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"        [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)">      </aj-select>      <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)">      </aj-select>      <div class="flex-1"></div>      <aj-input-button class="dark-mode" title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"        (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">      </aj-input-button>      <div class="search-next" *ngIf="valuesFinded !== null">        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less        </mat-icon>        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">          expand_more        </mat-icon>      </div>    </div>    <div class="indicators">      <div class="profil">        <div class="label-container">          <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>          <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>          <p>Compteurs</p>        </div>        <ng-template [ngIf]="showIndicatorPanel">          <div class="contentieux-label">            <div class="text">              <div class="taux-row">                <p>Taux de couverture :</p>              </div>              <div class="dtes-row">                <p>DTES (en mois) :</p>              </div>              <div class="etp-target-row">                <p>ETPT cibles :</p>              </div>              <div class="total-etp-row">                <p>ETPT ventilés :</p>              </div>            </div>          </div>        </ng-template>      </div>      <ng-template [ngIf]="showIndicatorPanel">        <div class="activities">          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">            <ng-template [ngIf]="referentiel.length > index + 1">              <div class="taux-row">                <div class="taux">                  <aj-speedometer class="with-auto small-text" [classDarkMode]="true" [percent]="ref.coverage">                  </aj-speedometer>                </div>              </div>              <div class="dtes-row">                <div class="dtes">                  <p>{{ref.dtes | number:".2-2"}}</p>                </div>              </div>              <div class="etp-target-row">                <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />              </div>            </ng-template>            <div class="flex-1"></div>            <div class="total-etp-row">              <p>{{ref.etpUseToday | number:".2-2"}}</p>            </div>          </div>        </div>      </ng-template>      <div class="actions"></div>    </div>    <div class="content-list" id="container-list">      <ng-template ngFor let-list let-mainIndex="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">        <ng-template [ngIf]="list.categoryId === reaffectatorService.selectedCategoriesId">          <div class="header-list">            <div class="profil">              <div class="label-container">                <div class="selection-row" *ngIf="!duringPrint">                  <div class="check-item" [ngClass]="{selected: list.personSelected.length}"                    (click)="toogleCheckAllPerson(mainIndex)">                    {{ list.personSelected.length ? list.personSelected.length :                    \'\' }}                  </div>                  <p class="label">                    {{ list.personSelected.length > 1 ? \'sélections\' :                    \'sélection\' }}                  </p>                </div>                <div class="buttons-row" *ngIf="!duringPrint">                  <p class="btn" (click)="onToogleIsolation()">Isoler</p>                  <p class="btn" (click)="onInitList(list)">Réinitialiser</p>                </div>              </div>              <div class="contentieux-label">                <div class="label">                  <p>Contentieux :</p>                </div>                <div class="etp">                  <p>ETPT simulés :</p>                </div>                <div class="filter">                  <p class="etp-header">Trier par :</p>                </div>              </div>            </div>            <div class="activities">              <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"                [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">                <div class="label">                  <p>{{ referentielMappingName(ref.label) }}</p>                </div>                <div class="etp">                  <p>{{ ref.totalAffected | number:\'0.2-2\' }}</p>                </div>                <div class="filter">                  <i class="ri-sort-desc"></i>                </div>              </div>            </div>            <div class="actions"></div>          </div>          <div class="sub-content-list">            <ng-template ngFor let-hr let-index="index" [ngForOf]="list.hrFiltered" [ngForTrackBy]="trackById">              <ng-template [ngIf]="duringPrint && hr.isModify">                <ng-container                  *ngTemplateOutlet="rowPerson; context: { hr: getOrignalHuman(hr, list), list: list, mainIndex: mainIndex, isCheckable: !duringPrint }">                </ng-container>              </ng-template>              <ng-template [ngIf]="(duringPrint && hr.isModify) || !duringPrint">                <ng-container                  *ngTemplateOutlet="rowPerson; context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }">                </ng-container>              </ng-template>            </ng-template>          </div>        </ng-template>      </ng-template>    </div>  </div></aj-wrapper><ng-template #actions>  <a routerLink="/ventilations" class="reaffectator-page">    <button class="blue-light small light outline">      Retour aux ventilations    </button>  </a>  <button class="blue-light light small" (click)="onExport()">    <mat-icon>save</mat-icon>    Exporter en PDF  </button></ng-template><ng-template #rowPerson let-hr="hr" let-list="list" let-mainIndex="mainIndex" let-isCheckable="isCheckable">  <ng-template    [ngIf]="!isolatePersons || (isolatePersons && (list.personSelected.indexOf(hr.id) !== -1 || hr.isModify))">    <div class="item-list" [class.is-modify]="hr.isModify"      [class.is-selected]="isCheckable ? list.personSelected.indexOf(hr.id) !== -1 : false"      [style.opacity]="isCheckable ? hr.opacity : 1" [id]="\'human-\'+hr.id">      <div class="profil item">        <div class="text">          <div class="name">            <div class="check-item" [ngClass]="{selected: isCheckable && list.personSelected.indexOf(hr.id) !== -1}"              (click)="toogleCheckPerson(mainIndex, hr)"></div>            <p>{{ hr.firstName}} {{ hr.lastName}}</p>            <div *ngIf="hr.comment" class="tooltip">              <mat-icon>message</mat-icon>              <span class="tooltiptext">{{ hr.comment }}</span>            </div>          </div>          <div class="tags">            <p *ngIf="hr.fonction && hr.fonction.code" class="function">              {{ hr.fonction && hr.fonction.code}}            </p>            <p class="etp">{{ hr.etpLabel }}</p>          </div>          <div class="flex-1"></div>          <div class="updated-at">            MàJ le {{ hr.updatedAt | date:"dd" }} {{            getMonthString(hr.updatedAt) }} {{ hr.updatedAt |            date:"YYYY" }}          </div>        </div>        <div class="read-etp">          <p class="label">ETP Travaillé :</p>          <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"            [indisponibility]="hr.hasIndisponibility" [ngClass]="{\'dark-mode\': !hr.isModify}">          </etp-preview>          <div class="flex-1"></div>          <p class="unavailable" *ngIf="hr.hasIndisponibility">            <mat-icon>error</mat-icon> Indispo          </p>        </div>      </div>      <div class="activities">        <div class="flex-1"></div>        <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"          (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)" [updateRefentielOnLoad]="false"          [canSelectedTopReferentiel]="true">        </panel-activities>        <div class="flex-1"></div>      </div>    </div>  </ng-template></ng-template></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ReaffectatorPage'};
 </script>

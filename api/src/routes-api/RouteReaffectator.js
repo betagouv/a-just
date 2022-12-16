@@ -1,12 +1,12 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
+import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
+import { copyArray } from '../utils/array'
 
 export default class RouteReaffectator extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
-
-    this.model.onPreload()
   }
 
   @Route.Post({
@@ -14,88 +14,44 @@ export default class RouteReaffectator extends Route {
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
-      categoryId: Types.number(),
+      categoryId: Types.number().required(),
       fonctionsIds: Types.array().required(),
+      referentielList: Types.array(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, categoryId, contentieuxIds, fonctionsIds } =
-      this.body(ctx)
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
+    let { backupId, date, fonctionsIds, categoryId, referentielList } = this.body(ctx)
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     console.time('step1')
     const hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
-    console.time('step2')
-    const preformatedAllHumanResource = preformatHumanResources(hr, date)
-    console.timeEnd('step2')
     console.time('step3')
-    let list = preformatedAllHumanResource.filter((hr) => {
-      let isOk = true
-      if (hr.category && categoryId && categoryId !== hr.category.id) {
-        isOk = false
-      }
-
-      if (hr.fonction && fonctionsIds.indexOf(hr.fonction.id) === -1) {
-        isOk = false
-      }
-
-      if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
-        isOk = false
-      }
-
-      if (hr.dateStart && hr.dateStart.getTime() > date.getTime()) {
-        isOk = false
-      }
-
-      return isOk
-    })
+    let hrfiltered = filterByCategoryAndFonction(copyArray(hr), null, fonctionsIds)
     console.timeEnd('step3')
     console.time('step4')
-    if (contentieuxIds) {
-      list = list.filter((h) => {
-        const idsOfactivities = h.currentActivities.map(
-          (a) => (a.contentieux && a.contentieux.id) || 0
-        )
-        for (let i = 0; i < idsOfactivities.length; i++) {
-          if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
-            return true
-          }
-        }
-
-        return false
-      })
-    }
-    console.timeEnd('step4')
-    console.time('step5')
-
-    let listFiltered = [...list]
-    const categories = await this.models.HRCategories.getAll()
-
-    let listFormated = categories
-
-    if(categoryId) {
-      listFormated = listFormated.filter((c) => categoryId === c.id)
-    }
-      
-    listFormated = listFormated.map((category) => ({
-      originalLabel: category.label,
-      allHr: listFiltered.filter(
-        (h) => h.category && h.category.id === category.id
-      ),
-      categoryId: category.id,
-    }))
-
+    let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupId, date)
 
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
+    for (let i = 0; i < referentiel.length; i++) {
+      referentiel[i] = {
+        ...referentiel[i],
+        ...(await getSituation(referentiel[i].id, hrfiltered, activities, categories, date, null, categoryId)),
+      }
+    }
+    console.timeEnd('step4')
+
     this.sendOk(ctx, {
-      list: listFormated,
-      activities,
+      list: categories.map((category) => ({
+        originalLabel: category.label,
+        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, null), date, referentielList),
+        categoryId: category.id,
+        referentiel,
+      })),
     })
   }
 }

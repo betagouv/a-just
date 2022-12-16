@@ -8,7 +8,9 @@ export class ImportService {
   constructor(private serverService: ServerService) {}
 
   importReferentiel(file: string): Promise<string> {
-    return this.serverService.post('imports/import-referentiel', { file }).then(d => d.data);
+    return this.serverService
+      .post('imports/import-referentiel', { file })
+      .then((d) => d.data);
   }
 
   importHR(params: any) {

@@ -5,7 +5,7 @@ import {
 } from '../utils/referentiel'
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
-import { getMonthString, getShortMonthString, today } from '../utils/dates'
+import { decimalToStringDate, getMonthString, getShortMonthString, today } from '../utils/dates'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/category'
 
 export class MainClass {
@@ -152,5 +152,9 @@ export class MainClass {
       date1.getMonth() === date2.getMonth() &&
       date1.getFullYear() === date2.getFullYear()
     )
+  }
+  
+  public decimalToStringDate(decimal: number | null) {
+    return decimalToStringDate(decimal)
   }
 }

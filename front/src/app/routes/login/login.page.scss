@@ -1,14 +1,89 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  .logo {
+    height: 178px;
+
+    > img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 24px;
+  }
+
+  label {
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  input {
+    margin-bottom: 24px;
+  }
 
   .actions {
     display: block;
     margin-top: 16px;
+  }
+
+  a {
+    font-size: 14px;
+    color: fColor(primary);
+  }
+
+  input[type=checkbox] {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    margin-bottom: 0;
+  }
+
+  .remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    > div {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.signup {
+  margin-top: 68px;
+  padding: 16px 24px;
+  background-color: fColor(bgProgressBar);
+
+  p:last-child {
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
+
+  b {
+    font-size: 20px;
+  }
+
+  a {
+    margin-top: 16px;
+    display: block;
+  }
+
+  button {
+    width: 100%;
+    font-weight: bold;
+    height: 48px;
+    line-height: 48px;
+
+    i {
+      margin-right: 12px;
+      position: relative;
+      top: 3px;
+    }
   }
 }

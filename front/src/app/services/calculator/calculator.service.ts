@@ -6,21 +6,42 @@ import { ContentieuxOptionsService } from '../contentieux-options/contentieux-op
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 
+/**
+ * Service du calculateur
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class CalculatorService extends MainClass {
+  /**
+   * Liste des datas d'un resultat de calculateur
+   */
   calculatorDatas: BehaviorSubject<CalculatorInterface[]> = new BehaviorSubject<
     CalculatorInterface[]
   >([])
+  /**
+   * Date de début du calculateur
+   */
   dateStart: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
     null
   )
+  /**
+   * Date de fin du calculateur
+   */
   dateStop: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(
     null
   )
+  /**
+   * Liste des réferentiels sélectionnées
+   */
   referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
 
+  /**
+   * Constructeur
+   * @param serverService 
+   * @param humanResourceService 
+   * @param contentieuxOptionsService 
+   */
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
@@ -34,6 +55,12 @@ export class CalculatorService extends MainClass {
     })
   }
 
+  /**
+   * API retourne la liste du tableau du calculateur pour une juridiction et une date choisie
+   * @param categorySelected 
+   * @param selectedFonctionsIds 
+   * @returns 
+   */
   filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
     return this.serverService
       .post(`calculator/filter-list`, {

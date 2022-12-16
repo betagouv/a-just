@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;un item de la liste</p>
+
+            </p>
 
 
         <section>
@@ -276,6 +283,10 @@
 } from &#x27;@angular/core&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 
+/**
+ * Interface d&#x27;un item de la liste
+ */
+
 export interface dataInterface {
   id: number
   value: string
@@ -283,11 +294,19 @@ export interface dataInterface {
   childrens?: childrenInterface[]
 }
 
+/**
+ * Interface d&#x27;un enfant 
+ */
+
 export interface childrenInterface {
   id: number
   value: string
   parentId?: number
 }
+
+/**
+ * Composant select designer pour le projet
+ */
 
 @Component({
   selector: &#x27;aj-select&#x27;,
@@ -295,26 +314,72 @@ export interface childrenInterface {
   styleUrls: [&#x27;./select.component.scss&#x27;],
 })
 export class SelectComponent extends MainClass implements OnChanges {
+  /**
+   * Titre du bouton
+   */
   @Input() title: string | null &#x3D; null
+  /**
+   * Icon à droite
+   */
   @Input() icon: string &#x3D; &#x27;expand_more&#x27;
+  /**
+   * Valeures par défaut
+   */
   @Input() value: number | string | null | number[] | string[] &#x3D; null
+  /**
+   * Liste des élements de la liste
+   */
   @Input() datas: dataInterface[] &#x3D; []
+  /**
+   * Si c&#x27;est un choix multiple
+   */
   @Input() multiple: boolean &#x3D; true
+  /**
+   * Sous liste, si il y a
+   */
   @Input() subList: number[] | null &#x3D; null
+  /**
+   * Id du parent, s&#x27;il y a sous liste
+   */
   @Input() parent: number | string | null &#x3D; null
+  /**
+   * Valeure par défaut
+   */
   @Input() defaultRealValue: string &#x3D; &#x27;&#x27;
+  /**
+   * Valeur du champs visible par défaut
+   */
+  @Input() defaultAllValue: string | null &#x3D; null
+  /**
+   * Remonte au parent la ou les valeurs selectionnée
+   */
   @Output() valueChange: EventEmitter&lt;number[] | string[]&gt; &#x3D; new EventEmitter()
+  /**
+   * Nouvelle sous liste
+   */
   subReferentielData: dataInterface[] &#x3D; []
+  /**
+   * Valeure changé en visible par humain
+   */
   realValue: string &#x3D; &#x27;&#x27;
 
+  /**
+   * Constructeur
+   */
   constructor() {
     super()
   }
 
+  /**
+   * Ecoute du changement d&#x27;une des valeures d&#x27;entrées
+   */
   ngOnChanges() {
     this.findRealValue()
   }
 
+  /**
+   * Création et recherche du champ visible par humain soit le realValue
+   */
   findRealValue() {
     let find &#x3D; !this.parent
       ? this.datas.find((d) &#x3D;&gt; d.id &#x3D;&#x3D;&#x3D; this.value)
@@ -361,19 +426,30 @@ export class SelectComponent extends MainClass implements OnChanges {
     } else if (Array.isArray(this.value) &amp;&amp; this.value.length !&#x3D;&#x3D; 0) {
       const arrayValues &#x3D; Array.isArray(this.value) ? this.value : [this.value]
       this.realValue &#x3D; &#x27;&#x27;
-      this.datas.map((v) &#x3D;&gt; {
-        arrayValues.map((x) &#x3D;&gt; {
-          if (v.id &#x3D;&#x3D;&#x3D; x) {
-            tmpStr &#x3D; tmpStr.concat(v.value, &#x27;, &#x27;)
-            this.realValue &#x3D; tmpStr.slice(0, -2)
-          }
+
+      if (
+        this.value.length &#x3D;&#x3D;&#x3D; this.datas.length &amp;&amp;
+        this.defaultAllValue !&#x3D;&#x3D; null
+      ) {
+        this.realValue &#x3D; this.defaultAllValue
+      } else
+        this.datas.map((v) &#x3D;&gt; {
+          arrayValues.map((x) &#x3D;&gt; {
+            if (v.id &#x3D;&#x3D;&#x3D; x) {
+              tmpStr &#x3D; tmpStr.concat(v.value, &#x27;, &#x27;)
+              this.realValue &#x3D; tmpStr.slice(0, -2)
+            }
+          })
         })
-      })
     } else {
-        this.realValue &#x3D; &#x27;&#x27;
+      this.realValue &#x3D; &#x27;&#x27;
     }
   }
 
+  /**
+   * Nouvelle liste ou item sélectionnée
+   * @param list 
+   */
   onSelectedChanged(list: number[] | number) {
     if (this.parent &amp;&amp; Array.isArray(list)) {
       if (list.length &#x3D;&#x3D;&#x3D; 0) this.value &#x3D; this.subList &#x3D; []

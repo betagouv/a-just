@@ -12,7 +12,7 @@ h1 {
     position: absolute;
     left: 0;
     right: 0;
-    top: 80px;
+    top: 0px;
   }
 
   .title {
@@ -52,6 +52,7 @@ h1 {
 
     .category-select {
       margin-right: 8px;
+      width: 148px;
     }
 
     .export-button {

@@ -1,3 +1,8 @@
+/**
+ * Conversion d'un nom de référentiel en version simplifiée
+ * @param name 
+ * @returns 
+ */
 export function referentielMappingName (name: string): string {
   switch(name) {
     case 'Soutien': return 'Soutien';
@@ -14,6 +19,11 @@ export function referentielMappingName (name: string): string {
   return name
 }
 
+/**
+ * Récupération du code couleur des référentiels
+ * @param name 
+ * @returns 
+ */
 export function referentielMappingColor (name: string): string {
   switch(name) {
     case 'Soutien': return '#424242';
@@ -34,6 +44,11 @@ export function referentielMappingColor (name: string): string {
   return '';
 }
 
+/**
+ * Récupération d'un index pour un référentiel pour le trier
+ * @param name 
+ * @returns 
+ */
 export function referentielMappingIndex (name: string): number {
   switch(name) {
     case 'Soutien': return 12;
@@ -54,6 +69,11 @@ export function referentielMappingIndex (name: string): number {
   return 0;
 }
 
+/**
+ * Conversion d'un ETP en string humain
+ * @param value 
+ * @returns 
+ */
 export function etpLabel(value: number): string {
   switch(value) {
     case 1: return 'Temps plein';
@@ -62,5 +82,5 @@ export function etpLabel(value: number): string {
     case 0: return 'Ne travaille pas';
   }
 
-  return `${value * 100}%`;
+  return `${Math.floor(value * 100)}%`;
 }

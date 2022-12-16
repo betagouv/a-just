@@ -132,6 +132,12 @@
                                         </a>
                                 </li>
                                 <li>
+                                        <a href="#isModify" 
+>
+                                            isModify
+                                        </a>
+                                </li>
+                                <li>
                                         <a href="#opacity" 
 >
                                             opacity
@@ -390,6 +396,39 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
+                                        <a name="isModify"></a>
+                                        <span class="name "><b>isModify</b>
+                                            <a href="#isModify">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>isModify:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
                                         <a name="opacity"></a>
                                         <span class="name "><b>opacity</b>
                                             <a href="#opacity">
@@ -466,12 +505,9 @@
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
 import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
-import { meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
+import { flatten, meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
-import {
-  HRCategoryInterface,
-  HRCategorySelectedInterface,
-} from &#x27;src/app/interfaces/hr-category&#x27;
+import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
 import { RHActivityInterface } from &#x27;src/app/interfaces/rh-activity&#x27;
 import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
 import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
@@ -481,11 +517,19 @@ import { HRSituationInterface } from &#x27;src/app/interfaces/hr-situation&#x27;
 import { WorkforceService } from &#x27;src/app/services/workforce/workforce.service&#x27;
 import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
 import { ReaffectatorService } from &#x27;src/app/services/reaffectator/reaffectator.service&#x27;
-import { month, nbOfDays } from &#x27;src/app/utils/dates&#x27;
+import {
+  decimalToStringDate,
+  month,
+  nbOfDays,
+  stringToDecimalDate,
+  today,
+} from &#x27;src/app/utils/dates&#x27;
 import { environment } from &#x27;src/environments/environment&#x27;
 import { SimulatorService } from &#x27;src/app/services/simulator/simulator.service&#x27;
 import { etpAffectedInterface } from &#x27;src/app/interfaces/calculator&#x27;
 import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
+import { copyArray } from &#x27;src/app/utils/array&#x27;
+import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
   opacity: number
@@ -497,6 +541,7 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   category: HRCategoryInterface | null
   fonction: HRFonctionInterface | null
   currentSituation: HRSituationInterface | null
+  isModify: boolean
 }
 
 interface listFormatedInterface {
@@ -507,21 +552,24 @@ interface listFormatedInterface {
   allHr: HumanResourceSelectedInterface[]
   hrFiltered: HumanResourceSelectedInterface[]
   referentiel: ContentieuReferentielCalculateInterface[]
-  firstETPTargetValue: number[]
-  headerPanel: boolean
   personSelected: number[]
   categoryId: number
+  totalRealETp: number
 }
 
 interface ContentieuReferentielCalculateInterface
   extends ContentieuReferentielInterface {
   dtes: number
   coverage: number
-}
-
-interface FirstETPTargetValueInterface {
-  groupId: number
-  list: number[]
+  realDTESInMonths: number
+  realCoverage: number
+  etpToCompute: number
+  etpUseToday: number
+  magRealTimePerCase: number | null
+  nbWorkingHours: number
+  nbWorkingDays: number
+  totalIn: number
+  lastStock: number
 }
 
 @Component({
@@ -546,16 +594,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   lastScrollTop: number &#x3D; 0
   isFirstLoad: boolean &#x3D; true
   showIndicatorPanel: boolean &#x3D; true
-  objectOfFirstETPTargetValue: FirstETPTargetValueInterface[] &#x3D; []
-  timeoutUpdateETPTargetAfterDelay: any
-  actualActivities: ActivityInterface[] &#x3D; []
+  firstETPTargetValue: (number | null)[] &#x3D; []
+  isolatePersons: boolean &#x3D; false
 
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private appService: AppService
   ) {
     super()
   }
@@ -563,26 +611,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
-        this.onFilterList()
-      })
-    )
-    this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref) &#x3D;&gt; {
-        this.referentiel &#x3D; ref
-          .filter(
-            (a) &#x3D;&gt; this.referentielService.idsIndispo.indexOf(a.id) &#x3D;&#x3D;&#x3D; -1
-          )
-          .map((r) &#x3D;&gt; ({ ...r, selected: true, dtes: 0, coverage: 0 }))
-        this.formReferentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; ({
-          id: r.id,
-          value: this.referentielMappingName(r.label),
-        }))
-
-        this.reaffectatorService.selectedReferentielIds &#x3D; this
-          .reaffectatorService.selectedReferentielIds.length
-          ? this.reaffectatorService.selectedReferentielIds
-          : this.formReferentiel.map((c) &#x3D;&gt; c.id)
-
         this.onFilterList()
       })
     )
@@ -595,10 +623,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalValue: f.label,
           }))
 
-          this.onSelectedCategoriesIdsChanged(
-            this.reaffectatorService.selectedCategoriesIds.length
-              ? this.reaffectatorService.selectedCategoriesIds
-              : categories.map((c) &#x3D;&gt; c.id)
+          this.onSelectedCategoriesIdChanged(
+            this.reaffectatorService.selectedCategoriesId !&#x3D;&#x3D; null
+              ? [this.reaffectatorService.selectedCategoriesId]
+              : this.formFilterSelect.length
+              ? [this.formFilterSelect[0].id]
+              : []
           )
         }
       )
@@ -610,12 +640,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   }
 
   updateCategoryValues() {
-    this.formFilterSelect &#x3D; this.formFilterSelect.map(c &#x3D;&gt; {
-      const itemBlock &#x3D; this.listFormated.find(l &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
-      c.value &#x3D; (c.orignalValue + &#x27;&#x27;)
+    this.formFilterSelect &#x3D; this.formFilterSelect.map((c) &#x3D;&gt; {
+      const itemBlock &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
+      c.value &#x3D; c.orignalValue + &#x27;&#x27;
 
-      if(itemBlock &amp;&amp; itemBlock.hrFiltered.length &gt; 1) {
-        c.value &#x3D; &#x60;${c.value}s&#x60;
+      if (itemBlock &amp;&amp; itemBlock.hrFiltered) {
+        c.value &#x3D; &#x60;${itemBlock.hrFiltered.length} ${c.value}${
+          itemBlock.hrFiltered.length &gt; 1 ? &#x27;s&#x27; : &#x27;&#x27;
+        } (${fixDecimal(
+          sumBy(itemBlock.referentiel || [], &#x27;totalAffected&#x27;),
+          100
+        )} ETPT)&#x60;
       }
 
       return c
@@ -663,49 +698,90 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onFilterList() {
     if (
       !this.formFilterSelect.length ||
-      !this.referentiel.length ||
-      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null
+      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null ||
+      this.reaffectatorService.selectedCategoriesId &#x3D;&#x3D;&#x3D; null
     ) {
       return
     }
 
-    // init datas
-    this.objectOfFirstETPTargetValue &#x3D; []
-
     let selectedReferentielIds: number[] | null &#x3D; null
-    if (this.formReferentiel.length !&#x3D;&#x3D; this.reaffectatorService.selectedReferentielIds.length) {
+    if (
+      this.formReferentiel.length !&#x3D;&#x3D;
+      this.reaffectatorService.selectedReferentielIds.length
+    ) {
       selectedReferentielIds &#x3D; this.reaffectatorService.selectedReferentielIds
     }
+
+    const allFonctions &#x3D; this.humanResourceService.fonctions.getValue()
+
+    let selectedFonctionsIds &#x3D; [
+      ...this.reaffectatorService.selectedFonctionsIds,
+    ]
+    selectedFonctionsIds &#x3D; selectedFonctionsIds.concat(
+      allFonctions
+        .filter(
+          (f) &#x3D;&gt; f.categoryId !&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+        )
+        .map((f) &#x3D;&gt; f.id)
+    )
 
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
+        this.reaffectatorService.selectedCategoriesId || 0,
+        selectedFonctionsIds,
         selectedReferentielIds,
-        this.reaffectatorService.selectedCategoriesIds,
-        this.reaffectatorService.selectedFonctionsIds
       )
       .then((returnValues) &#x3D;&gt; {
         console.log(returnValues)
-        this.actualActivities &#x3D; returnValues.activities
         this.listFormated &#x3D; returnValues.list.map(
-          (i: listFormatedInterface) &#x3D;&gt; ({
-            ...i,
-            hrFiltered: [...i.allHr],
-            headerPanel: true,
-            personSelected: [],
-            firstETPTargetValue: [],
-          })
+          (i: listFormatedInterface, index: number) &#x3D;&gt; {
+            if (index &#x3D;&#x3D;&#x3D; 0) {
+              this.referentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+                ...r,
+                selected: true,
+              }))
+              this.formReferentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+                id: r.id,
+                value: this.referentielMappingName(r.label),
+              }))
+              if (this.firstETPTargetValue.length &#x3D;&#x3D;&#x3D; 0) {
+                this.firstETPTargetValue &#x3D; i.referentiel.map(() &#x3D;&gt; null)
+              }
+
+              this.reaffectatorService.selectedReferentielIds &#x3D; this
+                .reaffectatorService.selectedReferentielIds.length
+                ? this.reaffectatorService.selectedReferentielIds
+                : this.formReferentiel.map((c) &#x3D;&gt; c.id)
+            }
+
+            const allHr &#x3D; i.allHr.map((h) &#x3D;&gt; ({
+              ...h,
+              isModify: false,
+            }))
+            return {
+              ...i,
+              allHr,
+              hrFiltered: [...i.allHr],
+              personSelected: [],
+              referentiel: i.referentiel.map((r) &#x3D;&gt; ({
+                ...r,
+                dtes: 0,
+                coverage: 0,
+              })),
+            }
+          }
         )
 
         this.orderListWithFiltersParams()
       })
   }
 
-  orderListWithFiltersParams() {
-    this.onCalculETPAffected()
-
+  orderListWithFiltersParams(onSearch: boolean &#x3D; true) {
     this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
+      list.hrFiltered &#x3D; orderBy(list.hrFiltered, [&#x27;fonction.rank&#x27;], [&#x27;asc&#x27;])
+
       if (this.filterSelected) {
         list.hrFiltered &#x3D; orderBy(
           list.hrFiltered,
@@ -722,9 +798,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
-    this.updateCategoryValues()
-    this.onSearchBy()
+    if (onSearch) {
+      this.onSearchBy()
+    }
     this.calculateReferentielValues()
+    this.updateCategoryValues()
   }
 
   onSearchBy() {
@@ -838,32 +916,31 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.filterSelected &#x3D; null
     }
 
-    this.onFilterList()
+    this.orderListWithFiltersParams()
   }
 
   onExport() {
     this.duringPrint &#x3D; true
-    this.wrapper
-      ?.exportAsPdf(&#x27;simulation-d-affectation.pdf&#x27;, false)
-      .then(() &#x3D;&gt; {
-        this.duringPrint &#x3D; false
+    this.wrapper?.exportAsPdf(&#x27;simulation-d-affectation.pdf&#x27;).then(() &#x3D;&gt; {
+      this.duringPrint &#x3D; false
+      this.appService.alert.next({
+        text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
       })
+    })
   }
 
-  onSelectedCategoriesIdsChanged(list: string[] | number[]) {
-    this.reaffectatorService.selectedCategoriesIds &#x3D; list.map((i) &#x3D;&gt; +i)
+  onSelectedCategoriesIdChanged(item: string[] | number[]) {
+    this.reaffectatorService.selectedCategoriesId &#x3D; item.length
+      ? +item[0]
+      : null
 
     const allFonctions &#x3D; this.humanResourceService.fonctions.getValue()
-    let fonctionList: HRFonctionInterface[] &#x3D; []
-    this.reaffectatorService.selectedCategoriesIds.map((cId) &#x3D;&gt; {
-      fonctionList &#x3D; fonctionList.concat(
-        allFonctions.filter((f) &#x3D;&gt; f.categoryId &#x3D;&#x3D;&#x3D; cId)
-      )
-    })
-
+    let fonctionList: HRFonctionInterface[] &#x3D; allFonctions.filter(
+      (f) &#x3D;&gt; f.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+    )
     this.formFilterFonctionsSelect &#x3D; fonctionList.map((f) &#x3D;&gt; ({
       id: f.id,
-      value: f.label,
+      value: f.code || f.label,
     }))
 
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) &#x3D;&gt; f.id))
@@ -875,169 +952,77 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
-  onCalculETPAffected() {
-    this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
-      list.referentiel.map((ref) &#x3D;&gt; {
-        ref.totalAffected &#x3D; 0
-        return ref
-      })
+  onCalculETPAffected(
+    referentielId: number,
+    hrList: HumanResourceSelectedInterface[]
+  ) {
+    let etpCalculate &#x3D; 0
 
-      list.hrFiltered &#x3D; list.hrFiltered.map((hr) &#x3D;&gt; {
-        hr.tmpActivities &#x3D; {}
-
-        list.referentiel &#x3D; list.referentiel.map((ref) &#x3D;&gt; {
-          hr.tmpActivities[ref.id] &#x3D; hr.currentActivities.filter(
-            (r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; ref.id
-          )
-          if (hr.tmpActivities[ref.id].length) {
-            const timeAffected &#x3D; sumBy(hr.tmpActivities[ref.id], &#x27;percent&#x27;)
-            if (timeAffected) {
-              let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP &lt; 0) {
-                realETP &#x3D; 0
-              }
-              ref.totalAffected &#x3D;
-                (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-            }
-          }
-
-          return ref
-        })
-
-        return hr
-      })
-
-      if (list.hrFiltered.length &gt; 1) {
-        if (list.originalLabel.indexOf(&#x27;agistrat&#x27;) !&#x3D;&#x3D; -1) {
-          list.label &#x3D; list.originalLabel.replace(
-            &#x27;agistrat&#x27;,
-            &#x27;agistrats du siège&#x27;
-          )
-        } else {
-          list.label &#x3D; list.originalLabel + &#x27;s&#x27;
-        }
-      } else if (list.originalLabel.indexOf(&#x27;agistrat&#x27;) !&#x3D;&#x3D; -1) {
-        list.label &#x3D; list.originalLabel.replace(&#x27;agistrat&#x27;, &#x27;agistrat du siège&#x27;)
-      } else {
-        list.label &#x3D; list.originalLabel
+    hrList.map((hr) &#x3D;&gt; {
+      const timeAffected &#x3D; sumBy(
+        hr.currentActivities.filter(
+          (r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; referentielId
+        ),
+        &#x27;percent&#x27;
+      )
+      let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
+      if (realETP &lt; 0) {
+        realETP &#x3D; 0
       }
-
-      return list
+      etpCalculate +&#x3D; (timeAffected / 100) * realETP
     })
+
+    return fixDecimal(etpCalculate)
   }
 
   calculateReferentielValues() {
-    const activities &#x3D; this.actualActivities
-    const magistrats &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; 1)
-
-    this.referentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; {
-      // list all activities
-      const activitiesFiltered &#x3D; orderBy(
-        activities.filter(
-          (a) &#x3D;&gt; a.contentieux.id &#x3D;&#x3D;&#x3D; r.id &amp;&amp; a.stock !&#x3D;&#x3D; 0 &amp;&amp; a.stock !&#x3D;&#x3D; null
-        ),
-        (a) &#x3D;&gt; {
-          const p &#x3D; new Date(a.periode)
-          return p.getTime()
-        },
-        [&#x27;desc&#x27;]
-      ).slice(0, 12)
-
-      // find new ETPT of today
-      let etpt &#x3D; 0
-      if (magistrats) {
-        const ref &#x3D; magistrats.referentiel.find(
-          (referentiel) &#x3D;&gt; referentiel.id &#x3D;&#x3D;&#x3D; r.id
-        )
-        if (ref) {
-          etpt &#x3D; fixDecimal(ref.totalAffected!) || 0
-        }
-      }
-
-      const nbDaysByMonthForMagistrat &#x3D; environment.nbDaysByMagistrat / 12
-      const inValue &#x3D; Math.floor(meanBy(activitiesFiltered, &#x27;entrees&#x27;)) || 0
-      const averageOut &#x3D; Math.floor(meanBy(activitiesFiltered, &#x27;sorties&#x27;)) || 0
-      let lastStock &#x3D; activitiesFiltered.length
-        ? activitiesFiltered[0].stock || 0
-        : 0
-
-      // simulate value if last datas are before selected month
-      const lastPeriode &#x3D; activitiesFiltered.length
-        ? month(activitiesFiltered[0].periode, 0, &#x27;lastday&#x27;)
-        : null
-
-      if (
-        lastStock &amp;&amp;
-        lastPeriode &amp;&amp;
-        lastPeriode.getTime() &lt; month(this.dateSelected).getTime()
-      ) {
-        // ETPT of the last 12 months
-        let etpAffectedLast12Months &#x3D; this.simulatorService.getHRPositions(
-          (magistrats &amp;&amp; magistrats.hrFiltered) || [],
-          r.id,
-          this.humanResourceService.categories.getValue(),
-          new Date(month(lastPeriode, -11)),
-          true,
-          new Date(month(lastPeriode, 0, &#x27;lastday&#x27;))
-        ) as Array&lt;etpAffectedInterface&gt;
-        let etpToComputeLast12Months &#x3D;
-          etpAffectedLast12Months.length &gt;&#x3D; 0
-            ? etpAffectedLast12Months[0].totalEtp
-            : 0
-
-        let averageWorkingProcess &#x3D; fixDecimal(
-          (nbDaysByMonthForMagistrat * environment.nbHoursPerDay) /
-            (averageOut / etpToComputeLast12Months)
-        )
-
-        let outValue &#x3D; Math.floor(
-          (etpt * environment.nbHoursPerDay * nbDaysByMonthForMagistrat) /
-            averageWorkingProcess
-        )
-
-        // ETPT Delta between lastperiod and today/selected date in the futur
-        const etpAffected &#x3D; this.simulatorService.getHRPositions(
-          (magistrats &amp;&amp; magistrats.hrFiltered) || [],
-          r.id,
-          this.humanResourceService.categories.getValue(),
-          lastPeriode,
-          true,
-          this.dateSelected
-        ) as Array&lt;etpAffectedInterface&gt;
-        const etpMagDelta &#x3D;
-          etpAffected.length &gt;&#x3D; 0 ? etpAffected[0].totalEtp : 0
-        const nbDayCalendar &#x3D; nbOfDays(lastPeriode, this.dateSelected)
-
-        // Compute stock projection until today
-        lastStock &#x3D;
-          Math.floor(lastStock) -
-          Math.floor(
-            (nbDayCalendar / (365 / 12)) *
-              nbDaysByMonthForMagistrat *
-              ((etpMagDelta * environment.nbHoursPerDay) /
-                averageWorkingProcess)
-          ) +
-          Math.floor((nbDayCalendar / (365 / 12)) * inValue)
-
-        return {
-          ...r,
-          in: inValue,
-          out: outValue,
-          stock: lastStock,
-          coverage: fixDecimal(outValue / inValue) * 100,
-          dtes: fixDecimal(lastStock / outValue),
-        }
-      }
-
+    this.listFormated &#x3D; this.listFormated.map((itemList) &#x3D;&gt; {
       return {
-        ...r,
-        in: inValue,
-        out: averageOut,
-        stock: lastStock,
-        coverage: averageOut &#x3D;&#x3D;&#x3D; 0 ? 0 : fixDecimal(averageOut / inValue) * 100,
-        dtes: lastStock &#x3D;&#x3D;&#x3D; 0 ? 0 : fixDecimal(lastStock / averageOut),
+        ...itemList,
+        referentiel: itemList.referentiel.map((r) &#x3D;&gt; ({
+          ...r,
+          totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
+        })),
       }
     })
+
+    const itemList &#x3D; this.listFormated.find(
+      (i) &#x3D;&gt; i.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId
+    )
+
+    if (itemList) {
+      this.referentiel &#x3D; this.referentiel.map((ref) &#x3D;&gt; {
+        const refFromItemList &#x3D; (itemList.referentiel || []).find(
+          (r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ref.id
+        )
+
+        if (!refFromItemList) {
+          return ref
+        }
+
+        const averageWorkingProcess &#x3D; refFromItemList.magRealTimePerCase || 0
+        const etpt &#x3D; refFromItemList.totalAffected || 0
+        const nbWorkingHours &#x3D; refFromItemList.nbWorkingHours || 0
+        const nbWorkingDays &#x3D; refFromItemList.nbWorkingDays || 0
+        const lastStock &#x3D; refFromItemList.lastStock || 0
+        const inValue &#x3D; refFromItemList.totalIn || 0
+
+        let outValue &#x3D;
+          averageWorkingProcess &#x3D;&#x3D;&#x3D; 0
+            ? 0
+            : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
+        outValue &#x3D; Math.floor(outValue)
+
+        return {
+          ...ref,
+          coverage: fixDecimal(outValue / inValue) * 100,
+          dtes:
+            lastStock &#x3D;&#x3D;&#x3D; 0 || outValue &#x3D;&#x3D;&#x3D; 0
+              ? 0
+              : fixDecimal(lastStock / outValue),
+        }
+      })
+    }
   }
 
   updateHRReferentiel(
@@ -1058,6 +1043,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
+            averageProcessingTimeFonc: null,
           },
         })
         ;(r.childrens || [])
@@ -1070,6 +1056,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
                 id: rc.id,
                 label: rc.label,
                 averageProcessingTime: null,
+                averageProcessingTimeFonc: null,
               },
             })
           })
@@ -1083,20 +1070,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (indexOfHR !&#x3D;&#x3D; -1) {
       this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities &#x3D;
         list
+      this.listFormated[indexList].hrFiltered[indexOfHR].isModify &#x3D; true
 
-      this.orderListWithFiltersParams()
+      this.orderListWithFiltersParams(false)
     }
-  }
-
-  updateETPTargetAfterDelay(list: number[], index: number, value: number) {
-    if (this.timeoutUpdateETPTargetAfterDelay) {
-      clearTimeout(this.timeoutUpdateETPTargetAfterDelay)
-      this.timeoutUpdateETPTargetAfterDelay &#x3D; null
-    }
-
-    this.timeoutUpdateETPTargetAfterDelay &#x3D; setTimeout(() &#x3D;&gt; {
-      list[index] &#x3D; value || 0
-    }, 500)
   }
 
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
@@ -1105,6 +1082,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.listFormated[index].personSelected.push(hr.id)
     } else {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
+    }
+
+    if (this.listFormated[index].personSelected.length &#x3D;&#x3D;&#x3D; 0) {
+      // force to reset isolate var
+      this.isolatePersons &#x3D; false
     }
   }
 
@@ -1135,6 +1117,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       list.personSelected &#x3D; []
       this.orderListWithFiltersParams()
     }
+  }
+
+  onToogleIsolation() {
+    this.isolatePersons &#x3D; !this.isolatePersons
+  }
+
+  getOrignalHuman(
+    hr: HumanResourceSelectedInterface,
+    itemObject: listFormatedInterface
+  ) {
+    return itemObject.allHr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; hr.id)
   }
 }
 </code></pre>
