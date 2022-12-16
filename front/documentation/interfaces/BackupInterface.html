@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface des sauvegardes (Juridictions / Temps moyens par dossier ...)</p>
+
+            </p>
 
 
         <section>
@@ -143,6 +150,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de dernière mise à jour de lui ou de ses enfants</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -176,6 +189,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de sauvegarde</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -209,6 +228,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Intitulé de sauvegarde</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -217,8 +242,17 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface BackupInterface {
+	/**
+	 * Id de sauvegarde
+	 */
 	id: number;
+	/**
+	 * Intitulé de sauvegarde
+	 */
 	label: string;
+	/**
+	 * Date de dernière mise à jour de lui ou de ses enfants
+	 */
 	date: Date;
 }
 </code></pre>

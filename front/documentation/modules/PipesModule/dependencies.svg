@@ -14,13 +14,13 @@
 <title>cluster_PipesModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-32.8 8,-230.8 4826,-230.8 4826,-32.8 8,-32.8"/>
 </g>
-<g id="clust31" class="cluster">
-<title>cluster_PipesModule_exports</title>
-<polygon fill="none" stroke="black" points="16,-170.8 16,-222.8 4818,-222.8 4818,-170.8 16,-170.8"/>
-</g>
 <g id="clust2" class="cluster">
 <title>cluster_PipesModule_declarations</title>
 <polygon fill="none" stroke="black" points="64,-40.8 64,-92.8 4771,-92.8 4771,-40.8 64,-40.8"/>
+</g>
+<g id="clust31" class="cluster">
+<title>cluster_PipesModule_exports</title>
+<polygon fill="none" stroke="black" points="16,-170.8 16,-222.8 4818,-222.8 4818,-170.8 16,-170.8"/>
 </g>
 <!-- CoveragePreviewComponent -->
 <g id="node1" class="node">

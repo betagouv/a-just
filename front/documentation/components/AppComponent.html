@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Composant principal du projet</p>
+
+    </p>
 
 
 
@@ -174,12 +181,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/app.component.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/app.component.ts:32</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur de control SSL + Matomo</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -277,14 +286,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="75"
-                            class="link-to-prism">src/app/app.component.ts:75</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="100"
+                            class="link-to-prism">src/app/app.component.ts:100</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Suppression de l&#39;alert et du texte dans le service</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -314,14 +325,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="67"
-                            class="link-to-prism">src/app/app.component.ts:67</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="89"
+                            class="link-to-prism">src/app/app.component.ts:89</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Control si on est en SSL ou non</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -361,10 +374,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/app.component.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/app.component.ts:32</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable qui permet d&#39;afficher une alert</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -392,10 +411,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/app.component.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/app.component.ts:28</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable pour savoir si on change le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -415,17 +440,36 @@ import { ContentieuxOptionsService } from &#x27;./services/contentieux-options/c
 import { UserService } from &#x27;./services/user/user.service&#x27;
 import { iIOS } from &#x27;./utils/system&#x27;
 
+/**
+ * Variable d&#x27;environement en global
+ */
 declare const window: any
 
+/**
+ * Composant principal du projet
+ */
 @Component({
   selector: &#x27;app-root&#x27;,
   templateUrl: &#x27;./app.component.html&#x27;,
   styleUrls: [&#x27;./app.component.scss&#x27;],
 })
 export class AppComponent {
+  /**
+   * Variable pour savoir si on change le serveur
+   */
   dbReady: boolean &#x3D; false
+  /**
+   * Variable qui permet d&#x27;afficher une alert
+   */
   alertMessage: AlertInterface | null &#x3D; null
 
+  /**
+   * Constructeur de control SSL + Matomo
+   * @param router
+   * @param userService
+   * @param contentieuxOptionsService
+   * @param appService
+   */
   constructor(
     router: Router,
     private userService: UserService,
@@ -471,6 +515,9 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Control si on est en SSL ou non
+   */
   onControlSSL() {
     if (location.protocol !&#x3D;&#x3D; &#x27;https:&#x27; &amp;&amp; environment.forceSSL) {
       location.replace(
@@ -479,6 +526,9 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Suppression de l&#x27;alert et du texte dans le service
+   */
   onCloseAlert() {
     this.appService.alert.next(null)
   }

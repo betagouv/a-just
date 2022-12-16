@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Composant de mise en page en mode non connecté</p>
+
+    </p>
 
 
 
@@ -167,9 +174,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/components/wrapper-no-connected/wrapper-no-connected.component.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/components/wrapper-no-connected/wrapper-no-connected.component.ts:19</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Titre de la page du paneau gauche</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -187,12 +200,19 @@
   Input,
 } from &#x27;@angular/core&#x27;
 
+/**
+ * Composant de mise en page en mode non connecté
+ */
+
 @Component({
   selector: &#x27;aj-wrapper-no-connected&#x27;,
   templateUrl: &#x27;./wrapper-no-connected.component.html&#x27;,
   styleUrls: [&#x27;./wrapper-no-connected.component.scss&#x27;],
 })
 export class WrapperNoConnectedComponent {
+  /**
+   * Titre de la page du paneau gauche
+   */
   @Input() title: string &#x3D; &#x27;&#x27;
 }
 </code></pre>

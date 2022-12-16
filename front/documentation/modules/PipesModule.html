@@ -753,6 +753,13 @@
 
 
 
+        <p class="comment">
+            <h3>Description</h3>
+        </p>
+        <p class="comment">
+            <p>Module d&#39;export des pipes</p>
+
+        </p>
 
 
         <div class="container-fluid module">
@@ -946,8 +953,14 @@ import { SanitizeHtmlPipe } from &#x27;./sanitize-html/sanitize-html.pipe&#x27;;
 import { SanitizeUrlPipe } from &#x27;./sanitize-url/sanitize-url.pipe&#x27;;
 import { SanitizeResourceUrlPipe } from &#x27;./sanitize-resource-url/sanitize-resource-url.pipe&#x27;;
 
+/**
+ * Liste des pipes 
+ */
 const list &#x3D; [ UcFirstPipe, SanitizeStylePipe, SanitizeHtmlPipe, SanitizeUrlPipe, SanitizeResourceUrlPipe ];
 
+/**
+ * Module d&#x27;export des pipes
+ */
 @NgModule({
 	declarations: [ ...list ],
 	exports: list
