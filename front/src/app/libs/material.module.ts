@@ -38,12 +38,18 @@ import {
 } from '@angular/material-moment-adapter'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 
+/**
+ * Paramétrage du tooltips par défaut de matérial
+ */
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
   showDelay: 1000,
   hideDelay: 1000,
   touchendHideDelay: 1000,
 }
 
+/**
+ * Paramétrage du format de la date du composant date de matérial
+ */
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -56,6 +62,9 @@ export const MY_FORMATS = {
   },
 }
 
+/**
+ * Module avec les élements materials qui nous intéresses
+ */
 @NgModule({
   exports: [
     MatButtonToggleModule,

@@ -8,17 +8,36 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
 
+/**
+ * Variable d'environement en global
+ */
 declare const window: any
 
+/**
+ * Composant principal du projet
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  /**
+   * Variable pour savoir si on change le serveur
+   */
   dbReady: boolean = false
+  /**
+   * Variable qui permet d'afficher une alert
+   */
   alertMessage: AlertInterface | null = null
 
+  /**
+   * Constructeur de control SSL + Matomo
+   * @param router
+   * @param userService
+   * @param contentieuxOptionsService
+   * @param appService
+   */
   constructor(
     router: Router,
     private userService: UserService,
@@ -64,6 +83,9 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Control si on est en SSL ou non
+   */
   onControlSSL() {
     if (location.protocol !== 'https:' && environment.forceSSL) {
       location.replace(
@@ -72,6 +94,9 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Suppression de l'alert et du texte dans le service
+   */
   onCloseAlert() {
     this.appService.alert.next(null)
   }

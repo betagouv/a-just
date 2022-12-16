@@ -43,7 +43,7 @@
 
 <ol class="breadcrumb">
   <li>Pipes</li>
-  <li >UcFirstPipe</li>
+  <li >SanitizeResourceUrlPipe</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -62,7 +62,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/pipes/uc-first/uc-first.pipes.ts</code>
+            <code>src/app/pipes/sanitize-resource-url/sanitize-resource-url.pipe.ts</code>
         </p>
 
 
@@ -70,7 +70,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Transforme une string en premier caratère en majuscule et le reste en minuscule</p>
+                <p>Force to parse une resource url</p>
 
             </p>
 
@@ -81,7 +81,7 @@
                 <tbody>
                     <tr>
                         <td class="col-md-3">Name</td>
-                        <td class="col-md-9">ucFirst</td>
+                        <td class="col-md-9">sanitizeResourceUrl</td>
                     </tr>
                 </tbody>
             </table>
@@ -105,15 +105,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>transform(string: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>transform(v: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="14"
-                            class="link-to-prism">src/app/pipes/uc-first/uc-first.pipes.ts:14</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="25"
+                            class="link-to-prism">src/app/pipes/sanitize-resource-url/sanitize-resource-url.pipe.ts:25</a></div>
                 </td>
             </tr>
 
@@ -136,7 +136,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>string</td>
+                                    <td>v</td>
                                     <td>
                                                 <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                     </td>
@@ -153,7 +153,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>        <code><a href="https://angular.io/api/platform-browser/SafeStyle" target="_blank" >SafeStyle</a></code>
 
                     </div>
                     <div class="io-description">
@@ -169,24 +169,32 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Pipe, PipeTransform } from &#x27;@angular/core&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { PipeTransform, Pipe, Injectable } from &#x27;@angular/core&#x27;;
+import { DomSanitizer, SafeStyle } from &#x27;@angular/platform-browser&#x27;;
 
 /**
- * Transforme une string en premier caratère en majuscule et le reste en minuscule
+ * Force to parse une resource url
  */
-@Pipe({ name: &#x27;ucFirst&#x27; })
-export class UcFirstPipe implements PipeTransform {
+
+@Injectable()
+@Pipe({
+  name: &#x27;sanitizeResourceUrl&#x27;,
+  pure: false, // required to update the value when the promise is resolved
+})
+export class SanitizeResourceUrlPipe implements PipeTransform {
+  /**
+   * Construteur
+   * @param _sanitizer 
+   */
+  constructor(private _sanitizer: DomSanitizer) { }
+
   /**
    * Analyse la chaine
-   * @param v
-   * @returns
+   * @param v 
+   * @returns 
    */
-
-  transform(string: string) {
-    if (string &amp;&amp; typeof string &#x3D;&#x3D;&#x3D; &#x27;string&#x27;) {
-      return string.charAt(0).toUpperCase() + string.slice(1)
-    }
-    return string
+  transform(v: string): SafeStyle {
+    return this._sanitizer.bypassSecurityTrustResourceUrl(v);
   }
 }
 </code></pre>
@@ -229,7 +237,7 @@ export class UcFirstPipe implements PipeTransform {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'pipe';
-            var COMPODOC_CURRENT_PAGE_URL = 'UcFirstPipe.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'SanitizeResourceUrlPipe.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 
