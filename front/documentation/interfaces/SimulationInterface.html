@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface pour préparer une simulation</p>
+
+            </p>
 
 
         <section>
@@ -179,6 +186,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP contractuel</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -212,6 +225,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Greffier</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -245,6 +264,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP magistrat</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -278,6 +303,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Dernière valeure de stock</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -311,6 +342,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Tremps de traitement moyen des dossiers</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -344,6 +381,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Pourcentage de couverture (entrees / sorties)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -377,6 +420,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeur du DTES</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -410,6 +459,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées moyenne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -443,6 +498,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties moyenne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -450,17 +511,42 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { etpAffectedInterface } from &#x27;./calculator&#x27;
-
-export interface SimulationInterface {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface SimulationInterface {
+  /**
+   * Entrées moyenne
+   */
   totalIn: number | null
+  /**
+   * Sorties moyenne
+   */
   totalOut: number | null
+  /**
+   * Dernière valeure de stock
+   */
   lastStock: number | null
+  /**
+   * ETP magistrat
+   */
   etpMag: number | null
+  /**
+   * ETP Greffier
+   */
   etpFon: number | null
+  /**
+   * ETP contractuel
+   */
   etpCont: number | null
+  /**
+   * Pourcentage de couverture (entrees / sorties)
+   */
   realCoverage: number | null
+  /**
+   * Valeur du DTES
+   */
   realDTESInMonths: number | null
+  /**
+   * Tremps de traitement moyen des dossiers
+   */
   magRealTimePerCase: number | null
 }
 </code></pre>

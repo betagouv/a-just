@@ -1,5 +1,8 @@
 import { etpAffectedInterface } from './calculator'
 
+/**
+ * Interface du resultat d'une simulation
+ */
 export interface SimulatorInterface {
   totalIn: number | null
   totalOut: number | null
