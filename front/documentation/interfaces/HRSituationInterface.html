@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Un magistrat à une liste de situation</p>
+
+            </p>
 
 
         <section>
@@ -161,6 +168,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des contentieux pour cette situation</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -194,6 +207,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Catégorie selectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -227,6 +246,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de début de cette situation</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -260,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP allans de 0 à 1</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -293,6 +324,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Fonction selectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -326,6 +363,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la situation en base</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -337,12 +380,33 @@
 import { HRFonctionInterface } from &quot;./hr-fonction&quot;;
 import { RHActivityInterface } from &quot;./rh-activity&quot;;
 
+/**
+ * Un magistrat à une liste de situation
+ */
 export interface HRSituationInterface {
+	/**
+	 * Id de la situation en base
+	 */
 	id: number;
+	/**
+	 * ETP allans de 0 à 1
+	 */
 	etp: number;
+	/**
+	 * Catégorie selectionnée
+	 */
 	category: HRCategoryInterface | null;
+	/**
+	 * Fonction selectionnée
+	 */
 	fonction: HRFonctionInterface | null;
+	/**
+	 * Date de début de cette situation
+	 */
 	dateStart: Date;
+	/**
+	 * Liste des contentieux pour cette situation
+	 */
 	activities: RHActivityInterface[];
 }
 </code></pre>
