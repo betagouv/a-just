@@ -2,11 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { flatten, meanBy, orderBy, sumBy } from 'lodash'
+import { orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -14,18 +13,6 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import {
-  decimalToStringDate,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-} from 'src/app/utils/dates'
-import { environment } from 'src/environments/environment'
-import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import { etpAffectedInterface } from 'src/app/interfaces/calculator'
-import { ActivityInterface } from 'src/app/interfaces/activity'
-import { copyArray } from 'src/app/utils/array'
 import { AppService } from 'src/app/services/app/app.service'
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
@@ -93,13 +80,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showIndicatorPanel: boolean = true
   firstETPTargetValue: (number | null)[] = []
   isolatePersons: boolean = false
+  showReelValues: boolean = false
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService,
     private appService: AppService
   ) {
     super()

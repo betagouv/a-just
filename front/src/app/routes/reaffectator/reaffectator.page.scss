@@ -156,6 +156,14 @@
           width: 100%;
           text-align: center;
         }
+
+        &.show-reel-values {
+          background-color: fColor(cbluemiddle);
+
+          p {
+            color: fColor(bgSelectSelected);
+          }
+        }
       }
 
       .filter {
@@ -188,24 +196,40 @@
 
     > .label-container {
       flex: 1;
-      display: flex;
       padding: 0px 16px;
 
-      i {
-        width: 32px;
-        height: 32px;
-        margin-right: 8px;
-        border: 1px solid fColor(darkModeTitle);
-        color: fColor(darkModeTitle);
-        text-align: center;
-        line-height: 32px;
-        cursor: pointer;
+      > div {
+        display: flex;
+
+        i {
+          width: 32px;
+          height: 32px;
+          margin-right: 8px;
+          border: 1px solid fColor(darkModeTitle);
+          color: fColor(darkModeTitle);
+          text-align: center;
+          line-height: 32px;
+          cursor: pointer;
+        }
+
+        p {
+          color: white;
+          font-size: 20px;
+          font-weight: bold;
+        }
       }
 
-      p {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
+      button {
+        margin: 8px 18px 8px 0;
+        height: 32px;
+        line-height: 32px;
+        border: solid 1px fColor(tooltipBgTitleColor);
+        font-size: 14px;
+        font-weight: 500;
+        color: fColor(tooltipBgTitleColor);
+        border-radius: 0;
+        background-color: transparent;
+        cursor: pointer;
       }
     }
 
@@ -314,6 +338,10 @@
           > aj-speedometer {
             width: 48px;
           }
+
+          &.show-reel-values {
+            background-color: fColor(cbluemiddle);
+          }
         }
 
         > div.dtes {
@@ -327,6 +355,14 @@
           p {
             color: white;
             font-size: 14px;
+          }
+
+          &.show-reel-values {
+            background-color: fColor(cbluemiddle);
+
+            p {
+              color: fColor(bgSelectSelected);
+            }
           }
         }
       }
@@ -403,9 +439,9 @@
 
   &.is-selected {
     .profil.item {
-      background-color: fColor(cbluemiddle);    
+      background-color: fColor(cbluemiddle);
     }
-    
+
     .profil.item .text .name p {
       color: fColor(cbluedark);
     }

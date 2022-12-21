@@ -23,6 +23,20 @@
   &.small-text .title {  
     font-size: 12px;
   }
+
+  &.text-blue {
+    .title {
+      color: fColor(bgSelectSelected);
+
+      &.alert {
+        color: fColor(bgSelectSelected);
+      }
+    
+      &.good {
+        color: fColor(bgSelectSelected);
+      }
+    }    
+  }
 }
 
 .title {
