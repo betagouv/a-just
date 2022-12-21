@@ -31,9 +31,13 @@
     <div class="indicators">
       <div class="profil">
         <div class="label-container">
-          <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
-          <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
-          <p>Compteurs</p>
+          <div>
+            <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
+            <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
+            <p>Compteurs</p>
+          </div>
+          <button (mousedown)="showReelValues = true" (mouseleave)="showReelValues = false"
+            (mouseup)="showReelValues = false">Voir avant / après</button>
         </div>
         <ng-template [ngIf]="showIndicatorPanel">
           <div class="contentieux-label">
@@ -59,14 +63,18 @@
           <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
             <ng-template [ngIf]="referentiel.length > index + 1">
               <div class="taux-row">
-                <div class="taux">
-                  <aj-speedometer class="with-auto small-text" [classDarkMode]="true" [percent]="ref.coverage">
+                <div class="taux"
+                  [ngClass]="{'show-reel-values': showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
+                  <aj-speedometer class="with-auto small-text"
+                    [classTextBlue]="showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100 ? true : false"
+                    [classDarkMode]="true" [percent]="showReelValues ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
                 </div>
               </div>
               <div class="dtes-row">
-                <div class="dtes">
-                  <p>{{ref.dtes | number:".2-2"}}</p>
+                <div class="dtes"
+                  [ngClass]="{'show-reel-values': showReelValues && ref.realDTESInMonths && ref.dtes !== ref.realDTESInMonths}">
+                  <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
               </div>
               <div class="etp-target-row">
@@ -123,8 +131,9 @@
                 <div class="label">
                   <p>{{ referentielMappingName(ref.label) }}</p>
                 </div>
-                <div class="etp">
-                  <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
+                <div class="etp"
+                  [ngClass]="{'show-reel-values': showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
+                  <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number: "0.2-2"}}</p>
                 </div>
                 <div class="filter">
                   <i class="ri-sort-desc"></i>
@@ -193,8 +202,7 @@
           <div class="flex-1"></div>
           <div class="updated-at">
             MàJ le {{ hr.updatedAt | date:"dd" }} {{
-            getMonthString(hr.updatedAt) }} {{ hr.updatedAt |
-            date:"YYYY" }}
+            getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY" }}
           </div>
         </div>
         <div class="read-etp">
@@ -218,5 +226,4 @@
       </div>
     </div>
   </ng-template>
-
 </ng-template>
