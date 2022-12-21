@@ -127,9 +127,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   NOMENCLATURE_DOWNLOAD_URL =
     '/assets/Nomenclature_A-JUST_20221019_utilisateurs.html'
-    /**
-     * Menu de gauche 
-     */
+  /**
+   * Menu de gauche
+   */
   menu = [
     {
       label: 'Panorama',
@@ -139,18 +139,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Constructeur
-   * @param authService 
-   * @param router 
-   * @param userService 
-   * @param humanResourceService 
-   * @param appService 
+   * @param authService
+   * @param router
+   * @param userService
+   * @param humanResourceService
+   * @param appService
    */
   constructor(
     private authService: AuthService,
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
   ) {
     super()
 
@@ -193,7 +193,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Mise à jour du menu qui affiche les pages accéssibles
-   * @param user 
+   * @param user
    */
   updateMenu(user: UserInterface | null) {
     const menu = []
@@ -237,8 +237,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Retourne si un url est le même que celui de la page actuelle
-   * @param item 
-   * @returns 
+   * @param item
+   * @returns
    */
   isSelected(item: any) {
     return `/${item.path}` === window.location.pathname
@@ -246,7 +246,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Changement de la juridiction
-   * @param id 
+   * @param id
    */
   onChangeHRBackup(id: number) {
     this.humanResourceService.backupId.next(id)
@@ -254,9 +254,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Export PDF du contenu et aussi au besoin du header
-   * @param filename 
-   * @param header 
-   * @returns 
+   * @param filename
+   * @param header
+   * @returns
    */
   async exportAsPdf(filename: string, header: boolean = true): Promise<any> {
     this.duringPrint = true
@@ -315,7 +315,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Methode à disposition pour forcer l'ouverture du paneau, pratique pour un appel exterieur du composant
-   * @param documentation 
+   * @param documentation
    */
   onForcePanelHelperToShow(documentation: DocumentationInterface) {
     this.documentationToShow = documentation

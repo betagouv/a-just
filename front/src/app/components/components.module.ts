@@ -32,6 +32,7 @@ import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
 import { EtpChartComponent } from './etp-chart/etp-chart.component'
 import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-connected.component'
 import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
+import { NewsComponent } from './news/news.component'
 
 const list = [
   WrapperComponent,
@@ -61,6 +62,7 @@ const list = [
   EtpChartComponent,
   WrapperNoConnectedComponent,
   FooterNoConnectedComponent,
+  NewsComponent,
 ]
 
 @NgModule({
