@@ -1,22 +1,40 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 
+/**
+ * Route contenant les lectures et modifications des activités
+ */
 export default class RouteActivities extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'Activities' })
 
     // this.cleanDatas() TO TEST
   }
 
+  /**
+   * Fonction de dev pour forcer de supprimer les doublons d'activités
+   */
   async cleanDatas () {
     const backups = await this.models.HRBackups.getAll()
-    
-    for(let i = 0; i < backups.length; i++) {
+
+    for (let i = 0; i < backups.length; i++) {
       await this.models.Activities.removeDuplicateDatas(backups[i].id)
       await this.models.Activities.cleanActivities(backups[i].id)
     }
   }
 
+  /**
+   * Modification des entrees / sorties / stock d'un contentieux à un mois donné
+   * @param {*} contentieuxId
+   * @param {*} date
+   * @param {*} values
+   * @param {*} hrBackupId
+   * @param {*} nodeUpdated
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       contentieuxId: Types.number(),
@@ -33,6 +51,11 @@ export default class RouteActivities extends Route {
     this.sendOk(ctx, 'Ok')
   }
 
+  /**
+   * API retour de la liste des activités des contentieux d'un mois et d'une juridiction
+   * @param {*} date
+   * @param {*} hrBackupId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       date: Types.date(),
@@ -43,17 +66,21 @@ export default class RouteActivities extends Route {
   async getByMonth (ctx) {
     const { date, hrBackupId } = this.body(ctx)
 
-    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
       const list = await this.model.getByMonth(date, hrBackupId)
       this.sendOk(ctx, {
         list,
-        lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map(i => i.id)),
+        lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id)),
       })
     } else {
       this.sendOk(ctx, null)
     }
   }
 
+  /**
+   * API dernier mois où il y a des données d'une juridiction
+   * @param {*} hrBackupId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       hrBackupId: Types.number(),
@@ -63,7 +90,7 @@ export default class RouteActivities extends Route {
   async getLastMonth (ctx) {
     const { hrBackupId } = this.body(ctx)
 
-    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
       const date = await this.model.getLastMonth(hrBackupId)
       this.sendOk(ctx, {
         date,
@@ -72,33 +99,4 @@ export default class RouteActivities extends Route {
       this.sendOk(ctx, null)
     }
   }
-
-  @Route.Post({
-    bodyType: Types.object().keys({
-      hrBackupId: Types.number(),
-    }),
-    accesses: [Access.canVewActivities],
-  })
-  async loadAllActivities (ctx) {
-    const { hrBackupId } = this.body(ctx)
-
-    if(await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.model.getAll(hrBackupId)
-      this.sendOk(ctx, list)
-    } else {
-      this.sendOk(ctx, null)
-    }
-  }
-
-  /*
-@Route.Get({
-  path: '*',
-})
-  async getAll (ctx) {
-    this.sendOk(ctx, (req, res) => {
-      let workbook = createTestWorkbook().then(()=>{
-        workbook.write('workbook.xlsx', res)
-      })
-    })
-  }*/
 }

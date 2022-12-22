@@ -92,24 +92,4 @@ export class ActivitiesService {
       })
       .then((data) => data.data.date || null)
   }
-
-  /**
-   * API retourne l'ensemble des activitiés d'une juridiction
-   * @returns 
-   */
-  loadAllActivities() {
-    return this.serverService
-      .post(`activities/load-all-activities`, {
-        hrBackupId: this.hrBackupId,
-      })
-      .then((data) => {
-        const list = data.data
-        this.activities.next(
-          list.map((a: ActivityInterface) => ({
-            ...a,
-            periode: new Date(a.periode),
-          }))
-        )
-      })
-  }
 }

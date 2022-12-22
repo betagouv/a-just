@@ -6,13 +6,24 @@ import { getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 
+/**
+ * Route des fiches
+ */
 export default class RouteHumanResources extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
 
     this.model.onPreload()
   }
 
+  /**
+   * Interface de la liste des juridictions
+   * @param {*} backupId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.any(),
@@ -32,6 +43,9 @@ export default class RouteHumanResources extends Route {
     })
   }
 
+  /**
+   * Interface pour supprimer une juridiction
+   */
   @Route.Delete({
     path: 'remove-backup/:backupId',
     accesses: [Access.canVewHR],
@@ -44,6 +58,11 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, 'OK')
   }
 
+  /**
+   * Interface pour copier une juridiction
+   * @param {*} backupId
+   * @param {*} backupName
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -57,6 +76,9 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId, backupName))
   }
 
+  /**
+   * Interface qui retourne toutes les juridictions
+   */
   @Route.Get({
     accesses: [Access.isAdmin],
   })
@@ -64,6 +86,11 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, await this.model.models.HRBackups.getAll())
   }
 
+  /**
+   * Interface qui permet d'une fiche
+   * @param {*} backupId
+   * @param {*} hr
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),
@@ -79,6 +106,9 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, responseUpdate)
   }
 
+  /**
+   * Interface de suppression d'une fiche
+   */
   @Route.Delete({
     path: 'remove-hr/:hrId',
     accesses: [Access.canVewHR],
@@ -102,6 +132,9 @@ export default class RouteHumanResources extends Route {
     }
   }
 
+  /**
+   * Interface de suppression d'une situation d'une fiche
+   */
   @Route.Delete({
     path: 'remove-situation/:situationId',
     accesses: [Access.canVewHR],
@@ -118,6 +151,15 @@ export default class RouteHumanResources extends Route {
     this.sendOk(ctx, null)
   }
 
+  /**
+   * Interface de la liste des fiches d'une juridiction
+   * @param {*} backupId
+   * @param {*} date
+   * @param {*} contentieuxIds
+   * @param {*} categoriesIds
+   * @param {*} extractor
+   * @param {*} endPeriodToCheck
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -194,6 +236,9 @@ export default class RouteHumanResources extends Route {
     }
   }
 
+  /**
+   * Interface des détails d'une fiche
+   */
   @Route.Get({
     path: 'read-hr/:hrId',
     accesses: [Access.canVewHR],

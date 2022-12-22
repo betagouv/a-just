@@ -4,11 +4,26 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 
+/**
+ * Route de la page réaffectateur
+ */
 export default class RouteReaffectator extends Route {
+  /**
+   * Constructeur
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface de résultat de la page réaffectator
+   * @param {*} backupId
+   * @param {*} date
+   * @param {*} contentieuxIds
+   * @param {*} categoryId
+   * @param {*} fonctionsIds
+   * @param {*} referentielList
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
