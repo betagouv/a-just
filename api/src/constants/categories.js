@@ -1,3 +1,9 @@
+/**
+ * Récupération de la couleur d'une catégories
+ * @param {*} label
+ * @param {*} opacity
+ * @returns
+ */
 export const getCategoryColor = (label, opacity = 1) => {
   switch (label) {
   case 'Magistrat':
@@ -13,5 +19,11 @@ export const getCategoryColor = (label, opacity = 1) => {
   return `rgba(239, 203, 58, ${opacity})`
 }
 
+/**
+ * Clé Magistrats
+ */
 export const MAGISTRATS = 'magistrats'
+/**
+ * Clé Fonctionnaires
+ */
 export const FONCTIONNAIRES = 'fonctionnaires'

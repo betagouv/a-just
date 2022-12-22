@@ -27,6 +27,11 @@ export const USER_ACCESS_SIMULATOR = 6
  */
 export const USER_ACCESS_REAFFECTATOR = 7
 
+/**
+ * Conversion d'un accessId en string
+ * @param {*} roleId
+ * @returns
+ */
 export const accessToString = (roleId) => {
   switch (roleId) {
   case USER_ACCESS_DASHBOARD:
@@ -46,6 +51,9 @@ export const accessToString = (roleId) => {
   }
 }
 
+/**
+ * Liste des accès possible
+ */
 export const accessList = [
   {
     id: USER_ACCESS_DASHBOARD,
