@@ -3,11 +3,28 @@ import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 
+/**
+ * Route pour la page du simulateur
+ */
+
 export default class RouteSimulator extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface de retourne pour les précalcul du simulateur
+   * @param {*} backupId
+   * @param {*} referentielId
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} functionIds
+   * @param {*} categoryId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -55,6 +72,15 @@ export default class RouteSimulator extends Route {
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
+  /**
+   * Interface de résultat de simulation de la page de simulation
+   * @param {*} backupId
+   * @param {*} params
+   * @param {*} simulation
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} selectedCategoryId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),

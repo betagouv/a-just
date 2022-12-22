@@ -1,11 +1,24 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 
+/**
+ * Route des temps moyens par dossier
+ */
+
 export default class RouteContentieuxOptions extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'ContentieuxOptions' })
   }
 
+  /**
+   * Interface de la liste des sauvegardes des temps moyens
+   * @param {*} backupId
+   * @param {*} juridictionId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),
@@ -24,6 +37,9 @@ export default class RouteContentieuxOptions extends Route {
     })
   }
 
+  /**
+   * Interface pour supprimer une sauvegarde
+   */
   @Route.Delete({
     path: 'remove-backup/:backupId',
     accesses: [Access.canVewContentieuxOptions],
@@ -36,6 +52,12 @@ export default class RouteContentieuxOptions extends Route {
     this.sendOk(ctx, 'OK')
   }
 
+  /**
+   * Interface pour duppliquer une sauvegarde limité à la juridiction
+   * @param {*} backupId
+   * @param {*} backupName
+   * @param {*} juridictionId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -54,6 +76,13 @@ export default class RouteContentieuxOptions extends Route {
     }
   }
 
+  /**
+   * Interface pour modifier les temps moyens d'une sauvegarde
+   * @param {*} list
+   * @param {*} backupId
+   * @param {*} backupName
+   * @param {*} juridictionId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       list: Types.any(),
@@ -79,6 +108,12 @@ export default class RouteContentieuxOptions extends Route {
     }
   }
 
+  /**
+   * Interface de modification d'une sauvegarde
+   * @param {*} backupId
+   * @param {*} backupName
+   * @param {*} juridictionId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -99,6 +134,9 @@ export default class RouteContentieuxOptions extends Route {
     }
   }
 
+  /**
+   * Interface de la liste des toutes les sauvegardes
+   */
   @Route.Get({
     accesses: [Access.isAdmin],
   })
@@ -116,6 +154,11 @@ export default class RouteContentieuxOptions extends Route {
     })
   }
 
+  /**
+   * Interface pour modifier les accès à une juridiction
+   * @param {*} ctx
+   * @param {*} ctx
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       id: Types.number().required(),
@@ -131,6 +174,9 @@ export default class RouteContentieuxOptions extends Route {
     this.sendOk(ctx, 'Ok')
   }
 
+  /**
+   * Liste des temps moyen d'une sauvegarde
+   */
   @Route.Get({
     path: 'get-backup-details/:backupId',
     accesses: [Access.canVewContentieuxOptions],
@@ -145,6 +191,11 @@ export default class RouteContentieuxOptions extends Route {
     }
   }
 
+  /**
+   * Interface de dernière date de mise à jour d'une sauvegarde
+   * @param {*} backupId
+   * @param {*} juridictionId
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),

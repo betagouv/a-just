@@ -1,11 +1,21 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 
+/**
+ * Route des news
+ */
 export default class RouteNews extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'News' })
   }
 
+  /**
+   * Interface de la dernière news pour un utilisateur
+   */
   @Route.Get({
     accesses: [Access.isLogin],
   })
@@ -26,6 +36,10 @@ export default class RouteNews extends Route {
     )
   }
 
+  /**
+   * Interface qui informe qui un utilisateur ferme une news
+   * @param {*} id
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       id: Types.any(),

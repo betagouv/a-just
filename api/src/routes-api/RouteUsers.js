@@ -8,11 +8,21 @@ import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ON
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 
+/**
+ * Route de la gestion des utilisateurs
+ */
 export default class RouteUsers extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'Users' })
   }
 
+  /**
+   * Interface qui retourne l'utilisateur connecté
+   */
   @Route.Get()
   async me (ctx) {
     if (ctx.state && ctx.state.user) {
@@ -23,6 +33,15 @@ export default class RouteUsers extends Route {
     }
   }
 
+  /**
+   * Interface pour créer un compte
+   * @param {*} email
+   * @param {*} password
+   * @param {*} firstName
+   * @param {*} lastName
+   * @param {*} tj
+   * @param {*} fonction
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
@@ -45,7 +64,7 @@ export default class RouteUsers extends Route {
         {
           email,
           serverUrl: config.frontUrl,
-          tj, 
+          tj,
           fonction,
         }
       )
@@ -65,6 +84,9 @@ export default class RouteUsers extends Route {
     }
   }
 
+  /**
+   * Interface de la liste de tout les utilisateurs
+   */
   @Route.Get({
     accesses: [Access.isAdmin],
   })
@@ -78,6 +100,12 @@ export default class RouteUsers extends Route {
     })
   }
 
+  /**
+   * Interface pour modifier les accès et juridictions d'un utilisateur
+   * @param {*} userId
+   * @param {*} access
+   * @param {*} ventilations
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       userId: Types.number().required(),
@@ -98,6 +126,11 @@ export default class RouteUsers extends Route {
     }
   }
 
+  /**
+   * Interface pour générer une demande d'un mail pour changer de mot de passe
+   * @param {*} email
+   * @returns
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
@@ -127,7 +160,7 @@ export default class RouteUsers extends Route {
         await this.models.Logs.addLog(USER_USER_FORGOT_PASSWORD, null, { email })
         this.sendOk(
           ctx,
-          'Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d\'ici quelques minutes, un e-mail de réinitialisation à l\'adresse correspondant à votre compte d\'inscription.'
+          "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription."
         )
         return
       }
@@ -136,6 +169,13 @@ export default class RouteUsers extends Route {
     ctx.throw(401, ctx.state.__('Information de contact non valide!'))
   }
 
+  /**
+   * Interface pour changer le mot de passe à la suite à une demande de changement de mot passe
+   * @param {*} email
+   * @param {*} code
+   * @param {*} password
+   * @returns
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
@@ -166,10 +206,13 @@ export default class RouteUsers extends Route {
     })
   }
 
+  /**
+   * Interface pour avoir une liste des données standard d'un utilisateur connecté
+   */
   @Route.Get({
     accesses: [Access.isLogin],
   })
-  async getUserDatas (ctx) {    
+  async getUserDatas (ctx) {
     this.sendOk(ctx, {
       backups: await this.models.HRBackups.list(ctx.state.user.id),
       categories: await this.models.HRCategories.getAll(),
