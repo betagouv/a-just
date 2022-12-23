@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { PageAccessInterface } from 'src/app/interfaces/page-access-interface';
 import { UserInterface } from 'src/app/interfaces/user-interface';

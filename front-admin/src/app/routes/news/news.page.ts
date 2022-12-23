@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { REMIXICONLIST } from 'src/app/constants/icons';
 import { NewsInterface } from 'src/app/interfaces/news';
