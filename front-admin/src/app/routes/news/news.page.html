@@ -1,0 +1,109 @@
+<aj-wrapper title="Notifications">
+  <button mat-button color="primary" (click)="onCreate()">
+    Ajouter une notification
+  </button>
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="desc">
+    <ng-container matColumnDef="html">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="html">Contenu</th>
+      <td mat-cell *matCellDef="let element">
+        <span [innerHTML]="element.html"></span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateStart">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="dateStart">
+        Date de début visibilitée
+      </th>
+      <td mat-cell *matCellDef="let element">{{element.dateStart | date}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateStop">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="dateStop">
+        Date de fin visibilitée
+      </th>
+      <td mat-cell *matCellDef="let element">{{element.dateStop | date}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="enabled">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="enabled">Actif</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.enabled ? 'Oui' : 'Non'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button color="primary" (click)="onEdit(element)">
+          Modifier
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <aj-popup *ngIf="newsToEdit" class="large"
+    title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification" [actions]="popupAction"
+    (selectedAction)="onPopupDetailAction($event)">
+    <label>Contenu</label>
+    <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"
+      [config]="htmlEditorConfig"></angular-editor>
+
+    <div class="grid-triple">
+      <div>
+        <label>Notification active</label>
+        <select [(ngModel)]="newsToEdit.enabled">
+          <option [value]="true">Oui</option>
+          <option [value]="false">Non</option>
+        </select>
+      </div>
+      <div>
+        <label>Date de début de diffusion</label>
+        <input matInput [ngModel]="newsToEdit.dateStart" [matDatepicker]="pickerDateStart"
+          (ngModelChange)="onDateChanged('dateStart', $event)" [readonly]="true" (click)="pickerDateStart.open()" />
+        <mat-datepicker #pickerDateStart></mat-datepicker>
+      </div>
+      <div>
+        <label>Date de fin de diffusion</label>
+        <input matInput [ngModel]="newsToEdit.dateStop" [matDatepicker]="pickerDateStop"
+          (ngModelChange)="onDateChanged('dateStop', $event)" [readonly]="true" (click)="pickerDateStop.open()" />
+        <mat-datepicker #pickerDateStop></mat-datepicker>
+      </div>
+    </div>
+
+    <div class="grid-triple">
+      <div>
+        <label>Texte du bouton (ne rien mettre pour ne pas afficher)</label>
+        <input class="ethics-ui" [(ngModel)]="newsToEdit.actionButtonText" />
+      </div>
+      <div>
+        <label>Url du bouton</label>
+        <input class="ethics-ui" [(ngModel)]="newsToEdit.actionButtonUrl" />
+      </div>
+      <div>
+        <label>Couleur du bouton</label>
+        <input class="ethics-ui" [(ngModel)]="newsToEdit.actionButtonColor" />
+      </div>
+    </div>
+
+    <div class="grid-triple">
+      <div>
+        <label>Icone</label>
+        <mat-select [(ngModel)]="newsToEdit.icon">
+          <mat-option *ngFor="let ico of REMIXICONLIST" [value]="ico"><i class="ri-{{ico}}"></i>
+          </mat-option>
+        </mat-select>
+      </div>
+      <div>
+        <label>Couleur de text</label>
+        <input class="ethics-ui" [(ngModel)]="newsToEdit.textColor" />
+      </div>
+      <div>
+        <label>Couleur du fond</label>
+        <input class="ethics-ui" [(ngModel)]="newsToEdit.backgroundColor" />
+      </div>
+    </div>
+  </aj-popup>
+</aj-wrapper>
