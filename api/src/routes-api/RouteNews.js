@@ -51,4 +51,14 @@ export default class RouteNews extends Route {
 
     this.sendOk(ctx, 'OK')
   }
+
+  /**
+   * Interface de toutes les news disponibles
+   */
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAll (ctx) {
+    this.sendOk(ctx, await this.model.getAll())
+  }
 }
