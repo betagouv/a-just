@@ -1,31 +1,31 @@
 import { NgModule } from '@angular/core'
-import { MatInputModule } from '@angular/material/input'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import {
-  MatFormFieldModule,
-  MAT_FORM_FIELD_DEFAULT_OPTIONS,
-} from '@angular/material/form-field'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
+  MatLegacyFormFieldModule as MatFormFieldModule,
+  MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS,
+} from '@angular/material/legacy-form-field'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import {
-  MatSnackBarModule,
-  MAT_SNACK_BAR_DEFAULT_OPTIONS,
-} from '@angular/material/snack-bar'
-import { MatTableModule } from '@angular/material/table'
+  MatLegacySnackBarModule as MatSnackBarModule,
+  MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS,
+} from '@angular/material/legacy-snack-bar'
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 import { MatIconModule } from '@angular/material/icon'
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatSelectModule } from '@angular/material/select'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSortModule } from '@angular/material/sort'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import {
-  MatTooltipDefaultOptions,
-  MatTooltipModule,
-  MAT_TOOLTIP_DEFAULT_OPTIONS,
-} from '@angular/material/tooltip'
-import { MatMenuModule } from '@angular/material/menu'
+  MatLegacyTooltipDefaultOptions as MatTooltipDefaultOptions,
+  MatLegacyTooltipModule as MatTooltipModule,
+  MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS,
+} from '@angular/material/legacy-tooltip'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import {
   MatNativeDateModule,
   DateAdapter,
@@ -36,7 +36,7 @@ import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
 
 /**
  * Paramétrage du tooltips par défaut de matérial
