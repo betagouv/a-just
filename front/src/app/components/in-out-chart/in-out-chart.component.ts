@@ -9,21 +9,54 @@ import {
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Composant graphique entrée sortie simulateur
+ */
 @Component({
   selector: 'aj-in-out-chart',
   templateUrl: './in-out-chart.component.html',
   styleUrls: ['./in-out-chart.component.scss'],
 })
 export class InOutChartComponent implements OnDestroy {
+  /**
+   * Date début
+   */
   dateStart: Date = new Date()
+  /**
+   * Date fin
+   */
   dateStop: Date | null = null
+  /**
+   * Valeur de début
+   */
   startRealValue = ''
+  /**
+   * Valeur de fin
+   */
   stopRealValue = ''
+  /**
+   * Valeur de fin
+   */
   elementRef: HTMLElement | undefined
+  /**
+   * Object Chart.js
+   */
   myChart: any = null
+  /**
+   * Liste des mois en abscisse
+   */
   labels: string[] | null = null
+  /**
+   * Affichage Tooltip element au survol de la souris
+   */
   tooltip: any = { display: false }
+  /**
+   * Mois selectionné
+   */
   realSelectedMonth = ''
+  /**
+   * Données graphiques
+   */
   data = {
     projectedIn: {
       values: [0],
@@ -39,6 +72,11 @@ export class InOutChartComponent implements OnDestroy {
     },
   }
 
+  /**
+   * Constructeur
+   * @param element Element HTML
+   * @param simulatorService Service simulateur
+   */
   constructor(
     element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
@@ -107,8 +145,9 @@ export class InOutChartComponent implements OnDestroy {
     Chart.register(annotationPlugin)
   }
 
-  ngOnInit(): void {}
-
+  /**
+   * Réinitialisation lors de la destruction du composant
+   */
   ngOnDestroy(): void {
     this.myChart.destroy()
     this.dateStart = new Date()
@@ -132,6 +171,10 @@ export class InOutChartComponent implements OnDestroy {
       },
     }
   }
+
+  /**
+   * Remplissage du graphique après l'initialisation du composant
+   */
   ngAfterViewInit(): void {
     const labels = this.labels
 
@@ -495,68 +538,7 @@ export class InOutChartComponent implements OnDestroy {
           },
         },
       },
-      plugins: [
-        yScaleTextInOut,
-        /**
-        {
-          id: 'corsair',
-          afterInit: (chart: any) => {
-            chart.corsair = {
-              x: 0,
-              y: 0,
-            }
-          },
-          afterEvent: (chart: any, evt: any) => {
-            const {
-              chartArea: { top, bottom, left, right },
-            } = chart
-            const {
-              event: { x, y },
-            } = evt
-            if (x < left || x > right || y < top || y > bottom) {
-              chart.corsair = {
-                x,
-                y,
-                draw: false,
-              }
-              chart.draw()
-              return
-            }
-
-            chart.corsair = {
-              x,
-              y,
-              draw: true,
-            }
-
-            chart.draw()
-          },
-          afterDatasetsDraw: (chart: any, _: any, opts: any) => {
-            const {
-              ctx,
-              chartArea: { top, bottom, left, right },
-            } = chart
-            const { x, y, draw } = chart.corsair
-
-            if (!draw) {
-              return
-            }
-
-            ctx.lineWidth = opts.width || 0
-            ctx.setLineDash(opts.dash || [])
-            ctx.strokeStyle = opts.color || 'black'
-
-            ctx.save()
-            ctx.beginPath()
-            ctx.moveTo(x, bottom)
-            ctx.lineTo(x, top)
-            ctx.moveTo(left, y)
-            ctx.lineTo(right, y)
-            ctx.stroke()
-            ctx.restore()
-          },
-        },*/
-      ],
+      plugins: [yScaleTextInOut],
     }
     this.myChart = new Chart(
       document.getElementById('in-out-chart') as ChartItem,
@@ -634,6 +616,10 @@ export class InOutChartComponent implements OnDestroy {
     })
   }
 
+  /**
+   * Afficher/Masquer une courbe
+   * @param event Evenement toogle d'affichage d'une courbe
+   */
   display(event: any) {
     let index: number | undefined = undefined
     if (event.label === 'projectedIn') index = 0
@@ -647,6 +633,10 @@ export class InOutChartComponent implements OnDestroy {
     }
   }
 
+  /**
+   * Synchronisation des tooltip sur les graphiques
+   * @param obj Tooltip values
+   */
   affectTooltipValues(obj: any) {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
@@ -654,6 +644,13 @@ export class InOutChartComponent implements OnDestroy {
     })
   }
 
+  /**
+   * Maj de la popin
+   * @param display Affichage de la popin
+   * @param xMin Abscisse min popin
+   * @param xMax Abscisse max popin
+   * @param content Contenue de la popin
+   */
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
@@ -669,6 +666,12 @@ export class InOutChartComponent implements OnDestroy {
     })
   }
 
+  /**
+   * Calcul de pourcentage
+   * @param value1 Numérateur
+   * @param value2 Dénominateur
+   * @returns
+   */
   getDeltaInPercent(value1: number, value2: number): number {
     if (value1 !== undefined && value2 !== undefined) {
       return fixDecimal(((value1 - value2) / value2) * 100) as number
@@ -676,9 +679,19 @@ export class InOutChartComponent implements OnDestroy {
     return 0
   }
 
+  /**
+   * Calcul l'arrondi d'un nombre
+   * @param value Nombre
+   * @returns Retourne l'arrondi d'un nombre
+   */
   getRounded(value: number): number {
     return fixDecimal(value)
   }
+  /**
+   * Récupération du label MOIS
+   * @param month chaine de caractère MOIS
+   * @returns Retourne le nom de mois entier
+   */
   getRealMonth(month: string) {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }

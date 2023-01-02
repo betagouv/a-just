@@ -34,6 +34,9 @@ import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-c
 import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 import { NewsComponent } from './news/news.component'
 
+/**
+ * Liste des composants à importer
+ */
 const list = [
   WrapperComponent,
   SpeedometerComponent,
@@ -65,6 +68,9 @@ const list = [
   NewsComponent,
 ]
 
+/**
+ * Module d'import de composant
+ */
 @NgModule({
   declarations: [...list],
   imports: [

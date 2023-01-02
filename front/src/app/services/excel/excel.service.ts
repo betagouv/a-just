@@ -11,8 +11,14 @@ import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 
+/**
+ * Excel file details
+ */
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+/**
+ * Excel file extension
+ */
 const EXCEL_EXTENSION = '.xlsx'
 
 @Injectable({
