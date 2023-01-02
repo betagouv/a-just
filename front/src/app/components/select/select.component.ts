@@ -8,30 +8,48 @@ import {
 import { MainClass } from 'src/app/libs/main-class'
 
 /**
- * Interface d'un item de la liste
+ * Interface d'un réferentiel selectionné
  */
-
 export interface dataInterface {
+  /**
+   * Id référentiel
+   */
   id: number
+  /**
+   * Valeur
+   */
   value: string
+  /**
+   * Valeur précédente
+   */
   orignalValue?: string
+  /**
+   * Sous contentieux
+   */
   childrens?: childrenInterface[]
 }
 
 /**
- * Interface d'un enfant 
+ * Interface d'un enfant
  */
-
 export interface childrenInterface {
+  /**
+   * Id
+   */
   id: number
+  /**
+   * Valeur
+   */
   value: string
+  /**
+   * Id du parent
+   */
   parentId?: number
 }
 
 /**
  * Composant select designer pour le projet
  */
-
 @Component({
   selector: 'aj-select',
   templateUrl: './select.component.html',
@@ -172,7 +190,8 @@ export class SelectComponent extends MainClass implements OnChanges {
 
   /**
    * Nouvelle liste ou item sélectionnée
-   * @param list 
+   * @param list
+   * @returns void
    */
   onSelectedChanged(list: number[] | number) {
     if (this.parent && Array.isArray(list)) {

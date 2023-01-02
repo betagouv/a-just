@@ -1,23 +1,47 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core'
 
+/**
+ * Composant barres de chargement simulateur
+ */
 @Component({
   selector: 'aj-loaders-widget',
   templateUrl: './loaders-widget.component.html',
   styleUrls: ['./loaders-widget.component.scss'],
 })
-export class LoadersWidgetComponent implements OnInit, OnChanges {
+export class LoadersWidgetComponent implements OnChanges {
+  /**
+   * Date de début de simulation
+   */
   @Input() dateStart: string = ''
+  /**
+   * Date de fin de simulation
+   */
   @Input() dateStop: string = ''
+  /**
+   * Valeur à aujourd'hui
+   */
   @Input() valueAt: string = ''
+  /**
+   * Valeur projetée
+   */
   @Input() valueProjected: string = ''
+  /**
+   * Valeur simulée
+   */
   @Input() valueSimulated: string = ''
+  /** Valeur par défaut bar 1 */
   valueBar1 = 100
+  /** Valeur par défaut bar 2 */
   valueBar2 = 100
 
+  /**
+   * Constructeur
+   */
   constructor() {}
 
-  ngOnInit(): void {}
-
+  /**
+   * Ecoute la valeur de la simulation afin d'augmenter/diminuer la jauge
+   */
   ngOnChanges(): void {
     if (this.valueAt !== '') {
       const delta =

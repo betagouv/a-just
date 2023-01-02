@@ -10,6 +10,9 @@ import {
 import { degreesToRadians } from 'src/app/utils/geometry'
 import { animate, style, transition, trigger } from '@angular/animations'
 
+/**
+ * Cadran affichant le taux de couverture du widget associé dans le simulateur
+ */
 @Component({
   selector: 'aj-coverage-preview',
   templateUrl: './coverage-preview.component.html',
@@ -25,25 +28,54 @@ import { animate, style, transition, trigger } from '@angular/animations'
   ],
 })
 export class CoveragePreviewComponent implements OnInit, OnChanges {
+  /**
+   * Element HTML du canvas
+   */
   @ViewChild('canvas', { static: false })
   domCanvas: ElementRef<HTMLCanvasElement> | null = null
-
+  /**
+   * Taux de couverture 1
+   */
   @Input() oldCoverageRate: number | null = null
+  /**
+   * Taux de couverture 2
+   */
   @Input() coverageRate: number = 240
+  /**
+   * Longueur du composant
+   */
   @Input() width: number = 180
+  /**
+   * Hauteur du composant
+   */
   @Input() height: number = 180
+  /**
+   * Marge autour du cadran
+   */
   margin: number = 35
+  /**
+   * Epaisseur de bordure
+   */
   borderWidth: number = 12
-  // counter: number = 1
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit(): void {
     this.onDraw()
   }
 
+  /**
+   * Modification du composant
+   * @param change evenement externe de changement
+   */
   ngOnChanges(change: SimpleChanges): void {
     this.onDraw()
   }
 
+  /**
+   * Génération du cadran
+   */
   onDraw(): void {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
 
@@ -57,6 +89,9 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Génération de la zone coloré dépliée
+   */
   generateBackground() {
     const canvas = this.domCanvas?.nativeElement as HTMLCanvasElement
     const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D
@@ -195,22 +230,25 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     }
 
     let myReq: any = null
-
-    //window.requestAnimationFrame(() => this.generateBackground())
-    /**
-    if (this.counter < 1000) {
-      // it's important to update the requestId each time you're calling requestAnimationFrame
-      myReq = requestAnimationFrame(() => this.generateBackground())
-    } else {
-      cancelAnimationFrame(myReq)
-    }
-     */
   }
 
+  /**
+   * Conversion de degré en radian
+   * @param degree position de l'aiguille en degrés
+   * @returns la position de l'aiguille en radian
+   */
   getRadiusPosition(degree: number) {
     return degreesToRadians(180 + (degree * 9) / 10)
   }
 
+  /**
+   * Génération de l'aiguille
+   * @param ctx objet de contexte
+   * @param lgd taille de l'aiguille
+   * @param cl_int style de remplissage
+   * @param cl_bord style de bordure
+   * @param angle angle de l'aiguille
+   */
   draw_aiguille(
     ctx: CanvasRenderingContext2D,
     lgd: number,
@@ -241,6 +279,15 @@ export class CoveragePreviewComponent implements OnInit, OnChanges {
     ctx.rotate(-angle)
   }
 
+  /**
+   * Dessiner un point
+   * @param ctx objet de context
+   * @param coverageRatio taux de couverture
+   * @param label label
+   * @param center_x abscisse
+   * @param center_y ordonné
+   * @param color couleur
+   */
   drawPoint(
     ctx: CanvasRenderingContext2D,
     coverageRatio: number,

@@ -1,39 +1,59 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core'
-import {
-  getLongMonthString,
-  getRangeOfMonths,
-  getShortMonthString,
-} from 'src/app/utils/dates'
+import { Component, ElementRef } from '@angular/core'
+import { getLongMonthString, getRangeOfMonths } from 'src/app/utils/dates'
 import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { fixDecimal } from 'src/app/utils/numbers'
-
+/**
+ * Composant graphique DTES simulateur
+ */
 @Component({
   selector: 'aj-dtes-chart',
   templateUrl: './dtes-chart.component.html',
   styleUrls: ['./dtes-chart.component.scss'],
 })
 export class DtesChartComponent {
+  /**
+   * Date début
+   */
   dateStart: Date = new Date()
+  /**
+   * Date fin
+   */
   dateStop: Date | null = null
+  /**
+   * Valeur de début
+   */
   startRealValue = ''
+  /**
+   * Valeur de fin
+   */
   stopRealValue = ''
+  /**
+   * Valeur de fin
+   */
   elementRef: HTMLElement | undefined
+  /**
+   * Object Chart.js
+   */
   myChart: any = null
+  /**
+   * Liste des mois en abscisse
+   */
   labels: string[] | null = null
+  /**
+   * Affichage Tooltip element au survol de la souris
+   */
   tooltip: any = { display: false }
+  /**
+   * Mois selectionné
+   */
   realSelectedMonth = ''
-
+  /**
+   * Données graphiques
+   */
   data = {
     projectedStock: {
       values: [0],
@@ -49,6 +69,11 @@ export class DtesChartComponent {
     },
   }
 
+  /**
+   * Constructeur
+   * @param element Element HTML
+   * @param simulatorService Service simulateur
+   */
   constructor(
     element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
@@ -128,6 +153,9 @@ export class DtesChartComponent {
     Chart.register(annotationPlugin)
   }
 
+  /**
+   * Réinitialisation lors de la destruction du composant
+   */
   ngOnDestroy(): void {
     this.simulatorService.chartAnnotationBox.next({ display: false })
     this.myChart.destroy()
@@ -153,6 +181,9 @@ export class DtesChartComponent {
     }
   }
 
+  /**
+   * Remplissage du graphique après l'initialisation du composant
+   */
   ngAfterViewInit(): void {
     const labels = this.labels
 
@@ -627,6 +658,10 @@ export class DtesChartComponent {
     })
   }
 
+  /**
+   * Afficher/Masquer une courbe
+   * @param event Evenement toogle d'affichage d'une courbe
+   */
   display(event: any) {
     let index: number | undefined = undefined
     if (event.label === 'projectedStock') index = 0
@@ -640,6 +675,10 @@ export class DtesChartComponent {
     }
   }
 
+  /**
+   * Synchronisation des tooltip sur les graphiques
+   * @param obj Tooltip values
+   */
   affectTooltipValues(obj: any) {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
@@ -647,6 +686,13 @@ export class DtesChartComponent {
     })
   }
 
+  /**
+   * Maj de la popin
+   * @param display Affichage de la popin
+   * @param xMin Abscisse min popin
+   * @param xMax Abscisse max popin
+   * @param content Contenue de la popin
+   */
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
@@ -662,6 +708,12 @@ export class DtesChartComponent {
     })
   }
 
+  /**
+   * Calcul de pourcentage
+   * @param value1 Numérateur
+   * @param value2 Dénominateur
+   * @returns
+   */
   getDeltaInPercent(value1: number, value2: number): number {
     if (value1 !== undefined && value2 !== undefined) {
       return fixDecimal(((value1 - value2) / value2) * 100) as number
@@ -669,10 +721,21 @@ export class DtesChartComponent {
     return 0
   }
 
+  /**
+   * Calcul l'arrondi d'un nombre
+   * @param value Nombre
+   * @returns Retourne l'arrondi d'un nombre
+   */
   getRounded(value: number, integer = false): number {
     if (integer) return Math.floor(value)
     return fixDecimal(value)
   }
+
+  /**
+   * Récupération du label MOIS
+   * @param month chaine de caractère MOIS
+   * @returns Retourne le nom de mois entier
+   */
   getRealMonth(month: string) {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
