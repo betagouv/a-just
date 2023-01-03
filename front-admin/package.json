@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-material-components/color-picker": "^9.0.0",
     "@angular/animations": "^15.0.4",
     "@angular/cdk": "^15.0.3",
     "@angular/common": "^15.0.4",
@@ -25,7 +26,6 @@
     "@angular/router": "^15.0.4",
     "@compodoc/compodoc": "^1.1.19",
     "@kolkov/angular-editor": "^3.0.0-beta.0",
-    "@ng-select/ng-select": "^9.0.1",
     "animate.css": "^4.1.1",
     "chart.js": "^3.5.1",
     "form-data": "^4.0.0",
@@ -42,8 +42,8 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^14.0.1",
-    "@angular/cli": "~14.0.1",
+    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular/cli": "~15.0.4",
     "@angular/compiler-cli": "^15.0.4",
     "@types/jasmine": "~4.0.0",
     "@types/lodash": "^4.14.182",

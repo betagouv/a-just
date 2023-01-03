@@ -1,31 +1,16 @@
 import { NgModule } from '@angular/core'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import {
-  MatLegacyFormFieldModule as MatFormFieldModule,
-  MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS,
-} from '@angular/material/legacy-form-field'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import {
-  MatLegacySnackBarModule as MatSnackBarModule,
   MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS,
 } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatSortModule } from '@angular/material/sort'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import {
   MatLegacyTooltipDefaultOptions as MatTooltipDefaultOptions,
-  MatLegacyTooltipModule as MatTooltipModule,
   MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS,
 } from '@angular/material/legacy-tooltip'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
 import {
   MatNativeDateModule,
   DateAdapter,
@@ -36,7 +21,16 @@ import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
+import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTableModule } from '@angular/material/table'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatSelectModule } from '@angular/material/select'
+import { MatTooltipModule } from '@angular/material/tooltip'
+
 
 /**
  * Paramétrage du tooltips par défaut de matérial
@@ -71,7 +65,6 @@ export const MY_FORMATS = {
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatCardModule,
     MatSnackBarModule,
     MatTableModule,
     MatIconModule,
@@ -80,17 +73,15 @@ export const MY_FORMATS = {
     MatSortModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatProgressSpinnerModule,
     DragDropModule,
     MatTooltipModule,
-    MatMenuModule,
-    MatCheckboxModule,
-    MatProgressBarModule,
+    NgxMatColorPickerModule,
   ],
   providers: [
+    { provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: 'fill' },
+      useValue: { floatLabel: 'always' },
     },
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' },

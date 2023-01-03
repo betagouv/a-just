@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { REMIXICONLIST } from 'src/app/constants/icons';
 import { NewsInterface } from 'src/app/interfaces/news';
@@ -12,9 +12,8 @@ import { NewsService } from 'src/app/services/news/news.service';
 })
 export class NewsPage extends MainClass implements OnInit {
   REMIXICONLIST = REMIXICONLIST;
-  displayedColumns: string[] = ['html', 'dateStart', 'dateStop', 'enabled'];
+  displayedColumns: string[] = ['html', 'dateStart', 'dateStop', 'enabled', 'actions'];
   dataSource = new MatTableDataSource();
-  news: NewsInterface[] = [];
   newsToEdit: NewsInterface | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
@@ -28,7 +27,6 @@ export class NewsPage extends MainClass implements OnInit {
     width: 'auto',
     enableToolbar: true,
     showToolbar: true,
-    placeholder: 'Contenu ici',
     sanitize: true,
     toolbarPosition: 'top',
     toolbarHiddenButtons: [
@@ -73,12 +71,20 @@ export class NewsPage extends MainClass implements OnInit {
 
   onLoad() {
     this.newsService.getAll().then((datas) => {
-      this.news = datas;
+      this.dataSource.data = datas;
     });
   }
 
   onEdit(b: NewsInterface) {
     this.newsToEdit = b;
+  }
+
+  onRemove(b: NewsInterface) {
+    if(confirm('Supprimer cette notification ?')) {
+      this.newsService.remove(b.id).then(() => {
+        this.onLoad();
+      });
+    }
   }
 
   onCreate() {
@@ -90,14 +96,20 @@ export class NewsPage extends MainClass implements OnInit {
   }
 
   onPopupDetailAction(action: any) {
-    console.log(this.newsToEdit)
     switch (action.id) {
       case 'save':
         {
-          /*this.contentieuxOptionsService.updateBackup(this.backup).then(() => {
-            this.backup = null;
-            this.onLoad();
-          });*/
+          if (this.newsToEdit) {
+            if (!this.newsToEdit.html) {
+              alert('Vous devez saisir un contenu !');
+              return;
+            }
+
+            this.newsService.updateOrCreate(this.newsToEdit).then(() => {
+              this.newsToEdit = null;
+              this.onLoad();
+            });
+          }
         }
         break;
       case 'close':
@@ -106,14 +118,14 @@ export class NewsPage extends MainClass implements OnInit {
     }
   }
 
-  onDateChanged(node: 'dateStart' | 'dateStop', event: any) {
+  onDateChanged(node: 'dateStart' | 'dateStop', event: any) {
     // @ts-ignore
-    this.newsToEdit[node] = undefined
+    this.newsToEdit[node] = undefined;
 
     if (event && event._i.year) {
-      const date = new Date(event._i.year, event._i.month, event._i.date)
+      const date = new Date(event._i.year, event._i.month, event._i.date);
       // @ts-ignore
-      this.newsToEdit[node] = date
+      this.newsToEdit[node] = date;
     }
   }
 }
