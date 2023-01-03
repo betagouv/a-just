@@ -105,6 +105,16 @@ export class NewsPage extends MainClass implements OnInit {
               return;
             }
 
+            if (!this.newsToEdit.dateStart) {
+              alert('Vous devez saisir une date de début de diffusion !');
+              return;
+            }
+
+            if (!this.newsToEdit.dateStop) {
+              alert('Vous devez saisir une date de fin de diffusion !');
+              return;
+            }
+
             this.newsService.updateOrCreate(this.newsToEdit).then(() => {
               this.newsToEdit = null;
               this.onLoad();

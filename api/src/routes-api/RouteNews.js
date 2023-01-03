@@ -20,20 +20,9 @@ export default class RouteNews extends Route {
     accesses: [Access.isLogin],
   })
   async last (ctx) {
-    //await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
-    this.sendOk(
-      ctx,
-      /*{
-      html: 'ceci est un test',
-      icon: 'error-warning-line',
-      backgroundColor: 'red',
-      textColor: 'blue',
-      delayBeforeAutoClosing: 5000,
-      actionButtonText: 'test',
-      actionButtonUrl: 'https://www.google.fr',
-      actionButtonColor: 'green',
-    }*/ null
-    )
+    const lastNews = await this.model.getLastActiveNews(ctx.state.user.id)
+
+    this.sendOk(ctx, lastNews)
   }
 
   /**
@@ -48,6 +37,7 @@ export default class RouteNews extends Route {
   })
   async onClose (ctx) {
     const { id } = this.body(ctx)
+    await this.models.NewsUserLog.userCloseEvent(ctx.state.user.id, id)
 
     this.sendOk(ctx, 'OK')
   }
