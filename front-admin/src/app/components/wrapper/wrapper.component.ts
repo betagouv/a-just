@@ -20,6 +20,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   }, {
     label: 'Imports',
     path: 'imports',
+  }, {
+    label: 'Notifications',
+    path: 'news',
   }];
   
   constructor(private authService: AuthService, private router: Router) {

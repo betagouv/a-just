@@ -30,6 +30,12 @@ const routes: Routes = [
     loadChildren: () =>
       import('./imports/imports.module').then((mod) => mod.ImportsModule),
     canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'news',
+    loadChildren: () =>
+      import('./news/news.module').then((mod) => mod.NewsModule),
+    canActivate: [AdminAuthGuard],
   }
 ];
 
