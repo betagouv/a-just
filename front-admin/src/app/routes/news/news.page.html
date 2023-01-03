@@ -109,6 +109,9 @@
         <mat-form-field>
           <mat-label>Icone</mat-label>
           <mat-select [(ngModel)]="newsToEdit.icon">
+            <mat-select-trigger>
+              <i class="ri-{{newsToEdit.icon}}"></i>
+            </mat-select-trigger>
             <mat-option *ngFor="let ico of REMIXICONLIST" [value]="ico"><i class="ri-{{ico}}"></i>
             </mat-option>
           </mat-select>
