@@ -1,29 +1,45 @@
 import parse from 'csv-parse'
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier
 
+/**
+ * Transforme un fichier CSV en objet JSON
+ * @param {*} data
+ * @param {*} options
+ * @returns objet JSON
+ */
 export function csvToArrayJson (data, options = {}) {
   return new Promise((resolve, reject) => {
-    parse(data, {
-      columns: true,
-      skip_empty_lines: true,
-      delimiter: ';',
-      trim: true,
-      bom: true,
-      ...options,
-    }, (err, output) => {
-      if(err) reject(err)
-      else resolve(output)
-    })
-  }).then(list => (
-    list.map(tab => {
+    parse(
+      data,
+      {
+        columns: true,
+        skip_empty_lines: true,
+        delimiter: ';',
+        trim: true,
+        bom: true,
+        ...options,
+      },
+      (err, output) => {
+        if (err) reject(err)
+        else resolve(output)
+      }
+    )
+  }).then((list) =>
+    list.map((tab) => {
       const obj = {}
       for (const p in tab) {
-        obj[p.replace(/ /g,'_').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = tab[p]
+        obj[
+          p
+            .replace(/ /g, '_')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+        ] = tab[p]
       }
 
       return obj
     })
-  ))
+  )
 }
 
 /**
@@ -39,6 +55,12 @@ export function csvToArrayJson (data, options = {}) {
 ]
  */
 
+/**
+ * Création d'un buffer CSV
+ * @param {*} columns
+ * @param {*} records
+ * @returns buffer
+ */
 export function csvBuffer (columns, records) {
   const csvStringifier = createCsvStringifier({
     header: columns,

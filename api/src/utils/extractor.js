@@ -1,5 +1,11 @@
 import { sumBy } from 'lodash'
 
+/**
+ * Tri par catégorie et par fonction
+ * @param {*} a
+ * @param {*} b
+ * @returns boolean
+ */
 export function sortByCatAndFct (a, b) {
   if (a['Catégorie'] === b['Catégorie']) {
     return a.Fonction < b.Fonction ? -1 : 1
@@ -8,6 +14,11 @@ export function sortByCatAndFct (a, b) {
   }
 }
 
+/**
+ * Créer un objet avec pour propriété la liste de contentieux passée en paramètre
+ * @param {*} flatReferentielsList
+ * @returns
+ */
 export function emptyRefObj (flatReferentielsList) {
   let obj = { ...JSON.parse(JSON.stringify({})) }
   flatReferentielsList.map((referentiel) => {
@@ -18,6 +29,12 @@ export function emptyRefObj (flatReferentielsList) {
   return obj
 }
 
+/**
+ * Génére le label utilisé dans l'entête de l'export excel
+ * @param {*} referentiel
+ * @param {*} isTotal
+ * @returns
+ */
 export const getExcelLabel = (referentiel, isTotal) => {
   if (isTotal) return referentiel.code_import.toUpperCase() + ' TOTAL ' + referentiel.label.toUpperCase()
   else return referentiel.code_import.toUpperCase() + ' ' + referentiel.label.toUpperCase()
@@ -39,6 +56,12 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
   return allReferentiels
 }
 
+/**
+ * Calcule des d'ETP
+ * @param {*} etpAffected
+ * @param {*} referentiel
+ * @returns objet d'ETP
+ */
 export const countEtp = (etpAffected, referentiel) => {
   let counterEtpTotal = 0
   let counterEtpSubTotal = 0
@@ -64,6 +87,11 @@ export const countEtp = (etpAffected, referentiel) => {
   }
 }
 
+/**
+ * Récupère informations sur les indisponibilités
+ * @param {*} referentiels
+ * @returns objet d'indipos details
+ */
 export const getIndispoDetails = (referentiels) => {
   const refIndispo = referentiels.find((r) => r.label === 'Indisponibilité')
 
@@ -87,6 +115,12 @@ export const getIndispoDetails = (referentiels) => {
   return { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo }
 }
 
+/**
+ * Ajout d'une ligne faisant la somme des ETP totals dans notre data set
+ * @param {*} data
+ * @param {*} selectedCategory
+ * @returns data object
+ */
 export const addSumLine = (data, selectedCategory) => {
   if (selectedCategory !== 'tous' && data.length !== 0) {
     let headerSum = new Object({})
@@ -100,6 +134,11 @@ export const addSumLine = (data, selectedCategory) => {
   return data
 }
 
+/**
+ * Calcule la taille que doit faire la colonne sur excel en fonction de la taille du label de l'entête
+ * @param {*} json
+ * @returns object
+ */
 export const autofitColumns = (json) => {
   if (json.length !== 0) {
     const jsonKeys = Object.keys(json[0])
@@ -130,6 +169,11 @@ export const autofitColumns = (json) => {
   } else return []
 }
 
+/**
+ * Remplace les 0 par des _ dans un dataset
+ * @param {*} data
+ * @returns data set
+ */
 export const replaceZeroByDash = (data) => {
   for (let i = 0; i < data.length; i++) {
     Object.keys(data[i]).forEach((key) => {
