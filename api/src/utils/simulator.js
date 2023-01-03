@@ -14,6 +14,9 @@ import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
 
+/**
+ * Variable de temps travail en fonction de la category
+ */
 export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
   nbDaysPerMonthByMagistrat: config.nbDaysByMagistrat / 12,
@@ -26,6 +29,9 @@ export const environment = {
   nbHoursPerDayAndByContractuel: 7,
 }
 
+/**
+ * Situation null
+ */
 const emptySituation = {
   totalIn: null,
   totalOut: null,
@@ -40,6 +46,14 @@ const emptySituation = {
   etpToCompute: null,
 }
 
+/**
+ * Aggrégation de simulation permettant d'ajouter les calculs d'ETP des catégories non selectionnées
+ * @param {*} situationFiltered situation calculé
+ * @param {*} situation situation
+ * @param {*} categories category magistrat, fonctionnaire, greffier
+ * @param {*} categoryId catégory selectionnée
+ * @returns situation
+ */
 export function mergeSituations (situationFiltered, situation, categories, categoryId) {
   categories.map((x) => {
     if (x.id !== categoryId) {
@@ -59,6 +73,13 @@ export function mergeSituations (situationFiltered, situation, categories, categ
   return situationFiltered
 }
 
+/**
+ * Filtre des situations par catégorie et par fonction
+ * @param {*} hr liste de ressources
+ * @param {*} categoryId catégorie selectionnée
+ * @param {*} functionIds fonctions selectionées
+ * @returns liste de hr avec situations filtrées
+ */
 export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
   return hr
     .map((human) => {
@@ -81,15 +102,27 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
     })
     .filter((x) => (x.situations || []).some((s) => s.etp !== 0))
 }
+
+/**
+ * Calcul d'une situation
+ * @param {*} referentielId contentieux selectionné
+ * @param {*} hr liste de ressources humaines
+ * @param {*} allActivities liste des activités
+ * @param {*} categories liste des catégories
+ * @param {*} dateStart date de début
+ * @param {*} dateStop date de fin
+ * @param {*} selectedCategoryId catégorie selectionnée
+ * @returns une situation à une date donnée ou sur une période
+ */
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
-  //console.log(selectedCategoryId, categories)
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
+  // calcul des entrées/sorties sur les 12 derniers mois
   let totalIn = Math.floor(meanBy(lastActivities, 'entrees')) || 0
   let totalOut = Math.floor(meanBy(lastActivities, 'sorties')) || 0
 
-  //console.log('TOTAL OUT 1', totalOut)
+  // récupération du dernier stock
   let lastStock = lastActivities.length ? lastActivities[0].stock || 0 : 0
 
   let realTimePerCase = undefined
@@ -110,8 +143,10 @@ export async function getSituation (referentielId, hr, allActivities, categories
   let etpFonUntilStartDate = undefined
   let etpConUntilStartDate = undefined
 
+  // indicateur pour récupérer variable d'environnement
   const categoryLabel = categories.find((element) => element.id === selectedCategoryId).label
   let sufix = 'By' + categoryLabel
+
   if (lastActivities.length === 0) return emptySituation
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
@@ -125,7 +160,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
-    // console.log(etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
     // console.log('realTimePerCase', realTimePerCase)
@@ -138,9 +172,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
     const countOfCalandarDays = nbOfDays(endDateCs, new Date())
 
-    console.log({ countOfCalandarDays, start: endDateCs, end: new Date() })
     // Compute stock projection until today
-    // console.log(lastStock)
     lastStock = computeLastStock(
       lastStock,
       countOfCalandarDays,
@@ -149,8 +181,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
       totalIn,
       sufix
     )
-
-    //console.log({ totalOut, lastStock })
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
@@ -162,14 +192,12 @@ export async function getSituation (referentielId, hr, allActivities, categories
       // Compute etpAffected & etpMag at dateStart (specific date) to display
       etpAffectedAtStartDate = await getHRPositions(hr, referentielId, categories, new Date(dateStart))
       ;({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
-      //console.log('CHECK IF DATE IS NOT TODAY', etpMag)
+
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-      //console.log('totalOut', totalOut)
 
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart))
-      //console.log('DELTAAAAAA', etpAffectedDeltaToCompute)
       ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
 
       // Compute stock, coverage, dtes projection until dateStart
@@ -237,21 +265,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
         monthlyReport: monthlyReport,
       }
     }
-    /**
-    const tmpList = {
-      etpMagFuturToCompute,
-      countOfCalandarDays,
-      etpAffectedDeltaToCompute,
-      etpMagToCompute,
-      etpAffectedToday,
-      lastActivities,
-      deltaOfMonths,
-    }
-    */
 
-    //console.log('TOTAL ETPMAG', etpMag)
     return {
-      //...tmpList,
       endSituation,
       countOfCalandarDays,
       totalIn,
@@ -272,14 +287,36 @@ export async function getSituation (referentielId, hr, allActivities, categories
   }
 }
 
+/**
+ * Calcul du taux de couverture
+ * @param {*} totalOut sorties
+ * @param {*} totalIn entrées
+ * @returns taux de couverture en %
+ */
 function computeCoverage (totalOut, totalIn) {
   return fixDecimal(totalOut / totalIn, 100)
 }
 
+/**
+ * Calcul du DTES
+ * @param {*} lastStock quantité de stock
+ * @param {*} totalOut sorties
+ * @returns le délai nécessaire pour écolouer la totalité des stocks en mois
+ */
 function computeDTES (lastStock, totalOut) {
   return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null
 }
 
+/**
+ * Calcul du stock
+ * @param {*} lastStock quantité de stock
+ * @param {*} countOfCalandarDays nombre de jours travaillés
+ * @param {*} futurEtp etp moyen sur la période calculée
+ * @param {*} magRealTimePerCase temps moyen par dossier
+ * @param {*} totalIn entrées
+ * @param {*} sufix catégorie
+ * @returns stock calculé
+ */
 function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
   console.log('Calcul des stocks', {
     lastStock,
@@ -307,36 +344,53 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
   return stock < 0 ? 0 : stock
 }
 
+/**
+ * Calcul des sorties
+ * @param {*} magRealTimePerCase temps moyen par dossier
+ * @param {*} etp etp à un instant précis
+ * @param {*} sufix catégorie
+ * @returns nombre de dossier sorties
+ */
 function computeTotalOut (magRealTimePerCase, etp, sufix) {
   return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
+/**
+ * Calcul du temps moyen par dossier
+ * @param {*} totalOut sortie
+ * @param {*} etp etp moyen sur les 12 derniers mois
+ * @param {*} sufix catégorie
+ * @returns le temps moyen par dossier sur les 12 derniers mois
+ */
 function computeRealTimePerCase (totalOut, etp, sufix) {
   let realTimeCorrectValue = fixDecimal(((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp), 100)
-  let realTimeCorrectvalueNotRounded = ((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp)
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
 
-  //console.log('REAL TIME PER CASE 1.1', etp, realTimeCorrectValue, realTimeDisplayed, realTimeToUse)
   return realTimeToUse
 }
 
+/**
+ * Retourne un objet d'ETP formaté pour le front
+ * @param {*} etpAffected objet d'etp calculé comprenant les 3 catégories
+ * @param {*} sufix catégorie selectionnée
+ * @returns objet formaté contenant les etp pour chaque catégorie
+ */
 export function getEtpByCategory (etpAffected, sufix = '') {
-  //console.log(etpAffected)
   let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
   let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
   let etpCon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
-  //console.log({ ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCon' + sufix]: etpCon })
+
   return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCon' + sufix]: etpCon }
 }
+
 /**
  * Get the Current Situations Activities of the last 12 months available
- * @param {*} referentielId
- * @param {*} allActivities
- * @param {*} filter
- * @param {*} dateStart
- * @param {*} dateStop
- * @returns
+ * @param {*} referentielId contentieux id
+ * @param {*} allActivities liste des activités
+ * @param {*} dateStart date de début
+ * @param {*} dateStop date de fin
+ * @returns situation
  */
 export async function getCSActivities (referentielId, allActivities, dateStart, dateStop) {
   if (allActivities.length !== 0) {
@@ -368,6 +422,11 @@ export async function getCSActivities (referentielId, allActivities, dateStart, 
   } else return { lastActivities: [], dateStart, dateStop }
 }
 
+/**
+ * Indique si une activité à au moins des entrées, des stock ou des sorties
+ * @param {*} activities
+ * @returns
+ */
 export function hasInOutOrStock (activities) {
   let hasIn = false
   let hasOut = false
@@ -383,6 +442,12 @@ export function hasInOutOrStock (activities) {
   return hasIn && hasOut && hasStock
 }
 
+/**
+ * Indique si un contentieux se trouve dans une liste de situation
+ * @param {*} situations liste de situation
+ * @param {*} referentielId contentieux id
+ * @returns boolean indiquant si le contentieux se trouve dans une liste de situation
+ */
 export function appearOneTimeAtLeast (situations, referentielId) {
   return situations.some((s) => {
     const activities = s.activities || []
@@ -390,6 +455,17 @@ export function appearOneTimeAtLeast (situations, referentielId) {
   })
 }
 
+/**
+ * Calcul de l'etp pour une liste de ressource humaine
+ * @param {*} hr liste des ressources humaines
+ * @param {*} referentielId contentieux id
+ * @param {*} categories liste de categories
+ * @param {*} date date de début
+ * @param {*} onPeriod indication de positions sur une période
+ * @param {*} dateStop date de fin
+ * @param {*} monthlyReport données mensuels
+ * @returns objet contenant l'ETP calculé
+ */
 export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
   const hrCategories = {}
   let hrCategoriesMonthly = new Object({})
@@ -557,6 +633,14 @@ export async function getHRVentilationOnPeriod (hr, referentielId, categories, d
   return { etptAll: list, monthlyList: { ...monthlyList } }
 }
 
+/**
+ * Recupère les ventilations à une date donnée
+ * @param {*} hr liste des ressources humaines
+ * @param {*} referentielId contentieux id
+ * @param {*} categories liste des categories
+ * @param {*} date date selectionné
+ * @returns objet contenant l'etp
+ */
 export async function getHRVentilation (hr, referentielId, categories, date) {
   const list = {}
   categories.map((c) => {
@@ -589,6 +673,15 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
   return list
 }
 
+/**
+ * Calcule d'une simulation
+ * @param {*} params paramètres de la simulation
+ * @param {*} simulation simulation initialisée
+ * @param {*} dateStart date de début
+ * @param {*} dateStop date de fin
+ * @param {*} sufix catégorie
+ * @returns simulation calculée
+ */
 export function execSimulation (params, simulation, dateStart, dateStop, sufix) {
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
@@ -737,6 +830,5 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
     )
   )
 
-  //console.log('$$$$$$$$$$$', simulation)
   return simulation
 }

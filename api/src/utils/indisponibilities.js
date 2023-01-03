@@ -1,6 +1,12 @@
 import { orderBy } from 'lodash'
 import { today } from './date'
 
+/**
+ * Récupère toutes les indisponibilités
+ * @param {*} hr
+ * @param {*} date
+ * @returns
+ */
 export const findAllIndisponibilities = (hr, date) => {
   let indisponibilities = orderBy(
     hr.indisponibilities || [],

@@ -7,6 +7,13 @@ var defaultClient = SibApiV3Sdk.ApiClient.instance
 var apiKey = defaultClient.authentications['api-key']
 apiKey.apiKey = config.sendinblue
 
+/**
+ * Envoi de mail
+ * @param {*} to 
+ * @param {*} templateId 
+ * @param {*} params 
+ * @returns instance de transaction mail
+ */
 export function sentEmail (to, templateId, params) {
   var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
   var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
@@ -30,6 +37,12 @@ export function sentEmail (to, templateId, params) {
   )
 }
 
+/**
+ * Import/supprime contact sendinblue
+ * @param {*} user 
+ * @param {*} addToList 
+ * @returns 
+ */
 export function sentEmailSendinblueUserList (user, addToList = true) {
   let apiInstance = new SibApiV3Sdk.ContactsApi()
 
