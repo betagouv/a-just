@@ -1,6 +1,8 @@
-import { sortBy } from 'lodash'
-import { month } from './date'
-
+/**
+ * Formalise les activités d'un contentieux en fonction de ses sous contentieux
+ * @param {*} childs
+ * @returns
+ */
 export const calculMainValuesFromChilds = (childs) => {
   const returnObject = {
     entrees: preformatActivitiesArray(childs, ['entrees', 'original_entrees']),
@@ -38,6 +40,12 @@ export const calculMainValuesFromChilds = (childs) => {
   return returnObject
 }
 
+/**
+ * Calcul du total d'un node
+ * @param {*} list
+ * @param {*} index
+ * @returns
+ */
 export const preformatActivitiesArray = (list, index) => {
   let total = null
   list.map((item) => {
@@ -53,14 +61,4 @@ export const preformatActivitiesArray = (list, index) => {
   })
 
   return total !== null && total < 0 ? 0 : total
-}
-
-export async function filterActivitiesByDateAndContentieuxId (activities, referentielId, startDate, endDate) {
-  return sortBy(
-    activities.filter(
-      (a) =>
-        a.contentieux.id === referentielId && month(a.periode).getTime() > month(startDate).getTime() && month(a.periode).getTime() <= month(endDate).getTime()
-    ),
-    'periode'
-  )
 }
