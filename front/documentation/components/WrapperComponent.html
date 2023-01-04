@@ -3758,9 +3758,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   NOMENCLATURE_DOWNLOAD_URL &#x3D;
     &#x27;/assets/Nomenclature_A-JUST_20221019_utilisateurs.html&#x27;
-    /**
-     * Menu de gauche 
-     */
+  /**
+   * Menu de gauche
+   */
   menu &#x3D; [
     {
       label: &#x27;Panorama&#x27;,
@@ -3770,18 +3770,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Constructeur
-   * @param authService 
-   * @param router 
-   * @param userService 
-   * @param humanResourceService 
-   * @param appService 
+   * @param authService
+   * @param router
+   * @param userService
+   * @param humanResourceService
+   * @param appService
    */
   constructor(
     private authService: AuthService,
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
   ) {
     super()
 
@@ -3824,7 +3824,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Mise à jour du menu qui affiche les pages accéssibles
-   * @param user 
+   * @param user
    */
   updateMenu(user: UserInterface | null) {
     const menu &#x3D; []
@@ -3868,8 +3868,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Retourne si un url est le même que celui de la page actuelle
-   * @param item 
-   * @returns 
+   * @param item
+   * @returns
    */
   isSelected(item: any) {
     return &#x60;/${item.path}&#x60; &#x3D;&#x3D;&#x3D; window.location.pathname
@@ -3877,7 +3877,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Changement de la juridiction
-   * @param id 
+   * @param id
    */
   onChangeHRBackup(id: number) {
     this.humanResourceService.backupId.next(id)
@@ -3885,9 +3885,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Export PDF du contenu et aussi au besoin du header
-   * @param filename 
-   * @param header 
-   * @returns 
+   * @param filename
+   * @param header
+   * @returns
    */
   async exportAsPdf(filename: string, header: boolean &#x3D; true): Promise&lt;any&gt; {
     this.duringPrint &#x3D; true
@@ -3946,7 +3946,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   /**
    * Methode à disposition pour forcer l&#x27;ouverture du paneau, pratique pour un appel exterieur du composant
-   * @param documentation 
+   * @param documentation
    */
   onForcePanelHelperToShow(documentation: DocumentationInterface) {
     this.documentationToShow &#x3D; documentation
@@ -3973,109 +3973,112 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;menu no-print&quot; title&#x3D;&quot;&quot;&gt;
-  &lt;div class&#x3D;&quot;images&quot;&gt;
-    &lt;div class&#x3D;&quot;logo white-mode block-marque-white&quot;&gt;&lt;/div&gt;
-    &lt;div class&#x3D;&quot;logo dark-mode block-marque-dark&quot;&gt;&lt;/div&gt;
-    &lt;div class&#x3D;&quot;logo-ajust white-mode logo-white&quot; [title]&#x3D;&quot;versionNumber&quot;&gt;&lt;/div&gt;
-    &lt;div class&#x3D;&quot;logo-ajust dark-mode logo-dark&quot; [title]&#x3D;&quot;versionNumber&quot;&gt;&lt;/div&gt;
-  &lt;/div&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;aj-news&gt;&lt;/aj-news&gt;
+&lt;div&gt;
+  &lt;div class&#x3D;&quot;menu no-print&quot; title&#x3D;&quot;&quot;&gt;
+    &lt;div class&#x3D;&quot;images&quot;&gt;
+      &lt;div class&#x3D;&quot;logo white-mode block-marque-white&quot;&gt;&lt;/div&gt;
+      &lt;div class&#x3D;&quot;logo dark-mode block-marque-dark&quot;&gt;&lt;/div&gt;
+      &lt;div class&#x3D;&quot;logo-ajust white-mode logo-white&quot; [title]&#x3D;&quot;versionNumber&quot;&gt;&lt;/div&gt;
+      &lt;div class&#x3D;&quot;logo-ajust dark-mode logo-dark&quot; [title]&#x3D;&quot;versionNumber&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
 
-  &lt;div class&#x3D;&quot;juridiction&quot; *ngIf&#x3D;&quot;hrBackups.length&quot;&gt;
-    &lt;div class&#x3D;&quot;juridiction-title&quot;&gt;
-      &lt;h6&gt;{{ hrBackup &amp;&amp; hrBackup.label }}&lt;/h6&gt;
-      &lt;mat-icon *ngIf&#x3D;&quot;hrBackups &amp;&amp; hrBackups.length &gt; 1&quot; [matMenuTriggerFor]&#x3D;&quot;menu&quot;&gt;expand_more&lt;/mat-icon&gt;
-      &lt;mat-menu #menu&#x3D;&quot;matMenu&quot;&gt;
-        &lt;button mat-menu-item *ngFor&#x3D;&quot;let bu of hrBackups&quot; (click)&#x3D;&quot;onChangeHRBackup(bu.id)&quot; [title]&#x3D;&quot;bu.id&quot;&gt;
-          {{ bu.label }}
-        &lt;/button&gt;
-      &lt;/mat-menu&gt;
+    &lt;div class&#x3D;&quot;juridiction&quot; *ngIf&#x3D;&quot;hrBackups.length&quot;&gt;
+      &lt;div class&#x3D;&quot;juridiction-title&quot;&gt;
+        &lt;h6&gt;{{ hrBackup &amp;&amp; hrBackup.label }}&lt;/h6&gt;
+        &lt;mat-icon *ngIf&#x3D;&quot;hrBackups &amp;&amp; hrBackups.length &gt; 1&quot; [matMenuTriggerFor]&#x3D;&quot;menu&quot;&gt;expand_more&lt;/mat-icon&gt;
+        &lt;mat-menu #menu&#x3D;&quot;matMenu&quot;&gt;
+          &lt;button mat-menu-item *ngFor&#x3D;&quot;let bu of hrBackups&quot; (click)&#x3D;&quot;onChangeHRBackup(bu.id)&quot; [title]&#x3D;&quot;bu.id&quot;&gt;
+            {{ bu.label }}
+          &lt;/button&gt;
+        &lt;/mat-menu&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
-  &lt;/div&gt;
 
-  &lt;div class&#x3D;&quot;menu-scrollable&quot;&gt;
-    &lt;div class&#x3D;&quot;menu-item&quot; *ngFor&#x3D;&quot;let item of menu&quot; [class.selected]&#x3D;&quot;isSelected(item)&quot;&gt;
-      &lt;a [routerLink]&#x3D;&quot;[&#x27;/&#x27; + item.path]&quot;&gt;
-        {{ item.label }}
-      &lt;/a&gt;
-    &lt;/div&gt;
-    &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
-    &lt;div class&#x3D;&quot;menu-item tools&quot;&gt;
-      &lt;p&gt;Outils&lt;/p&gt;
-      &lt;ul&gt;
-        &lt;li&gt;
-          &lt;a [href]&#x3D;&quot;DOCUMENTATION_URL&quot; target&#x3D;&quot;_blank&quot;&gt;
-            &lt;p&gt;
-              Documentation
-              &lt;i class&#x3D;&quot;ri-external-link-line&quot;&gt;&lt;/i&gt;
-            &lt;/p&gt;
-          &lt;/a&gt;
-        &lt;/li&gt;
-        &lt;li&gt;
-          &lt;a [href]&#x3D;&quot;NOMENCLATURE_DOWNLOAD_URL&quot; (click)&#x3D;&quot;onDownloadNomenclature()&quot; download&gt;
-            &lt;p&gt;Nomenclature&lt;/p&gt;
-          &lt;/a&gt;
-        &lt;/li&gt;
-        &lt;li&gt;
-          &lt;a [href]&#x3D;&quot;CALCULATE_DOWNLOAD_URL&quot; (click)&#x3D;&quot;onDownloadCalculator()&quot; download&gt;
-            &lt;p&gt;Calculatrice de ventilation&lt;/p&gt;
-          &lt;/a&gt;
-        &lt;/li&gt;
+    &lt;div class&#x3D;&quot;menu-scrollable&quot;&gt;
+      &lt;div class&#x3D;&quot;menu-item&quot; *ngFor&#x3D;&quot;let item of menu&quot; [class.selected]&#x3D;&quot;isSelected(item)&quot;&gt;
+        &lt;a [routerLink]&#x3D;&quot;[&#x27;/&#x27; + item.path]&quot;&gt;
+          {{ item.label }}
+        &lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div class&#x3D;&quot;flex-1&quot;&gt;&lt;/div&gt;
+      &lt;div class&#x3D;&quot;menu-item tools&quot;&gt;
+        &lt;p&gt;Outils&lt;/p&gt;
+        &lt;ul&gt;
+          &lt;li&gt;
+            &lt;a [href]&#x3D;&quot;DOCUMENTATION_URL&quot; target&#x3D;&quot;_blank&quot;&gt;
+              &lt;p&gt;
+                Documentation
+                &lt;i class&#x3D;&quot;ri-external-link-line&quot;&gt;&lt;/i&gt;
+              &lt;/p&gt;
+            &lt;/a&gt;
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;a [href]&#x3D;&quot;NOMENCLATURE_DOWNLOAD_URL&quot; (click)&#x3D;&quot;onDownloadNomenclature()&quot; download&gt;
+              &lt;p&gt;Nomenclature&lt;/p&gt;
+            &lt;/a&gt;
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;a [href]&#x3D;&quot;CALCULATE_DOWNLOAD_URL&quot; (click)&#x3D;&quot;onDownloadCalculator()&quot; download&gt;
+              &lt;p&gt;Calculatrice de ventilation&lt;/p&gt;
+            &lt;/a&gt;
+          &lt;/li&gt;
 
-        &lt;li&gt;
-          &lt;a routerLink&#x3D;&quot;/dashboard&quot;&gt;
-            &lt;p&gt;Extraire des données&lt;/p&gt;
-          &lt;/a&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-    &lt;div class&#x3D;&quot;menu-item&quot;&gt;
-      &lt;a href&#x3D;&quot;mailto:support-utilisateurs@a-just.fr&quot;&gt;
-        &lt;p&gt;Nous contacter&lt;/p&gt;
-      &lt;/a&gt;
-    &lt;/div&gt;
-    &lt;!-- &lt;div class&#x3D;&quot;menu-item disconnect&quot; (click)&#x3D;&quot;onDisconnect()&quot;&gt;
+          &lt;li&gt;
+            &lt;a routerLink&#x3D;&quot;/dashboard&quot;&gt;
+              &lt;p&gt;Extraire des données&lt;/p&gt;
+            &lt;/a&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;div class&#x3D;&quot;menu-item&quot;&gt;
+        &lt;a href&#x3D;&quot;mailto:support-utilisateurs@a-just.fr&quot;&gt;
+          &lt;p&gt;Nous contacter&lt;/p&gt;
+        &lt;/a&gt;
+      &lt;/div&gt;
+      &lt;!-- &lt;div class&#x3D;&quot;menu-item disconnect&quot; (click)&#x3D;&quot;onDisconnect()&quot;&gt;
     &lt;p&gt;Déconnexion&lt;/p&gt;
   &lt;/div&gt; --&gt;
+    &lt;/div&gt;
   &lt;/div&gt;
-&lt;/div&gt;
 
-&lt;div class&#x3D;&quot;contener&quot; #contener title&#x3D;&quot;&quot;&gt;
-  &lt;div class&#x3D;&quot;header no-print&quot; id&#x3D;&quot;top&quot;&gt;
-    &lt;div *ngIf&#x3D;&quot;backUrl&quot; class&#x3D;&quot;back-url&quot;&gt;
-      &lt;a [routerLink]&#x3D;&quot;backUrl&quot; [fragment]&#x3D;&quot;backAnchor&quot;&gt;
-        &lt;button class&#x3D;&quot;primary small&quot;&gt;
-          &lt;mat-icon&gt;chevron_left&lt;/mat-icon&gt;Retour
-        &lt;/button&gt;
-      &lt;/a&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-      &lt;div class&#x3D;&quot;title-with-doc&quot;&gt;
-        &lt;h3 [innerHTML]&#x3D;&quot;title&quot;&gt;&lt;/h3&gt;
-        &lt;span *ngIf&#x3D;&quot;documentation&quot; class&#x3D;&quot;documentation&quot;&gt;
-          &lt;div (click)&#x3D;&quot;onTogglePanelHelper()&quot;&gt;
-            &lt;i class&#x3D;&quot;ri-lightbulb-flash-line&quot;&gt;&lt;/i&gt;
-            &lt;span&gt;Comment ça marche ?&lt;/span&gt;
-          &lt;/div&gt;
-        &lt;/span&gt;
+  &lt;div class&#x3D;&quot;contener&quot; #contener title&#x3D;&quot;&quot;&gt;
+    &lt;div class&#x3D;&quot;header no-print&quot; id&#x3D;&quot;top&quot;&gt;
+      &lt;div *ngIf&#x3D;&quot;backUrl&quot; class&#x3D;&quot;back-url&quot;&gt;
+        &lt;a [routerLink]&#x3D;&quot;backUrl&quot; [fragment]&#x3D;&quot;backAnchor&quot;&gt;
+          &lt;button class&#x3D;&quot;primary small&quot;&gt;
+            &lt;mat-icon&gt;chevron_left&lt;/mat-icon&gt;Retour
+          &lt;/button&gt;
+        &lt;/a&gt;
       &lt;/div&gt;
-      &lt;p class&#x3D;&quot;subtitle&quot;&gt;
-        &lt;ng-container *ngTemplateOutlet&#x3D;&quot;subtitleTemplate || defaultSubtitleTemplate&quot;&gt;&lt;/ng-container&gt;
-      &lt;/p&gt;
+      &lt;div&gt;
+        &lt;div class&#x3D;&quot;title-with-doc&quot;&gt;
+          &lt;h3 [innerHTML]&#x3D;&quot;title&quot;&gt;&lt;/h3&gt;
+          &lt;span *ngIf&#x3D;&quot;documentation&quot; class&#x3D;&quot;documentation&quot;&gt;
+            &lt;div (click)&#x3D;&quot;onTogglePanelHelper()&quot;&gt;
+              &lt;i class&#x3D;&quot;ri-lightbulb-flash-line&quot;&gt;&lt;/i&gt;
+              &lt;span&gt;Comment ça marche ?&lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class&#x3D;&quot;subtitle&quot;&gt;
+          &lt;ng-container *ngTemplateOutlet&#x3D;&quot;subtitleTemplate || defaultSubtitleTemplate&quot;&gt;&lt;/ng-container&gt;
+        &lt;/p&gt;
+      &lt;/div&gt;
+      &lt;ng-template [ngIf]&#x3D;&quot;titleTemplate&quot;&gt;
+        &lt;ng-container *ngTemplateOutlet&#x3D;&quot;titleTemplate&quot;&gt;&lt;/ng-container&gt;
+      &lt;/ng-template&gt;
+      &lt;div *ngIf&#x3D;&quot;!alignLeft&quot; class&#x3D;&quot;space&quot;&gt;&lt;/div&gt;
+      &lt;div class&#x3D;&quot;actions&quot;&gt;
+        &lt;ng-container *ngTemplateOutlet&#x3D;&quot;actionTemplate || defaultActionTemplate&quot;&gt;&lt;/ng-container&gt;
+      &lt;/div&gt;
+      &lt;div class&#x3D;&quot;progress-bar&quot; *ngIf&#x3D;&quot;isLoading&quot;&gt;
+        &lt;mat-progress-bar mode&#x3D;&quot;indeterminate&quot;&gt;&lt;/mat-progress-bar&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
-    &lt;ng-template [ngIf]&#x3D;&quot;titleTemplate&quot;&gt;
-      &lt;ng-container *ngTemplateOutlet&#x3D;&quot;titleTemplate&quot;&gt;&lt;/ng-container&gt;
-    &lt;/ng-template&gt;
-    &lt;div *ngIf&#x3D;&quot;!alignLeft&quot; class&#x3D;&quot;space&quot;&gt;&lt;/div&gt;
-    &lt;div class&#x3D;&quot;actions&quot;&gt;
-      &lt;ng-container *ngTemplateOutlet&#x3D;&quot;actionTemplate || defaultActionTemplate&quot;&gt;&lt;/ng-container&gt;
+    &lt;div class&#x3D;&quot;content&quot; #content id&#x3D;&quot;content&quot;&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
     &lt;/div&gt;
-    &lt;div class&#x3D;&quot;progress-bar&quot; *ngIf&#x3D;&quot;isLoading&quot;&gt;
-      &lt;mat-progress-bar mode&#x3D;&quot;indeterminate&quot;&gt;&lt;/mat-progress-bar&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class&#x3D;&quot;content&quot; #content id&#x3D;&quot;content&quot;&gt;
-    &lt;ng-content&gt;&lt;/ng-content&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 
@@ -4114,8 +4117,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
                 <pre class="line-numbers"><code class="language-scss">@import &#x27;../../styles/utils.scss&#x27;;
 
 :host {
-  display: flex;
   height: 100%;
+
+  &gt; div {
+    display: flex;
+  }
 
   .subtitle-name {
     border-radius: 12px;
@@ -4567,8 +4573,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="menu no-print" title="">  <div class="images">    <div class="logo white-mode block-marque-white"></div>    <div class="logo dark-mode block-marque-dark"></div>    <div class="logo-ajust white-mode logo-white" [title]="versionNumber"></div>    <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber"></div>  </div>  <div class="juridiction" *ngIf="hrBackups.length">    <div class="juridiction-title">      <h6>{{ hrBackup && hrBackup.label }}</h6>      <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>      <mat-menu #menu="matMenu">        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">          {{ bu.label }}        </button>      </mat-menu>    </div>  </div>  <div class="menu-scrollable">    <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">      <a [routerLink]="[\'/\' + item.path]">        {{ item.label }}      </a>    </div>    <div class="flex-1"></div>    <div class="menu-item tools">      <p>Outils</p>      <ul>        <li>          <a [href]="DOCUMENTATION_URL" target="_blank">            <p>              Documentation              <i class="ri-external-link-line"></i>            </p>          </a>        </li>        <li>          <a [href]="NOMENCLATURE_DOWNLOAD_URL" (click)="onDownloadNomenclature()" download>            <p>Nomenclature</p>          </a>        </li>        <li>          <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>            <p>Calculatrice de ventilation</p>          </a>        </li>        <li>          <a routerLink="/dashboard">            <p>Extraire des données</p>          </a>        </li>      </ul>    </div>    <div class="menu-item">      <a href="mailto:support-utilisateurs@a-just.fr">        <p>Nous contacter</p>      </a>    </div>    <!-- <div class="menu-item disconnect" (click)="onDisconnect()">    <p>Déconnexion</p>  </div> -->  </div></div><div class="contener" #contener title="">  <div class="header no-print" id="top">    <div *ngIf="backUrl" class="back-url">      <a [routerLink]="backUrl" [fragment]="backAnchor">        <button class="primary small">          <mat-icon>chevron_left</mat-icon>Retour        </button>      </a>    </div>    <div>      <div class="title-with-doc">        <h3 [innerHTML]="title"></h3>        <span *ngIf="documentation" class="documentation">          <div (click)="onTogglePanelHelper()">            <i class="ri-lightbulb-flash-line"></i>            <span>Comment ça marche ?</span>          </div>        </span>      </div>      <p class="subtitle">        <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>      </p>    </div>    <ng-template [ngIf]="titleTemplate">      <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>    </ng-template>    <div *ngIf="!alignLeft" class="space"></div>    <div class="actions">      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>    </div>    <div class="progress-bar" *ngIf="isLoading">      <mat-progress-bar mode="indeterminate"></mat-progress-bar>    </div>  </div>  <div class="content" #content id="content">    <ng-content></ng-content>  </div></div><div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">  <div class="panel-header">    <div class="over-title">      <div class="panel-header-closing-row">        <h6>{{ documentationToShow && documentationToShow.title }}</h6>        <i class="ri-close-line" (click)="panelHelper = false"></i>      </div>      <p>        <i class="ri-lightbulb-flash-line"></i>        <span>Comment ça marche ?</span>      </p>    </div>  </div>  <iframe [src]="      (documentationToShow && documentationToShow.path) || \'\'        | sanitizeResourceUrl    "></iframe></div><ng-template #defaultActionTemplate></ng-template><ng-template #defaultSubtitleTemplate>{{ subtitle }}  <label *ngIf="subtitleName !== \'\'" class="subtitle-name">{{    subtitleName    }}</label></ng-template></div>'
-    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+        var COMPONENT_TEMPLATE = '<div><aj-news></aj-news><div>  <div class="menu no-print" title="">    <div class="images">      <div class="logo white-mode block-marque-white"></div>      <div class="logo dark-mode block-marque-dark"></div>      <div class="logo-ajust white-mode logo-white" [title]="versionNumber"></div>      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber"></div>    </div>    <div class="juridiction" *ngIf="hrBackups.length">      <div class="juridiction-title">        <h6>{{ hrBackup && hrBackup.label }}</h6>        <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>        <mat-menu #menu="matMenu">          <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">            {{ bu.label }}          </button>        </mat-menu>      </div>    </div>    <div class="menu-scrollable">      <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">        <a [routerLink]="[\'/\' + item.path]">          {{ item.label }}        </a>      </div>      <div class="flex-1"></div>      <div class="menu-item tools">        <p>Outils</p>        <ul>          <li>            <a [href]="DOCUMENTATION_URL" target="_blank">              <p>                Documentation                <i class="ri-external-link-line"></i>              </p>            </a>          </li>          <li>            <a [href]="NOMENCLATURE_DOWNLOAD_URL" (click)="onDownloadNomenclature()" download>              <p>Nomenclature</p>            </a>          </li>          <li>            <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>              <p>Calculatrice de ventilation</p>            </a>          </li>          <li>            <a routerLink="/dashboard">              <p>Extraire des données</p>            </a>          </li>        </ul>      </div>      <div class="menu-item">        <a href="mailto:support-utilisateurs@a-just.fr">          <p>Nous contacter</p>        </a>      </div>      <!-- <div class="menu-item disconnect" (click)="onDisconnect()">    <p>Déconnexion</p>  </div> -->    </div>  </div>  <div class="contener" #contener title="">    <div class="header no-print" id="top">      <div *ngIf="backUrl" class="back-url">        <a [routerLink]="backUrl" [fragment]="backAnchor">          <button class="primary small">            <mat-icon>chevron_left</mat-icon>Retour          </button>        </a>      </div>      <div>        <div class="title-with-doc">          <h3 [innerHTML]="title"></h3>          <span *ngIf="documentation" class="documentation">            <div (click)="onTogglePanelHelper()">              <i class="ri-lightbulb-flash-line"></i>              <span>Comment ça marche ?</span>            </div>          </span>        </div>        <p class="subtitle">          <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>        </p>      </div>      <ng-template [ngIf]="titleTemplate">        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>      </ng-template>      <div *ngIf="!alignLeft" class="space"></div>      <div class="actions">        <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>      </div>      <div class="progress-bar" *ngIf="isLoading">        <mat-progress-bar mode="indeterminate"></mat-progress-bar>      </div>    </div>    <div class="content" #content id="content">      <ng-content></ng-content>    </div>  </div></div><div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">  <div class="panel-header">    <div class="over-title">      <div class="panel-header-closing-row">        <h6>{{ documentationToShow && documentationToShow.title }}</h6>        <i class="ri-close-line" (click)="panelHelper = false"></i>      </div>      <p>        <i class="ri-lightbulb-flash-line"></i>        <span>Comment ça marche ?</span>      </p>    </div>  </div>  <iframe [src]="      (documentationToShow && documentationToShow.path) || \'\'        | sanitizeResourceUrl    "></iframe></div><ng-template #defaultActionTemplate></ng-template><ng-template #defaultSubtitleTemplate>{{ subtitle }}  <label *ngIf="subtitleName !== \'\'" class="subtitle-name">{{    subtitleName    }}</label></ng-template></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'CalculatorPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'WrapperComponent'};
 </script>

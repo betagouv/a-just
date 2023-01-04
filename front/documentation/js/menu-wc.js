@@ -185,13 +185,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/ComponentsModule.html" data-type="entity-link" >ComponentsModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' : 'data-target="#xs-components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' }>
+                                            'data-target="#components-links-module-ComponentsModule-57170a35cb7688c8710821f3123802ea0100f4bb86724097d7f5c27c503707f0899040fdcc578763ceb4d2363a7a5a58df68bc8b6a5f8416b537385b69d539f0"' : 'data-target="#xs-components-links-module-ComponentsModule-57170a35cb7688c8710821f3123802ea0100f4bb86724097d7f5c27c503707f0899040fdcc578763ceb4d2363a7a5a58df68bc8b6a5f8416b537385b69d539f0"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' :
-                                            'id="xs-components-links-module-ComponentsModule-f733a63196d36a55cb12d2a0a1df59fedf68caee20498a1b62c110e8583f74c05850c12e5cdd3c98de0b43265e13767d90a4f0e0d5dd50061a7b61013a22db21"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-ComponentsModule-57170a35cb7688c8710821f3123802ea0100f4bb86724097d7f5c27c503707f0899040fdcc578763ceb4d2363a7a5a58df68bc8b6a5f8416b537385b69d539f0"' :
+                                            'id="xs-components-links-module-ComponentsModule-57170a35cb7688c8710821f3123802ea0100f4bb86724097d7f5c27c503707f0899040fdcc578763ceb4d2363a7a5a58df68bc8b6a5f8416b537385b69d539f0"' }>
                                             <li class="link">
                                                 <a href="components/CoveragePreviewComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >CoveragePreviewComponent</a>
                                             </li>
@@ -236,6 +236,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                             </li>
                                             <li class="link">
                                                 <a href="components/LoadersWidgetComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >LoadersWidgetComponent</a>
+                                            </li>
+                                            <li class="link">
+                                                <a href="components/NewsComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >NewsComponent</a>
                                             </li>
                                             <li class="link">
                                                 <a href="components/OptionsBackupPanelComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >OptionsBackupPanelComponent</a>
@@ -445,6 +448,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="components/LoadersWidgetComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >LoadersWidgetComponent</a>
                                             </li>
                                             <li class="link">
+                                                <a href="components/NewsComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >NewsComponent</a>
+                                            </li>
+                                            <li class="link">
                                                 <a href="components/OptionsBackupPanelComponent.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >OptionsBackupPanelComponent</a>
                                             </li>
                                             <li class="link">
@@ -623,6 +629,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/HumanResourceService.html" data-type="entity-link" >HumanResourceService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/NewsService.html" data-type="entity-link" >NewsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/ReaffectatorService.html" data-type="entity-link" >ReaffectatorService</a>
                                 </li>
                                 <li class="link">
@@ -752,6 +761,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/listFormatedInterface-1.html" data-type="entity-link" >listFormatedInterface</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/NewsInterface.html" data-type="entity-link" >NewsInterface</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/NodeActivityUpdatedInterface.html" data-type="entity-link" >NodeActivityUpdatedInterface</a>
