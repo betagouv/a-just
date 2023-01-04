@@ -493,11 +493,10 @@
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
 import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
-import { flatten, meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
+import { orderBy, sumBy } from &#x27;lodash&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
 import { RHActivityInterface } from &#x27;src/app/interfaces/rh-activity&#x27;
-import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
 import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
 import { dataInterface } from &#x27;src/app/components/select/select.component&#x27;
 import { HRFonctionInterface } from &#x27;src/app/interfaces/hr-fonction&#x27;
@@ -505,18 +504,6 @@ import { HRSituationInterface } from &#x27;src/app/interfaces/hr-situation&#x27;
 import { WorkforceService } from &#x27;src/app/services/workforce/workforce.service&#x27;
 import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
 import { ReaffectatorService } from &#x27;src/app/services/reaffectator/reaffectator.service&#x27;
-import {
-  decimalToStringDate,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-} from &#x27;src/app/utils/dates&#x27;
-import { environment } from &#x27;src/environments/environment&#x27;
-import { SimulatorService } from &#x27;src/app/services/simulator/simulator.service&#x27;
-import { etpAffectedInterface } from &#x27;src/app/interfaces/calculator&#x27;
-import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
-import { copyArray } from &#x27;src/app/utils/array&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
@@ -584,13 +571,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showIndicatorPanel: boolean &#x3D; true
   firstETPTargetValue: (number | null)[] &#x3D; []
   isolatePersons: boolean &#x3D; false
+  showReelValues: boolean &#x3D; false
 
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
     private workforceService: WorkforceService,
     public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService,
     private appService: AppService
   ) {
     super()
@@ -643,6 +629,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       return c
     })
+
+    console.log(&#x27;this.listFormated&#x27;, this.listFormated)
   }
 
   trackById(index: number, item: any) {
@@ -969,6 +957,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ...itemList,
         referentiel: itemList.referentiel.map((r) &#x3D;&gt; ({
           ...r,
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
           totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
         })),
       }
@@ -1008,6 +997,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             lastStock &#x3D;&#x3D;&#x3D; 0 || outValue &#x3D;&#x3D;&#x3D; 0
               ? 0
               : fixDecimal(lastStock / outValue),
+          etpUseToday: refFromItemList.etpUseToday,
         }
       })
     }
