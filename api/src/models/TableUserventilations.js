@@ -1,5 +1,3 @@
-import { sentEmailSendinblueUserList } from '../utils/email'
-
 export default (sequelizeInstance, Model) => {
   Model.getUserVentilations = async (userId) => {
     const list = await Model.findAll({
@@ -52,16 +50,6 @@ export default (sequelizeInstance, Model) => {
         list.push(backup)
       }
     }
-
-    await sentEmailSendinblueUserList(
-      await Model.models.Users.findOne({
-        where: {
-          id: userId,
-        },
-        raw: true,
-      }),
-      list.length ? true : false
-    )
 
     return list
   }
