@@ -6,7 +6,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    return access.map(a => (a.access_id))
+    return access.map((a) => a.access_id)
   }
 
   Model.updateAccess = async (userId, accessIds) => {
@@ -17,7 +17,7 @@ export default (sequelizeInstance, Model) => {
       force: true,
     })
 
-    for(let i = 0; i < accessIds.length; i++) {
+    for (let i = 0; i < accessIds.length; i++) {
       await Model.create({
         user_id: userId,
         access_id: accessIds[i],
