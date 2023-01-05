@@ -1,7 +1,7 @@
 import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
-import { sentEmail } from '../utils/email'
+import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 
 export default (sequelizeInstance, Model) => {
@@ -66,6 +66,7 @@ export default (sequelizeInstance, Model) => {
       const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
 
       if (ventilationsList.length) {
+        sentEmailSendinblueUserList(user, true)
         await sentEmail(
           {
             email: user.email,
@@ -76,6 +77,8 @@ export default (sequelizeInstance, Model) => {
             juridictionsList: ventilationsList.map((v) => v.label).join(', '),
           }
         )
+      } else {
+        sentEmailSendinblueUserList(user, false)
       }
     } else {
       throw 'User not found'
