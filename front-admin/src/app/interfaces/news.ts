@@ -1,3 +1,5 @@
+import { Color } from "@angular-material-components/color-picker";
+
 /**
  * Interface pour afficher un bandeau news
  */
@@ -17,11 +19,11 @@ export interface NewsInterface {
 	/**
 	 * Background color
 	 */
-	backgroundColor?: string;
+	backgroundColor?: string | Color;
 	/**
 	 * Text color
 	 */
-	textColor?: string;
+	textColor?: string | Color;
 	/**
 	 * Temps de fermeture automatique
 	 */
@@ -37,7 +39,7 @@ export interface NewsInterface {
 	/**
 	 * Action button color
 	 */
-	actionButtonColor?: string;
+	actionButtonColor?: string | Color;
 	/**
 	 * Date de début
 	 */
