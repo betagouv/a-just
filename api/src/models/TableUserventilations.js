@@ -1,4 +1,13 @@
+/**
+ * Liste des juridictions qui ont accès
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Retourne les accès des juridictions à un utilisateur
+   * @param {*} userId
+   * @returns
+   */
   Model.getUserVentilations = async (userId) => {
     const list = await Model.findAll({
       attributes: ['id', 'user_id', 'hr_backup_id'],
@@ -24,6 +33,12 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Mise à jour des accès à un utilisateur
+   * @param {*} userId
+   * @param {*} ventilationsIds
+   * @returns
+   */
   Model.updateVentilations = async (userId, ventilationsIds) => {
     const list = []
     await Model.destroy({

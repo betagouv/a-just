@@ -1,4 +1,13 @@
+/**
+ * Commentaire attribué à un magistrat
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Récupération d'un commentaire d'une fiche
+   * @param {*} hrId
+   * @returns
+   */
   Model.getComment = async (hrId) => {
     const com = await Model.findOne({
       attributes: ['comment', ['updated_at', 'updatedAt']],
@@ -11,6 +20,12 @@ export default (sequelizeInstance, Model) => {
     return com || { comment: '', updatedAt: null }
   }
 
+  /**
+   * Modification du commentaire d'une fiche
+   * @param {*} hrId
+   * @param {*} comment
+   * @returns
+   */
   Model.updateComment = async (hrId, comment) => {
     let com = await Model.findOne({
       where: {

@@ -1,4 +1,14 @@
+/**
+ * Liste des options d'une juridiction
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Liste des sauvegardes
+   * @param {*} userId
+   * @param {*} juridictionId
+   * @returns
+   */
   Model.getBackup = async (userId, juridictionId) => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
@@ -34,6 +44,10 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Suppression d'une sauvegarde
+   * @param {*} backupId
+   */
   Model.removeBackup = async (backupId) => {
     await Model.destroy({
       where: {
@@ -54,6 +68,13 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  /**
+   * Copie d'une sauvegarde
+   * @param {*} backupId
+   * @param {*} backupName
+   * @param {*} juridictionId
+   * @returns
+   */
   Model.duplicateBackup = async (backupId, backupName, juridictionId) => {
     const backup = await Model.findOne({
       where: {
@@ -92,6 +113,14 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Sauvegarde des temps moyens à une juridicitons
+   * @param {*} list
+   * @param {*} backupId
+   * @param {*} backupName
+   * @param {*} juridictionId
+   * @returns
+   */
   Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
     let newBackupId = backupId
     let reelIds = []
@@ -147,6 +176,11 @@ export default (sequelizeInstance, Model) => {
     return newBackupId
   }
 
+  /**
+   * Renomme une sauvegarde
+   * @param {*} backupId
+   * @param {*} backupName
+   */
   Model.renameBackup = async (backupId, backupName) => {
     const backup = await Model.findOne({
       where: {
@@ -161,6 +195,13 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Vérifier si une utilisateur à accès a une sauvegarde
+   * @param {*} optionBackupId
+   * @param {*} juridictionId
+   * @param {*} userId
+   * @returns
+   */
   Model.haveAccess = async (optionBackupId, juridictionId, userId) => {
     const find = await Model.findOne({
       where: {
@@ -189,6 +230,12 @@ export default (sequelizeInstance, Model) => {
     return find ? true : false
   }
 
+  /**
+   * Control si un utilisateur sur les sauvegarde
+   * @param {*} optionBackupId
+   * @param {*} userId
+   * @returns
+   */
   Model.haveAccessWithoutJuridiction = async (optionBackupId, userId) => {
     const find = await Model.findOne({
       where: {
@@ -214,6 +261,10 @@ export default (sequelizeInstance, Model) => {
     return find ? true : false
   }
 
+  /**
+   * Retourne de l'enssemble des sauvegardes
+   * @returns
+   */
   Model.adminGetAll = async () => {
     const list = await Model.findAll({
       attributes: ['id', 'label'],

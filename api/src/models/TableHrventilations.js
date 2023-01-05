@@ -1,6 +1,10 @@
+/**
+ * Ancienne manière de stocker les activités d'une fiche, a supprimer progressivement
+ */
+
 export default (sequelizeInstance, Model) => {
   Model.getActivitiesByHR = async (hrId, dateStop) => {
-    if(dateStop) {
+    if (dateStop) {
       dateStop = new Date(dateStop)
     }
 
@@ -9,14 +13,16 @@ export default (sequelizeInstance, Model) => {
       where: {
         rh_id: hrId,
       },
-      include: [{
-        attributes: ['id', 'label'],
-        model: Model.models.ContentieuxReferentiels,
-      }],
+      include: [
+        {
+          attributes: ['id', 'label'],
+          model: Model.models.ContentieuxReferentiels,
+        },
+      ],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       const dStart = list[i].date_start ? new Date(list[i].date_start) : null
       const dStop = list[i].date_stop ? new Date(list[i].date_stop) : null
 

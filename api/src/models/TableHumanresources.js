@@ -2,11 +2,15 @@ import { posad } from '../constants/hr'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
-const now = new Date()
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+/**
+ * Cache des juridicitions avec leurs magistrats
+ */
 let cacheJuridictionPeoples = {}
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Chargement des juridictions
+   */
   Model.onPreload = async () => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
@@ -16,6 +20,11 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Suppresion de la fiche d'une juridiction en cache
+   * @param {*} humanId
+   * @param {*} backupId
+   */
   Model.removeCacheByUser = async (humanId, backupId) => {
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === humanId)
 
@@ -24,6 +33,10 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Modification de la fiche d'une juridiction en cache
+   * @param {*} human
+   */
   Model.updateCacheByUser = async (human) => {
     console.log(human)
     const backupId = human.backupId
@@ -36,6 +49,11 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Liste des fiches d'une juridiction
+   * @param {*} backupId
+   * @returns
+   */
   Model.getCache = async (backupId) => {
     if (!cacheJuridictionPeoples[backupId]) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
@@ -44,6 +62,11 @@ export default (sequelizeInstance, Model) => {
     return cacheJuridictionPeoples[backupId]
   }
 
+  /**
+   * Retour des détails d'une juridiction
+   * @param {*} backupId
+   * @returns
+   */
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
@@ -79,6 +102,11 @@ export default (sequelizeInstance, Model) => {
     return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
   }
 
+  /**
+   * Retour des détails d'une fiche
+   * @param {*} hrId
+   * @returns
+   */
   Model.getHrDetails = async (hrId) => {
     const details = await Model.findOne({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
@@ -114,7 +142,14 @@ export default (sequelizeInstance, Model) => {
     return null
   }
 
+  /**
+   * Import une liste de fiche et auto affectation à des juridictions
+   * @param {*} list
+   */
   Model.importList = async (list) => {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
@@ -219,6 +254,12 @@ export default (sequelizeInstance, Model) => {
     //console.log(importSituation)
   }
 
+  /**
+   * Control si une utilisateur a accès à une fiche
+   * @param {*} HRId
+   * @param {*} userId
+   * @returns
+   */
   Model.haveAccess = async (HRId, userId) => {
     const hr = await Model.findOne({
       attributes: ['id'],
@@ -246,6 +287,12 @@ export default (sequelizeInstance, Model) => {
     return hr ? true : false
   }
 
+  /**
+   * Mise à jour d'une fiche
+   * @param {*} hr
+   * @param {*} backupId
+   * @returns
+   */
   Model.updateHR = async (hr, backupId) => {
     const options = {
       first_name: hr.firstName || null,
@@ -276,6 +323,11 @@ export default (sequelizeInstance, Model) => {
     return await Model.getHr(hr.id)
   }
 
+  /**
+   * Retour complet d'une fiche
+   * @param {*} hrId
+   * @returns
+   */
   Model.getHr = async (hrId) => {
     let hr = await Model.findOne({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'registration_number', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
@@ -314,6 +366,11 @@ export default (sequelizeInstance, Model) => {
     return hr
   }
 
+  /**
+   * Suppression d'une fiche et se ses éléments rattachés
+   * @param {*} hrId
+   * @returns
+   */
   Model.removeHR = async (hrId) => {
     const hrFromDB = await Model.findOne({
       attributes: ['id', 'backup_id'],

@@ -1,7 +1,16 @@
 import { Op } from 'sequelize'
 import { today } from '../utils/date'
 
+/**
+ * Liste des indispo d'une fiche
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Liste des indispo d'une fiches
+   * @param {*} HRId
+   * @returns
+   */
   Model.getAllByHR = async (HRId) => {
     const list = await Model.findAll({
       attributes: ['id', 'percent', 'date_start', 'date_stop'],
@@ -35,11 +44,16 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Mise à jour des indispo d'une fiche
+   * @param {*} indisponibilities
+   * @param {*} hRId
+   */
   Model.syncIndisponibilites = async (indisponibilities, hRId) => {
     let reelHRIds = []
 
     for (let i = 0; i < indisponibilities.length; i++) {
-      const indispo = indisponibilities[i] 
+      const indispo = indisponibilities[i]
       console.log(indispo)
 
       const options = {
