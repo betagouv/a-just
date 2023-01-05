@@ -1,13 +1,22 @@
 import { orderBy, sortBy } from 'lodash'
 import { Op } from 'sequelize'
-import {
-  extractCodeFromLabelImported,
-  referentielMappingIndex,
-} from '../utils/referentiel'
+import { extractCodeFromLabelImported, referentielMappingIndex } from '../utils/referentiel'
+
+/**
+ * Scripts intermediaires des contentieux
+ */
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Cache du référentiel
+   */
   Model.cacheReferentielMap = null
 
+  /**
+   * Retourne la liste du référentiel et prend en cache si besoin
+   * @param {*} force
+   * @returns
+   */
   Model.getReferentiels = async (force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
       let list = (
@@ -64,32 +73,11 @@ export default (sequelizeInstance, Model) => {
     return Model.cacheReferentielMap
   }
 
-  Model.formatReferentielWithCode = async (list) => {
-    for (let i = 0; i < list.length; i++) {
-      const ref = list[i]
-
-      for (let i = 3; i <= 4; i++) {
-        if (ref['niveau_' + i]) {
-          const extract = extractCodeFromLabelImported(ref['niveau_' + i])
-          if (extract && extract.code) {
-            const findToDB = await Model.findOne({
-              where: {
-                label: extract.label,
-                code_import: null,
-              },
-            })
-            if (findToDB) {
-              console.log(extract)
-              await findToDB.update({
-                code_import: extract.code,
-              })
-            }
-          }
-        }
-      }
-    }
-  }
-
+  /**
+   * Importe une nouvelle liste de réfentiel et modifie, supprime et crée en fonction du code d'import.
+   * @param {*} list
+   * @returns
+   */
   Model.importList = async (list) => {
     // The service work by label name and not by id. Find "niveau_3" or "niveau_4" and not "id"
     const listCodeUpdated = []
@@ -192,13 +180,9 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
     for (let i = 0; i < humanFromDB.length; i++) {
-      const situations = await Model.models.HRSituations.getListByHumanId(
-        humanFromDB[i].id
-      )
+      const situations = await Model.models.HRSituations.getListByHumanId(humanFromDB[i].id)
       const activities = situations.reduce((acc, cur) => {
-        const filterActivities = (cur.activities || []).filter(
-          (c) => idNacFinded.indexOf(c.contentieux.id) !== -1
-        )
+        const filterActivities = (cur.activities || []).filter((c) => idNacFinded.indexOf(c.contentieux.id) !== -1)
         return acc.concat(filterActivities)
       }, [])
 
@@ -208,9 +192,7 @@ export default (sequelizeInstance, Model) => {
           person: humanFromDB[i],
           situations,
           activitiesImpacted: activities,
-          impact: deltaToUpdate.filter(
-            (d) => contentieuxIds.indexOf(d.id) !== -1
-          ),
+          impact: deltaToUpdate.filter((d) => contentieuxIds.indexOf(d.id) !== -1),
         })
       }
     }
@@ -224,6 +206,11 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Retourne le contentieux id en fonction de son nom
+   * @param {*} label
+   * @returns
+   */
   Model.getContentieuxId = async (label) => {
     const listCont = await Model.findOne({
       attributes: ['id'],

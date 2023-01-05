@@ -1,6 +1,15 @@
 import { Op } from 'sequelize'
 
+/**
+ * Liste des actitiés d'une sitution d'un magistrat
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Liste des activitiés d'une situatioj
+   * @param {*} HRActivityId
+   * @returns
+   */
   Model.getAll = async (HRActivityId) => {
     const list = await Model.findAll({
       attributes: ['id', 'percent'],
@@ -29,6 +38,11 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Ajoute, modifie ou supprime des activités d'une situation
+   * @param {*} HRActivities
+   * @param {*} hRSituationId
+   */
   Model.syncHRActivities = async (HRActivities, hRSituationId) => {
     let reelHRIds = []
 
