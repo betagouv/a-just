@@ -42,6 +42,7 @@ const emptySituation = {
   magRealTimePerCase: null,
   etpFon: null,
   etpCont: null,
+  etpUseToday: null,
   etpAffected: null,
   etpToCompute: null,
 }
@@ -130,7 +131,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
   let Coverage = undefined
   let etpAffectedAtStartDate = undefined
   let etpAffectedToday = undefined
-  let etpUseToday = undefined
   let etpMagToCompute = undefined
   let etpFonToCompute = undefined
   let etpConToCompute = undefined
@@ -153,7 +153,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
     // console.log(etpAffectedToday)
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
-    //console.log('ETPMAG 1', etpMag)
+    // console.log('ETPMAG 1', referentielId, etpMag)
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))

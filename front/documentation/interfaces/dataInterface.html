@@ -73,7 +73,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Interface d&#39;un item de la liste</p>
+                <p>Interface d&#39;un réferentiel selectionné</p>
 
             </p>
 
@@ -163,6 +163,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sous contentieux</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -196,6 +202,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id référentiel</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -234,6 +246,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeur précédente</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -267,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeur</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -284,30 +308,48 @@
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 
 /**
- * Interface d&#x27;un item de la liste
+ * Interface d&#x27;un réferentiel selectionné
  */
-
 export interface dataInterface {
+  /**
+   * Id référentiel
+   */
   id: number
+  /**
+   * Valeur
+   */
   value: string
+  /**
+   * Valeur précédente
+   */
   orignalValue?: string
+  /**
+   * Sous contentieux
+   */
   childrens?: childrenInterface[]
 }
 
 /**
- * Interface d&#x27;un enfant 
+ * Interface d&#x27;un enfant
  */
-
 export interface childrenInterface {
+  /**
+   * Id
+   */
   id: number
+  /**
+   * Valeur
+   */
   value: string
+  /**
+   * Id du parent
+   */
   parentId?: number
 }
 
 /**
  * Composant select designer pour le projet
  */
-
 @Component({
   selector: &#x27;aj-select&#x27;,
   templateUrl: &#x27;./select.component.html&#x27;,
@@ -448,7 +490,8 @@ export class SelectComponent extends MainClass implements OnChanges {
 
   /**
    * Nouvelle liste ou item sélectionnée
-   * @param list 
+   * @param list
+   * @returns void
    */
   onSelectedChanged(list: number[] | number) {
     if (this.parent &amp;&amp; Array.isArray(list)) {

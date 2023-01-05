@@ -85,10 +85,10 @@
                             <a href="#environment" title="src/environments/environment.prod.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.prod.ts)</a>
                         </li>
                         <li>
-                            <a href="#environment" title="src/environments/environment.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.ts)</a>
+                            <a href="#environment" title="src/environments/environment.staging.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.staging.ts)</a>
                         </li>
                         <li>
-                            <a href="#environment" title="src/environments/environment.staging.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.staging.ts)</a>
+                            <a href="#environment" title="src/environments/environment.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.ts)</a>
                         </li>
                         <li>
                             <a href="#etpFon" title="src/app/routes/simulator/simulator.page.ts" ><b>etpFon</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.page.ts)</a>
@@ -259,7 +259,7 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;/assets/calculatrice%20de%20ventilation%20du%20temps%20par%20activit%C3%A9%20A-JUST%20MAG%20et%20GRF.xlsx&#x27;</code>
+                        <i>Default value : </i><code>&#x27;/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF_20221219.xlsx&#x27;</code>
                     </td>
                 </tr>
 
@@ -519,51 +519,6 @@ Gris : #999999</p>
         </tbody>
     </table>
 </section>
-    <h3>src/environments/environment.ts</h3>
-    <section>
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="environment"></a>
-                    <span class="name">
-                        <span ><b>environment</b></span>
-                        <a href="#environment"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>{
-  production: false,
-  serverUrl: &#x27;http://localhost:8080/api/&#x27;,
-  nbDaysByMagistrat: 208,
-  nbDaysByFonctionnaire: 229.57, // 1607 heures / an
-  nbHoursPerDayAndFonctionnaire: 7,
-  nbHoursPerDayAndMagistrat: 8,
-  version: packageJSON.version,
-  matomo: null,
-  forceSSL: false,
-}</code>
-                    </td>
-                </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Variables global avec url serveur différent ou matomo qui change</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-</section>
     <h3>src/environments/environment.staging.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -595,6 +550,51 @@ Gris : #999999</p>
   version: packageJSON.version,
   matomo: 261,
   forceSSL: true,
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variables global avec url serveur différent ou matomo qui change</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/environments/environment.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="environment"></a>
+                    <span class="name">
+                        <span ><b>environment</b></span>
+                        <a href="#environment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  production: false,
+  serverUrl: &#x27;http://localhost:8080/api/&#x27;,
+  nbDaysByMagistrat: 208,
+  nbDaysByFonctionnaire: 229.57, // 1607 heures / an
+  nbHoursPerDayAndFonctionnaire: 7,
+  nbHoursPerDayAndMagistrat: 8,
+  version: packageJSON.version,
+  matomo: null,
+  forceSSL: false,
 }</code>
                     </td>
                 </tr>
@@ -793,6 +793,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -819,6 +825,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -845,6 +857,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -871,6 +889,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -897,6 +921,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -923,6 +953,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -949,6 +985,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -975,6 +1017,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1001,6 +1049,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1027,6 +1081,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1053,6 +1113,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1079,6 +1145,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1105,6 +1177,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1131,6 +1209,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1157,6 +1241,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1183,6 +1273,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1209,6 +1305,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1235,6 +1337,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1261,6 +1369,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1287,6 +1401,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1313,6 +1433,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1339,6 +1465,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1365,6 +1497,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1391,6 +1529,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2112,6 +2256,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Arbre de décision de simulation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2141,6 +2291,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Excel file extension</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2167,6 +2323,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Excel file details</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2287,10 +2449,17 @@ Gris : #999999</p>
   EtpChartComponent,
   WrapperNoConnectedComponent,
   FooterNoConnectedComponent,
+  NewsComponent,
 ]</code>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des composants à importer</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

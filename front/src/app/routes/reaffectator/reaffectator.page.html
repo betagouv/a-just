@@ -36,7 +36,7 @@
             <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
             <p>Compteurs</p>
           </div>
-          <button (mousedown)="showReelValues = true" (mouseleave)="showReelValues = false"
+          <button *ngIf="showIndicatorPanel" (mousedown)="showReelValues = true" (mouseleave)="showReelValues = false"
             (mouseup)="showReelValues = false">Voir avant / après</button>
         </div>
         <ng-template [ngIf]="showIndicatorPanel">
@@ -61,8 +61,8 @@
       <ng-template [ngIf]="showIndicatorPanel">
         <div class="activities">
           <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
-            <ng-template [ngIf]="referentiel.length > index + 1">
-              <div class="taux-row">
+            <div class="taux-row">
+              <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="taux"
                   [ngClass]="{'show-reel-values': showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
                   <aj-speedometer class="with-auto small-text"
@@ -70,17 +70,19 @@
                     [classDarkMode]="true" [percent]="showReelValues ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
                 </div>
-              </div>
-              <div class="dtes-row">
+              </ng-template>
+            </div>
+            <div class="dtes-row">
+              <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="dtes"
                   [ngClass]="{'show-reel-values': showReelValues && ref.realDTESInMonths && ref.dtes !== ref.realDTESInMonths}">
                   <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
-              </div>
-              <div class="etp-target-row">
-                <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
-              </div>
-            </ng-template>
+              </ng-template>
+            </div>
+            <div class="etp-target-row">
+              <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
+            </div>
             <div class="flex-1"></div>
             <div class="total-etp-row">
               <p>{{ref.etpUseToday | number:".2-2"}}</p>
@@ -133,7 +135,8 @@
                 </div>
                 <div class="etp"
                   [ngClass]="{'show-reel-values': showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
-                  <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number: "0.2-2"}}</p>
+                  <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number:
+                    "0.2-2"}}</p>
                 </div>
                 <div class="filter">
                   <i class="ri-sort-desc"></i>
