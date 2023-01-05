@@ -1,3 +1,4 @@
+import { Color } from '@angular-material-components/color-picker';
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
@@ -5,6 +6,7 @@ import { REMIXICONLIST } from 'src/app/constants/icons';
 import { NewsInterface } from 'src/app/interfaces/news';
 import { MainClass } from 'src/app/libs/main-class';
 import { NewsService } from 'src/app/services/news/news.service';
+import { hexToRgb } from 'src/app/utils/color';
 
 @Component({
   templateUrl: './news.page.html',
@@ -12,7 +14,13 @@ import { NewsService } from 'src/app/services/news/news.service';
 })
 export class NewsPage extends MainClass implements OnInit {
   REMIXICONLIST = REMIXICONLIST;
-  displayedColumns: string[] = ['html', 'dateStart', 'dateStop', 'enabled', 'actions'];
+  displayedColumns: string[] = [
+    'html',
+    'dateStart',
+    'dateStop',
+    'enabled',
+    'actions',
+  ];
   dataSource = new MatTableDataSource();
   newsToEdit: NewsInterface | null = null;
   popupAction = [
@@ -71,7 +79,18 @@ export class NewsPage extends MainClass implements OnInit {
 
   onLoad() {
     this.newsService.getAll().then((datas) => {
-      this.dataSource.data = datas;
+      this.dataSource.data = datas.map((d: NewsInterface) => {
+        const textColorHex = d.textColor && typeof d.textColor === 'string' ? hexToRgb(d.textColor) : null
+        const backgroundColorHex = d.backgroundColor && typeof d.backgroundColor === 'string' ? hexToRgb(d.backgroundColor) : null
+        const actionButtonColorHex = d.actionButtonColor && typeof d.actionButtonColor === 'string' ? hexToRgb(d.actionButtonColor) : null
+
+        return {
+          ...d,
+          textColor: textColorHex ? new Color(textColorHex.r, textColorHex.g, textColorHex.b) : '',
+          backgroundColor: backgroundColorHex ? new Color(backgroundColorHex.r, backgroundColorHex.g, backgroundColorHex.b) : '',
+          actionButtonColor: actionButtonColorHex ? new Color(actionButtonColorHex.r, actionButtonColorHex.g, actionButtonColorHex.b) : ''
+        }
+      });
     });
   }
 
@@ -80,7 +99,7 @@ export class NewsPage extends MainClass implements OnInit {
   }
 
   onRemove(b: NewsInterface) {
-    if(confirm('Supprimer cette notification ?')) {
+    if (confirm('Supprimer cette notification ?')) {
       this.newsService.remove(b.id).then(() => {
         this.onLoad();
       });
@@ -113,6 +132,34 @@ export class NewsPage extends MainClass implements OnInit {
             if (!this.newsToEdit.dateStop) {
               alert('Vous devez saisir une date de fin de diffusion !');
               return;
+            }
+
+            console.log(this.newsToEdit);
+            if (
+              this.newsToEdit &&
+              this.newsToEdit.actionButtonColor &&
+              typeof this.newsToEdit.actionButtonColor !== 'string' && 
+              this.newsToEdit.actionButtonColor.hex
+            ) {
+              this.newsToEdit.actionButtonColor = `#${this.newsToEdit.actionButtonColor.hex}`;
+            }
+
+            if (
+              this.newsToEdit &&
+              this.newsToEdit.backgroundColor &&
+              typeof this.newsToEdit.backgroundColor !== 'string' && 
+              this.newsToEdit.backgroundColor.hex
+            ) {
+              this.newsToEdit.backgroundColor = `#${this.newsToEdit.backgroundColor.hex}`;
+            }
+
+            if (
+              this.newsToEdit &&
+              this.newsToEdit.textColor &&
+              typeof this.newsToEdit.textColor !== 'string' && 
+              this.newsToEdit.textColor.hex
+            ) {
+              this.newsToEdit.textColor = `#${this.newsToEdit.textColor.hex}`;
             }
 
             this.newsService.updateOrCreate(this.newsToEdit).then(() => {
