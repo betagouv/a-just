@@ -13,6 +13,9 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 
+/**
+ * Interface d'un référentiel spécifique à la page
+ */
 interface ContentieuReferentielActivitiesInterface
   extends ContentieuReferentielInterface {
   activityUpdated: NodeActivityUpdatedInterface | null
@@ -23,22 +26,56 @@ interface ContentieuReferentielActivitiesInterface
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
+  /**
+   * Dom du wrapper 
+   */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  /**
+   * Liste des activités 
+   */
   activities: ActivityInterface[] = []
+  /**
+   * Date du mois sélectionné
+   */
   activityMonth: Date = new Date()
+  /**
+   * Référentiel
+   */
   referentiel: ContentieuReferentielActivitiesInterface[] = []
+  /**
+   * Node qui sauvegarde qui à modifié en dernier
+   */
   updatedBy: {
     user: UserInterface | null
     date: Date
   } | null = null
+  /**
+   * Instance de l'auto mise à jours des activités
+   */
   timeoutUpdateAcitity: any = {}
+  /**
+   * Affiche ou non un panel si les données existes
+   */
   canEditActivities: boolean = false
+  /**
+   * Control si c'est le premier
+   */
   isLoadedFirst: boolean = true
+  /**
+   * Lien de la doc
+   */
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
   }
 
+  /**
+   * Constructeur
+   * @param activitiesService 
+   * @param humanResourceService 
+   * @param referentielService 
+   * @param userService 
+   */
   constructor(
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
@@ -68,10 +105,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     )
   }
 
+  /**
+   * Destruction des observables lors de la suppression de la page
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Modificiation de la donnée d'entrée, sorties, stock d'un contentieux
+   * @param referentiel 
+   * @param subRef 
+   * @param nodeUpdated 
+   */
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
     subRef: ContentieuReferentielInterface,
@@ -154,10 +200,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }, 750)
   }
 
+  /**
+   * Changement de la date via le selecteur
+   * @param date 
+   */
   changeMonth(date: Date) {
     this.activitiesService.activityMonth.next(date)
   }
 
+  /**
+   * Chargement de la liste des activités d'un mois sélectionné
+   */
   onLoadMonthActivities() {
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
@@ -236,6 +289,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       })
   }
 
+  /**
+   * Retour des titres des infos bulles
+   * @param type 
+   * @param contentieux 
+   * @param value 
+   * @returns 
+   */
   getTooltipTitle(
     type: 'entrees' | 'sorties' | 'stock',
     contentieux: ContentieuReferentielActivitiesInterface,
@@ -293,6 +353,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     return string
   }
 
+  /**
+   * Retour du contenu des tooltips
+   * @param type 
+   * @param contentieux 
+   * @param value 
+   * @param level 
+   * @returns 
+   */
   getTooltipBody(
     type: 'entrees' | 'sorties' | 'stock',
     contentieux: ContentieuReferentielActivitiesInterface,
@@ -353,6 +421,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
+  /**
+   * Retourne le pied des tooltips
+   * @param type 
+   * @param contentieux 
+   * @param value 
+   * @param level 
+   * @returns 
+   */
   getTooltipFooter(
     type: string,
     contentieux: ContentieuReferentielActivitiesInterface,
@@ -380,6 +456,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     return ''
   }
 
+  /**
+   * Force l'ouverture du paneau d'aide
+   * @param type 
+   */
   onShowPanel(type: string) {
     switch (type) {
       case 'logiciel':

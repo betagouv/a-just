@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page d&#39;extraction</p>
+
+    </p>
 
     <p class="comment">
         <h3>Extends</h3>
@@ -76,12 +83,6 @@
                 <code><a href="../classes/MainClass.html" target="_self" >MainClass</a></code>
     </p>
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.io/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
-    </p>
 
 
 <section>
@@ -187,9 +188,6 @@
                                 <a href="#export" >export</a>
                             </li>
                             <li>
-                                <a href="#ngAfterViewInit" >ngAfterViewInit</a>
-                            </li>
-                            <li>
                                 <a href="#selectDate" >selectDate</a>
                             </li>
                             <li>
@@ -293,7 +291,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:25</a></div>
                             </td>
                         </tr>
 
@@ -360,8 +358,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="57"
-                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:57</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="61"
+                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:61</a></div>
                 </td>
             </tr>
 
@@ -397,45 +395,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="27"
-                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:27</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="ngAfterViewInit"></a>
-                    <span class="name">
-                        <span ><b>ngAfterViewInit</b></span>
-                        <a href="#ngAfterViewInit"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>ngAfterViewInit()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="10"
-                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:10</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:31</a></div>
                 </td>
             </tr>
 
@@ -471,8 +432,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="36"
+                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:36</a></div>
                 </td>
             </tr>
 
@@ -552,8 +513,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="44"
-                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:44</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="48"
+                            class="link-to-prism">src/app/routes/dashboard/dashboard.page.ts:48</a></div>
                 </td>
             </tr>
 
@@ -2529,19 +2490,19 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AfterViewInit, Component } from &#x27;@angular/core&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component } from &#x27;@angular/core&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 import { ExcelService } from &#x27;src/app/services/excel/excel.service&#x27;
+
+/**
+ * Page d&#x27;extraction
+ */
 
 @Component({
   templateUrl: &#x27;./dashboard.page.html&#x27;,
   styleUrls: [&#x27;./dashboard.page.scss&#x27;],
 })
-export class DashboardPage extends MainClass implements AfterViewInit {
-  ngAfterViewInit(): void {}
-  constructor(private excelService: ExcelService) {
-    super()
-  }
+export class DashboardPage extends MainClass {
   dateStart: Date | null &#x3D; null
   dateStop: Date | null &#x3D; null
   today &#x3D; new Date()
@@ -2554,6 +2515,10 @@ export class DashboardPage extends MainClass implements AfterViewInit {
   ]
   selectedCategorieId: undefined | string &#x3D; undefined
   isLoading: boolean &#x3D; false
+  
+  constructor(private excelService: ExcelService) {
+    super()
+  }
 
   export() {
     this.isLoading &#x3D; true
