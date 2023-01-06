@@ -17,18 +17,53 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 
+/**
+ * Interface d'un filtre
+ */
+
 export interface FilterPanelInterface {
+  /**
+   * Clé de tri
+   */
   sort: string | number | null
+  /**
+   * Label de tri
+   */
   sortName: string | null
+  /**
+   * Traitement du tri
+   */
   sortFunction: Function | null
+  /**
+   * Clé de l'ordre
+   */
   order: string | number | null
+  /**
+   * Icon d'ordre
+   */
   orderIcon: string | null
+  /**
+   * Filtre fonction
+   */
   filterFunction: Function | null
+  /**
+   * Filtre des valeurs
+   */
   filterValues: (string | number)[] | null
+  /**
+   * Filtre des noms
+   */
   filterNames: string | null
+  /**
+   * Filtre rendu visuel dans le paneau
+   */
   display?: string | number | null
 }
 
+
+/**
+ * Paneau de filtre de la page workforce
+ */
 @Component({
   selector: 'filter-panel',
   templateUrl: './filter-panel.component.html',
@@ -38,8 +73,17 @@ export class FilterPanelComponent
   extends MainClass
   implements AfterViewInit, OnChanges, OnInit
 {
+  /**
+   * Event au père lors d'une mise à jour
+   */
   @Output() update: EventEmitter<FilterPanelInterface> = new EventEmitter()
+  /**
+   * Event au père lors de la demande de fermeture
+   */
   @Output() close: EventEmitter<any> = new EventEmitter()
+  /**
+   * Liste complète des tris possibles
+   */
   sortList = [
     {
       id: 'name',
@@ -84,6 +128,9 @@ export class FilterPanelComponent
       },
     },
   ]
+  /**
+   * Liste complète des ordres
+   */
   orderList = [
     {
       id: 'asc',
@@ -96,6 +143,9 @@ export class FilterPanelComponent
       label: 'Ordre descendant',
     },
   ]
+  /**
+   * List des tris possibles
+   */
   displayList = [
     {
       id: 'nom/prénom',
@@ -108,23 +158,65 @@ export class FilterPanelComponent
       label: 'prénom/nom',
     },
   ]
+  /**
+   * Valeur de filtre déjà selectionnée
+   */
   @Input() filterValues: (string | number)[] | null = null
+  /**
+   * Valeur de tri déjà selectionnée
+   */
   @Input() sortValue: string | number | null = null
+  /**
+   * Valeur d'ordre déjà selectionné
+   */
   @Input() orderValue: string | number | null = null
+  /**
+   * Filtre déjà selectionnée
+   */
   @Input() displayValue: string | number | null = 'prénom/nom'
+  /**
+   * Dom de la popin
+   */
   @ViewChild('popin') popin: ElementRef<HTMLElement> | null = null
+  /**
+   * Position left par rapport à l'écran complet
+   */
   leftPosition: number = 0
+  /**
+   * Position top par rapport à l'écran complet
+   */
   topPosition: number = 0
+  /**
+   * List des filtres possibles
+   */
   filterList: ItemInterface[] = []
+  /**
+   * Valeur par défaut de filtre
+   */
   defaultFilterValues: (string | number)[] | null = null
+  /**
+   * Valeur par défaut de tri
+   */
   defaultSortValue: string | number | null = this.sortList[1].id
+  /**
+   * Valeur par défaut d'ordre
+   */
   defaultOrderValue: string | number | null = this.orderList[0].id
 
+  /**
+   * Détection d'un click sur le composant
+   */
   @HostListener('click', ['$event'])
   onClick() {
     this.close.emit()
   }
 
+  /**
+   * Constructeur
+   * @param hrFonctionService 
+   * @param elementRef 
+   * @param referentielService 
+   */
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
@@ -133,10 +225,16 @@ export class FilterPanelComponent
     super()
   }
 
+  /**
+   * Au chargement lister les fonctions possibles
+   */
   ngOnInit() {
     this.loadFonctions()
   }
 
+  /**
+   * A chaque changement chercher l'élement de filtre selectionnée
+   */
   ngOnChanges() {
     if (!this.sortList.find((o) => o.id === this.sortValue)) {
       this.sortValue = this.sortList[1].id
@@ -146,6 +244,9 @@ export class FilterPanelComponent
     }
   }
 
+  /**
+   * Après le rendu HTML on position la popin de filtre
+   */
   ngAfterViewInit() {
     setTimeout(() => {
       let { x, y } =
@@ -166,6 +267,9 @@ export class FilterPanelComponent
     }, 0)
   }
 
+  /**
+   * Chargement des fonctions
+   */
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
     // tempory fix to load only Magistrat and Fonctionnaires fonctions
@@ -185,6 +289,9 @@ export class FilterPanelComponent
     this.defaultFilterValues = listUsedFunctions.map((f) => f.id)
   }
 
+  /**
+   * Choix du filtre change
+   */
   updateParams() {
     const sortItem = this.sortList.find((o) => o.id === this.sortValue)
     const orderItem = this.orderList.find((o) => o.id === this.orderValue)

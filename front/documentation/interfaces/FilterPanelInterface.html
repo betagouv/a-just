@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;un filtre</p>
+
+            </p>
 
 
         <section>
@@ -185,6 +192,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Filtre rendu visuel dans le paneau</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -218,6 +231,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Filtre fonction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -251,6 +270,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Filtre des noms</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -284,6 +309,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Filtre des valeurs</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -317,6 +348,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Clé de l&#39;ordre</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -350,6 +387,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Icon d&#39;ordre</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -383,6 +426,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Clé de tri</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -416,6 +465,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Traitement du tri</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -449,6 +504,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Label de tri</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -475,18 +536,53 @@ import { HRFonctionService } from &#x27;src/app/services/hr-fonction/hr-function
 import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
 import { HumanResourceSelectedInterface } from &#x27;../workforce.page&#x27;
 
+/**
+ * Interface d&#x27;un filtre
+ */
+
 export interface FilterPanelInterface {
+  /**
+   * Clé de tri
+   */
   sort: string | number | null
+  /**
+   * Label de tri
+   */
   sortName: string | null
+  /**
+   * Traitement du tri
+   */
   sortFunction: Function | null
+  /**
+   * Clé de l&#x27;ordre
+   */
   order: string | number | null
+  /**
+   * Icon d&#x27;ordre
+   */
   orderIcon: string | null
+  /**
+   * Filtre fonction
+   */
   filterFunction: Function | null
+  /**
+   * Filtre des valeurs
+   */
   filterValues: (string | number)[] | null
+  /**
+   * Filtre des noms
+   */
   filterNames: string | null
+  /**
+   * Filtre rendu visuel dans le paneau
+   */
   display?: string | number | null
 }
 
+
+/**
+ * Paneau de filtre de la page workforce
+ */
 @Component({
   selector: &#x27;filter-panel&#x27;,
   templateUrl: &#x27;./filter-panel.component.html&#x27;,
@@ -496,8 +592,17 @@ export class FilterPanelComponent
   extends MainClass
   implements AfterViewInit, OnChanges, OnInit
 {
+  /**
+   * Event au père lors d&#x27;une mise à jour
+   */
   @Output() update: EventEmitter&lt;FilterPanelInterface&gt; &#x3D; new EventEmitter()
+  /**
+   * Event au père lors de la demande de fermeture
+   */
   @Output() close: EventEmitter&lt;any&gt; &#x3D; new EventEmitter()
+  /**
+   * Liste complète des tris possibles
+   */
   sortList &#x3D; [
     {
       id: &#x27;name&#x27;,
@@ -542,6 +647,9 @@ export class FilterPanelComponent
       },
     },
   ]
+  /**
+   * Liste complète des ordres
+   */
   orderList &#x3D; [
     {
       id: &#x27;asc&#x27;,
@@ -554,6 +662,9 @@ export class FilterPanelComponent
       label: &#x27;Ordre descendant&#x27;,
     },
   ]
+  /**
+   * List des tris possibles
+   */
   displayList &#x3D; [
     {
       id: &#x27;nom/prénom&#x27;,
@@ -566,23 +677,65 @@ export class FilterPanelComponent
       label: &#x27;prénom/nom&#x27;,
     },
   ]
+  /**
+   * Valeur de filtre déjà selectionnée
+   */
   @Input() filterValues: (string | number)[] | null &#x3D; null
+  /**
+   * Valeur de tri déjà selectionnée
+   */
   @Input() sortValue: string | number | null &#x3D; null
+  /**
+   * Valeur d&#x27;ordre déjà selectionné
+   */
   @Input() orderValue: string | number | null &#x3D; null
+  /**
+   * Filtre déjà selectionnée
+   */
   @Input() displayValue: string | number | null &#x3D; &#x27;prénom/nom&#x27;
+  /**
+   * Dom de la popin
+   */
   @ViewChild(&#x27;popin&#x27;) popin: ElementRef&lt;HTMLElement&gt; | null &#x3D; null
+  /**
+   * Position left par rapport à l&#x27;écran complet
+   */
   leftPosition: number &#x3D; 0
+  /**
+   * Position top par rapport à l&#x27;écran complet
+   */
   topPosition: number &#x3D; 0
+  /**
+   * List des filtres possibles
+   */
   filterList: ItemInterface[] &#x3D; []
+  /**
+   * Valeur par défaut de filtre
+   */
   defaultFilterValues: (string | number)[] | null &#x3D; null
+  /**
+   * Valeur par défaut de tri
+   */
   defaultSortValue: string | number | null &#x3D; this.sortList[1].id
+  /**
+   * Valeur par défaut d&#x27;ordre
+   */
   defaultOrderValue: string | number | null &#x3D; this.orderList[0].id
 
+  /**
+   * Détection d&#x27;un click sur le composant
+   */
   @HostListener(&#x27;click&#x27;, [&#x27;$event&#x27;])
   onClick() {
     this.close.emit()
   }
 
+  /**
+   * Constructeur
+   * @param hrFonctionService 
+   * @param elementRef 
+   * @param referentielService 
+   */
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
@@ -591,10 +744,16 @@ export class FilterPanelComponent
     super()
   }
 
+  /**
+   * Au chargement lister les fonctions possibles
+   */
   ngOnInit() {
     this.loadFonctions()
   }
 
+  /**
+   * A chaque changement chercher l&#x27;élement de filtre selectionnée
+   */
   ngOnChanges() {
     if (!this.sortList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.sortValue)) {
       this.sortValue &#x3D; this.sortList[1].id
@@ -604,6 +763,9 @@ export class FilterPanelComponent
     }
   }
 
+  /**
+   * Après le rendu HTML on position la popin de filtre
+   */
   ngAfterViewInit() {
     setTimeout(() &#x3D;&gt; {
       let { x, y } &#x3D;
@@ -624,6 +786,9 @@ export class FilterPanelComponent
     }, 0)
   }
 
+  /**
+   * Chargement des fonctions
+   */
   async loadFonctions() {
     const fonctions &#x3D; await this.hrFonctionService.getAll()
     // tempory fix to load only Magistrat and Fonctionnaires fonctions
@@ -643,6 +808,9 @@ export class FilterPanelComponent
     this.defaultFilterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id)
   }
 
+  /**
+   * Choix du filtre change
+   */
   updateParams() {
     const sortItem &#x3D; this.sortList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.sortValue)
     const orderItem &#x3D; this.orderList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.orderValue)
