@@ -20,14 +20,35 @@ import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 
+/**
+ * Variable ETP magistrat field name
+ */
 const etpMag = 'etpMag'
+/**
+ * Variable ETP magistrat popup title
+ */
 const etpMagTitle = 'des ETPT magistrat'
+/**
+ * Variable ETP magistrat unité
+ */
 const etpMagToDefine = '[un volume moyen de]'
 
+/**
+ * Variable ETP fonctionnaire field name
+ */
 const etpFon = 'etpFon'
+/**
+ * Variable ETP fonctionnaire popup title
+ */
 const etpFonTitle = 'des ETPT greffe'
+/**
+ * Variable ETP fonctionnaire unité
+ */
 const etpFonToDefine = '[un volume moyen de]'
 
+/**
+ * Composant page simulateur
+ */
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
@@ -41,38 +62,122 @@ const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
+export class SimulatorPage extends MainClass implements OnInit {
+  /**
+   * Wrapper de page contenant le simulateur
+   */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  /**
+   * Ouverture de la popup de modification de paramètre
+   */
   openPopup: boolean = false
+  /**
+   * Indicateur de saisie date de début de simulation
+   */
   mooveClass: string = ''
+  /**
+   * Indicateur de selection de paramètre de simulation
+   */
   disabled: string = 'disabled'
+  /**
+   * Indicateur d'affichage du titre pour export PDF
+   */
   printTitle: string = ''
+  /**
+   * Contentieux selectionné
+   */
   contentieuId: number | null = null
+  /**
+   * Sous-contentieux selectionné(s)
+   */
   subList: number[] = []
+  /**
+   * Tous les référentiel
+   */
   formReferentiel: dataInterface[] = []
+  /**
+   * Situation à aujourd'hui ou date de début
+   */
   firstSituationData: SimulatorInterface | null = null
+  /**
+   * Situation projetée à la date de fin
+   */
   projectedSituationData: SimulatorInterface | null = null
+  /**
+   * Situation simulée à la date de fin
+   */
   simulatedSationData: SimulationInterface | null = null
+  /**
+   * Référentiel selectionné
+   */
   referentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Date de début de simulation
+   */
   dateStart: Date = new Date()
+  /**
+   * Date de fin de simulation
+   */
   dateStop: Date | null = null
+  /**
+   * Date à aujourd'hui
+   */
   today: Date = new Date()
+  /**
+   * Date de début format chaîne de charactère
+   */
   startRealValue: string = ''
+  /**
+   * Date de fin format chaiîne de charactère
+   */
   stopRealValue: string = ''
+  /**
+   * Nombre de mois contenu dans la période selectionnée
+   */
   nbOfMonthWithinPeriod: number[] = []
+  /**
+   * Bouton de modification de paramètre clické
+   */
   buttonSelected: any = undefined
+  /**
+   * Indicateur de réinitialisation pour les input de type %
+   */
   resetPercentage: boolean = false
+  /**
+   * Objet d'édition de paramètre de simulation
+   */
   valueToAjust = { value: '', percentage: null }
+  /**
+   * Correspond au noeud selectionné dans l'arbre de décision en fonction des paramètres édités lors de la simulation
+   */
   currentNode: any | undefined = {}
+  /**
+   * Loader
+   */
   isLoading: boolean = false
+  /**
+   * Catégorie selectionnée
+   */
   categorySelected: string = 'MAGISTRAT'
+  /**
+   * Liste des fonctions pour la catégorie selectionnée
+   */
   functionsList: Array<any> = []
+  /**
+   * Identifiant(s) de fonction selectionnée(s)
+   */
   selectedFonctionsIds: number[] = []
+  /**
+   * Documentation widget
+   */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
     path: 'https://a-just.gitbook.io/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
+  /**
+   * Paramètres de simulation
+   */
   paramsToAjust = {
     param1: {
       label: '',
@@ -89,23 +194,59 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       button: { value: '' },
     },
   }
+  /**
+   * Liste complète de(s) paramètre(s) pouvant être gardé constant lors de la simulation
+   */
   pickersParamsToLock = []
+  /**
+   * Liste de(s) paramètre(s) selectionnés à garder constant lors de la simulation
+   */
   paramsToLock = {
     param1: { label: '', value: '' },
     param2: { label: '', value: '' },
   }
+  /**
+   * Arbre de décision de simulation magistrat
+   */
   decisionTreeMag = tree
+  /**
+   * Arbre de décision de simulation fonctionnaire
+   */
   decisionTreeFon = this.FonTree()
 
+  /**
+   * Ouverture popup selection de paramètre constant
+   */
   toSimulate: boolean = false
+  /**
+   * Affichage de la simulation
+   */
   toDisplaySimulation: boolean = false
+  /**
+   * Paramètre à afficher sans calcul supplémentaire lors de la restitution de la simulation
+   */
   toDisplay = []
+  /**
+   * Paramètre à calculer lors de la restituation de la simulation
+   */
   toCalculate = []
+  /**
+   * Activation du bouton simuler
+   */
   simulateButton = 'disabled'
 
+  /**
+   * Backup hr à traiter lors de la simulation
+   */
   hrBackup: BackupInterface | undefined
+  /**
+   * Backup hr global de l'application
+   */
   hrBackups: BackupInterface[] = []
 
+  /**
+   * Constructeur
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
@@ -136,6 +277,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit(): void {
     this.dateStop = null
     this.watch(
@@ -145,7 +289,7 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
             this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
             this.referentielService.idsSoutien.indexOf(r.id) === -1
         )
-        this.formatReferenteil()
+        this.formatReferentiel()
       })
     )
 
@@ -188,9 +332,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.loadFunctions()
   }
 
-  ngOnDestroy() {}
-
-  formatReferenteil() {
+  /**
+   * Formatage du référentiel
+   */
+  formatReferentiel() {
     this.formReferentiel = this.referentiel.map((r) => ({
       id: r.id,
       value: this.referentielMappingName(r.label),
@@ -202,6 +347,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }))
   }
 
+  /**
+   * Selection de paramètre de simulation
+   * @param type contentieux, sous-contentieux, date de début, date de fin
+   * @param event capteur d'élément clické
+   */
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
       this.subList = []
@@ -261,10 +411,23 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Récupère un contentieux ou sous-contentieux grâce à son identifiant
+   * @param id identifiant contentieux/sous-contentieux
+   * @returns noeud du contentieux trouvé
+   */
   getElementById(id: number | null) {
     return this.referentiel?.find((v) => v.id === id)
   }
 
+  /**
+   * Récupère la valeur d'un champs à afficher
+   * @param param paramètre à afficher
+   * @param data simulation
+   * @param initialValue valeur initial
+   * @param toCompute valeur calculé ou non
+   * @returns valeur à afficher
+   */
   getFieldValue(
     param: string,
     data: SimulatorInterface | SimulationInterface | null,
@@ -286,6 +449,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return ''
   }
 
+  /**
+   * Réinitalisation de simulation
+   */
   resetParams() {
     this.contentieuId = null
     this.subList = []
@@ -311,7 +477,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return date
   }
 
-  //passer en back maybe ??????
+  /**
+   * Ouverture de popup avec le paramètre correspondant
+   * @param button bouton clické
+   */
   openPopupWithParams(button: any): void {
     this.buttonSelected = button
     let buttonToFind = button.id
@@ -330,6 +499,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.openPopup = true
   }
 
+  /**
+   * Conversion de l'arbre de décision pour les fonctionnaires
+   * @returns arbre de décision
+   */
   FonTree(): any {
     const originalMsg = JSON.stringify([...tree])
     let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
@@ -337,10 +510,24 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
     return JSON.parse(updatedMsg)
   }
+
+  /**
+   * Remplace toutes les occurences de chaîne de caractère par une autre chaîne de caractère
+   * @param string chaine de caractère à évaluer
+   * @param search string recherchée
+   * @param replace string venant en remplacement de celle recherchée
+   * @returns chaine de caractère maj
+   */
   replaceAll(string: string, search: string, replace: string) {
     return string.split(search).join(replace)
   }
 
+  /**
+   * Renseigne le paramètre à ajuster
+   * @param volumeInput type d'input
+   * @param inputField  input modifié
+   * @param allButton liste de tous les boutons
+   */
   setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
     // get list of params to ajust from the currentNode selected
     const paramsToAjust =
@@ -504,6 +691,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       this.simulateButton = ''
   }
 
+  /**
+   * Maj des paramètres à ajuster
+   * @param event
+   */
   onUpdateValueToAjust(event: any) {
     //only if percentage filled
     if (event.value === 0) {
@@ -516,6 +707,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     } else this.valueToAjust = event
   }
 
+  /**
+   * Sauvegarde de paramètre édité
+   * @param input type de saisie
+   * @returns valeur saisie
+   */
   valueSaved(input: number): string {
     // if input type volume (quantity)
     if (input === 1) {
@@ -543,6 +739,12 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return ''
   }
 
+  /**
+   * Saisie de paramètre de type pourcentage
+   * @param id nom du champs à éditer
+   * @param projectedValue valeur projeté
+   * @returns chaine de caractère de la valeur finale
+   */
   percentageModifiedInputText(
     id: string,
     projectedValue: string | number | undefined
@@ -577,10 +779,21 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
+  /**
+   * Retourne une valeur avec le signe + ou -
+   * @param value
+   * @returns String contenant le chiffre ainsi que le signe + ou -
+   */
   percantageWithSign(value: number | null) {
     return value && value >= 0 ? '+' + value : value
   }
 
+  /**
+   * Calcul la proportion d'une valeur par rapport à une autre
+   * @param result numérateur
+   * @param initialValue dénominateur
+   * @returns Proportion de la valeur testé en %
+   */
   ratio(result: string, initialValue: string) {
     const roundedValue =
       Math.round(
@@ -591,14 +804,29 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
+  /**
+   * Soustrait 2 valeurs
+   * @param value1
+   * @param value2
+   * @returns Résultat de la soustraction
+   */
   calculCoverage(value1: number, value2: number) {
     return value1 - value2
   }
 
+  /**
+   * Cast une string en integer
+   * @param value string
+   * @returns integer
+   */
   getReferenceValue(value: any) {
     return parseInt(value)
   }
 
+  /**
+   * Réinitialise l'ensemble des paramètres de la simulation
+   * @param buttons bouton selecitonné
+   */
   initParams(buttons: any) {
     this.disabled = 'disabled-date'
     this.toDisplaySimulation = false
@@ -633,6 +861,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Retourne le titre complet d'un champs à éditer
+   * @param label label correspondant à un input field (ex: etpMag)
+   * @returns String correspondant au text associé au champs de saisi
+   */
   getText(label: string): string {
     if (label === 'title') {
       if (
@@ -668,6 +901,10 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return ''
   }
 
+  /**
+   * Retourne le nombre de paramètre à définir
+   * @returns nombre de paramètre à définir
+   */
   getNbOfParams(): number {
     if (
       this.buttonSelected.id === this.paramsToAjust.param1.label ||
@@ -680,17 +917,31 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
       ).toDefine.length
   }
 
+  /**
+   * Edition du temps moyen par dossier cas particulier
+   * @param button
+   * @param event
+   */
   valueChange(button: any, event: any) {
     if (this.buttonSelected.id === 'magRealTimePerCase' && event === 0)
       button.value = 'Ajuster'
     else button.value = event
   }
 
+  /**
+   * Cast d'une string en float
+   * @param value string
+   * @returns float
+   */
   parseFloat(value: string): number {
     if (value !== '') return parseFloat(value)
     else return 0
   }
 
+  /**
+   * Générate simulation
+   * @param allButton liste de tous les boutons clickables
+   */
   simulate(allButton: any): void {
     if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -739,6 +990,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Get the label of a field and return the full text name of the label
+   * @param paramNumber
+   * @returns text name of the label selected
+   */
   getLockedParamLabel(paramNumber: number): string {
     if (this.pickersParamsToLock.length > 0)
       return this.simulatorService.getLabelTranslation(
@@ -747,6 +1003,11 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     return ''
   }
 
+  /**
+   * Run simulation
+   * @param paramNumber index du paramètre à garder constant
+   * @param allButton liste de tous les boutons clickables
+   */
   selectParamToLock(paramNumber: number, allButton: any) {
     if (this.paramsToLock.param1.label === '') {
       this.paramsToLock.param1.label = this.pickersParamsToLock[paramNumber]
@@ -876,6 +1137,9 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Calcul de la simulation
+   */
   computeSimulation() {
     const params = {
       beginSituation: this.firstSituationData,
@@ -900,6 +1164,13 @@ export class SimulatorPage extends MainClass implements OnDestroy, OnInit {
     this.simulatorService.toSimulate(params, simulation)
   }
 
+  /**
+   * Press
+   * @param event
+   * @param volumeInput
+   * @param inputField
+   * @param allButton
+   */
   onKeypressEvent(
     event: any,
     volumeInput: any,
