@@ -1,11 +1,17 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
-import {
-  calculMainValuesFromChilds,
-  preformatActivitiesArray,
-} from '../utils/activities'
+import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
+
+/**
+ * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
+ */
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Retourne la date du dernière stock pour une juridiction
+   * @param {*} HRBackupId
+   * @returns
+   */
   Model.getLastMonth = async (HRBackupId) => {
     const theLast = await Model.findOne({
       attributes: ['periode'],
@@ -23,17 +29,14 @@ export default (sequelizeInstance, Model) => {
     return null
   }
 
+  /**
+   * Retour la liste de l'ensemble des activités d'une jurdicition
+   * @param {*} HRBackupId
+   * @returns
+   */
   Model.getAll = async (HRBackupId) => {
     const list = await Model.findAll({
-      attributes: [
-        'periode',
-        'entrees',
-        'sorties',
-        'stock',
-        'original_entrees',
-        'original_sorties',
-        'original_stock',
-      ],
+      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
       where: {
         hr_backup_id: HRBackupId,
       },
@@ -50,10 +53,8 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         periode: list[i].periode,
-        entrees:
-          list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
-        sorties:
-          list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
+        entrees: list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
+        sorties: list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
         stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
@@ -65,6 +66,11 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Importe une liste d'activités à une juridiction. Et reformate et recalcul les stocks calculés.
+   * @param {*} csv
+   * @param {*} HRBackupId
+   */
   Model.importList = async (csv, HRBackupId) => {
     const contentieuxIds = {}
     let minDate = null
@@ -108,14 +114,13 @@ export default (sequelizeInstance, Model) => {
         // clean null values
         csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
         csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
-        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === ''  ? null : csv[i].stock
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : csv[i].stock
 
         // if existe update content
         if (
           findExist &&
           (csv[i].entrees !== findExist.dataValues.original_entrees ||
-            csv[i].sorties !==
-              findExist.dataValues.original_sorties ||
+            csv[i].sorties !== findExist.dataValues.original_sorties ||
             csv[i].stock !== findExist.dataValues.original_stock)
         ) {
           await findExist.update({
@@ -140,6 +145,10 @@ export default (sequelizeInstance, Model) => {
     await Model.cleanActivities(HRBackupId, minDate)
   }
 
+  /**
+   * Control et supprimé les activités qui sont en double pour un même mois et un même contentieux
+   * @param {*} HRBackupId
+   */
   Model.removeDuplicateDatas = async (HRBackupId) => {
     const activities = await Model.findAll({
       attributes: ['periode', 'contentieux_id', 'hr_backup_id'],
@@ -172,9 +181,14 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Force pour recalculer les stocks à partir d'une date ou de la première donnée d'activité
+   * @param {*} HRBackupId
+   * @param {*} minPeriode
+   * @returns
+   */
   Model.cleanActivities = async (HRBackupId, minPeriode = null) => {
-    const referentiels =
-      await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
 
     if (!minPeriode) {
       const minPeriodeFromDB = await Model.min('periode', {
@@ -194,31 +208,21 @@ export default (sequelizeInstance, Model) => {
     }
 
     for (let i = 0; i < referentiels.length; i++) {
-      await Model.updateTotalAndFuturValue(
-        referentiels[i].id,
-        minPeriode,
-        HRBackupId
-      )
+      await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId)
     }
   }
 
-  Model.updateBy = async (
-    contentieuxId,
-    date,
-    values,
-    hrBackupId,
-    userId,
-    nodeUpdated
-  ) => {
-    console.log(
-      'updateBy',
-      contentieuxId,
-      date,
-      values,
-      hrBackupId,
-      userId,
-      nodeUpdated
-    )
+  /**
+   * Mes à jour d'une entrée, sortie, stock à un mois et un contentieux
+   * @param {*} contentieuxId
+   * @param {*} date
+   * @param {*} values
+   * @param {*} hrBackupId
+   * @param {*} userId
+   * @param {*} nodeUpdated
+   */
+  Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
+    console.log('updateBy', contentieuxId, date, values, hrBackupId, userId, nodeUpdated)
     date = new Date(date)
 
     let findActivity = await Model.findOne({
@@ -243,33 +247,26 @@ export default (sequelizeInstance, Model) => {
     }
 
     if (userId !== null) {
-      await Model.models.HistoriesActivitiesUpdate.addHistory(
-        userId,
-        findActivity.dataValues.id,
-        nodeUpdated,
-        values[nodeUpdated]
-      )
+      await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
-    const referentiels =
-      await Model.models.ContentieuxReferentiels.getReferentiels()
-    const ref = referentiels.find((r) =>
-      (r.childrens || []).find((c) => c.id === contentieuxId)
-    )
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const ref = referentiels.find((r) => (r.childrens || []).find((c) => c.id === contentieuxId))
 
     if (ref) {
       await Model.updateTotalAndFuturValue(ref.id, date, hrBackupId)
     }
   }
 
-  Model.updateTotalAndFuturValue = async (
-    mainContentieuxId,
-    date,
-    hrBackupId
-  ) => {
+  /**
+   * Calcul les nouveaux entrées, sorties niveau 3 et les stocks de niveau 3 et 4
+   * @param {*} mainContentieuxId
+   * @param {*} date
+   * @param {*} hrBackupId
+   */
+  Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
     date = new Date(date) // detach date reference
-    const referentiels =
-      await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
     // console.log(ref)
     console.log('startOfMonth(date), endOfMonth(date)', date, startOfMonth(date), endOfMonth(date))
@@ -317,38 +314,19 @@ export default (sequelizeInstance, Model) => {
         for (let i = 0; i < findAllChild.length; i++) {
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
-          const getUserUpdateStock =
-            await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
-              findAllChild[i].id,
-              'stock'
-            )
+          const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
 
           //console.log('currentStock', currentStock, getUserUpdateStock)
-          
+
           // do not updated if updated by user
           if (!getUserUpdateStock || getUserUpdateStock.value === null) {
-            const previousStockValue = await Model.checkAndUpdatePreviousStock(
-              findAllChild[i].contentieux_id,
-              date,
-              hrBackupId
-            )
+            const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
 
             if (previousStockValue !== null) {
-              if (
-                findAllChild[i].entrees !== null ||
-                findAllChild[i].sorties !== null ||
-                previousStockValue.type === 'calculate'
-              ) {
-                const entrees = preformatActivitiesArray(
-                  [findAllChild[i]],
-                  ['entrees', 'original_entrees']
-                )
-                const sorties = preformatActivitiesArray(
-                  [findAllChild[i]],
-                  ['sorties', 'original_sorties']
-                )
-                currentStock =
-                  previousStockValue.stock + (entrees || 0) - (sorties || 0)
+              if (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null || previousStockValue.type === 'calculate') {
+                const entrees = preformatActivitiesArray([findAllChild[i]], ['entrees', 'original_entrees'])
+                const sorties = preformatActivitiesArray([findAllChild[i]], ['sorties', 'original_sorties'])
+                currentStock = previousStockValue.stock + (entrees || 0) - (sorties || 0)
               } else {
                 currentStock = findAllChild[i].original_stock
               }
@@ -356,15 +334,15 @@ export default (sequelizeInstance, Model) => {
               currentStock = findAllChild[i].original_stock
 
               if (findAllChild[i].entrees !== null) {
-                currentStock += (findAllChild[i].entrees || 0)
+                currentStock += findAllChild[i].entrees || 0
               } else if (findAllChild[i].original_entrees !== null && findAllChild[i].sorties !== null) {
-                currentStock += (findAllChild[i].original_entrees || 0)
+                currentStock += findAllChild[i].original_entrees || 0
               }
 
               if (findAllChild[i].sorties !== null) {
-                currentStock -= (findAllChild[i].sorties || 0)
+                currentStock -= findAllChild[i].sorties || 0
               } else if (findAllChild[i].original_sorties !== null && findAllChild[i].entrees !== null) {
-                currentStock -= (findAllChild[i].original_sorties || 0)
+                currentStock -= findAllChild[i].original_sorties || 0
               }
             }
 
@@ -372,7 +350,7 @@ export default (sequelizeInstance, Model) => {
               currentStock = null
             }
 
-            if(currentStock !== null && currentStock < 0) {
+            if (currentStock !== null && currentStock < 0) {
               currentStock = 0
             }
 
@@ -424,12 +402,14 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  // check if they are a stock before, set by user, and find it. If this is multiple month ago then update all month between them.
-  Model.checkAndUpdatePreviousStock = async (
-    contentieuxId,
-    periode,
-    backupId
-  ) => {
+  /**
+   * check if they are a stock before, set by user, and find it. If this is multiple month ago then update all month between them.
+   * @param {*} contentieuxId
+   * @param {*} periode
+   * @param {*} backupId
+   * @returns
+   */
+  Model.checkAndUpdatePreviousStock = async (contentieuxId, periode, backupId) => {
     const startOfMonthPeriode = startOfMonth(periode)
 
     const previousPeriode = await Model.findAll({
@@ -463,9 +443,7 @@ export default (sequelizeInstance, Model) => {
           stock: previousPeriode[previousPeriode.length - 1].stock,
           type: 'calculate',
         }
-      } else if (
-        previousPeriode[previousPeriode.length - 1].original_stock === null
-      ) {
+      } else if (previousPeriode[previousPeriode.length - 1].original_stock === null) {
         return null
       } else if (previousPeriode[previousPeriode.length - 1].original_stock !== null) {
         return {
@@ -477,6 +455,12 @@ export default (sequelizeInstance, Model) => {
     return null
   }
 
+  /**
+   * List des activités d'un mois et d'une juridiction
+   * @param {*} date
+   * @param {*} HrBackupId
+   * @returns
+   */
   Model.getByMonth = async (date, HrBackupId) => {
     date = new Date(date)
 

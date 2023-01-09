@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page de connexion</p>
+
+    </p>
 
 
 
@@ -167,12 +174,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/routes/login/login.page.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/routes/login/login.page.ts:23</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -270,14 +279,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">src/app/routes/login/login.page.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="39"
+                            class="link-to-prism">src/app/routes/login/login.page.ts:39</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Vérificiation si l&#39;utilisateur est connecté</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -307,14 +318,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="30"
-                            class="link-to-prism">src/app/routes/login/login.page.ts:30</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="50"
+                            class="link-to-prism">src/app/routes/login/login.page.ts:50</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Demande connexion</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -351,10 +364,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/routes/login/login.page.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/routes/login/login.page.ts:20</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Formulaire</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -371,20 +390,37 @@ import { Router } from &quot;@angular/router&quot;;
 import { AuthService } from &quot;src/app/services/auth/auth.service&quot;;
 import { UserService } from &quot;src/app/services/user/user.service&quot;;
 
+/**
+ * Page de connexion
+ */
+
 @Component({
   templateUrl: &quot;./login.page.html&quot;,
   styleUrls: [&quot;./login.page.scss&quot;],
 })
 export class LoginPage {
+  /**
+   * Formulaire
+   */
   form &#x3D; new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
   });
 
+  /**
+   * Constructeur
+   * @param authService 
+   * @param userService 
+   * @param router 
+   * @param title 
+   */
   constructor(private authService: AuthService, private userService: UserService, private router: Router, private title: Title) {
     this.title.setTitle(&#x27;Se connecter | A-Just&#x27;)
   }
 
+  /**
+   * Vérificiation si l&#x27;utilisateur est connecté
+   */
   ngOnInit() {
     this.userService.me().then((data) &#x3D;&gt; {
       if (data) {
@@ -393,6 +429,9 @@ export class LoginPage {
     });
   }
 
+  /**
+   * Demande connexion
+   */
   onSubmit() {
     let { email, password } &#x3D; this.form.value;
     this.authService.login({ email, password }).then(() &#x3D;&gt; {

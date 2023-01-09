@@ -1,5 +1,9 @@
 import { LOG_EVENT_ON_CLOSE } from '../constants/log-events'
 
+/**
+ * Historisation de qui à fermé une notification
+ */
+
 export default (sequelizeInstance, Model) => {
   /**
    * Save on close notification

@@ -1,6 +1,16 @@
 import { CODES } from '../constants/log-codes'
 
+/**
+ * Logs tracés pour historiser différents évents
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Ajout d'une ligne un events
+   * @param {*} codeId
+   * @param {*} userId
+   * @param {*} datas
+   */
   Model.addLog = async (codeId, userId, datas = {}) => {
     await Model.create({
       code_id: codeId,
@@ -9,46 +19,68 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  /**
+   * Liste des tous les events et qui l'a fait
+   * @returns
+   */
   Model.getLogs = async () => {
     const list = await Model.findAll({
       order: [['created_at', 'DESC']],
       raw: true,
-      include: [{
-        model: Model.models.Users,
-      }],
+      include: [
+        {
+          model: Model.models.Users,
+        },
+      ],
     })
 
-    return list.map(l => ({
+    return list.map((l) => ({
       id: l.id,
       codeId: l.code_id,
       date: l.created_at,
       datas: l.datas,
-      user: l['User.id'] === null ? null : {
-        email: l['User.email'],
-        firstName: l['User.first_name'],
-        lastName: l['User.last_name'],
-      },
+      user:
+        l['User.id'] === null
+          ? null
+          : {
+            email: l['User.email'],
+            firstName: l['User.first_name'],
+            lastName: l['User.last_name'],
+          },
     }))
   }
 
+  /** Converti liste logs en csv pour export */
   Model.getCsvLogs = async () => {
     const list = await Model.getLogs()
 
-    return '"id";"codeId";"label";"ower";"date";\n' + list.map(l => {
-      return `"${l.id}";"${l.codeId}";"${Model.formatLabel(l)}";"${l.user ? l.user.firstName + ' ' + l.user.lastName + ' ' + l.user.email : 'null'}";"${l.date}";`
-    }).join('\n')
+    return (
+      '"id";"codeId";"label";"ower";"date";\n' +
+      list
+        .map((l) => {
+          return `"${l.id}";"${l.codeId}";"${Model.formatLabel(l)}";"${l.user ? l.user.firstName + ' ' + l.user.lastName + ' ' + l.user.email : 'null'}";"${
+            l.date
+          }";`
+        })
+        .join('\n')
+    )
   }
 
+  /**
+   * Conversion d'un code + variable en variable traduit
+   * @param {*} line
+   * @returns
+   */
   Model.formatLabel = (line) => {
     const datas = JSON.parse(line.datas || '')
     const regex = /\${(.*?)}/g
 
-    let stringToReturn = (CODES[line.codeId] || '')
-    const tab = (stringToReturn.match(regex) || [])
+    let stringToReturn = CODES[line.codeId] || ''
+    const tab = stringToReturn.match(regex) || []
 
-    tab.map(find => {
+    tab.map((find) => {
       const key = find.slice(2, -1)
-      if(datas[key]) {
+      if (datas[key]) {
         stringToReturn = stringToReturn.replace(find, datas[key])
       }
     })
