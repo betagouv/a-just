@@ -21,10 +21,13 @@ const EXCEL_TYPE =
  */
 const EXCEL_EXTENSION = '.xlsx'
 
+/**
+ * Service d'extraction excel
+ */
 @Injectable({
   providedIn: 'root',
 })
-export class ExcelService extends MainClass implements OnInit {
+export class ExcelService extends MainClass {
   /**
    * Categories selectionnées par l'utilisateur
    */
@@ -73,8 +76,6 @@ export class ExcelService extends MainClass implements OnInit {
   ) {
     super()
   }
-
-  ngOnInit(): void {}
 
   /**
    * API retourne les données de ventilations aggrégées pour l'ensemble des ressources présentes sur une date choisie

@@ -64,7 +64,6 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
 /**
  * Liste des fiches d'une catégories
  */
-
 interface listFormatedInterface {
   /**
    * Couleur de la categories
@@ -112,31 +111,70 @@ interface listFormatedInterface {
  * Référentiel surchargé avec un visuel et des calculs ajustés
  */
 interface ContentieuReferentielCalculateInterface
+  /**
+   * Référentiel surchargé avec un visuel et des calculs ajustés
+   */
   extends ContentieuReferentielInterface {
+  /**
+   * Délai Total d'Ecoulement des Stock
+   */
   dtes: number
+  /**
+   * Taux de couverture
+   */
   coverage: number
+  /**
+   * Délai Total d'Ecoulement des Stock réél
+   */
   realDTESInMonths: number
+  /**
+   * Taux de couverture réél
+   */
   realCoverage: number
+  /**
+   * ETP moyen sur une période
+   */
   etpToCompute: number
+  /**
+   * ETP disponible à aujourd'hui
+   */
   etpUseToday: number
+  /**
+   * Temps moyen par dossier
+   */
   magRealTimePerCase: number | null
+  /**
+   * Nombre d'heure travaillé
+   */
   nbWorkingHours: number
+  /**
+   * Nombre de jour travaillé
+   */
   nbWorkingDays: number
+  /**
+   * Total d'entrée
+   */
   totalIn: number
+  /**
+   * Dernier stock disponible
+   */
   lastStock: number
 }
 
 /**
  * Page de réaffectation
  */
-
 @Component({
   templateUrl: './reaffectator.page.html',
   styleUrls: ['./reaffectator.page.scss'],
 })
+/**
+ * Page de réaffectation
+ */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Dom du wrapper
+   * @param wrapper
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   /**
@@ -296,7 +334,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Accélération du chargement de la liste
    * @param index
    * @param item
-   * @returns
+   * @returns id
    */
   trackById(index: number, item: any) {
     return item.id
@@ -305,7 +343,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Retourne si une personne est trouvé par la recherche ou non
    * @param hr
-   * @returns
+   * @returns opacity
    */
   checkHROpacity(hr: HumanResourceInterface) {
     if (
@@ -323,7 +361,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Appel au serveur pour avoir la liste
-   * @returns
+   * @returns list
    */
   onFilterList() {
     if (

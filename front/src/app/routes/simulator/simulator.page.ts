@@ -470,7 +470,9 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.simulateButton = 'disabled'
   }
 
-  // get minimum date you can select on the date picker
+  /**
+   *  Get minimum date you can select on the date picker
+   */
   getMin(): Date {
     const date = new Date(this.dateStart)
     date.setDate(this.dateStart.getDate() + 1)

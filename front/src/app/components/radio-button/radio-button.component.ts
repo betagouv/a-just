@@ -13,12 +13,14 @@ import {
 /**
  * Composant radio bouton designer
  */
-
 @Component({
   selector: 'aj-radio-button',
   templateUrl: './radio-button.component.html',
   styleUrls: ['./radio-button.component.scss'],
 })
+/**
+ * Classe RadioButtonComponent
+ */
 export class RadioButtonComponent implements OnChanges, OnInit {
   /**
    * Tire du bouton
@@ -74,9 +76,15 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   @HostBinding('class.selected') @Input() value: boolean = true
   /**
    * Détection d'un clique n'importe où sur le composant
-   * @param event 
+   * @param eventName
+   * @param event
    */
   @HostListener('click', ['$event'])
+
+  /**
+   * Action lors d'un clique n'importe où sur le composant
+   * @param event
+   */
   onClick(event: MouseEvent) {
     event.stopPropagation()
     if (!this.readOnly) {
@@ -85,6 +93,10 @@ export class RadioButtonComponent implements OnChanges, OnInit {
       this.valueChange.emit(this.o)
     }
   }
+
+  /**
+   * State object
+   */
   o = {
     label: '',
     checked: true,
@@ -101,7 +113,7 @@ export class RadioButtonComponent implements OnChanges, OnInit {
 
   /**
    * Détection du changement de la valeur
-   * @param changes 
+   * @param changes
    */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {

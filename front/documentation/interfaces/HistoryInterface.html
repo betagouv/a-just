@@ -156,6 +156,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de fin</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -189,6 +195,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des indisponibilités</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -222,6 +234,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Première situation</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -252,8 +270,17 @@ import { AddVentilationComponent } from &#x27;./add-ventilation/add-ventilation.
  * Interface d&#x27;une situation
  */
 export interface HistoryInterface extends HRSituationInterface {
+  /**
+   * Liste des indisponibilités
+   */
   indisponibilities: RHActivityInterface[]
+  /**
+   * Date de fin
+   */
   dateStop: Date | null
+  /**
+   * Première situation
+   */
   situationForTheFirstTime: boolean
 }
 
@@ -345,11 +372,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Constructeur
-   * @param humanResourceService 
-   * @param route 
-   * @param router 
-   * @param hrFonctionService 
-   * @param hrCategoryService 
+   * @param humanResourceService
+   * @param route
+   * @param router
+   * @param hrFonctionService
+   * @param hrCategoryService
    */
   constructor(
     private humanResourceService: HumanResourceService,
@@ -399,8 +426,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Chargement de la fiche coté back + traitement
-   * @param cacheHr 
-   * @returns 
+   * @param cacheHr
+   * @returns
    */
   async onLoad(cacheHr: HumanResourceInterface | null &#x3D; null) {
     if (this.categories.length &#x3D;&#x3D;&#x3D; 0 || this.fonctions.length &#x3D;&#x3D;&#x3D; 0) {
@@ -684,9 +711,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Amélioration du chargement de la liste
-   * @param index 
-   * @param item 
-   * @returns 
+   * @param index
+   * @param item
+   * @returns
    */
   trackByDate(index: number, item: any) {
     return item.dateStart
@@ -705,9 +732,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de modification d&#x27;une fiche
-   * @param nodeName 
-   * @param value 
-   * @param directRef 
+   * @param nodeName
+   * @param value
+   * @param directRef
    */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
     if (this.currentHR) {
@@ -735,7 +762,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Fermeture du paneau d&#x27;une situation
-   * @param removeIndispo 
+   * @param removeIndispo
    */
   async onCancel(removeIndispo: boolean &#x3D; false) {
     if (
@@ -776,7 +803,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande d&#x27;ajout d&#x27;une indispo
-   * @param indispo 
+   * @param indispo
    */
   onAddIndispiniblity(indispo: RHActivityInterface | null &#x3D; null) {
     this.updateIndisponiblity &#x3D; indispo
@@ -793,8 +820,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Creation, modification et de suppression des indispo
-   * @param action 
-   * @returns 
+   * @param action
+   * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
     const controlIndisponibilitiesError &#x3D; this.onEditIndex &#x3D;&#x3D;&#x3D; null // if panel ediction do not control error
@@ -1076,7 +1103,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de suppression d&#x27;une situation
-   * @param id 
+   * @param id
    */
   async onRemoveSituation(id: number) {
     const returnValue &#x3D; await this.humanResourceService.removeSituation(id)
