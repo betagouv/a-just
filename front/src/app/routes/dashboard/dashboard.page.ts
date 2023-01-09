@@ -1,21 +1,19 @@
-import { AfterViewInit, Component } from '@angular/core'
+import { Component } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 import { ExcelService } from 'src/app/services/excel/excel.service'
+
 /**
- * Composant Dashboard
+ * Page d'extraction
  */
 @Component({
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage extends MainClass implements AfterViewInit {
-  ngAfterViewInit(): void {}
-  constructor(private excelService: ExcelService) {
-    super()
-  }
+export class DashboardPage extends MainClass {
   /**
    * Date de début selectionnée
    */
+
   dateStart: Date | null = null
   /**
    * Date de fin selectionnée
@@ -46,6 +44,14 @@ export class DashboardPage extends MainClass implements AfterViewInit {
    * Loader
    */
   isLoading: boolean = false
+
+  /**
+   * Constructeur
+   * @param excelService
+   */
+  constructor(private excelService: ExcelService) {
+    super()
+  }
 
   /**
    * Export de fichier excel

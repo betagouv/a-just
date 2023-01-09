@@ -14,31 +14,93 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { month } from 'src/app/utils/dates'
+
+/**
+ * Page du calculateur
+ */
+
 @Component({
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
+  /**
+   * Dom du wrapper
+   */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  /**
+   * Référentiel
+   */
   referentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Liste des id des référentiels
+   */
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
+  /** 
+   * Date de début du calcul
+   */
   dateStart: Date | null = null
+  /**
+   * Date de fin du calcul
+   */
   dateStop: Date | null = null
+  /**
+   * Tri ou non
+   */
   sortBy: string = ''
+  /**
+   * Liste des lignes du calculateurs venant du back
+   */
   datas: CalculatorInterface[] = []
+  /**
+   * Filtre des lignes du calculateur visible
+   */
   datasFilted: CalculatorInterface[] = []
+  /**
+   * En chargement
+   */
   isLoading: boolean = false
+  /**
+   * Date max du calculateur
+   */
   maxDateSelectionDate: Date | null = null
+  /**
+   * Catégories selectionnée
+   */
   categorySelected: string = 'magistrats'
+  /**
+   * Lien de la documentation
+   */
   documentation: DocumentationInterface = {
     title: 'Calculateur',
     path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/quest-ce-que-cest',
   }
+  /**
+   * Mémorisation de la dernière categorie
+   */
   lastCategorySelected: string = ''
+  /**
+   * Liste des ids des fonctions 
+   */
   selectedFonctionsIds: number[] = []
+  /**
+   * Liste des fonctions
+   */
   fonctions: dataInterface[] = []
+  /**
+   * Variable en cours d'export de page
+   */
   duringPrint: boolean = false
 
+  /**
+   * Constructeur
+   * @param humanResourceService 
+   * @param calculatorService 
+   * @param referentielService 
+   * @param contentieuxOptionsService 
+   * @param activitiesService 
+   * @param appService 
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private calculatorService: CalculatorService,
@@ -50,6 +112,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     super()
   }
 
+  /**
+   * Initialisation des datas au chargement de la page
+   */
   ngOnInit() {
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
@@ -103,10 +168,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     )
   }
 
+  /**
+   * Suppresion des observables lors de la suppression de la page
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Demande au serveur quelle est la dernière date des datas
+   */
   onCheckLastMonth() {
     if (
       this.calculatorService.dateStart.getValue() === null &&
@@ -129,6 +200,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Chargement des données back
+   */
   onLoad() {
     if (
       this.humanResourceService.backupId.getValue() &&
@@ -164,11 +238,18 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Préformate les données des données du serveur
+   * @param list 
+   */
   formatDatas(list: CalculatorInterface[]) {
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
 
+  /**
+   * Trier les datas en fonction d'un trie
+   */
   filtredDatas() {
     let list = this.datas
     if (this.sortBy) {
@@ -187,6 +268,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.datasFilted = list
   }
 
+  /**
+   * Mise à jour des données pour l'appel au serveur
+   * @param type 
+   * @param event 
+   */
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
       this.calculatorService.referentielIds.next(event)
@@ -201,10 +287,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.filtredDatas()
   }
 
+  /**
+   * Optimisation de charge de la liste
+   * @param index 
+   * @param item 
+   * @returns 
+   */
   trackBy(index: number, item: CalculatorInterface) {
     return item.contentieux.id
   }
 
+  /**
+   * Demande de trie en fonction d'une colonne
+   * @param type 
+   */
   onSortBy(type: string) {
     if (this.sortBy === type) {
       this.sortBy = ''
@@ -215,17 +311,29 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.filtredDatas()
   }
 
+  /**
+   * Changement de la catégorie selectionné puis appel au serveur
+   * @param category 
+   */
   changeCategorySelected(category: string) {
     this.categorySelected = category
 
     this.onLoad()
   }
 
+  /**
+   * Changement des fonctions selectionnés puis appel au serveur
+   * @param fonctionsId 
+   */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
     this.onLoad()
   }
 
+  /**
+   * Force l'ouverture d'un paneau d'aide
+   * @param type 
+   */
   onShowPanel(type: string) {
     switch (type) {
       case 'données renseignées':
@@ -249,6 +357,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Demande d'extraction de la page au format pdf
+   */
   onExport() {
     this.duringPrint = true
     this.appService.alert.next({

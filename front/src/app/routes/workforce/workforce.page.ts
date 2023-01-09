@@ -21,27 +21,86 @@ import { UserService } from 'src/app/services/user/user.service'
 import { AppService } from 'src/app/services/app/app.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 
+/**
+ * Interface d'une fiche avec ses valeurs rendu
+ */
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Trouvé dans la recherche ou non
+   */
   opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
   tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
   etpLabel: string
+  /**
+   * Total des indispo
+   */
   hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
   currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
   etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
   category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
   fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
   currentSituation: HRSituationInterface | null
 }
 
+/**
+ * Liste des fiches d'une catégories
+ */
+
 interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
   textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
   bgColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
   label: string
+  /**
+   * Liste des fiches
+   */
   hr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
   hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d'etp, couverture propre à la catégorie
+   */
   referentiel: ContentieuReferentielInterface[]
+  /**
+   * Id de la categorie
+   */
   categoryId: number
 }
+
+/**
+ * Page de la liste des fiches (magistrats, greffier ...)
+ */
 
 @Component({
   templateUrl: './workforce.page.html',
@@ -182,26 +241,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   trackById(index: number, item: any) {
     return item.id
-  }
-
-  calculTotalTmpActivity(
-    currentActivities: RHActivityInterface[],
-    formActivities: RHActivityInterface[]
-  ) {
-    // total main activities whitout form
-    const totalWhitout = sumBy(
-      currentActivities.filter((ca) => {
-        const ref = this.referentiel.find((r) => r.id === ca.referentielId)
-        if (ref && ca.referentielId !== formActivities[0].id) {
-          return true
-        } else {
-          return false
-        }
-      }),
-      'percent'
-    )
-
-    return totalWhitout + (formActivities[0].percent || 0)
   }
 
   checkHROpacity(hr: HumanResourceInterface) {

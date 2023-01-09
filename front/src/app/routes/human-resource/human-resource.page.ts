@@ -17,40 +17,109 @@ import { copy } from 'src/app/utils'
 import { dateAddDays, today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 
+/**
+ * Interface d'une situation
+ */
 export interface HistoryInterface extends HRSituationInterface {
   indisponibilities: RHActivityInterface[]
   dateStop: Date | null
   situationForTheFirstTime: boolean
 }
 
+/**
+ * Page qui affiche en détail une fiche
+ */
+
 @Component({
   templateUrl: './human-resource.page.html',
   styleUrls: ['./human-resource.page.scss'],
 })
 export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Dom du paneau d'ajout d'une situation
+   */
   @ViewChild('addDomVentilation')
   addDomVentilation: AddVentilationComponent | null = null
+  /**
+   * Liste des catégories existantes
+   */
   categories: HRCategoryInterface[] = []
+  /**
+   * Liste des fonctions existantes
+   */
   fonctions: HRFonctionInterface[] = []
+  /**
+   * Référentiel
+   */
   contentieuxReferentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Fiche
+   */
   currentHR: HumanResourceInterface | null = null
+  /**
+   * Retour sur la catégorie
+   */
   categoryName: string = ''
+  /**
+   * Liste de toutes les situations
+   */
   histories: HistoryInterface[] = []
+  /**
+   * Situations passé à aujourd'hui
+   */
   historiesOfThePast: HistoryInterface[] = []
+  /**
+   * Situations futur à aujourd'hui
+   */
   historiesOfTheFutur: HistoryInterface[] = []
+  /**
+   * Liste de toutes les indispo de la fiche
+   */
   allIndisponibilities: RHActivityInterface[] = []
+  /**
+   * Mode d'édition courant
+   */
   onEditIndex: number | null = null // null (no edition), -1 (new edition), x (x'eme edition)
+  /**
+   * Indispo en court d'édition
+   */
   updateIndisponiblity: RHActivityInterface | null = null
+  /**
+   * Référentiel des indispo
+   */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Indispos en error (chevauchement de date ou plus de 100%)
+   */
   indisponibilityError: string | null = null
+  /**
+   * Première date de situation
+   */
   actualHistoryDateStart: Date | null = null
+  /**
+   * Derniere date de situation
+   */
   actualHistoryDateStop: Date | null = null
+  /**
+   * Index de la situation en cour d'édition
+   */
   indexOfTheFuture: number | null = null
+  /**
+   * Documentation patch
+   */
   documentation: DocumentationInterface = {
     title: 'Fiche individuelle :',
     path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
   }
 
+  /**
+   * Constructeur
+   * @param humanResourceService 
+   * @param route 
+   * @param router 
+   * @param hrFonctionService 
+   * @param hrCategoryService 
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private route: ActivatedRoute,
@@ -61,6 +130,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     super()
   }
 
+  /**
+   * Au chargement récupération des variables globales + chargement
+   */
   ngOnInit() {
     this.watch(
       this.route.params.subscribe((params) => {
@@ -87,10 +159,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * A la destruction suppression des observables
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Chargement de la fiche coté back + traitement
+   * @param cacheHr 
+   * @returns 
+   */
   async onLoad(cacheHr: HumanResourceInterface | null = null) {
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
@@ -135,24 +215,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.formatHRHistory()
   }
 
-  calculTotalTmpActivity(activities: RHActivityInterface[]) {
-    activities = this.humanResourceService.filterActivitiesByDate(
-      activities || [],
-      new Date()
-    )
-
-    return sumBy(
-      activities.filter((ca) => {
-        return this.contentieuxReferentiel.find(
-          (r) => r.id === ca.referentielId
-        )
-          ? true
-          : false
-      }),
-      'percent'
-    )
-  }
-
+  /**
+   * Génération des situations artificielle ou non
+   */
   formatHRHistory() {
     if (this.fonctions.length === 0 || !this.currentHR) {
       return
@@ -386,10 +451,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Amélioration du chargement de la liste
+   * @param index 
+   * @param item 
+   * @returns 
+   */
   trackByDate(index: number, item: any) {
     return item.dateStart
   }
 
+  /**
+   * Demande de suppression del a fiche
+   */
   async onDelete() {
     if (this.currentHR) {
       if (await this.humanResourceService.removeHrById(this.currentHR.id)) {
@@ -398,6 +472,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de modification d'une fiche
+   * @param nodeName 
+   * @param value 
+   * @param directRef 
+   */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
     if (this.currentHR) {
       if (
@@ -422,6 +502,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Fermeture du paneau d'une situation
+   * @param removeIndispo 
+   */
   async onCancel(removeIndispo: boolean = false) {
     if (
       removeIndispo &&
@@ -442,17 +526,27 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de sauvegarde de la situation
+   */
   onSave() {
     if (this.addDomVentilation) {
       this.addDomVentilation.onSave()
     }
   }
 
+  /**
+   * Demande de chargement de la fiche
+   */
   onNewUpdate() {
     this.onEditIndex = null
     this.onLoad()
   }
 
+  /**
+   * Demande d'ajout d'une indispo
+   * @param indispo 
+   */
   onAddIndispiniblity(indispo: RHActivityInterface | null = null) {
     this.updateIndisponiblity = indispo
       ? copy(indispo)
@@ -466,6 +560,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         }
   }
 
+  /**
+   * Creation, modification et de suppression des indispo
+   * @param action 
+   * @returns 
+   */
   async onEditIndisponibility(action: ActionsInterface) {
     const controlIndisponibilitiesError = this.onEditIndex === null // if panel ediction do not control error
 
@@ -693,6 +792,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     return true
   }
 
+  /**
+   * Demande de modification d'une situation
+   * @param history
+   */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
     const index = history
       ? this.histories.findIndex(
@@ -740,6 +843,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de suppression d'une situation
+   * @param id 
+   */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
     console.log(returnValue, this.histories.length, this.onEditIndex)

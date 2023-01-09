@@ -16,6 +16,10 @@ import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
 
+/**
+ * Panneau de la situation actuelle
+ */
+
 @Component({
   selector: 'actual-panel-situation',
   templateUrl: './actual-panel-situation.component.html',
@@ -25,24 +29,80 @@ export class ActualPanelSituationComponent
   extends MainClass
   implements OnChanges
 {
+  /**
+   * Fiche courante
+   */
   @Input() currentHR: HumanResourceInterface | null = null
+  /** 
+   * Date de début de la situation actuelle
+   */
   @Input() dateStart: Date | null = null
+  /**
+   * Date de fin de la situation actuelle
+   */
   @Input() dateStop: Date | null = null
+  /**
+   * Affiche ou non un bouton "modifier la situation"
+   */
   @Input() canEdit: boolean = false
+  /**
+   * Affiche ou non un bouton "Supprimer la situation"
+   */
   @Input() canRemoveSituation: boolean = false
+  /**
+   * Affiche l'ETP calculé
+   */
   @Input() etp: number = 0
+  /**
+   * Fonction courante
+   */
   @Input() fonction: HRFonctionInterface | null = null
+  /**
+   * Liste des indispo courrante
+   */
   @Input() indisponibilities: RHActivityInterface[] = []
+  /**
+   * Event lors du choix d'éditer une ventilation
+   */
   @Output() editVentilation = new EventEmitter()
+  /**
+   * Event lors du choix d'ajouter une indispo
+   */
   @Output() addIndispiniblity = new EventEmitter()
+  /**
+   * Event lors du choix de supprimer une indispo
+   */
   @Output() onRemove = new EventEmitter()
+  /**
+   * ETP des indispo
+   */
   indisponibility: number = 0
+  /**
+   * Temps de travail en text
+   */
   timeWorked: string = ''
+  /**
+   * Commentaire de la fiche
+   */
   comment: string = ''
+  /**
+   * Date de mise à jours du commentaire
+   */
   commentUpdatedAt: Date | null = null
+  /**
+   * instance créé lors de la modification d'une fiche
+   */
   timeoutUpdateComment: any = null
+  /**
+   * Liste des activités de la situation
+   */
   activities: RHActivityInterface[] = []
 
+  /**
+   * Constructeur
+   * @param hRCommentService
+   * @param humanResourceService 
+   */
   constructor(
     private hRCommentService: HRCommentService,
     private humanResourceService: HumanResourceService
@@ -50,6 +110,9 @@ export class ActualPanelSituationComponent
     super()
   }
 
+  /**
+   * Detection lors du changement d'une des entrées pour le changement complet du rendu
+   */
   ngOnChanges() {
     const findSituation = this.humanResourceService.findSituation(
       this.currentHR,
@@ -78,6 +141,9 @@ export class ActualPanelSituationComponent
     this.onLoadComment()
   }
 
+  /**
+   * Chargement du commentaire d'une fiche
+   */
   onLoadComment() {
     if (this.currentHR) {
       this.hRCommentService.getHRComment(this.currentHR.id).then((result) => {
@@ -88,6 +154,10 @@ export class ActualPanelSituationComponent
     }
   }
 
+  /**
+   * Mise à jour du commentaire de la fiche
+   * @param comment 
+   */
   updateComment(comment: string) {
     if (this.timeoutUpdateComment) {
       clearTimeout(this.timeoutUpdateComment)
@@ -103,9 +173,5 @@ export class ActualPanelSituationComponent
           })
       }
     }, 1000)
-  }
-
-  onEditSituation() {
-    this.editVentilation.emit(true)
   }
 }

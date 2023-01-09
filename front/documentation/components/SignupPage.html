@@ -68,6 +68,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page d&#39;inscription</p>
+
+    </p>
 
 
 
@@ -139,9 +146,6 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#ngOnInit" >ngOnInit</a>
-                            </li>
-                            <li>
                                 <a href="#onSubmit" >onSubmit</a>
                             </li>
                         </ul>
@@ -167,12 +171,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/routes/signup/signup.page.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/routes/signup/signup.page.ts:26</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -242,43 +248,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="ngOnInit"></a>
-                    <span class="name">
-                        <span ><b>ngOnInit</b></span>
-                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>ngOnInit()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="26"
-                            class="link-to-prism">src/app/routes/signup/signup.page.ts:26</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="onSubmit"></a>
                     <span class="name">
                         <span ><b>onSubmit</b></span>
@@ -295,18 +264,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="28"
-                            class="link-to-prism">src/app/routes/signup/signup.page.ts:28</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="42"
+                            class="link-to-prism">src/app/routes/signup/signup.page.ts:42</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Envoi des informations d&#39;inscriptions</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
@@ -344,10 +320,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/routes/signup/signup.page.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/routes/signup/signup.page.ts:18</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Formulaire d&#39;inscription</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -363,11 +345,17 @@ import { Title } from &#x27;@angular/platform-browser&#x27;
 import { Router } from &#x27;@angular/router&#x27;
 import { UserService } from &#x27;src/app/services/user/user.service&#x27;
 
+/**
+ * Page d&#x27;inscription
+ */
 @Component({
   templateUrl: &#x27;./signup.page.html&#x27;,
   styleUrls: [&#x27;./signup.page.scss&#x27;],
 })
 export class SignupPage {
+  /**
+   * Formulaire d&#x27;inscription
+   */
   form &#x3D; new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
@@ -378,12 +366,20 @@ export class SignupPage {
     passwordConf: new FormControl(),
   })
 
+  /**
+   * Constructeur
+   * @param userService 
+   * @param router 
+   * @param title 
+   */
   constructor(private userService: UserService, private router: Router, private title: Title) {
     this.title.setTitle(&#x27;Embarquement | A-Just&#x27;)
   }
 
-  ngOnInit() {}
-
+  /**
+   * Envoi des informations d&#x27;inscriptions
+   * @returns 
+   */
   onSubmit() {
     const { email, password, firstName, lastName, passwordConf, fonction, tj } &#x3D;
       this.form.value

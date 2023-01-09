@@ -2,6 +2,10 @@ import { Op } from 'sequelize'
 import { LOG_EVENT_ON_CLOSE } from '../constants/log-events'
 import { camel_to_snake_object } from '../utils/utils'
 
+/**
+ * Notifications center
+ */
+
 export default (sequelizeInstance, Model) => {
   /**
    * Retourne la totalité des news reformatés en camel case

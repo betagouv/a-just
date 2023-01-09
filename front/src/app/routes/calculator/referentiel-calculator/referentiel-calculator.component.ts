@@ -34,9 +34,9 @@ export class ReferentielCalculatorComponent extends MainClass {
   @HostBinding('class.show-children') showChildren: boolean =
     (this.calculator && this.calculator.childIsVisible) || false
 
-    /**
-     * Constructor
-     */
+  /**
+   * Constructor
+   */
   constructor() {
     super()
   }

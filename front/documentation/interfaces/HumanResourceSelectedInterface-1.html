@@ -648,26 +648,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return item.id
   }
 
-  calculTotalTmpActivity(
-    currentActivities: RHActivityInterface[],
-    formActivities: RHActivityInterface[]
-  ) {
-    // total main activities whitout form
-    const totalWhitout &#x3D; sumBy(
-      currentActivities.filter((ca) &#x3D;&gt; {
-        const ref &#x3D; this.referentiel.find((r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ca.referentielId)
-        if (ref &amp;&amp; ca.referentielId !&#x3D;&#x3D; formActivities[0].id) {
-          return true
-        } else {
-          return false
-        }
-      }),
-      &#x27;percent&#x27;
-    )
-
-    return totalWhitout + (formActivities[0].percent || 0)
-  }
-
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
