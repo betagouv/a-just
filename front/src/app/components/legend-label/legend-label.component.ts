@@ -41,6 +41,10 @@ export class LegendLabelComponent implements OnInit, OnChanges {
    * Valeur de sortie du composant
    */
   @Output() value = new EventEmitter()
+
+  /**
+   * Action d'affichage ou non d'une courbe sur un graphique
+   */
   toogle = {
     label: '',
     checked: true,

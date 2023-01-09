@@ -21,8 +21,17 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
  * Interface d'une situation
  */
 export interface HistoryInterface extends HRSituationInterface {
+  /**
+   * Liste des indisponibilités
+   */
   indisponibilities: RHActivityInterface[]
+  /**
+   * Date de fin
+   */
   dateStop: Date | null
+  /**
+   * Première situation
+   */
   situationForTheFirstTime: boolean
 }
 
@@ -114,11 +123,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Constructeur
-   * @param humanResourceService 
-   * @param route 
-   * @param router 
-   * @param hrFonctionService 
-   * @param hrCategoryService 
+   * @param humanResourceService
+   * @param route
+   * @param router
+   * @param hrFonctionService
+   * @param hrCategoryService
    */
   constructor(
     private humanResourceService: HumanResourceService,
@@ -168,8 +177,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Chargement de la fiche coté back + traitement
-   * @param cacheHr 
-   * @returns 
+   * @param cacheHr
+   * @returns
    */
   async onLoad(cacheHr: HumanResourceInterface | null = null) {
     if (this.categories.length === 0 || this.fonctions.length === 0) {
@@ -453,9 +462,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Amélioration du chargement de la liste
-   * @param index 
-   * @param item 
-   * @returns 
+   * @param index
+   * @param item
+   * @returns
    */
   trackByDate(index: number, item: any) {
     return item.dateStart
@@ -474,9 +483,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de modification d'une fiche
-   * @param nodeName 
-   * @param value 
-   * @param directRef 
+   * @param nodeName
+   * @param value
+   * @param directRef
    */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
     if (this.currentHR) {
@@ -504,7 +513,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Fermeture du paneau d'une situation
-   * @param removeIndispo 
+   * @param removeIndispo
    */
   async onCancel(removeIndispo: boolean = false) {
     if (
@@ -545,7 +554,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande d'ajout d'une indispo
-   * @param indispo 
+   * @param indispo
    */
   onAddIndispiniblity(indispo: RHActivityInterface | null = null) {
     this.updateIndisponiblity = indispo
@@ -562,8 +571,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Creation, modification et de suppression des indispo
-   * @param action 
-   * @returns 
+   * @param action
+   * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
     const controlIndisponibilitiesError = this.onEditIndex === null // if panel ediction do not control error
@@ -845,7 +854,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de suppression d'une situation
-   * @param id 
+   * @param id
    */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)

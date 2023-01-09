@@ -45,6 +45,9 @@ export class PanelHistoryVentilationComponent
    * ETP de la situation
    */
   @Input() etp: number = 0
+  /**
+   * Liste des indisponibilités
+   */
   @Input() indisponibilities: RHActivityInterface[] = []
   /**
    * Indispo de la periode de la situation
@@ -93,7 +96,7 @@ export class PanelHistoryVentilationComponent
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )
-    if(this.indisponibility > 1) {
+    if (this.indisponibility > 1) {
       this.indisponibility = 1
     }
 

@@ -66,7 +66,6 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
 /**
  * Liste des fiches d'une catégories
  */
-
 interface listFormatedInterface {
   /**
    * Couleur de la categories
@@ -101,36 +100,105 @@ interface listFormatedInterface {
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
  */
-
 @Component({
   templateUrl: './workforce.page.html',
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Liste de toutes les RH
+   */
   allHumanResources: HumanResourceInterface[] = []
+  /**
+   * Formated RH
+   */
   preformatedAllHumanResource: HumanResourceSelectedInterface[] = []
+  /***
+   * RH
+   */
   humanResources: HumanResourceSelectedInterface[] = []
+  /**
+   * RH filtrés
+   */
   humanResourcesFilters: HumanResourceSelectedInterface[] = []
+  /**
+   * Contentieux
+   */
   referentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Liste des référentiels
+   */
   formReferentiel: dataInterface[] = []
+  /**
+   * liste des catégories filtrées
+   */
   categoriesFilterList: HRCategorySelectedInterface[] = []
+  /**
+   * Liste des ids catégories
+   */
   categoriesFilterListIds: number[] = []
+  /**
+   * Identifiants des contentieux selectionnés
+   */
   selectedReferentielIds: number[] = []
+  /**
+   * Valeur du champs recherche
+   */
   searchValue: string = ''
+  /**
+   * Liste des RH trouvées
+   */
   valuesFinded: HumanResourceInterface[] | null = null
+  /**
+   * Indice des valeurs trouvées suite à une recherche
+   */
   indexValuesFinded: number = 0
+  /**
+   * Backup des RH
+   */
   hrBackup: BackupInterface | null = null
+  /**
+   * Date selectionnée
+   */
   dateSelected: Date = this.workforceService.dateSelected.getValue()
+  /**
+   * Liste formatée contenant l'ensemble des informations nécessaire au chargement de la page
+   */
   listFormated: listFormatedInterface[] = []
+  /**
+   * Liste des filtres selectionnés
+   */
   filterSelected: ContentieuReferentielInterface | null = null
+  /**
+   * Affichage du panneau de selection de filtre
+   */
   showFilterPanel: number = -1
+  /**
+   * Paramètres de filtre selectionnés
+   */
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
+  /**
+   * Accès au réafectateur
+   */
   canViewReaffectator: boolean = false
+  /**
+   * Documentation module
+   */
   documentation: DocumentationInterface = {
     title: 'Le ventilateur :',
     path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/quest-ce-que-cest',
   }
 
+  /**
+   * Constructor
+   * @param humanResourceService
+   * @param referentielService
+   * @param route
+   * @param router
+   * @param workforceService
+   * @param userService
+   * @param appService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
@@ -143,6 +211,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     super()
   }
 
+  /**
+   * Initialisation du composent
+   */
   ngOnInit() {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
@@ -198,10 +269,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       user && user.access && user.access.indexOf(7) !== -1 ? true : false
   }
 
+  /**
+   * Destruction du composant
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Maj de catégorie filtrée
+   */
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
@@ -231,6 +308,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.calculateTotalAffected()
   }
 
+  /**
+   * Ajout d'une RH
+   */
   async addHR() {
     const newId = await this.humanResourceService.createHumanResource(
       this.dateSelected
@@ -239,10 +319,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.router.navigate(['/resource-humaine', newId])
   }
 
+  /**
+   * Retourne l'id d'un élément
+   * @param index
+   * @param item
+   * @returns
+   */
   trackById(index: number, item: any) {
     return item.id
   }
 
+  /**
+   * Gestion de l'opacité pour une RH
+   * @param hr
+   * @returns
+   */
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
@@ -256,6 +347,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return 0.5
   }
 
+  /**
+   * Recherche de RH
+   */
   onSearchBy() {
     const valuesFinded: HumanResourceInterface[] = []
     let nbPerson = 0
@@ -288,6 +382,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Filtre liste RH
+   */
   onFilterList() {
     if (
       !this.categoriesFilterList.length ||
@@ -323,8 +420,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Ordonner une liste de RH
+   */
   orderListWithFiltersParams() {
-    // console.log(this.filterParams)
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr]
       if (this.filterParams) {
@@ -362,6 +461,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.updateCategoryValues()
   }
 
+  /**
+   * Scroll jusqu'à une RH donnée en paramètre
+   * @param hrId identifiant d'une ressource
+   */
   onGoTo(hrId: number | null) {
     let isFinded = false
     const findContainer = document.getElementById('container-list')
@@ -404,6 +507,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Trouver la RH suivante dans la liste de recherche
+   * @param delta
+   */
   onFindNext(delta: number = 1) {
     if (this.valuesFinded) {
       this.indexValuesFinded = this.indexValuesFinded + delta
@@ -417,6 +524,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Contentieux ids selectionnés
+   */
   onSelectedReferentielIdsChanged(list: any) {
     this.selectedReferentielIds = list
     this.humanResourceService.selectedReferentielIds =
@@ -430,12 +540,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
+  /**
+   * Changement de date du ventilateur
+   * @param date
+   */
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
   }
 
+  /**
+   * Filtrer par contentieux
+   * @param ref
+   */
   onFilterBy(ref: ContentieuReferentielInterface) {
     if (!this.filterSelected || this.filterSelected.id !== ref.id) {
       this.filterSelected = ref
@@ -446,6 +564,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Maj des paramètres de filtre
+   * @param event
+   */
   updateFilterParams(event: FilterPanelInterface) {
     this.workforceService.filterParams = event // memorize in cache
     this.filterParams = event
@@ -453,6 +575,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Reset tri
+   */
   clearFilterSort() {
     if (this.filterParams) {
       this.filterParams.sort = null
@@ -465,6 +590,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Reset filtre
+   */
   clearFilterFilter() {
     if (this.filterParams) {
       this.filterParams.filterNames = null
@@ -475,6 +603,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Calcul de l'ETP total
+   */
   calculateTotalAffected() {
     this.listFormated = this.listFormated.map((group) => {
       group.referentiel = group.referentiel.map((r) => ({

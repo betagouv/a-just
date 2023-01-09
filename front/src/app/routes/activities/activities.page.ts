@@ -18,20 +18,26 @@ import { UserService } from 'src/app/services/user/user.service'
  */
 interface ContentieuReferentielActivitiesInterface
   extends ContentieuReferentielInterface {
+  /**
+   * Log de mise à jour de donnée d'activité
+   */
   activityUpdated: NodeActivityUpdatedInterface | null
 }
 
+/**
+ * Composant page activité
+ */
 @Component({
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
-   * Dom du wrapper 
+   * Dom du wrapper
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   /**
-   * Liste des activités 
+   * Liste des activités
    */
   activities: ActivityInterface[] = []
   /**
@@ -71,10 +77,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Constructeur
-   * @param activitiesService 
-   * @param humanResourceService 
-   * @param referentielService 
-   * @param userService 
+   * @param activitiesService
+   * @param humanResourceService
+   * @param referentielService
+   * @param userService
    */
   constructor(
     private activitiesService: ActivitiesService,
@@ -114,9 +120,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Modificiation de la donnée d'entrée, sorties, stock d'un contentieux
-   * @param referentiel 
-   * @param subRef 
-   * @param nodeUpdated 
+   * @param referentiel
+   * @param subRef
+   * @param nodeUpdated
    */
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
@@ -202,7 +208,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Changement de la date via le selecteur
-   * @param date 
+   * @param date
    */
   changeMonth(date: Date) {
     this.activitiesService.activityMonth.next(date)
@@ -291,10 +297,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retour des titres des infos bulles
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @returns
    */
   getTooltipTitle(
     type: 'entrees' | 'sorties' | 'stock',
@@ -355,11 +361,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retour du contenu des tooltips
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @param level 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @param level
+   * @returns
    */
   getTooltipBody(
     type: 'entrees' | 'sorties' | 'stock',
@@ -423,11 +429,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retourne le pied des tooltips
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @param level 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @param level
+   * @returns
    */
   getTooltipFooter(
     type: string,
@@ -458,19 +464,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Force l'ouverture du paneau d'aide
-   * @param type 
+   * @param type
    */
   onShowPanel(type: string) {
     switch (type) {
       case 'logiciel':
         this.wrapper?.onForcePanelHelperToShow({
-          title: 'Données d\'activité logiciel',
+          title: "Données d'activité logiciel",
           path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
         })
         break
       case 'saisie':
         this.wrapper?.onForcePanelHelperToShow({
-          title: 'Données d\'activité A-JUSTées',
+          title: "Données d'activité A-JUSTées",
           path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
         })
         break

@@ -144,6 +144,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Log de mise à jour de donnée d&#39;activité</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -171,20 +177,26 @@ import { UserService } from &#x27;src/app/services/user/user.service&#x27;
  */
 interface ContentieuReferentielActivitiesInterface
   extends ContentieuReferentielInterface {
+  /**
+   * Log de mise à jour de donnée d&#x27;activité
+   */
   activityUpdated: NodeActivityUpdatedInterface | null
 }
 
+/**
+ * Composant page activité
+ */
 @Component({
   templateUrl: &#x27;./activities.page.html&#x27;,
   styleUrls: [&#x27;./activities.page.scss&#x27;],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
-   * Dom du wrapper 
+   * Dom du wrapper
    */
   @ViewChild(&#x27;wrapper&#x27;) wrapper: WrapperComponent | undefined
   /**
-   * Liste des activités 
+   * Liste des activités
    */
   activities: ActivityInterface[] &#x3D; []
   /**
@@ -224,10 +236,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Constructeur
-   * @param activitiesService 
-   * @param humanResourceService 
-   * @param referentielService 
-   * @param userService 
+   * @param activitiesService
+   * @param humanResourceService
+   * @param referentielService
+   * @param userService
    */
   constructor(
     private activitiesService: ActivitiesService,
@@ -267,9 +279,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Modificiation de la donnée d&#x27;entrée, sorties, stock d&#x27;un contentieux
-   * @param referentiel 
-   * @param subRef 
-   * @param nodeUpdated 
+   * @param referentiel
+   * @param subRef
+   * @param nodeUpdated
    */
   onUpdateActivity(
     referentiel: ContentieuReferentielInterface,
@@ -355,7 +367,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Changement de la date via le selecteur
-   * @param date 
+   * @param date
    */
   changeMonth(date: Date) {
     this.activitiesService.activityMonth.next(date)
@@ -444,10 +456,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retour des titres des infos bulles
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @returns
    */
   getTooltipTitle(
     type: &#x27;entrees&#x27; | &#x27;sorties&#x27; | &#x27;stock&#x27;,
@@ -508,11 +520,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retour du contenu des tooltips
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @param level 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @param level
+   * @returns
    */
   getTooltipBody(
     type: &#x27;entrees&#x27; | &#x27;sorties&#x27; | &#x27;stock&#x27;,
@@ -576,11 +588,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retourne le pied des tooltips
-   * @param type 
-   * @param contentieux 
-   * @param value 
-   * @param level 
-   * @returns 
+   * @param type
+   * @param contentieux
+   * @param value
+   * @param level
+   * @returns
    */
   getTooltipFooter(
     type: string,
@@ -611,19 +623,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Force l&#x27;ouverture du paneau d&#x27;aide
-   * @param type 
+   * @param type
    */
   onShowPanel(type: string) {
     switch (type) {
       case &#x27;logiciel&#x27;:
         this.wrapper?.onForcePanelHelperToShow({
-          title: &#x27;Données d\&#x27;activité logiciel&#x27;,
+          title: &quot;Données d&#x27;activité logiciel&quot;,
           path: &#x27;https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel&#x27;,
         })
         break
       case &#x27;saisie&#x27;:
         this.wrapper?.onForcePanelHelperToShow({
-          title: &#x27;Données d\&#x27;activité A-JUSTées&#x27;,
+          title: &quot;Données d&#x27;activité A-JUSTées&quot;,
           path: &#x27;https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees&#x27;,
         })
         break
