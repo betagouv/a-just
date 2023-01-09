@@ -572,6 +572,7 @@ import { WorkforceService } from &#x27;src/app/services/workforce/workforce.serv
 import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
 import { ReaffectatorService } from &#x27;src/app/services/reaffectator/reaffectator.service&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
+import { ServerService } from &#x27;src/app/services/http-server/server.service&#x27;
 
 /**
  * Interface d&#x27;une fiche surchargé avec des rendus visuels
@@ -813,19 +814,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   showReelValues: boolean &#x3D; false
 
   /**
+   * Reaffectator Service
+   */
+  reaffectatorService: ReaffectatorService
+
+  /**
    * Constructeur
    * @param humanResourceService
    * @param workforceService
    * @param reaffectatorService
    * @param appService
+   * @param  serverService
    */
   constructor(
     private humanResourceService: HumanResourceService,
     private workforceService: WorkforceService,
-    public reaffectatorService: ReaffectatorService,
-    private appService: AppService
+    private appService: AppService,
+    private rs: ReaffectatorService
   ) {
     super()
+    this.reaffectatorService &#x3D; this.rs
   }
 
   /**
