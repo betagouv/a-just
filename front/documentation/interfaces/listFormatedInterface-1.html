@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Liste des fiches d&#39;une catégories</p>
+
+            </p>
 
 
         <section>
@@ -167,6 +174,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couleur de fond de la categories</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -200,6 +213,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la categorie</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -233,6 +252,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des fiches</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -266,6 +291,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des fiches après filtres</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -299,6 +330,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom de la catégorie (pluriel ou non)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -332,6 +369,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Reférentiel avec les calcules d&#39;etp, couverture propre à la catégorie</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -365,6 +408,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couleur de la categories</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -395,27 +444,86 @@ import { UserService } from &#x27;src/app/services/user/user.service&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
 
+/**
+ * Interface d&#x27;une fiche avec ses valeurs rendu
+ */
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Trouvé dans la recherche ou non
+   */
   opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
   tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
   etpLabel: string
+  /**
+   * Total des indispo
+   */
   hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
   currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
   etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
   category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
   fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
   currentSituation: HRSituationInterface | null
 }
 
+/**
+ * Liste des fiches d&#x27;une catégories
+ */
+
 interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
   textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
   bgColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
   label: string
+  /**
+   * Liste des fiches
+   */
   hr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
   hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d&#x27;etp, couverture propre à la catégorie
+   */
   referentiel: ContentieuReferentielInterface[]
+  /**
+   * Id de la categorie
+   */
   categoryId: number
 }
+
+/**
+ * Page de la liste des fiches (magistrats, greffier ...)
+ */
 
 @Component({
   templateUrl: &#x27;./workforce.page.html&#x27;,

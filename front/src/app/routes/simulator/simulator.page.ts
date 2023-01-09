@@ -1165,7 +1165,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   }
 
   /**
-   * Press
+   * Valider un paramètre lorsque la touche ENTREE est pressée
    * @param event
    * @param volumeInput
    * @param inputField
@@ -1182,6 +1182,9 @@ export class SimulatorPage extends MainClass implements OnInit {
     }
   }
 
+  /**
+   * Export pdf de simulation
+   */
   print() {
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
@@ -1211,6 +1214,10 @@ export class SimulatorPage extends MainClass implements OnInit {
     })
   }
 
+  /**
+   * Changement de categorie selectionnée pour la simulation
+   * @param category magistrat, fonctionnaire, greffier
+   */
   changeCategorySelected(category: string) {
     this.categorySelected = category
     this.contentieuId = null
@@ -1229,6 +1236,9 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.loadFunctions()
   }
 
+  /**
+   * Chargement de la liste des fonctions
+   */
   loadFunctions() {
     const finalList = this.humanResourceService.fonctions
       .getValue()
@@ -1247,6 +1257,10 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
+  /**
+   * Selectionner une fonction
+   * @param fonctionsId identifiant de la fonction choisie
+   */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)

@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;une fiche avec ses valeurs rendu</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -186,6 +193,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Categorie à la date sélectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -219,6 +232,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Activités de la date sélectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -252,6 +271,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Situation à la date sélectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -285,6 +310,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP a la date sélectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -318,6 +349,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Temps de travail en string</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -351,6 +388,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Fonction à la date sélectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -384,6 +427,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Total des indispo</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -417,6 +466,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Trouvé dans la recherche ou non</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -455,6 +510,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Cache pour les activité courantes</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -485,27 +546,86 @@ import { UserService } from &#x27;src/app/services/user/user.service&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
 import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
 
+/**
+ * Interface d&#x27;une fiche avec ses valeurs rendu
+ */
 export interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Trouvé dans la recherche ou non
+   */
   opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
   tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
   etpLabel: string
+  /**
+   * Total des indispo
+   */
   hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
   currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
   etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
   category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
   fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
   currentSituation: HRSituationInterface | null
 }
 
+/**
+ * Liste des fiches d&#x27;une catégories
+ */
+
 interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
   textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
   bgColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
   label: string
+  /**
+   * Liste des fiches
+   */
   hr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
   hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d&#x27;etp, couverture propre à la catégorie
+   */
   referentiel: ContentieuReferentielInterface[]
+  /**
+   * Id de la categorie
+   */
   categoryId: number
 }
+
+/**
+ * Page de la liste des fiches (magistrats, greffier ...)
+ */
 
 @Component({
   templateUrl: &#x27;./workforce.page.html&#x27;,
