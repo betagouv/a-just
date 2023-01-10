@@ -186,7 +186,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Le ventilateur :',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/quest-ce-que-cest',
+    path: 'https://pinnate-radar-357.notion.site/Ajouter-une-annonce-29c431283d6d4ee387f4c5545a2dd24f',
   }
 
   /**
