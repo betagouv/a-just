@@ -41,6 +41,11 @@ export default class RouteReaffectator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    const fonctions = await this.models.HRFonctions.getAll()
+    if (fonctions.length === fonctionsIds.length) {
+      fonctionsIds = null
+    }
+
     console.time('step1')
     const hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
