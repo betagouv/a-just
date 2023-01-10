@@ -390,16 +390,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
 
-    let selectedFonctionsIds = [
-      ...this.reaffectatorService.selectedFonctionsIds,
-    ]
-    selectedFonctionsIds = selectedFonctionsIds.concat(
-      allFonctions
-        .filter(
-          (f) => f.categoryId !== this.reaffectatorService.selectedCategoriesId
-        )
-        .map((f) => f.id)
-    )
+    let selectedFonctionsIds = null
+
+    if (
+      this.reaffectatorService.selectedFonctionsIds.length !==
+      this.formFilterFonctionsSelect.length
+    ) {
+      selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
+      selectedFonctionsIds = selectedFonctionsIds.concat(
+        allFonctions
+          .filter(
+            (f) =>
+              f.categoryId !== this.reaffectatorService.selectedCategoriesId
+          )
+          .map((f) => f.id)
+      )
+    }
 
     this.reaffectatorService
       .onFilterList(
