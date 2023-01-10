@@ -381,7 +381,11 @@ export function getEtpByCategory (etpAffected, sufix = '') {
   let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
   let etpCon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
 
-  return { ['etpMag' + sufix]: etpMag, ['etpFon' + sufix]: etpFon, ['etpCon' + sufix]: etpCon }
+  return {
+    ['etpMag' + sufix]: etpMag,
+    ['etpFon' + sufix]: etpFon,
+    ['etpCon' + sufix]: etpCon,
+  }
 }
 
 /**
@@ -606,17 +610,17 @@ export async function getHRVentilationOnPeriod (hr, referentielId, categories, d
       monthDaysCounter++
       const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr)
 
-      if (etp !== null) {
-        // @ts-ignore
-        list[situation.category.id].etpt += etp
-
+      if (etp !== null && situation && situation.category) {
         const str = getShortMonthString(now) + now.getFullYear().toString().slice(-2)
 
-        // @ts-ignore
-        monthlyList[str][situation.category.id].etpt += etp
-        // @ts-ignore
-        monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
-        // @ts-ignore
+        if (monthlyList[str]) {
+          // @ts-ignore
+          list[situation.category.id].etpt += etp
+          // @ts-ignore
+          monthlyList[str][situation.category.id].etpt += etp
+          // @ts-ignore
+          monthlyList[str][situation.category.id].nbOfDays = monthDaysCounter
+        }
       }
     }
     now.setDate(now.getDate() + 1)
@@ -781,13 +785,19 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
 
       if (x === 'magRealTimePerCase') {
         if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
-          console.log({ etpMag: simulation.etpMag || params.beginSituation.etpMag, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          console.log({
+            etpMag: simulation.etpMag || params.beginSituation.etpMag,
+            totalOut: simulation.totalOut || params.endSituation.totalOut,
+          })
           simulation.magRealTimePerCase =
             Math.round(
               ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
             ) / 100
         } else {
-          console.log({ etpFon: simulation.etpFon || params.beginSituation.etpFon, totalOut: simulation.totalOut || params.endSituation.totalOut })
+          console.log({
+            etpFon: simulation.etpFon || params.beginSituation.etpFon,
+            totalOut: simulation.totalOut || params.endSituation.totalOut,
+          })
           simulation.magRealTimePerCase =
             Math.round(
               (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
