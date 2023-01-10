@@ -380,19 +380,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    console.log(this.formReferentiel, this.reaffectatorService.selectedReferentielIds)
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
-      this.reaffectatorService.selectedReferentielIds.length
+        this.reaffectatorService.selectedReferentielIds.length
     ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
-
     let selectedFonctionsIds = null
-
     if (
       this.reaffectatorService.selectedFonctionsIds.length !==
       this.formFilterFonctionsSelect.length

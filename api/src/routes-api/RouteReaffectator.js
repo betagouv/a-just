@@ -40,6 +40,10 @@ export default class RouteReaffectator extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
+    if (referentielList && referentielList.length == referentiel.length) {
+      referentielList = null
+    }
 
     console.time('step1')
     const hr = await this.model.getCache(backupId)
@@ -51,7 +55,6 @@ export default class RouteReaffectator extends Route {
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupId, date)
 
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
     for (let i = 0; i < referentiel.length; i++) {
       referentiel[i] = {
         ...referentiel[i],
