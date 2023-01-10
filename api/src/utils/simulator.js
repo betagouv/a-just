@@ -8,6 +8,7 @@ import {
   month,
   nbOfDays,
   stringToDecimalDate,
+  today,
   workingDay,
 } from './date'
 import { fixDecimal } from './number'
@@ -79,10 +80,11 @@ export function mergeSituations (situationFiltered, situation, categories, categ
  * @param {*} hr liste de ressources
  * @param {*} categoryId catégorie selectionnée
  * @param {*} functionIds fonctions selectionées
+ * @param {*} date date selectionées en option
  * @returns liste de hr avec situations filtrées
  */
-export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
-  return hr
+export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) {
+  hr = hr
     .map((human) => {
       const situations = (human.situations || []).map((situation) => {
         if (categoryId && situation.category && situation.category.id !== categoryId) {
@@ -102,6 +104,26 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds) {
       }
     })
     .filter((x) => (x.situations || []).some((s) => s.etp !== 0))
+
+  if (date) {
+    date = today(date)
+    hr = hr.filter((h) => {
+      const dateStart = h.dateStart ? today(h.dateStart) : null
+      const dateEnd = h.dateEnd ? today(h.dateEnd) : null
+
+      if (dateStart && dateStart.getTime() > date.getTime()) {
+        return false
+      }
+
+      if (dateEnd && dateEnd.getTime() < date.getTime()) {
+        return false
+      }
+
+      return true
+    })
+  }
+
+  return hr
 }
 
 /**
