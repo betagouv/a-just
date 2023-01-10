@@ -172,7 +172,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/simulateur/quest-ce-que-cest',
+    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
   /**
