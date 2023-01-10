@@ -380,6 +380,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
+    console.log(this.formReferentiel, this.reaffectatorService.selectedReferentielIds)
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
