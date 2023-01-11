@@ -1,20 +1,63 @@
-import { ContentieuReferentielInterface } from "./contentieu-referentiel";
-import { UserInterface } from "./user-interface";
+import { ContentieuReferentielInterface } from './contentieu-referentiel'
+import { UserInterface } from './user-interface'
 
+/**
+ * Entrées / Sorties / Stock d'un contentieux à un mois donnée
+ */
 export interface ActivityInterface {
-	periode: Date;
-	entrees: number;
-	originalEntrees?: number;
-	sorties: number;
-	originalSorties?: number;
-	stock: number;
-	originalStock?: number;
-	contentieux: ContentieuReferentielInterface;
-	updatedBy?: NodeActivityUpdatedInterface;
+  /**
+   * Mois d'une activité
+   */
+  periode: Date
+  /**
+   * Entrées d'une activité
+   */
+  entrees: number
+  /**
+   * Entrées venant de la SDSE
+   */
+  originalEntrees?: number
+  /**
+   * Sorties d'une activité
+   */
+  sorties: number
+  /**
+   * Sorties venant de la SDSE
+   */
+  originalSorties?: number
+  /**
+   * Stock calculé
+   */
+  stock: number
+  /**
+   * Stock de la SDSE
+   */
+  originalStock?: number
+  /**
+   * Contentieux concerné
+   */
+  contentieux: ContentieuReferentielInterface
+  /**
+   * Node qui précise qui à mise à jour et quand
+   */
+  updatedBy?: NodeActivityUpdatedInterface
 }
 
+
+  /**
+   * Node qui précise qui à mise à jour et quand
+   */
 export interface NodeActivityUpdatedInterface {
-	entrees: {user: UserInterface | null, date: Date};
-	sorties: {user: UserInterface | null, date: Date};
-	stock: {user: UserInterface | null, date: Date};
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  entrees: { user: UserInterface | null; date: Date }
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  sorties: { user: UserInterface | null; date: Date }
+  /**
+   * Utilisateur plus sa date de mise à jour
+   */
+  stock: { user: UserInterface | null; date: Date }
 }

@@ -112,9 +112,6 @@
                                 <a href="#getLastMonthActivities" >getLastMonthActivities</a>
                             </li>
                             <li>
-                                <a href="#loadAllActivities" >loadAllActivities</a>
-                            </li>
-                            <li>
                                 <a href="#loadMonthActivities" >loadMonthActivities</a>
                             </li>
                             <li>
@@ -288,50 +285,6 @@
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>API retourne le dernier mois qui possède une activité pour une juridiction</p>
-</div>
-
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="loadAllActivities"></a>
-                    <span class="name">
-                        <span ><b>loadAllActivities</b></span>
-                        <a href="#loadAllActivities"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>loadAllActivities()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="100"
-                            class="link-to-prism">src/app/services/activities/activities.service.ts:100</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>API retourne l&#39;ensemble des activitiés d&#39;une juridiction</p>
 </div>
 
                     <div>
@@ -754,26 +707,6 @@ export class ActivitiesService {
         hrBackupId: this.hrBackupId,
       })
       .then((data) &#x3D;&gt; data.data.date || null)
-  }
-
-  /**
-   * API retourne l&#x27;ensemble des activitiés d&#x27;une juridiction
-   * @returns 
-   */
-  loadAllActivities() {
-    return this.serverService
-      .post(&#x60;activities/load-all-activities&#x60;, {
-        hrBackupId: this.hrBackupId,
-      })
-      .then((data) &#x3D;&gt; {
-        const list &#x3D; data.data
-        this.activities.next(
-          list.map((a: ActivityInterface) &#x3D;&gt; ({
-            ...a,
-            periode: new Date(a.periode),
-          }))
-        )
-      })
   }
 }
 </code></pre>

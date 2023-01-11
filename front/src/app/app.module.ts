@@ -7,6 +7,10 @@ import { HttpClientModule } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AlertComponent } from './components/alert/alert.component'
 
+/**
+ * Module principal du projet
+ */
+
 @NgModule({
     declarations: [AppComponent, AlertComponent],
     imports: [

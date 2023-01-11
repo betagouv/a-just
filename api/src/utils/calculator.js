@@ -4,6 +4,11 @@ import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
 
+/**
+ * Création d'un tableau vide du calculateur de tout les contentieux et sous contentieux
+ * @param {*} referentiels
+ * @returns
+ */
 export const emptyCalulatorValues = (referentiels) => {
   const list = []
   for (let i = 0; i < referentiels.length; i++) {
@@ -65,6 +70,18 @@ export const emptyCalulatorValues = (referentiels) => {
   return list
 }
 
+/**
+ * Calcul des lignes du calculateur
+ * @param {*} list
+ * @param {*} nbMonth
+ * @param {*} activities
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @param {*} hr
+ * @param {*} categories
+ * @param {*} optionsBackups
+ * @returns
+ */
 export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
   console.log('syncCalculatorDatas')
   console.log('list hr', hr.map((h) => `${h.firstName} ${h.lastName}`).join(', '))
@@ -96,6 +113,19 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
 
   return list
 }
+
+/**
+ * Préparation d'un objet d'un contentieux avec les filtres de recherche
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @param {*} activities
+ * @param {*} referentielId
+ * @param {*} nbMonth
+ * @param {*} hr
+ * @param {*} categories
+ * @param {*} optionsBackups
+ * @returns
+ */
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
@@ -139,6 +169,15 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   }
 }
 
+/**
+ * Calcul d'un taux de ventilation d'un contentieux pour tous les utilisateurs
+ * @param {*} hr
+ * @param {*} categories
+ * @param {*} referentielId
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @returns
+ */
 const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {}
 
@@ -181,6 +220,15 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
   return sortBy(list, 'rank')
 }
 
+/**
+ * Calcul du temps de ventilation d'un magistrat et d'un contentieux
+ * @param {*} hr
+ * @param {*} referentielId
+ * @param {*} categories
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @returns
+ */
 export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop) => {
   const list = new Object()
   categories.map((c) => {
@@ -261,6 +309,16 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   return list
 }
 
+/**
+ * Calcul de stock, moyenne, temps de traitement des activités
+ * @param {*} referentielId
+ * @param {*} totalIn
+ * @param {*} lastStock
+ * @param {*} magEtpAffected
+ * @param {*} fonEtpAffected
+ * @param {*} optionsBackups
+ * @returns
+ */
 const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, fonEtpAffected, optionsBackups) => {
   let magCalculateTimePerCase = null
   let fonCalculateTimePerCase = null

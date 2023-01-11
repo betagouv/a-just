@@ -15,11 +15,27 @@ import {
 import { getHumanRessourceList } from '../utils/humanServices'
 import { sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
+
+/**
+ * Route de la page extrateur
+ */
+
 export default class RouteExtractor extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface de retour des calculs pour la page extracteur
+   * @param {*} backupId
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} categoryFilter
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),

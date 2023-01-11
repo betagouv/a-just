@@ -5,11 +5,22 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import config from 'config'
 
+/**
+ * Route des imports
+ */
 export default class RouteImports extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface qui permet d'importer une liste de fiche
+   * @param {*} file
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       file: Types.string(),
@@ -25,6 +36,10 @@ export default class RouteImports extends Route {
     this.sendOk(ctx, 'OK')
   }
 
+  /**
+   * Interface pour importer une liste de contentieux niveau 3 et 4 et indispo
+   * @param {*} file
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       file: Types.string(),
@@ -44,6 +59,11 @@ export default class RouteImports extends Route {
     this.sendOk(ctx, `${config.serverUrl}/public/tmp/update-referentiel.json`)
   }
 
+  /**
+   * Route des activités pour une juridiction
+   * @param {*} backupId
+   * @param {*} file
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),

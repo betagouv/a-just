@@ -4,11 +4,17 @@ import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 import { UserService } from 'src/app/services/user/user.service'
 
+/**
+ * Page d'inscription
+ */
 @Component({
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage {
+  /**
+   * Formulaire d'inscription
+   */
   form = new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
@@ -19,12 +25,20 @@ export class SignupPage {
     passwordConf: new FormControl(),
   })
 
+  /**
+   * Constructeur
+   * @param userService 
+   * @param router 
+   * @param title 
+   */
   constructor(private userService: UserService, private router: Router, private title: Title) {
     this.title.setTitle('Embarquement | A-Just')
   }
 
-  ngOnInit() {}
-
+  /**
+   * Envoi des informations d'inscriptions
+   * @returns 
+   */
   onSubmit() {
     const { email, password, firstName, lastName, passwordConf, fonction, tj } =
       this.form.value

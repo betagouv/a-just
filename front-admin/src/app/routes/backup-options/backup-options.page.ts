@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { JuridictionInterface } from 'src/app/interfaces/juridiction';
 import { UserInterface } from 'src/app/interfaces/user-interface';
 import { MainClass } from 'src/app/libs/main-class';

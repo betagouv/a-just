@@ -3,11 +3,23 @@ import { crypt } from '../utils'
 import { Types } from '../utils/types'
 import { USER_ROLE_ADMIN } from '../constants/roles'
 
+/**
+ * Route des authentification
+ */
 export default class RouteAuths extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'Users' })
   }
 
+  /**
+   * Interface de connexion utilisateur
+   * @param {*} email
+   * @param {*} password
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
@@ -20,8 +32,8 @@ export default class RouteAuths extends Route {
     email = (email || '').toLowerCase()
 
     const user = await this.model.findOne({ where: { email } })
-    if(user && user.dataValues.status === 0) {
-      ctx.throw(401, ctx.state.__('Votre compte n\'est plus accessible.'))
+    if (user && user.dataValues.status === 0) {
+      ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
     } else if (user && crypt.compartPassword(password, user.dataValues.password)) {
       delete user.dataValues.password
 
@@ -33,6 +45,11 @@ export default class RouteAuths extends Route {
     }
   }
 
+  /**
+   * Interface de connexion administrateur
+   * @param {*} email
+   * @param {*} password
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
@@ -45,8 +62,8 @@ export default class RouteAuths extends Route {
     email = (email || '').toLowerCase()
 
     const user = await this.model.findOne({ where: { email, role: USER_ROLE_ADMIN } })
-    if(user && user.dataValues.status === 0) {
-      ctx.throw(401, ctx.state.__('Votre compte n\'est plus accessible.'))
+    if (user && user.dataValues.status === 0) {
+      ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
     } else if (user && crypt.compartPassword(password, user.dataValues.password)) {
       delete user.dataValues.password
 
@@ -58,6 +75,9 @@ export default class RouteAuths extends Route {
     }
   }
 
+  /**
+   * Interface de control de qui est connecté
+   */
   @Route.Get({})
   async autoLogin (ctx) {
     if (this.userId(ctx)) {
@@ -68,6 +88,9 @@ export default class RouteAuths extends Route {
     }
   }
 
+  /**
+   * Interface de control de qui est l'administrateur connecté
+   */
   @Route.Get({})
   async autoLoginAdmin (ctx) {
     if (this.userId(ctx) && ctx.state.user.role === USER_ROLE_ADMIN) {
@@ -78,6 +101,9 @@ export default class RouteAuths extends Route {
     }
   }
 
+  /**
+   * Suppression du token de l'utilisateur connecté
+   */
   @Route.Get({})
   async logout (ctx) {
     await ctx.logoutUser()

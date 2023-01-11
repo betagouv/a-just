@@ -1,7 +1,17 @@
 import { Op } from 'sequelize'
 import { today } from '../utils/date'
 
+/**
+ * Liste des situations des fiches (situation = catégorie, fonction, etp, ...)
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Liste des situations d'une fiche à partir d'une date donnée
+   * @param {*} humanId
+   * @param {*} dateStart
+   * @returns
+   */
   Model.getListByHumanId = async (humanId, dateStart) => {
     const list = await Model.findAll({
       attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
@@ -59,6 +69,12 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Mise à jour des sitations d'une fiche
+   * @param {*} list
+   * @param {*} humanId
+   * @param {*} cleanOldSituation
+   */
   Model.syncSituations = async (list, humanId, cleanOldSituation = false) => {
     let reelHRIds = []
 
@@ -123,6 +139,12 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Control si un utilisateur a accès à la situation d'une fiche
+   * @param {*} situationId
+   * @param {*} userId
+   * @returns
+   */
   Model.haveHRId = async (situationId, userId) => {
     const hr = await Model.findOne({
       attributes: ['id'],

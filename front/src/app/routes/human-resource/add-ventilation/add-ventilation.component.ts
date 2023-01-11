@@ -20,28 +20,84 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Panneau pour ajouter / modifier une situation
+ * indispos, etp, category, fonction, date début
+ */
+
 @Component({
   selector: 'add-ventilation',
   templateUrl: './add-ventilation.component.html',
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  /**
+   * Fiche
+   */
   @Input() human: HumanResourceInterface | null = null
+  /**
+   * Liste de toutes les indispo d'une fiche
+   */
   @Input() indisponibilities: RHActivityInterface[] = []
+  /**
+   * Liste des ventilations en court de modification
+   */
   @Input() activities: RHActivityInterface[] = []
+  /**
+   * Date de début de la situation
+   */
   @Input() lastDateStart: Date | null = null
+  /**
+   * Date de fin estimé de la situation
+   */
   @Input() dateStop: Date | null = null
+  /**
+   * Indispo en erreur si doublon d'indispo
+   */
   @Input() indisponibilityError: string | null = null
+  /**
+   * Active les boutons de sauvegarde
+   */
   @Input() saveActions: boolean = false
+  /**
+   * Modification / Création d'une situation
+   */
   @Input() isEdit: boolean = false
+  /**
+   * Event lors de la sauvegarde
+   */
   @Output() onSaveConfirm = new EventEmitter()
+  /**
+   * Event lors de la demande d'ajout d'une indispo
+   */
   @Output() addIndispiniblity = new EventEmitter()
+  /**
+   * Event fermeture du paneau
+   */
   @Output() close = new EventEmitter()
+  /**
+   * Réferentiel des indispo
+   */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Liste des catégories (magistrat, greffier...)
+   */
   categories: HRCategoryInterface[] = []
+  /**
+   * Liste des fonctions (1VP, VP, ...)
+   */
   fonctions: HRFonctionInterface[] = []
+  /**
+   * Referentiel avec les activités
+   */
   updatedReferentiels: ContentieuReferentielInterface[] = []
+  /**
+   * ETP 
+   */
   etp: number = 1
+  /**
+   * Formulaire de saisie 
+   */
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl<number | null>(null, [Validators.required]),
@@ -49,6 +105,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
+  /**
+   * Constructeur
+   * @param hrFonctionService 
+   * @param hrCategoryService 
+   * @param humanResourceService 
+   */
   constructor(
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
@@ -57,6 +119,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     super()
   }
 
+  /**
+   * Au chargement charger les catégories et fonctions
+   */
   ngOnInit() {
     this.watch(
       this.hrFonctionService.getAll().then(() => this.loadCategories())
@@ -73,12 +138,19 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     )
   }
 
+  /**
+   * Initilisation lors du changement de la date 
+   * @param changes 
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (changes.lastDateStart) {
       this.onStart()
     }
   }
 
+  /**
+   * Initialisation du formulaire
+   */
   onStart() {
     const situation = this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
     this.etp = (situation && situation.etp) || 0
@@ -107,10 +179,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.loadCategories()
   }
 
+  /**
+   * Destruction des observables
+   */
   ngOnDestroy(): void {
     this.watcherDestroy()
   }
 
+  /**
+   * Filtre des fonctions en fonction des categories
+   */
   async loadCategories() {
     if (this.form.value) {
       this.fonctions = (await this.hrFonctionService.getAll()).filter(
@@ -119,6 +197,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Control du formulaire lors de la sauvegarde
+   * @returns 
+   */
   async onSave() {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError)
@@ -209,6 +291,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Reformatage des situations 
+   * @param newReferentiel 
+   * @param activitiesStartDate 
+   * @param profil 
+   * @param cat 
+   * @param fonct 
+   * @returns 
+   */
   generateAllNewSituations(
     newReferentiel: ContentieuReferentielInterface[],
     activitiesStartDate: Date,
@@ -263,6 +354,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     return situations
   }
 
+  /**
+   * Retour du référentiel en fonction du paneau d'activité
+   * @param referentiels 
+   */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
   }

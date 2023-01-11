@@ -11,14 +11,23 @@ import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 
+/**
+ * Excel file details
+ */
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+/**
+ * Excel file extension
+ */
 const EXCEL_EXTENSION = '.xlsx'
 
+/**
+ * Service d'extraction excel
+ */
 @Injectable({
   providedIn: 'root',
 })
-export class ExcelService extends MainClass implements OnInit {
+export class ExcelService extends MainClass {
   /**
    * Categories selectionnées par l'utilisateur
    */
@@ -67,8 +76,6 @@ export class ExcelService extends MainClass implements OnInit {
   ) {
     super()
   }
-
-  ngOnInit(): void {}
 
   /**
    * API retourne les données de ventilations aggrégées pour l'ensemble des ressources présentes sur une date choisie

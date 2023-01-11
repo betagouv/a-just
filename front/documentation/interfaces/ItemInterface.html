@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;un item d&#39;une list du composant list-selection</p>
+
+            </p>
 
 
         <section>
@@ -149,6 +156,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Icon à afficher à gauche</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -182,6 +195,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id propre à l&#39;item</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -215,6 +234,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Champ visible</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -223,8 +248,17 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface ItemInterface {
+	/**
+	 * Id propre à l&#x27;item
+	 */
 	id: string | number;
+	/**
+	 * Champ visible
+	 */
 	label: string;
+	/**
+	 * Icon à afficher à gauche
+	 */
 	icon?: string;
 }
 </code></pre>

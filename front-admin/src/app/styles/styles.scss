@@ -21,3 +21,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .flex-1 {
 	flex: 1;
 }
+
+.grid-double {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 8px;
+}
+
+.grid-triple {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 8px;
+}

@@ -4,11 +4,29 @@ import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 
+/**
+ * Route des calculs de la page calcule
+ */
+
 export default class RouteCalculator extends Route {
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface des retours de calcul de la page calculateur
+   * @param {*} backupId
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} contentieuxIds
+   * @param {*} optionBackupId
+   * @param {*} categorySelected
+   * @param {*} selectedFonctionsIds
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),

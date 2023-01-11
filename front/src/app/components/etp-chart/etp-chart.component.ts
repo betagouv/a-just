@@ -4,7 +4,6 @@ import {
   ElementRef,
   Input,
   OnDestroy,
-  OnInit,
 } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
@@ -16,23 +15,59 @@ import {
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Composant graphique etp du simulateur
+ */
 @Component({
   selector: 'aj-etp-chart',
   templateUrl: './etp-chart.component.html',
   styleUrls: ['./etp-chart.component.scss'],
 })
-export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
+export class EtpChartComponent implements AfterViewInit, OnDestroy {
+  /**
+   * Date de début de simulation
+   */
   dateStart: Date = new Date()
+  /**
+   * Date de fin de simulation
+   */
   dateStop: Date | null = null
+  /**
+   * Valeur de début de simulation
+   */
   startRealValue = ''
+  /**
+   * Valeur de fin de simulation
+   */
   stopRealValue = ''
+  /**
+   * Element html du graphique
+   */
   elementRef: HTMLElement | undefined
+  /**
+   * Objet Chart JS correspondant au graphique
+   */
   myChart: any = null
+  /**
+   * Catégorie selectionnée (magistrat, fonctionnaire...)
+   */
   @Input() categorySelected = ''
+  /**
+   * Labels sur l'axe des abscisse
+   */
   labels: string[] | null = null
+  /**
+   * Affichage du tooltip au survol
+   */
   tooltip: any = { display: false }
+  /**
+   * Mois selectionné
+   */
   realSelectedMonth = ''
 
+  /**
+   * Caractéristiques du graphique
+   */
   data = {
     projectedMag: {
       values: [0],
@@ -66,6 +101,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     },
   }
 
+  /**
+   * Constructeur
+   * @param element element html
+   * @param simulatorService service simulateur
+   */
   constructor(
     private element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
@@ -158,8 +198,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
             if (this.categorySelected === 'MAGISTRAT') this.myChart.hide(3)
             else this.myChart.hide(1)
 
-          //if (this.categorySelected === 'MAGISTRATS') this.myChart.hide(3)
-
           this.myChart.hide(4)
           this.myChart.hide(5)
           this.myChart.update()
@@ -172,7 +210,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     Chart.register(annotationPlugin)
   }
 
-  ngOnInit(): void {}
+  /**
+   * Génération du graphique après l'initialisation du composant
+   */
   ngAfterViewInit(): void {
     const labels = this.labels
 
@@ -633,6 +673,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     })
   }
 
+  /**
+   * Affichage d'une courbe sur le graphique
+   * @param event évenement de click sur le toogle bouton en légende
+   */
   display(event: any) {
     let index: number | undefined = undefined
     if (event.label === 'projectedMag') index = 0
@@ -649,12 +693,23 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Synchronisation du tooltip
+   * @param obj element détaillant le tooltip selectionné
+   */
   affectTooltipValues(obj: any) {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
       ...obj,
     })
   }
+  /**
+   * Maj de la popin
+   * @param display Affichage de la popin
+   * @param xMin Abscisse min popin
+   * @param xMax Abscisse max popin
+   * @param content Contenue de la popin
+   */
   updateAnnotationBox(
     display?: boolean,
     xMin?: number | undefined,
@@ -670,6 +725,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     })
   }
 
+  /**
+   * Calcul de pourcentage
+   * @param value1 Numérateur
+   * @param value2 Dénominateur
+   * @returns
+   */
   getDeltaInPercent(value1: number, value2: number): number {
     if (value1 !== undefined && value2 !== undefined) {
       return fixDecimal(((value1 - value2) / value2) * 100) as number
@@ -677,10 +738,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
     return 0
   }
 
+  /**
+   * Calcul l'arrondi d'un nombre
+   * @param value Nombre
+   * @returns Retourne l'arrondi d'un nombre
+   */
   getRounded(value: number): number {
     return fixDecimal(value)
   }
 
+  /**
+   * Réinitialisation lors de la destruction du composant
+   */
   ngOnDestroy(): void {
     this.myChart.destroy()
     this.dateStart = new Date()
@@ -722,6 +791,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy, OnInit {
       },
     }
   }
+
+  /**
+   * Récupération du label MOIS
+   * @param month chaine de caractère MOIS
+   * @returns Retourne le nom de mois entier
+   */
   getRealMonth(month: string) {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }

@@ -19,7 +19,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList) => 
       }
 
       let firstSituation = currentSituation
-      //console.log(h, currentSituation)
+
       if (!firstSituation) {
         const allSituation = findAllSituations(h)
         firstSituation = allSituation.length ? allSituation[allSituation.length - 1] : null

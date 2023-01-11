@@ -1,35 +1,110 @@
+/**
+ * Etp magistrat field name
+ */
 const etpMag = 'etpMag'
+/**
+ * Etp magistrat text 1
+ */
 const etpMagTitle = 'des ETPT magistrat'
+/**
+ * Etp magistrat unit
+ */
 const etpMagToDefine = ['un volume moyen de']
 
+/**
+ * Etp fonctionnaire field name
+ */
 const etpFon = 'etpFon'
+/**
+ * Etp fonctionnaire text 1
+ */
 const etpFonTitle = 'des ETPT greffe'
+/**
+ * Etp fonctionnaire unit
+ */
 const etpFonToDefine = ['un volume moyen de']
 
+/**
+ * Temps moyen par dossier field name
+ */
 const magRealTimePerCase = 'magRealTimePerCase'
+/**
+ * Temps moyen par dossier text 1
+ */
 const magRealTimePerCaseTitle = 'du Temps moyen / Dossier'
+/**
+ * Temps moyen par dossier field name
+ */
 const magRealTimePerCaseToDefine = ['un temps moyen par dossier de']
 
+/**
+ * Entrée field name
+ */
 const totalIn = 'totalIn'
+/**
+ * Entrée text 1
+ */
 const totalInTitle = 'des entrées moyennes mensuelles'
+/**
+ * Entrée unit
+ */
 const totalInToDefine = ['une valeur de', 'une variation de']
 
+/**
+ * Sorties field name
+ */
 const totalOut = 'totalOut'
+/**
+ * Sorties text 1
+ */
 const totalOutTitle = 'des sorties moyennes mensuelles'
+/**
+ * Sorties unit
+ */
 const totalOutToDefine = ['une valeur de', 'une variation de']
 
+/**
+ * Stock field name
+ */
 const lastStock = 'lastStock'
+/**
+ * Stock text 1
+ */
 const lastStockTitle = 'du stock'
+/**
+ * Stock unit
+ */
 const lastStockToDefine = ['une valeur de', 'une variation de']
 
+/**
+ * Taux de couverture field name
+ */
 const realCoverage = 'realCoverage'
+/**
+ * Taux de couverture text 1
+ */
 const realCoverageTitle = 'du Taux de Couverture'
+/**
+ * Taux de couverture unit
+ */
 const realCoverageToDefine = ['une valeur de (en %)']
 
+/**
+ * DTES field name
+ */
 const realDTESInMonths = 'realDTESInMonths'
+/**
+ * DTES text 1
+ */
 const realDTESInMonthsTitle = 'du DTES'
+/**
+ * DTES unit
+ */
 const realDTESInMonthsToDefine = ['une valeur de (en mois)']
 
+/**
+ * Arbre de décision de simulation
+ */
 const tree = [
   {
     label: etpMag,

@@ -1,29 +1,29 @@
-import { Op } from 'sequelize'
+/**
+ * Liste des juridctions auquels ont accès les utilisateur
+ */
 
 export default (sequelizeInstance, Model) => {
-  Model.lastId = async () => {
-    const lastBackup = await Model.findAll({
-      order: [['id', 'desc']],
-      limit: 1,
-    })
-
-    return lastBackup.length ? lastBackup[0].dataValues.id : null
-  }
-
+  /**
+   * List des juridictions affectés d'un utilisateur
+   * @param {*} userId
+   * @returns
+   */
   Model.list = async (userId) => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['updated_at', 'date']],
-      include: [{
-        attributes: ['id'],
-        model: Model.models.UserVentilations,
-        where: {
-          user_id: userId,
+      include: [
+        {
+          attributes: ['id'],
+          model: Model.models.UserVentilations,
+          where: {
+            user_id: userId,
+          },
         },
-      }],
+      ],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         label: list[i].label,
@@ -34,6 +34,10 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Suppression d'une juridiciton
+   * @param {*} backupId
+   */
   Model.removeBackup = async (backupId) => {
     await Model.destroy({
       where: {
@@ -48,6 +52,12 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  /**
+   * Copie d'un juridicition
+   * @param {*} backupId
+   * @param {*} backupName
+   * @returns
+   */
   Model.duplicateBackup = async (backupId, backupName) => {
     const backup = await Model.findOne({
       where: {
@@ -56,7 +66,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if(backup) {
+    if (backup) {
       delete backup.id
       const backupCreated = await Model.create({ ...backup, label: backupName })
       const newBackupId = backupCreated.dataValues.id
@@ -67,7 +77,7 @@ export default (sequelizeInstance, Model) => {
         },
         raw: true,
       })
-      for(let x = 0; x < hrList.length; x++) {
+      for (let x = 0; x < hrList.length; x++) {
         const hrId = hrList[x].id
         delete hrList[x].id
         const newHR = await Model.models.HumanResources.create({
@@ -82,7 +92,7 @@ export default (sequelizeInstance, Model) => {
           },
           raw: true,
         })
-        for(let x = 0; x < ventilationsList.length; x++) {
+        for (let x = 0; x < ventilationsList.length; x++) {
           delete ventilationsList[x].id
           await Model.models.HRVentilations.create({
             ...ventilationsList[x],
@@ -98,101 +108,17 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.saveBackup = async (list, backupId, backupName) => {
-    let newBackupId = backupId
-    let reelHRIds = []
-    // if backup name create a copy
-    if(backupName) {
-      const newBackup = await Model.create({
-        label: backupName,
-      })
-      newBackupId = newBackup.dataValues.id
-    }
-
-    for(let x = 0; x < list.length; x++) {
-      const hr = list[x]
-
-      const options = {
-        first_name: hr.firstName || null,
-        last_name: hr.lastName || null,
-        date_entree: hr.dateStart || null,
-        date_sortie: hr.dateEnd || null,
-        note: hr.note,
-        backup_id: newBackupId,
-      }
-
-      if(hr.id && hr.id > 0 && !backupName) {
-        // update
-        await Model.models.HumanResources.updateById(hr.id, options)
-
-        // delete force all references
-        await Model.models.HRVentilations.destroy({
-          where: {
-            rh_id: hr.id,
-          },
-          force: true,
-        })
-      } else {
-        // create
-        const newHr = await Model.models.HumanResources.create(options)
-        hr.id = newHr.dataValues.id
-      }
-
-      reelHRIds.push(hr.id)
-
-      for(let i = 0; i < hr.activities.length; i++) {
-        // add activities
-        const activity = hr.activities[i]
-        if(activity.percent) {
-          if(!activity.referentielId) {
-            // find referentiel id
-            activity.referentielId = await Model.models.ContentieuxReferentiels.getContentieuxId(activity.label) 
-          }
-
-          await Model.models.HRVentilations.create({
-            backup_id: newBackupId,
-            rh_id: hr.id,
-            percent: activity.percent,
-            nac_id: activity.referentielId,
-            date_start: activity.dateStart,
-            date_stop: activity.dateStop,
-          })
-        }
-      }
-
-      await Model.models.HRSituations.syncSituations(hr.situations, hr.id)
-    }
-
-    // remove old HR
-    const oldNewHRList = (await Model.models.HumanResources.findAll({
-      attributes: ['id'],
-      where: {
-        backup_id: newBackupId,
-        id: {
-          [Op.notIn]: reelHRIds,
-        },
-      },
-      raw: true,
-    })).map(h => (h.id))
-    for(let i = 0; i < oldNewHRList.length; i++) {
-      await Model.models.HumanResources.destroyById(oldNewHRList[i])
-    }
-
-    // update date of backup
-    await Model.updateById(newBackupId, {
-      updated_at: new Date(),
-    })
-
-    return newBackupId
-  }
-
+  /**
+   * Liste des juridictions
+   * @returns
+   */
   Model.getAll = async () => {
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
       raw: true,
     })
 
-    for(let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         label: list[i].label,
@@ -203,6 +129,12 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Control pour savoir si un utilisateur a accès à une juridiction id
+   * @param {*} id
+   * @param {*} userId
+   * @returns
+   */
   Model.haveAccess = async (id, userId) => {
     const hr = await Model.findOne({
       where: {
@@ -210,20 +142,27 @@ export default (sequelizeInstance, Model) => {
       },
       attributes: ['id'],
       model: Model.models.HRBackups,
-      include: [{
-        attributes: ['id'],
-        model: Model.models.UserVentilations,
-        required: true,
-        where: {
-          user_id: userId,
+      include: [
+        {
+          attributes: ['id'],
+          model: Model.models.UserVentilations,
+          required: true,
+          where: {
+            user_id: userId,
+          },
         },
-      }],
+      ],
       raw: true,
     })
 
     return hr ? true : false
   }
 
+  /**
+   * Création ou récupération d'une juridiction par son nom
+   * @param {*} juridictionName
+   * @returns
+   */
   Model.findOrCreateLabel = async (juridictionName) => {
     const find = await Model.findOne({
       attributes: ['id'],
@@ -233,7 +172,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if(!find) {
+    if (!find) {
       const newElement = await Model.create({
         label: juridictionName,
       })

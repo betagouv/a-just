@@ -43,6 +43,10 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   @Input() @HostBinding('class.dark-mode') classDarkMode: boolean = false
   /**
+   * Ecoute la valeur du forcing de couleur bleu
+   */
+  @Input() @HostBinding('class.text-blue') classTextBlue: boolean = false
+  /**
    * Variable d'écoute de la largeur dynamique
    */
   width$: Observable<number> = this.resize$.pipe(
@@ -186,7 +190,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   drawArrows() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     ctx.beginPath()
-    let percent = this.percent
+    let percent = (this.percent || 0)
     if (percent < 0) {
       percent = 0
     } else if (percent > 200) {
@@ -194,7 +198,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
     }
     const radiusAngle = this.getRadiusPosition(percent)
 
-    ctx.strokeStyle = this.classDarkMode ? 'white' : 'black'
+    ctx.strokeStyle = this.classTextBlue ? '#0063cb' : (this.classDarkMode ? 'white' : 'black')
     ctx.lineWidth = 1
     ctx.moveTo(this.canvasWidth / 2 + this.lineWidth / 2, this.canvasWidth / 2 + this.lineWidth / 2)
     ctx.lineTo(

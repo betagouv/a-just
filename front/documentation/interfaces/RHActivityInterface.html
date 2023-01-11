@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface de la liste des activités</p>
+
+            </p>
 
 
         <section>
@@ -83,13 +90,6 @@
                     <tr>
                         <td class="col-md-4">
                             <ul class="index-list">
-                                <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#codeNac" 
->
-                                            codeNac
-                                        </a>
-                                </li>
                                 <li>
                                         <a href="#contentieux" 
 >
@@ -158,44 +158,6 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="codeNac"></a>
-                                        <span class="name "><b>codeNac</b>
-                                            <a href="#codeNac">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>codeNac:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
-
-
-
-
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
                                         <a name="contentieux"></a>
                                         <span class="name "><b>contentieux</b>
                                             <a href="#contentieux">
@@ -223,6 +185,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Contentieux au complet</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -261,6 +229,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de début, quand il y en a</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -299,6 +273,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de fin, quand il y en a</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -332,6 +312,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id en base</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -370,6 +356,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Etat transitoir de demande de suppression d&#39;une ventilation</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -408,6 +400,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom du contentieux</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -441,6 +439,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Pourcentage lié au contentieux</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -479,6 +483,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id du contentieux</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -488,15 +498,41 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &quot;./contentieu-referentiel&quot;;
 
+/**
+ * Interface de la liste des activités 
+ */
 export interface RHActivityInterface {
+	/**
+	 * Id en base
+	 */
 	id: number;
-	codeNac?: string;
+	/**
+	 * Nom du contentieux
+	 */
 	label?: string;
+	/**
+	 * Pourcentage lié au contentieux
+	 */
 	percent: number;
+	/**
+	 * Id du contentieux
+	 */
 	referentielId?: number;
+	/**
+	 * Date de début, quand il y en a
+	 */
 	dateStart?: Date;
+	/**
+	 * Date de fin, quand il y en a
+	 */
 	dateStop?: Date;
+	/**
+	 * Contentieux au complet
+	 */
 	contentieux: ContentieuReferentielInterface;
+	/**
+	 * Etat transitoir de demande de suppression d&#x27;une ventilation
+	 */
 	isDeleted?: boolean;
 }
 </code></pre>
