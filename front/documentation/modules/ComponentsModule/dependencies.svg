@@ -18,13 +18,13 @@
 <title>cluster_ComponentsModule_declarations</title>
 <polygon fill="none" stroke="black" points="146,-40.8 146,-92.8 4983,-92.8 4983,-40.8 146,-40.8"/>
 </g>
-<g id="clust32" class="cluster">
-<title>cluster_ComponentsModule_exports</title>
-<polygon fill="none" stroke="black" points="31,-170.8 31,-222.8 4968,-222.8 4968,-170.8 31,-170.8"/>
-</g>
 <g id="clust31" class="cluster">
 <title>cluster_ComponentsModule_imports</title>
 <polygon fill="none" stroke="black" points="16,-40.8 16,-92.8 138,-92.8 138,-40.8 16,-40.8"/>
+</g>
+<g id="clust32" class="cluster">
+<title>cluster_ComponentsModule_exports</title>
+<polygon fill="none" stroke="black" points="31,-170.8 31,-222.8 4968,-222.8 4968,-170.8 31,-170.8"/>
 </g>
 <!-- CoveragePreviewComponent -->
 <g id="node1" class="node">

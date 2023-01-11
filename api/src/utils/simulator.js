@@ -472,7 +472,7 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
   let emptyList = new Object({})
 
   emptyList = { ...getRangeOfMonthsAsObject(date, dateStop, true) }
-
+  console.log('&&&&', emptyList)
   Object.keys(emptyList).map((x) => {
     emptyList[x] = {
       ...{
