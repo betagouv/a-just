@@ -47,7 +47,6 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   loadNews() {
     this.newsService.getLast().then((n) => {
-      console.log(n)
       this.news = n
     })
   }

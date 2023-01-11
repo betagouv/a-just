@@ -118,7 +118,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Fiche individuelle :',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
   }
 
   /**
