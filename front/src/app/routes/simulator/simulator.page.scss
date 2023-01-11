@@ -964,7 +964,11 @@
     background-color: white;
 
     &.contentieux {
-      margin: 0px 0px 0px 8px;
+      margin: 0px 8px 0px 0px;
+
+      &.fonctions-selection {
+        margin: 0px 0px 0px 8px;
+      }
     }
 
     &.disabled-date {
