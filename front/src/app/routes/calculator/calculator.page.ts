@@ -73,7 +73,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   documentation: DocumentationInterface = {
     title: 'Calculateur',
-    path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/quest-ce-que-cest',
+    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
   }
   /**
    * Mémorisation de la dernière categorie
@@ -339,19 +339,19 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       case 'données renseignées':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Données renseignées',
-          path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/visualiser-son-activite-grace-aux-donnees-renseignees',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/visualiser-son-activite-grace-aux-donnees-renseignees',
         })
         break
       case 'activité constatée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité constatée',
-          path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/indicateurs-issus-de-lactivite-constatee',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/indicateurs-issus-de-lactivite-constatee',
         })
         break
       case 'activité calculée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité calculée',
-          path: 'https://a-just.gitbook.io/documentation-deploiement/calculateur/comparer-son-activite-grace-a-lactivite-calculee',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/comparer-son-activite-grace-a-lactivite-calculee',
         })
         break
     }

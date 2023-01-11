@@ -72,7 +72,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
-    path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
   }
 
   /**
@@ -471,13 +471,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       case 'logiciel':
         this.wrapper?.onForcePanelHelperToShow({
           title: "Données d'activité logiciel",
-          path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
         })
         break
       case 'saisie':
         this.wrapper?.onForcePanelHelperToShow({
           title: "Données d'activité A-JUSTées",
-          path: 'https://a-just.gitbook.io/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
         })
         break
     }

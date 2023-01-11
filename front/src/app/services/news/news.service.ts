@@ -3,6 +3,11 @@ import { NewsInterface } from 'src/app/interfaces/news'
 import { ServerService } from '../http-server/server.service'
 
 /**
+ * Clé de token du local storage
+ */
+const NEWS_TOKEN = 'news-token-closes'
+
+/**
  * Liste des news pour les utilisateurs
  */
 
@@ -21,13 +26,56 @@ export class NewsService {
    * @returns
    */
   getLast(): Promise<NewsInterface> {
-    return this.serverService.get(`news/last`).then((d) => d.data)
+    return this.serverService.get(`news/last`).then((d) => {
+      const news = d.data
+
+      if(news && news.id && !this.hasClose(news.id)) {
+        return news
+      }
+
+      return null
+    })
   }
 
   /**
    * API qui trace le clique utilisateur
    */
   updateNewsOnClick(id: number) {
-    return this.serverService.post(`news/on-close`, { id })
+    this.addIdMemorise(id)
+    //return this.serverService.post(`news/on-close`, { id })
+  }
+
+  /**
+   * Liste des ids déjà cliqué
+   * @returns 
+   */
+  getIdsSelected() {
+    const ls = localStorage.getItem(NEWS_TOKEN)
+    const ids = ls ? JSON.parse(ls) as number[] : []
+
+    return ids
+  }
+
+  /**
+   * Ajouter un id à la liste
+   * @returns 
+   */
+  addIdMemorise(id: number) {
+    const ids = this.getIdsSelected()
+
+    if(ids.indexOf(id) === -1) {
+      ids.push(id)
+      localStorage.setItem(NEWS_TOKEN, JSON.stringify(ids))
+    }
+  }
+
+  /**
+   * Has already close
+   * @returns 
+   */
+  hasClose(id: number) {
+    const ids = this.getIdsSelected()
+
+    return ids.indexOf(id) !== -1
   }
 }
