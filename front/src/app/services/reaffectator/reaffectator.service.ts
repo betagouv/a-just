@@ -40,7 +40,7 @@ export class ReaffectatorService {
     backupId: number,
     date: Date,
     categoryId: number,
-    fonctionsIds: number[],
+    fonctionsIds: number[] | null,
     referentielList: number[] | null
   ) {
     return this.serverService

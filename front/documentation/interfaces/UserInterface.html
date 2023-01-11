@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;un utilisateur connecté</p>
+
+            </p>
 
 
         <section>
@@ -186,6 +193,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des pages sur lequels il a accès</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -224,6 +237,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Email de connection</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -262,6 +281,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Prénom utilisateur</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -300,6 +325,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la base</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -338,6 +369,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom utilisateur</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -376,6 +413,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Role (1 admin, 0 user)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -414,6 +457,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Compte bloqué ou non</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -452,6 +501,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Token de connection généré par JWT</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -460,13 +515,37 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface UserInterface {
+	/**
+	 * Id de la base
+	 */
 	id?: number;
+	/**
+	 * Email de connection
+	 */
 	email?: string;
+	/**
+	 * Role (1 admin, 0 user)
+	 */
 	role?: number;
+	/**
+	 * Compte bloqué ou non
+	 */
 	status?: number;
+	/**
+	 * Prénom utilisateur
+	 */
 	firstName?: string;
+	/**
+	 * Nom utilisateur
+	 */
 	lastName?: string;
+	/**
+	 * Token de connection généré par JWT
+	 */
 	token?: string;
+	/**
+	 * Liste des pages sur lequels il a accès
+	 */
 	access?: number[];
 }
 </code></pre>

@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;une situation</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -149,6 +156,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de fin</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -182,6 +195,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des indisponibilités</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -215,6 +234,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Première situation</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -226,7 +251,6 @@
 import { ActivatedRoute, Router } from &#x27;@angular/router&#x27;
 import { maxBy, minBy, orderBy, sumBy } from &#x27;lodash&#x27;
 import { ActionsInterface } from &#x27;src/app/components/popup/popup.component&#x27;
-import { DOCUMENTATION_CREATE_NEW_PERSON, DOCUMENTATION_UPDATE_PERSON } from &#x27;src/app/constants/documentation&#x27;
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { DocumentationInterface } from &#x27;src/app/interfaces/documentation&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
@@ -242,40 +266,118 @@ import { copy } from &#x27;src/app/utils&#x27;
 import { dateAddDays, today } from &#x27;src/app/utils/dates&#x27;
 import { AddVentilationComponent } from &#x27;./add-ventilation/add-ventilation.component&#x27;
 
+/**
+ * Interface d&#x27;une situation
+ */
 export interface HistoryInterface extends HRSituationInterface {
+  /**
+   * Liste des indisponibilités
+   */
   indisponibilities: RHActivityInterface[]
+  /**
+   * Date de fin
+   */
   dateStop: Date | null
+  /**
+   * Première situation
+   */
   situationForTheFirstTime: boolean
 }
+
+/**
+ * Page qui affiche en détail une fiche
+ */
 
 @Component({
   templateUrl: &#x27;./human-resource.page.html&#x27;,
   styleUrls: [&#x27;./human-resource.page.scss&#x27;],
 })
 export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Dom du paneau d&#x27;ajout d&#x27;une situation
+   */
   @ViewChild(&#x27;addDomVentilation&#x27;)
   addDomVentilation: AddVentilationComponent | null &#x3D; null
+  /**
+   * Liste des catégories existantes
+   */
   categories: HRCategoryInterface[] &#x3D; []
+  /**
+   * Liste des fonctions existantes
+   */
   fonctions: HRFonctionInterface[] &#x3D; []
+  /**
+   * Référentiel
+   */
   contentieuxReferentiel: ContentieuReferentielInterface[] &#x3D; []
+  /**
+   * Fiche
+   */
   currentHR: HumanResourceInterface | null &#x3D; null
+  /**
+   * Retour sur la catégorie
+   */
   categoryName: string &#x3D; &#x27;&#x27;
+  /**
+   * Liste de toutes les situations
+   */
   histories: HistoryInterface[] &#x3D; []
+  /**
+   * Situations passé à aujourd&#x27;hui
+   */
   historiesOfThePast: HistoryInterface[] &#x3D; []
+  /**
+   * Situations futur à aujourd&#x27;hui
+   */
   historiesOfTheFutur: HistoryInterface[] &#x3D; []
+  /**
+   * Liste de toutes les indispo de la fiche
+   */
   allIndisponibilities: RHActivityInterface[] &#x3D; []
+  /**
+   * Mode d&#x27;édition courant
+   */
   onEditIndex: number | null &#x3D; null // null (no edition), -1 (new edition), x (x&#x27;eme edition)
+  /**
+   * Indispo en court d&#x27;édition
+   */
   updateIndisponiblity: RHActivityInterface | null &#x3D; null
+  /**
+   * Référentiel des indispo
+   */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] &#x3D; []
+  /**
+   * Indispos en error (chevauchement de date ou plus de 100%)
+   */
   indisponibilityError: string | null &#x3D; null
+  /**
+   * Première date de situation
+   */
   actualHistoryDateStart: Date | null &#x3D; null
+  /**
+   * Derniere date de situation
+   */
   actualHistoryDateStop: Date | null &#x3D; null
+  /**
+   * Index de la situation en cour d&#x27;édition
+   */
   indexOfTheFuture: number | null &#x3D; null
+  /**
+   * Documentation patch
+   */
   documentation: DocumentationInterface &#x3D; {
     title: &#x27;Fiche individuelle :&#x27;,
-    path: DOCUMENTATION_CREATE_NEW_PERSON,
+    path: &#x27;https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation&#x27;,
   }
 
+  /**
+   * Constructeur
+   * @param humanResourceService
+   * @param route
+   * @param router
+   * @param hrFonctionService
+   * @param hrCategoryService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
     private route: ActivatedRoute,
@@ -286,6 +388,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     super()
   }
 
+  /**
+   * Au chargement récupération des variables globales + chargement
+   */
   ngOnInit() {
     this.watch(
       this.route.params.subscribe((params) &#x3D;&gt; {
@@ -312,10 +417,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * A la destruction suppression des observables
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Chargement de la fiche coté back + traitement
+   * @param cacheHr
+   * @returns
+   */
   async onLoad(cacheHr: HumanResourceInterface | null &#x3D; null) {
     if (this.categories.length &#x3D;&#x3D;&#x3D; 0 || this.fonctions.length &#x3D;&#x3D;&#x3D; 0) {
       return
@@ -349,38 +462,20 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           (c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; currentSituation.category.id
         )
         this.categoryName &#x3D; findCategory ? findCategory.label.toLowerCase() : &#x27;&#x27;
-        this.documentation.path &#x3D; DOCUMENTATION_UPDATE_PERSON
       } else {
         this.categoryName &#x3D; &#x27;&#x27;
-        this.documentation.path &#x3D; DOCUMENTATION_CREATE_NEW_PERSON
       }
     } else {
       this.currentHR &#x3D; null
       this.categoryName &#x3D; &#x27;&#x27;
-      this.documentation.path &#x3D; DOCUMENTATION_CREATE_NEW_PERSON
     }
 
     this.formatHRHistory()
   }
 
-  calculTotalTmpActivity(activities: RHActivityInterface[]) {
-    activities &#x3D; this.humanResourceService.filterActivitiesByDate(
-      activities || [],
-      new Date()
-    )
-
-    return sumBy(
-      activities.filter((ca) &#x3D;&gt; {
-        return this.contentieuxReferentiel.find(
-          (r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ca.referentielId
-        )
-          ? true
-          : false
-      }),
-      &#x27;percent&#x27;
-    )
-  }
-
+  /**
+   * Génération des situations artificielle ou non
+   */
   formatHRHistory() {
     if (this.fonctions.length &#x3D;&#x3D;&#x3D; 0 || !this.currentHR) {
       return
@@ -614,10 +709,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Amélioration du chargement de la liste
+   * @param index
+   * @param item
+   * @returns
+   */
   trackByDate(index: number, item: any) {
     return item.dateStart
   }
 
+  /**
+   * Demande de suppression del a fiche
+   */
   async onDelete() {
     if (this.currentHR) {
       if (await this.humanResourceService.removeHrById(this.currentHR.id)) {
@@ -626,6 +730,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de modification d&#x27;une fiche
+   * @param nodeName
+   * @param value
+   * @param directRef
+   */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
     if (this.currentHR) {
       if (
@@ -650,6 +760,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Fermeture du paneau d&#x27;une situation
+   * @param removeIndispo
+   */
   async onCancel(removeIndispo: boolean &#x3D; false) {
     if (
       removeIndispo &amp;&amp;
@@ -670,17 +784,27 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de sauvegarde de la situation
+   */
   onSave() {
     if (this.addDomVentilation) {
       this.addDomVentilation.onSave()
     }
   }
 
+  /**
+   * Demande de chargement de la fiche
+   */
   onNewUpdate() {
     this.onEditIndex &#x3D; null
     this.onLoad()
   }
 
+  /**
+   * Demande d&#x27;ajout d&#x27;une indispo
+   * @param indispo
+   */
   onAddIndispiniblity(indispo: RHActivityInterface | null &#x3D; null) {
     this.updateIndisponiblity &#x3D; indispo
       ? copy(indispo)
@@ -694,6 +818,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         }
   }
 
+  /**
+   * Creation, modification et de suppression des indispo
+   * @param action
+   * @returns
+   */
   async onEditIndisponibility(action: ActionsInterface) {
     const controlIndisponibilitiesError &#x3D; this.onEditIndex &#x3D;&#x3D;&#x3D; null // if panel ediction do not control error
 
@@ -921,6 +1050,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     return true
   }
 
+  /**
+   * Demande de modification d&#x27;une situation
+   * @param history
+   */
   onSelectSituationToEdit(history: HistoryInterface | null &#x3D; null) {
     const index &#x3D; history
       ? this.histories.findIndex(
@@ -968,6 +1101,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Demande de suppression d&#x27;une situation
+   * @param id
+   */
   async onRemoveSituation(id: number) {
     const returnValue &#x3D; await this.humanResourceService.removeSituation(id)
     console.log(returnValue, this.histories.length, this.onEditIndex)

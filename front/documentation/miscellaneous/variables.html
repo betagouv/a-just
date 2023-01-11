@@ -73,10 +73,13 @@
                             <a href="#copyArray" title="src/app/utils/array.ts" ><b>copyArray</b>&nbsp;&nbsp;&nbsp;(src/.../array.ts)</a>
                         </li>
                         <li>
-                            <a href="#DOCUMENTATION_URL" title="src/app/constants/documentation.ts" ><b>DOCUMENTATION_URL</b>&nbsp;&nbsp;&nbsp;(src/.../documentation.ts)</a>
+                            <a href="#DOCUMENTATION_CREATE_NEW_PERSON" title="src/app/constants/documentation.ts" ><b>DOCUMENTATION_CREATE_NEW_PERSON</b>&nbsp;&nbsp;&nbsp;(src/.../documentation.ts)</a>
                         </li>
                         <li>
-                            <a href="#end" title="src/app/services/simulator/simulator.service.ts" ><b>end</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.service.ts)</a>
+                            <a href="#DOCUMENTATION_UPDATE_PERSON" title="src/app/constants/documentation.ts" ><b>DOCUMENTATION_UPDATE_PERSON</b>&nbsp;&nbsp;&nbsp;(src/.../documentation.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DOCUMENTATION_URL" title="src/app/constants/documentation.ts" ><b>DOCUMENTATION_URL</b>&nbsp;&nbsp;&nbsp;(src/.../documentation.ts)</a>
                         </li>
                         <li>
                             <a href="#environment" title="src/environments/environment.prod.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.prod.ts)</a>
@@ -184,9 +187,6 @@
                             <a href="#realDTESInMonthsToDefine" title="src/app/routes/simulator/simulator.tree.ts" ><b>realDTESInMonthsToDefine</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.tree.ts)</a>
                         </li>
                         <li>
-                            <a href="#start" title="src/app/services/simulator/simulator.service.ts" ><b>start</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.service.ts)</a>
-                        </li>
-                        <li>
                             <a href="#totalIn" title="src/app/routes/simulator/simulator.tree.ts" ><b>totalIn</b>&nbsp;&nbsp;&nbsp;(src/.../simulator.tree.ts)</a>
                         </li>
                         <li>
@@ -259,10 +259,80 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;/assets/calculatrice%20de%20ventilation%20du%20temps%20par%20activit%C3%A9%20A-JUST%20MAG%20et%20GRF.xlsx&#x27;</code>
+                        <i>Default value : </i><code>&#x27;/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF_20221219.xlsx&#x27;</code>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien de la calculate</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DOCUMENTATION_CREATE_NEW_PERSON"></a>
+                    <span class="name">
+                        <span ><b>DOCUMENTATION_CREATE_NEW_PERSON</b></span>
+                        <a href="#DOCUMENTATION_CREATE_NEW_PERSON"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;https://a-just.gitbook.io/documentation-deploiement/ventilateur/creer-une-nouvelle-fiche&#x27;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien pour créer une nouvelle fiche</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DOCUMENTATION_UPDATE_PERSON"></a>
+                    <span class="name">
+                        <span ><b>DOCUMENTATION_UPDATE_PERSON</b></span>
+                        <a href="#DOCUMENTATION_UPDATE_PERSON"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;https://a-just.gitbook.io/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation&#x27;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien pour modifier une fiche</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -289,6 +359,12 @@
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Lien de la documentation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -394,49 +470,6 @@ Gris : #999999</p>
 </div>
                 </td>
             </tr>
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/services/simulator/simulator.service.ts</h3>
-    <section>
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="end"></a>
-                    <span class="name">
-                        <span ><b>end</b></span>
-                        <a href="#end"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>new Date()</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="start"></a>
-                    <span class="name">
-                        <span ><b>start</b></span>
-                        <a href="#start"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>new Date()</code>
-                    </td>
-                </tr>
-
 
         </tbody>
     </table>
@@ -601,6 +634,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP fonctionnaire field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -627,6 +666,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP fonctionnaire popup title</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -653,6 +698,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP fonctionnaire unité</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -679,6 +730,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP magistrat field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -705,6 +762,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP magistrat popup title</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -731,6 +794,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable ETP magistrat unité</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -760,6 +829,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -786,6 +861,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -812,6 +893,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp fonctionnaire unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -838,6 +925,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -864,6 +957,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -890,6 +989,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Etp magistrat unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -916,6 +1021,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -942,6 +1053,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -968,6 +1085,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stock unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -994,6 +1117,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1020,6 +1149,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1046,6 +1181,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temps moyen par dossier field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1072,6 +1213,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1098,6 +1245,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1124,6 +1277,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Taux de couverture unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1150,6 +1309,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1176,6 +1341,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1202,6 +1373,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>DTES unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1228,6 +1405,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1254,6 +1437,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1280,6 +1469,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entrée unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1306,6 +1501,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties field name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1332,6 +1533,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties text 1</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1358,6 +1565,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Sorties unit</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2079,6 +2292,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Arbre de décision de simulation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2108,6 +2327,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Excel file extension</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2134,6 +2359,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Excel file details</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2163,6 +2394,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante des fonctionnes</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2189,6 +2426,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante des magistrats</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2242,10 +2485,17 @@ Gris : #999999</p>
   EtpChartComponent,
   WrapperNoConnectedComponent,
   FooterNoConnectedComponent,
+  NewsComponent,
 ]</code>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des composants à importer</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2275,6 +2525,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des pipes</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2314,6 +2570,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Paramétrage du format de la date du composant date de matérial</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2344,6 +2606,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Paramétrage du tooltips par défaut de matérial</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2373,6 +2641,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au données d&#39;activité</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2399,6 +2673,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au temps moyens</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2425,6 +2705,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au calculateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2451,6 +2737,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au dasboard</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2477,6 +2769,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au réaffectateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2503,6 +2801,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au simulateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2529,6 +2833,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Constante id d&#39;accés au ventilateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -2553,6 +2863,12 @@ Gris : #999999</p>
                     </td>
                 </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Variable d&#39;environement en global</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

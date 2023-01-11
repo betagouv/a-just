@@ -8,7 +8,6 @@ import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
-const proxy = require('koa-proxies')
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -44,13 +43,6 @@ export default class App extends AppBase {
     })
 
     super.addMiddlewares([
-      proxy('/documentation', {
-        target: 'https://a-just.gitbook.io/documentation-deploiement/presentation-da-just/avant-de-commencer',    
-        changeOrigin: true,
-        logs: (ctx, target) => {
-          console.log('%s - %s %s proxy to -> %s', new Date().toISOString(), ctx.req.method, ctx.req.oldPath, new URL(ctx.req.url, target))
-        }, 
-      }),
       // we add the relevant middlewares to our API
       cors({ credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
@@ -58,8 +50,8 @@ export default class App extends AppBase {
       i18n(this.koaApp, {
         directory: join(__dirname, 'locales'),
         extension: '.json',
-        locales: [ 'en', 'fr' ],
-        modes: [ 'query', 'subdomain', 'cookie', 'header', 'tld' ],
+        locales: ['en', 'fr'],
+        modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
       config.consoleLog ? logger() : () => {}, // gives detailed logs of each request made on the API
@@ -68,12 +60,11 @@ export default class App extends AppBase {
       givePassword,
     ])
 
-    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files 
-    super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files 
-    super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files 
-    super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files 
+    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files
 
-    
     return super.start()
   }
 

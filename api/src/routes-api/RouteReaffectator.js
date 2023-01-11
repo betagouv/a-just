@@ -4,18 +4,33 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 
+/**
+ * Route de la page réaffectateur
+ */
 export default class RouteReaffectator extends Route {
+  /**
+   * Constructeur
+   */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
+  /**
+   * Interface de résultat de la page réaffectator
+   * @param {*} backupId
+   * @param {*} date
+   * @param {*} contentieuxIds
+   * @param {*} categoryId
+   * @param {*} fonctionsIds
+   * @param {*} referentielList
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
       categoryId: Types.number().required(),
-      fonctionsIds: Types.array().required(),
+      fonctionsIds: Types.any(),
       referentielList: Types.array(),
     }),
     accesses: [Access.canVewHR],
@@ -24,6 +39,10 @@ export default class RouteReaffectator extends Route {
     let { backupId, date, fonctionsIds, categoryId, referentielList } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
+    if (referentielList && referentielList.length == referentiel.length) {
+      referentielList = null
     }
 
     console.time('step1')
@@ -36,7 +55,6 @@ export default class RouteReaffectator extends Route {
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupId, date)
 
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
     for (let i = 0; i < referentiel.length; i++) {
       referentiel[i] = {
         ...referentiel[i],
@@ -48,7 +66,7 @@ export default class RouteReaffectator extends Route {
     this.sendOk(ctx, {
       list: categories.map((category) => ({
         originalLabel: category.label,
-        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, null), date, referentielList),
+        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, fonctionsIds, date), date, referentielList),
         categoryId: category.id,
         referentiel,
       })),

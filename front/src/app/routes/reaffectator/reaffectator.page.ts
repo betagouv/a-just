@@ -2,11 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { flatten, meanBy, orderBy, sumBy } from 'lodash'
+import { orderBy, sumBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -14,97 +13,274 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import {
-  decimalToStringDate,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-} from 'src/app/utils/dates'
-import { environment } from 'src/environments/environment'
-import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import { etpAffectedInterface } from 'src/app/interfaces/calculator'
-import { ActivityInterface } from 'src/app/interfaces/activity'
-import { copyArray } from 'src/app/utils/array'
 import { AppService } from 'src/app/services/app/app.service'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
+/**
+ * Interface d'une fiche surchargé avec des rendus visuels
+ */
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Trouvé dans la recherche ou non
+   */
   opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
   tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
   etpLabel: string
+  /**
+   * Total des indispo
+   */
   hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
   currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
   etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
   category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
   fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
   currentSituation: HRSituationInterface | null
+  /**
+   * Is c'est modifié ou non
+   */
   isModify: boolean
 }
 
+/**
+ * Liste des fiches d'une catégories
+ */
 interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
   textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
   bgColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
   label: string
+  /**
+   * Nom de la catégorie (au singulier)
+   */
   originalLabel: string
+  /**
+   * Liste des fiches
+   */
   allHr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
   hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d'etp, couverture propre à la catégorie
+   */
   referentiel: ContentieuReferentielCalculateInterface[]
+  /**
+   * Liste des id des personnes selectionnée
+   */
   personSelected: number[]
+  /**
+   * Id de la categorie
+   */
   categoryId: number
+  /**
+   * Total des ETP d'une categorie
+   */
   totalRealETp: number
 }
 
+/**
+ * Référentiel surchargé avec un visuel et des calculs ajustés
+ */
 interface ContentieuReferentielCalculateInterface
+  /**
+   * Référentiel surchargé avec un visuel et des calculs ajustés
+   */
   extends ContentieuReferentielInterface {
+  /**
+   * Délai Total d'Ecoulement des Stock
+   */
   dtes: number
+  /**
+   * Taux de couverture
+   */
   coverage: number
+  /**
+   * Délai Total d'Ecoulement des Stock réél
+   */
   realDTESInMonths: number
+  /**
+   * Taux de couverture réél
+   */
   realCoverage: number
+  /**
+   * ETP moyen sur une période
+   */
   etpToCompute: number
+  /**
+   * ETP disponible à aujourd'hui
+   */
   etpUseToday: number
+  /**
+   * Temps moyen par dossier
+   */
   magRealTimePerCase: number | null
+  /**
+   * Nombre d'heure travaillé
+   */
   nbWorkingHours: number
+  /**
+   * Nombre de jour travaillé
+   */
   nbWorkingDays: number
+  /**
+   * Total d'entrée
+   */
   totalIn: number
+  /**
+   * Dernier stock disponible
+   */
   lastStock: number
 }
 
+/**
+ * Page de réaffectation
+ */
 @Component({
   templateUrl: './reaffectator.page.html',
   styleUrls: ['./reaffectator.page.scss'],
 })
+/**
+ * Page de réaffectation
+ */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Dom du wrapper
+   * @param wrapper
+   */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  /**
+   * Boulean lors de l'impression
+   */
   duringPrint: boolean = false
+  /**
+   * Liste des fiches
+   */
   humanResources: HumanResourceSelectedInterface[] = []
+  /**
+   * Referentiel complet
+   */
   referentiel: ContentieuReferentielCalculateInterface[] = []
+  /**
+   * Menu déroulant pour le référentiel
+   */
   formReferentiel: dataInterface[] = []
+  /**
+   * Menu déroulant pour les catégories
+   */
   formFilterSelect: dataInterface[] = []
+  /**
+   * Menu déroulant pour les fonctions
+   */
   formFilterFonctionsSelect: dataInterface[] = []
+  /**
+   * Recherche textuelle
+   */
   searchValue: string = ''
+  /**
+   * List des personnes trouvé lors de la recherche
+   */
   valuesFinded: HumanResourceInterface[] | null = null
+  /**
+   * Index de la personne que nous avons trouvé
+   */
   indexValuesFinded: number = 0
+  /**
+   * Instance du timeout pour la recherche
+   */
   timeoutUpdateSearch: any = null
+  /**
+   * Date sélectionnée
+   */
   dateSelected: Date = this.workforceService.dateSelected.getValue()
+  /**
+   * Liste reçu par le serveur
+   */
   listFormated: listFormatedInterface[] = []
+  /**
+   * Contentieux avec les calculs
+   */
   filterSelected: ContentieuReferentielCalculateInterface | null = null
+  /**
+   * Position de la dernière recherche
+   */
   lastScrollTop: number = 0
+  /**
+   * Boolean de première recherche
+   */
   isFirstLoad: boolean = true
+  /**
+   * Affiche ou non le paneau des indicateurs
+   */
   showIndicatorPanel: boolean = true
+  /**
+   * Liste des ETP par défaut qui sont modifiable à titre informatif
+   */
   firstETPTargetValue: (number | null)[] = []
+  /**
+   * Isole les personnes modifiés
+   */
   isolatePersons: boolean = false
+  /**
+   * Affiche les personnes modifiés et leurs pendant non modifié
+   */
+  showReelValues: boolean = false
 
+  /**
+   * Reaffectator Service
+   */
+  reaffectatorService: ReaffectatorService
+
+  /**
+   * Constructeur
+   * @param humanResourceService
+   * @param workforceService
+   * @param reaffectatorService
+   * @param appService
+   * @param  serverService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
     private workforceService: WorkforceService,
-    public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService,
-    private appService: AppService
+    private appService: AppService,
+    private rs: ReaffectatorService
   ) {
     super()
+    this.reaffectatorService = this.rs
   }
 
+  /**
+   * A l'initialisation chercher les variables globals puis charger
+   */
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
@@ -132,10 +308,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     )
   }
 
+  /**
+   * Destruction des observables
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Mise à jour des catégories du menu déroulant
+   */
   updateCategoryValues() {
     this.formFilterSelect = this.formFilterSelect.map((c) => {
       const itemBlock = this.listFormated.find((l) => l.categoryId === c.id)
@@ -152,32 +334,25 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       return c
     })
+
+    console.log('this.listFormated', this.listFormated)
   }
 
+  /**
+   * Accélération du chargement de la liste
+   * @param index
+   * @param item
+   * @returns id
+   */
   trackById(index: number, item: any) {
     return item.id
   }
 
-  calculTotalTmpActivity(
-    currentActivities: RHActivityInterface[],
-    formActivities: RHActivityInterface[]
-  ) {
-    // total main activities whitout form
-    const totalWhitout = sumBy(
-      currentActivities.filter((ca) => {
-        const ref = this.referentiel.find((r) => r.id === ca.referentielId)
-        if (ref && ca.referentielId !== formActivities[0].id) {
-          return true
-        } else {
-          return false
-        }
-      }),
-      'percent'
-    )
-
-    return totalWhitout + (formActivities[0].percent || 0)
-  }
-
+  /**
+   * Retourne si une personne est trouvé par la recherche ou non
+   * @param hr
+   * @returns opacity
+   */
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
@@ -192,6 +367,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     return 0.5
   }
 
+  /**
+   * Appel au serveur pour avoir la liste
+   * @returns list
+   */
   onFilterList() {
     if (
       !this.formFilterSelect.length ||
@@ -204,23 +383,27 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
-      this.reaffectatorService.selectedReferentielIds.length
+        this.reaffectatorService.selectedReferentielIds.length
     ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
     const allFonctions = this.humanResourceService.fonctions.getValue()
-
-    let selectedFonctionsIds = [
-      ...this.reaffectatorService.selectedFonctionsIds,
-    ]
-    selectedFonctionsIds = selectedFonctionsIds.concat(
-      allFonctions
-        .filter(
-          (f) => f.categoryId !== this.reaffectatorService.selectedCategoriesId
-        )
-        .map((f) => f.id)
-    )
+    let selectedFonctionsIds = null
+    if (
+      this.reaffectatorService.selectedFonctionsIds.length !==
+      this.formFilterFonctionsSelect.length
+    ) {
+      selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
+      selectedFonctionsIds = selectedFonctionsIds.concat(
+        allFonctions
+          .filter(
+            (f) =>
+              f.categoryId !== this.reaffectatorService.selectedCategoriesId
+          )
+          .map((f) => f.id)
+      )
+    }
 
     this.reaffectatorService
       .onFilterList(
@@ -228,7 +411,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.dateSelected,
         this.reaffectatorService.selectedCategoriesId || 0,
         selectedFonctionsIds,
-        selectedReferentielIds,
+        selectedReferentielIds
       )
       .then((returnValues) => {
         console.log(returnValues)
@@ -275,6 +458,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
+  /**
+   * Trie de la liste retournée
+   * @param onSearch
+   */
   orderListWithFiltersParams(onSearch: boolean = true) {
     this.listFormated = this.listFormated.map((list) => {
       list.hrFiltered = orderBy(list.hrFiltered, ['fonction.rank'], ['asc'])
@@ -302,6 +489,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.updateCategoryValues()
   }
 
+  /**
+   * Demande de recherche sur la liste
+   */
   onSearchBy() {
     const valuesFinded: HumanResourceInterface[] = []
     let nbPerson = 0
@@ -331,6 +521,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Scroller sur une fiche
+   * @param hrId
+   */
   onGoTo(hrId: number | null) {
     let isFinded = false
     const findContainer = document.getElementById('container-list')
@@ -376,6 +570,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Recherche allez au prochain
+   * @param delta
+   */
   onFindNext(delta: number = 1) {
     if (this.valuesFinded) {
       this.indexValuesFinded = this.indexValuesFinded + delta
@@ -389,6 +587,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Quand le referentiel du menu déroulant change
+   * @param list
+   */
   onSelectedReferentielIdsChanged(list: any) {
     this.reaffectatorService.selectedReferentielIds = list
     this.referentiel = this.referentiel.map((cat) => {
@@ -400,12 +602,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
+  /**
+   * Date de sélection change
+   * @param date
+   */
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
   }
 
+  /**
+   * Filtre de la liste
+   * @param ref
+   */
   onFilterBy(ref: ContentieuReferentielCalculateInterface) {
     if (!this.filterSelected || this.filterSelected.id !== ref.id) {
       this.filterSelected = ref
@@ -416,6 +626,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Export en PDF de la page
+   */
   onExport() {
     this.duringPrint = true
     this.wrapper?.exportAsPdf('simulation-d-affectation.pdf').then(() => {
@@ -426,6 +639,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Rechargement de la liste des fonctions en fonction des catégories
+   * @param item
+   */
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
     this.reaffectatorService.selectedCategoriesId = item.length
       ? +item[0]
@@ -443,12 +660,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
   }
 
+  /**
+   * Event lors du changement des fonctions
+   * @param list
+   */
   onSelectedFonctionsIdsChanged(list: string[] | number[]) {
     this.reaffectatorService.selectedFonctionsIds = list.map((i) => +i)
 
     this.onFilterList()
   }
 
+  /**
+   * Calcul des ETP
+   * @param referentielId
+   * @param hrList
+   * @returns
+   */
   onCalculETPAffected(
     referentielId: number,
     hrList: HumanResourceSelectedInterface[]
@@ -472,12 +699,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     return fixDecimal(etpCalculate)
   }
 
+  /**
+   * Calcul des couvertures et DTES en fonction des saisies
+   */
   calculateReferentielValues() {
     this.listFormated = this.listFormated.map((itemList) => {
       return {
         ...itemList,
         referentiel: itemList.referentiel.map((r) => ({
           ...r,
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
           totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
         })),
       }
@@ -517,11 +748,18 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             lastStock === 0 || outValue === 0
               ? 0
               : fixDecimal(lastStock / outValue),
+          etpUseToday: refFromItemList.etpUseToday,
         }
       })
     }
   }
 
+  /**
+   * Mise à jour à la volé de la ventilation d'une fiche
+   * @param hr
+   * @param referentiels
+   * @param indexList
+   */
   updateHRReferentiel(
     hr: HumanResourceSelectedInterface,
     referentiels: ContentieuReferentielInterface[],
@@ -573,6 +811,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Selection on non une fiche
+   * @param index
+   * @param hr
+   */
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
     const indexFinded = this.listFormated[index].personSelected.indexOf(hr.id)
     if (indexFinded === -1) {
@@ -587,6 +830,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Selectionne ou non toutes les fiches
+   * @param index
+   */
   toogleCheckAllPerson(index: number) {
     if (
       this.listFormated[index].personSelected.length ===
@@ -600,6 +847,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Supprime les données modifiés sélectionnées
+   * @param list
+   */
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) => {
@@ -616,10 +867,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Isole ou non
+   */
   onToogleIsolation() {
     this.isolatePersons = !this.isolatePersons
   }
 
+  /**
+   * Trouve les valeurs non modifiés d'une fiche
+   * @param hr
+   * @param itemObject
+   * @returns
+   */
   getOrignalHuman(
     hr: HumanResourceSelectedInterface,
     itemObject: listFormatedInterface

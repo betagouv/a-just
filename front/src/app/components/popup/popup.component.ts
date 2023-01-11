@@ -10,10 +10,25 @@ import {
  * Interface des boutons d'actions de la popup
  */
 export interface ActionsInterface {
+    /**
+     * Type d'action
+     */
     type?: string
+    /**
+     * Force en rouge ou non
+     */
     red?: boolean
+    /**
+     * Couleur de bouton plainne
+     */
     fill?: boolean
+    /**
+     * Texte du bouton
+     */
     content: string
+    /**
+     * Id du bouton
+     */
     id: string
 }
 

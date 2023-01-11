@@ -4,11 +4,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MainClass } from 'src/app/libs/main-class';
 import { UserService } from 'src/app/services/user/user.service';
 
+/**
+ * Page changement du mot de passe
+ */
+
 @Component({
   templateUrl: './change-password.page.html',
   styleUrls: ['./change-password.page.scss'],
 })
 export class ChangePassword extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Formulaire
+   */
   form = new FormGroup({
     email: new FormControl(),
     code: new FormControl(),
@@ -16,6 +23,12 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     passwordConf: new FormControl(),
   });
 
+  /**
+   * Constructeur
+   * @param userService 
+   * @param route 
+   * @param router 
+   */
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
@@ -24,6 +37,9 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     super();
   }
 
+  /**
+   * On écoute le changement du code dans l'url
+   */
   ngOnInit() {
     this.watch(
       this.route.queryParams
@@ -35,10 +51,16 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * On détruit les observables
+   */
   ngOnDestroy() {
     this.watcherDestroy();
   }
 
+  /** 
+   * Envoi du nouveau mot de passe au serveur
+   */
   onSubmit() {
     const { email, code, password, passwordConf } =
       this.form.value;

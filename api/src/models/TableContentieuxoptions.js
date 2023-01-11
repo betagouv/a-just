@@ -1,4 +1,14 @@
+/**
+ * Scripts intermediaires des temps moyens de dossier
+ */
+
 export default (sequelizeInstance, Model) => {
+  /**
+   * Liste des temps moyens d'une juridiction et d'une sauvegarde
+   * @param {*} backupId
+   * @param {*} juridictionId
+   * @returns
+   */
   Model.getAll = async (backupId, juridictionId) => {
     const list = await Model.findAll({
       attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],
@@ -42,6 +52,11 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Liste des temps moyens d'une sauvegarde
+   * @param {*} backupId
+   * @returns
+   */
   Model.getAllById = async (backupId) => {
     const list = await Model.findAll({
       attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],

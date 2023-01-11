@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Liste des fiches d&#39;une catégories</p>
+
+            </p>
 
 
         <section>
@@ -185,6 +192,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des fiches</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -218,6 +231,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couleur de fond de la categories</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -251,6 +270,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la categorie</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -284,6 +309,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des fiches après filtres</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -317,6 +348,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom de la catégorie (pluriel ou non)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -350,6 +387,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom de la catégorie (au singulier)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -383,6 +426,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Liste des id des personnes selectionnée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -416,6 +465,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Reférentiel avec les calcules d&#39;etp, couverture propre à la catégorie</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -449,6 +504,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couleur de la categories</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -482,6 +543,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Total des ETP d&#39;une categorie</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -493,11 +560,10 @@
 import { ContentieuReferentielInterface } from &#x27;src/app/interfaces/contentieu-referentiel&#x27;
 import { HumanResourceInterface } from &#x27;src/app/interfaces/human-resource-interface&#x27;
 import { HumanResourceService } from &#x27;src/app/services/human-resource/human-resource.service&#x27;
-import { flatten, meanBy, orderBy, sumBy } from &#x27;lodash&#x27;
+import { orderBy, sumBy } from &#x27;lodash&#x27;
 import { MainClass } from &#x27;src/app/libs/main-class&#x27;
 import { HRCategoryInterface } from &#x27;src/app/interfaces/hr-category&#x27;
 import { RHActivityInterface } from &#x27;src/app/interfaces/rh-activity&#x27;
-import { ReferentielService } from &#x27;src/app/services/referentiel/referentiel.service&#x27;
 import { fixDecimal } from &#x27;src/app/utils/numbers&#x27;
 import { dataInterface } from &#x27;src/app/components/select/select.component&#x27;
 import { HRFonctionInterface } from &#x27;src/app/interfaces/hr-fonction&#x27;
@@ -505,97 +571,274 @@ import { HRSituationInterface } from &#x27;src/app/interfaces/hr-situation&#x27;
 import { WorkforceService } from &#x27;src/app/services/workforce/workforce.service&#x27;
 import { WrapperComponent } from &#x27;src/app/components/wrapper/wrapper.component&#x27;
 import { ReaffectatorService } from &#x27;src/app/services/reaffectator/reaffectator.service&#x27;
-import {
-  decimalToStringDate,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-} from &#x27;src/app/utils/dates&#x27;
-import { environment } from &#x27;src/environments/environment&#x27;
-import { SimulatorService } from &#x27;src/app/services/simulator/simulator.service&#x27;
-import { etpAffectedInterface } from &#x27;src/app/interfaces/calculator&#x27;
-import { ActivityInterface } from &#x27;src/app/interfaces/activity&#x27;
-import { copyArray } from &#x27;src/app/utils/array&#x27;
 import { AppService } from &#x27;src/app/services/app/app.service&#x27;
+import { ServerService } from &#x27;src/app/services/http-server/server.service&#x27;
 
+/**
+ * Interface d&#x27;une fiche surchargé avec des rendus visuels
+ */
 interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Trouvé dans la recherche ou non
+   */
   opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
   tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
   etpLabel: string
+  /**
+   * Total des indispo
+   */
   hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
   currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
   etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
   category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
   fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
   currentSituation: HRSituationInterface | null
+  /**
+   * Is c&#x27;est modifié ou non
+   */
   isModify: boolean
 }
 
+/**
+ * Liste des fiches d&#x27;une catégories
+ */
 interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
   textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
   bgColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
   label: string
+  /**
+   * Nom de la catégorie (au singulier)
+   */
   originalLabel: string
+  /**
+   * Liste des fiches
+   */
   allHr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
   hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d&#x27;etp, couverture propre à la catégorie
+   */
   referentiel: ContentieuReferentielCalculateInterface[]
+  /**
+   * Liste des id des personnes selectionnée
+   */
   personSelected: number[]
+  /**
+   * Id de la categorie
+   */
   categoryId: number
+  /**
+   * Total des ETP d&#x27;une categorie
+   */
   totalRealETp: number
 }
 
+/**
+ * Référentiel surchargé avec un visuel et des calculs ajustés
+ */
 interface ContentieuReferentielCalculateInterface
+  /**
+   * Référentiel surchargé avec un visuel et des calculs ajustés
+   */
   extends ContentieuReferentielInterface {
+  /**
+   * Délai Total d&#x27;Ecoulement des Stock
+   */
   dtes: number
+  /**
+   * Taux de couverture
+   */
   coverage: number
+  /**
+   * Délai Total d&#x27;Ecoulement des Stock réél
+   */
   realDTESInMonths: number
+  /**
+   * Taux de couverture réél
+   */
   realCoverage: number
+  /**
+   * ETP moyen sur une période
+   */
   etpToCompute: number
+  /**
+   * ETP disponible à aujourd&#x27;hui
+   */
   etpUseToday: number
+  /**
+   * Temps moyen par dossier
+   */
   magRealTimePerCase: number | null
+  /**
+   * Nombre d&#x27;heure travaillé
+   */
   nbWorkingHours: number
+  /**
+   * Nombre de jour travaillé
+   */
   nbWorkingDays: number
+  /**
+   * Total d&#x27;entrée
+   */
   totalIn: number
+  /**
+   * Dernier stock disponible
+   */
   lastStock: number
 }
 
+/**
+ * Page de réaffectation
+ */
 @Component({
   templateUrl: &#x27;./reaffectator.page.html&#x27;,
   styleUrls: [&#x27;./reaffectator.page.scss&#x27;],
 })
+/**
+ * Page de réaffectation
+ */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Dom du wrapper
+   * @param wrapper
+   */
   @ViewChild(&#x27;wrapper&#x27;) wrapper: WrapperComponent | undefined
+  /**
+   * Boulean lors de l&#x27;impression
+   */
   duringPrint: boolean &#x3D; false
+  /**
+   * Liste des fiches
+   */
   humanResources: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * Referentiel complet
+   */
   referentiel: ContentieuReferentielCalculateInterface[] &#x3D; []
+  /**
+   * Menu déroulant pour le référentiel
+   */
   formReferentiel: dataInterface[] &#x3D; []
+  /**
+   * Menu déroulant pour les catégories
+   */
   formFilterSelect: dataInterface[] &#x3D; []
+  /**
+   * Menu déroulant pour les fonctions
+   */
   formFilterFonctionsSelect: dataInterface[] &#x3D; []
+  /**
+   * Recherche textuelle
+   */
   searchValue: string &#x3D; &#x27;&#x27;
+  /**
+   * List des personnes trouvé lors de la recherche
+   */
   valuesFinded: HumanResourceInterface[] | null &#x3D; null
+  /**
+   * Index de la personne que nous avons trouvé
+   */
   indexValuesFinded: number &#x3D; 0
+  /**
+   * Instance du timeout pour la recherche
+   */
   timeoutUpdateSearch: any &#x3D; null
+  /**
+   * Date sélectionnée
+   */
   dateSelected: Date &#x3D; this.workforceService.dateSelected.getValue()
+  /**
+   * Liste reçu par le serveur
+   */
   listFormated: listFormatedInterface[] &#x3D; []
+  /**
+   * Contentieux avec les calculs
+   */
   filterSelected: ContentieuReferentielCalculateInterface | null &#x3D; null
+  /**
+   * Position de la dernière recherche
+   */
   lastScrollTop: number &#x3D; 0
+  /**
+   * Boolean de première recherche
+   */
   isFirstLoad: boolean &#x3D; true
+  /**
+   * Affiche ou non le paneau des indicateurs
+   */
   showIndicatorPanel: boolean &#x3D; true
+  /**
+   * Liste des ETP par défaut qui sont modifiable à titre informatif
+   */
   firstETPTargetValue: (number | null)[] &#x3D; []
+  /**
+   * Isole les personnes modifiés
+   */
   isolatePersons: boolean &#x3D; false
+  /**
+   * Affiche les personnes modifiés et leurs pendant non modifié
+   */
+  showReelValues: boolean &#x3D; false
 
+  /**
+   * Reaffectator Service
+   */
+  reaffectatorService: ReaffectatorService
+
+  /**
+   * Constructeur
+   * @param humanResourceService
+   * @param workforceService
+   * @param reaffectatorService
+   * @param appService
+   * @param  serverService
+   */
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
     private workforceService: WorkforceService,
-    public reaffectatorService: ReaffectatorService,
-    private simulatorService: SimulatorService,
-    private appService: AppService
+    private appService: AppService,
+    private rs: ReaffectatorService
   ) {
     super()
+    this.reaffectatorService &#x3D; this.rs
   }
 
+  /**
+   * A l&#x27;initialisation chercher les variables globals puis charger
+   */
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
@@ -623,10 +866,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     )
   }
 
+  /**
+   * Destruction des observables
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Mise à jour des catégories du menu déroulant
+   */
   updateCategoryValues() {
     this.formFilterSelect &#x3D; this.formFilterSelect.map((c) &#x3D;&gt; {
       const itemBlock &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
@@ -643,32 +892,25 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       return c
     })
+
+    console.log(&#x27;this.listFormated&#x27;, this.listFormated)
   }
 
+  /**
+   * Accélération du chargement de la liste
+   * @param index
+   * @param item
+   * @returns id
+   */
   trackById(index: number, item: any) {
     return item.id
   }
 
-  calculTotalTmpActivity(
-    currentActivities: RHActivityInterface[],
-    formActivities: RHActivityInterface[]
-  ) {
-    // total main activities whitout form
-    const totalWhitout &#x3D; sumBy(
-      currentActivities.filter((ca) &#x3D;&gt; {
-        const ref &#x3D; this.referentiel.find((r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ca.referentielId)
-        if (ref &amp;&amp; ca.referentielId !&#x3D;&#x3D; formActivities[0].id) {
-          return true
-        } else {
-          return false
-        }
-      }),
-      &#x27;percent&#x27;
-    )
-
-    return totalWhitout + (formActivities[0].percent || 0)
-  }
-
+  /**
+   * Retourne si une personne est trouvé par la recherche ou non
+   * @param hr
+   * @returns opacity
+   */
   checkHROpacity(hr: HumanResourceInterface) {
     if (
       !this.searchValue ||
@@ -683,6 +925,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     return 0.5
   }
 
+  /**
+   * Appel au serveur pour avoir la liste
+   * @returns list
+   */
   onFilterList() {
     if (
       !this.formFilterSelect.length ||
@@ -719,7 +965,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.dateSelected,
         this.reaffectatorService.selectedCategoriesId || 0,
         selectedFonctionsIds,
-        selectedReferentielIds,
+        selectedReferentielIds
       )
       .then((returnValues) &#x3D;&gt; {
         console.log(returnValues)
@@ -766,6 +1012,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
+  /**
+   * Trie de la liste retournée
+   * @param onSearch
+   */
   orderListWithFiltersParams(onSearch: boolean &#x3D; true) {
     this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
       list.hrFiltered &#x3D; orderBy(list.hrFiltered, [&#x27;fonction.rank&#x27;], [&#x27;asc&#x27;])
@@ -793,6 +1043,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.updateCategoryValues()
   }
 
+  /**
+   * Demande de recherche sur la liste
+   */
   onSearchBy() {
     const valuesFinded: HumanResourceInterface[] &#x3D; []
     let nbPerson &#x3D; 0
@@ -822,6 +1075,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Scroller sur une fiche
+   * @param hrId
+   */
   onGoTo(hrId: number | null) {
     let isFinded &#x3D; false
     const findContainer &#x3D; document.getElementById(&#x27;container-list&#x27;)
@@ -867,6 +1124,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Recherche allez au prochain
+   * @param delta
+   */
   onFindNext(delta: number &#x3D; 1) {
     if (this.valuesFinded) {
       this.indexValuesFinded &#x3D; this.indexValuesFinded + delta
@@ -880,6 +1141,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Quand le referentiel du menu déroulant change
+   * @param list
+   */
   onSelectedReferentielIdsChanged(list: any) {
     this.reaffectatorService.selectedReferentielIds &#x3D; list
     this.referentiel &#x3D; this.referentiel.map((cat) &#x3D;&gt; {
@@ -891,12 +1156,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onFilterList()
   }
 
+  /**
+   * Date de sélection change
+   * @param date
+   */
   onDateChanged(date: any) {
     this.dateSelected &#x3D; date
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
   }
 
+  /**
+   * Filtre de la liste
+   * @param ref
+   */
   onFilterBy(ref: ContentieuReferentielCalculateInterface) {
     if (!this.filterSelected || this.filterSelected.id !&#x3D;&#x3D; ref.id) {
       this.filterSelected &#x3D; ref
@@ -907,6 +1180,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Export en PDF de la page
+   */
   onExport() {
     this.duringPrint &#x3D; true
     this.wrapper?.exportAsPdf(&#x27;simulation-d-affectation.pdf&#x27;).then(() &#x3D;&gt; {
@@ -917,6 +1193,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Rechargement de la liste des fonctions en fonction des catégories
+   * @param item
+   */
   onSelectedCategoriesIdChanged(item: string[] | number[]) {
     this.reaffectatorService.selectedCategoriesId &#x3D; item.length
       ? +item[0]
@@ -934,12 +1214,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) &#x3D;&gt; f.id))
   }
 
+  /**
+   * Event lors du changement des fonctions
+   * @param list
+   */
   onSelectedFonctionsIdsChanged(list: string[] | number[]) {
     this.reaffectatorService.selectedFonctionsIds &#x3D; list.map((i) &#x3D;&gt; +i)
 
     this.onFilterList()
   }
 
+  /**
+   * Calcul des ETP
+   * @param referentielId
+   * @param hrList
+   * @returns
+   */
   onCalculETPAffected(
     referentielId: number,
     hrList: HumanResourceSelectedInterface[]
@@ -963,12 +1253,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     return fixDecimal(etpCalculate)
   }
 
+  /**
+   * Calcul des couvertures et DTES en fonction des saisies
+   */
   calculateReferentielValues() {
     this.listFormated &#x3D; this.listFormated.map((itemList) &#x3D;&gt; {
       return {
         ...itemList,
         referentiel: itemList.referentiel.map((r) &#x3D;&gt; ({
           ...r,
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
           totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
         })),
       }
@@ -1008,11 +1302,18 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             lastStock &#x3D;&#x3D;&#x3D; 0 || outValue &#x3D;&#x3D;&#x3D; 0
               ? 0
               : fixDecimal(lastStock / outValue),
+          etpUseToday: refFromItemList.etpUseToday,
         }
       })
     }
   }
 
+  /**
+   * Mise à jour à la volé de la ventilation d&#x27;une fiche
+   * @param hr
+   * @param referentiels
+   * @param indexList
+   */
   updateHRReferentiel(
     hr: HumanResourceSelectedInterface,
     referentiels: ContentieuReferentielInterface[],
@@ -1064,6 +1365,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Selection on non une fiche
+   * @param index
+   * @param hr
+   */
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
     const indexFinded &#x3D; this.listFormated[index].personSelected.indexOf(hr.id)
     if (indexFinded &#x3D;&#x3D;&#x3D; -1) {
@@ -1078,6 +1384,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Selectionne ou non toutes les fiches
+   * @param index
+   */
   toogleCheckAllPerson(index: number) {
     if (
       this.listFormated[index].personSelected.length &#x3D;&#x3D;&#x3D;
@@ -1091,6 +1401,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Supprime les données modifiés sélectionnées
+   * @param list
+   */
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) &#x3D;&gt; {
@@ -1107,10 +1421,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Isole ou non
+   */
   onToogleIsolation() {
     this.isolatePersons &#x3D; !this.isolatePersons
   }
 
+  /**
+   * Trouve les valeurs non modifiés d&#x27;une fiche
+   * @param hr
+   * @param itemObject
+   * @returns
+   */
   getOrignalHuman(
     hr: HumanResourceSelectedInterface,
     itemObject: listFormatedInterface

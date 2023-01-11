@@ -29,10 +29,10 @@ module.exports = {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    });
+    })
   },
   down: async (queryInterface /*, Sequelize*/) => {
-    await queryInterface.dropTable('HistoriesContentieuxUpdate');
-    return;
+    await queryInterface.dropTable('HistoriesContentieuxUpdate')
+    return
   },
-};
+}

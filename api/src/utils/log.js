@@ -1,5 +1,8 @@
 import winston from 'winston'
 
+/**
+ * Creatin d'un logger
+ */
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),

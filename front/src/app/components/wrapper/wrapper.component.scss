@@ -1,8 +1,12 @@
 @import '../../styles/utils.scss';
 
 :host {
-  display: flex;
   height: 100%;
+
+  > div {
+    display: flex;
+    height: 100%;
+  }
 
   .subtitle-name {
     border-radius: 12px;

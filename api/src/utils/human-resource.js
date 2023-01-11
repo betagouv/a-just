@@ -1,6 +1,13 @@
 import { minBy, sumBy } from 'lodash'
 import { today } from '../utils/date'
 
+/**
+ * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
+ * @param {*} referentielId
+ * @param {*} date
+ * @param {*} hr
+ * @returns objet d'ETP détaillé
+ */
 export function getEtpByDateAndPerson (referentielId, date, hr) {
   if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
     return {
@@ -50,6 +57,13 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
   }
 }
 
+/**
+ * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines et un contentieux donné
+ * @param {*} referentielId
+ * @param {*} date
+ * @param {*} hr
+ * @returns objet d'ETP détaillé
+ */
 export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
@@ -88,6 +102,12 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   }
 }
 
+/**
+ * Récupère la prochaine date d'indisponibilité d'une ressource humaine
+ * @param {*} hr
+ * @param {*} dateSelected
+ * @returns date de la prochaine indispo
+ */
 export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   dateSelected = today(dateSelected).getTime()
   const indispos = hr.indisponibilities || []
@@ -100,13 +120,19 @@ export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   return min ? new Date(min) : null
 }
 
+/**
+ * Retourne la situation d'une personne à une date donnée
+ * @param {*} hr
+ * @param {*} date
+ * @param {*} reelEtp
+ * @returns objet contenant la situation en cours et la prochaine situation
+ */
 export const findSituation = (hr, date, reelEtp = false) => {
   if (date) {
     date = today(date)
   }
 
   if (hr && hr.dateEnd && date) {
-    // control de date when the person goone
     const dateEnd = today(hr.dateEnd)
     if (dateEnd.getTime() < date.getTime()) {
       return {
@@ -132,6 +158,9 @@ export const findSituation = (hr, date, reelEtp = false) => {
   }*/
 }
 
+/**
+ * Retourne la liste de toutes les situaitons futures
+ */
 export const findAllFuturSituations = (hr, date) => {
   date = today(date)
   let situations = hr && hr.situations && hr.situations.length ? hr.situations : []
@@ -154,6 +183,12 @@ export const findAllFuturSituations = (hr, date) => {
   return situations
 }
 
+/**
+ * Retourne l'ensemble des situations passées d'une personne
+ * @param {*} hr
+ * @param {*} date
+ * @returns liste de situation
+ */
 export const findAllSituations = (hr, date) => {
   let situations = hr && hr.situations && hr.situations.length ? hr.situations : []
 
@@ -167,9 +202,15 @@ export const findAllSituations = (hr, date) => {
   return situations
 }
 
+/**
+ * Retourne la liste des indisponibilités
+ * @param {*} hr
+ * @param {*} date
+ * @returns liste des indisponibilités filtrées
+ */
 const findAllIndisponibilities = (hr, date) => {
   let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
-  //if (indisponibilities.length > 0) console.log('here 1', date, indisponibilities);
+
   if (date instanceof Date) {
     date = today(date)
     indisponibilities = indisponibilities.filter((hra) => {
@@ -189,7 +230,6 @@ const findAllIndisponibilities = (hr, date) => {
       return false
     })
   }
-  //if (indisponibilities.length > 0) console.log('here 2', indisponibilities);
 
   return indisponibilities
 }

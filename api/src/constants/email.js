@@ -1,5 +1,9 @@
 import config from 'config'
 
+/**
+ * Id des templates pour sendinblue
+ */
+
 export const TEMPLATE_FORGOT_PASSWORD_ID = 1
 export const TEMPLATE_NEW_USER_SIGNIN = 5
 export const TEMPLATE_USER_ONBOARDING = 3

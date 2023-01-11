@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Catégories des personnes (magistrats, greffier ....)</p>
+
+            </p>
 
 
         <section>
@@ -144,6 +151,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la base</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -177,6 +190,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -215,6 +234,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Ordre pour trier en base</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -223,15 +248,39 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface HRCategoryInterface {
+  /**
+   * Id de la base
+   */
 	id: number;
+  /**
+   * Nom
+   */
 	label: string;
+  /**
+   * Ordre pour trier en base
+   */
 	rank?: number;
 }
 
+/**
+ * Catégorie selectionnée pour une page
+ */
 export interface HRCategorySelectedInterface extends HRCategoryInterface {
+  /**
+   * Selectionnée ou non
+   */
   selected: boolean;
+  /**
+   * Somme des ETPT calculé
+   */
   etpt: number;
+  /**
+   * Nom de personne de la catégorie
+   */
   nbPersonal: number;
+  /**
+   * String pour afficher au pluriel ou non
+   */
   labelPlural: string;
 }
 </code></pre>

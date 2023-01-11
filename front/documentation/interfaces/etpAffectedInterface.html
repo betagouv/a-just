@@ -69,6 +69,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;un ETP</p>
+
+            </p>
 
 
         <section>
@@ -143,6 +150,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom de l&#39;interface</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -176,6 +189,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Ordre de l&#39;ETP</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -209,6 +228,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Somme de l&#39;ETP</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -218,36 +243,119 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &quot;./contentieu-referentiel&quot;;
 
+/**
+ * Interface d&#x27;un ETP
+ */
 export interface etpAffectedInterface {
+	/**
+	 * Nom de l&#x27;interface
+	 */
 	name: string;
+	/**
+	 * Somme de l&#x27;ETP
+	 */
   totalEtp: number;
+	/**
+	 * Ordre de l&#x27;ETP
+	 */
   rank: number;
 }
 
+/**
+ * Interface du résultat d&#x27;un calcul
+ */
 export interface CalculatorInterface {
+	/**
+	 * Entrées moyennes
+	 */
 	totalIn: number | null;
+	/**
+	 * Sorties moyennes
+	 */
 	totalOut: number | null;
+	/**
+	 * Dernière valeure de stock
+	 */
 	lastStock: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période
+	 */
 	etpMag: number | null;
+	/**
+	 * Temps de traitement réel des magistrats
+	 */
 	magRealTimePerCase: number | null;
+	/**
+	 * Temps de traitement calculé des magistrats
+	 */
 	magCalculateTimePerCase: number | null;
+	/**
+	 * Sorties estimées des magistrats
+	 */
 	magCalculateOut: number | null;
+	/**
+	 * Couverture des entres / sorties des magistrats
+	 */
 	magCalculateCoverage: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les magistrats
+	 */
 	magCalculateDTESInMonths: number | null;
+	/**
+	 * ETP Fonctionnaires
+	 */
 	etpFon: number | null;
+	/**
+	 * Temps de traitement réel des fonctionnaires
+	 */
 	fonRealTimePerCase: number | null;
+	/**
+	 * Temps de traitement calculé des fonctionnaires
+	 */
 	fonCalculateTimePerCase: number | null;
+	/**
+	 * Sorties estimées des fonctionnaires
+	 */
 	fonCalculateOut: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les fonctionnaires
+	 */
 	fonCalculateCoverage: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les fonctionnaires
+	 */
 	fonCalculateDTESInMonths: number | null;
+	/**
+	 * ETP Contractuel
+	 */
 	etpCont: number | null;
+	/**
+	 * Couverture global
+	 */
 	realCoverage: number | null;
+	/**
+	 * DTES glbal
+	 */
 	realDTESInMonths: number | null;
+	/**
+	 * Contentieux rataché
+	 */
 	contentieux: ContentieuReferentielInterface;
+	/**
+	 * Nombre de mois selectionnés
+	 */
 	nbMonth: number;
+	/**
+	 * Resultats des calculs des enfants d&#x27;un contientieux
+	 */
 	childrens: CalculatorInterface[];
+	/**
+	 * ETP global
+	 */
 	etpAffected: etpAffectedInterface[];
-	needToCalculate: boolean;
+	/**
+	 * Affiche ou non les enfants d&#x27;un resultat sur la page calculateur
+	 */
 	childIsVisible: boolean;
 }
 </code></pre>

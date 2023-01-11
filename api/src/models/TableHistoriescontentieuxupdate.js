@@ -1,4 +1,12 @@
+/**
+ * Historise qui modifie un temps moyen par dossier
+ */
 export default (sequelizeInstance, Model) => {
+  /**
+   * Ajoute une ligne de qui sauvegarde qui à modifié un temps moyens par dossier
+   * @param {*} userId
+   * @param {*} backupId
+   */
   Model.addHistory = async (userId, backupId) => {
     await Model.create({
       backup_id: backupId,
@@ -6,6 +14,11 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  /**
+   * Retourne qui a modifié en dernier une juridiction
+   * @param {*} listId
+   * @returns
+   */
   Model.getLastUpdate = async (listId) => {
     const listUpdated = await Model.findAll({
       attributes: ['user_id', 'updated_at'],

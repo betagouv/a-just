@@ -10,6 +10,27 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
   <div class="action-simulator-bar">
+    <aj-select
+      title="Contentieux (obligatoire)"
+      class="contentieux {{disabled}}"
+      [defaultRealValue]="'Sélectionner un contentieux'"
+      [value]="contentieuId"
+      [datas]="formReferentiel"
+      (valueChange)="updateReferentielSelected('referentiel', $event)"
+      [multiple]="false"
+    >
+    </aj-select>
+    <aj-select
+      title="Sous-contentieux (option)"
+      class=" contentieux {{disabled}}"
+      [class.notSelectable]="contentieuId===null"
+      [value]="subList"
+      [datas]="formReferentiel"
+      [subList]="subList"
+      [parent]="contentieuId"
+      (valueChange)="updateReferentielSelected('subList', $event)"
+    >
+    </aj-select>
     <div class="categories-switch">
       <div
         class="magistrats {{disabled}}"
@@ -30,33 +51,12 @@
       </div>
     </div>
     <aj-select
-      class="contentieux {{disabled}}"
+      class="contentieux fonctions-selection {{disabled}}"
       title="Choix des fonctions (option)"
       [value]="selectedFonctionsIds"
       [datas]="functionsList"
       [defaultAllValue]="'Toutes'"
       (valueChange)="onChangeFonctionsSelected($event)"
-    >
-    </aj-select>
-    <aj-select
-      title="Contentieux (obligatoire)"
-      class="contentieux {{disabled}}"
-      [defaultRealValue]="'Sélectionner un contentieux'"
-      [value]="contentieuId"
-      [datas]="formReferentiel"
-      (valueChange)="updateReferentielSelected('referentiel', $event)"
-      [multiple]="false"
-    >
-    </aj-select>
-    <aj-select
-      title="Sous-contentieux (option)"
-      class=" contentieux {{disabled}}"
-      [class.notSelectable]="contentieuId===null"
-      [value]="subList"
-      [datas]="formReferentiel"
-      [subList]="subList"
-      [parent]="contentieuId"
-      (valueChange)="updateReferentielSelected('subList', $event)"
     >
     </aj-select>
   </div>

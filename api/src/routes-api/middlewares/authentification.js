@@ -1,14 +1,18 @@
 import config from 'config'
 import { crypt } from '../../utils'
-
 import { ENUM_TYPE } from '../../models/TableTokens'
 
+/**
+ * Fonction qui ajoute un object de type user de l'utilisateur connecté
+ * @param {*} ctx
+ * @returns
+ */
 async function addUserToCtx (ctx) {
   const token = ctx.get('Authorization')
   if (token) {
     try {
       const user = crypt.getDataJwtToken(token)
-      if(user) {
+      if (user) {
         const isConsumable = await ctx.models.tokens.isConsumable({
           entity_id: user.id,
           token,
@@ -26,8 +30,13 @@ async function addUserToCtx (ctx) {
   return null
 }
 
+/**
+ * Fonction pour créer un token d'un utilisateur connecté
+ * @param {*} ctx
+ * @returns
+ */
 function loginUser (ctx) {
-  return async user => {
+  return async (user) => {
     const userToRegister = {
       id: user.id,
       role: user.role,
@@ -45,6 +54,11 @@ function loginUser (ctx) {
   }
 }
 
+/**
+ * Fonction qui supprime le token d'un utilisateur
+ * @param {*} ctx
+ * @returns
+ */
 function logoutUser (ctx) {
   return async () => {
     const token = ctx.get('Authorization')
@@ -56,6 +70,9 @@ function logoutUser (ctx) {
   }
 }
 
+/**
+ * Module d'export autour de l'utilisateur connecté
+ */
 export default async (ctx, next) => {
   await addUserToCtx(ctx)
   ctx.loginUser = loginUser(ctx)

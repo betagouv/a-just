@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -11,21 +10,59 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
+/**
+ * Page des temps moyens par dossier
+ */
+
 @Component({
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],
 })
 export class AverageEtpPage extends MainClass implements OnDestroy {
+  /**
+   * Référentiel complet
+   */
   referentiel: ContentieuReferentielInterface[] = []
+  /**
+   * Unité de mesure de saisi
+   */
   perUnity: string = 'hour'
+  /**
+   * En cours de chargement
+   */
   isLoading: boolean = false
+  /**
+   * Titre de la page
+   */
   subTitleDate: string = ''
+  /**
+   * Sous titre de la page
+   */
   subTitleName: string = ''
+  /**
+   * Catégorie selectionné (MAGISTRATS, FONCTIONNAIRES)
+   */
   categorySelected: string = 'MAGISTRATS'
+  /**
+   * Liste des sauvegardes
+   */
   backups: BackupInterface[] = []
+  /**
+   * Liste des sauvegardes des temps mouens
+   */
   selectedIds: any[] = []
+  /**
+   * Liste des sauvegardes formatés pour le menu roulant
+   */
   formDatas: dataInterface[] = []
-  initValue: boolean = false
+  
+  /**
+   * Constructeur
+   * @param contentieuxOptionsService 
+   * @param humanResourceService 
+   * @param referentielService 
+   * @param activitiesService 
+   */
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
@@ -45,13 +82,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         (b) => (this.selectedIds = [b])
       )
     )
-
-    this.watch(
-      this.contentieuxOptionsService.optionsIsModify.subscribe((b) => {
-        if (b === false) {
-        }
-      })
-    )
+    
     this.watch(
       this.contentieuxOptionsService.initValue.subscribe((b) => {
         if (b === true) {
@@ -112,6 +143,11 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     )
   }
 
+  /**
+   * Change l'id de la sauvegarde
+   * @param id 
+   * @returns 
+   */
   onChangeBackup(id: any[]) {
     if (
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
@@ -126,6 +162,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     }
   }
 
+  /**
+   * Formate le menu déroulant avec la liste de toutes les sauvegardes
+   */
   formatDatas() {
     if (
       this.selectedIds &&
@@ -148,13 +187,18 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     })
   }
 
-  getLogOfLastUpdate() {}
+  /**
+   * Destruction des observables 
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
 
+  /**
+   * Chargement des temps moyens par dossier
+   * @param backupId 
+   */
   onLoad(backupId: number) {
-    let res = this.activitiesService.loadMonthActivities(new Date())
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
@@ -209,6 +253,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     })
   }
 
+  /**
+   * Modification d'un temps moyen
+   * @param referentiel 
+   * @param value 
+   * @param unit 
+   */
   onUpdateOptions(
     referentiel: ContentieuReferentielInterface,
     value: number,
@@ -233,14 +283,28 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     }
   }
 
+  /**
+   * Change l'unité de mesure
+   * @param unit 
+   */
   changeUnity(unit: string) {
     this.perUnity = unit
   }
 
+  /**
+   * Change les catégories
+   * @param category 
+   */
   changeCategorySelected(category: string) {
     this.categorySelected = category
   }
 
+  /**
+   * Retourne le temps de traitement d'un point de vue humain
+   * @param avgProcessTime 
+   * @param unit 
+   * @returns 
+   */
   getInputValue(avgProcessTime: any, unit: string) {
     switch (this.getCategoryStr()) {
       case 'averageProcessingTime':
@@ -265,6 +329,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     return '0'
   }
 
+  /**
+   * Modife le champs d'un temps mouens
+   * @param referentiel 
+   * @param event 
+   * @param unit 
+   */
   getField(
     referentiel: ContentieuReferentielInterface,
     event: any,
@@ -284,6 +354,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     }
   }
 
+  /**
+   * Liste des catégories
+   * @returns 
+   */
   getCategoryStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'averageProcessingTime'
     else if (this.categorySelected === 'FONCTIONNAIRES')
@@ -291,13 +365,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     else return 'averageProcessingTime'
   }
 
-  getCategoryDefaultStr() {
-    if (this.categorySelected === 'MAGISTRATS') return 'defaultValue'
-    else if (this.categorySelected === 'FONCTIONNAIRES')
-      return 'defaultValueFonc'
-    else return 'defaultValue'
-  }
-
+  /**
+   * Noeu de catégorie 
+   * @returns 
+   */
   getCategoryModifStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'isModified'
     else return 'isModifiedFonc'
