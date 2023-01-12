@@ -140,8 +140,8 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
     }
   }
 
-  const realCoverage = fixDecimal(totalOut / totalIn)
-  const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut) : null
+  const realCoverage = fixDecimal(totalOut / totalIn, 100)
+  const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut, 100) : null
 
   const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop)
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
