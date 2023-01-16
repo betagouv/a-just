@@ -194,7 +194,7 @@ export class SelectComponent extends MainClass implements OnChanges {
    * @returns void
    */
   onSelectedChanged(list: number[] | number) {
-    if (this.parent && Array.isArray(list)) {
+    /**if (this.parent && Array.isArray(list)) {
       if (list.length === 0) this.value = this.subList = []
       else if (list.length === 1) this.value = list
       else if (list.length === 2 && this.subReferentielData.length !== 2)
@@ -206,7 +206,8 @@ export class SelectComponent extends MainClass implements OnChanges {
         this.value = this.subList = [this.value as number[]][0].filter(
           (v) => !list.includes(v)
         )
-    } else if (typeof list === 'number') this.value = [list]
+    } else */
+    if (typeof list === 'number') this.value = [list]
     else this.value = list
 
     this.valueChange.emit(this.value as number[])

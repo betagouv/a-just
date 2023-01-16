@@ -76,6 +76,30 @@ export function mergeSituations (situationFiltered, situation, categories, categ
 }
 
 /**
+ * Sum situations contained in a list
+ * @param {*} situationFiltered situation calculé
+ * @returns sum of situations
+ */
+export function sumSituations (listOfSituations) {
+  return listOfSituations.reduce(function (previousValue, currentValue) {
+    return {
+      totalIn: (previousValue.totalIn || 0) + (currentValue.totalIn || 0),
+      totalOut: previousValue.totalOut || 0 + currentValue.totalOut || 0,
+      lastStock: (previousValue.lastStock || 0) + (currentValue.lastStock || 0),
+      realCoverage: previousValue.realCoverage || 0 + currentValue.realCoverage || 0,
+      realDTESInMonths: previousValue.realDTESInMonths || 0 + currentValue.realDTESInMonths || 0,
+      etpMag: previousValue.etpMag || 0 + currentValue.etpMag || 0,
+      magRealTimePerCase: previousValue.magRealTimePerCase || 0 + currentValue.magRealTimePerCase || 0,
+      etpFon: previousValue.etpFon || 0 + currentValue.etpFon || 0,
+      etpCont: previousValue.etpCont || 0 + currentValue.etpCont || 0,
+      etpUseToday: previousValue.etpUseToday || 0 + currentValue.etpUseToday || 0,
+      etpAffected: previousValue.etpAffected || 0 + currentValue.etpAffected || 0,
+      etpToCompute: previousValue.etpToCompute || 0 + currentValue.etpToCompute || 0,
+    }
+  })
+}
+
+/**
  * Filtre des situations par catégorie et par fonction
  * @param {*} hr liste de ressources
  * @param {*} categoryId catégorie selectionnée
