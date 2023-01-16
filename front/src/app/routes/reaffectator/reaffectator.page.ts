@@ -383,7 +383,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
-        this.reaffectatorService.selectedReferentielIds.length
+        this.reaffectatorService.selectedReferentielIds.length &&
+      this.formReferentiel.length !== 0
     ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
@@ -394,6 +395,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       this.reaffectatorService.selectedFonctionsIds.length !==
       this.formFilterFonctionsSelect.length
     ) {
+      console.log(this.reaffectatorService.selectedReferentielIds.length)
       selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
       selectedFonctionsIds = selectedFonctionsIds.concat(
         allFonctions
@@ -404,7 +406,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           .map((f) => f.id)
       )
     }
-
+    console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -592,6 +594,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param list
    */
   onSelectedReferentielIdsChanged(list: any) {
+    console.log('laliste:', list)
     this.reaffectatorService.selectedReferentielIds = list
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1
@@ -599,7 +602,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       return cat
     })
 
-    this.onFilterList()
+    if (list.length === 0) {
+      this.listFormated = []
+    } else this.onFilterList()
   }
 
   /**
