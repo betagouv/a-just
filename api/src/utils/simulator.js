@@ -1,5 +1,5 @@
 import { isFirstDayOfMonth } from 'date-fns'
-import { meanBy, orderBy, sortBy } from 'lodash'
+import { meanBy, orderBy, sortBy, sumBy } from 'lodash'
 import {
   checkIfDateIsNotToday,
   decimalToStringDate,
@@ -48,6 +48,44 @@ const emptySituation = {
   etpToCompute: null,
 }
 
+const emptySimulation = {
+  endSituation: null,
+  countOfCalandarDays: null,
+  totalIn: null,
+  totalOut: null,
+  lastStock: null,
+  realCoverage: null,
+  realDTESInMonths: null,
+  magRealTimePerCase: null,
+  etpMag: null,
+  etpFon: null,
+  etpCont: null,
+  etpAffected: null,
+  etpUseToday: null,
+  etpToCompute: null,
+  nbWorkingHours: null,
+  nbWorkingDays: null,
+}
+
+const emptyEndSituation = {
+  totalIn: undefined,
+  totalOut: undefined,
+  lastStock: undefined,
+  realCoverage: undefined,
+  realDTESInMonths: undefined,
+  magRealTimePerCase: undefined,
+  etpMag: undefined,
+  etpAffected: undefined,
+  etpFon: undefined,
+  etpCont: undefined,
+  magCalculateCoverage: undefined,
+  fonCalculateCoverage: undefined,
+  magCalculateDTESInMonths: undefined,
+  magCalculateTimePerCase: undefined,
+  nbMonthHistory: undefined,
+  etpToCompute: undefined,
+  monthlyReport: undefined,
+}
 /**
  * Aggrégation de simulation permettant d'ajouter les calculs d'ETP des catégories non selectionnées
  * @param {*} situationFiltered situation calculé
@@ -81,22 +119,54 @@ export function mergeSituations (situationFiltered, situation, categories, categ
  * @returns sum of situations
  */
 export function sumSituations (listOfSituations) {
-  return listOfSituations.reduce(function (previousValue, currentValue) {
-    return {
-      totalIn: (previousValue.totalIn || 0) + (currentValue.totalIn || 0),
-      totalOut: previousValue.totalOut || 0 + currentValue.totalOut || 0,
-      lastStock: (previousValue.lastStock || 0) + (currentValue.lastStock || 0),
-      realCoverage: previousValue.realCoverage || 0 + currentValue.realCoverage || 0,
-      realDTESInMonths: previousValue.realDTESInMonths || 0 + currentValue.realDTESInMonths || 0,
-      etpMag: previousValue.etpMag || 0 + currentValue.etpMag || 0,
-      magRealTimePerCase: previousValue.magRealTimePerCase || 0 + currentValue.magRealTimePerCase || 0,
-      etpFon: previousValue.etpFon || 0 + currentValue.etpFon || 0,
-      etpCont: previousValue.etpCont || 0 + currentValue.etpCont || 0,
-      etpUseToday: previousValue.etpUseToday || 0 + currentValue.etpUseToday || 0,
-      etpAffected: previousValue.etpAffected || 0 + currentValue.etpAffected || 0,
-      etpToCompute: previousValue.etpToCompute || 0 + currentValue.etpToCompute || 0,
+  return sumElements(listOfSituations) //endSituations)
+}
+
+export function sumElements (listOfElements) {
+  // Get new empty situation
+  let situation = JSON.parse(JSON.stringify(emptySimulation))
+
+  situation = Object.keys(situation).map((key) => {
+    if (key === 'endSituation') {
+      let endSituationList = listOfElements.map((item) => item.endSituation).filter((item) => item !== undefined)
+      let endSituation = []
+
+      if (endSituationList.length > 0) {
+        endSituation = subSum(emptyEndSituation, endSituationList, ['monthlyReport'])
+        console.log('KATAK', endSituation.monthlyReport)
+      }
+
+      return { [key]: endSituation }
     }
+    if (key === 'etpAffected') {
+      let etpAffectedList = listOfElements.map((item) => item.endSituation).filter((item) => item !== undefined)
+      let etpAffected = []
+      if (etpAffectedList.length > 0) etpAffected = subSum(emptyEndSituation, etpAffectedList)
+      return { [key]: etpAffected }
+    } else return { [key]: sumBy(listOfElements, key) }
   })
+
+  situation = Object.assign({}, ...situation)
+
+  console.log('SUMBY exemple', Object.keys(emptySimulation), situation)
+  return situation
+}
+
+export function subSum (keysObject, listOfElements, subElements) {
+  const dataLists = []
+  if (subElements.length >= 1) {
+    dataLists[0] = listOfElements.map((item) => item[subElements[0]]).filter((item) => item !== undefined)
+    console.log('STATUS', subElements[0], listOfElements[0][subElements[0]], dataLists[0])
+  }
+  if (subElements.length > 1) dataLists[1] = listOfElements.map((item) => item[subElements[1]])
+
+  const sumObject = Object.keys(keysObject).map((key) => {
+    if (dataLists.length > 0) {
+      return { [key]: subSum(Object.keys(listOfElements[key]), listOfElements[key]) }
+    }
+    return { [key]: sumBy(listOfElements, key) }
+  })
+  return Object.assign({}, ...sumObject)
 }
 
 /**
@@ -289,7 +359,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       )
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn)
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
-      console.log({ monthlyReport: monthlyReport[2] })
+      //console.log({ monthlyReport: monthlyReport[2] })
 
       endSituation = {
         totalIn,

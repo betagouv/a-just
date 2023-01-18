@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations, sumSituations } from '../utils/simulator'
+import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations, sumElements, sumSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 
 /**
@@ -73,11 +73,11 @@ export default class RouteSimulator extends Route {
       })
     )
 
-    console.log('RES=', results)
+    console.log('RES=', { len: results.length }, results)
 
     const finalSituation = sumSituations(results)
 
-    console.log({ len: results.length, referentielId, finalSituation })
+    // console.log({ len: results.length, referentielId, finalSituation, EndSitu: finalSituation.endSituation })
 
     this.sendOk(ctx, { situation: finalSituation, categories, hr })
   }
