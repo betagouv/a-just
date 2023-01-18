@@ -5,6 +5,7 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
+import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 
 /**
  * Route des fiches
@@ -187,7 +188,7 @@ export default class RouteHumanResources extends Route {
 
     if (extractor === false) {
       let listFiltered = [...list]
-      const categories = await this.models.HRCategories.getAll()
+      const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
       const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
 
       const listFormated = categories

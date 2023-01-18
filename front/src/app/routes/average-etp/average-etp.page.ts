@@ -3,12 +3,13 @@ import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
-import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 
 /**
  * Page des temps moyens par dossier
@@ -40,9 +41,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    */
   subTitleName: string = ''
   /**
-   * Catégorie selectionné (MAGISTRATS, FONCTIONNAIRES)
+   * Catégorie selectionné (MAGISTRATS, FONCTIONNAIRES), null temps que l'on ne charge pas les droits utilisateurs
    */
-  categorySelected: string = 'MAGISTRATS'
+  categorySelected: string | null = null
   /**
    * Liste des sauvegardes
    */
@@ -55,21 +56,44 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Liste des sauvegardes formatés pour le menu roulant
    */
   formDatas: dataInterface[] = []
-  
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+
   /**
    * Constructeur
-   * @param contentieuxOptionsService 
-   * @param humanResourceService 
-   * @param referentielService 
-   * @param activitiesService 
+   * @param contentieuxOptionsService
+   * @param humanResourceService
+   * @param referentielService
+   * @param userService
    */
   constructor(
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private activitiesService: ActivitiesService
+    private userService: UserService
   ) {
     super()
+
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+
+        if (this.canViewMagistrat) {
+          this.categorySelected = 'MAGISTRATS'
+        } else if (this.canViewGreffier) {
+          this.categorySelected = 'FONCTIONNAIRES'
+        } else {
+          this.categorySelected = null
+        }
+      })
+    )
 
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
@@ -82,7 +106,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         (b) => (this.selectedIds = [b])
       )
     )
-    
+
     this.watch(
       this.contentieuxOptionsService.initValue.subscribe((b) => {
         if (b === true) {
@@ -145,8 +169,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Change l'id de la sauvegarde
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   onChangeBackup(id: any[]) {
     if (
@@ -188,7 +212,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   }
 
   /**
-   * Destruction des observables 
+   * Destruction des observables
    */
   ngOnDestroy() {
     this.watcherDestroy()
@@ -196,9 +220,13 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Chargement des temps moyens par dossier
-   * @param backupId 
+   * @param backupId
    */
   onLoad(backupId: number) {
+    if(this.categorySelected === null) {
+      return
+    }
+
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
       this.contentieuxOptionsService.contentieuxOptions.next(options)
@@ -255,9 +283,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Modification d'un temps moyen
-   * @param referentiel 
-   * @param value 
-   * @param unit 
+   * @param referentiel
+   * @param value
+   * @param unit
    */
   onUpdateOptions(
     referentiel: ContentieuReferentielInterface,
@@ -285,7 +313,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Change l'unité de mesure
-   * @param unit 
+   * @param unit
    */
   changeUnity(unit: string) {
     this.perUnity = unit
@@ -293,7 +321,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Change les catégories
-   * @param category 
+   * @param category
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
@@ -301,9 +329,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Retourne le temps de traitement d'un point de vue humain
-   * @param avgProcessTime 
-   * @param unit 
-   * @returns 
+   * @param avgProcessTime
+   * @param unit
+   * @returns
    */
   getInputValue(avgProcessTime: any, unit: string) {
     switch (this.getCategoryStr()) {
@@ -331,9 +359,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Modife le champs d'un temps mouens
-   * @param referentiel 
-   * @param event 
-   * @param unit 
+   * @param referentiel
+   * @param event
+   * @param unit
    */
   getField(
     referentiel: ContentieuReferentielInterface,
@@ -356,7 +384,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
   /**
    * Liste des catégories
-   * @returns 
+   * @returns
    */
   getCategoryStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'averageProcessingTime'
@@ -366,8 +394,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   }
 
   /**
-   * Noeu de catégorie 
-   * @returns 
+   * Noeu de catégorie
+   * @returns
    */
   getCategoryModifStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'isModified'

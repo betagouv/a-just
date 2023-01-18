@@ -60,7 +60,7 @@
         <p>Nom: {{ userEdit.lastName }}</p>
 
         <div class="item item-left">
-          <p><b>Liste des pages accessibles</b></p>
+          <p><b>Liste des accès</b></p>
 
           <p *ngFor="let ac of access">
             <input type="checkbox" #acDom [(ngModel)]="ac.selected" /> <label (click)="acDom.click()">{{ ac.label

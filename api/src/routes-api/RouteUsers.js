@@ -7,6 +7,7 @@ import { sentEmail } from '../utils/email'
 import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ONBOARDING } from '../constants/email'
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
+import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 
 /**
  * Route de la gestion des utilisateurs
@@ -215,7 +216,7 @@ export default class RouteUsers extends Route {
   async getUserDatas (ctx) {
     this.sendOk(ctx, {
       backups: await this.models.HRBackups.list(ctx.state.user.id),
-      categories: await this.models.HRCategories.getAll(),
+      categories: getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user),
       fonctions: await this.models.HRFonctions.getAll(),
       referentiel: await this.models.ContentieuxReferentiels.getReferentiels(),
     })

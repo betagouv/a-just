@@ -26,6 +26,18 @@ export const USER_ACCESS_SIMULATOR = 6
  * Constante id d'accés au réaffectateur
  */
 export const USER_ACCESS_REAFFECTATOR = 7
+/**
+ * Constante d'accès aux magistrats
+ */
+export const HAS_ACCESS_TO_MAGISTRAT = 8
+/**
+ * Constante d'accès aux fonctionnaires
+ */
+export const HAS_ACCESS_TO_GREFFIER = 9
+/**
+ * Constante d'accès aux contractuels
+ */
+export const HAS_ACCESS_TO_CONTRACTUEL = 10
 
 /**
  * Conversion d'un accessId en string
@@ -48,6 +60,12 @@ export const accessToString = (roleId) => {
     return 'Simulateur'
   case USER_ACCESS_REAFFECTATOR:
     return 'Réaffectateur'
+  case HAS_ACCESS_TO_MAGISTRAT:
+    return 'Accès aux magistrats'
+  case HAS_ACCESS_TO_GREFFIER:
+    return 'Accès aux greffier'
+  case HAS_ACCESS_TO_CONTRACTUEL:
+    return 'Accès aux contractuels'
   }
 }
 
@@ -82,5 +100,17 @@ export const accessList = [
   {
     id: USER_ACCESS_REAFFECTATOR,
     label: accessToString(USER_ACCESS_REAFFECTATOR),
+  },
+  {
+    id: HAS_ACCESS_TO_MAGISTRAT,
+    label: accessToString(HAS_ACCESS_TO_MAGISTRAT),
+  },
+  {
+    id: HAS_ACCESS_TO_GREFFIER,
+    label: accessToString(HAS_ACCESS_TO_GREFFIER),
+  },
+  {
+    id: HAS_ACCESS_TO_CONTRACTUEL,
+    label: accessToString(HAS_ACCESS_TO_CONTRACTUEL),
   },
 ]

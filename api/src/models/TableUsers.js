@@ -84,20 +84,25 @@ export default (sequelizeInstance, Model) => {
 
     if (user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
+      const oldVentilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort()
       const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
-        await sentEmail(
-          {
-            email: user.email,
-          },
-          TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
-          {
-            user: `${user.first_name} ${user.last_name}`,
-            juridictionsList: ventilationsList.map((v) => v.label).join(', '),
-          }
-        )
+
+        const newVentilationList = ventilationsList.map((v) => v.id).sort()
+        if (JSON.stringify(newVentilationList) !== JSON.stringify(oldVentilations)) {
+          await sentEmail(
+            {
+              email: user.email,
+            },
+            TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+            {
+              user: `${user.first_name} ${user.last_name}`,
+              juridictionsList: ventilationsList.map((v) => v.label).join(', '),
+            }
+          )
+        }
       } else {
         sentEmailSendinblueUserList(user, false)
       }
