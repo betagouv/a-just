@@ -7,7 +7,7 @@
       <div class="label col">Nombre de dossiers par jour</div>
       <div class="label col">Nombre de dossiers par mois</div>
     </div>
-    <div class="content-list">
+    <div class="content-list" *ngIf="categorySelected">
       <div *ngFor="let ref of referentiel" class="item-grouped">
         <div class="item" (click)="ref.showOptionGroup = !ref.showOptionGroup"
           [class.selectable]="(ref.childrens || []).length" style="position: relative">
@@ -99,7 +99,7 @@
 <ng-template #actions>
   <div class="flex-1"></div>
 
-  <div class="categories-switch">
+  <div class="categories-switch" *ngIf="canViewMagistrat && canViewGreffier">
     <div class="magistrats" [ngClass]="{'selected': categorySelected === 'MAGISTRATS'}"
       (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRATS')">
       <input type="radio" [checked]="categorySelected === 'MAGISTRATS'" />

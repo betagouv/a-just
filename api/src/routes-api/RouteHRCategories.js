@@ -1,3 +1,4 @@
+import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import Route, { Access } from './Route'
 
 /**
@@ -20,6 +21,6 @@ export default class RouteHrCategories extends Route {
     accesses: [Access.isLogin],
   })
   async getAll (ctx) {
-    this.sendOk(ctx, await this.model.getAll())
+    this.sendOk(ctx, getCategoriesByUserAccess(await this.model.getAll(), ctx.state.user))
   }
 }

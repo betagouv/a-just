@@ -25,6 +25,9 @@ export default class Route extends RouteBase {
     // the "beforeRoute" function is executed before any call to a route belonging to the same class
     // (or a class ihneriting from it) is made.
     try {
+      // force to load user access
+      await this.addUserInfoInBody(ctx)
+
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
       logError(e)
@@ -73,6 +76,7 @@ export default class Route extends RouteBase {
     user = { ...user, ...snakeToCamelObject(user), access: await this.models.UsersAccess.getUserAccess(id) }
     this.assertUnauthorized(user)
     ctx.body.user = user
+    ctx.state.user = user // force to add to state with regenerated access
 
     return user
   }
