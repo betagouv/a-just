@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
-    "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 dist/index.js",
+    "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 dist/index.js",
     "build": "npm run rm-build-prod && npm run build-prod",
     "build:test": "npm run build-prod",
     "build:documentation": "jsdoc -r src -d documentation",
