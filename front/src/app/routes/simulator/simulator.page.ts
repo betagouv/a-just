@@ -327,8 +327,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.isLoading = d
       })
     )
-    if (this.contentieuId)
-      this.simulatorService.getSituation([this.contentieuId])
+    if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
 
     this.loadFunctions()
   }
@@ -359,12 +358,11 @@ export class SimulatorPage extends MainClass implements OnInit {
       const fnd = this.referentiel.find((o) => o.id === event[0])
       fnd?.childrens?.map((value) => this.subList.push(value.id))
       this.contentieuId = event[0]
-      this.simulatorService.contentieuOrSubContentieuId.next([
-        this.contentieuId,
-      ] as Array<number>)
+      this.simulatorService.contentieuOrSubContentieuId.next(
+        this.contentieuId as number
+      )
       this.disabled = ''
     } else if (type === 'subList') {
-      console.log({ sub: this.subList, event })
       this.subList = event
       const tmpRefLength = this.referentiel.find(
         (v) => v.id === this.contentieuId
@@ -373,12 +371,12 @@ export class SimulatorPage extends MainClass implements OnInit {
       if (!event.length) this.disabled = 'disabled'
       else {
         if (event.length === tmpRefLength?.childrens?.length)
-          this.simulatorService.contentieuOrSubContentieuId.next([
-            this.contentieuId,
-          ] as Array<number>)
+          this.simulatorService.contentieuOrSubContentieuId.next(
+            this.contentieuId as number
+          )
         else
           this.simulatorService.contentieuOrSubContentieuId.next(
-            this.subList as Array<number>
+            this.subList[0] as number
           )
         this.disabled = ''
       }
@@ -1234,7 +1232,9 @@ export class SimulatorPage extends MainClass implements OnInit {
             c.label.toUpperCase() === this.categorySelected.toUpperCase()
         ) || null
 
+    console.log('findCategory', findCategory)
     this.simulatorService.selectedCategory.next(findCategory)
+    console.log('fonctions', this.humanResourceService.fonctions.getValue())
     this.loadFunctions()
   }
 
