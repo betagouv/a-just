@@ -98,6 +98,7 @@ export default class RouteSimulator extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+    console.log('Yoko0', params)
 
     const categories = await this.models.HRCategories.getAll()
 
@@ -105,6 +106,7 @@ export default class RouteSimulator extends Route {
 
     console.log('Yoko1', params)
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
+    process.memoryUsage()
     console.log('Yoko2', simulatedSituation, params)
 
     this.sendOk(ctx, simulatedSituation)
