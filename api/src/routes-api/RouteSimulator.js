@@ -101,12 +101,12 @@ export default class RouteSimulator extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
-    console.log('Yoko0', params)
+    this.sendOk(ctx, { situation: null })
 
-    var categories = await this.models.HRCategories.getAll()
+    //var categories = await this.models.HRCategories.getAll()
 
-    let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
-    console.log('Memo0', process.memoryUsage())
+    //let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
+    //console.log('Memo0', process.memoryUsage())
 
     //console.log('Yoko1', params)
     //const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
@@ -114,7 +114,5 @@ export default class RouteSimulator extends Route {
     //console.log('Memo4', process.memoryUsage())
 
     // execSimulation(params, simulation, dateStart, dateStop, sufix)
-
-    this.sendOk(ctx, {})
   }
 }
