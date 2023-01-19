@@ -257,7 +257,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
       const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
 
-      if (situation && etp !== null) {
+      if (situation && etp !== null && list[categoryId]) {
         lastEtpAdded = etp
         lastSituationId = categoryId
         list[categoryId].reelEtp += reelEtp
@@ -267,7 +267,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       const sumByInd = sumBy(indispoFiltred, 'percent')
       if (sumByInd !== 0) {
         indispoFiltred.map((c) => {
-          if (c.contentieux.id === referentielId) list[categoryId].indispo += c.percent
+          if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
         })
       }
     }

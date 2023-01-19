@@ -1,6 +1,6 @@
 <aj-wrapper #wrapper title="Calculateur" [documentation]="documentation" [actionTemplate]="actions"
   class="content-margin-null action-fit-width" [isLoading]="isLoading">
-  <div class="container">
+  <div class="container" *ngIf="categorySelected">
     <div class="sub-main-header">
       <aj-date-select title="Pour la période du" [value]="dateStart"
         (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white"
@@ -174,12 +174,14 @@
 
 <ng-template #actions>
   <div class="categories-switch">
-    <div class="magistrats" [ngClass]="{'selected': categorySelected === MAGISTRATS}"
+    <div class="magistrats" *ngIf="canViewMagistrat"
+      [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
       (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
       <input type="radio" [checked]="categorySelected === MAGISTRATS" />
       <p>Magistrats</p>
     </div>
-    <div class="fonctionnaires" [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}" class="fonctionnaires"
+    <div class="fonctionnaires" *ngIf="canViewGreffier"
+      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
       (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
       <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
       <p>Fonctionnaires</p>
