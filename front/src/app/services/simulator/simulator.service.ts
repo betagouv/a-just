@@ -170,7 +170,7 @@ export class SimulatorService extends MainClass {
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        params: params,
+        params: {}, //params,
         simulation: simulation,
         dateStart: generalizeTimeZone(this.dateStart.getValue()),
         dateStop: generalizeTimeZone(this.dateStop.getValue()),
