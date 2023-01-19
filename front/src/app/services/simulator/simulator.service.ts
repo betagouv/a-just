@@ -166,21 +166,23 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface) {
     console.log('Yoko1', { params, simulation })
-    this.isLoading.next(true)
-    this.serverService
-      .post(`simulator/to-simulate`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-        params: params,
-        simulation: simulation,
-        dateStart: generalizeTimeZone(this.dateStart.getValue()),
-        dateStop: generalizeTimeZone(this.dateStop.getValue()),
-        selectedCategoryId: this.selectedCategory.getValue()?.id,
-      })
-      .then((data) => {
-        console.log('Simulation result', data.data)
-        this.situationSimulated.next(data.data)
-        this.isLoading.next(false)
-      })
+    setTimeout(() => {
+      this.isLoading.next(true)
+      this.serverService
+        .post(`simulator/to-simulate`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          params: params,
+          simulation: simulation,
+          dateStart: generalizeTimeZone(this.dateStart.getValue()),
+          dateStop: generalizeTimeZone(this.dateStop.getValue()),
+          selectedCategoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          console.log('Simulation result', data.data)
+          this.situationSimulated.next(data.data)
+          this.isLoading.next(false)
+        })
+    }, 10000)
   }
 
   /**

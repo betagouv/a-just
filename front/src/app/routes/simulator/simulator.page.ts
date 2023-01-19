@@ -1030,6 +1030,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         if (objSecond !== null) {
           this.pickersParamsToLock = objSecond
         } else {
+          console.log('toSimulate = false')
           this.toSimulate = false
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
@@ -1059,6 +1060,7 @@ export class SimulatorPage extends MainClass implements OnInit {
           this.toDisplaySimulation = true
           this.toDisplay = lastObj.toDisplay
           this.toCalculate = lastObj.toCalculate
+          console.log('toSimulate = false')
           this.computeSimulation()
           allButton.map((x: any) => {
             x.classList.add('disable')
