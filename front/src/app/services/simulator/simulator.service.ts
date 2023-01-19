@@ -39,8 +39,8 @@ export class SimulatorService extends MainClass {
   /**
    * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
    */
-  contentieuOrSubContentieuId: BehaviorSubject<Array<number> | null> =
-    new BehaviorSubject<Array<number> | null>(null)
+  contentieuOrSubContentieuId: BehaviorSubject<number | null> =
+    new BehaviorSubject<number | null>(null)
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
@@ -132,13 +132,11 @@ export class SimulatorService extends MainClass {
    * @returns Situation data interface
    */
   getSituation(
-    referentielId: Array<number> | null,
+    referentielId: number | null,
     dateStart?: Date,
     dateStop?: Date
   ) {
     console.log('getSituation')
-
-    console.log('Fonctions selected', this.selectedFonctionsIds.getValue())
     this.isLoading.next(true)
     return this.serverService
       .post(`simulator/get-situation`, {
