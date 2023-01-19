@@ -13,7 +13,9 @@ import { CalculatorService } from 'src/app/services/calculator/calculator.servic
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
 import { month } from 'src/app/utils/dates'
+import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 
 /**
  * Page du calculateur
@@ -65,9 +67,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   maxDateSelectionDate: Date | null = null
   /**
-   * Catégories selectionnée
+   * Catégories selectionnée (magistrats, fonctionnaire)
    */
-  categorySelected: string = 'magistrats'
+  categorySelected: string | null = null
   /**
    * Lien de la documentation
    */
@@ -78,7 +80,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Mémorisation de la dernière categorie
    */
-  lastCategorySelected: string = ''
+  lastCategorySelected: string | null = null
   /**
    * Liste des ids des fonctions 
    */
@@ -91,6 +93,18 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Variable en cours d'export de page
    */
   duringPrint: boolean = false
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  canViewContractuel: boolean = false
 
   /**
    * Constructeur
@@ -108,6 +122,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
     private appService: AppService,
+    private userService: UserService,
   ) {
     super()
   }
@@ -116,6 +131,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
+    this.watch(this.userService.user.subscribe((u) => {
+      this.canViewMagistrat = userCanViewMagistrat(u)
+      this.canViewGreffier = userCanViewGreffier(u)
+      this.canViewContractuel = userCanViewContractuel(u)
+
+      if (this.canViewMagistrat) {
+        this.categorySelected = this.MAGISTRATS
+      } else if (this.canViewGreffier) {
+        this.categorySelected = this.FONCTIONNAIRES
+      } else {
+        this.categorySelected = null
+      }
+    }))
+
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
         this.onLoad()
@@ -210,7 +239,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.calculatorService.referentielIds.getValue().length &&
       this.dateStart !== null &&
       this.dateStop !== null &&
-      this.isLoading === false
+      this.isLoading === false &&
+      this.categorySelected
     ) {
       this.isLoading = true
       this.calculatorService

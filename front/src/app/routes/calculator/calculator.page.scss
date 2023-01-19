@@ -176,6 +176,10 @@ aj-referentiel-calculator:nth-child(even) {
     cursor: pointer;
     border: solid 1px fColor(cgraylightv3);
 
+    &.alone {
+      border-radius: 4px;
+    }
+
     p {
       font-size: 16px;
       line-height: 1.5;

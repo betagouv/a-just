@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
+import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 
 /**
  * Route des calculs de la page calcule
