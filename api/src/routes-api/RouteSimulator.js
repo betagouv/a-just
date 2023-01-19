@@ -59,18 +59,20 @@ export default class RouteSimulator extends Route {
 
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
     console.log('MemoGetSituation 0', process.memoryUsage())
+    /**
     console.time('simulator-1.1')
     const hrfiltered = filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
     console.timeEnd('simulator-1.1')
-
+   
     console.time('simulator-4')
     let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
     console.timeEnd('simulator-4')
     console.log('MemoGetSituation 1', process.memoryUsage())
 
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId)
-
-    this.sendOk(ctx, { situation: situationFiltered, categories, hr })
+     */
+    this.sendOk(ctx, { situation: situation, categories, hr })
+    //this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
   /**
