@@ -111,6 +111,8 @@ export default class RouteSimulator extends Route {
     //console.log('Yoko2', simulatedSituation, params)
     //console.log('Memo4', process.memoryUsage())
 
-    this.sendOk(ctx, execSimulation(params, simulation, dateStart, dateStop, sufix))
+    // execSimulation(params, simulation, dateStart, dateStop, sufix)
+
+    this.sendOk(ctx, {})
   }
 }
