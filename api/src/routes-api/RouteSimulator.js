@@ -95,7 +95,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async toSimulate (ctx) {
+  async toSuperSimulate (ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
