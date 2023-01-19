@@ -168,9 +168,9 @@ export class SimulatorService extends MainClass {
     console.log('Yoko1', { params, simulation })
     this.isLoading.next(true)
     this.serverService
-      .post(`simulator/to-super-simulate`, {
+      .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        params: {}, //params,
+        params: params,
         simulation: simulation,
         dateStart: generalizeTimeZone(this.dateStart.getValue()),
         dateStop: generalizeTimeZone(this.dateStop.getValue()),
