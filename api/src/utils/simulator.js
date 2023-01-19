@@ -849,6 +849,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
           ) / 100
       }
     })
+
+    console.log('WHILE LOOP', { simulation })
   } while (
     !(
       simulation.totalIn !== null &&
