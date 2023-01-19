@@ -105,8 +105,8 @@ export default class RouteSimulator extends Route {
 
     console.log('Yoko1', params)
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
-    console.log('Yoko2', simulatedSituation, params)
+    // console.log('Yoko2', simulatedSituation, params)
 
-    this.sendOk(ctx, simulatedSituation)
+    this.sendOk(ctx, null)
   }
 }
