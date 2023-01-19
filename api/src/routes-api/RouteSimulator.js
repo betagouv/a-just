@@ -58,21 +58,20 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-3')
 
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
-    console.log('MemoGetSituation 0', process.memoryUsage())
-    /**
+    //console.log('MemoGetSituation 0', process.memoryUsage())
+
     console.time('simulator-1.1')
     const hrfiltered = filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
     console.timeEnd('simulator-1.1')
-   
+
     console.time('simulator-4')
     let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
     console.timeEnd('simulator-4')
     console.log('MemoGetSituation 1', process.memoryUsage())
 
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId)
-     */
-    this.sendOk(ctx, { situation: situation, categories, hr })
-    //this.sendOk(ctx, { situation: situationFiltered, categories, hr })
+
+    this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
   /**
@@ -95,24 +94,20 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async toSuperSimulate (ctx) {
+  async toSimulate (ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
-    this.sendOk(ctx, { situation: null })
 
-    //var categories = await this.models.HRCategories.getAll()
+    const categories = await this.models.HRCategories.getAll()
 
-    //let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
-    //console.log('Memo0', process.memoryUsage())
+    let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
-    //console.log('Yoko1', params)
-    //const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
-    //console.log('Yoko2', simulatedSituation, params)
-    //console.log('Memo4', process.memoryUsage())
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
+    console.log('Yoko', params)
 
-    // execSimulation(params, simulation, dateStart, dateStop, sufix)
+    this.sendOk(ctx, simulatedSituation)
   }
 }
