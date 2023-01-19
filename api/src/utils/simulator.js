@@ -709,7 +709,7 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
  * @returns simulation calculée
  */
 export function execSimulation (params, simulation, dateStart, dateStop, sufix) {
-  process.memoryUsage()
+  console.log('Memo1', process.memoryUsage())
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
@@ -850,7 +850,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
           ) / 100
       }
     })
-    process.memoryUsage()
+    console.log('Memo2', process.memoryUsage())
     console.log('WHILE LOOP', { simulation })
   } while (
     !(
@@ -865,7 +865,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
     )
   )
   console.log('WHILE AFTER', { simulation })
-  process.memoryUsage()
+  console.log('Memo3', process.memoryUsage())
 
   return simulation
 }

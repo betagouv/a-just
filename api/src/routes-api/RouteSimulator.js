@@ -103,11 +103,13 @@ export default class RouteSimulator extends Route {
     const categories = await this.models.HRCategories.getAll()
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
+    console.log('Memo0', process.memoryUsage())
 
     console.log('Yoko1', params)
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
     process.memoryUsage()
     console.log('Yoko2', simulatedSituation, params)
+    console.log('Memo4', process.memoryUsage())
 
     this.sendOk(ctx, simulatedSituation)
   }
