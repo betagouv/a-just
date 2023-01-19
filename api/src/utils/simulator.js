@@ -808,19 +808,11 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
 
       if (x === 'magRealTimePerCase') {
         if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
-          console.log({
-            etpMag: simulation.etpMag || params.beginSituation.etpMag,
-            totalOut: simulation.totalOut || params.endSituation.totalOut,
-          })
           simulation.magRealTimePerCase =
             Math.round(
               ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
             ) / 100
         } else {
-          console.log({
-            etpFon: simulation.etpFon || params.beginSituation.etpFon,
-            totalOut: simulation.totalOut || params.endSituation.totalOut,
-          })
           simulation.magRealTimePerCase =
             Math.round(
               (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
@@ -831,7 +823,6 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
 
       if (x === 'etpMag') {
         simulation.etpFon = params.beginSituation.etpFon
-
         simulation.etpMag =
           Math.round(
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
@@ -841,7 +832,6 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
       }
       if (x === 'etpFon') {
         simulation.etpMag = params.beginSituation.etpMag
-
         simulation.etpFon =
           Math.round(
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
