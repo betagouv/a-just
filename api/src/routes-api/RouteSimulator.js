@@ -103,8 +103,9 @@ export default class RouteSimulator extends Route {
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
+    console.log('Yoko1', params)
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
-    console.log('Yoko', params)
+    console.log('Yoko2', simulatedSituation, params)
 
     this.sendOk(ctx, simulatedSituation)
   }
