@@ -1232,7 +1232,6 @@ export class SimulatorPage extends MainClass implements OnInit {
             c.label.toUpperCase() === this.categorySelected.toUpperCase()
         ) || null
 
-    console.log('findCategory', findCategory)
     this.simulatorService.selectedCategory.next(findCategory)
     console.log('fonctions', this.humanResourceService.fonctions.getValue())
     this.loadFunctions()

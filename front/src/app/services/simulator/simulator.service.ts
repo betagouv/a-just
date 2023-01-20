@@ -136,7 +136,7 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
-    console.log('getSituation')
+    console.log('getSituation', this.selectedCategory.getValue())
     this.isLoading.next(true)
     return this.serverService
       .post(`simulator/get-situation`, {
