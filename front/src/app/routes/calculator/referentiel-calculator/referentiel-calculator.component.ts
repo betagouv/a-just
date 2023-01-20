@@ -1,6 +1,12 @@
 import { Component, HostBinding, Input } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { UserService } from 'src/app/services/user/user.service'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 /**
  * Composant d'une ligne du calculateur
@@ -33,12 +39,39 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   @HostBinding('class.show-children') showChildren: boolean =
     (this.calculator && this.calculator.childIsVisible) || false
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  canViewContractuel: boolean = false
 
   /**
    * Constructor
    */
-  constructor() {
+  constructor(private userService: UserService) {
     super()
+
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+      })
+    )
+  }
+
+  /**
+   * Suppresion des observables lors de la suppression du composant
+   */
+  ngOnDestroy() {
+    this.watcherDestroy()
   }
 
   /**

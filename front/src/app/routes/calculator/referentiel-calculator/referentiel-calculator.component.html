@@ -27,7 +27,7 @@
                 </div>
             </ng-template>
         </div>
-        <div [ngClass]="{
+        <div *ngIf="canViewMagistrat" [ngClass]="{
         selected: sortBy === 'etpMag',
         'bg-magistrats': categorySelected === MAGISTRATS
       }">
@@ -35,7 +35,7 @@
                 <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
             </div>
         </div>
-        <div [ngClass]="{
+        <div *ngIf="canViewGreffier" [ngClass]="{
         selected: sortBy === 'etpFon',
         'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
       }">
@@ -43,7 +43,7 @@
                 <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
             </div>
         </div>
-        <div [ngClass]="{ selected: sortBy === 'etpCont' }">
+        <div *ngIf="canViewContractuel" [ngClass]="{ selected: sortBy === 'etpCont' }">
             <div>
                 <p>{{ calculator.etpCont | number: '0.2-2' }}</p>
             </div>
@@ -110,13 +110,17 @@
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
                         <ng-template [ngIf]="calculator.magCalculateDTESInMonths !== null" [ngIfElse]="nr">
-                            <p>{{ calculator.magCalculateDTESInMonths | number: '0.2-2' || 0 }}</p>
+                            <p>
+                                {{ calculator.magCalculateDTESInMonths | number: '0.2-2' || 0 }}
+                            </p>
                             <p class="unity">mois</p>
                         </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
                         <ng-template [ngIf]="calculator.fonCalculateDTESInMonths !== null" [ngIfElse]="nr">
-                            <p>{{ calculator.fonCalculateDTESInMonths | number: '0.2-2' || 0 }}</p>
+                            <p>
+                                {{ calculator.fonCalculateDTESInMonths | number: '0.2-2' || 0 }}
+                            </p>
                             <p class="unity">mois</p>
                         </ng-template>
                     </ng-template>
@@ -182,9 +186,10 @@
     </div>
 </div>
 <div *ngIf="
-    ((showChildren || forceToShowChildren) && calculator &&
+    (showChildren || forceToShowChildren) &&
+    calculator &&
     calculator.childrens &&
-    calculator.childrens.length)
+    calculator.childrens.length
   " class="childrens">
     <aj-referentiel-calculator *ngFor="let r of calculator.childrens; trackBy: trackBy" [calculator]="r"
         [sortBy]="sortBy" class="is-child" [categorySelected]="categorySelected">

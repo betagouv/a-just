@@ -3,7 +3,8 @@ import { Types } from '../utils/types'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
-import { getCategoriesByUserAccess } from '../utils/hr-catagories'
+import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
+import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
  * Route des calculs de la page calcule
@@ -114,6 +115,29 @@ export default class RouteCalculator extends Route {
 
     console.time('calculator-8')
     list = syncCalculatorDatas(list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups)
+
+    const cleanDataToSent = (item) => ({
+      ...item,
+      etpMag: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.etpMag : null,
+      magRealTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magRealTimePerCase : null,
+      magCalculateCoverage: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateCoverage : null,
+      magCalculateDTESInMonths: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateDTESInMonths : null,
+      magCalculateTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateTimePerCase : null,
+      magCalculateOut: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateOut : null,
+      etpFon: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.etpFon : null,
+      fonRealTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonRealTimePerCase : null,
+      fonCalculateCoverage: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateCoverage : null,
+      fonCalculateDTESInMonths: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateDTESInMonths : null,
+      fonCalculateTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateTimePerCase : null,
+      fonCalculateOut: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateOut : null,
+      etpCont: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL) ? item.etpCont : null,
+    })
+
+    list = list.map((item) => ({
+      ...cleanDataToSent(item),
+      childrens: (item.childrens || []).map(cleanDataToSent),
+    }))
+
     console.timeEnd('calculator-8')
 
     this.sendOk(ctx, { fonctions, list })

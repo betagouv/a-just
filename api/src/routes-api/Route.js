@@ -26,7 +26,7 @@ export default class Route extends RouteBase {
     // (or a class ihneriting from it) is made.
     try {
       // force to load user access
-      await this.addUserInfoInBody(ctx)
+      await this.addUserToBody(ctx)
 
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
@@ -73,12 +73,48 @@ export default class Route extends RouteBase {
       },
       raw: true,
     })
-    user = { ...user, ...snakeToCamelObject(user), access: await this.models.UsersAccess.getUserAccess(id) }
+    user = {
+      ...user,
+      ...snakeToCamelObject(user),
+      access: await this.models.UsersAccess.getUserAccess(id),
+    }
     this.assertUnauthorized(user)
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
 
     return user
+  }
+
+  /**
+   * Fonction pour récupérer l'ensemble de l'utilisateur connecté
+   * @param {*} ctx
+   * @returns
+   */
+  async addUserToBody (ctx) {
+    const id = ctx && ctx.state && ctx.state.user && ctx.state.user.id
+    if (!id) {
+      return
+    }
+
+    let user = await this.models.Users.findOne({
+      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      where: {
+        id,
+        status: 1,
+      },
+      raw: true,
+    })
+    if (!user) {
+      return
+    }
+
+    user = {
+      ...user,
+      ...snakeToCamelObject(user),
+      access: await this.models.UsersAccess.getUserAccess(id),
+    }
+    ctx.body.user = user
+    ctx.state.user = user // force to add to state with regenerated access
   }
 
   /**
