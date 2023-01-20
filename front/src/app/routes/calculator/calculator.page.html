@@ -69,7 +69,8 @@
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStock'}"></i>
             <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
           </div>
-          <div class="tooltip medium" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag'}">
+          <div *ngIf="canViewMagistrat" class="tooltip medium" (click)="onSortBy('etpMag')"
+            [ngClass]="{'selected': sortBy === 'etpMag'}">
             <div class="flex-1"></div>
             <p>ETPT <br />Mag.</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
@@ -77,7 +78,8 @@
               content="Total des ETP travaillés sur la période par les magistrats affectés à ce contentieux">
             </aj-tooltips>
           </div>
-          <div class="tooltip medium" (click)="onSortBy('etpFon')" [ngClass]="{'selected': sortBy === 'etpFon'}">
+          <div *ngIf="canViewGreffier" class="tooltip medium" (click)="onSortBy('etpFon')"
+            [ngClass]="{'selected': sortBy === 'etpFon'}">
             <div class="flex-1"></div>
             <p>ETPT<br />Greffe</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
@@ -85,7 +87,8 @@
               content="Total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
             </aj-tooltips>
           </div>
-          <div class="tooltip medium" (click)="onSortBy('etpCont')" [ngClass]="{'selected': sortBy === 'etpCont'}">
+          <div *ngIf="canViewContractuel" class="tooltip medium" (click)="onSortBy('etpCont')"
+            [ngClass]="{'selected': sortBy === 'etpCont'}">
             <div class="flex-1"></div>
             <p>ETPT<br />Cont.</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>

@@ -18,9 +18,6 @@ export function findCategoryName (categories, currentSituation) {
  */
 export function getCategoriesByUserAccess (categories, user) {
   const ids = getCategoriesIdByUserAccess(user)
-
-  console.log(ids, user)
-
   return categories.filter((cat) => ids.indexOf(cat.id) !== -1)
 }
 
@@ -49,4 +46,15 @@ export function getCategoriesIdByUserAccess (user) {
   }
 
   return listCategoriesId
+}
+
+/**
+ * Control si un utilisateur a accès a une catégorie
+ * @param {*} user
+ * @param {*} key
+ * @returns
+ */
+export function canHaveUserCategoryAccess (user, key) {
+  const access = user && user.access ? user.access : []
+  return access.indexOf(key) !== -1
 }
