@@ -2,14 +2,14 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 // @ts-ignore
-import packageJSON from '../../../package.json';
+import packageJSON from '../../../package.json'
 
 /**
  * Variables global avec url serveur différent ou matomo qui change
  */
 export const environment = {
   production: false,
-  serverUrl: 'http://localhost:8080/api/',
+  serverUrl: 'http://localhost:8080/api/', //'https://a-just.beta.gouv.fr/api/', //
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,
@@ -17,7 +17,7 @@ export const environment = {
   version: packageJSON.version,
   matomo: null,
   forceSSL: false,
-};
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

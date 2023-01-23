@@ -68,7 +68,7 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
+    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100

@@ -138,6 +138,7 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
  * @returns une situation à une date donnée ou sur une période
  */
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
+  if (Array.isArray(referentielId) === false) referentielId = [referentielId]
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
@@ -423,7 +424,7 @@ export async function getCSActivities (referentielId, allActivities, dateStart, 
     const lastActivities = orderBy(
       allActivities.filter(
         (a) =>
-          a.contentieux.id === referentielId &&
+          referentielId.includes(a.contentieux.id) &&
           month(a.periode).getTime() >= month(dateStart).getTime() &&
           month(a.periode).getTime() <= month(dateStop).getTime() &&
           a.stock !== null
@@ -477,7 +478,7 @@ export function hasInOutOrStock (activities) {
 export function appearOneTimeAtLeast (situations, referentielId) {
   return situations.some((s) => {
     const activities = s.activities || []
-    return activities.some((a) => a.contentieux.id === referentielId)
+    return activities.some((a) => referentielId.includes(a.contentieux.id))
   })
 }
 
@@ -682,7 +683,7 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
   if (etp !== null && etp !== 0) {
     let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null
     if (listContentieux !== [] && listContentieux !== null) {
-      listContentieux = listContentieux.filter((contentieux) => contentieux.id === referentielId)
+      listContentieux = listContentieux.filter((contentieux) => referentielId.includes(contentieux.id))
     }
   }
 
