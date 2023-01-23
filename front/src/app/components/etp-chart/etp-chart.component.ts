@@ -476,7 +476,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           }
 
           e.chart.config.options.scales.x.ticks.color = colorArray
-          e.chart.update()
+          // ADD e.chart.update()
         },
         tooltips: {
           events: ['click'],
@@ -549,7 +549,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false
               e.chart.options.plugins.annotation.annotations.box1.content = ''
-              items.chart.update()
+              // ADD items.chart.update()
               $this.updateAnnotationBox(false, undefined, undefined, '')
             },
             annotations: {
@@ -599,11 +599,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       },
       plugins: [yScaleTextStock],
     }
-    /**
+
     this.myChart = new Chart(
       document.getElementById('etp-chart') as ChartItem,
       config
-    ) */
+    )
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -678,7 +678,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
 
-        this.myChart.update()
+        // ADD this.myChart.update()
       }
     })
   }

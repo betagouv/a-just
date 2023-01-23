@@ -1224,6 +1224,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
+    this.resetParams()
     this.contentieuId = null
     this.subList = []
     const findCategory =
