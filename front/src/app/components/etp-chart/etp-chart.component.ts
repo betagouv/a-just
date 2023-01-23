@@ -216,6 +216,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const labels = this.labels
 
+    console.log('load Chart ETP')
+
     const data = {
       labels: labels,
       datasets: [
