@@ -128,86 +128,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         )
       }
     })
-    simulatorService.situationSimulated.subscribe((value) => {
-      if (this.labels !== null) {
-        this.data.simulatedMag.values = simulatorService.generateLinearData(
-          value?.etpMag as number,
-          value?.etpMag as number,
-          this.labels.length
-        )
-
-        console.log({ etpFon: value?.etpFon })
-        this.data.simulatedGref.values = simulatorService.generateLinearData(
-          value?.etpFon as number,
-          value?.etpFon as number,
-          this.labels.length
-        )
-
-        /** TO ADD WHEN INTEGRATE CONT AND FON
-        this.data.simulatedCont.values = simulatorService.generateLinearData(
-          value?.etpCont as number,
-          value?.etpCont as number,
-          this.labels.length
-        )
-
- 
-        */
-        let monthlyMagValues: any = undefined
-        let monthlyContValues: any = undefined
-        let monthlyFonValues: any = undefined
-
-        simulatorService.situationProjected
-          .getValue()!
-          .monthlyReport!.forEach((x) => {
-            console.log('Montly Values', x)
-            if (x.name === 'Magistrat') monthlyMagValues = x.values
-            if (x.name === 'Fonctionnaire') monthlyFonValues = x.values
-            if (x.name === 'Contractuel') monthlyContValues = x.values
-          })
-
-        this.data.projectedMag.values = new Array()
-        this.data.projectedGref.values = new Array()
-        this.data.projectedCont.values = new Array()
-
-        Object.keys(monthlyMagValues).forEach((x: any) => {
-          this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
-          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
-          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
-        })
-
-        if (this.myChart !== null) {
-          this.myChart.config.data.labels = this.labels
-          this.myChart._metasets[0]._dataset.data =
-            this.data.projectedMag.values
-          this.myChart._metasets[1]._dataset.data =
-            this.data.simulatedMag.values
-          this.myChart._metasets[2]._dataset.data =
-            this.data.projectedGref.values
-          this.myChart._metasets[3]._dataset.data =
-            this.data.simulatedGref.values
-          this.myChart._metasets[5]._dataset.data =
-            this.data.projectedCont.values
-          //this.myChart._metasets[6]._dataset.data =
-          //this.data.simulatedCont.values
-          console.log('LA DATA', this.data)
-
-          const isDataShown = this.myChart.isDatasetVisible(
-            this.categorySelected === 'MAGISTRAT' ? 3 : 1
-          )
-          if (isDataShown === true)
-            if (this.categorySelected === 'MAGISTRAT') this.myChart.hide(3)
-            else this.myChart.hide(1)
-
-          this.myChart.hide(4)
-          this.myChart.hide(5)
-          this.myChart.update()
-        }
-      }
-    })
-
     this.elementRef = element.nativeElement
-    Chart.register(...registerables)
-    Chart.register(annotationPlugin)
   }
 
   /**
@@ -671,6 +592,87 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.myChart.update()
       }
     })
+    this.simulatorService.situationSimulated.subscribe((value) => {
+      if (this.labels !== null) {
+        this.data.simulatedMag.values =
+          this.simulatorService.generateLinearData(
+            value?.etpMag as number,
+            value?.etpMag as number,
+            this.labels.length
+          )
+
+        console.log({ etpFon: value?.etpFon })
+        this.data.simulatedGref.values =
+          this.simulatorService.generateLinearData(
+            value?.etpFon as number,
+            value?.etpFon as number,
+            this.labels.length
+          )
+
+        /** TO ADD WHEN INTEGRATE CONT AND FON
+        this.data.simulatedCont.values = simulatorService.generateLinearData(
+          value?.etpCont as number,
+          value?.etpCont as number,
+          this.labels.length
+        )
+
+ 
+        */
+        let monthlyMagValues: any = undefined
+        let monthlyContValues: any = undefined
+        let monthlyFonValues: any = undefined
+
+        this.simulatorService.situationProjected
+          .getValue()!
+          .monthlyReport!.forEach((x) => {
+            console.log('Montly Values', x)
+            if (x.name === 'Magistrat') monthlyMagValues = x.values
+            if (x.name === 'Fonctionnaire') monthlyFonValues = x.values
+            if (x.name === 'Contractuel') monthlyContValues = x.values
+          })
+
+        this.data.projectedMag.values = new Array()
+        this.data.projectedGref.values = new Array()
+        this.data.projectedCont.values = new Array()
+
+        Object.keys(monthlyMagValues).forEach((x: any) => {
+          this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
+          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
+        })
+
+        if (this.myChart !== null) {
+          this.myChart.config.data.labels = this.labels
+          this.myChart._metasets[0]._dataset.data =
+            this.data.projectedMag.values
+          this.myChart._metasets[1]._dataset.data =
+            this.data.simulatedMag.values
+          this.myChart._metasets[2]._dataset.data =
+            this.data.projectedGref.values
+          this.myChart._metasets[3]._dataset.data =
+            this.data.simulatedGref.values
+          this.myChart._metasets[5]._dataset.data =
+            this.data.projectedCont.values
+          //this.myChart._metasets[6]._dataset.data =
+          //this.data.simulatedCont.values
+          console.log('LA DATA', this.data)
+
+          const isDataShown = this.myChart.isDatasetVisible(
+            this.categorySelected === 'MAGISTRAT' ? 3 : 1
+          )
+          if (isDataShown === true)
+            if (this.categorySelected === 'MAGISTRAT') this.myChart.hide(3)
+            else this.myChart.hide(1)
+
+          this.myChart.hide(4)
+          this.myChart.hide(5)
+          this.myChart.update()
+        }
+      }
+    })
+
+    Chart.register(...registerables)
+    Chart.register(annotationPlugin)
   }
 
   /**
