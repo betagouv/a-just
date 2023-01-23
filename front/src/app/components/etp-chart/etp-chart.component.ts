@@ -604,7 +604,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       document.getElementById('etp-chart') as ChartItem,
       config
     )
-
+    console.log({ chart: this.myChart })
+    /**
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
         this.myChart.options.plugins.annotation.annotations.box1.yMax =
@@ -681,6 +682,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         // ADD this.myChart.update()
       }
     })
+    */
   }
 
   /**
