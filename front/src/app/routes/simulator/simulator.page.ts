@@ -327,7 +327,8 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.isLoading = d
       })
     )
-    if (this.contentieuId) this.simulatorService.getSituation(this.contentieuId)
+    if (this.contentieuId)
+      this.simulatorService.getSituation([this.contentieuId])
 
     this.loadFunctions()
   }
@@ -358,9 +359,9 @@ export class SimulatorPage extends MainClass implements OnInit {
       const fnd = this.referentiel.find((o) => o.id === event[0])
       fnd?.childrens?.map((value) => this.subList.push(value.id))
       this.contentieuId = event[0]
-      this.simulatorService.contentieuOrSubContentieuId.next(
-        this.contentieuId as number
-      )
+      this.simulatorService.contentieuOrSubContentieuId.next([
+        this.contentieuId as number,
+      ])
       this.disabled = ''
     } else if (type === 'subList') {
       this.subList = event
@@ -371,13 +372,11 @@ export class SimulatorPage extends MainClass implements OnInit {
       if (!event.length) this.disabled = 'disabled'
       else {
         if (event.length === tmpRefLength?.childrens?.length)
-          this.simulatorService.contentieuOrSubContentieuId.next(
-            this.contentieuId as number
-          )
+          this.simulatorService.contentieuOrSubContentieuId.next([
+            this.contentieuId as number,
+          ])
         else
-          this.simulatorService.contentieuOrSubContentieuId.next(
-            this.subList[0] as number
-          )
+          this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
         this.disabled = ''
       }
     } else if (type === 'dateStart') {

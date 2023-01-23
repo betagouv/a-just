@@ -30,11 +30,11 @@ export default class RouteSimulator extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
-      referentielId: Types.number().required(),
+      referentielId: Types.array().required(),
       dateStart: Types.date(),
       dateStop: Types.date(),
       functionIds: Types.array(),
-      categoryId: Types.number(),
+      categoryId: Types.number().required(),
     }),
     accesses: [Access.canVewHR],
   })

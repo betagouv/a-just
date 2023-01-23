@@ -39,8 +39,8 @@ export class SimulatorService extends MainClass {
   /**
    * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
    */
-  contentieuOrSubContentieuId: BehaviorSubject<number | null> =
-    new BehaviorSubject<number | null>(null)
+  contentieuOrSubContentieuId: BehaviorSubject<Array<number> | null> =
+    new BehaviorSubject<Array<number> | null>(null)
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
@@ -132,29 +132,35 @@ export class SimulatorService extends MainClass {
    * @returns Situation data interface
    */
   getSituation(
-    referentielId: number | null,
+    referentielId: Array<number> | null,
     dateStart?: Date,
     dateStop?: Date
   ) {
-    console.log('getSituation', this.selectedCategory.getValue())
-    this.isLoading.next(true)
-    return this.serverService
-      .post(`simulator/get-situation`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-        referentielId: referentielId,
-        dateStart: generalizeTimeZone(dateStart),
-        dateStop: generalizeTimeZone(dateStop),
-        functionIds: this.selectedFonctionsIds.getValue(),
-        categoryId: this.selectedCategory.getValue()?.id,
-      })
-      .then((data) => {
-        if (dateStop) {
-          this.situationProjected.next(data.data.situation.endSituation)
-        } else this.situationActuelle.next(data.data.situation)
+    console.log('getSituation', referentielId)
 
-        console.log('Situation result', data)
-      })
-      .then(() => this.isLoading.next(false))
+    if (
+      this.selectedCategory.getValue()?.id !== null &&
+      this.selectedFonctionsIds.getValue() !== null
+    ) {
+      this.isLoading.next(true)
+      return this.serverService
+        .post(`simulator/get-situation`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          referentielId: referentielId,
+          dateStart: generalizeTimeZone(dateStart),
+          dateStop: generalizeTimeZone(dateStop),
+          functionIds: this.selectedFonctionsIds.getValue(),
+          categoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          if (dateStop) {
+            this.situationProjected.next(data.data.situation.endSituation)
+          } else this.situationActuelle.next(data.data.situation)
+
+          console.log('Situation result', data)
+        })
+        .then(() => this.isLoading.next(false))
+    } else return null
   }
 
   /**
