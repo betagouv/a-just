@@ -4,7 +4,7 @@ import {
   findRealValue,
   monthDiffList,
 } from 'src/app/utils/dates'
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -19,6 +19,12 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
+import { UserService } from 'src/app/services/user/user.service'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 /**
  * Variable ETP magistrat field name
@@ -158,7 +164,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Catégorie selectionnée
    */
-  categorySelected: string = 'MAGISTRAT'
+  categorySelected: string | null = null
   /**
    * Liste des fonctions pour la catégorie selectionnée
    */
@@ -243,6 +249,26 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Backup hr global de l'application
    */
   hrBackups: BackupInterface[] = []
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  canViewContractuel: boolean = false
+  /**
+   * label etpMag
+   */
+  etpMag = etpMag
+  /**
+   * label etpFon
+   */
+  etpFon = etpFon
 
   /**
    * Constructeur
@@ -250,9 +276,24 @@ export class SimulatorPage extends MainClass implements OnInit {
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private userService: UserService
   ) {
     super()
+
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+
+        if (this.canViewMagistrat) {
+          this.changeCategorySelected(this.MAGISTRATS)
+        } else if (this.canViewGreffier) {
+          this.changeCategorySelected(this.FONCTIONNAIRES)
+        }
+      })
+    )
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -265,10 +306,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     )
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
-        this.changeCategorySelected(this.categorySelected)
-        this.simulatorService.selectedFonctionsIds.next(
-          this.selectedFonctionsIds
-        )
+        if (this.categorySelected) {
+          this.changeCategorySelected(this.categorySelected)
+          this.simulatorService.selectedFonctionsIds.next(
+            this.selectedFonctionsIds
+          )
+        }
       })
     )
     const originalMsg = JSON.stringify(this.currentNode)
@@ -1228,7 +1271,11 @@ export class SimulatorPage extends MainClass implements OnInit {
         .getValue()
         .find(
           (c: HRCategoryInterface) =>
-            c.label.toUpperCase() === this.categorySelected.toUpperCase()
+            c.label.toUpperCase() ===
+            (this.categorySelected
+              ? this.categorySelected.slice(0, -1) // remove "s" to find category by name
+              : ''
+            ).toUpperCase()
         ) || null
 
     this.simulatorService.selectedCategory.next(findCategory)
