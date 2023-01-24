@@ -216,7 +216,7 @@ export default class RouteUsers extends Route {
   async getUserDatas (ctx) {
     this.sendOk(ctx, {
       backups: await this.models.HRBackups.list(ctx.state.user.id),
-      categories: await this.models.HRCategories.getAll(), // getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
+      categories: getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user),
       fonctions: await this.models.HRFonctions.getAll(),
       referentiel: await this.models.ContentieuxReferentiels.getReferentiels(),
     })
