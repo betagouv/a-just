@@ -1264,19 +1264,18 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
+    this.resetParams()
     this.contentieuId = null
     this.subList = []
     const findCategory =
-      this.humanResourceService.categories
-        .getValue()
-        .find(
-          (c: HRCategoryInterface) =>
-            c.label.toUpperCase() ===
-            (this.categorySelected
-              ? this.categorySelected.slice(0, -1) // remove "s" to find category by name
-              : ''
-            ).toUpperCase()
-        ) || null
+      this.humanResourceService.categories.getValue().find(
+        (c: HRCategoryInterface) =>
+          c.label.toUpperCase() ===
+          (this.categorySelected
+            ? this.categorySelected.slice(0, -1) // remove "s" to find category by name
+            : ''
+          ).toUpperCase()
+      ) || null
 
     this.simulatorService.selectedCategory.next(findCategory)
     console.log('fonctions', this.humanResourceService.fonctions.getValue())
