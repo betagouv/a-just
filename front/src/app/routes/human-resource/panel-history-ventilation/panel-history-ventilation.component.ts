@@ -62,6 +62,10 @@ export class PanelHistoryVentilationComponent
    */
   @Input() canRemoveSituation: boolean = false
   /**
+   * Bouton de editer de la situation
+   */
+  @Input() canEditSituation: boolean = false
+  /**
    * Event lors du souhait de modifier la situation
    */
   @Output() editVentilation = new EventEmitter()

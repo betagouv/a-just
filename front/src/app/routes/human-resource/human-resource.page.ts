@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
+import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -10,6 +11,7 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -44,6 +46,10 @@ export interface HistoryInterface extends HRSituationInterface {
   styleUrls: ['./human-resource.page.scss'],
 })
 export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Dom du wrapper
+   */
+  @ViewChild('wrapper') wrapper: WrapperComponent | undefined
   /**
    * Dom du paneau d'ajout d'une situation
    */
@@ -120,6 +126,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     title: 'Fiche individuelle :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
   }
+  /**
+   * Variable en cours d'export de page
+   */
+  duringPrint: boolean = false
 
   /**
    * Constructeur
@@ -134,7 +144,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService
+    private hrCategoryService: HRCategoryService,
+    private appService: AppService,
   ) {
     super()
   }
@@ -864,5 +875,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.onEditIndex = null
       this.onLoad(returnValue)
     }
+  }
+
+  /**
+   * Demande d'extraction de la page au format pdf
+   */
+  onExport() {
+    this.duringPrint = true
+    this.appService.alert.next({
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    })
+    this.wrapper?.exportAsPdf(`fiche individuelle${this.currentHR ? ' de ' + this.currentHR.firstName + ' ' +this.currentHR.lastName : ''}.pdf`).then(() => {
+      this.duringPrint = false
+    })
   }
 }

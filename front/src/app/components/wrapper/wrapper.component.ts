@@ -89,7 +89,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Affiche une bulle d'aide avec une doc derriere
    */
-  @Input() documentation: DocumentationInterface | undefined
+  @Input() documentation: DocumentationInterface | undefined | null
   /**
    * Doc d'aide à afficher
    */
@@ -268,6 +268,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       })
     }
     document.body.classList.add('remove-height')
+    document.body.classList.add('on-print')
 
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -297,6 +298,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
           this.duringPrint = false
           document.body.classList.remove('remove-height')
+          document.body.classList.remove('on-print')
           resolve(true)
         })
       })
