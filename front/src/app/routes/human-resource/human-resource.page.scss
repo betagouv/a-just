@@ -52,16 +52,10 @@
 
 .actions {
   display: flex;
+  margin-right: 16px;
 
   aj-date-select {
     margin-left: 16px;
-  }
-}
-
-.actions {
-  button {
-    display: block;
-    margin: 16px 0;
   }
 }
 

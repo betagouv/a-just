@@ -12,3 +12,11 @@
     height: auto !important;
   }
 }
+
+body.on-print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+}
+
