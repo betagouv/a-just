@@ -110,8 +110,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     private element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
-    console.log('MASS TEST 0')
-
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -131,7 +129,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       }
     })
     simulatorService.situationSimulated.subscribe((value) => {
-      console.log('MASS TEST 1', value)
       if (this.labels !== null) {
         this.data.simulatedMag.values = simulatorService.generateLinearData(
           value?.etpMag as number,
@@ -139,17 +136,13 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.labels.length
         )
 
+        console.log({ etpFon: value?.etpFon })
         this.data.simulatedGref.values = simulatorService.generateLinearData(
           value?.etpFon as number,
           value?.etpFon as number,
           this.labels.length
         )
 
-        console.log(
-          'Data ETP graph simulated',
-          this.data.simulatedMag.values,
-          this.data.simulatedGref.values
-        )
         /** TO ADD WHEN INTEGRATE CONT AND FON
         this.data.simulatedCont.values = simulatorService.generateLinearData(
           value?.etpCont as number,
@@ -207,7 +200,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
           this.myChart.hide(4)
           this.myChart.hide(5)
-          // TO ADD // this.myChart.update()
+          this.myChart.update()
         }
       }
     })
@@ -222,8 +215,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     const labels = this.labels
-
-    console.log('load Chart ETP')
 
     const data = {
       labels: labels,
@@ -476,7 +467,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           }
 
           e.chart.config.options.scales.x.ticks.color = colorArray
-          // ADD e.chart.update()
+          e.chart.update()
         },
         tooltips: {
           events: ['click'],
@@ -549,7 +540,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false
               e.chart.options.plugins.annotation.annotations.box1.content = ''
-              // ADD items.chart.update()
+              items.chart.update()
               $this.updateAnnotationBox(false, undefined, undefined, '')
             },
             annotations: {
@@ -599,13 +590,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       },
       plugins: [yScaleTextStock],
     }
-
     this.myChart = new Chart(
       document.getElementById('etp-chart') as ChartItem,
       config
     )
-    console.log({ chart: this.myChart })
-    /**
+
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
         this.myChart.options.plugins.annotation.annotations.box1.yMax =
@@ -679,10 +668,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
 
-        // ADD this.myChart.update()
+        this.myChart.update()
       }
     })
-    */
   }
 
   /**
