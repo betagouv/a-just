@@ -136,7 +136,18 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
-    console.log('getSituation', referentielId)
+    console.log(
+      'getSituation',
+      {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId: referentielId,
+        dateStart: generalizeTimeZone(dateStart),
+        dateStop: generalizeTimeZone(dateStop),
+        functionIds: this.selectedFonctionsIds.getValue(),
+        categoryId: this.selectedCategory.getValue()?.id,
+      },
+      referentielId
+    )
 
     if (
       this.selectedCategory.getValue()?.id !== null &&
@@ -170,6 +181,15 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface) {
     this.isLoading.next(true)
+    console.log('PARAM Simulation', {
+      backupId: this.humanResourceService.backupId.getValue(),
+      params: params,
+      simulation: simulation,
+      dateStart: generalizeTimeZone(this.dateStart.getValue()),
+      dateStop: generalizeTimeZone(this.dateStop.getValue()),
+      selectedCategoryId: this.selectedCategory.getValue()?.id,
+    })
+
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),

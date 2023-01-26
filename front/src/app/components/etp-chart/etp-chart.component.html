@@ -105,6 +105,10 @@
     [label]="'Magistrats (projeté)'"
     [dotColor]="'#e07dd8'"
     [bgColor]="'#fdc0f8'"
+    [disabledEl]="!canViewMagistrat"
+    [ngClass]="{
+      'disabled-label': !canViewMagistrat
+    }"
     (value)="display($event)"
   ></aj-legend-label>
 
@@ -114,8 +118,12 @@
     [dotColor]="'#fdc0f8'"
     [bgColor]="'#e07dd8'"
     (value)="display($event)"
-    [disabledEl]="categorySelected === 'FONCTIONNAIRE' ? true : false"
-    [ngClass]="{ 'disabled-label': categorySelected === 'FONCTIONNAIRE' }"
+    [disabledEl]="
+      !canViewMagistrat || categorySelected !== 'MAGISTRAT' ? true : false
+    "
+    [ngClass]="{
+      'disabled-label': !canViewMagistrat || categorySelected !== 'MAGISTRAT'
+    }"
   ></aj-legend-label>
   <div class="space"></div>
   <aj-legend-label
@@ -124,6 +132,10 @@
     [dotColor]="'#f083a0'"
     [bgColor]="'#ffcade'"
     (value)="display($event)"
+    [disabledEl]="!canViewGreffier"
+    [ngClass]="{
+      'disabled-label': !canViewGreffier
+    }"
   ></aj-legend-label>
 
   <aj-legend-label
@@ -132,8 +144,12 @@
     [dotColor]="'#ffcade'"
     [bgColor]="'#f083a0'"
     (value)="display($event)"
-    [disabledEl]="categorySelected === 'MAGISTRAT' ? true : false"
-    [ngClass]="{ 'disabled-label': categorySelected === 'MAGISTRAT' }"
+    [disabledEl]="
+      !canViewGreffier || categorySelected !== 'FONCTIONNAIRE' ? true : false
+    "
+    [ngClass]="{
+      'disabled-label': !canViewGreffier || categorySelected !== 'FONCTIONNAIRE'
+    }"
   ></aj-legend-label>
 
   <div class="space"></div>

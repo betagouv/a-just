@@ -4,7 +4,7 @@ import {
   findRealValue,
   monthDiffList,
 } from 'src/app/utils/dates'
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -25,6 +25,7 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
+import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 
 /**
  * Variable ETP magistrat field name
@@ -164,7 +165,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Catégorie selectionnée
    */
-  categorySelected: string | null = null
+  categorySelected: string | null = null //'MAGISTRAT'
   /**
    * Liste des fonctions pour la catégorie selectionnée
    */
@@ -261,14 +262,6 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-  /**
-   * label etpMag
-   */
-  etpMag = etpMag
-  /**
-   * label etpFon
-   */
-  etpFon = etpFon
 
   /**
    * Constructeur
@@ -277,20 +270,36 @@ export class SimulatorPage extends MainClass implements OnInit {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService,
-    private userService: UserService
+    private userService: UserService,
+    private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
 
+    this.watch(
+      this.contentieuxOptionsService.backupId.subscribe(() => {
+        this.resetParams()
+      })
+    )
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
+      })
+    )
 
+    this.watch(
+      this.humanResourceService.categories.subscribe(() => {
         if (this.canViewMagistrat) {
-          this.changeCategorySelected(this.MAGISTRATS)
+          this.changeCategorySelected('MAGISTRAT')
+          this.simulatorService.selectedFonctionsIds.next(
+            this.selectedFonctionsIds
+          )
         } else if (this.canViewGreffier) {
-          this.changeCategorySelected(this.FONCTIONNAIRES)
+          this.changeCategorySelected('FONCTIONNAIRE')
+          this.simulatorService.selectedFonctionsIds.next(
+            this.selectedFonctionsIds
+          )
         }
       })
     )
@@ -306,7 +315,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     )
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
-        if (this.categorySelected) {
+        if (this.categorySelected !== null) {
           this.changeCategorySelected(this.categorySelected)
           this.simulatorService.selectedFonctionsIds.next(
             this.selectedFonctionsIds
@@ -325,6 +334,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   ngOnInit(): void {
     this.dateStop = null
+
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
@@ -811,9 +821,6 @@ export class SimulatorPage extends MainClass implements OnInit {
           parseFloat(projectedValue as string)
       )
 
-    if (id === 'etpFon') {
-      console.log(this.paramsToAjust, projectedValue)
-    }
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -1004,11 +1011,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.toDisplay = find[0].toDisplay
         this.toCalculate = find[0].toCalculate
         //compute ! no popup
-        this.computeSimulation()
-        allButton.map((x: any) => {
-          x.classList.add('disable')
-        })
-        this.simulateButton = 'disabled'
+        this.computeSimulation(allButton)
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -1025,11 +1028,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.toDisplay = this.currentNode.toSimulate[0].toDisplay
         this.toCalculate = this.currentNode.toSimulate[0].toCalculate
         //compute ! no popup
-        this.computeSimulation()
-        allButton.map((x: any) => {
-          x.classList.add('disable')
-        })
-        this.simulateButton = 'disabled'
+        this.computeSimulation(allButton)
       }
     }
   }
@@ -1076,11 +1075,7 @@ export class SimulatorPage extends MainClass implements OnInit {
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
           this.toCalculate = find.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         }
       } else {
         const find = this.currentNode.toAjust.find(
@@ -1101,11 +1096,7 @@ export class SimulatorPage extends MainClass implements OnInit {
           this.toDisplaySimulation = true
           this.toDisplay = lastObj.toDisplay
           this.toCalculate = lastObj.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         }
       }
     } else if (this.paramsToLock.param2.label === '') {
@@ -1134,19 +1125,11 @@ export class SimulatorPage extends MainClass implements OnInit {
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
           this.toCalculate = objSecond.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         } else {
           this.toDisplay = find.toDisplay
           this.toCalculate = find.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         }
       } else if (
         this.paramsToAjust.param1.input !== 0 &&
@@ -1161,21 +1144,13 @@ export class SimulatorPage extends MainClass implements OnInit {
           )
           this.toDisplay = objSecond.toDisplay
           this.toCalculate = objSecond.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         } else {
           this.toSimulate = false
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
           this.toCalculate = find.toCalculate
-          this.computeSimulation()
-          allButton.map((x: any) => {
-            x.classList.add('disable')
-          })
-          this.simulateButton = 'disabled'
+          this.computeSimulation(allButton)
         }
       }
     }
@@ -1184,7 +1159,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Calcul de la simulation
    */
-  computeSimulation() {
+  computeSimulation(allButton: any) {
     const params = {
       beginSituation: this.firstSituationData,
       endSituation: this.projectedSituationData,
@@ -1204,8 +1179,19 @@ export class SimulatorPage extends MainClass implements OnInit {
       realDTESInMonths: null,
       realCoverage: null,
     }
-
-    this.simulatorService.toSimulate(params, simulation)
+    if (this.hasNoNullValue(this.firstSituationData)) {
+      this.toDisplaySimulation = true
+      this.simulateButton = 'disabled'
+      allButton.map((x: any) => {
+        x.classList.add('disable')
+      })
+      this.simulatorService.toSimulate(params, simulation)
+    } else {
+      this.simulateButton = ''
+      alert(
+        'Les données en base ne permettent pas de calculer une simulation pour ce contentieux'
+      )
+    }
   }
 
   /**
@@ -1262,24 +1248,24 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Changement de categorie selectionnée pour la simulation
    * @param category magistrat, fonctionnaire, greffier
    */
-  changeCategorySelected(category: string) {
-    this.categorySelected = category
-    this.resetParams()
-    this.contentieuId = null
-    this.subList = []
-    const findCategory =
-      this.humanResourceService.categories.getValue().find(
-        (c: HRCategoryInterface) =>
-          c.label.toUpperCase() ===
-          (this.categorySelected
-            ? this.categorySelected.slice(0, -1) // remove "s" to find category by name
-            : ''
-          ).toUpperCase()
-      ) || null
-
-    this.simulatorService.selectedCategory.next(findCategory)
-    console.log('fonctions', this.humanResourceService.fonctions.getValue())
-    this.loadFunctions()
+  changeCategorySelected(category: string | null) {
+    if (
+      this.humanResourceService.categories.getValue().length > 0 &&
+      this.categorySelected !== category
+    ) {
+      this.categorySelected = category
+      this.contentieuId = null
+      this.subList = []
+      const findCategory =
+        this.humanResourceService.categories
+          .getValue()
+          .find(
+            (c: HRCategoryInterface) =>
+              c.label.toUpperCase() === this.categorySelected?.toUpperCase()
+          ) || null
+      this.simulatorService.selectedCategory.next(findCategory)
+      this.loadFunctions()
+    }
   }
 
   /**
@@ -1310,5 +1296,10 @@ export class SimulatorPage extends MainClass implements OnInit {
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+  }
+
+  hasNoNullValue(obj: SimulatorInterface | null): boolean {
+    if (obj && Object.values(obj).every((o) => o !== null)) return true
+    else return false
   }
 }
