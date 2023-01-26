@@ -408,14 +408,24 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
-      this.subList = []
-      const fnd = this.referentiel.find((o) => o.id === event[0])
-      fnd?.childrens?.map((value) => this.subList.push(value.id))
-      this.contentieuId = event[0]
-      this.simulatorService.contentieuOrSubContentieuId.next([
-        this.contentieuId as number,
-      ])
-      this.disabled = ''
+      if (
+        this.canViewMagistrat ||
+        this.canViewGreffier
+        //||this.canViewContractuel
+      ) {
+        this.subList = []
+        const fnd = this.referentiel.find((o) => o.id === event[0])
+        fnd?.childrens?.map((value) => this.subList.push(value.id))
+        this.contentieuId = event[0]
+        this.simulatorService.contentieuOrSubContentieuId.next([
+          this.contentieuId as number,
+        ])
+        this.disabled = ''
+      } else {
+        alert(
+          "Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur."
+        )
+      }
     } else if (type === 'subList') {
       this.subList = event
       const tmpRefLength = this.referentiel.find(
