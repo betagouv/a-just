@@ -92,11 +92,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   updatedReferentiels: ContentieuReferentielInterface[] = []
   /**
-   * ETP 
+   * ETP
    */
   etp: number = 1
   /**
-   * Formulaire de saisie 
+   * Formulaire de saisie
    */
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
@@ -107,9 +107,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Constructeur
-   * @param hrFonctionService 
-   * @param hrCategoryService 
-   * @param humanResourceService 
+   * @param hrFonctionService
+   * @param hrCategoryService
+   * @param humanResourceService
    */
   constructor(
     private hrFonctionService: HRFonctionService,
@@ -139,8 +139,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   /**
-   * Initilisation lors du changement de la date 
-   * @param changes 
+   * Initilisation lors du changement de la date
+   * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes.lastDateStart) {
@@ -152,7 +152,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Initialisation du formulaire
    */
   onStart() {
-    const situation = this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
+    const situation = this.humanResourceService.findSituation(
+      this.human,
+      this.lastDateStart ? this.lastDateStart : undefined
+    )
     this.etp = (situation && situation.etp) || 0
 
     this.form
@@ -199,7 +202,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Control du formulaire lors de la sauvegarde
-   * @returns 
+   * @returns
    */
   async onSave() {
     if (this.indisponibilityError) {
@@ -292,13 +295,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   /**
-   * Reformatage des situations 
-   * @param newReferentiel 
-   * @param activitiesStartDate 
-   * @param profil 
-   * @param cat 
-   * @param fonct 
-   * @returns 
+   * Reformatage des situations
+   * @param newReferentiel
+   * @param activitiesStartDate
+   * @param profil
+   * @param cat
+   * @param fonct
+   * @returns
    */
   generateAllNewSituations(
     newReferentiel: ContentieuReferentielInterface[],
@@ -356,7 +359,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Retour du référentiel en fonction du paneau d'activité
-   * @param referentiels 
+   * @param referentiels
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
