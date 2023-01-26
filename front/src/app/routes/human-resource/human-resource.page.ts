@@ -145,7 +145,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private appService: AppService,
+    private appService: AppService
   ) {
     super()
   }
@@ -192,6 +192,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onLoad(cacheHr: HumanResourceInterface | null = null) {
+    console.log('saved', cacheHr)
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
@@ -203,7 +204,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       const id = +this.route.snapshot.params.id
       findUser = await this.humanResourceService.loadRemoteHR(id)
     }
-
+    console.log('userFinded', findUser)
     if (findUser) {
       this.currentHR = findUser
 
@@ -499,6 +500,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param directRef
    */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
+    console.log('Lose focus on save')
     if (this.currentHR) {
       if (
         nodeName === 'firstName' ||
@@ -885,8 +887,20 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
-    this.wrapper?.exportAsPdf(`fiche individuelle${this.currentHR ? ' de ' + this.currentHR.firstName + ' ' +this.currentHR.lastName : ''}.pdf`).then(() => {
-      this.duringPrint = false
-    })
+    this.wrapper
+      ?.exportAsPdf(
+        `fiche individuelle${
+          this.currentHR
+            ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
+            : ''
+        }.pdf`
+      )
+      .then(() => {
+        this.duringPrint = false
+      })
+  }
+
+  printConsole() {
+    console.log('out')
   }
 }
