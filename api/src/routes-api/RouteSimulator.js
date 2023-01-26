@@ -2,8 +2,6 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
-import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
-import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
  * Route pour la page du simulateur
@@ -67,15 +65,7 @@ export default class RouteSimulator extends Route {
     let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
     console.timeEnd('simulator-4')
 
-    situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId)
-
-    console.log(situationFiltered)
-    situationFiltered = {
-      ...situationFiltered,
-      etpMag: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? situationFiltered.etpMag : null,
-      etpFon: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? situationFiltered.etpFon : null,
-      etpCont: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL) ? situationFiltered.etpCont : null,
-    }
+    situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }

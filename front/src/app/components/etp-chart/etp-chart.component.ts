@@ -53,6 +53,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    */
   @Input() categorySelected = ''
   /**
+   * Peux voir l'interface magistrat
+   */
+  @Input() canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  @Input() canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  @Input() canViewContractuel: boolean = false
+  /**
    * Labels sur l'axe des abscisse
    */
   labels: string[] | null = null
@@ -135,7 +147,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           value?.etpMag as number,
           this.labels.length
         )
-
+        console.log('Graph data', this.data.simulatedMag.values)
         console.log({ etpFon: value?.etpFon })
         this.data.simulatedGref.values = simulatorService.generateLinearData(
           value?.etpFon as number,
@@ -177,26 +189,56 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
-          this.myChart._metasets[0]._dataset.data =
-            this.data.projectedMag.values
-          this.myChart._metasets[1]._dataset.data =
-            this.data.simulatedMag.values
-          this.myChart._metasets[2]._dataset.data =
-            this.data.projectedGref.values
-          this.myChart._metasets[3]._dataset.data =
-            this.data.simulatedGref.values
-          this.myChart._metasets[5]._dataset.data =
-            this.data.projectedCont.values
-          //this.myChart._metasets[6]._dataset.data =
-          //this.data.simulatedCont.values
+          if (this.canViewMagistrat) {
+            this.myChart._metasets[0]._dataset.data =
+              this.data.projectedMag.values
+            this.myChart._metasets[1]._dataset.data =
+              this.data.simulatedMag.values
+          }
+          if (this.canViewGreffier) {
+            this.myChart._metasets[2]._dataset.data =
+              this.data.projectedGref.values
+            this.myChart._metasets[3]._dataset.data =
+              this.data.simulatedGref.values
+          }
+          if (this.canViewContractuel) {
+            this.myChart._metasets[5]._dataset.data =
+              this.data.projectedCont.values
+            //this.myChart._metasets[6]._dataset.data =
+            //this.data.simulatedCont.values
+          }
           console.log('LA DATA', this.data)
 
+          // A remplacer
+          /**
           const isDataShown = this.myChart.isDatasetVisible(
             this.categorySelected === 'MAGISTRAT' ? 3 : 1
           )
-          if (isDataShown === true)
-            if (this.categorySelected === 'MAGISTRAT') this.myChart.hide(3)
-            else this.myChart.hide(1)
+          if (isDataShown === true) {
+            if (this.categorySelected === 'MAGISTRAT') {
+              this.myChart.hide(3)
+            } else this.myChart.hide(1)
+          }
+ */
+          if (this.categorySelected === 'MAGISTRAT') {
+            this.myChart.hide(3)
+          }
+          if (this.categorySelected === 'FONCTIONNAIRE') {
+            this.myChart.hide(1)
+          }
+
+          if (!this.canViewMagistrat) {
+            this.myChart.hide(0)
+            this.myChart.hide(1)
+          }
+          if (!this.canViewGreffier) {
+            this.myChart.hide(2)
+            this.myChart.hide(3)
+          }
+          if (!this.canViewContractuel) {
+            this.myChart.hide(4)
+            this.myChart.hide(5)
+          }
 
           this.myChart.hide(4)
           this.myChart.hide(5)

@@ -35,20 +35,20 @@
       <div
         *ngIf="canViewMagistrat"
         class="magistrats {{disabled}}"
-        [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-        (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS); "
+        [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
+        (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); "
       >
-        <input type="radio" [checked]="categorySelected === MAGISTRATS" />
+        <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
         <p>Magistrats</p>
       </div>
       <div
         *ngIf="canViewGreffier"
         class="fonctionnaires {{disabled}}"
-        [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}"
+        [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE', alone: !canViewMagistrat}"
         class="fonctionnaires"
-        (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)"
+        (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRE')"
       >
-        <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
+        <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRE'" />
         <p>Fonctionnaires</p>
       </div>
     </div>
@@ -111,20 +111,18 @@
       <p>Stock</p>
     </div>
     <div
-      *ngIf="canViewMagistrat"
       class="item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
       <p>ETPT magistrat</p>
     </div>
     <div
-      *ngIf="canViewGreffier"
       class="item blue-bg"
-      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
       <p>ETPT greffe</p>
     </div>
-    <div *ngIf="canViewContractuel" class="item">
+    <div class="item">
       <p>ETPT contractuels</p>
     </div>
     <div class="item blue-bg">
@@ -132,13 +130,13 @@
     </div>
     <div
       class="item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <p>DTES</p>
     </div>
     <div
       class="item blue-bg"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <p>Temps moyen / dossier</p>
     </div>
@@ -165,20 +163,18 @@
       <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
     </div>
     <div
-      *ngIf="canViewMagistrat"
       class="line-item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
       <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
     </div>
     <div
-      *ngIf="canViewGreffier"
       class="line-item orange-bg"
-      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
       <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
     </div>
-    <div *ngIf="canViewContractuel" class="line-item">
+    <div class="line-item">
       <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
     </div>
     <div class="line-item orange-bg">
@@ -189,7 +185,7 @@
     </div>
     <div
       class="line-item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <input
         [value]="getFieldValue('realDTESInMonths',firstSituationData)"
@@ -198,7 +194,7 @@
     </div>
     <div
       class="line-item orange-bg"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <input
         [value]="getFieldValue('magRealTimePerCase',firstSituationData)"
@@ -238,9 +234,8 @@
       />
     </div>
     <div
-      *ngIf="canViewMagistrat"
       class="line-item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
       <input
         [value]="getFieldValue('etpMag',projectedSituationData)"
@@ -248,16 +243,15 @@
       />
     </div>
     <div
-      *ngIf="canViewGreffier"
       class="line-item grey-bg"
-      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
       <input
         [value]="getFieldValue('etpFon',projectedSituationData)"
         disabled
       />
     </div>
-    <div *ngIf="canViewContractuel" class="line-item">
+    <div class="line-item">
       <input
         [value]="getFieldValue('etpCont',projectedSituationData)"
         disabled
@@ -271,7 +265,7 @@
     </div>
     <div
       class="line-item"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <input
         [value]="getFieldValue('realDTESInMonths',projectedSituationData)"
@@ -280,7 +274,7 @@
     </div>
     <div
       class="line-item grey-bg"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS || categorySelected === FONCTIONNAIRES}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}"
     >
       <input
         [value]="getFieldValue('magRealTimePerCase',projectedSituationData)"
@@ -297,13 +291,13 @@
       <div
         id="init-button"
         class="init-button"
-        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === MAGISTRATS ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Réinitialiser</p>
       </div>
       <div
         class="simulate-button {{simulateButton}}"
-        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === MAGISTRATS ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
+        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])"
       >
         <p class="title">Simuler</p>
       </div>
@@ -473,7 +467,7 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div *ngIf="canViewMagistrat" class="line-item">
+    <div class="line-item">
       <input
         class="ajusted-button"
         id="etpMag"
@@ -481,7 +475,7 @@
         (click)="openPopupWithParams(etpMag)"
         value="Ajuster"
         readonly="readonly"
-        [ngClass]="{disable: categorySelected !== MAGISTRATS}"
+        [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}"
         #etpMag
       />
       <div
@@ -494,7 +488,7 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div *ngIf="canViewGreffier" class="line-item blue-bg">
+    <div class="line-item blue-bg">
       <input
         class="ajusted-button"
         id="etpFon"
@@ -502,7 +496,7 @@
         (click)="openPopupWithParams(etpFon)"
         value="Ajuster"
         readonly="readonly"
-        [ngClass]="{disable: categorySelected !== FONCTIONNAIRES}"
+        [ngClass]="{disable: categorySelected !== 'FONCTIONNAIRE'}"
         #etpFon
       />
       <div
@@ -514,7 +508,7 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div *ngIf="canViewContractuel" class="line-item">
+    <div class="line-item">
       <input
         class="ajusted-button disable"
         id="etpCont"
@@ -595,7 +589,10 @@
     </div>
   </div>
 
-  <div class="simulation-bottom" *ngIf="toDisplaySimulation">
+  <div
+    class="simulation-bottom"
+    *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)"
+  >
     <p class="simulation-title">Résultat de la simulation</p>
     <div class="simulation-table">
       <div class="items">
@@ -848,6 +845,9 @@
     <aj-etp-chart
       *ngIf="categorySelected"
       [categorySelected]="categorySelected"
+      [canViewMagistrat]="canViewMagistrat"
+      [canViewGreffier]="canViewGreffier"
+      [canViewContractuel]="canViewContractuel"
     ></aj-etp-chart>
 
     <aj-in-out-chart></aj-in-out-chart>

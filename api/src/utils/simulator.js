@@ -14,6 +14,8 @@ import {
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
+import { canHaveUserCategoryAccess } from './hr-catagories'
+import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
  * Variable de temps travail en fonction de la category
@@ -56,14 +58,19 @@ const emptySituation = {
  * @param {*} categoryId catégory selectionnée
  * @returns situation
  */
-export function mergeSituations (situationFiltered, situation, categories, categoryId) {
+export function mergeSituations (situationFiltered, situation, categories, categoryId, ctx) {
+  const etpMagAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT)
+  const etpFonAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER)
+  const etpContAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL)
+
   categories.map((x) => {
     if (x.id !== categoryId) {
       if (x.id === 1) situationFiltered.etpMag = situation.etpMag
       if (x.id === 2) situationFiltered.etpFon = situation.etpFon
       if (x.id === 3) situationFiltered.etpCont = situation.etpCont
-
       if (situation.endSituation) {
+        console.log(JSON.stringify(situationFiltered.endSituation.monthlyReport))
+
         situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
         if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
         if (x.id === 2) situationFiltered.endSituation.etpFon = situation.endSituation.etpFon
@@ -71,6 +78,14 @@ export function mergeSituations (situationFiltered, situation, categories, categ
       }
     }
   })
+
+  console.log(situationFiltered)
+  situationFiltered = {
+    ...situationFiltered,
+    etpMag: etpMagAccess ? situationFiltered.etpMag : 0,
+    etpFon: etpFonAccess ? situationFiltered.etpFon : 0,
+    etpCont: etpContAccess ? situationFiltered.etpCont : 0,
+  }
 
   return situationFiltered
 }
@@ -850,16 +865,16 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
           ) / 100
       }
     })
+    console.log(simulation)
   } while (
     !(
-      simulation.totalIn !== null &&
-      simulation.totalOut !== null &&
-      simulation.lastStock !== null &&
-      simulation.etpMag !== null &&
-      simulation.etpFon !== null &&
-      simulation.magRealTimePerCase !== null &&
-      simulation.realDTESInMonths !== null &&
-      simulation.realCoverage !== null
+      simulation.totalIn !== undefined &&
+      simulation.totalOut !== undefined &&
+      simulation.lastStock !== undefined &&
+      (simulation.etpMag !== undefined || simulation.etpFon !== undefined) &&
+      simulation.magRealTimePerCase !== undefined &&
+      simulation.realDTESInMonths !== undefined &&
+      simulation.realCoverage !== undefined
     )
   )
 
