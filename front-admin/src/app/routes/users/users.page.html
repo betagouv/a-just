@@ -43,7 +43,13 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-button color="primary" (click)="onEdit(element)">Modifier les accès</button>
+        <button
+          *ngIf="!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN)"
+          mat-button color="primary" (click)="onEdit(element)">Modifier les accès</button>
+        <p *ngIf="element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN"
+          class="super-administrateur">
+          <i>Super administrateur</i>
+        </p>
       </td>
     </ng-container>
 

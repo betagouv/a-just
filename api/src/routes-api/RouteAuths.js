@@ -1,7 +1,7 @@
 import Route from './Route'
 import { crypt } from '../utils'
 import { Types } from '../utils/types'
-import { USER_ROLE_ADMIN } from '../constants/roles'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
 /**
  * Route des authentification
@@ -61,7 +61,7 @@ export default class RouteAuths extends Route {
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
 
-    const user = await this.model.findOne({ where: { email, role: USER_ROLE_ADMIN } })
+    const user = await this.model.findOne({ where: { email, role: [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN] } })
     if (user && user.dataValues.status === 0) {
       ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
     } else if (user && crypt.compartPassword(password, user.dataValues.password)) {
@@ -93,7 +93,7 @@ export default class RouteAuths extends Route {
    */
   @Route.Get({})
   async autoLoginAdmin (ctx) {
-    if (this.userId(ctx) && ctx.state.user.role === USER_ROLE_ADMIN) {
+    if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
     } else {

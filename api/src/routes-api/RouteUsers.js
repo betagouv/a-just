@@ -8,6 +8,7 @@ import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ON
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
+import { USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
 /**
  * Route de la gestion des utilisateurs
@@ -78,7 +79,13 @@ export default class RouteUsers extends Route {
           serverUrl: config.frontUrl,
         }
       )
-      await this.models.Logs.addLog(USER_USER_SIGN_IN, null, { email, firstName, lastName, tj, fonction })
+      await this.models.Logs.addLog(USER_USER_SIGN_IN, null, {
+        email,
+        firstName,
+        lastName,
+        tj,
+        fonction,
+      })
       this.sendOk(ctx, 'OK')
     } catch (err) {
       ctx.throw(401, err)
@@ -117,6 +124,13 @@ export default class RouteUsers extends Route {
   })
   async updateAccount (ctx) {
     const { userId } = this.body(ctx)
+    const userToUpdate = await this.model.userPreview(userId)
+
+    if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
+      ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
+    }
+
+    console.log('user connected', ctx.body.user)
 
     try {
       await this.model.updateAccount(this.body(ctx))
@@ -158,7 +172,9 @@ export default class RouteUsers extends Route {
             serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
           }
         )
-        await this.models.Logs.addLog(USER_USER_FORGOT_PASSWORD, null, { email })
+        await this.models.Logs.addLog(USER_USER_FORGOT_PASSWORD, null, {
+          email,
+        })
         this.sendOk(
           ctx,
           "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription."

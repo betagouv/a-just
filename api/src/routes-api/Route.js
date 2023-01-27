@@ -1,5 +1,5 @@
 import { Route as RouteBase } from 'koa-smart'
-import { USER_ROLE_ADMIN } from '../constants/roles'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
 
@@ -125,6 +125,15 @@ export default class Route extends RouteBase {
   isAdmin (ctx) {
     return isAdmin(ctx)
   }
+
+  /**
+   * Fonction pour retourner si l'utilisateur connecté est super administrateur
+   * @param {*} ctx
+   * @returns
+   */
+  isSuperAdmin (ctx) {
+    return isSuperAdmin(ctx)
+  }
 }
 
 /**
@@ -142,7 +151,16 @@ function isLogin (ctx) {
  * @returns
  */
 function isAdmin (ctx) {
-  return !!ctx.state.user && ctx.state.user.role === USER_ROLE_ADMIN
+  return !!ctx.state.user && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1
+}
+
+/**
+ * Contril si l'utilisateur est de type Super Admin
+ * @param {*} ctx
+ * @returns
+ */
+function isSuperAdmin (ctx) {
+  return !!ctx.state.user && [USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1
 }
 
 /**
