@@ -16,7 +16,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.userPreview = async (userId) => {
     const user = await Model.findOne({
-      attributes: ['email', 'first_name', 'last_name'],
+      attributes: ['email', 'first_name', 'last_name', 'role'],
       where: { id: userId },
       raw: true,
     })

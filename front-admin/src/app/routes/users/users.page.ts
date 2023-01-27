@@ -16,7 +16,10 @@ interface FormSelection {
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })
-export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDestroy {
+export class UsersPage
+  extends MainClass
+  implements OnInit, AfterViewInit, OnDestroy
+{
   displayedColumns: string[] = [
     'id',
     'email',
@@ -32,6 +35,7 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
   access: FormSelection[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
+  userConnected: UserInterface | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
     { id: 'close', content: 'Fermer' },
@@ -39,61 +43,98 @@ export class UsersPage extends MainClass implements OnInit, AfterViewInit, OnDes
 
   constructor(private userService: UserService) {
     super();
+
+    this.watch(
+      this.userService.user.subscribe((u) => (this.userConnected = u))
+    );
   }
 
   ngOnInit() {
     this.onLoad();
   }
 
-  ngAfterViewInit () {}
+  ngAfterViewInit() {}
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.watcherDestroy();
+  }
 
   onLoad() {
-    this.userService.getAll().then(l => {
+    this.userService.getAll().then((l) => {
       this.dataSource.data = l.list.map((u: UserInterface) => ({
         ...u,
-        accessName: (u.accessName || '').replace(/, /g,', <br/>'),
-        ventilationsName: (u.ventilations || []).map(j => (j.label)).join(', <br/>'),
+        accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
+        ventilationsName: (u.ventilations || [])
+          .map((j) => j.label)
+          .join(', <br/>'),
       }));
-      this.access = l.access.map((u: PageAccessInterface) => ({id: u.id, label: u.label, selected: false}));
-      this.ventilations = l.ventilations.map((u: BackupInterface) => ({id: u.id, label: u.label, selected: false}));
+      this.access = l.access.map((u: PageAccessInterface) => ({
+        id: u.id,
+        label: u.label,
+        selected: false,
+      }));
+      this.ventilations = l.ventilations.map((u: BackupInterface) => ({
+        id: u.id,
+        label: u.label,
+        selected: false,
+      }));
     });
   }
 
   onEdit(user: UserInterface) {
+    if (
+      user &&
+      user.role &&
+      user.role === this.USER_ROLE_SUPER_ADMIN &&
+      this.userConnected &&
+      this.userConnected.role !== this.USER_ROLE_SUPER_ADMIN
+    ) {
+      alert(
+        "Vous n'avez pas le droit de modifier les droits d'un super administrateur."
+      );
+      return;
+    }
+
     this.userEdit = user;
 
-    this.access = this.access.map(u => {
+    this.access = this.access.map((u) => {
       return {
         ...u,
-        selected: (user.access || []).indexOf(u.id) !== -1 ? true : false
-      }
+        selected: (user.access || []).indexOf(u.id) !== -1 ? true : false,
+      };
     });
 
-    this.ventilations = this.ventilations.map(u => {
+    this.ventilations = this.ventilations.map((u) => {
       return {
         ...u,
-        selected: (user.ventilations || []).find(j => j.id === u.id) ? true : false
-      }
+        selected: (user.ventilations || []).find((j) => j.id === u.id)
+          ? true
+          : false,
+      };
     });
   }
 
-  onPopupDetailAction (action: any) {
+  onPopupDetailAction(action: any) {
     switch (action.id) {
-    case 'save': {
-      this.userService.updateUser({
-        userId: this.userEdit && this.userEdit.id,
-        access: this.access.filter(a => a.selected).map(a => (a.id)),
-        ventilations: this.ventilations.filter(a => a.selected).map(a => (a.id))
-      }).then(() => {
+      case 'save':
+        {
+          this.userService
+            .updateUser({
+              userId: this.userEdit && this.userEdit.id,
+              access: this.access.filter((a) => a.selected).map((a) => a.id),
+              ventilations: this.ventilations
+                .filter((a) => a.selected)
+                .map((a) => a.id),
+            })
+            .then(() => {
+              this.userEdit = null;
+              this.onLoad();
+            });
+        }
+        break;
+      case 'close':
         this.userEdit = null;
-        this.onLoad();
-      });
-    } break
-    case 'close':
-      this.userEdit = null
-      break
+        break;
     }
   }
 }
