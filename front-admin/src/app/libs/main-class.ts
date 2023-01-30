@@ -1,9 +1,12 @@
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles';
 
 export class MainClass {
   watcherList: Subscription[] = [];
   environment = environment;
+  USER_ROLE_ADMIN = USER_ROLE_ADMIN;
+  USER_ROLE_SUPER_ADMIN = USER_ROLE_SUPER_ADMIN;
 
   watch(sub: any) {
     this.watcherList.push(sub);
