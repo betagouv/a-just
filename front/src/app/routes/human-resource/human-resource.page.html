@@ -158,12 +158,12 @@
       <span
         contenteditable
         data-placeholder="Prénom"
-        (keyup)="updateHuman('firstName', $event && $event.target ? $event.target : '',$event)"
+        (keydown)="updateHuman('firstName', $event && $event.target ? $event.target : '',$event)"
         >{{ (currentHR && currentHR.firstName)||'' }}</span
       >&nbsp;<span
         contenteditable
         data-placeholder="Nom"
-        (keyup)="updateHuman('lastName', $event && $event.target ? $event.target : '',$event)"
+        (keydown)="updateHuman('lastName', $event && $event.target ? $event.target : '',$event)"
         >{{ (currentHR && currentHR.lastName) }}</span
       >
       <mat-icon *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
