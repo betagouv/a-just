@@ -500,7 +500,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param directRef
    */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
-    console.log('Lose focus on save')
+    console.log('Lose focus on save', value, this.currentHR)
     if (this.currentHR) {
       if (
         nodeName === 'firstName' ||
@@ -508,8 +508,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         nodeName === 'matricule'
       ) {
         directRef.srcElement.innerText = value.innerText
-        value = value.innerText
-        console.log(value)
+        //
+        console.log(
+          'valuE',
+          value,
+          value.innerText,
+          value.innerHML,
+          value.textContent
+        )
+        value = value.text
       } else if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
       }
@@ -521,6 +528,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           [nodeName]: value,
         })
       )
+
+      this.currentHR = {
+        ...this.currentHR,
+        [nodeName]: value,
+      }
     }
   }
 
