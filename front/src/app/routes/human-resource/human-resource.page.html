@@ -50,6 +50,7 @@
     (close)="onCancel()"
     (onSaveConfirm)="onNewUpdate()"
     (addIndispiniblity)="onAddIndispiniblity($event)"
+    [basicData]="basicHrInfo"
     [indisponibilityError]="indisponibilityError"
     [saveActions]="histories.length !== 0"
   >
@@ -154,36 +155,49 @@
 <ng-template #titleTemplate>
   <div class="title">
     <p class="page-name">Fiche individuelle de</p>
-    <p class="user-name">
-      <span
-        contenteditable
-        data-placeholder="Prénom"
-        (keydown)="updateHuman('firstName', $event && $event.target ? $event.target : '',$event)"
-        >{{ (currentHR && currentHR.firstName)||'' }}</span
-      >&nbsp;<span
-        contenteditable
-        data-placeholder="Nom"
-        (keydown)="updateHuman('lastName', $event && $event.target ? $event.target : '',$event)"
-        >{{ (currentHR && currentHR.lastName) }}</span
-      >
-      <mat-icon *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
-    </p>
-  </div>
-  <div>
-    <p class="matricule">
-      <span
-        contenteditable
-        data-placeholder="Matricule"
-        (keyup)="updateHuman('matricule', $event && $event.target ? $event.target : '',$event)"
-        >{{ (currentHR && currentHR.matricule)||'' }}</span
-      >
-      <mat-icon *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
-    </p>
-    <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
-      {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-      getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt) +
-      ' ' + getFullYear(currentHR.updatedAt) : '' }}
-    </p>
+    <form [formGroup]="basicHrInfo">
+      <div class="container-names">
+        <input
+          class="form-group-names"
+          [attr.size]="getFormValueLength('firstName')||6"
+          (blur)="updateHuman('firstName',$event && $event.target ? $event.target : '',$event)"
+          type="text"
+          formControlName="firstName"
+          placeholder="Prénom"
+        />
+        <input
+          class="form-group-names"
+          [attr.size]="getFormValueLength('lastName')||4"
+          (blur)="updateHuman('lastName',$event && $event.target ? $event.target : '',$event)"
+          type="text"
+          formControlName="lastName"
+          placeholder="Nom"
+        />
+        <mat-icon class="iconPen" *ngIf="!duringPrint"
+          >drive_file_rename_outline</mat-icon
+        >
+      </div>
+      <div>
+        <input
+          class="matricule"
+          [attr.size]="getFormValueLength('matricule')||8"
+          (blur)="updateHuman('matricule',$event && $event.target ? $event.target : '',$event)"
+          type="text"
+          formControlName="matricule"
+          placeholder="Matricule"
+        />
+        <mat-icon class="iconPenSmall" *ngIf="!duringPrint"
+          >drive_file_rename_outline</mat-icon
+        >
+
+        <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
+          {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+          getDate(currentHR.updatedAt) + ' ' +
+          getMonthString(currentHR.updatedAt) + ' ' +
+          getFullYear(currentHR.updatedAt) : '' }}
+        </p>
+      </div>
+    </form>
   </div>
 </ng-template>
 

@@ -105,6 +105,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
+  @Input() basicData: FormGroup | null = null
+
   /**
    * Constructeur
    * @param hrFonctionService
@@ -157,7 +159,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.lastDateStart ? this.lastDateStart : undefined
     )
     this.etp = (situation && situation.etp) || 0
-
     this.form
       .get('activitiesStartDate')
       ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null)
@@ -220,11 +221,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
-    if (this.human?.lastName === 'Nom' || this.human?.lastName === null) {
+    console.log(this.basicData)
+    if (this.basicData!.controls.lastName.value === '') {
       alert('Vous devez saisir un nom pour valider la création !')
       return
     }
-    if (this.human?.firstName === 'Prénom' || this.human?.firstName === null) {
+    if (this.basicData!.controls.firstName.value === '') {
       alert('Vous devez saisir un prénom pour valider la création !')
       return
     }
@@ -285,6 +287,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if (this.human) {
       if (
         await this.humanResourceService.updatePersonById(this.human, {
+          firstName: this.basicData!.controls.firstName.value,
+          lastName: this.basicData!.controls.lastName.value,
+          matricule: this.basicData!.controls.matricule.value,
           situations,
           indisponibilities: this.indisponibilities,
         })

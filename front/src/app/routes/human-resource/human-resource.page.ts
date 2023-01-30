@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
@@ -130,6 +131,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Variable en cours d'export de page
    */
   duringPrint: boolean = false
+  /**
+   * Formulaire de saisie
+   */
+  basicHrInfo = new FormGroup({
+    lastName: new FormControl(''),
+    firstName: new FormControl(''),
+    matricule: new FormControl(''),
+  })
 
   /**
    * Constructeur
@@ -192,7 +201,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onLoad(cacheHr: HumanResourceInterface | null = null) {
-    console.log('saved', cacheHr)
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
@@ -207,6 +215,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     console.log('userFinded', findUser)
     if (findUser) {
       this.currentHR = findUser
+
+      this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
+      this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
+      this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
 
       // control indisponibilities
       this.indisponibilityError =
@@ -500,23 +512,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param directRef
    */
   async updateHuman(nodeName: string, value: any, directRef?: any) {
-    console.log('Lose focus on save', value, this.currentHR)
     if (this.currentHR) {
       if (
-        nodeName === 'firstName' ||
         nodeName === 'lastName' ||
+        nodeName === 'firstName' ||
         nodeName === 'matricule'
       ) {
-        directRef.srcElement.innerText = value.innerText
-        //
-        console.log(
-          'valuE',
-          value,
-          value.innerText,
-          value.innerHML,
-          value.textContent
-        )
-        value = value.text
+        value = this.basicHrInfo.controls[nodeName].value
       } else if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
       }
@@ -914,5 +916,29 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   printConsole() {
     console.log('out')
+  }
+
+  /**
+   * Enlever le focus du champ d'édition
+   * @param event mouse event
+   */
+  blur(event: any) {
+    event.target.blur()
+  }
+
+  getFormValueLength(str: string) {
+    if (
+      str === 'firstName' &&
+      this.basicHrInfo.controls.firstName.value?.length
+    )
+      return this.basicHrInfo.controls.firstName.value?.length
+    if (str === 'lastName' && this.basicHrInfo.controls.lastName.value?.length)
+      return this.basicHrInfo.controls.lastName.value?.length
+    if (
+      str === 'matricule' &&
+      this.basicHrInfo.controls.matricule.value?.length
+    )
+      return this.basicHrInfo.controls.matricule.value?.length
+    return null
   }
 }
