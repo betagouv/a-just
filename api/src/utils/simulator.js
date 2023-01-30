@@ -1,5 +1,5 @@
 import { isFirstDayOfMonth } from 'date-fns'
-import { meanBy, orderBy, sortBy } from 'lodash'
+import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
 import {
   checkIfDateIsNotToday,
   decimalToStringDate,
@@ -154,15 +154,26 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
  */
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
-  const nbMonthHistory = 12
+  const nbMonthHistory = 13
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
 
+  //console.log('lasts act', lastActivities.length, lastActivities)
+  let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
+    return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
+  })
+  //console.log('ltmpTotalIn', Object.keys(tmpTotalIn).length, Object.keys(tmpTotalIn), tmpTotalIn)
+
+  //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
-  let totalIn = Math.floor(meanBy(lastActivities, 'entrees')) || 0
-  let totalOut = Math.floor(meanBy(lastActivities, 'sorties')) || 0
+  let totalIn = Math.floor(meanBy(summedlastActivities, 'entrees')) || 0
+  let totalOut = Math.floor(meanBy(summedlastActivities, 'sorties')) || 0
 
   // récupération du dernier stock
-  let lastStock = lastActivities.length ? lastActivities[0].stock || 0 : 0
+  let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
+
+  console.log('To compare totalIn : ', totalIn)
+  console.log('To compare totalOut : ', totalOut)
+  console.log('To compare lastStock : ', lastStock)
 
   let realTimePerCase = undefined
   let DTES = undefined
@@ -201,9 +212,11 @@ export async function getSituation (referentielId, hr, allActivities, categories
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
     // console.log('realTimePerCase', realTimePerCase)
+    console.log('To compare realTimePerCase : ', realTimePerCase, 'Etp used : ', selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute)
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
+    console.log('To compare final totalOut : ', totalOut, 'Tmd used : ', realTimePerCase, 'ETP used : ', selectedCategoryId === 1 ? etpMag : etpFon)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
