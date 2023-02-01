@@ -94,12 +94,14 @@ export class ExcelService extends MainClass {
         this.columnSize = data.data.columnSize
         import('xlsx').then((xlsx) => {
           const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+          worksheet['!cols'] = this.columnSize
+
           const workbook = {
             Sheets: { data: worksheet },
             SheetNames: ['data'],
           }
 
-          worksheet['!cols'] = this.columnSize
+          xlsx.utils.book_append_sheet(workbook, worksheet, 'Onglet 1')
 
           const excelBuffer: any = xlsx.write(workbook, {
             bookType: 'xlsx',
