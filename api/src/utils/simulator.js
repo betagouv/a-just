@@ -415,8 +415,11 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  */
 function computeRealTimePerCase (totalOut, etp, sufix) {
   let realTimeCorrectValue = fixDecimal(((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp), 100)
+  console.log('clock fixed 0: ', realTimeCorrectValue)
   let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
+  console.log('clock string 1: ', realTimeDisplayed)
   let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
+  console.log('clock decimal 2: ', realTimeToUse)
 
   return realTimeToUse
 }
@@ -478,7 +481,7 @@ export async function getCSActivities (referentielId, allActivities) {
       startDateCs,
       endDateCs,
     }
-  } else return { lastActivities: [], dateStart, dateStop }
+  } else return { lastActivities: [], dateStart: month(new Date(), -11), dateStop: new Date() }
 }
 
 /**
