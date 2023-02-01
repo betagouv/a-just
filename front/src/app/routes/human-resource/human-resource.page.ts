@@ -903,11 +903,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
     this.wrapper
       ?.exportAsPdf(
-        `fiche individuelle${
+        `Fiche individuelle${
           this.currentHR
             ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
             : ''
-        }.pdf`
+        } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
         this.duringPrint = false
