@@ -64,9 +64,9 @@
             <div class="taux-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="taux"
-                  [ngClass]="{'show-reel-values': showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
                   <aj-speedometer class="with-auto small-text"
-                    [classTextBlue]="showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100 ? true : false"
+                    [classTextBlue]="!showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100 ? true : false"
                     [classDarkMode]="true" [percent]="showReelValues ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
                 </div>
@@ -75,7 +75,7 @@
             <div class="dtes-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="dtes"
-                  [ngClass]="{'show-reel-values': showReelValues && ref.realDTESInMonths && ref.dtes !== ref.realDTESInMonths}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
                   <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
               </ng-template>
@@ -134,7 +134,7 @@
                   <p>{{ referentielMappingName(ref.label) }}</p>
                 </div>
                 <div class="etp"
-                  [ngClass]="{'show-reel-values': showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
                   <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number:
                     "0.2-2"}}</p>
                 </div>

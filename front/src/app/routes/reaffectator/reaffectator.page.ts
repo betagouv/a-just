@@ -326,10 +326,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       c.value = c.orignalValue + ''
 
       if (itemBlock && itemBlock.hrFiltered) {
+        console.log(itemBlock.hrFiltered)
         c.value = `${itemBlock.hrFiltered.length} ${c.value}${
           itemBlock.hrFiltered.length > 1 ? 's' : ''
         } (${fixDecimal(
-          sumBy(itemBlock.referentiel || [], 'totalAffected'),
+          sumBy(itemBlock.hrFiltered || [], function (h) {
+            const etp = h.etp - h.hasIndisponibility
+            return etp > 0 ? etp : 0
+          }),
           100
         )} ETPT)`
       }
@@ -596,7 +600,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param list
    */
   onSelectedReferentielIdsChanged(list: any) {
-    console.log('laliste:', list)
     this.reaffectatorService.selectedReferentielIds = list
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1
@@ -764,6 +767,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               ? 0
               : fixDecimal(lastStock / outValue),
           etpUseToday: refFromItemList.etpUseToday,
+          realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
         }
       })
     }
