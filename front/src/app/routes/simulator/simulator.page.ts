@@ -1230,7 +1230,9 @@ export class SimulatorPage extends MainClass implements OnInit {
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
 
-    const filename = `Simulation_${contentieuLabel}_${new Date()
+    const filename = `Simulation-${contentieuLabel}_par ${
+      this.userService.user.getValue()!.firstName
+    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
       .toJSON()
       .slice(0, 10)}.pdf`
 

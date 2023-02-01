@@ -15,6 +15,7 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { AppService } from 'src/app/services/app/app.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -272,7 +273,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private workforceService: WorkforceService,
     private appService: AppService,
-    private rs: ReaffectatorService
+    private rs: ReaffectatorService,
+    private userService: UserService
   ) {
     super()
     this.reaffectatorService = this.rs
@@ -636,12 +638,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
-    this.wrapper?.exportAsPdf('simulation-d-affectation.pdf').then(() => {
-      this.duringPrint = false
-      this.appService.alert.next({
-        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    this.wrapper
+      ?.exportAsPdf(
+        `Simulation-D-Affectation_par ${
+          this.userService.user.getValue()!.firstName
+        }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+          .toJSON()
+          .slice(0, 10)}.pdf`
+      )
+      .then(() => {
+        this.duringPrint = false
+        this.appService.alert.next({
+          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+        })
       })
-    })
   }
 
   /**
