@@ -121,11 +121,7 @@ export class ExcelService extends MainClass {
    * @returns String - Nom du fichier téléchargé
    */
   getFileName() {
-    return `Extraction-${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_fait le ${new Date()
-      .toJSON()
-      .slice(0, 10)}_du ${new Date(
+    return `Extraction ETPT_du ${new Date(
       this.dateStart
         .getValue()
         .setMinutes(
@@ -142,6 +138,10 @@ export class ExcelService extends MainClass {
             this.dateStop.getValue().getTimezoneOffset()
         )
     )
+      .toJSON()
+      .slice(0, 10)}_par ${
+      this.userService.user.getValue()!.firstName
+    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
       .toJSON()
       .slice(0, 10)}`
   }

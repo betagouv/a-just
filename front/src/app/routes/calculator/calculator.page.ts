@@ -15,7 +15,11 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { month } from 'src/app/utils/dates'
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 /**
  * Page du calculateur
@@ -38,7 +42,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Liste des id des référentiels
    */
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
-  /** 
+  /**
    * Date de début du calcul
    */
   dateStart: Date | null = null
@@ -69,7 +73,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Catégories selectionnée (magistrats, fonctionnaire)
    */
-  categorySelected: string | null = null
+  categorySelected: string | null = null
   /**
    * Lien de la documentation
    */
@@ -80,9 +84,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Mémorisation de la dernière categorie
    */
-  lastCategorySelected: string | null = null
+  lastCategorySelected: string | null = null
   /**
-   * Liste des ids des fonctions 
+   * Liste des ids des fonctions
    */
   selectedFonctionsIds: number[] = []
   /**
@@ -108,12 +112,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Constructeur
-   * @param humanResourceService 
-   * @param calculatorService 
-   * @param referentielService 
-   * @param contentieuxOptionsService 
-   * @param activitiesService 
-   * @param appService 
+   * @param humanResourceService
+   * @param calculatorService
+   * @param referentielService
+   * @param contentieuxOptionsService
+   * @param activitiesService
+   * @param appService
    */
   constructor(
     private humanResourceService: HumanResourceService,
@@ -122,7 +126,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
     private appService: AppService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     super()
   }
@@ -131,19 +135,21 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
-    this.watch(this.userService.user.subscribe((u) => {
-      this.canViewMagistrat = userCanViewMagistrat(u)
-      this.canViewGreffier = userCanViewGreffier(u)
-      this.canViewContractuel = userCanViewContractuel(u)
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
 
-      if (this.canViewMagistrat) {
-        this.categorySelected = this.MAGISTRATS
-      } else if (this.canViewGreffier) {
-        this.categorySelected = this.FONCTIONNAIRES
-      } else {
-        this.categorySelected = null
-      }
-    }))
+        if (this.canViewMagistrat) {
+          this.categorySelected = this.MAGISTRATS
+        } else if (this.canViewGreffier) {
+          this.categorySelected = this.FONCTIONNAIRES
+        } else {
+          this.categorySelected = null
+        }
+      })
+    )
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
@@ -213,7 +219,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.referentiel.length
     ) {
       this.activitiesService.getLastMonthActivities().then((date) => {
-        if(date === null) {
+        if (date === null) {
           date = new Date()
         }
 
@@ -270,7 +276,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Préformate les données des données du serveur
-   * @param list 
+   * @param list
    */
   formatDatas(list: CalculatorInterface[]) {
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
@@ -300,8 +306,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Mise à jour des données pour l'appel au serveur
-   * @param type 
-   * @param event 
+   * @param type
+   * @param event
    */
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
@@ -319,9 +325,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Optimisation de charge de la liste
-   * @param index 
-   * @param item 
-   * @returns 
+   * @param index
+   * @param item
+   * @returns
    */
   trackBy(index: number, item: CalculatorInterface) {
     return item.contentieux.id
@@ -329,7 +335,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Demande de trie en fonction d'une colonne
-   * @param type 
+   * @param type
    */
   onSortBy(type: string) {
     if (this.sortBy === type) {
@@ -343,7 +349,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Changement de la catégorie selectionné puis appel au serveur
-   * @param category 
+   * @param category
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
@@ -353,7 +359,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Changement des fonctions selectionnés puis appel au serveur
-   * @param fonctionsId 
+   * @param fonctionsId
    */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
@@ -362,7 +368,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Force l'ouverture d'un paneau d'aide
-   * @param type 
+   * @param type
    */
   onShowPanel(type: string) {
     switch (type) {
@@ -395,8 +401,17 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
-    this.wrapper?.exportAsPdf('calculateur.pdf', false).then(() => {
-      this.duringPrint = false
-    })
+    this.wrapper
+      ?.exportAsPdf(
+        `Calculateur_par ${
+          this.userService.user.getValue()!.firstName
+        }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+          .toJSON()
+          .slice(0, 10)}.pdf`,
+        false
+      )
+      .then(() => {
+        this.duringPrint = false
+      })
   }
 }
