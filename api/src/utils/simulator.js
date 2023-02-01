@@ -162,7 +162,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
   //console.log('ltmpTotalIn', Object.keys(tmpTotalIn).length, Object.keys(tmpTotalIn), tmpTotalIn)
-  console.log('Value to compute mean : ', summedlastActivities)
+  console.log('Value to compute mean : ', Object.keys(summedlastActivities).length, Object.keys(summedlastActivities), summedlastActivities)
   //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
   let totalIn = Math.floor(meanBy(summedlastActivities, 'entrees')) || 0
