@@ -308,7 +308,7 @@ export function decimalToStringDate (decimal) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
     const decimalMinute = strArray[1] && +strArray[1].length === 1 ? +strArray[1] * 10 : +strArray[1]
-    let minute = strArray[1] ? String(Math.ceil((1 / 100) * decimalMinute * 60)) : '00'
+    let minute = strArray[1] ? String(Math.round((1 / 100) * decimalMinute * 60)) : '00'
     minute = minute.length === 1 ? '0' + minute : minute
     return strArray[0] + 'h' + minute
   }
