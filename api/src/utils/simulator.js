@@ -154,8 +154,8 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
  */
 export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
-  const nbMonthHistory = 13
-  const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities, month(new Date(), -nbMonthHistory), month(new Date()))
+  const nbMonthHistory = 12
+  const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
 
   //console.log('lasts act', lastActivities.length, lastActivities)
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
@@ -447,15 +447,18 @@ export function getEtpByCategory (etpAffected, sufix = '') {
  * @param {*} dateStop date de fin
  * @returns situation
  */
-export async function getCSActivities (referentielId, allActivities, dateStart, dateStop) {
+export async function getCSActivities (referentielId, allActivities) {
   if (allActivities.length !== 0) {
+    const filteredByContentieux = allActivities.filter((a) => referentielId.includes(a.contentieux.id))
+
+    const dateStop = filteredByContentieux.reduce((a, b) => {
+      return a.periode > b.periode ? a.periode : b.periode
+    })
+    const dateStart = month(new Date(dateStop), -11)
+
     const lastActivities = orderBy(
-      allActivities.filter(
-        (a) =>
-          referentielId.includes(a.contentieux.id) &&
-          month(a.periode).getTime() >= month(dateStart).getTime() &&
-          month(a.periode).getTime() <= month(dateStop).getTime() &&
-          a.stock !== null
+      filteredByContentieux.filter(
+        (a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime() && a.stock !== null
       ),
       (a) => {
         const p = new Date(a.periode)
@@ -463,6 +466,7 @@ export async function getCSActivities (referentielId, allActivities, dateStart, 
       },
       ['desc']
     )
+    console.log('FTP:', dateStart, dateStop, lastActivities)
 
     const startDateCs = month(lastActivities.length ? lastActivities[lastActivities.length - 1].periode : new Date())
     const endDateCs = month(lastActivities.length ? lastActivities[0].periode : new Date(), 0, 'lastday')
