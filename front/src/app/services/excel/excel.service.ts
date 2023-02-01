@@ -101,7 +101,7 @@ export class ExcelService extends MainClass {
             SheetNames: ['data'],
           }
 
-          xlsx.utils.book_append_sheet(workbook, worksheet, 'Onglet 1')
+          //xlsx.utils.book_append_sheet(workbook, worksheet, 'Onglet 1')
 
           const excelBuffer: any = xlsx.write(workbook, {
             bookType: 'xlsx',
