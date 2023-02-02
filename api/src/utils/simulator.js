@@ -212,7 +212,14 @@ export async function getSituation (referentielId, hr, allActivities, categories
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
     // console.log('realTimePerCase', realTimePerCase)
-    console.log('To compare realTimePerCase : ', realTimePerCase, 'Etp used : ', selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute)
+    console.log(
+      'To compare realTimePerCase : ',
+      realTimePerCase,
+      'Etp used : ',
+      selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute,
+      'Total out used :',
+      totalOut
+    )
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
