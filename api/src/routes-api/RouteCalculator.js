@@ -126,10 +126,10 @@ export default class RouteCalculator extends Route {
       magCalculateOut: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateOut : null,
       etpFon: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.etpFon : null,
       fonRealTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonRealTimePerCase : null,
-      fonCalculateCoverage: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateCoverage : null,
-      fonCalculateDTESInMonths: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateDTESInMonths : null,
-      fonCalculateTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateTimePerCase : null,
-      fonCalculateOut: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT) ? item.fonCalculateOut : null,
+      fonCalculateCoverage: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateCoverage : null,
+      fonCalculateDTESInMonths: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateDTESInMonths : null,
+      fonCalculateTimePerCase: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateTimePerCase : null,
+      fonCalculateOut: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateOut : null,
       etpCont: canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL) ? item.etpCont : null,
     })
 

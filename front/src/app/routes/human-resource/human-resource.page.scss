@@ -83,10 +83,9 @@
 
 .new-action {
   margin: 32px 0;
-
-  >button:first-child {
-    margin-right: 16px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .actions {
@@ -175,4 +174,25 @@ add-ventilation {
   bottom: 0;
   z-index: 100;
   pointer-events: none;
+}
+
+.help-icon {
+  height: 22px;
+  width: 22px;
+  border-radius: 22px;
+  margin-left: 8px;
+  background-color: fColor(bgHelper);
+  display: inline-block;
+
+  > i {
+    font-size: 14px;
+    color: white;
+  }
+}
+
+.separator-action {
+  height: 16px;
+  width: 1px;
+  background-color: fColor(cgraylightv2);
+  margin: 0 16px 0 16px;
 }

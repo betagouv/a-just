@@ -13,7 +13,6 @@ export class DashboardPage extends MainClass {
   /**
    * Date de début selectionnée
    */
-
   dateStart: Date | null = null
   /**
    * Date de fin selectionnée
