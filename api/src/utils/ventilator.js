@@ -4,7 +4,7 @@ import { findAllSituations, findSituation } from './human-resource'
 import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
 
-export const preformatHumanResources = (list, dateSelected, referentielList) => {
+export const preformatHumanResources = (list, dateSelected, referentielList, fonctionsIds) => {
   return orderBy(
     list.map((h) => {
       const indisponibilities = findAllIndisponibilities(h, dateSelected)
@@ -44,6 +44,10 @@ export const preformatHumanResources = (list, dateSelected, referentielList) => 
     if (referentielList) {
       const activities = hr.currentActivities || []
       return activities.some((a) => referentielList.includes(a.contentieux.id))
+    }
+
+    if (fonctionsIds && hr.fonction) {
+      return fonctionsIds.includes(hr.fonction.id)
     }
 
     return true
