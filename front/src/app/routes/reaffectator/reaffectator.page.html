@@ -36,8 +36,8 @@
             <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
             <p>Compteurs</p>
           </div>
-          <button *ngIf="showIndicatorPanel" (mousedown)="showReelValues = true" (mouseleave)="showReelValues = false"
-            (mouseup)="showReelValues = false">Voir avant / après</button>
+          <button *ngIf="showIndicatorPanel" class="no-print" (mousedown)="showReelValues = true"
+            (mouseleave)="showReelValues = false" (mouseup)="showReelValues = false">Voir avant / après</button>
         </div>
         <ng-template [ngIf]="showIndicatorPanel">
           <div class="contentieux-label">

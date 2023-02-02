@@ -941,4 +941,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return this.basicHrInfo.controls.matricule.value?.length
     return null
   }
+
+  openHelpPanel(type: string) {
+    switch (type) {
+      case 'indispo':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Ajouter des indisponibilités',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
+        })
+        break
+    }
+  }
 }

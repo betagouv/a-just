@@ -99,13 +99,15 @@
 <ng-template #actions>
   <div class="flex-1"></div>
 
-  <div class="categories-switch" *ngIf="canViewMagistrat && canViewGreffier">
-    <div class="magistrats" [ngClass]="{'selected': categorySelected === 'MAGISTRATS'}"
+  <div class="categories-switch">
+    <div *ngIf="canViewMagistrat" class="magistrats"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRATS',  alone: !canViewGreffier}"
       (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRATS')">
       <input type="radio" [checked]="categorySelected === 'MAGISTRATS'" />
       <p>Magistrats</p>
     </div>
-    <div class="fonctionnaires" [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRES'}" class="fonctionnaires"
+    <div *ngIf="canViewGreffier" class="fonctionnaires"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRES',  alone: !canViewMagistrat}" class="fonctionnaires"
       (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRES')">
       <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRES'" />
       <p>Fonctionnaires</p>
