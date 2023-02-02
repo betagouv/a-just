@@ -66,7 +66,7 @@ export default class RouteReaffectator extends Route {
     this.sendOk(ctx, {
       list: categories.map((category) => ({
         originalLabel: category.label,
-        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, fonctionsIds, date), date, referentielList),
+        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, fonctionsIds, date), date, referentielList, fonctionsIds),
         categoryId: category.id,
         referentiel,
       })),
