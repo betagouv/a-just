@@ -19,8 +19,7 @@
         Ajouter une indisponibilité
       </button>
 
-      <span class="help-icon cursor-pointer" (click)="openHelpPanel('indispo')"><i
-          class="ri-lightbulb-flash-line"></i></span>
+      <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"></aj-help-button>
 
       <div class="separator-action"></div>
 
@@ -36,7 +35,8 @@
     [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"
     [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
     (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
-    [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0">
+    [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
+    (onOpenHelpPanel)="openHelpPanel($event)">
   </add-ventilation>
 
   <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">

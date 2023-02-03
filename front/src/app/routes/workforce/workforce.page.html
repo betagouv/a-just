@@ -171,5 +171,24 @@
         expand_more
       </mat-icon>
     </div>
+    <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
+      <ng-template ngFor let-person [ngForOf]="allPersonsFiltered">
+        <div *ngIf="person.isIn" (click)="onGoTo(person.id)" class="cursor-pointer">
+          {{ filterParams && filterParams.display === 'nom/prénom' ?
+          person.lastName:person.firstName}} {{ filterParams &&
+          filterParams.display === 'nom/prénom' ? person.firstName :
+          person.lastName}}
+        </div>
+        <a *ngIf="!person.isIn" [routerLink]="['/resource-humaine', person.id]">
+          {{ filterParams && filterParams.display === 'nom/prénom' ?
+          person.lastName:person.firstName}} {{ filterParams &&
+          filterParams.display === 'nom/prénom' ? person.firstName :
+          person.lastName}}
+        </a>
+      </ng-template>
+      <div *ngIf="allPersonsFiltered.length === 0">
+        Personne non trouvée !
+      </div>
+    </div>
   </div>
 </ng-template>

@@ -10,13 +10,11 @@
             {{ getShortMonthString(lastDateStart) }}
             {{ lastDateStart.getFullYear() }}
           </p>
-          <p
-            *ngIf="
+          <p *ngIf="
               dateStop &&
               lastDateStart &&
               lastDateStart.getTime() !== dateStop.getTime()
-            "
-          >
+            ">
             {{ dateStop | date : 'dd' }}
             {{ getShortMonthString(dateStop) }}
             {{ dateStop.getFullYear() }}
@@ -47,38 +45,23 @@
         </div>
         <div>
           <div class="label-aj">Temps de travail (en % d'un plein temps) :</div>
-          <input
-            type="number"
-            formControlName="etp"
-            min="0"
-            max="100"
-            (ngModelChange)="etp = $event / 100"
-          />
+          <input type="number" formControlName="etp" min="0" max="100" (ngModelChange)="etp = $event / 100" />
         </div>
       </div>
     </div>
 
     <div class="activities">
       <p>Répartition du temps disponible</p>
-      <panel-activities
-        [activities]="activities"
-        [etp]="etp"
-        [selected]="true"
-        (referentielChange)="onNewReferentiel($event)"
-        #panelActivities
-      >
+      <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
+        (referentielChange)="onNewReferentiel($event)" #panelActivities>
       </panel-activities>
     </div>
 
     <div class="date-start">
       <p *ngIf="isEdit">Modification de la situation au :</p>
       <p *ngIf="!isEdit">Situation à prendre en compte :</p>
-      <aj-date-select
-        title="A compter du"
-        [value]="form.get('activitiesStartDate')?.value"
-        (valueChange)="form.get('activitiesStartDate')?.setValue($event)"
-        [showToday]="false"
-      >
+      <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
       </aj-date-select>
       <div class="flex-1"></div>
     </div>
@@ -86,20 +69,14 @@
     <div class="indisponibilities">
       <div class="indispo-header">
         <p>Indisponibilités :</p>
-        <button
-          class="outline blue small"
-          (click)="addIndispiniblity.emit(null)"
-        >
+        <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
           Ajouter une indisponibilité
         </button>
+        <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"></aj-help-button>
         <div class="flex-1"></div>
       </div>
       <div class="indispo-content grid-triple" *ngIf="indisponibilities.length">
-        <div
-          *ngFor="let indisp of indisponibilities"
-          class="cursor-pointer"
-          (click)="addIndispiniblity.emit(indisp)"
-        >
+        <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
           <div class="icon">
             <mat-icon>event_busy</mat-icon>
           </div>
@@ -109,22 +86,18 @@
               ({{ indisp.percent || 0 }}%)
             </p>
             <p>
-              <ng-template [ngIf]="indisp.dateStart"
-                >du {{ indisp.dateStart | date : 'dd' }}
+              <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date : 'dd' }}
                 {{ getShortMonthString(indisp.dateStart) }}
-                {{ getFullYear(indisp.dateStart) }}</ng-template
-              >
+                {{ getFullYear(indisp.dateStart) }}</ng-template>
               <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
                 au
               </ng-template>
               <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
                 jusqu'au
               </ng-template>
-              <ng-template [ngIf]="indisp.dateStop"
-                >{{ indisp.dateStop | date : 'dd' }}
+              <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date : 'dd' }}
                 {{ getShortMonthString(indisp.dateStop) }}
-                {{ getFullYear(indisp.dateStop) }}</ng-template
-              >
+                {{ getFullYear(indisp.dateStop) }}</ng-template>
             </p>
           </div>
           <div class="action">

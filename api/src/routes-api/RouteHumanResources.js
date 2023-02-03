@@ -226,6 +226,7 @@ export default class RouteHumanResources extends Route {
 
       this.sendOk(ctx, {
         list: listFormated,
+        allPersons: hr,
       })
     } else {
       console.timeEnd('step5')

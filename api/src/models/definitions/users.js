@@ -84,23 +84,11 @@ export default (sequelizeInstance) => {
     if (validateEmail(user.email) === false) {
       throw 'Email non valide!'
     }
-
-    if (controlPassword(user.password) === false) {
-      throw 'Mot de passe trop faible!'
-    }
-    user.password = crypt.encryptPassword(user.password)
   })
 
   Model.addHook('beforeUpdate', async (user) => {
     if (user.email !== undefined && validateEmail(user.email) === false) {
       throw 'Email non valide!'
-    }
-
-    if (user.password) {
-      if (controlPassword(user.password) === false) {
-        throw 'Mot de passe trop faible!'
-      }
-      user.password = crypt.encryptPassword(user.password)
     }
   })
 

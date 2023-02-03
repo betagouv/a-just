@@ -76,6 +76,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Output() close = new EventEmitter()
   /**
+   * Event pour ouvrir le paneau d'aide
+   */
+  @Output() onOpenHelpPanel = new EventEmitter()
+  /**
    * Réferentiel des indispo
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
@@ -368,5 +372,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
+  }
+
+  /**
+   * Show panel to help
+   * @param type 
+   */
+  openHelpPanel(type: string) {
+    this.onOpenHelpPanel.emit(type)
   }
 }

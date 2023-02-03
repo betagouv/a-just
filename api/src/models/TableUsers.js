@@ -1,14 +1,30 @@
 import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
-import { snakeToCamelObject } from '../utils/utils'
+import { controlPassword, snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
+import { crypt } from '../utils'
 
 /**
  * Table des utilisateurs
  */
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Change user password
+   * @param {*} userId
+   * @param {*} password
+   * @returns
+   */
+  Model.updatePassword = async (userId, password) => {
+    password = crypt.encryptPassword(password)
+
+    return await Model.updateById(userId, {
+      new_password_token: null,
+      password,
+    })
+  }
+
   /**
    * Retourne les informations d'un utilisateur
    * @param {*} userId
@@ -36,6 +52,11 @@ export default (sequelizeInstance, Model) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
+      if (controlPassword(password) === false) {
+        throw 'Mot de passe trop faible!'
+      }
+      password = crypt.encryptPassword(password)
+
       await Model.create({
         email,
         password,
