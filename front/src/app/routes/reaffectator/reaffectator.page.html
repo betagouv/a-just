@@ -64,9 +64,9 @@
             <div class="taux-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="taux"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
                   <aj-speedometer class="with-auto small-text"
-                    [classTextBlue]="!showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100 ? true : false"
+                    [classTextBlue]="!showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday ? true : false"
                     [classDarkMode]="true" [percent]="showReelValues ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
                 </div>
@@ -75,7 +75,7 @@
             <div class="dtes-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="dtes"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.realCoverage && ref.coverage !== ref.realCoverage * 100}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
                   <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
               </ng-template>
