@@ -33,6 +33,7 @@ import { EtpChartComponent } from './etp-chart/etp-chart.component'
 import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-connected.component'
 import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 import { NewsComponent } from './news/news.component'
+import { HelpButtonComponent } from './help-button/help-button.component'
 
 /**
  * Liste des composants à importer
@@ -66,6 +67,7 @@ const list = [
   WrapperNoConnectedComponent,
   FooterNoConnectedComponent,
   NewsComponent,
+  HelpButtonComponent,
 ]
 
 /**

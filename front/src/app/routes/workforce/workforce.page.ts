@@ -20,6 +20,17 @@ import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
 import { AppService } from 'src/app/services/app/app.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
+import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
+
+/**
+ * Interface d'une fiche avec ses valeurs rendu
+ */
+export interface HumanResourceIsInInterface extends HumanResourceInterface {
+  /**
+   * Est présent dans l'interface
+   */
+  isIn: boolean
+}
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -109,6 +120,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Liste de toutes les RH
    */
   allHumanResources: HumanResourceInterface[] = []
+  /**
+   * Liste de toutes les personnes quelque soit l'arrivée ou le départ
+   */
+  allPersons: HumanResourceIsInInterface[] = []
+  /**
+   * Liste de toutes les personnes quelque soit l'arrivée ou le départ
+   */
+  allPersonsFiltered: HumanResourceIsInInterface[] | null = null
   /**
    * Formated RH
    */
@@ -371,14 +390,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 
-    if (this.valuesFinded && this.valuesFinded.length) {
-      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
-    } else {
-      this.onGoTo(null)
-      if (this.searchValue.length !== 0)
-        this.appService.alert.next({
-          text: 'La personne recherchée n’est pas présente à la date sélectionnée.',
-        })
+    this.allPersonsFiltered = null
+    let list = [...this.allPersons]
+    list = list.filter((h) => this.checkHROpacity(h) === 1)
+    if (list.length <= FILTER_LIMIT_ON_SEARCH) {
+      console.log(list)
+      this.allPersonsFiltered = list
     }
   }
 
@@ -408,8 +425,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         selectedReferentielIds,
         this.humanResourceService.categoriesFilterListIds
       )
-      .then((list) => {
+      .then((returnServeur) => {
+        const { list, allPersons } = returnServeur
         this.listFormated = list
+        let allPersonIds: number[] = []
+        this.listFormated.map((l) => {
+          allPersonIds = allPersonIds.concat(l.hr.map((h) => h.id))
+        })
+        this.allPersons = allPersons.map((p: HumanResourceInterface) => ({
+          ...p,
+          isIn: allPersonIds.includes(p.id),
+        }))
 
         this.orderListWithFiltersParams()
         this.onSearchBy()

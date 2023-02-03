@@ -650,9 +650,9 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
-        console.log(data.data.list)
+        console.log(data.data)
 
-        return data.data.list
+        return data.data
       })
   }
 
