@@ -767,9 +767,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               ? 0
               : fixDecimal(lastStock / outValue),
           etpUseToday: refFromItemList.etpUseToday,
+          totalAffected: refFromItemList.totalAffected,
           realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
         }
       })
+
+      console.log(this.referentiel)
     }
   }
 
