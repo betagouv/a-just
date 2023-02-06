@@ -187,6 +187,7 @@
       <div>
         <input
           class="matricule"
+          [style.height]="duringPrint? '20px':'auto'"
           [style.width]="getFormValueLength(basicHrInfo.controls.matricule.value||'Matricule',true)"
           (blur)="updateHuman('matricule',$event && $event.target ? $event.target : '',$event)"
           type="text"
