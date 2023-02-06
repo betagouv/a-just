@@ -200,7 +200,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param cacheHr
    * @returns
    */
-  async onLoad(cacheHr: HumanResourceInterface | null = null) {
+  async onLoad(cacheHr: HumanResourceInterface | null = null, updated = false) {
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
@@ -216,9 +216,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (findUser) {
       this.currentHR = findUser
 
-      this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
-      this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
-      this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
+      if (!updated) {
+        this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
+        this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
+        this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
+      }
 
       // control indisponibilities
       this.indisponibilityError =
@@ -518,23 +520,43 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         nodeName === 'firstName' ||
         nodeName === 'matricule'
       ) {
+        console.log(this.currentHR, this.basicHrInfo.controls)
         value = this.basicHrInfo.controls[nodeName].value
+
+        this.onLoad(
+          await this.humanResourceService.updatePersonById(this.currentHR, {
+            lastName: this.basicHrInfo.controls.lastName.value,
+            firstName: this.basicHrInfo.controls.firstName.value,
+            matricule: this.basicHrInfo.controls.matricule.value,
+          }),
+          true
+        )
+
+        this.currentHR = {
+          ...this.currentHR,
+          ...{
+            lastName: this.basicHrInfo.controls.lastName.value || '',
+            firstName: this.basicHrInfo.controls.firstName.value || '',
+            matricule: this.basicHrInfo.controls.matricule.value || '',
+          },
+        }
       } else if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
+
+        this.onLoad(
+          await this.humanResourceService.updatePersonById(this.currentHR, {
+            [nodeName]: value,
+          })
+        )
+
+        this.currentHR = {
+          ...this.currentHR,
+          [nodeName]: value,
+        }
       }
       console.log({
         [nodeName]: value,
       })
-      this.onLoad(
-        await this.humanResourceService.updatePersonById(this.currentHR, {
-          [nodeName]: value,
-        })
-      )
-
-      this.currentHR = {
-        ...this.currentHR,
-        [nodeName]: value,
-      }
     }
   }
 
@@ -926,20 +948,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     event.target.blur()
   }
 
-  getFormValueLength(str: string) {
-    if (
-      str === 'firstName' &&
-      this.basicHrInfo.controls.firstName.value?.length
-    )
-      return this.basicHrInfo.controls.firstName.value?.length
-    if (str === 'lastName' && this.basicHrInfo.controls.lastName.value?.length)
-      return this.basicHrInfo.controls.lastName.value?.length
-    if (
-      str === 'matricule' &&
-      this.basicHrInfo.controls.matricule.value?.length
-    )
-      return this.basicHrInfo.controls.matricule.value?.length
-    return null
+  getFormValueLength(str: string | null, small = false) {
+    if (small) return (str?.length || 0) * 6.5 + 3 + 'px'
+    return (str?.length || 0) * 13.5 + 'px'
   }
 
   openHelpPanel(type: string) {
