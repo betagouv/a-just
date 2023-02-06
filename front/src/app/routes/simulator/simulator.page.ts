@@ -59,6 +59,7 @@ const etpFonToDefine = '[un volume moyen de]'
 @Component({
   templateUrl: './simulator.page.html',
   styleUrls: ['./simulator.page.scss'],
+
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -1314,5 +1315,13 @@ export class SimulatorPage extends MainClass implements OnInit {
   hasNoNullValue(obj: SimulatorInterface | null): boolean {
     if (obj && Object.values(obj).every((o) => o !== null)) return true
     else return false
+  }
+
+  getTooltipText() {
+    return (
+      'Calculé à partir de la situation ' +
+      (this.startRealValue !== '' ? 'au ' : 'à ') +
+      (this.startRealValue || "aujourd'hui")
+    )
   }
 }
