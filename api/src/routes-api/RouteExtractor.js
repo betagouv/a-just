@@ -166,4 +166,23 @@ export default class RouteExtractor extends Route {
 
     this.sendOk(ctx, { values: data, columnSize })
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+      categoryFilter: Types.string().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async filterListAct (ctx) {
+    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+
+    this.sendOk(ctx, 'OK')
+  }
 }
