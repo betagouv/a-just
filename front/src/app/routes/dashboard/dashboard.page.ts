@@ -1,6 +1,13 @@
 import { Component } from '@angular/core'
+import { CategoryScale } from 'chart.js'
 import { MainClass } from 'src/app/libs/main-class'
 import { ExcelService } from 'src/app/services/excel/excel.service'
+import { UserService } from 'src/app/services/user/user.service'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 /**
  * Page d'extraction
@@ -29,12 +36,7 @@ export class DashboardPage extends MainClass {
   /**
    * Categories
    */
-  categories = [
-    { id: 1, value: 'Tous' },
-    { id: 2, value: 'Magistrat' },
-    { id: 3, value: 'Contractuel' },
-    { id: 4, value: 'Fonctionnaire' },
-  ]
+  categories = new Array<any>()
   /**
    * Categorie selectionée
    */
@@ -43,13 +45,47 @@ export class DashboardPage extends MainClass {
    * Loader
    */
   isLoading: boolean = false
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  canViewContractuel: boolean = false
 
   /**
    * Constructeur
    * @param excelService
    */
-  constructor(private excelService: ExcelService) {
+  constructor(
+    private excelService: ExcelService,
+    private userService: UserService
+  ) {
     super()
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+        if (
+          this.canViewMagistrat &&
+          this.canViewGreffier &&
+          this.canViewContractuel
+        )
+          this.categories.push({ id: 1, value: 'Tous' })
+        if (this.canViewMagistrat)
+          this.categories.push({ id: 2, value: 'Magistrat' })
+        if (this.canViewContractuel)
+          this.categories.push({ id: 3, value: 'Contractuel' })
+        if (this.canViewGreffier)
+          this.categories.push({ id: 4, value: 'Fonctionnaire' })
+      })
+    )
   }
 
   /**
