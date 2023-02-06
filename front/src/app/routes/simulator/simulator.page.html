@@ -420,6 +420,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id"
         [@fadeInOut]
       >
@@ -440,6 +446,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id"
         [@fadeInOut]
       >
@@ -459,6 +471,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id"
         [@fadeInOut]
       >
@@ -480,6 +498,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id"
         [@fadeInOut]
       >
@@ -501,6 +525,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id"
         [@fadeInOut]
       >
@@ -520,6 +550,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id"
         [@fadeInOut]
       >
@@ -540,6 +576,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
         [@fadeInOut]
       >
@@ -559,6 +601,12 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
         [@fadeInOut]
       >
@@ -579,11 +627,16 @@
       />
       <div
         class="modified-label"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltipText()"
+        [matTooltipClass]="{'tooltip-orange':true}"
+        matTooltipPosition="left"
+        matTooltipShowDelay="0"
+        matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===magRealTimePerCase.id  || paramsToAjust.param2.label===magRealTimePerCase.id"
         [@fadeInOut]
       >
         {{percentageModifiedInputText(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}%
-
         <div class="triangle"></div>
       </div>
     </div>
@@ -645,6 +698,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn'"
             [@fadeInOut]
           >
@@ -654,6 +713,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn') && getFieldValue('totalIn',simulatedSationData)!==getFieldValue('totalIn',firstSituationData)"
             [@fadeInOut]
           >
@@ -669,6 +733,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut'"
             [@fadeInOut]
           >
@@ -678,6 +748,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut') && getFieldValue('totalOut',simulatedSationData)!==getFieldValue('totalOut',firstSituationData)"
             [@fadeInOut]
           >
@@ -693,6 +768,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock'"
             [@fadeInOut]
           >
@@ -702,6 +783,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock') && getFieldValue('lastStock',simulatedSationData)!==getFieldValue('lastStock',firstSituationData)"
             [@fadeInOut]
           >
@@ -717,6 +803,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag'"
             [@fadeInOut]
           >
@@ -726,6 +818,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag') && getFieldValue('etpMag',simulatedSationData)!==getFieldValue('etpMag',firstSituationData)"
             [@fadeInOut]
           >
@@ -741,6 +838,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon'"
             [@fadeInOut]
           >
@@ -750,6 +853,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData)"
             [@fadeInOut]
           >
@@ -768,6 +876,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage'"
             [@fadeInOut]
           >
@@ -777,6 +891,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',firstSituationData)"
             [@fadeInOut]
           >
@@ -797,6 +916,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths'"
             [@fadeInOut]
           >
@@ -806,6 +931,11 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths') && getFieldValue('realDTESInMonths',simulatedSationData)!==getFieldValue('realDTESInMonths',firstSituationData)"
             [@fadeInOut]
           >
@@ -821,6 +951,12 @@
           />
           <div
             class="modified-label simulated"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='magRealTimePerCase'  || paramsToAjust.param2.label==='magRealTimePerCase'"
             [@fadeInOut]
           >
@@ -830,11 +966,15 @@
           </div>
           <div
             class="modified-label simulated blue"
+            #tooltip="matTooltip"
+            [matTooltip]="getTooltipText()"
+            matTooltipPosition="left"
+            matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='magRealTimePerCase'  || paramsToAjust.param2.label==='magRealTimePerCase') && getFieldValue('magRealTimePerCase',simulatedSationData)!==getFieldValue('magRealTimePerCase',firstSituationData)"
             [@fadeInOut]
           >
             {{ratio(getFieldValue('magRealTimePerCase',simulatedSationData,true,true),getFieldValue('magRealTimePerCase',firstSituationData,true,true))}}%
-
             <div class="triangle simulated blue"></div>
           </div>
         </div>
