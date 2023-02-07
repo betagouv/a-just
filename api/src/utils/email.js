@@ -9,9 +9,9 @@ apiKey.apiKey = config.sendinblue
 
 /**
  * Envoi de mail
- * @param {*} to 
- * @param {*} templateId 
- * @param {*} params 
+ * @param {*} to
+ * @param {*} templateId
+ * @param {*} params
  * @returns instance de transaction mail
  */
 export function sentEmail (to, templateId, params) {
@@ -20,7 +20,7 @@ export function sentEmail (to, templateId, params) {
   sendSmtpEmail = {
     to: [to],
     templateId,
-    params,
+    params: { ...params, envName: config.displayEnvName },
   }
 
   return apiInstance.sendTransacEmail(sendSmtpEmail).then(
@@ -39,9 +39,9 @@ export function sentEmail (to, templateId, params) {
 
 /**
  * Import/supprime contact sendinblue
- * @param {*} user 
- * @param {*} addToList 
- * @returns 
+ * @param {*} user
+ * @param {*} addToList
+ * @returns
  */
 export function sentEmailSendinblueUserList (user, addToList = true) {
   let apiInstance = new SibApiV3Sdk.ContactsApi()
