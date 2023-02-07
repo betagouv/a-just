@@ -6,6 +6,10 @@ module.exports = {
    */
   envName: '',
   /**
+   * String pour préfixer le nom de l'environement (idéal pour les mails de test)
+   */
+  displayEnvName: '',
+  /**
    * Url du serveur (idéal pour le contenu des mails)
    */
   serverUrl: process.env.SERVER_URL || 'http://localhost:8080/api',
@@ -72,4 +76,8 @@ module.exports = {
   sendingBlue: {
     usersListId: 6,
   },
+  /**
+   * Nombre de mois d'inactivité maximum des comptes
+   */
+  nbMaxMonthCanBeInactive: 3,
 }

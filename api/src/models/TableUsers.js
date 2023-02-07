@@ -2,8 +2,11 @@ import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { controlPassword, snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
-import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
+import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 import { crypt } from '../utils'
+import { USER_AUTO_LOGIN } from '../constants/log-codes'
+import config from 'config'
+import { getNbMonth } from '../utils/date'
 
 /**
  * Table des utilisateurs
@@ -129,6 +132,46 @@ export default (sequelizeInstance, Model) => {
       }
     } else {
       throw 'User not found'
+    }
+  }
+
+  /**
+   * Control de l'ensemble des personnes à la dernière date de connexion
+   */
+  Model.checkLastConnexion = async () => {
+    if (config.nbMaxMonthCanBeInactive === null) {
+      return
+    }
+
+    const users = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'email'],
+      raw: true,
+    })
+    const usersFinded = []
+
+    for (let i = 0; i < users.length; i++) {
+      const lastLog = await Model.models.Logs.findLastLog(null, USER_AUTO_LOGIN, { userId: users[i].id })
+      let lastConnexionDate = new Date(2023, 1, 15) // date fictive base sur la date de mise en prod
+      if (lastLog) {
+        lastConnexionDate = new Date(lastLog.createdAt)
+      }
+
+      const nbMonth = getNbMonth(lastConnexionDate, new Date())
+      if (nbMonth > config.nbMaxMonthCanBeInactive) {
+        usersFinded.push({ name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''), email: users[i].email })
+      }
+    }
+
+    if (usersFinded.length) {
+      await sentEmail(
+        {
+          email: config.contactEmail,
+        },
+        TEMPLATE_CRON_USERS_NOT_CONNECTED,
+        {
+          userList: usersFinded,
+        }
+      )
     }
   }
 

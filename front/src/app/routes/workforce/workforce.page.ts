@@ -127,7 +127,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste de toutes les personnes quelque soit l'arrivée ou le départ
    */
-  allPersonsFiltered: HumanResourceIsInInterface[] | null = null
+  allPersonsFiltered: HumanResourceIsInInterface[] | null = null
   /**
    * Formated RH
    */
@@ -354,11 +354,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   checkHROpacity(hr: HumanResourceInterface) {
+    let name =
+      this.filterParams && this.filterParams.display === 'nom/prénom'
+        ? (hr.lastName || '') + ' ' + (hr.firstName || '')
+        : (hr.firstName || '') + ' ' + (hr.lastName || '')
     if (
       !this.searchValue ||
-      ((hr.firstName || '') + (hr.lastName || ''))
-        .toLowerCase()
-        .includes(this.searchValue.toLowerCase())
+      name.toLowerCase().includes(this.searchValue.toLowerCase())
     ) {
       return 1
     }

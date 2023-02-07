@@ -8,6 +8,7 @@ import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
+import { start as startCrons } from './crons'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -23,6 +24,7 @@ export default class App extends AppBase {
   async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
+        startCrons(this) // start crons
         console.log('--- IS READY ---')
         this.isReady()
       })
