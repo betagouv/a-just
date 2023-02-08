@@ -337,8 +337,12 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
   }
 
   if (magCalculateTimePerCase) {
-    magCalculateOut = Math.floor((((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) / 12)
-    fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
+    magCalculateOut = Math.floor(Math.floor(magEtpAffected * config.nbHoursPerDayAndMagistrat * (config.nbDaysByMagistrat / 12)) / magCalculateTimePerCase)
+    fonCalculateOut = Math.floor(
+      Math.floor(fonEtpAffected * config.nbHoursPerDayAndFonctionnaire * (config.nbDaysByFonctionnaire / 12)) / fonCalculateTimePerCase
+    )
+    //magCalculateOut = Math.floor((((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) / 12)
+    //fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
     magCalculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
     fonCalculateCoverage = fixDecimal(fonCalculateOut / (totalIn || 0))
     magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
