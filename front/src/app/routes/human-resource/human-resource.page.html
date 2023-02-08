@@ -103,18 +103,24 @@
 
 <ng-template #titleTemplate>
   <div class="title">
-    <p class="page-name">Fiche individuelle de</p>
-    <div class="flex-center">
-      <p class="user-name">
-        <span contenteditable data-placeholder="Prénom"
-          (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
-          (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{ (currentHR?.firstName
-          || '') }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
-          (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
-          (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{ (currentHR?.lastName)
-          }}</span>
-        <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
-      </p>
+    <div class="personal-name">
+      <p class="page-name">Fiche individuelle de</p>
+      <div class="flex-center">
+        <p class="user-name">
+          <span contenteditable data-placeholder="Prénom"
+            (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
+            (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{
+            (currentHR?.firstName
+            || '') }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
+            (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
+            (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{
+            (currentHR?.lastName)
+            }}</span>
+          <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
+        </p>
+      </div>
+    </div>
+    <div>
       <div>
         <span class="matricule" [style.height]="duringPrint? '20px':'auto'" contenteditable data-placeholder="Matricule"
           (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
