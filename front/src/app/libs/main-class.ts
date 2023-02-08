@@ -269,4 +269,8 @@ export class MainClass {
   public decimalToStringDate(decimal: number | null) {
     return decimalToStringDate(decimal)
   }
+
+  public log(event: any) {
+    console.log(event)
+  }
 }

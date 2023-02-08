@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { maxBy, minBy, orderBy, sumBy } from 'lodash'
+import { debounceTime, delay, last, mergeMap, of, takeLast } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -157,6 +158,41 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private appService: AppService
   ) {
     super()
+
+    this.basicHrInfo.valueChanges.pipe(debounceTime(500)).subscribe((v) => {
+      if (this.currentHR) {
+        let options = {}
+
+        if (v.firstName !== (this.currentHR.firstName || '')) {
+          options = { ...options, firstName: v.firstName }
+        }
+        if (v.lastName !== (this.currentHR.lastName || '')) {
+          options = { ...options, lastName: v.lastName }
+        }
+        if (v.matricule !== (this.currentHR.matricule || '')) {
+          options = { ...options, matricule: v.matricule }
+        }
+
+        if (Object.keys(options).length && this.onEditIndex === null) {
+          // @ts-ignore
+          if (options.lastName === '') {
+            alert('Vous devez saisir un nom pour valider la création !')
+            return
+          }
+          // @ts-ignore
+          if (options.firstName === '') {
+            alert('Vous devez saisir un prénom pour valider la création !')
+            return
+          }
+
+          this.humanResourceService.updatePersonById(this.currentHR, options)
+          this.currentHR = {
+            ...this.currentHR,
+            ...options,
+          }
+        }
+      }
+    })
   }
 
   /**
@@ -511,49 +547,24 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Demande de modification d'une fiche
    * @param nodeName
    * @param value
-   * @param directRef
    */
-  async updateHuman(nodeName: string, value: any, directRef?: any) {
+  async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
-      if (
-        nodeName === 'lastName' ||
-        nodeName === 'firstName' ||
-        nodeName === 'matricule'
-      ) {
-        console.log(this.currentHR, this.basicHrInfo.controls)
-        value = this.basicHrInfo.controls[nodeName].value
-
-        this.onLoad(
-          await this.humanResourceService.updatePersonById(this.currentHR, {
-            lastName: this.basicHrInfo.controls.lastName.value,
-            firstName: this.basicHrInfo.controls.firstName.value,
-            matricule: this.basicHrInfo.controls.matricule.value,
-          }),
-          true
-        )
-
-        this.currentHR = {
-          ...this.currentHR,
-          ...{
-            lastName: this.basicHrInfo.controls.lastName.value || '',
-            firstName: this.basicHrInfo.controls.firstName.value || '',
-            matricule: this.basicHrInfo.controls.matricule.value || '',
-          },
-        }
-      } else if (value && typeof value.innerText !== 'undefined') {
+      if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
-
-        this.onLoad(
-          await this.humanResourceService.updatePersonById(this.currentHR, {
-            [nodeName]: value,
-          })
-        )
-
-        this.currentHR = {
-          ...this.currentHR,
-          [nodeName]: value,
-        }
       }
+
+      this.onLoad(
+        await this.humanResourceService.updatePersonById(this.currentHR, {
+          [nodeName]: value,
+        })
+      )
+
+      this.currentHR = {
+        ...this.currentHR,
+        [nodeName]: value,
+      }
+
       console.log({
         [nodeName]: value,
       })
@@ -936,10 +947,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       })
   }
 
-  printConsole() {
-    console.log('out')
-  }
-
   /**
    * Enlever le focus du champ d'édition
    * @param event mouse event
@@ -948,11 +955,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     event.target.blur()
   }
 
-  getFormValueLength(str: string | null, small = false) {
-    if (small) return (str?.length || 0) * 6.5 + 3 + 'px'
-    return (str?.length || 0) * 13.5 + 'px'
-  }
-
+  /**
+   * Force to open help panel
+   * @param type 
+   */
   openHelpPanel(type: string) {
     switch (type) {
       case 'indispo':
@@ -962,5 +968,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         })
         break
     }
+  }
+
+  /**
+   * Update form with contenteditable event
+   * @param node 
+   * @param object 
+   */
+  completeFormWithDomObject(
+    node: 'firstName' | 'lastName' | 'matricule',
+    object: any
+  ) {
+    this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
   }
 }
