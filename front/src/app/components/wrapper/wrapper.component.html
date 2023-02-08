@@ -111,7 +111,10 @@
       </div>
       <p>
         <i class="ri-lightbulb-flash-line"></i>
-        <span>Comment ça marche ?</span>
+        <span>{{
+          (documentationToShow && documentationToShow.subTitle) ||
+          'Comment ça marche ?'
+          }}</span>
       </p>
     </div>
   </div>

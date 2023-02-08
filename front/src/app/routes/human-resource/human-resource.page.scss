@@ -51,10 +51,15 @@
 }
 
 .new-action {
-  margin: 32px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 32px auto;
+  display: grid;
+	grid-template-columns: repeat(2, 1fr);
+  max-width: 300px;
+	grid-gap: 16px 8px;
+
+  aj-help-button {
+    margin-top: 6px;
+  }
 }
 
 .actions {
@@ -143,15 +148,4 @@ add-ventilation {
   bottom: 0;
   z-index: 100;
   pointer-events: none;
-}
-
-.help-icon {
-  margin-left: 8px;
-}
-
-.separator-action {
-  height: 16px;
-  width: 1px;
-  background-color: fColor(cgraylightv2);
-  margin: 0 16px 0 16px;
 }
