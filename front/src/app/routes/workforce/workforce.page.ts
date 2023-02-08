@@ -354,7 +354,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   checkHROpacity(hr: HumanResourceInterface) {
-    let name =
+    const name =
       this.filterParams && this.filterParams.display === 'nom/prénom'
         ? (hr.lastName || '') + ' ' + (hr.firstName || '')
         : (hr.firstName || '') + ' ' + (hr.lastName || '')
