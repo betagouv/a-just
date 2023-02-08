@@ -360,12 +360,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns opacity
    */
   checkHROpacity(hr: HumanResourceInterface) {
+    const name =
+      (hr.firstName || '') + ' ' + (hr.lastName || '')
+
     if (
       !this.searchValue ||
-      (hr.firstName || '')
-        .toLowerCase()
-        .includes(this.searchValue.toLowerCase()) ||
-      (hr.lastName || '').toLowerCase().includes(this.searchValue.toLowerCase())
+      name.toLowerCase().includes(this.searchValue.toLowerCase())
     ) {
       return 1
     }
