@@ -395,7 +395,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
-    if (list.length <= FILTER_LIMIT_ON_SEARCH) {
+    if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
       console.log(list)
       this.allPersonsFiltered = list
     }

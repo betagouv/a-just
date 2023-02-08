@@ -965,6 +965,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
+          subTitle: 'Qu\'est-ce que c\'est ?',
         })
         break
     }
