@@ -17,6 +17,10 @@
 
 :host {
 
+  .hide-by-category {
+    display: none !important
+  }
+
   .categories-switch {
     display: flex;
     align-items: stretch;

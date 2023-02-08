@@ -111,18 +111,20 @@
       <p>Stock</p>
     </div>
     <div
+      *ngIf="canViewMagistrat"
       class="item"
       [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
       <p>ETPT magistrat</p>
     </div>
     <div
+      *ngIf="canViewGreffier"
       class="item blue-bg"
       [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
       <p>ETPT greffe</p>
     </div>
-    <div class="item">
+    <div *ngIf="canViewContractuel" class="item">
       <p>ETPT contractuels</p>
     </div>
     <div class="item blue-bg">
@@ -163,18 +165,20 @@
       <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
     </div>
     <div
+      *ngIf="canViewMagistrat"
       class="line-item"
       [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
       <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
     </div>
     <div
+      *ngIf="canViewGreffier"
       class="line-item orange-bg"
       [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
       <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
     </div>
-    <div class="line-item">
+    <div *ngIf="canViewContractuel" class="line-item">
       <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
     </div>
     <div class="line-item orange-bg">
@@ -234,6 +238,7 @@
       />
     </div>
     <div
+      *ngIf="canViewMagistrat"
       class="line-item"
       [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"
     >
@@ -243,6 +248,7 @@
       />
     </div>
     <div
+      *ngIf="canViewGreffier"
       class="line-item grey-bg"
       [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}"
     >
@@ -251,7 +257,7 @@
         disabled
       />
     </div>
-    <div class="line-item">
+    <div *ngIf="canViewContractuel" class="line-item">
       <input
         [value]="getFieldValue('etpCont',projectedSituationData)"
         disabled
@@ -485,7 +491,7 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item">
+    <div [ngClass]="{'hide-by-category': !canViewMagistrat}" class="line-item">
       <input
         class="ajusted-button"
         id="etpMag"
@@ -512,7 +518,10 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item blue-bg">
+    <div
+      [ngClass]="{'hide-by-category': !canViewGreffier}"
+      class="line-item blue-bg"
+    >
       <input
         class="ajusted-button"
         id="etpFon"
@@ -538,7 +547,10 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item">
+    <div
+      [ngClass]="{'hide-by-category': !canViewContractuel}"
+      class="line-item"
+    >
       <input
         class="ajusted-button disable"
         id="etpCont"
@@ -658,13 +670,13 @@
         <div class="item blue-bg">
           <p>Stock</p>
         </div>
-        <div class="item">
+        <div *ngIf="canViewMagistrat" class="item">
           <p>ETPT magistrat</p>
         </div>
-        <div class="item blue-bg">
+        <div *ngIf="canViewGreffier" class="item blue-bg">
           <p>ETPT greffe</p>
         </div>
-        <div class="item">
+        <div *ngIf="canViewContractuel" class="item">
           <p>ETPT contractuels</p>
         </div>
         <div class="item blue-bg">
@@ -796,7 +808,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div *ngIf="canViewMagistrat" class="line-item">
           <input
             [value]="getFieldValue('etpMag',simulatedSationData)"
             disabled
@@ -831,7 +843,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div *ngIf="canViewGreffier" class="line-item">
           <input
             [value]="getFieldValue('etpFon',simulatedSationData)"
             disabled
@@ -866,7 +878,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div *ngIf="canViewContractuel" class="line-item">
           <input [value]="getFieldValue('',simulatedSationData)" disabled />
         </div>
         <div class="line-item">
