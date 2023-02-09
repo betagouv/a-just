@@ -153,7 +153,7 @@ export class MainClass {
         return `rgba(165, 88, 160, ${opacity})`
     }
 
-    return `rgba(239, 203, 58, ${opacity})`
+    return `rgba(121, 104, 48, ${opacity})`
   }
 
   /**

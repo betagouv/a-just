@@ -224,8 +224,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService,
-    private appService: AppService
+    private userService: UserService
   ) {
     super()
   }
