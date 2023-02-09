@@ -144,9 +144,9 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / totalOut, 100) : null
 
   const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop)
-  const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 100) : 0
-  const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
-  const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
+  const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
+  const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
+  const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (totalOut / etpMag))
