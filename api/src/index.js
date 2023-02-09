@@ -1,6 +1,6 @@
 import config from 'config'
 
-if(!config.consoleLog) {
+if (!config.consoleLog) {
   // hide console log
   console.log('HIDE CONSOLE LOGS !!!')
   console.log = function () {}
@@ -12,4 +12,3 @@ const app = new App()
 app.start()
 
 export default app
-
