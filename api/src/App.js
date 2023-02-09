@@ -9,6 +9,12 @@ import db from './models'
 import render from 'koa-ejs'
 import path from 'path'
 
+var StatsD = require('hot-shots')
+var dogstatsd = new StatsD()
+
+// Increment a counter.
+dogstatsd.increment('page.views')
+
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
   constructor () {
