@@ -26,7 +26,7 @@ export class NewsService {
    * @returns
    */
   getLast(): Promise<NewsInterface> {
-    return this.serverService.get(`news/last`).then((d) => {
+    return this.serverService.getWithoutError(`news/last`).then((d) => {
       const news = d.data
 
       if(news && news.id && !this.hasClose(news.id)) {
