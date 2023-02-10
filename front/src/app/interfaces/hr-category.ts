@@ -14,6 +14,14 @@ export interface HRCategoryInterface {
    * Ordre pour trier en base
    */
 	rank?: number;
+  /**
+   * Couleur du texte de la catégorie
+   */
+	textColor: string;
+  /**
+   * Couleur de fond de la catégorie
+   */
+	bgColor: string;
 }
 
 /**

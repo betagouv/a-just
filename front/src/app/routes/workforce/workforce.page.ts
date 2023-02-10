@@ -224,8 +224,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService,
-    private appService: AppService
+    private userService: UserService
   ) {
     super()
   }
@@ -314,7 +313,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt += realETP
         })
       }
-
+console.log(etpt)
       return {
         ...c,
         etpt,
@@ -354,7 +353,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   checkHROpacity(hr: HumanResourceInterface) {
-    let name =
+    const name =
       this.filterParams && this.filterParams.display === 'nom/prénom'
         ? (hr.lastName || '') + ' ' + (hr.firstName || '')
         : (hr.firstName || '') + ' ' + (hr.lastName || '')
@@ -395,7 +394,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
-    if (list.length <= FILTER_LIMIT_ON_SEARCH) {
+    if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
       console.log(list)
       this.allPersonsFiltered = list
     }

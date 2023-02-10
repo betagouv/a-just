@@ -67,7 +67,8 @@
                   [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
                   <aj-speedometer class="with-auto small-text"
                     [classTextBlue]="!showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday ? true : false"
-                    [classDarkMode]="true" [percent]="showReelValues ? ref.realCoverage * 100 : ref.coverage">
+                    [classDarkMode]="true"
+                    [percent]="showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
                 </div>
               </ng-template>

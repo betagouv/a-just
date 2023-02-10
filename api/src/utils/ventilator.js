@@ -33,7 +33,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
         etpLabel: etpLabel(etp),
         hasIndisponibility,
         currentSituation,
-        etp,
+        etp: fixDecimal(etp, 100),
         category: firstSituation && firstSituation.category,
         fonction: firstSituation && firstSituation.fonction,
       }
