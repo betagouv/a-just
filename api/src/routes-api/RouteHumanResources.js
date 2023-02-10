@@ -179,16 +179,17 @@ export default class RouteHumanResources extends Route {
     }
 
     console.time('step1')
-    const hr = await this.model.getCache(backupId)
+    let hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
+    const allCategories = await this.models.HRCategories.getAll()
 
     if (extractor === false) {
       let listFiltered = [...list]
-      const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
+      const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
       const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
 
       const listFormated = categories
@@ -223,6 +224,12 @@ export default class RouteHumanResources extends Route {
           }
         })
       console.log('step7')
+
+      // if filter by user access to categories
+      if (categories.length !== allCategories.length) {
+        const ids = categories.map((c) => c.id)
+        hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
+      }
 
       this.sendOk(ctx, {
         list: listFormated,
