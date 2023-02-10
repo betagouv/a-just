@@ -1,4 +1,4 @@
-<div>
+<div (mouseenter)="isChildVisible = true" (mouseleave)="isChildVisible = false">
   <i class="ri-lightbulb-flash-line"></i>
-  <span>Comment ça marche ?</span>
+  <span *ngIf="isChildVisible">{{ text || 'Comment ça marche ?' }}</span>
 </div>

@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
-import { getCategoryColor } from '../constants/categories'
+import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
@@ -179,16 +179,17 @@ export default class RouteHumanResources extends Route {
     }
 
     console.time('step1')
-    const hr = await this.model.getCache(backupId)
+    let hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
+    const allCategories = await this.models.HRCategories.getAll()
 
     if (extractor === false) {
       let listFiltered = [...list]
-      const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
+      const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
       const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
 
       const listFormated = categories
@@ -215,7 +216,7 @@ export default class RouteHumanResources extends Route {
 
           return {
             textColor: getCategoryColor(label),
-            bgColor: getCategoryColor(label, 0.2),
+            bgColor: getBgCategoryColor(label),
             referentiel,
             label,
             hr: group,
@@ -223,6 +224,12 @@ export default class RouteHumanResources extends Route {
           }
         })
       console.log('step7')
+
+      // if filter by user access to categories
+      if (categories.length !== allCategories.length) {
+        const ids = categories.map((c) => c.id)
+        hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
+      }
 
       this.sendOk(ctx, {
         list: listFormated,

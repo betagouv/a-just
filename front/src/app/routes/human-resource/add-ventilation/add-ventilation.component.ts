@@ -63,6 +63,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Modification / Création d'une situation
    */
   @Input() isEdit: boolean = false
+  @Input() basicData: FormGroup | null = null
   /**
    * Event lors de la sauvegarde
    */
@@ -109,7 +110,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
-  @Input() basicData: FormGroup | null = null
 
   /**
    * Constructeur

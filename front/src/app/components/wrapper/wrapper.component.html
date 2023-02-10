@@ -4,8 +4,19 @@
     <div class="images">
       <div class="logo white-mode block-marque-white"></div>
       <div class="logo dark-mode block-marque-dark"></div>
-      <div class="logo-ajust white-mode logo-white" [title]="versionNumber" (click)="onDisconnect()"></div>
-      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="onDisconnect()"></div>
+      <div class="logo-ajust white-mode logo-white" [title]="versionNumber" (click)="popin=true"></div>
+
+
+      <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
+        <p>Êtes-vous sur de vouloir vous déconnecter ?</p>
+        <div class="content-popup">
+          <button (click)="onSelectAction('logout')">Oui</button>
+          <button (click)="popin = false">Non</button>
+        </div>
+      </aj-popup>
+
+
+      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin=true"></div>
     </div>
 
     <div class="juridiction" *ngIf="hrBackups.length">
@@ -111,7 +122,10 @@
       </div>
       <p>
         <i class="ri-lightbulb-flash-line"></i>
-        <span>Comment ça marche ?</span>
+        <span>{{
+          (documentationToShow && documentationToShow.subTitle) ||
+          'Comment ça marche ?'
+          }}</span>
       </p>
     </div>
   </div>

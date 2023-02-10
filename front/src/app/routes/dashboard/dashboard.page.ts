@@ -1,5 +1,4 @@
 import { Component } from '@angular/core'
-import { CategoryScale } from 'chart.js'
 import { MainClass } from 'src/app/libs/main-class'
 import { ExcelService } from 'src/app/services/excel/excel.service'
 import { UserService } from 'src/app/services/user/user.service'
