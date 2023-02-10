@@ -65,10 +65,9 @@ export class ServerService {
     }
 
     if (error.status === 403) {
-      localStorage.removeItem('token')
       window.location.href = '/'
-      alert('Veuillez vous reconnecter')
-      return Promise.reject('Veuillez vous reconnecter')
+      alert('Vous n\'avez pas accès à cette section !')
+      return Promise.reject('Vous n\'avez pas accès à cette section !')
     } else if (error.status === 404) {
       alert(
         'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.'
