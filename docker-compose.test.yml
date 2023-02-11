@@ -3,7 +3,7 @@ services:
   db:
     image: postgres:10.4
     restart: always
-    cpus: "2.0"
+    cpus: 2.0
     mem_limit: 4G
     expose:
       - "5432"
@@ -56,17 +56,17 @@ services:
       ajust_network:
         ipv4_address: 173.0.0.20
     expose:
-      - '8080'
+      - "8080"
     depends_on:
-      - 'db'
+      - "db"
     volumes:
-      - './api/coverage:/home/api/coverage'
+      - "./api/coverage:/home/api/coverage"
     environment:
       - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
       - SERVER_URL=http://173.0.0.20:8080/api
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
-  
+
 networks:
   ajust_network:
     driver: bridge
