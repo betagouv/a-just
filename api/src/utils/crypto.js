@@ -3,8 +3,6 @@ import cryptoM from 'crypto'
 import config from 'config'
 import jwt from 'jsonwebtoken'
 
-const uuidV4 = require('uuid/v4')
-
 let _instance = null
 /**
  * Class pour le cryptage
