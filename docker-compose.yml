@@ -3,7 +3,7 @@ services:
   db:
     image: postgres:10.4
     restart: always
-    cpus: "2.0"
+    cpus: 2.0
     mem_limit: 4G
     ports:
       - "5436:5432"
