@@ -59,6 +59,7 @@ export default (sequelizeInstance, Model) => {
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
+          code_import: list[i]['ContentieuxReferentiel.code_import'],
         },
       }
     }
