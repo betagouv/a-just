@@ -13,8 +13,9 @@ import {
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { sumBy } from 'lodash'
+import { groupBy, orderBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
+import { month, monthDiffList } from '../utils/date'
 
 /**
  * Route de la page extrateur
@@ -172,17 +173,38 @@ export default class RouteExtractor extends Route {
       backupId: Types.number().required(),
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
-      categoryFilter: Types.string().required(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterListAct (ctx) {
-    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+    let { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    this.sendOk(ctx, 'OK')
+    const monthList = monthDiffList(dateStart, dateStop)
+
+    const list = await this.models.Activities.getByMonth(dateStart, backupId)
+    /**Promise.all(
+      monthList.map(async (key) => {
+        return await this.models.Activities.getByMonth(month(dateStart, key), backupId)
+      })
+    )*/
+    //const list = Promise.all(monthList.map(async (elem) => await this.models.Activities.getByMonth(month(dateStart, elem), backupId)))
+    //console.log(test)
+    const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
+
+    let activities = await this.models.Activities.getAll(backupId)
+    activities = orderBy(activities, 'periode')
+    activities = activities.filter((act) => act.periode >= dateStart && act.periode <= dateStop)
+    activities = groupBy(activities, 'periode')
+    console.log(activities)
+    this.sendOk(ctx, {
+      list: activities,
+      lastUpdate,
+    })
+
+    //this.sendOk(ctx, 'OK')
   }
 }
