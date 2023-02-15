@@ -39,7 +39,7 @@ export default class RouteAuths extends Route {
       delete user.dataValues.password
 
       await ctx.loginUser(user.dataValues)
-      await this.models.Logs.addLog(USER_USER_LOGIN, null, { userId: user.dataValues.id })
+      await this.models.Logs.addLog(USER_USER_LOGIN, user.dataValues.id, { userId: user.dataValues.id })
       await super.addUserInfoInBody(ctx)
       this.sendCreated(ctx)
     } else {
@@ -84,7 +84,7 @@ export default class RouteAuths extends Route {
   async autoLogin (ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
-      await this.models.Logs.addLog(USER_AUTO_LOGIN, null, { userId: ctx.state.user.id })
+      await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, { userId: ctx.state.user.id })
       this.sendOk(ctx)
     } else {
       ctx.throw(401)

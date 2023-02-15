@@ -6,7 +6,7 @@ import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHAN
 import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
-import { getNbMonth } from '../utils/date'
+import { getNbDay } from '../utils/date'
 
 /**
  * Table des utilisateurs
@@ -139,7 +139,7 @@ export default (sequelizeInstance, Model) => {
    * Control de l'ensemble des personnes à la dernière date de connexion
    */
   Model.checkLastConnexion = async () => {
-    if (config.nbMaxMonthCanBeInactive === null) {
+    if (config.nbMaxDayCanBeInactive === null) {
       return
     }
 
@@ -156,16 +156,16 @@ export default (sequelizeInstance, Model) => {
         lastConnexionDate = new Date(lastLog.createdAt)
       }
 
-      const nbMonth = getNbMonth(lastConnexionDate, new Date())
-      if (nbMonth > config.nbMaxMonthCanBeInactive) {
-        usersFinded.push({ name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''), email: users[i].email })
+      const nbDays = getNbDay(lastConnexionDate, new Date())
+      if (nbDays >= config.nbMaxDayCanBeInactive) {
+        usersFinded.push({ name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''), email: users[i].email, nbDays })
       }
     }
 
     if (usersFinded.length) {
       await sentEmail(
         {
-          email: config.contactEmail,
+          email: config.supportEmail,
         },
         TEMPLATE_CRON_USERS_NOT_CONNECTED,
         {
