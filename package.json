@@ -73,7 +73,7 @@
     "babel-preset-stage-3": "^6.17.0",
     "eslint": "^7.13.0",
     "expect": "^26.6.2",
-    "mocha": "^8.2.1",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.6",
     "prettier-eslint": "^11.0.0"
   }
