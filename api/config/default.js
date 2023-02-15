@@ -51,6 +51,10 @@ module.exports = {
    */
   contactEmail: process.env.CONTACT_EMAIL,
   /**
+   * Email du support
+   */
+  supportEmail: process.env.SUPPORT_EMAIL,
+  /**
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
@@ -77,7 +81,7 @@ module.exports = {
     usersListId: 6,
   },
   /**
-   * Nombre de mois d'inactivité maximum des comptes
+   * Nombre de jours d'inactivité maximum des comptes
    */
-  nbMaxMonthCanBeInactive: 3,
+  nbMaxDayCanBeInactive: 30,
 }
