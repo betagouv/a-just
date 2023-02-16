@@ -12,7 +12,7 @@ export interface HumanResourceInterface {
   /**
    * Prénom
    */
-  firstName?: string
+  firstName?: string | null
   /**
    * Juridiction de rattachement
    */
@@ -20,11 +20,11 @@ export interface HumanResourceInterface {
   /**
    * Nom
    */
-  lastName?: string
+  lastName?: string | null
   /**
    * Matricule exterieur à l'outil
    */
-  matricule?: string
+  matricule?: string | null
   /**
    * Date d'arrivée en juridiction
    */

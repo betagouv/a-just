@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["chart.js"],
+            "allowedCommonJsDependencies": [],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -41,8 +41,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/app/styles/styles.scss",
-              "node_modules/animate.css/animate.min.css"
+              "src/app/styles/styles.scss"
             ],
             "scripts": []
           },
@@ -89,6 +88,27 @@
               ],
               "outputHashing": "all"
             },
+            "sandbox": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "25kb",
+                  "maximumError": "50kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sandbox.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -108,6 +128,9 @@
             },
             "staging": {
               "browserTarget": "a-just-front:build:staging"
+            },
+            "sandbox": {
+              "browserTarget": "a-just-front:build:sandbox"
             },
             "development": {
               "browserTarget": "a-just-front:build:development"

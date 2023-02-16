@@ -77,14 +77,10 @@
 }
 
 .activities-panel {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
 
   > div {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     progression-bar {
       width: 90%;
       cursor: pointer;

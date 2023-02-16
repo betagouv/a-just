@@ -6,8 +6,7 @@ import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
-import render from 'koa-ejs'
-import path from 'path'
+import { start as startCrons } from './crons'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -23,6 +22,7 @@ export default class App extends AppBase {
   async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
+        startCrons(this) // start crons
         console.log('--- IS READY ---')
         this.isReady()
       })
@@ -33,14 +33,6 @@ export default class App extends AppBase {
     this.routeParam.replicaModels = this.replicaModels
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
-
-    render(this.koaApp, {
-      root: path.join(__dirname, 'templates/ejs'),
-      layout: 'template',
-      viewExt: 'html',
-      cache: false,
-      debug: true,
-    })
 
     super.addMiddlewares([
       // we add the relevant middlewares to our API

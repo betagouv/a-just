@@ -2,7 +2,7 @@
 
 :host {
   height: 26px;
-  width: 26px;
+  min-width: 26px;
   position: relative;
 
   > div {
@@ -16,26 +16,17 @@
     line-height: 26px;
     padding: 0 6px;
     border-radius: 26px;
-    width: 26px;
-    -webkit-transition: width 0.25s ease;
-    transition: width 0.25s ease;
+    min-width: 26px;
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     overflow: hidden;
 
-    &:hover {
-      width: 190px;
-
-      > span {
-        display: inline;
-      }
-    }
-
     > span {
-      display: none;
+      display: inline;
       white-space: nowrap;
       margin-left: 4px;
+      margin-right: 4px;
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Route as RouteBase } from 'koa-smart'
+import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_VENTILATIONS } from '../constants/access'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
@@ -142,7 +143,7 @@ export default class Route extends RouteBase {
  * @returns
  */
 function isLogin (ctx) {
-  return !!ctx.state.user
+  return !!ctx.body.user
 }
 
 /**
@@ -151,7 +152,7 @@ function isLogin (ctx) {
  * @returns
  */
 function isAdmin (ctx) {
-  return !!ctx.state.user && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1
+  return !!ctx.body.user && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
 }
 
 /**
@@ -160,7 +161,7 @@ function isAdmin (ctx) {
  * @returns
  */
 function isSuperAdmin (ctx) {
-  return !!ctx.state.user && [USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1
+  return !!ctx.body.user && [USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
 }
 
 /**
@@ -169,7 +170,7 @@ function isSuperAdmin (ctx) {
  * @returns
  */
 function canVewHR (ctx) {
-  return !!ctx.state.user && ctx.state.user.access && ctx.state.user.access.indexOf(2) !== -1
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1
 }
 
 /**
@@ -178,7 +179,7 @@ function canVewHR (ctx) {
  * @returns
  */
 function canVewActivities (ctx) {
-  return !!ctx.state.user && ctx.state.user.access && ctx.state.user.access.indexOf(3) !== -1
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1
 }
 
 /**
@@ -187,7 +188,7 @@ function canVewActivities (ctx) {
  * @returns
  */
 function canVewContentieuxOptions (ctx) {
-  return !!ctx.state.user && ctx.state.user.access && ctx.state.user.access.indexOf(4) !== -1
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
 }
 
 /**

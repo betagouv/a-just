@@ -147,6 +147,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           this.categorySelected = this.FONCTIONNAIRES
         } else {
           this.categorySelected = null
+          alert(
+            "Vos droits ne vous permettent pas d'exécuter un calcul, veuillez contacter un administrateur."
+          )
         }
       })
     )

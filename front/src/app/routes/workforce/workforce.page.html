@@ -10,15 +10,16 @@
         (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
       <div class="flex-1"></div>
-      <div *ngFor="let category of categoriesFilterList; let index = index;" class="checkbox-button"
-        [ngClass]="{'blue': index === 0, 'pink': index === 1, 'yellow': index === 2}"
+      <div *ngFor="let category of categoriesFilterList;" class="checkbox-button"
+        [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
         (click)="checkboxCategory.click()">
         <div>
           <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
-            (ngModelChange)="onFilterList()" />
+            (ngModelChange)="onFilterList()"
+            [ngStyle]="{'border-color': category.textColor, 'background-color': category.selected ? category.textColor : null}" />
         </div>
         <div>
-          <p class="label">
+          <p class="label" [ngStyle]="{'color': category.textColor}">
             {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
             category.labelPlural : category.label }}
           </p>
@@ -172,23 +173,27 @@
       </mat-icon>
     </div>
     <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
-      <ng-template ngFor let-person [ngForOf]="allPersonsFiltered">
-        <div *ngIf="person.isIn" (click)="onGoTo(person.id)" class="cursor-pointer">
-          {{ filterParams && filterParams.display === 'nom/prénom' ?
+      <div *ngIf="allPersonsFilteredIsIn.length">{{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length >
+        1 ? 'resultats' : 'resultat'}} en
+        juridiction</div>
+      <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
+        <i class="ri-user-follow-line"></i>
+        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}
-        </div>
-        <a *ngIf="!person.isIn" [routerLink]="['/resource-humaine', person.id]">
-          {{ filterParams && filterParams.display === 'nom/prénom' ?
+          person.lastName}}</p>
+      </a>
+      <div *ngIf="allPersonsFilteredNotIn.length">{{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length
+        > 1 ? 'resultats' : 'resultat'}} en
+        juridiction</div>
+      <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
+        <i class="ri-user-shared-line"></i>
+        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}
-        </a>
-      </ng-template>
-      <div *ngIf="allPersonsFiltered.length === 0">
-        Personne non trouvée !
-      </div>
+          person.lastName}}</p>
+      </a>
+      <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
   </div>
 </ng-template>

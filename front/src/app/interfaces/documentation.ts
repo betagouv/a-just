@@ -7,6 +7,10 @@ export interface DocumentationInterface {
    */
   title: string;
   /**
+   * Sous titre dans les paneaux
+   */
+  subTitle?: string;
+  /**
    * Lien de la doc à mettre en iframe
    */
   path: string;

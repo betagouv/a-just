@@ -1319,7 +1319,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
   getTooltipText() {
     return (
-      'Calculé à partir de la situation ' +
+      'Evolution par rapport ' +
       (this.startRealValue !== '' ? 'au ' : 'à ') +
       (this.startRealValue || "aujourd'hui")
     )
