@@ -22,11 +22,11 @@
     padding-left: 24px;
     width: 386px;
 
-    >.label-container {
+    > .label-container {
       flex: 1;
       align-self: stretch;
 
-      >.category-name {
+      > .category-name {
         display: flex;
         align-items: center;
         align-self: stretch;
@@ -36,15 +36,15 @@
           margin-right: 8px;
         }
 
-        >.blue {
+        > .blue {
           color: #000091;
         }
 
-        >.label {
+        > .label {
           flex: 1;
         }
 
-        >.filter-button {
+        > .filter-button {
           mat-icon {
             margin-right: 16px;
             width: 34px;
@@ -59,12 +59,12 @@
         }
       }
 
-      >.filters {
+      > .filters {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
 
-        >.tag {
+        > .tag {
           border-radius: 12px;
           height: 24px;
           display: inline-flex;
@@ -91,13 +91,13 @@
       }
     }
 
-    >.contentieux-label {
+    > .contentieux-label {
       align-self: stretch;
       display: flex;
       background-color: fColor(bgSelect);
       width: 100px !important;
 
-      >.text {
+      > .text {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -116,19 +116,19 @@
           color: fColor(cgraylightv2);
         }
 
-        >.label {
+        > .label {
           flex: 1;
           display: flex;
           align-items: flex-end;
         }
 
-        >.etp {
+        > .etp {
           display: flex;
           align-items: flex-end;
           height: 22px;
         }
 
-        >.filter {
+        > .filter {
           display: flex;
           align-items: center;
           height: 26px;
@@ -138,19 +138,18 @@
   }
 
   .activities {
-    >.sub-item {
+    > .sub-item {
       cursor: pointer;
 
       &.selected {
         background-color: fColor(bgHeaderSelected);
 
-        >div.text .filter mat-icon {
+        > div.text .filter mat-icon {
           color: fColor(sortIconHeaderSelected);
         }
       }
 
-      >div.text {
-
+      > div.text {
         .label {
           flex: 1;
           align-items: flex-end;
@@ -166,7 +165,6 @@
         }
 
         .etp {
-
           p {
             color: fColor(headerNumberColor);
             font-size: 14px;
@@ -176,7 +174,6 @@
         }
 
         .filter {
-
           p {
             color: fColor(headerColor);
           }
@@ -307,7 +304,7 @@
       .tags {
         margin-bottom: 8px;
 
-        >p {
+        > p {
           display: inline-block;
           height: 24px;
           padding: 2px 8px;
@@ -511,64 +508,6 @@
 
   p.etp {
     font-weight: bold;
-
-  }
-
-  &.blue {
-    border-color: fColor(cbluedark);
-    background-color: rgba(fColor(cbluedark), 0.2);
-
-    p.label {
-      color: fColor(cbluedark);
-    }
-
-    input {
-      border-color: fColor(cbluedark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cbluedark);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
-  }
-
-  &.pink {
-    border-color: fColor(cpink);
-    background-color: rgba(fColor(cpink), 0.2);
-
-    p.label {
-      color: fColor(cpink);
-    }
-
-    input {
-      border-color: fColor(cpink);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cpink);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
-  }
-
-  &.yellow {
-    border-color: fColor(cyellow);
-    background-color: rgba(fColor(cyellow), 0.2);
-
-    p.label {
-      color: fColor(cyellowdark);
-    }
-
-    input {
-      border-color: fColor(cyellowdark);
-
-      &:checked {
-        border-color: none;
-        background-color: fColor(cyellowdark);
-        background-image: url('/assets/icons/checkbox.svg');
-      }
-    }
   }
 
   input {
@@ -583,6 +522,11 @@
     position: relative;
     width: 13px;
     height: 13px;
+
+    &:checked {
+      border-color: none;
+      background-image: url('/assets/icons/checkbox.svg');
+    }
   }
 
   p.label {
@@ -591,7 +535,6 @@
 
   p.etp {
     font-weight: bold;
-
   }
 }
 
@@ -608,7 +551,7 @@ progression-bar {
   margin-right: 8px;
   text-decoration: none;
 
-  >button {
+  > button {
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -624,7 +567,7 @@ progression-bar {
   align-items: center;
   position: relative;
 
-  >aj-input-button {
+  > aj-input-button {
     margin-left: 8px;
   }
 
@@ -632,24 +575,65 @@ progression-bar {
     z-index: 100;
     position: absolute;
     top: 100%;
+    margin-top: 4px;
     right: 0;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+    border-radius: 8px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: solid 1px #ddd;
     background-color: white;
-    border-radius: 4px;
     min-width: 250px;
 
     > * {
-      line-height: 36px;
-      height: 36px;
-      padding: 0 16px;
-      white-space: nowrap;
-      border-bottom: 1px solid rgba(fColor(cbluedark), 0.2);
-      text-decoration: none;
-      color: fColor(cblack);
-      display: block;
+      border-bottom: 1px solid fColor(lightBorder);
+
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
 
       &:last-child {
         border-bottom: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+
+    > div {
+      background-color: fColor(bgSelect);
+      color: fColor(cgray);
+      font-size: 12px;
+      padding: 0 16px;
+      font-weight: bold;
+      line-height: 32px;
+      height: 32px;
+    }
+
+    > a {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      background-color: fColor(bgSelect);
+      white-space: nowrap;
+      text-decoration: none;
+
+      &.is-in {
+        background-color: transparent;
+
+        > i {
+          color: fColor(titleEtpGraph);
+        }
+      }
+
+      > p {
+        color: fColor(cgray);
+        font-size: 12px;
+        margin-right: 16px;
+      }
+
+      > i {
+        color: fColor(cgray);
+        width: 48px;
+        text-align: center;
       }
     }
   }

@@ -1,5 +1,20 @@
 @import '../../styles/utils.scss';
 
+.content-popup {
+  margin-top: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-self: center;
+  :first-child {
+    background-color: #000091;
+    color: white;
+   }
+  button {
+ width: 80px;
+  margin: 0px 4px 0px 4px ;
+  }
+}
+
 :host {
   height: 100%;
 
@@ -340,7 +355,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 110;
   background-color: white;
   display: flex;
   flex-direction: column;

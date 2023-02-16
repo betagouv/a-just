@@ -18,7 +18,6 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
-import { AppService } from 'src/app/services/app/app.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
 
@@ -127,7 +126,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste de toutes les personnes quelque soit l'arrivée ou le départ
    */
-  allPersonsFiltered: HumanResourceIsInInterface[] | null = null
+  allPersonsFiltered: HumanResourceIsInInterface[] | null = null
+  /**
+   * Liste de toutes les personnes visibles
+   */
+  allPersonsFilteredIsIn: HumanResourceIsInInterface[] = []
+  /**
+   * Liste de toutes les personnes non visibles
+   */
+  allPersonsFilteredNotIn: HumanResourceIsInInterface[] = []
   /**
    * Formated RH
    */
@@ -224,8 +231,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService,
-    private appService: AppService
+    private userService: UserService
   ) {
     super()
   }
@@ -314,7 +320,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt += realETP
         })
       }
-
+console.log(etpt)
       return {
         ...c,
         etpt,
@@ -354,11 +360,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   checkHROpacity(hr: HumanResourceInterface) {
+    const name =
+      this.filterParams && this.filterParams.display === 'nom/prénom'
+        ? (hr.lastName || '') + ' ' + (hr.firstName || '')
+        : (hr.firstName || '') + ' ' + (hr.lastName || '')
     if (
       !this.searchValue ||
-      ((hr.firstName || '') + (hr.lastName || ''))
-        .toLowerCase()
-        .includes(this.searchValue.toLowerCase())
+      name.toLowerCase().includes(this.searchValue.toLowerCase())
     ) {
       return 1
     }
@@ -393,10 +401,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
-    if (list.length <= FILTER_LIMIT_ON_SEARCH) {
-      console.log(list)
+    if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
+      if (this.valuesFinded && this.valuesFinded.length) {
+        this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
+      }
+
       this.allPersonsFiltered = list
     }
+
+    this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
+    this.allPersonsFilteredNotIn = this.filterFindedPerson(this.allPersonsFiltered, false)
   }
 
   /**
@@ -667,5 +681,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       return group
     })
+  }
+
+  /**
+   * Filtre la liste des personnes trouvées dans la recherche
+   * @param list 
+   * @param isIn 
+   * @returns 
+   */
+  filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
+    return (list || []).filter(h => h.isIn === isIn)
   }
 }

@@ -2,6 +2,7 @@ import Route from './Route'
 import { crypt } from '../utils'
 import { Types } from '../utils/types'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
+import { USER_AUTO_LOGIN, USER_USER_LOGIN } from '../constants/log-codes'
 
 /**
  * Route des authentification
@@ -38,6 +39,7 @@ export default class RouteAuths extends Route {
       delete user.dataValues.password
 
       await ctx.loginUser(user.dataValues)
+      await this.models.Logs.addLog(USER_USER_LOGIN, user.dataValues.id, { userId: user.dataValues.id })
       await super.addUserInfoInBody(ctx)
       this.sendCreated(ctx)
     } else {
@@ -82,6 +84,7 @@ export default class RouteAuths extends Route {
   async autoLogin (ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
+      await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, { userId: ctx.state.user.id })
       this.sendOk(ctx)
     } else {
       ctx.throw(401)

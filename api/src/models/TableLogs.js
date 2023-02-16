@@ -88,5 +88,25 @@ export default (sequelizeInstance, Model) => {
     return stringToReturn
   }
 
+  /**
+   * Retourne la dernière log qui correspond à l'utilisateur et le code log
+   * @param {*} userId
+   * @param {*} codeId
+   * @param {*} params
+   */
+  Model.findLastLog = async (userId, codeId, params) => {
+    const findOne = await Model.findOne({
+      where: {
+        user_id: userId,
+        code_id: codeId,
+        datas: JSON.stringify(params),
+      },
+      order: [['updated_at', 'desc']],
+      raw: true,
+    })
+
+    return findOne
+  }
+
   return Model
 }

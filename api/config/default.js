@@ -6,6 +6,10 @@ module.exports = {
    */
   envName: '',
   /**
+   * String pour préfixer le nom de l'environement (idéal pour les mails de test)
+   */
+  displayEnvName: '',
+  /**
    * Url du serveur (idéal pour le contenu des mails)
    */
   serverUrl: process.env.SERVER_URL || 'http://localhost:8080/api',
@@ -47,6 +51,10 @@ module.exports = {
    */
   contactEmail: process.env.CONTACT_EMAIL,
   /**
+   * Email du support
+   */
+  supportEmail: process.env.SUPPORT_EMAIL,
+  /**
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
@@ -72,4 +80,8 @@ module.exports = {
   sendingBlue: {
     usersListId: 6,
   },
+  /**
+   * Nombre de jours d'inactivité maximum des comptes
+   */
+  nbMaxDayCanBeInactive: 30,
 }

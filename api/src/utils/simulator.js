@@ -797,6 +797,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
       }
       if (x === 'totalOut') {
         if ((simulation.etpMag || simulation.etpFon) && simulation.magRealTimePerCase) {
+          console.log('Sim=>', simulation.etpMag, simulation.magRealTimePerCase)
+
           if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
             simulation.totalOut = Math.floor(
               Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase

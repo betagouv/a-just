@@ -2,48 +2,17 @@
 
 .title {
   margin-right: 16px;
+  display: flex;
+
+  .personal-name {
+    margin-right: 16px;
+  }
 
   .page-name {
     font-size: 16px;
     color: fColor(titleSelect);
     font-weight: bold;
   }
-
-  .container-names {
-    display: flex;
-    margin-right: 8px;
-
-    .form-group-names {
-      background-color: white;
-      border-bottom: none;
-      width: auto;
-      font-size: 22px;
-      color: #000091;
-      font-weight: bold;
-      padding: 0;
-      height: 32px;
-
-      &::placeholder {
-        color: #000091;
-      }
-    }
-
-    .iconPen {
-      top: 8px;
-      position: relative;
-      font-size: 22px;
-      color: #000091;
-
-    }
-  }
-
-  form {
-    display: flex
-  }
-
-
-
-
 
   .iconPenSmall {
     font-size: 12px;
@@ -52,7 +21,6 @@
     width: 12px;
     height: 12px;
   }
-
 
   .user-name {
     font-size: 22px;
@@ -75,17 +43,24 @@
   font-size: 12px;
   color: #666666;
   align-items: center;
+  margin-right: 4px;
 }
 
 .user-updated-at {
   font-size: 12px;
+  margin-top: 8px;
 }
 
 .new-action {
-  margin: 32px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 32px auto;
+  display: grid;
+	grid-template-columns: repeat(2, 1fr);
+  max-width: 300px;
+	grid-gap: 16px 8px;
+
+  aj-help-button {
+    margin-top: 6px;
+  }
 }
 
 .actions {
@@ -174,15 +149,4 @@ add-ventilation {
   bottom: 0;
   z-index: 100;
   pointer-events: none;
-}
-
-.help-icon {
-  margin-left: 8px;
-}
-
-.separator-action {
-  height: 16px;
-  width: 1px;
-  background-color: fColor(cgraylightv2);
-  margin: 0 16px 0 16px;
 }

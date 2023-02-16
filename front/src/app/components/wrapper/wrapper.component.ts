@@ -95,6 +95,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   documentationToShow: DocumentationInterface | undefined
   /**
+   * Popup open
+   */
+  popin= false
+  /**
    * Dit si le paneau d'aide est visible ou non
    */
   panelHelper: boolean = false
@@ -189,6 +193,12 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.authService.onLogout().then(() => {
       this.router.navigate(['/'])
     })
+  }
+
+  onSelectAction(event:any){
+
+      this.onDisconnect() 
+
   }
 
   /**

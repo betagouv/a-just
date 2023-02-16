@@ -147,6 +147,28 @@ export function getNbMonth (dateStart, dateStop) {
 }
 
 /**
+ * Calcul le nombre de jours entre 2 dates
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @returns nombre
+ */
+export function getNbDay (dateStart, dateStop) {
+  let totalMonth = 0
+
+  const now = new Date(dateStart)
+  do {
+    totalMonth++
+    now.setDate(now.getDate() + 1)
+  } while (now.getTime() <= dateStop.getTime())
+
+  if (totalMonth <= 0) {
+    totalMonth = 1
+  }
+
+  return totalMonth
+}
+
+/**
  * Compare deux date afin de savoir si elles ont le même mois de la même année
  * @param {*} date1
  * @param {*} date2
