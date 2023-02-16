@@ -175,12 +175,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         if (Object.keys(options).length && this.onEditIndex === null) {
           // @ts-ignore
-          if (options.lastName === '') {
+          if (options.lastName === '' || options.lastName === 'Nom') {
             alert('Vous devez saisir un nom pour valider la création !')
             return
           }
           // @ts-ignore
-          if (options.firstName === '') {
+          if (options.firstName === '' || options.firstName === 'Prénom') {
             alert('Vous devez saisir un prénom pour valider la création !')
             return
           }
