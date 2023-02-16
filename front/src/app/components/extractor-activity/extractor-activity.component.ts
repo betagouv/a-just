@@ -1,10 +1,6 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 import FileSaver from 'file-saver'
 import { orderBy } from 'lodash'
-import { BehaviorSubject } from 'rxjs'
-import { ActivityInterface } from 'src/app/interfaces/activity'
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { AppService } from 'src/app/services/app/app.service'
@@ -12,16 +8,8 @@ import { ExcelService } from 'src/app/services/excel/excel.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
-import {
-  generalizeTimeZone,
-  getLongMonthString,
-  getShortMonthString,
-} from 'src/app/utils/dates'
-import {
-  userCanViewContractuel,
-  userCanViewGreffier,
-  userCanViewMagistrat,
-} from 'src/app/utils/user'
+import { generalizeTimeZone, getShortMonthString } from 'src/app/utils/dates'
+import * as xlsx from 'xlsx'
 
 /**
  * Excel file details
@@ -33,12 +21,26 @@ const EXCEL_TYPE =
  */
 const EXCEL_EXTENSION = '.xlsx'
 
+/**
+ * Excel file headers
+ */
+const headers = [
+  ' ',
+  'Période',
+  'Entrées logiciel',
+  'Entrées A-JUSTées',
+  'Sorties logiciel',
+  'Sorties A-JUSTées',
+  'Stock logiciel',
+  'Stock A-JUSTé',
+]
+
 @Component({
   selector: 'aj-extractor-activity',
   templateUrl: './extractor-activity.component.html',
   styleUrls: ['./extractor-activity.component.scss'],
 })
-export class ExtractorActivityComponent extends MainClass implements OnInit {
+export class ExtractorActivityComponent extends MainClass {
   /**
    * Date de début selectionnée
    */
@@ -72,21 +74,13 @@ export class ExtractorActivityComponent extends MainClass implements OnInit {
    */
   lastDataDate: Date | null = null
   /**
-   * Peux voir l'interface magistrat
-   */
-  canViewMagistrat: boolean = false
-  /**
-   * Peux voir l'interface greffier
-   */
-  canViewGreffier: boolean = false
-  /**
-   * Peux voir l'interface contractuel
-   */
-  canViewContractuel: boolean = false
-  /**
    * Données à extraire
    */
   data: any = undefined
+  /**
+   * Somme des données à extraire
+   */
+  sumTab: any = undefined
 
   /**
    * Constructeur
@@ -99,39 +93,16 @@ export class ExtractorActivityComponent extends MainClass implements OnInit {
     private humanResourceService: HumanResourceService,
     private serverService: ServerService,
     private excelService: ExcelService,
-    private userService: UserService,
     private activityService: ActivitiesService,
-    private appService: AppService
+    private appService: AppService,
+    private userService: UserService
   ) {
     super()
 
     this.activityService.getLastMonthActivities().then((data) => {
       this.lastDataDate = new Date(data)
-      console.log(this.lastDataDate)
     })
-
-    this.watch(
-      this.userService.user.subscribe((u) => {
-        this.canViewMagistrat = userCanViewMagistrat(u)
-        this.canViewGreffier = userCanViewGreffier(u)
-        this.canViewContractuel = userCanViewContractuel(u)
-        if (
-          this.canViewMagistrat &&
-          this.canViewGreffier &&
-          this.canViewContractuel
-        )
-          this.categories.push({ id: 1, value: 'Tous' })
-        if (this.canViewMagistrat)
-          this.categories.push({ id: 2, value: 'Magistrat' })
-        if (this.canViewContractuel)
-          this.categories.push({ id: 3, value: 'Contractuel' })
-        if (this.canViewGreffier)
-          this.categories.push({ id: 4, value: 'Fonctionnaire' })
-      })
-    )
   }
-
-  ngOnInit(): void {}
 
   /**
    * Selecteur de date
@@ -160,6 +131,122 @@ export class ExtractorActivityComponent extends MainClass implements OnInit {
   }
 
   /**
+   * Retourne le nom d'un onglet excel formaté
+   */
+  getMonthTabName(act: any) {
+    return (
+      getShortMonthString(new Date(act.periode)) +
+      ' ' +
+      new Date(act.periode).getFullYear()
+    )
+  }
+
+  /**
+   * Retourne le label de la période à extraire
+   * @param dateStart
+   * @param dateStop
+   * @returns
+   */
+  getTotalPeriodeLabel(dateStart: Date, dateStop: Date) {
+    return (
+      'De ' +
+      (getShortMonthString(new Date(dateStart)) +
+        ' ' +
+        new Date(dateStart).getFullYear()) +
+      ' à ' +
+      (getShortMonthString(new Date(dateStop)) +
+        ' ' +
+        new Date(dateStop).getFullYear())
+    )
+  }
+
+  /**
+   * Génère la donnée formatée à injecter dans le fichier Excel
+   * @param act
+   * @param monthTabName
+   * @returns
+   */
+  generateFormatedDataMonth(act: any, monthTabName: string) {
+    const sortCodeArray = act.contentieux.code_import
+      .split('.')
+      .map((x: string) => Number(x))
+      .filter((y: number) => y !== 0)
+
+    return {
+      [' ']: act.contentieux.label, //act.contentieux.code_import + ' ' +
+      ['codeUnit']: sortCodeArray[0] || 0,
+      ['codeCent']: sortCodeArray[1] || -1,
+      Période: monthTabName,
+      ['Entrées logiciel']: act.originalEntrees,
+      ['Entrées A-JUSTées']: act.entrees,
+      ['Sorties logiciel']: act.originalSorties,
+      ['Sorties A-JUSTées']: act.sorties,
+      ['Stock logiciel']: act.originalStock,
+      ['Stock A-JUSTé']: act.stock,
+    }
+  }
+
+  /**
+   * Retourne la largeur de chaque colonne en nombre de charactère
+   * @param headers
+   * @param element
+   * @returns
+   */
+  getColumnWidth(headers: any, element: any) {
+    return headers.map((header: any) => {
+      return {
+        wch: Math.max(
+          header.length,
+          element.reduce(
+            (w: any, r: any) =>
+              Math.max(w || 10, (r[header] || []).length || 10),
+            10
+          )
+        ),
+      }
+    })
+  }
+
+  /**
+   * Trier data par code import
+   */
+  sortByCodeImport(sumTab: any) {
+    sumTab = orderBy(sumTab, ['codeUnit', 'codeCent'], ['asc'])
+    sumTab.forEach(function (v: any) {
+      delete v['codeUnit']
+      delete v['codeCent']
+    })
+    return sumTab
+  }
+
+  /**
+   * Génère le nom du ficher téléchargé
+   * @returns 
+   */
+  getExportFileName(){
+    return `Extraction_Données_D_Activité_${this.getTotalPeriodeLabel(
+      this.dateStart || new Date(),
+      this.dateStop || new Date()
+    )} _par ${
+      this.userService.user.getValue()!.firstName
+    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+      .toJSON()
+      .slice(0, 10)}`
+  }
+
+  /**
+   * Génère un onglet excel
+   * @param headers 
+   * @param data 
+   * @returns 
+   */
+  generateWorkSheet(headers: any, data: any) {
+    const worksheet = xlsx.utils.json_to_sheet(data, {})
+    worksheet['!cols'] = this.getColumnWidth(headers, data)
+    return worksheet
+  }
+  
+  /**
    * Get data from back-end
    * @returns
    */
@@ -172,84 +259,50 @@ export class ExtractorActivityComponent extends MainClass implements OnInit {
       })
       .then((data) => {
         this.data = data.data.list
-        const headers = [
-          ' ',
-          'Période',
-          'Entrées logiciel',
-          'Entrées A-JUSTées',
-          'Sorties logiciel',
-          'Sorties A-JUSTées',
-          'Stock logiciel',
-          'Stock A-JUSTé',
-        ]
+        this.sumTab = data.data.sumTab
+
         let monthTabName = ''
+        const workbook = xlsx.utils.book_new()
 
-        import('xlsx').then((xlsx) => {
-          const workbook = xlsx.utils.book_new()
-
-          this.data = Object.keys(this.data).map((key: any) => {
-            this.data[key] = this.data[key].map((act: any) => {
-
-              monthTabName =
-                getShortMonthString(new Date(act.periode)) +
-                ' ' +
-                new Date(act.periode).getFullYear()
-              return {
-                [' ']:
-                  act.contentieux.code_import + ' ' + act.contentieux.label,
-                ['codeUnit']: Math.trunc(
-                  Number(act.contentieux.code_import.slice(0, -1))
-                ),
-                ['codeCent']:
-                  Number(act.contentieux.code_import.slice(0, -1)) % 1 * 10,
-                Période: monthTabName,
-                ['Entrées logiciel']: act.entrees,
-                ['Entrées A-JUSTées']: act.originalEntrees,
-                ['Sorties logiciel']: act.sorties,
-                ['Sorties A-JUSTées']: act.originalSorties,
-                ['Stock logiciel']: act.stock,
-                ['Stock A-JUSTé']: act.originalStock,
-              }
-            })
-            this.data[key] = orderBy(this.data[key], ['codeUnit','codeCent'],['asc'] )           
-    
-            this.data[key].forEach(function (v: any) {
-              delete v['codeUnit']
-              delete v['codeCent']
-            })
-
-            console.log(this.data[key])
-
-            const worksheet = xlsx.utils.json_to_sheet(this.data[key], {})
-            const max_width = headers.map((header) => {
-              return {
-                wch: Math.max(
-                  header.length,
-                  this.data[key].reduce(
-                    (w: any, r: any) =>
-                      Math.max(w || 10, (r[header] || []).length || 10),
-                    10
-                  )
-                ),
-              }
-            })
-
-            worksheet['!cols'] = max_width
-            xlsx.utils.book_append_sheet(workbook, worksheet, monthTabName)
-          })
-
-          const excelBuffer: any = xlsx.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          })
-
-          const filename = 'Extraction'
-          const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
-          this.appService.alert.next({
-            text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-          })
-          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
+        this.sumTab = this.sumTab.map((act: any) => {
+          return this.generateFormatedDataMonth(
+            act,
+            this.getTotalPeriodeLabel(
+              this.dateStart || new Date(),
+              this.dateStop || new Date()
+            )
+          )
         })
+        this.sumTab = this.sortByCodeImport(this.sumTab)
+        xlsx.utils.book_append_sheet(
+          workbook,
+          this.generateWorkSheet(headers, this.sumTab),
+          'Total sur la période'
+        )
+
+        this.data = Object.keys(this.data).map((key: any) => {
+          this.data[key] = this.data[key].map((act: any) => {
+            monthTabName = this.getMonthTabName(act)
+            return this.generateFormatedDataMonth(act, monthTabName)
+          })
+          this.data[key] = this.sortByCodeImport(this.data[key])
+          xlsx.utils.book_append_sheet(
+            workbook,
+            this.generateWorkSheet(headers, this.data[key]),
+            monthTabName
+          )
+        })
+
+        const excelBuffer: any = xlsx.write(workbook, {
+          bookType: 'xlsx',
+          type: 'array',
+        })
+
+        const dataSaved: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+        this.appService.alert.next({
+          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+        })
+        FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION)
       })
   }
 }

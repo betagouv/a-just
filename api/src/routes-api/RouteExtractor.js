@@ -13,9 +13,9 @@ import {
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { groupBy, orderBy, sumBy } from 'lodash'
+import { cloneDeep, first, groupBy, map, orderBy, reduce, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
-import { month, monthDiffList } from '../utils/date'
+import { generalizeTimeZone, month, monthDiffList } from '../utils/date'
 
 /**
  * Route de la page extrateur
@@ -183,28 +183,35 @@ export default class RouteExtractor extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    const monthList = monthDiffList(dateStart, dateStop)
-
     const list = await this.models.Activities.getByMonth(dateStart, backupId)
-    /**Promise.all(
-      monthList.map(async (key) => {
-        return await this.models.Activities.getByMonth(month(dateStart, key), backupId)
-      })
-    )*/
-    //const list = Promise.all(monthList.map(async (elem) => await this.models.Activities.getByMonth(month(dateStart, elem), backupId)))
-    //console.log(test)
+
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
-    let activities = await this.models.Activities.getAll(backupId)
-    activities = orderBy(activities, 'periode')
-    activities = activities.filter((act) => act.periode >= dateStart && act.periode <= dateStop)
-    activities = groupBy(activities, 'periode')
-    console.log(activities)
-    this.sendOk(ctx, {
-      list: activities,
-      lastUpdate,
+    let activities = await this.models.Activities.getAllDetails(backupId)
+    activities = orderBy(activities, 'periode', ['desc']).filter((act) => act.periode >= month(dateStart, -0.5) && act.periode <= dateStop)
+
+    let sum = cloneDeep(activities)
+    sum = groupBy(sum, 'contentieux.label')
+
+    let sumTab = []
+
+    Object.keys(sum).map((key) => {
+      sumTab.push({
+        periode: first(sum[key]).periode,
+        entrees: sumBy(sum[key], 'entrees'),
+        sorties: sumBy(sum[key], 'sorties'),
+        stock: first(sum[key]).stock,
+        originalEntrees: sumBy(sum[key], 'originalEntrees'),
+        originalSorties: sumBy(sum[key], 'originalSorties'),
+        originalStock: first(sum[key]).originalStock,
+        contentieux: { code_import: first(sum[key]).contentieux.code_import, label: first(sum[key]).contentieux.label },
+      })
     })
 
-    //this.sendOk(ctx, 'OK')
+    this.sendOk(ctx, {
+      list: groupBy(activities, 'periode'),
+      sumTab,
+      lastUpdate,
+    })
   }
 }
