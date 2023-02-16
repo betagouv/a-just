@@ -226,11 +226,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
     console.log(this.basicData)
-    if (this.basicData!.controls.lastName.value === '') {
+    if (this.basicData!.controls.lastName.value === '' || this.basicData!.controls.lastName.value === 'Nom') {
       alert('Vous devez saisir un nom pour valider la création !')
       return
     }
-    if (this.basicData!.controls.firstName.value === '') {
+    if (this.basicData!.controls.firstName.value === '' || this.basicData!.controls.firstName.value === 'Prénom') {
       alert('Vous devez saisir un prénom pour valider la création !')
       return
     }

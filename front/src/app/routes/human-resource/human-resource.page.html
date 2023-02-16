@@ -110,11 +110,11 @@
           <span contenteditable data-placeholder="Prénom"
             (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
             (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{
-            (currentHR?.firstName
-            || '') }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
+            (currentHR?.firstName)
+            || 'Prénom' }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
             (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
             (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{
-            (currentHR?.lastName)
+            (currentHR?.lastName) || 'Nom'
             }}</span>
           <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
         </p>
