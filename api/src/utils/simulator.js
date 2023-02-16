@@ -130,7 +130,7 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
         return false
       }
 
-      if (dateEnd && dateEnd.getTime() < date.getTime()) {
+      if (dateEnd && dateEnd.getTime() <= date.getTime()) {
         return false
       }
 

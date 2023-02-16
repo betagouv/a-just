@@ -3,6 +3,7 @@
 :host {
   display: block;
   height: 55px;
+  width: 170px;
   border-radius: 4px;
   background-color: fColor(bgSelect);
   border: 1px solid fColor(borderSelect);
@@ -40,14 +41,13 @@
   div {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    width: 100%;
 
     p {
       white-space: nowrap;
       flex: 1;
       font-weight: bold;
       height: 24px;
-      max-width: 150px;
       text-overflow: ellipsis;
       overflow: hidden;
     }
@@ -62,7 +62,7 @@
 
   mat-select {
     left: 35px;
-    top: 10px;
+    top: -10px;
     position: relative;
   }
 }
