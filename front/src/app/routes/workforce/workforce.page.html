@@ -173,23 +173,27 @@
       </mat-icon>
     </div>
     <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
-      <ng-template ngFor let-person [ngForOf]="allPersonsFiltered">
-        <div *ngIf="person.isIn" (click)="onGoTo(person.id)" class="cursor-pointer">
-          <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
-            person.lastName:person.firstName}} {{ filterParams &&
-            filterParams.display === 'nom/prénom' ? person.firstName :
-            person.lastName}}</p>
-          <i class="ri-user-line"></i>
-        </div>
-        <a *ngIf="!person.isIn" [routerLink]="['/resource-humaine', person.id]">
-          <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
-            person.lastName:person.firstName}} {{ filterParams &&
-            filterParams.display === 'nom/prénom' ? person.firstName :
-            person.lastName}}</p>
-          <i class="ri-user-shared-line"></i>
-        </a>
-      </ng-template>
-      <div *ngIf="allPersonsFiltered.length === 0">Personne non trouvée !</div>
+      <div *ngIf="allPersonsFilteredIsIn.length">{{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length >
+        1 ? 'resultats' : 'resultat'}} en
+        juridiction</div>
+      <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
+        <i class="ri-user-follow-line"></i>
+        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
+          person.lastName:person.firstName}} {{ filterParams &&
+          filterParams.display === 'nom/prénom' ? person.firstName :
+          person.lastName}}</p>
+      </a>
+      <div *ngIf="allPersonsFilteredNotIn.length">{{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length
+        > 1 ? 'resultats' : 'resultat'}} en
+        juridiction</div>
+      <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
+        <i class="ri-user-shared-line"></i>
+        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
+          person.lastName:person.firstName}} {{ filterParams &&
+          filterParams.display === 'nom/prénom' ? person.firstName :
+          person.lastName}}</p>
+      </a>
+      <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
   </div>
 </ng-template>
