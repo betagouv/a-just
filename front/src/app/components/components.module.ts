@@ -34,7 +34,8 @@ import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-c
 import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 import { NewsComponent } from './news/news.component'
 import { HelpButtonComponent } from './help-button/help-button.component'
-import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component'
+import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
+import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
 
 /**
  * Liste des composants à importer
@@ -70,13 +71,14 @@ const list = [
   NewsComponent,
   HelpButtonComponent,
   ExtractorActivityComponent,
+  ExtractorVentilationComponent,
 ]
 
 /**
  * Module d'import de composant
  */
 @NgModule({
-  declarations: [...list, ExtractorActivityComponent],
+  declarations: [...list],
   imports: [
     CommonModule,
     RouterModule,

@@ -1,22 +1,6 @@
 @import "../../styles/utils.scss";
 
-h1 {
-  color: fColor(primary);
-  margin: 32px 0;
-}
-
-:host {
-  position: relative;
-
-  aj-extractor-activity{
-  margin-top: 24px;
-  }
-  .progress-bar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0px;
-  }
+:host{
 
   .title {
     padding: 24px 24px;
