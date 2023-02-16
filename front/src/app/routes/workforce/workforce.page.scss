@@ -581,28 +581,59 @@ progression-bar {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border: solid 1px #ddd;
     background-color: white;
-    min-width: 330px;
+    min-width: 250px;
 
     > * {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 16px;
       border-bottom: 1px solid fColor(lightBorder);
-      white-space: nowrap;
-      text-decoration: none;
+
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
 
       &:last-child {
         border-bottom: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+
+    > div {
+      background-color: fColor(bgSelect);
+      color: fColor(cgray);
+      font-size: 12px;
+      padding: 0 16px;
+      font-weight: bold;
+      line-height: 32px;
+      height: 32px;
+    }
+
+    > a {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      background-color: fColor(bgSelect);
+      white-space: nowrap;
+      text-decoration: none;
+
+      &.is-in {
+        background-color: transparent;
+
+        > i {
+          color: fColor(titleEtpGraph);
+        }
       }
 
       > p {
         color: fColor(cgray);
-        font-weight: bold;
+        font-size: 12px;
+        margin-right: 16px;
       }
 
       > i {
         color: fColor(cgray);
+        width: 48px;
+        text-align: center;
       }
     }
   }
