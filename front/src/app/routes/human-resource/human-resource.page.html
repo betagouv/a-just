@@ -109,9 +109,9 @@
         <p class="user-name">
           <span contenteditable data-placeholder="Prénom" (keyup)="completeFormWithDomObject('firstName', $event)">{{
             (currentHR?.firstName)
-            || 'Prénom' }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
+            || '' }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
             (keyup)="completeFormWithDomObject('lastName', $event)">{{
-            (currentHR?.lastName) || 'Nom'
+            (currentHR?.lastName) || ''
             }}</span>
           <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
         </p>
