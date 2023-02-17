@@ -1,4 +1,4 @@
 process_config:
-  enabled: true
+  enabled: "true"
 network_config:
-  enabled: true
+  enabled: "true"
