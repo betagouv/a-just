@@ -44,6 +44,11 @@ textarea {
   content: attr(data-placeholder);
 }
 
+[contenteditable]:focus {
+  outline: none;
+  border-bottom: 2px solid fColor(primary);
+}
+
 [contenteditable] {
   cursor: text;
 }
