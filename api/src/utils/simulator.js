@@ -118,7 +118,7 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
         situations,
       }
     })
-    .filter((x) => (x.situations || []).some((s) => s.etp !== 0))
+    .filter((x) => (x.situations || []).some((s) => s.etp !== 0 || (s.category && categoryId && s.category.id === categoryId)))
 
   if (date) {
     date = today(date)
@@ -130,7 +130,7 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
         return false
       }
 
-      if (dateEnd && dateEnd.getTime() < date.getTime()) {
+      if (dateEnd && dateEnd.getTime() <= date.getTime()) {
         return false
       }
 
