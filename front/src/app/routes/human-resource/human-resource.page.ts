@@ -160,7 +160,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     super()
 
     this.basicHrInfo.valueChanges.pipe(debounceTime(500)).subscribe((v) => {
-      if (this.currentHR) {
+      if (this.currentHR && this.onEditIndex === null) {
         let options = {}
 
         if (v.firstName !== (this.currentHR.firstName || '')) {
@@ -173,7 +173,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           options = { ...options, matricule: v.matricule }
         }
 
-        if (Object.keys(options).length && this.onEditIndex === null) {
+        if (Object.keys(options).length) {
           // @ts-ignore
           if (options.lastName === '' || options.lastName === 'Nom') {
             alert('Vous devez saisir un nom pour valider la création !')

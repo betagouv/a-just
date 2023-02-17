@@ -107,13 +107,10 @@
       <p class="page-name">Fiche individuelle de</p>
       <div class="flex-center">
         <p class="user-name">
-          <span contenteditable data-placeholder="Prénom"
-            (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
-            (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{
+          <span contenteditable data-placeholder="Prénom" (keyup)="completeFormWithDomObject('firstName', $event)">{{
             (currentHR?.firstName)
             || 'Prénom' }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
-            (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
-            (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{
+            (keyup)="completeFormWithDomObject('lastName', $event)">{{
             (currentHR?.lastName) || 'Nom'
             }}</span>
           <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
