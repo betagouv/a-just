@@ -1,7 +1,4 @@
 process_config:
-  enabled: "true"
-network_config: # use system_probe_config for Agent's older than 7.24.1
-  ## @param enabled - boolean - optional - default: false
-  ## Set to true to enable Network Performance Monitoring.
-  #
+  enabled: true
+network_config:
   enabled: true
