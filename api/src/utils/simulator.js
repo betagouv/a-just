@@ -166,7 +166,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
   //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
   let totalIn = Math.floor(meanBy(summedlastActivities, 'entrees')) || 0
-  let totalOut = Math.floor(meanBy(summedlastActivities, 'sorties')) || 0
+  let totalOut = meanBy(summedlastActivities, 'sorties') || 0
 
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
