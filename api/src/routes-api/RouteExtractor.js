@@ -188,7 +188,7 @@ export default class RouteExtractor extends Route {
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
-    activities = orderBy(activities, 'periode', ['desc']).filter((act) => act.periode >= month(dateStart, -0.5) && act.periode <= dateStop)
+    activities = orderBy(activities, 'periode', ['desc']).filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
 
     let sum = cloneDeep(activities)
     sum = groupBy(sum, 'contentieux.label')
