@@ -120,11 +120,13 @@
     </div>
     <div>
       <div>
-        <span class="matricule" [style.height]="duringPrint? '20px':'auto'" contenteditable data-placeholder="Matricule"
-          (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
-          (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR.matricule
-          }}</span>
-        <mat-icon class="iconPenSmall" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
+        <p><span class="matricule" [style.height]="duringPrint? '20px':'auto'" contenteditable
+            data-placeholder="Matricule"
+            (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
+            (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR.matricule
+            }}</span>
+          <mat-icon class="iconPenSmall" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
+        </p>
       </div>
       <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
         {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
