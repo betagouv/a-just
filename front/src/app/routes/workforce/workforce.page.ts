@@ -29,6 +29,10 @@ export interface HumanResourceIsInInterface extends HumanResourceInterface {
    * Est présent dans l'interface
    */
   isIn: boolean
+  /**
+   * Category name
+   */
+  categoryName?: string
 }
 
 /**
@@ -320,7 +324,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt += realETP
         })
       }
-console.log(etpt)
+      console.log(etpt)
       return {
         ...c,
         etpt,
@@ -394,23 +398,59 @@ console.log(etpt)
         }
       }),
     }))
-    console.log(this.listFormated)
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
-    if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
+    if (
+      list.length <= FILTER_LIMIT_ON_SEARCH &&
+      this.allPersons.length !== list.length
+    ) {
       if (this.valuesFinded && this.valuesFinded.length) {
         this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
       }
 
-      this.allPersonsFiltered = list
+      let allPersonIds: number[] = []
+      this.listFormated.map((l) => {
+        allPersonIds = allPersonIds.concat(l.hrFiltered.map((h) => h.id))
+      })
+
+      this.allPersonsFiltered = list.map((person) => {
+        let sitations = this.humanResourceService.findAllSituations(
+          person,
+          this.dateSelected
+        )
+        if (sitations.length === 0) {
+          // if no situation in the past get to the future
+          sitations = this.humanResourceService.findAllSituations(
+            person,
+            this.dateSelected,
+            true,
+            true
+          )
+        }
+
+        return {
+          ...person,
+          isIn: allPersonIds.includes(person.id),
+          categoryName:
+            sitations.length && sitations[0].category
+              ? sitations[0].category.label
+              : '',
+        }
+      })
     }
 
-    this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn = this.filterFindedPerson(this.allPersonsFiltered, false)
+    this.allPersonsFilteredIsIn = this.filterFindedPerson(
+      this.allPersonsFiltered,
+      true
+    )
+    this.allPersonsFilteredNotIn = this.filterFindedPerson(
+      this.allPersonsFiltered,
+      false
+    )
   }
 
   /**
@@ -448,11 +488,10 @@ console.log(etpt)
         })
         this.allPersons = allPersons.map((p: HumanResourceInterface) => ({
           ...p,
-          isIn: allPersonIds.includes(p.id),
+          isIn: false,
         }))
 
         this.orderListWithFiltersParams()
-        this.onSearchBy()
       })
 
     if (this.route.snapshot.fragment) {
@@ -499,6 +538,7 @@ console.log(etpt)
     })
 
     this.updateCategoryValues()
+    this.onSearchBy()
   }
 
   /**
@@ -685,11 +725,11 @@ console.log(etpt)
 
   /**
    * Filtre la liste des personnes trouvées dans la recherche
-   * @param list 
-   * @param isIn 
-   * @returns 
+   * @param list
+   * @param isIn
+   * @returns
    */
   filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
-    return (list || []).filter(h => h.isIn === isIn)
+    return (list || []).filter((h) => h.isIn === isIn)
   }
 }

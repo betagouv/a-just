@@ -350,15 +350,17 @@ export class HumanResourceService {
 
   /**
    * Liste de toutes les situations jusqu'à une date saisie
-   * @param hr 
-   * @param date 
-   * @param order 
-   * @returns 
+   * @param hr
+   * @param date
+   * @param order
+   * @param inFuture
+   * @returns
    */
   findAllSituations(
     hr: HumanResourceInterface | null,
     date?: Date,
-    order: string | boolean = 'desc'
+    order: string | boolean = 'desc',
+    inFuture: boolean = false
   ) {
     let situations = orderBy(
       hr?.situations || [],
@@ -375,7 +377,11 @@ export class HumanResourceService {
     if (date) {
       situations = situations.filter((hra) => {
         const dateStart = today(hra.dateStart)
-        return dateStart.getTime() <= date.getTime()
+        if (!inFuture) {
+          return dateStart.getTime() <= date.getTime()
+        } else {
+          return dateStart.getTime() > date.getTime()
+        }
       })
     }
 
@@ -384,9 +390,9 @@ export class HumanResourceService {
 
   /**
    * Filtre des indispos d'une fiche
-   * @param hr 
-   * @param date 
-   * @returns 
+   * @param hr
+   * @param date
+   * @returns
    */
   findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
     let indisponibilities = orderBy(
@@ -426,9 +432,9 @@ export class HumanResourceService {
 
   /**
    * Mise à jour d'une fiche avec son ID et sur le serveur
-   * @param orignalObject 
-   * @param params 
-   * @returns 
+   * @param orignalObject
+   * @param params
+   * @returns
    */
   async updatePersonById(
     orignalObject: HumanResourceInterface,
@@ -443,8 +449,8 @@ export class HumanResourceService {
 
   /**
    * API mise à jour d'une fiche sur le serveur
-   * @param hr 
-   * @returns 
+   * @param hr
+   * @returns
    */
   updateRemoteHR(hr: any) {
     console.log(hr)
@@ -473,8 +479,8 @@ export class HumanResourceService {
 
   /**
    * API Suppression d'une situation d'une fiche
-   * @param situationId 
-   * @returns 
+   * @param situationId
+   * @returns
    */
   removeSituation(situationId: number) {
     if (confirm('Supprimer cette situation ?')) {
@@ -501,10 +507,10 @@ export class HumanResourceService {
 
   /**
    * Calcul de l'ETP à une date d'une fiche (etp - indispos)
-   * @param referentielId 
-   * @param date 
-   * @param hr 
-   * @returns 
+   * @param referentielId
+   * @param date
+   * @param hr
+   * @returns
    */
   getEtpByDateAndPerson(
     referentielId: number,
@@ -552,9 +558,9 @@ export class HumanResourceService {
 
   /**
    * Control de l'ensemble des indispo qu'il n'y ai pas plus de 100% à une date donnée
-   * @param human 
-   * @param indisponibilities 
-   * @returns 
+   * @param human
+   * @param indisponibilities
+   * @returns
    */
   controlIndisponibilities(
     human: HumanResourceInterface,
@@ -624,13 +630,13 @@ export class HumanResourceService {
 
   /**
    * API appel au serveur pour lister les effectifs d'une juridiction à une date précise
-   * @param backupId 
-   * @param date 
-   * @param contentieuxIds 
-   * @param categoriesIds 
-   * @param endPeriodToCheck 
-   * @param extractor 
-   * @returns 
+   * @param backupId
+   * @param date
+   * @param contentieuxIds
+   * @param categoriesIds
+   * @param endPeriodToCheck
+   * @param extractor
+   * @returns
    */
   onFilterList(
     backupId: number,
@@ -658,8 +664,8 @@ export class HumanResourceService {
 
   /**
    * API appel au serveur pour retourner les détails d'une fiche
-   * @param hrId 
-   * @returns 
+   * @param hrId
+   * @returns
    */
   loadRemoteHR(hrId: number): Promise<HumanResourceInterface | null> {
     return this.serverService

@@ -612,28 +612,25 @@ progression-bar {
       display: flex;
       align-items: center;
       height: 40px;
-      background-color: fColor(bgSelect);
       white-space: nowrap;
       text-decoration: none;
-
-      &.is-in {
-        background-color: transparent;
-
-        > i {
-          color: fColor(titleEtpGraph);
-        }
-      }
 
       > p {
         color: fColor(cgray);
         font-size: 12px;
-        margin-right: 16px;
+        margin: 0 16px;
+        flex: 1;
       }
 
       > i {
-        color: fColor(cgray);
-        width: 48px;
+        color: white;
+        background-color: rgb(fColor(cgray), 0.6);
+        width: 24px;
+        height: 24px;
+        border-radius: 24px;
+        line-height: 24px;
         text-align: center;
+        margin-right: 16px;
       }
     }
   }
