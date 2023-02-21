@@ -174,24 +174,26 @@
     </div>
     <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
       <div *ngIf="allPersonsFilteredIsIn.length">{{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length >
-        1 ? 'resultats' : 'resultat'}} en
-        juridiction</div>
+        1 ? 'Resultats' : 'Resultat'}}
+        dans les effectifs</div>
       <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
-        <i class="ri-user-follow-line"></i>
         <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}</p>
+        <i class="ri-user-follow-line" [style.background-color]="getCategoryColor(person.categoryName)"></i>
       </a>
       <div *ngIf="allPersonsFilteredNotIn.length">{{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length
-        > 1 ? 'resultats' : 'resultat'}} en
-        juridiction</div>
+        > 1 ? 'Resultats' : 'Resultat'}}
+        hors effectifs</div>
       <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
-        <i class="ri-user-shared-line"></i>
         <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}</p>
+        <i class="ri-user-shared-line"
+          [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
+          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null"></i>
       </a>
       <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
