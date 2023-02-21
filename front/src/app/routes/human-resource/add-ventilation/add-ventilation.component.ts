@@ -289,6 +289,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     )
 
     if (this.human) {
+      console.log(this.basicData!.controls)
+
       if (
         await this.humanResourceService.updatePersonById(this.human, {
           firstName: this.basicData!.controls.firstName.value,
