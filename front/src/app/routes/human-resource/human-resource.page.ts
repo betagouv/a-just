@@ -241,6 +241,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
+    this.currentHR = null
+
     let findUser
     if (cacheHr) {
       findUser = cacheHr
