@@ -1,5 +1,6 @@
 import { default as server } from '../dist/index'
 import routeIndex from './api/Route.test'
+import routeConnexion from './api/RouteConnexion'
 import routeImport from './api/RouteImports.test'
 import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
@@ -16,8 +17,9 @@ describe('Test server is ready', () => {
   })
 
   routeIndex()
-  routeImport()
-  /*routeHR()
+  routeConnexion(),
+  /*routeImport()
+  routeHR()
   routeActivities()
   RouteContentieuxOptions()*/
 

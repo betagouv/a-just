@@ -84,4 +84,40 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
     })
   })
+  describe('Sign up', () => {
+    it('Missing email, should return 400', async () => {
+      try {
+        await axios.post(`${config.serverUrl}/users/create-account`, {
+          password: '123456',
+          firstName: 'userTest',
+          lastName: 'userTest',
+          fonction: 'tester',
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 400)
+      }
+    })
+    it('Missing password, should return 400', async () => {
+      try {
+        await axios.post(`${config.serverUrl}/users/create-account`, {
+          email: 'test@mail.com',
+          firstName: 'userTest',
+          lastName: 'userTest',
+          fonction: 'tester',
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 400)
+      }
+    })
+    it('Correct inputs, should return 200', async () => {
+      const response = await axios.post(`${config.serverUrl}/users/create-account`, {
+        email: 'test@mail.com',
+        password: '123456',
+        firstName: 'userTest',
+        lastName: 'userTest',
+        fonction: 'tester',
+      })
+      assert.strictEqual(response.status, 200)
+    })
+  })
 }
