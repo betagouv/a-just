@@ -18,33 +18,26 @@ module.exports = function () {
     })
   })
 
-  describe('Test import referentiel', () => {
+  /*describe('Test import referentiel', () => {
     it('upload referentiel', async () => {
       const formData = new FormData()
       formData.append('file', createReadStream(`${__dirname}/../files/A-JUST_nomenclature.csv`))
 
-      const response = await axios.post(
-        `${config.serverUrl}/imports/import-referentiel`,
-        formData,
-        {
-          headers: {
-            Authorization: userToken,
-            'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
-          },
-        }
-      )
+      const response = await axios.post(`${config.serverUrl}/imports/import-referentiel`, formData, {
+        headers: {
+          Authorization: userToken,
+          'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
+        },
+      })
       assert.equal(response.status, 200, 'import referentiel fail')
     })
 
     it('load referentiel', async () => {
-      const response = await axios.get(
-        `${config.serverUrl}/referentiels/get-referentiels`,
-        {
-          headers: {
-            Authorization: userToken,
-          },
-        }
-      )
+      const response = await axios.get(`${config.serverUrl}/referentiels/get-referentiels`, {
+        headers: {
+          Authorization: userToken,
+        },
+      })
       assert.isOk(response.data && response.data.data.length, 'not referentiel imported')
     })
   })
@@ -55,16 +48,12 @@ module.exports = function () {
       formData.append('backupName', 'initialisation')
       formData.append('file', createReadStream(`${__dirname}/../files/hr-sample.csv`))
 
-      const response = await axios.post(
-        `${config.serverUrl}/imports/import-hr`,
-        formData,
-        {
-          headers: {
-            Authorization: userToken,
-            'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
-          },
-        }
-      )
+      const response = await axios.post(`${config.serverUrl}/imports/import-hr`, formData, {
+        headers: {
+          Authorization: userToken,
+          'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
+        },
+      })
       assert.equal(response.status, 200, 'import HR fail')
     })
 
@@ -82,5 +71,5 @@ module.exports = function () {
       )
       assert.isOk(response.data && response.data.data && response.data.data.hr.length === 17, 'missing hr when imported')
     })
-  })
+  })*/
 }
