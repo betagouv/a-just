@@ -45,7 +45,7 @@ export default (sequelizeInstance, Model) => {
       return list
     }
 
-    if (force === true || !Model.cacheReferentielMap) {
+    if ((force === true || !Model.cacheReferentielMap) && Model) {
       const mainList = await await formatToGraph()
       let list = []
       mainList.map((main) => {
