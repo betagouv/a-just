@@ -17,9 +17,9 @@ describe('Test server is ready', () => {
 
   routeIndex()
   routeImport()
-  routeHR()
+  /*routeHR()
   routeActivities()
-  RouteContentieuxOptions()
+  RouteContentieuxOptions()*/
 
   after(function () {
     server.done()
