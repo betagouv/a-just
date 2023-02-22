@@ -35,7 +35,7 @@ export default class RouteCalculator extends Route {
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
       contentieuxIds: Types.array().required(),
-      optionBackupId: Types.number().required(),
+      optionBackupId: Types.number(),
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
     }),
@@ -68,7 +68,7 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')
-    const optionsBackups = await this.models.ContentieuxOptions.getAllById(optionBackupId)
+    const optionsBackups = optionBackupId ? await this.models.ContentieuxOptions.getAllById(optionBackupId) : []
     console.timeEnd('calculator-2')
 
     console.time('calculator-3')

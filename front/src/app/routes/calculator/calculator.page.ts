@@ -244,7 +244,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   onLoad() {
     if (
       this.humanResourceService.backupId.getValue() &&
-      this.contentieuxOptionsService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
       this.dateStart !== null &&
       this.dateStop !== null &&
