@@ -93,6 +93,40 @@ export default class RouteUsers extends Route {
   }
 
   /**
+   * Interface pour supprimer un compte (For test only)
+   */
+  @Route.Delete({
+    path: 'remove-account-test/:id',
+    accesses: [Access.isAdmin],
+  })
+  async removeAccountTest (ctx) {
+    const { id } = ctx.params
+
+    if (await this.model.removeAccountTest(id)) {
+      this.sendOk(ctx, 'Ok')
+    } else {
+      ctx.throw(401, ctx.state.__('Code non valide!'))
+    }
+  }
+
+  /**
+   * Interface pour supprimer un compte (Admin only)
+   */
+  @Route.Delete({
+    path: 'remove-account/:id',
+    accesses: [Access.isAdmin],
+  })
+  async removeAccount (ctx) {
+    const { id } = ctx.params
+
+    if (await this.model.removeAccount(id)) {
+      this.sendOk(ctx, 'Ok')
+    } else {
+      ctx.throw(401, ctx.state.__('Code non valide!'))
+    }
+  }
+
+  /**
    * Interface de la liste de tout les utilisateurs
    */
   @Route.Get({
