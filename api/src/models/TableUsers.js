@@ -75,6 +75,22 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
+   * Supprimer un compte utilisateur (seulement pour les tests)
+   * @params {*} param0
+   */
+  Model.removeAccountTest = async (userId) => {
+    return await Model.destroyById(userId, { force: true })
+  }
+
+  /**
+   * Supprimer un compte utilisateur
+   * @params {*} param0
+   */
+  Model.removeAccount = async (userId) => {
+    return await Model.destroyById(userId)
+  }
+
+  /**
    * Retourne la liste des tous les utilisateurs
    * @returns
    */
