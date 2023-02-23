@@ -223,6 +223,6 @@ export default (sequelizeInstance, Model) => {
     return listCont ? listCont.id : null
   }
 
-  //Model.getReferentiels(true) // force to init
+  Model.getReferentiels(true) // force to init
   return Model
 }
