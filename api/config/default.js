@@ -72,4 +72,8 @@ module.exports = {
   sendingBlue: {
     usersListId: 6,
   },
+  /**
+   * Sentry api Key
+   */
+  sentryApi: process.env.SENTRY_API,
 }
