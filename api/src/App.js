@@ -1,12 +1,14 @@
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
-import { i18n, compress, cors, helmet, addDefaultBody, logger } from 'koa-smart/middlewares'
+import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
+import logger from './utils/log'
+import koaLogger from 'koa-logger-winston'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -46,7 +48,7 @@ export default class App extends AppBase {
         modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
-      config.consoleLog ? logger() : () => {}, // gives detailed logs of each request made on the API
+      koaLogger(logger),
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
