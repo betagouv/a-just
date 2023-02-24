@@ -43,6 +43,7 @@
     "jimp": "^0.16.1",
     "jsonwebtoken": "^8.5.1",
     "koa-body": "^4.0.6",
+    "koa-logger-winston": "^0.0.2",
     "koa-ejs": "^4.3.0",
     "koa-proxies": "^0.12.2",
     "koa-smart": "^2.2.0",
@@ -67,8 +68,9 @@
     "stream": "^0.0.2",
     "string-strip-html": "^6.3.0",
     "stripe": "^8.132.0",
-    "winston": "^3.3.3",
+    "winston": "^3.8.2",
     "winston-logzio": "^5.1.2",
+    "winston-sentry-log": "^1.0.26",
     "xml2csv": "^1.0.1"
   },
   "devDependencies": {
