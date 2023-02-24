@@ -1,9 +1,8 @@
 import { default as server } from '../dist/index'
 import routeIndex from './api/Route.test'
-import routeAuth from './api/RouteAuth.test'
 import routeUser from './api/RouteUser.test'
-import routeUnauthorizedAccess from './api/RouteUnauthorizedAccess.test'
-/*import routeImport from './api/RouteImports.test'
+/*import routeUnauthorizedAccess from './api/RouteUnauthorizedAccess.test'
+import routeImport from './api/RouteImports.test'
 import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
@@ -17,15 +16,12 @@ describe('Test server is ready', () => {
       done()
     }
   })
-  let adminToken = null
-  let userId = null
 
   routeIndex()
-  routeUser(adminToken, userId),
-  routeAuth(adminToken, userId),
-  routeUnauthorizedAccess(adminToken, userId),
-  //routeChangeData(),
-  /*routeImport()
+  routeUser(),
+  /*routeUnauthorizedAccess(),
+  routeChangeData(),
+  routeImport()
   routeHR()
   routeActivities()
   RouteContentieuxOptions()*/
