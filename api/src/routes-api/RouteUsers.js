@@ -264,6 +264,7 @@ export default class RouteUsers extends Route {
     accesses: [Access.isLogin],
   })
   async getUserDatas (ctx) {
+    console.log('-------CTX:', ctx)
     this.sendOk(ctx, {
       backups: await this.models.HRBackups.list(ctx.state.user.id),
       categories: getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user),
