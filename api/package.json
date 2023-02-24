@@ -26,6 +26,7 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "9.0.0",
     "koa-body": "^4.0.6",
+    "koa-logger-winston": "^0.0.2",
     "koa-smart": "^2.2.0",
     "lodash": "^4.17.20",
     "mime": "^2.5.2",
@@ -37,8 +38,9 @@
     "sequelize-transforms": "^2.0.0",
     "sib-api-v3-sdk": "^8.5.0",
     "stream": "^0.0.2",
-    "winston": "^3.3.3",
-    "winston-logzio": "^5.1.2"
+    "winston": "^3.8.2",
+    "winston-logzio": "^5.1.2",
+    "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
