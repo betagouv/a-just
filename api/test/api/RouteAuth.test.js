@@ -1,0 +1,114 @@
+import axios from 'axios'
+import config from 'config'
+import { assert } from 'chai'
+
+module.exports = function (adminToken, userId, userToken) {
+  /**
+   *  Test de la partie inscription d'un utilisateur
+   */
+  describe('Auth tests', () => {
+    it('Login - Login admin', async () => {
+      const email = 'redwane.zafari@a-just.fr'
+      const password = '123456'
+
+      // Connexion de l'admini
+      const response = await axios.post(`${config.serverUrl}/auths/login`, {
+        email,
+        password,
+      })
+      // Récupération du token associé pour l'identifier
+      adminToken = response.data.token
+      assert.strictEqual(response.status, 201)
+    })
+
+    /**
+     * Vérification qu'on ait bien un erreur si le mot de passe n'est pas correct
+     */
+    it('Login - Bad password, should return 401', async () => {
+      const email = 'test@mail.com'
+      const password = '123481349'
+
+      try {
+        await axios.post(`${config.serverUrl}/auths/login`, {
+          email,
+          password,
+        })
+      } catch (error) {
+        assert.notStrictEqual(error.response.status, 201)
+      }
+    })
+    /**
+     * Vérification qu'on ait bien un erreur si l'email n'est pas correct
+     */
+    it('Login - Bad email, should return 401', async () => {
+      const email = 'test@mail.fr'
+      const password = '123456'
+
+      try {
+        await axios.post(`${config.serverUrl}/auths/login`, {
+          email,
+          password,
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 401)
+      }
+    })
+    /**
+     * Vérification qu'on ait bien un erreur si le mot de passe et l'email ne sont pas corrects
+     */
+    it('Login - Bad email AND bad password, should return 401', async () => {
+      const email = 'teste@email.com'
+      const password = '124134683'
+
+      try {
+        await axios.post(`${config.serverUrl}/auths/login`, {
+          email,
+          password,
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 401)
+      }
+    })
+
+    /**
+     * Vérification que la connexion avec les bonnes infos focntionne
+     */
+    it('Login - Login should succeed and return 201 with user token', async () => {
+      const email = 'test@mail.com'
+      const password = '123456'
+
+      const response = await axios.post(`${config.serverUrl}/auths/login`, {
+        email,
+        password,
+      })
+      userToken = response.status === 201 && response.data.token
+      userId = response.data.user.id
+
+      assert.isOk(userToken, 'response 201 and user token created')
+    })
+
+    /**
+     * Vérification que l'utilisateur peur bien se déconnecter
+     */
+    it('Logout - Logout should return 200', async () => {
+      const response = await axios.get(`${config.serverUrl}/auths/logout`, {
+        headers: {
+          authorization: userToken,
+        },
+      })
+      assert.strictEqual(response.status, 200)
+    })
+
+    /**
+     * Vérification qu'un admin puisse bien surrpimer le compte d'un utilisateur
+     */
+    it('Remove user Account by admin', async () => {
+      const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
+        headers: {
+          authorization: adminToken,
+        },
+      })
+      assert.strictEqual(response.status, 200)
+    })
+  })
+}
