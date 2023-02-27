@@ -236,7 +236,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param cacheHr
    * @returns
    */
-  async onLoad(cacheHr: HumanResourceInterface | null = null, updated = false) {
+  async onLoad(cacheHr: HumanResourceInterface | null = null, updated = true) {
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
@@ -254,7 +254,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (findUser) {
       this.currentHR = findUser
 
-      if (!updated) {
+      if (updated) {
         this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
         this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
         this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
@@ -559,7 +559,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.onLoad(
         await this.humanResourceService.updatePersonById(this.currentHR, {
           [nodeName]: value,
-        })
+        }),false
       )
 
       this.currentHR = {
@@ -611,7 +611,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onNewUpdate() {
     this.onEditIndex = null
-    this.onLoad()
+    this.onLoad(null,false)
   }
 
   /**
