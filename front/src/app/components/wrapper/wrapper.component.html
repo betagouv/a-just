@@ -3,8 +3,9 @@
   <div class="menu no-print" title="">
     <div class="images">
       <div class="logo white-mode block-marque-white"></div>
-      <div class="logo dark-mode block-marque-dark"></div>
-      <div class="logo-ajust white-mode logo-white" [title]="versionNumber" (click)="popin=true"></div>
+      <div class="logo dark-mode block-marque-dark" alt="Se déconnecter"></div>
+      <div class="logo-ajust white-mode logo-white" [title]="'Se déconnecter'" (click)="popin=true">
+      </div>
 
 
       <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
