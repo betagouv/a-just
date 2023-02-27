@@ -227,7 +227,7 @@ export class ExtractorActivityComponent extends MainClass {
     return `Extraction_Données_D_Activité_${this.getTotalPeriodeLabel(
       this.dateStart || new Date(),
       this.dateStop || new Date()
-    )} _par ${
+    )}_par ${
       this.userService.user.getValue()!.firstName
     }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
       .toJSON()
