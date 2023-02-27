@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core'
+import { Component, ElementRef, ViewChild } from '@angular/core'
 import { getLongMonthString, getRangeOfMonths } from 'src/app/utils/dates'
 import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
@@ -6,6 +6,7 @@ import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { BaseChartDirective } from 'ng2-charts'
 /**
  * Composant graphique DTES simulateur
  */
@@ -15,6 +16,9 @@ import { fixDecimal } from 'src/app/utils/numbers'
   styleUrls: ['./dtes-chart.component.scss'],
 })
 export class DtesChartComponent {
+  //@ViewChild(BaseChartDirective)
+   //myChart!: BaseChartDirective; 
+
   /**
    * Date début
    */
@@ -68,6 +72,19 @@ export class DtesChartComponent {
       values: [0],
     },
   }
+/**
+ * Chart Data
+ */
+  lineChartData:any|null = null
+  /**
+ * Chart Options Data
+ */
+  lineChartOptions= undefined
+  /**
+ * Chart Options Data
+ */
+  config :any|null= null
+
 
   /**
    * Constructeur
@@ -134,7 +151,7 @@ export class DtesChartComponent {
         )
 
         if (this.myChart !== null) {
-          this.myChart.config.data.labels = this.labels
+          this.myChart.config.data.labels = this.labels;
           this.myChart._metasets[0]._dataset.data =
             this.data.projectedStock.values
           this.myChart._metasets[1]._dataset.data =
@@ -185,9 +202,11 @@ export class DtesChartComponent {
    * Remplissage du graphique après l'initialisation du composant
    */
   ngAfterViewInit(): void {
+
+    console.log(this.lineChartData)
     const labels = this.labels
 
-    const data = {
+    this.lineChartData = {
       labels: labels,
       datasets: [
         {
@@ -314,140 +333,10 @@ export class DtesChartComponent {
       }
     }
 
-    const config: any = {
+    this.config = {
       type: 'line',
-      data: data,
+      data: this.lineChartData,
       options: {
-        onClick: function (e: any, items: any) {
-          if (items.length == 0) return
-
-          var firstPoint = items[0].index
-          const projectedStock = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedStock'
-            }
-          )
-          const simulatedStock = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'simulatedStock'
-            }
-          )
-
-          const projectedDTES = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedDTES'
-            }
-          )
-          const simulatedDTES = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'simulatedDTES'
-            }
-          )
-
-          const tooltipEl =
-            $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
-          const tooltipElTriangle =
-            $this.myChart.canvas.parentNode.querySelector(
-              '#chartjs-tooltip-triangle'
-            )
-
-          const yValues = items.map((object: any) => {
-            return object.element.y
-          })
-
-          const min = Math.min(...yValues)
-
-          tooltipEl.style.opacity = 1
-          tooltipEl.style.left =
-            (items[0].element.x > 175 ? items[0].element.x : 175) + 'px'
-          tooltipEl.style.top = min - 130 + 'px'
-
-          tooltipElTriangle.style.opacity = 1
-          tooltipElTriangle.style.left = items[0].element.x + 4 + 'px'
-          tooltipElTriangle.style.top = min + 'px'
-
-          $this.affectTooltipValues({
-            projectedStock: projectedStock.data[firstPoint],
-            simulatedStock: simulatedStock.data[firstPoint],
-            projectedDTES: projectedDTES.data[firstPoint],
-            simulatedDTES: simulatedDTES.data[firstPoint],
-            x: (items[0].element.x > 175 ? items[0].element.x : 175) + 'px',
-            y: min - 130 + 'px',
-            trianglex: items[0].element.x + 'px',
-            tirnagley: min - 2.5 + 'px',
-            pointIndex: firstPoint,
-            selectedLabelValue: e.chart.data.labels[firstPoint],
-            enableTooltip: false,
-          })
-
-          const colorArray = []
-
-          if (
-            e.chart.options.plugins.annotation.annotations.box1.content ===
-            undefined
-          ) {
-            if (
-              e.chart.options.plugins.annotation.annotations.box1.display ===
-              false
-            ) {
-              e.chart.options.plugins.annotation.annotations.box1.display = true
-              $this.updateAnnotationBox(true, 0, 0)
-            }
-            var firstPoint = items[0].index
-            if (firstPoint === 0) {
-              e.chart.options.plugins.annotation.annotations.box1.xMin = 0
-              e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
-              $this.updateAnnotationBox(true, 0, 0.5)
-            } else if (firstPoint === e.chart.scales.x.max) {
-              e.chart.options.plugins.annotation.annotations.box1.xMin =
-                e.chart.scales.x.max - 0.5
-              e.chart.options.plugins.annotation.annotations.box1.xMax =
-                e.chart.scales.x.max
-              $this.updateAnnotationBox(
-                true,
-                e.chart.scales.x.max - 0.5,
-                e.chart.scales.x.max
-              )
-            } else {
-              e.chart.options.plugins.annotation.annotations.box1.xMin =
-                firstPoint - 0.5
-              e.chart.options.plugins.annotation.annotations.box1.xMax =
-                firstPoint + 0.5
-              $this.updateAnnotationBox(
-                true,
-                firstPoint - 0.5,
-                firstPoint + 0.5
-              )
-            }
-            e.chart.options.plugins.annotation.annotations.box1.yMax =
-              e.chart.scales.A.max
-            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
-              if (firstPoint === i) {
-                $this.realSelectedMonth = $this.labels![i]
-                colorArray.push('#0a76f6')
-              } else {
-                colorArray.push('rgb(109, 109, 109)')
-              }
-            }
-            e.chart.options.plugins.tooltip.enabled = false
-          } else {
-            e.chart.options.plugins.tooltip.enabled = true
-            $this.affectTooltipValues({
-              pointIndex: null,
-              enableTooltip: true,
-            })
-            for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
-              colorArray.push('rgb(109, 109, 109)')
-            }
-            e.chart.options.plugins.annotation.annotations.box1.content =
-              undefined
-            $this.updateAnnotationBox(false, 0, 0, undefined)
-            tooltipEl.style.opacity = 0
-            tooltipElTriangle.style.opacity = 0
-          }
-          e.chart.config.options.scales.x.ticks.color = colorArray
-          e.chart.update()
-        },
         tooltips: {
           events: ['click'],
           callbacks: {
@@ -584,10 +473,15 @@ export class DtesChartComponent {
       plugins: [yScaleTextStock, yScaleTextDTES],
     }
 
-    this.myChart = new Chart(
+    this.lineChartData = this.config.data
+    this.lineChartOptions = this.config.options
+
+/**this.myChart = new Chart(
       document.getElementById('dtes-chart') as ChartItem,
       config
-    )
+    )*/
+
+    console.log(this.myChart)
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -739,4 +633,139 @@ export class DtesChartComponent {
   getRealMonth(month: string) {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
+  onChartClick(e:any){
+console.log(e)
+    const items = Array()
+        //onClick: function (e: any, items: any) {
+      if (items.length == 0) return
+
+      var firstPoint = items[0].index
+      const projectedStock = e.chart.config._config.data.datasets.find(
+        (x: any) => {
+          return x.label === 'projectedStock'
+        }
+      )
+      const simulatedStock = e.chart.config._config.data.datasets.find(
+        (x: any) => {
+          return x.label === 'simulatedStock'
+        }
+      )
+
+      const projectedDTES = e.chart.config._config.data.datasets.find(
+        (x: any) => {
+          return x.label === 'projectedDTES'
+        }
+      )
+      const simulatedDTES = e.chart.config._config.data.datasets.find(
+        (x: any) => {
+          return x.label === 'simulatedDTES'
+        }
+      )
+
+      const tooltipEl =
+        this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+      const tooltipElTriangle =
+        this.myChart.canvas.parentNode.querySelector(
+          '#chartjs-tooltip-triangle'
+        )
+
+      const yValues = items.map((object: any) => {
+        return object.element.y
+      })
+
+      const min = Math.min(...yValues)
+
+      tooltipEl.style.opacity = 1
+      tooltipEl.style.left =
+        (items[0].element.x > 175 ? items[0].element.x : 175) + 'px'
+      tooltipEl.style.top = min - 130 + 'px'
+
+      tooltipElTriangle.style.opacity = 1
+      tooltipElTriangle.style.left = items[0].element.x + 4 + 'px'
+      tooltipElTriangle.style.top = min + 'px'
+
+      this.affectTooltipValues({
+        projectedStock: projectedStock.data[firstPoint],
+        simulatedStock: simulatedStock.data[firstPoint],
+        projectedDTES: projectedDTES.data[firstPoint],
+        simulatedDTES: simulatedDTES.data[firstPoint],
+        x: (items[0].element.x > 175 ? items[0].element.x : 175) + 'px',
+        y: min - 130 + 'px',
+        trianglex: items[0].element.x + 'px',
+        tirnagley: min - 2.5 + 'px',
+        pointIndex: firstPoint,
+        selectedLabelValue: e.chart.data.labels[firstPoint],
+        enableTooltip: false,
+      })
+
+      const colorArray = []
+
+      if (
+        e.chart.options.plugins.annotation.annotations.box1.content ===
+        undefined
+      ) {
+        if (
+          e.chart.options.plugins.annotation.annotations.box1.display ===
+          false
+        ) {
+          e.chart.options.plugins.annotation.annotations.box1.display = true
+          this.updateAnnotationBox(true, 0, 0)
+        }
+        var firstPoint = items[0].index
+        if (firstPoint === 0) {
+          e.chart.options.plugins.annotation.annotations.box1.xMin = 0
+          e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
+          this.updateAnnotationBox(true, 0, 0.5)
+        } else if (firstPoint === e.chart.scales.x.max) {
+          e.chart.options.plugins.annotation.annotations.box1.xMin =
+            e.chart.scales.x.max - 0.5
+          e.chart.options.plugins.annotation.annotations.box1.xMax =
+            e.chart.scales.x.max
+          this.updateAnnotationBox(
+            true,
+            e.chart.scales.x.max - 0.5,
+            e.chart.scales.x.max
+          )
+        } else {
+          e.chart.options.plugins.annotation.annotations.box1.xMin =
+            firstPoint - 0.5
+          e.chart.options.plugins.annotation.annotations.box1.xMax =
+            firstPoint + 0.5
+          this.updateAnnotationBox(
+            true,
+            firstPoint - 0.5,
+            firstPoint + 0.5
+          )
+        }
+        e.chart.options.plugins.annotation.annotations.box1.yMax =
+          e.chart.scales.A.max
+        for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
+          if (firstPoint === i) {
+            this.realSelectedMonth = this.labels![i]
+            colorArray.push('#0a76f6')
+          } else {
+            colorArray.push('rgb(109, 109, 109)')
+          }
+        }
+        e.chart.options.plugins.tooltip.enabled = false
+      } else {
+        e.chart.options.plugins.tooltip.enabled = true
+        this.affectTooltipValues({
+          pointIndex: null,
+          enableTooltip: true,
+        })
+        for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
+          colorArray.push('rgb(109, 109, 109)')
+        }
+        e.chart.options.plugins.annotation.annotations.box1.content =
+          undefined
+        this.updateAnnotationBox(false, 0, 0, undefined)
+        tooltipEl.style.opacity = 0
+        tooltipElTriangle.style.opacity = 0
+      }
+      e.chart.config.options.scales.x.ticks.color = colorArray
+      e.chart.update()
+    
+  }
+
 }

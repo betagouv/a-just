@@ -34,6 +34,7 @@ import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-c
 import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 import { NewsComponent } from './news/news.component'
 import { HelpButtonComponent } from './help-button/help-button.component'
+import { NgChartsModule } from 'ng2-charts'
 
 /**
  * Liste des composants à importer
@@ -83,6 +84,7 @@ const list = [
     MaterialModule,
     PipesModule,
     NgSelectModule,
+    NgChartsModule
   ],
   exports: list,
 })
