@@ -159,15 +159,18 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
   //console.log('lasts act', lastActivities.length, lastActivities)
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
+    console.log({ sorties: sumBy(val, 'sorties') })
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
+  console.log('LOCKED', summedlastActivities)
   //console.log('ltmpTotalIn', Object.keys(tmpTotalIn).length, Object.keys(tmpTotalIn), tmpTotalIn)
   console.log('Value to compute mean : ', Object.keys(summedlastActivities).length, Object.keys(summedlastActivities), summedlastActivities)
   //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
   let totalIn = Math.floor(meanBy(summedlastActivities, 'entrees')) || 0
-  let totalOut = Math.floor(meanBy(summedlastActivities, 'sorties')) || 0
+  let totalOut = meanBy(summedlastActivities, 'sorties') || 0
 
+  console.log('Check total out', meanBy(summedlastActivities, 'sorties'), ' Precise', Math.floor(meanBy(summedlastActivities, 'sorties')))
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
 
@@ -421,14 +424,8 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
 function computeRealTimePerCase (totalOut, etp, sufix) {
-  let realTimeCorrectValue = fixDecimal(((environment['nbDays' + sufix] / 12) * environment['nbHoursPerDayAnd' + sufix]) / (totalOut / etp), 100)
-  console.log('clock fixed 0: ', realTimeCorrectValue)
-  let realTimeDisplayed = decimalToStringDate(realTimeCorrectValue)
-  console.log('clock string 1: ', realTimeDisplayed)
-  let realTimeToUse = stringToDecimalDate(realTimeDisplayed)
-  console.log('clock decimal 2: ', realTimeToUse)
-
-  return realTimeToUse
+  let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 100)
+  return Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 }
 
 /**

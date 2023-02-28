@@ -336,3 +336,14 @@ export function decimalToStringDate (decimal) {
   }
   return ''
 }
+
+/**
+ * Génération d'un tableau qui liste chaque mois entre deux dates sous forme de tableau
+ * @param dateFrom
+ * @param dateTo
+ * @returns
+ */
+export function monthDiffList (dateFrom, dateTo) {
+  if (dateTo) return [...Array(1 + dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear())).keys()]
+  else return []
+}

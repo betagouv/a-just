@@ -59,6 +59,48 @@ export default (sequelizeInstance, Model) => {
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
+          code_import: list[i]['ContentieuxReferentiel.code_import'],
+        },
+      }
+    }
+
+    return list
+  }
+
+  /**
+   * Retour la liste de l'ensemble des activités d'une jurdicition avec le détail des sorties
+   * @param {*} HRBackupId
+   * @returns
+   */
+  Model.getAllDetails = async (HRBackupId) => {
+    const list = await Model.findAll({
+      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      include: [
+        {
+          model: Model.models.ContentieuxReferentiels,
+        },
+      ],
+      order: [['periode', 'asc']],
+      raw: true,
+    })
+
+    for (let i = 0; i < list.length; i++) {
+      list[i] = {
+        id: list[i].id,
+        periode: list[i].periode,
+        entrees: list[i].entrees,
+        sorties: list[i].sorties,
+        stock: list[i].stock,
+        originalEntrees: list[i].original_entrees,
+        originalSorties: list[i].original_sorties,
+        originalStock: list[i].original_stock,
+        contentieux: {
+          id: list[i]['ContentieuxReferentiel.id'],
+          label: list[i]['ContentieuxReferentiel.label'],
+          code_import: list[i]['ContentieuxReferentiel.code_import'],
         },
       }
     }
