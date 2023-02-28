@@ -49,13 +49,13 @@
 
 .enable {
   background-color: #000091 !important;
-  color: white;
+  color: white!important;
 
   border: solid 1px;
 
   &.empty {
     background-color: white !important;
-    color: #000091;
+    color: #000091!important;
     border: solid 1px #000091;
   }
 }
