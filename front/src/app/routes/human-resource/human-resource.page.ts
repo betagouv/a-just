@@ -163,7 +163,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       if (this.currentHR && this.onEditIndex === null) {
         let options = {}
 
-        if (v.firstName !== (this.currentHR.firstName || '')) {
+        if (v.firstName !== (this.currentHR.firstName || '')) {
           options = { ...options, firstName: v.firstName }
         }
         if (v.lastName !== (this.currentHR.lastName || '')) {
@@ -175,12 +175,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         if (Object.keys(options).length) {
           // @ts-ignore
-          if (options.lastName === '' || options.lastName === 'Nom') {
+          if (options.lastName === '' || options.lastName === 'Nom') {
             alert('Vous devez saisir un nom pour valider la création !')
             return
           }
           // @ts-ignore
-          if (options.firstName === '' || options.firstName === 'Prénom') {
+          if (options.firstName === '' || options.firstName === 'Prénom') {
             alert('Vous devez saisir un prénom pour valider la création !')
             return
           }
@@ -556,16 +556,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         value = value.innerText
       }
 
-      this.onLoad(
-        await this.humanResourceService.updatePersonById(this.currentHR, {
-          [nodeName]: value,
-        }),false
-      )
-
       this.currentHR = {
         ...this.currentHR,
         [nodeName]: value,
       }
+      
+      this.onLoad(
+        await this.humanResourceService.updatePersonById(this.currentHR, {
+          [nodeName]: value,
+        }),
+        false
+      )
 
       console.log({
         [nodeName]: value,
@@ -611,7 +612,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onNewUpdate() {
     this.onEditIndex = null
-    this.onLoad(null,false)
+    this.onLoad(null, false)  
   }
 
   /**
@@ -959,7 +960,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Force to open help panel
-   * @param type 
+   * @param type
    */
   openHelpPanel(type: string) {
     switch (type) {
@@ -967,7 +968,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
-          subTitle: 'Qu\'est-ce que c\'est ?',
+          subTitle: "Qu'est-ce que c'est ?",
         })
         break
     }
@@ -975,8 +976,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Update form with contenteditable event
-   * @param node 
-   * @param object 
+   * @param node
+   * @param object
    */
   completeFormWithDomObject(
     node: 'firstName' | 'lastName' | 'matricule',
