@@ -5,112 +5,113 @@
       <div class="logo white-mode block-marque-white"></div>
       <div class="logo dark-mode block-marque-dark"></div>
       <div class="logo-ajust white-mode logo-white" [title]="'Déconnexion'" (click)="popin=true"></div>
-
-
-      <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
-        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
-        <div class="content-popup">
-          <button (click)="onSelectAction('logout')">Oui</button>
-          <button (click)="popin = false">Non</button>
-        </div>
-      </aj-popup>
-
-
-      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin=true"></div>
     </div>
 
-    <div class="juridiction" *ngIf="hrBackups.length">
-      <div class="juridiction-title">
-        <h6>{{ hrBackup && hrBackup.label }}</h6>
-        <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-            {{ bu.label }}
-          </button>
-        </mat-menu>
+
+    <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
+      <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+      <div class="content-popup">
+        <button (click)="onSelectAction('logout')">Oui</button>
+        <button (click)="popin = false">Non</button>
       </div>
+    </aj-popup>
+
+
+    <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin=true"></div>
+  </div>
+
+  <div class="juridiction" *ngIf="hrBackups.length">
+    <div class="juridiction-title">
+      <h6>{{ hrBackup && hrBackup.label }}</h6>
+      <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+          {{ bu.label }}
+        </button>
+      </mat-menu>
     </div>
+  </div>
 
-    <div class="menu-scrollable">
-      <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]">
-          {{ item.label }}
-        </a>
-      </div>
-      <div class="flex-1"></div>
-      <div class="menu-item tools">
-        <p>Outils</p>
-        <ul>
-          <li>
-            <a [href]="DOCUMENTATION_URL" target="_blank">
-              <p>
-                Documentation
-                <i class="ri-external-link-line"></i>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a [href]="NOMENCLATURE_DOWNLOAD_URL" (click)="onDownloadNomenclature()" download>
-              <p>Nomenclature</p>
-            </a>
-          </li>
-          <li>
-            <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>
-              <p>Calculatrice de ventilation</p>
-            </a>
-          </li>
+  <div class="menu-scrollable">
+    <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
+      <a [routerLink]="['/' + item.path]">
+        {{ item.label }}
+      </a>
+    </div>
+    <div class="flex-1"></div>
+    <div class="menu-item tools">
+      <p>Outils</p>
+      <ul>
+        <li>
+          <a [href]="DOCUMENTATION_URL" target="_blank">
+            <p>
+              Documentation
+              <i class="ri-external-link-line"></i>
+            </p>
+          </a>
+        </li>
+        <li>
+          <a [href]="NOMENCLATURE_DOWNLOAD_URL" (click)="onDownloadNomenclature()" download>
+            <p>Nomenclature</p>
+          </a>
+        </li>
+        <li>
+          <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>
+            <p>Calculatrice de ventilation</p>
+          </a>
+        </li>
 
-          <li>
-            <a routerLink="/dashboard">
-              <p>Extraire des données</p>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="menu-item">
-        <a href="mailto:support-utilisateurs@a-just.fr">
-          <p>Nous contacter</p>
-        </a>
-      </div>
-      <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
+        <li>
+          <a routerLink="/dashboard">
+            <p>Extraire des données</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="menu-item">
+      <a href="mailto:support-utilisateurs@a-just.fr">
+        <p>Nous contacter</p>
+      </a>
+    </div>
+    <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
     <p>Déconnexion</p>
   </div> -->
-    </div>
   </div>
+</div>
 
-  <div class="contener" #contener title="">
-    <div class="header" id="top">
-      <div *ngIf="backUrl" class="back-url">
-        <a [routerLink]="backUrl" [fragment]="backAnchor">
-          <button class="primary small">
-            <mat-icon>chevron_left</mat-icon>Retour
-          </button>
-        </a>
-      </div>
-      <div>
-        <div class="title-with-doc">
-          <h3 [innerHTML]="title"></h3>
-          <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
-        </div>
-        <p class="subtitle">
-          <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
-        </p>
-      </div>
-      <ng-template [ngIf]="titleTemplate">
-        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-      </ng-template>
-      <div *ngIf="!alignLeft" class="space"></div>
-      <div class="actions">
-        <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
-      </div>
-      <div class="progress-bar" *ngIf="isLoading">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      </div>
+<div class="contener" #contener title="">
+  <div class="header" id="top">
+    <div *ngIf="backUrl" class="back-url">
+      <a [routerLink]="backUrl" [fragment]="backAnchor">
+        <button class="primary small">
+          <mat-icon>chevron_left</mat-icon>Retour
+        </button>
+      </a>
     </div>
-    <div class="content" #content id="content">
-      <ng-content></ng-content>
+    <div>
+      <div class="title-with-doc">
+        <h3 [innerHTML]="title"></h3>
+        <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
+      </div>
+      <p class="subtitle">
+        <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+      </p>
+    </div>
+    <ng-template [ngIf]="titleTemplate">
+      <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+    </ng-template>
+    <div *ngIf="!alignLeft" class="space"></div>
+    <div class="actions">
+      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+    </div>
+    <div class="progress-bar" *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
   </div>
+  <div class="content" #content id="content">
+    <ng-content></ng-content>
+  </div>
+</div>
 </div>
 
 <div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">

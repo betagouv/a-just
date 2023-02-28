@@ -13,8 +13,9 @@ import {
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { sumBy } from 'lodash'
+import { cloneDeep, first, groupBy, map, orderBy, reduce, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
+import { generalizeTimeZone, month, monthDiffList } from '../utils/date'
 
 /**
  * Route de la page extrateur
@@ -165,5 +166,52 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-6')
 
     this.sendOk(ctx, { values: data, columnSize })
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async filterListAct (ctx) {
+    let { backupId, dateStart, dateStop } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+
+    const list = await this.models.Activities.getByMonth(dateStart, backupId)
+
+    const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
+
+    let activities = await this.models.Activities.getAllDetails(backupId)
+    activities = orderBy(activities, 'periode', ['desc']).filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
+
+    let sum = cloneDeep(activities)
+    sum = groupBy(sum, 'contentieux.label')
+
+    let sumTab = []
+
+    Object.keys(sum).map((key) => {
+      sumTab.push({
+        periode: first(sum[key]).periode,
+        entrees: sumBy(sum[key], 'entrees'),
+        sorties: sumBy(sum[key], 'sorties'),
+        stock: first(sum[key]).stock,
+        originalEntrees: sumBy(sum[key], 'originalEntrees'),
+        originalSorties: sumBy(sum[key], 'originalSorties'),
+        originalStock: first(sum[key]).originalStock,
+        contentieux: { code_import: first(sum[key]).contentieux.code_import, label: first(sum[key]).contentieux.label },
+      })
+    })
+
+    this.sendOk(ctx, {
+      list: groupBy(activities, 'periode'),
+      sumTab,
+      lastUpdate,
+    })
   }
 }

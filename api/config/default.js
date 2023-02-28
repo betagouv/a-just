@@ -84,4 +84,8 @@ module.exports = {
    * Nombre de jours d'inactivité maximum des comptes
    */
   nbMaxDayCanBeInactive: 30,
+  /**
+   * Sentry api Key
+   */
+  sentryApi: process.env.SENTRY_API,
 }
