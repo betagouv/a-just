@@ -1,10 +1,12 @@
 import { default as server } from '../dist/index'
 import routeIndex from './api/Route.test'
+import routeUser from './api/RouteUser.test'
+/*import routeUnauthorizedAccess from './api/RouteUnauthorizedAccess.test'
 import routeConnexion from './api/RouteConnexion'
 import routeImport from './api/RouteImports.test'
 import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
-import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'
+import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
 
 describe('Test server is ready', () => {
@@ -17,6 +19,11 @@ describe('Test server is ready', () => {
   })
 
   routeIndex()
+
+  routeUser(),
+  /*routeUnauthorizedAccess(),
+  routeChangeData(),
+  routeImport()
   routeConnexion(),
   /*routeImport()
   routeHR()
