@@ -1,6 +1,7 @@
 @import "../../styles/utils.scss";
 
 :host {
+  position: relative;
   display: block;
   height: 55px;
   width: 170px;
@@ -41,9 +42,11 @@
   div {
     display: flex;
     align-items: center;
+    position: absolute;
     width: 100%;
-
+    left:-8px;
     p {
+      padding-left: 16px;
       white-space: nowrap;
       flex: 1;
       font-weight: bold;
