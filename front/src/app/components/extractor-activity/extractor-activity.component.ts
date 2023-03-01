@@ -7,6 +7,7 @@ import { AppService } from 'src/app/services/app/app.service'
 import { ExcelService } from 'src/app/services/excel/excel.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { generalizeTimeZone, getShortMonthString } from 'src/app/utils/dates'
 import * as xlsx from 'xlsx'
@@ -95,7 +96,8 @@ export class ExtractorActivityComponent extends MainClass {
     private excelService: ExcelService,
     private activityService: ActivitiesService,
     private appService: AppService,
-    private userService: UserService
+    private userService: UserService,
+    private referentielService: ReferentielService
   ) {
     super()
 
@@ -176,6 +178,7 @@ export class ExtractorActivityComponent extends MainClass {
       [' ']: act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
       ['codeCent']: sortCodeArray[1] || -1,
+      ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
       ['Entrées logiciel']: act.originalEntrees,
       ['Entrées A-JUSTées']: act.entrees,
@@ -215,6 +218,7 @@ export class ExtractorActivityComponent extends MainClass {
     sumTab.forEach(function (v: any) {
       delete v['codeUnit']
       delete v['codeCent']
+      delete v['idReferentiel']
     })
     return sumTab
   }
@@ -272,7 +276,14 @@ export class ExtractorActivityComponent extends MainClass {
               this.dateStop || new Date()
             )
           )
-        })
+        }).filter(
+          (r:any) =>
+            this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
+            this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
+        )
+
+        console.log(this.sumTab)
+
         this.sumTab = this.sortByCodeImport(this.sumTab)
         xlsx.utils.book_append_sheet(
           workbook,
@@ -284,7 +295,11 @@ export class ExtractorActivityComponent extends MainClass {
           this.data[key] = this.data[key].map((act: any) => {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)
-          })
+          }).filter(
+            (r:any) =>
+              this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
+              this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
+          )
           this.data[key] = this.sortByCodeImport(this.data[key])
           xlsx.utils.book_append_sheet(
             workbook,

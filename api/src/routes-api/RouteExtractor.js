@@ -204,9 +204,12 @@ export default class RouteExtractor extends Route {
         originalEntrees: sumBy(sum[key], 'originalEntrees'),
         originalSorties: sumBy(sum[key], 'originalSorties'),
         originalStock: first(sum[key]).originalStock,
+        idReferentiel: first(sum[key]).idReferentiel,
         contentieux: { code_import: first(sum[key]).contentieux.code_import, label: first(sum[key]).contentieux.label },
       })
     })
+
+    console.log(sumTab)
 
     this.sendOk(ctx, {
       list: groupBy(activities, 'periode'),
