@@ -1,5 +1,10 @@
 @import "../../styles/utils.scss";
 
+::ng-deep .mdc-list-item__primary-text {
+  font-size: 16px!important;
+  color: black!important;
+}
+
 :host {
   position: relative;
   display: block;
@@ -68,4 +73,5 @@
     top: -10px;
     position: relative;
   }
+
 }
