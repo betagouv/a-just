@@ -235,11 +235,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
+    console.log('ACT start date',activitiesStartDate,' Start date', this.human!.dateStart)
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !')
       return
     }
 
+    if (!(this.human && this.human.dateStart)) {
+      alert('Vous devez saisir une d\'arrivée !')
+      return
+    }
     activitiesStartDate = new Date(activitiesStartDate)
     if (this.human && this.human.dateEnd && activitiesStartDate) {
       const dateEnd = new Date(this.human.dateEnd)

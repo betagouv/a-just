@@ -19,6 +19,7 @@ describe('Test server is ready', () => {
   })
 
   routeIndex()
+
   routeUser(),
   /*routeUnauthorizedAccess(),
   routeChangeData(),

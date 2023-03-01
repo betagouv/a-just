@@ -253,8 +253,7 @@
     <div class="line-item blue-bg">
       <input class="ajusted-button" id="totalIn" [class.filled]="totalIn.value!=='Ajuster'"
         (click)="openPopupWithParams(totalIn)" value="Ajuster" readonly="readonly" #totalIn />
-      <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-        [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+      <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id" [@fadeInOut]>
         {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',firstSituationData))}}%
