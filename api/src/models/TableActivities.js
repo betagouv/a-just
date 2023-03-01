@@ -97,6 +97,7 @@ export default (sequelizeInstance, Model) => {
         originalEntrees: list[i].original_entrees,
         originalSorties: list[i].original_sorties,
         originalStock: list[i].original_stock,
+        idReferentiel: list[i]['ContentieuxReferentiel.id'],
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
