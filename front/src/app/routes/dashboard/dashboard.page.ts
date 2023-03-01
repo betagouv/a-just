@@ -7,6 +7,7 @@ import {
   userCanViewContractuel,
   userCanViewGreffier,
   userCanViewMagistrat,
+  userCanViewVentilateur,
 } from 'src/app/utils/user'
 
 /**
@@ -37,6 +38,10 @@ export class DashboardPage extends MainClass {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Peux voir le ventilateur
+   */
+  canViewVentilateur: boolean = false
 
   /**
    * Constructor
@@ -49,6 +54,7 @@ export class DashboardPage extends MainClass {
       this.canViewMagistrat = userCanViewMagistrat(u)
       this.canViewGreffier = userCanViewGreffier(u)
       this.canViewContractuel = userCanViewContractuel(u)
+      this.canViewVentilateur = userCanViewVentilateur(u)
     })
   )
 }
