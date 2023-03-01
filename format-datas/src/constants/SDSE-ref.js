@@ -34,4 +34,7 @@ export const I_ELST_LIST = {
   '00100082': 'TJ_VALENCE', // Valence
   '00963032': 'TJ_VALENCE', // Montélimar
   '00963056': 'TJ_VALENCE', // Romans-sur-Isère
+  '00100144': 'TJ_DUNKERQUE', // Dunkerque
+  '00963010': 'TJ_DUNKERQUE', // Hazebrouck
+  '00100147': 'TJ_VALENCIENNES', // Valenciennes
 }
