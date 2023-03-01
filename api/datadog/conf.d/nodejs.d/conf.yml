@@ -7,6 +7,6 @@ logs:
   #   tags: (optional) add tags to each log collected
 
   - type: file
-    path: /path/to/your/nodejs/log.log
+    path: ../../../src/utils/error.log
     service: a-just
     source: nodejs
