@@ -154,7 +154,7 @@ module.exports = function () {
     })
 
     /**
-     * Vérification que la connexion avec les bonnes infos focntionne
+     * Vérification que la connexion avec les bonnes infos fonctionne
      */
     it('Login - Login should succeed and return 201 with user token', async () => {
       const email = 'test@mail.com'
