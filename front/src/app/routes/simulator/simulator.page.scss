@@ -362,7 +362,7 @@
       .modified-label {
         pointer-events: all;
         cursor: pointer;
-        z-index: 2;
+        z-index: 1;
         position: absolute;
         bottom: -15px;
         display: block;
@@ -723,7 +723,7 @@
       .modified-label {
         pointer-events: all;
         cursor: pointer;
-        z-index: 2;
+        z-index: 1;
         position: absolute;
         bottom: -15px;
         display: block;
