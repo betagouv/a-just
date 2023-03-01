@@ -1,19 +1,28 @@
 @import '../../styles/utils.scss';
 
 
-::ng-deep .mat-tooltip {
-  background-color: #000091;
-  border: solid 1px #000091;
-  font-size: 12px;
-  width: 100px;
+::ng-deep .mat-mdc-tooltip-panel-left {
+  width:100px!important;
+  min-width: 100px!important;
+  .mdc-tooltip__surface {
+    background-color: #000091;
+    border: solid 1px #000091;
+  }
+
+  .tooltip-orange {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    .mdc-tooltip__surface {
+      background-color: #fa7a35;
+      border: solid 1px #fa7a35;
+      font-size: 12px;
+      text-align: center;
+      border-left: 100px;
+    }
+  }
 }
 
-::ng-deep .tooltip-orange {
-  background-color: #fa7a35;
-  border: solid 1px #fa7a35;
-  font-size: 12px;
-  width: 100px;
-}
 
 :host {
 
