@@ -184,3 +184,12 @@ export const replaceZeroByDash = (data) => {
   }
   return data
 }
+
+/**
+ * Retourne null si 0
+ * @param {*} value
+ * @returns value
+ */
+export const replaceIfZero = (value) => {
+  return value === 0 ? null : value
+}

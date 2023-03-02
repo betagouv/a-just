@@ -168,16 +168,15 @@ export class ExtractorActivityComponent extends MainClass {
    * @param monthTabName
    * @returns
    */
-  generateFormatedDataMonth(act: any, monthTabName: string) {
+  generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
+    console.log(act.contentieux.code_import)
     const sortCodeArray = act.contentieux.code_import
-      .split('.')
-      .map((x: string) => Number(x))
-      .filter((y: number) => y !== 0)
+      .split('.').filter((y : String) => y !== '').map((x: string) => x==='0'? 0.1 : Number(x))
 
     return {
-      [' ']: act.contentieux.label, //act.contentieux.code_import + ' ' +
+      [' ']: total===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
-      ['codeCent']: sortCodeArray[1] || -1,
+      ['codeCent']: sortCodeArray[1]*10 || -1,
       ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
       ['Entrées logiciel']: act.originalEntrees,
@@ -215,6 +214,7 @@ export class ExtractorActivityComponent extends MainClass {
    */
   sortByCodeImport(sumTab: any) {
     sumTab = orderBy(sumTab, ['codeUnit', 'codeCent'], ['asc'])
+    console.log(sumTab)
     sumTab.forEach(function (v: any) {
       delete v['codeUnit']
       delete v['codeCent']
@@ -274,7 +274,8 @@ export class ExtractorActivityComponent extends MainClass {
             this.getTotalPeriodeLabel(
               this.dateStart || new Date(),
               this.dateStop || new Date()
-            )
+            ),
+            true
           )
         }).filter(
           (r:any) =>
