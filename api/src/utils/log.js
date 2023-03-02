@@ -4,7 +4,8 @@ import Sentry from 'winston-sentry-log'
 import packageJson from '../../package.json'
 
 const logger = winston.createLogger({
-  // level: 'info',
+  level: 'info',
+  exitOnError: false,
   format: winston.format.json(),
   // defaultMeta: { service: 'user-service' },
   transports: config.sentryApi
@@ -23,6 +24,7 @@ const logger = winston.createLogger({
       //
       //new winston.transports.File({ filename: 'error.log', level: 'error' }),
       //new winston.transports.File({ filename: 'combined.log' }),
+      new winston.transports.File({ filename: 'error.log' }),
     ]
     : [],
 })
