@@ -180,6 +180,7 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   toSimulate(params: any, simulation: SimulationInterface) {
+    console.log('Yoko1', { params, simulation })
     this.isLoading.next(true)
     console.log('PARAM Simulation', {
       backupId: this.humanResourceService.backupId.getValue(),
