@@ -45,6 +45,7 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
+    "@babel/node": "^7.20.7",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
