@@ -9,6 +9,7 @@ import {
   flatListOfContentieuxAndSousContentieux,
   getExcelLabel,
   getIndispoDetails,
+  replaceIfZero,
   replaceZeroByDash,
   sortByCatAndFct,
 } from '../utils/extractor'
@@ -188,22 +189,22 @@ export default class RouteExtractor extends Route {
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
-    activities = orderBy(activities, 'periode', ['desc']).filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
+    activities = orderBy(activities, 'periode', ['asc']).filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
 
     let sum = cloneDeep(activities)
-    sum = groupBy(sum, 'contentieux.label')
+    sum = groupBy(sum, 'contentieux.id')
 
     let sumTab = []
 
     Object.keys(sum).map((key) => {
       sumTab.push({
-        periode: first(sum[key]).periode,
-        entrees: sumBy(sum[key], 'entrees'),
-        sorties: sumBy(sum[key], 'sorties'),
-        stock: first(sum[key]).stock,
-        originalEntrees: sumBy(sum[key], 'originalEntrees'),
-        originalSorties: sumBy(sum[key], 'originalSorties'),
-        originalStock: first(sum[key]).originalStock,
+        periode: replaceIfZero(first(sum[key]).periode),
+        entrees: replaceIfZero(sumBy(sum[key], 'entrees')),
+        sorties: replaceIfZero(sumBy(sum[key], 'sorties')),
+        stock: replaceIfZero(first(sum[key]).stock),
+        originalEntrees: replaceIfZero(sumBy(sum[key], 'originalEntrees')),
+        originalSorties: replaceIfZero(sumBy(sum[key], 'originalSorties')),
+        originalStock: replaceIfZero(first(sum[key]).originalStock),
         idReferentiel: first(sum[key]).idReferentiel,
         contentieux: { code_import: first(sum[key]).contentieux.code_import, label: first(sum[key]).contentieux.label },
       })
