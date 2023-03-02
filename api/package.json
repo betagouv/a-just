@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
-    "start:production": "TZ='Europe/Paris' node dist/index.js",
+    "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 dist/index.js",
     "build": "npm run rm-build-prod && npm run build-prod",
     "build:test": "npm run build-prod",
     "build:documentation": "jsdoc -r src -d documentation",
@@ -16,6 +16,7 @@
     "base64-stream": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.2",
+    "connect-datadog": "^0.0.9",
     "cron": "^1.8.2",
     "crypto": "^1.0.1",
     "csv-parse": "^4.14.0",

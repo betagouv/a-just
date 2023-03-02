@@ -2,3 +2,5 @@ process_config:
   enabled: "true"
 network_config:
   enabled: "true"
+logs_enabled: "true"
+site: "datadoghq.eu"
