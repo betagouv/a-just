@@ -2,12 +2,13 @@
   "name": "a-just-api",
   "version": "0.0.1",
   "scripts": {
+    "install": "npm install --save-dev @babel/node && ",
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
     "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 dist/index.js",
     "build": "npm run rm-build-prod && npm run build-prod",
     "build:test": "npm run build-prod",
     "build:documentation": "jsdoc -r src -d documentation",
-    "build-prod": "npm install --save-dev @babel/node && babel src --out-dir dist --copy-files",
+    "build-prod": "babel src --out-dir dist --copy-files",
     "rm-build-prod": "rm -rf dist",
     "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov node_modules/.bin/mocha"
   },
