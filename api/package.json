@@ -12,8 +12,16 @@
     "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov node_modules/.bin/mocha"
   },
   "dependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/runtime": "^7.21.0",
     "@babel/runtime-corejs2": "^7.21.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/preset-env": "^7.20.2",
     "axios": "^0.21.4",
     "base64-stream": "^1.0.0",
     "bcryptjs": "^2.4.3",
@@ -46,16 +54,8 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-env": "^7.20.2",
     "@babel/preset-stage-3": "^7.8.3",
     "@babel/register": "^7.0.0",
     "babel-eslint": "^10.1.0",
