@@ -546,14 +546,26 @@ const tree = [
       },
 
       {
-        label: realDTESInMonths,
-        popupTitle: realDTESInMonthsTitle,
-        toDefine: realDTESInMonthsToDefine,
+        label: lastStock,
+        popupTitle: lastStockTitle,
+        toDefine: lastStockToDefine,
         toSimulate: [
           {
             locked: '',
-            toDisplay: [totalIn, realDTESInMonths, magRealTimePerCase],
-            toCalculate: [totalOut, lastStock, realCoverage, etpMag],
+            toDisplay: [totalIn, realDTESInMonths, lastStock],
+            toCalculate: [totalOut, magRealTimePerCase, realCoverage, etpMag],
+          },
+        ],
+      },
+      {
+        label: magRealTimePerCase,
+        popupTitle: magRealTimePerCaseTitle,
+        toDefine: magRealTimePerCaseToDefine,
+        toSimulate: [
+          {
+            locked: '',
+            toDisplay: [totalIn, lastStock, magRealTimePerCase],
+            toCalculate: [totalOut, realCoverage, realDTESInMonths, etpMag],
           },
         ],
       },
