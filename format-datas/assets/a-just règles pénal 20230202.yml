@@ -1,0 +1,293 @@
+categories:
+  6.2.01:
+    label: "6.2. Activité pénale (JE)"
+    Code nomenclature: 6.2.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "21"
+        FILIERE: "COPJMEX"
+        ETAPE: "REQPENA"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "21"
+        FILIERE: "COPJMEX"
+        ETAPE: "REQPENA"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "21"
+        FILIERE: "COPJMEX"
+        ETAPE: "REQPENA"
+        TOTAL: "NB_AFF_OLD"
+  6.2.02:
+    label: "6.2. Activité pénale (JE)"
+    Code nomenclature: 6.2.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "22"
+        FILIERE: "COPJMIN"
+        ETAPE: 
+        - "COPJ_JE"
+        - "CVCEP_JE"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "22"
+        FILIERE: "COPJMIN"
+        ETAPE: 
+        - "COPJ_JE"
+        - "CVCEP_JE"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "22"
+        FILIERE: "COPJMIN"
+        ETAPE: 
+        - "COPJ_JE"
+        - "CVCEP_JE"
+        TOTAL: "NB_AFF_OLD"
+  6.2.03:
+    label: "6.2. Activité pénale (JE)"
+    Code nomenclature: 6.2.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "22"
+        FILIERE: "CONVIMJ"
+        ETAPE: "CONVIMJ"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "22"
+        FILIERE: "CONVIMJ"
+        ETAPE: "CONVIMJ"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "22"
+        FILIERE: "CONVIMJ"
+        ETAPE: "CONVIMJ"
+        TOTAL: "NB_AFF_OLD"
+  7.14.:
+    label: "7.14. Comparutions immédiates"
+    Code nomenclature: 7.4.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "COMPIM"
+        ETAPE:
+          - "PV-CI"
+          - "PV-CP"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "COMPIM"
+        ETAPE:
+          - "PV-CI"
+          - "PV-CP"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "COMPIM"
+        ETAPE:
+          - "PV-CI"
+          - "PV-CP"
+        TOTAL: "NB_AFF_OLD"
+  7.15.01 :
+    label: "7.15. CPPV"
+    Code nomenclature: 7.15.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_OLD"
+  7.15.02 :
+    label: "7.15. CPPV"
+    Code nomenclature: 7.15.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTC"
+        ETAPE: 
+        - "COPJ_TC"
+        - "CVCEP_TC"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTC"
+        ETAPE: 
+        - "COPJ_TC"
+        - "CVCEP_TC"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTC"
+        ETAPE: 
+        - "COPJ_TC"
+        - "CVCEP_TC"
+        TOTAL: "NB_AFF_OLD"
+  7.2 :
+    label: "7.2. CRPC"
+    Code nomenclature: 7.2.
+    filtres:
+      entrees:
+        REGLE_PHAROS: 
+        - "7"
+        - "8"
+        FILIERE: "CRPC"
+        ETAPE: "RHCPC"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS:  
+        - "7"
+        - "8"
+        FILIERE: "CRPC"
+        ETAPE: "RHCPC"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: 
+        - "7"
+        - "8"
+        FILIERE: "CRPC"
+        ETAPE: "RHCPC"
+        TOTAL: "NB_AFF_OLD"        
+  7.3 :
+    label: "7.3. OP correctionnelles"
+    Code nomenclature: 7.3.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_TC"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_TC"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_TC"
+        TOTAL: "NB_AFF_OLD"  
+  7.6.01 :
+    label: "7.6 Tribunal de Police - 5ème classe"
+    Code nomenclature: 7.6.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTP"
+        ETAPE: 
+        - "COPJ_TPTGI"
+        - "CVCEP_TPTGI"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTP"
+        ETAPE: 
+        - "COPJ_TPTGI"
+        - "CVCEP_TPTGI"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "COPJTP"
+        ETAPE: 
+        - "COPJ_TPTGI"
+        - "CVCEP_TPTGI"
+        TOTAL: "NB_AFF_OLD"  
+  7.6.02 :
+    label: "7.6 Tribunal de Police - 5ème classe"
+    Code nomenclature: 7.6.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "CITATP"
+        ETAPE: 
+        - "CD_TPTGI"
+        - "CPP_TPTGI"
+        - "CV_TPTGI"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "CITATP"
+        ETAPE: 
+        - "CD_TPTGI"
+        - "CPP_TPTGI"
+        - "CV_TPTGI"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "CITATP"
+        ETAPE: 
+        - "CD_TPTGI"
+        - "CPP_TPTGI"
+        - "CV_TPTGI"
+        TOTAL: "NB_AFF_OLD"  
+  7.7 :
+    label: "7.7. OP contraventionnelles"
+    Code nomenclature: 7.7.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTP"
+        ETAPE: "ROP_TPTGI"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTP"
+        ETAPE: "ROP_TPTGI"
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "6"
+        FILIERE: "OPTP"
+        ETAPE: "ROP_TPTGI"
+        TOTAL: "NB_AFF_OLD"  
+  8.:
+    label: "8. Juges d'instruction"
+    Code nomenclature: 8.
+    filtres:
+      entrees:
+        REGLE_PHAROS: "12"
+        FILIERE: "INSTR"
+        ETAPE:
+          - "DESIGJI_JI"
+          - "REQRECH"
+          - "REQRINF"
+          - "RI"
+          - "RNI_JI"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        REGLE_PHAROS: "1"
+        FILIERE: "INSTR"
+        ETAPE:
+          - "ORDREGL_JI_MAC"
+          - "ORDREGL_JI_MAC2"
+          - "ORDREGL_JI_RVCRPC"
+          - "ORDREGL_JI_NL"
+          - "ORDREGL_JI_REFINF"
+          - "ORDREGL_JI_RVJPROX"
+          - "ORDREGL_JI_RVJE"
+          - "ORDREGL_JI_RVJI"
+          - "ORDREGL_JI_RVTC"
+          - "ORDREGL_JI_RVTCMIN"
+          - "ORDREGL_JI_RVTE"
+          - "ORDREGL_JI_RVTP"
+          - "ORDREGL_JI_SSMES"
+          - "IRMENTA_JI"
+
+        TOTAL: "NB_AFF_END"
+      stock:
+        REGLE_PHAROS: "15"
+        FILIERE: "INSTR"
+        ETAPE:
+          - "DESIGJI_JI"
+          - "REQRECH"
+          - "REQRINF"
+          - "RI"
+          - "RNI_JI"
+        TOTAL: "NB_AFF_OLD"
