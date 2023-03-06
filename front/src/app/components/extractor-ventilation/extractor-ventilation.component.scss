@@ -1,6 +1,10 @@
 @import "../../styles/utils.scss";
 
 :host{
+  mat-icon {
+    color: white;
+    margin-right:8px;
+  }
 
   .title {
     padding: 24px 24px;
