@@ -169,12 +169,14 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
-    console.log(act.contentieux.code_import)
+    //console.log(act.contentieux.code_import)
     const sortCodeArray = act.contentieux.code_import
       .split('.').filter((y : String) => y !== '').map((x: string) => x==='0'? 0.1 : Number(x))
 
+      const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x=>x.id).includes(act.idReferentiel)===true ? true: false
+      console.log(this.humanResourceService.contentieuxReferentielOnly.value)
     return {
-      [' ']: total===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
+      [' ']: ref===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
       ['codeCent']: sortCodeArray[1]*10 || -1,
       ['idReferentiel']: act.idReferentiel,
@@ -214,7 +216,7 @@ export class ExtractorActivityComponent extends MainClass {
    */
   sortByCodeImport(sumTab: any) {
     sumTab = orderBy(sumTab, ['codeUnit', 'codeCent'], ['asc'])
-    console.log(sumTab)
+    //console.log(sumTab)
     sumTab.forEach(function (v: any) {
       delete v['codeUnit']
       delete v['codeCent']
@@ -283,7 +285,7 @@ export class ExtractorActivityComponent extends MainClass {
             this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
         )
 
-        console.log(this.sumTab)
+        //console.log(this.sumTab)
 
         this.sumTab = this.sortByCodeImport(this.sumTab)
         xlsx.utils.book_append_sheet(
