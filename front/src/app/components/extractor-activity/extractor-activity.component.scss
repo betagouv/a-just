@@ -8,6 +8,12 @@ h1 {
 :host {
     position: relative;
 
+
+    mat-icon {
+        color: white;
+        margin-right:8px;
+    }
+
     .progress-bar {
         position: absolute;
         left: 0;
