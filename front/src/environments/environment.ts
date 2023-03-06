@@ -9,7 +9,7 @@ import packageJSON from '../../../package.json'
  */
 export const environment = {
   production: false,
-  serverUrl: 'http://localhost:8080/api/', //'https://a-just.beta.gouv.fr/api/', //
+  serverUrl: 'http://localhost:8080/api/',
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,

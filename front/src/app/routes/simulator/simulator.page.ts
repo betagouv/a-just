@@ -1082,6 +1082,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         if (objSecond !== null) {
           this.pickersParamsToLock = objSecond
         } else {
+          console.log('toSimulate = false')
           this.toSimulate = false
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
