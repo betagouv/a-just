@@ -3,8 +3,7 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <aj-extractor-ventilation
-    *ngIf="canViewVentilateur && (canViewMagistrat||canViewGreffier||canViewContractuel)"></aj-extractor-ventilation>
+  <aj-extractor-ventilation *ngIf="canViewVentilateur"></aj-extractor-ventilation>
 
   <!--<aj-extractor-activity *ngIf="canViewActivities"></aj-extractor-activity>-->
 </aj-wrapper>
