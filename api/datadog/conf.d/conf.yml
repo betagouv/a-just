@@ -6,5 +6,5 @@ instances:
 logs:
   - type: file
     path: ../../src/utils/error.log
-    service: a-just
+    service: a-just-api
     source: nodejs
