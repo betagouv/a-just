@@ -1,0 +1,10 @@
+init_config:
+
+instances:
+
+## Section Logs
+logs:
+  - type: file
+    path: ../../src/utils/error.log
+    service: a-just
+    source: nodejs
