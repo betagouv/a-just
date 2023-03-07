@@ -118,7 +118,12 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
         situations,
       }
     })
-    .filter((x) => (x.situations || []).some((s) => s.etp !== 0 || (s.category && categoryId && s.category.id === categoryId)))
+    .filter((x) => {
+      const situations = x.situations || []
+      const hasEtp = situations.some((s) => s.etp !== 0)
+
+      return hasEtp
+    })
 
   if (date) {
     date = today(date)
