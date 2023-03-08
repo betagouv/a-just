@@ -165,9 +165,9 @@ export default class RouteExtractor extends Route {
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
 
-    console.log('Dates : ', dateStart, dateStop)
+    console.log('Dates : ', new Date(dateStart), dateStop)
 
-    this.sendOk(ctx, { values: data, columnSize })
+    this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }
 
   @Route.Post({
