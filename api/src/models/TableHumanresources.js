@@ -224,6 +224,7 @@ export default (sequelizeInstance, Model) => {
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
           updated_at: updatedAt,
+          juridiction: list[i].juridiction || '',
         }
 
         list[i].date_aff = list[i].date_aff.replace(/#/, '')
