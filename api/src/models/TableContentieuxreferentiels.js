@@ -118,7 +118,7 @@ export default (sequelizeInstance, Model) => {
               logging: false,
             })
             if (!findInDb) {
-              const newToDb = await Model.create(
+              /*const newToDb = await Model.create(
                 {
                   label: extract.label,
                   code_import: extract.code,
@@ -134,7 +134,7 @@ export default (sequelizeInstance, Model) => {
                 type: 'CREATE',
                 id: newToDb.dataValues.id,
                 label: extract.label,
-              })
+              })*/
             } else {
               if (extract.label !== findInDb.dataValues.label) {
                 deltaToUpdate.push({
@@ -145,7 +145,7 @@ export default (sequelizeInstance, Model) => {
                 })
 
                 // update only one time
-                await findInDb.update({ label: extract.label })
+                // await findInDb.update({ label: extract.label })
               }
               parentId = findInDb.dataValues.id
             }
