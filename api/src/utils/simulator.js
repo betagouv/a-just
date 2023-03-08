@@ -122,6 +122,16 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
       const situations = x.situations || []
       const hasEtp = situations.some((s) => s.etp !== 0)
 
+      if(!hasEtp && functionIds) {
+        // second check is they have fonctions
+        const allFonctionsId = situations.filter(s => s.fonction).map(s => s.fonction.id)
+        for(let i = 0; i < allFonctionsId.length; i++) {
+          if(functionIds.includes(allFonctionsId[i])) {
+            return true
+          }
+        }
+      }
+
       return hasEtp
     })
 
