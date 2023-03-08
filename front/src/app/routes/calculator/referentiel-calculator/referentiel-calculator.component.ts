@@ -83,4 +83,18 @@ export class ReferentielCalculatorComponent extends MainClass {
       this.calculator.childIsVisible = this.showChildren
     }
   }
+
+  /**
+   * Arrondi valeur numérique
+   */
+  floor(value:number){
+    return Math.floor(value)
+  }
+
+    /**
+   * Troncage valeur numérique
+   */
+    trunc(value:number){
+      return Math.trunc(value*100000)/100000
+    }
 }
