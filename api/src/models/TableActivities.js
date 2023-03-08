@@ -557,5 +557,96 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Importe une liste d'activités à une liste de juridiction. Et reformate et recalcul les stocks calculés.
+   * @param {*} csv
+   */
+  Model.importMultipleJuridictions = async (csv) => {
+    const contentieuxIds = {}
+    const listBackupId = []
+    let minDate = null
+
+    for (let i = 0; i < csv.length; i++) {
+      const code = csv[i].code_import
+      const HRBackupId = await Model.models.HRBackups.findByLabel(csv[i].juridiction)
+
+      if (HRBackupId === null) {
+        continue
+      }
+
+      // save id to clean base after import
+      if (!listBackupId.includes(HRBackupId)) {
+        listBackupId.push(HRBackupId)
+      }
+
+      if (!contentieuxIds[code]) {
+        const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+          attributes: ['id'],
+          where: {
+            code_import: code,
+          },
+          raw: true,
+        })
+
+        if (contentieux) {
+          contentieuxIds[code] = contentieux.id
+        }
+      }
+
+      if (contentieuxIds[code]) {
+        const year = csv[i].periode.slice(0, 4)
+        const month = +csv[i].periode.slice(-2) - 1
+        const periode = new Date(year, month)
+
+        if (minDate === null || periode.getTime() < minDate.getTime()) {
+          minDate = new Date(periode)
+        }
+
+        const findExist = await Model.findOne({
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: contentieuxIds[code],
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+            },
+          },
+        })
+
+        // clean null values
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : csv[i].stock
+
+        // if existe update content
+        if (
+          findExist &&
+          (csv[i].entrees !== findExist.dataValues.original_entrees ||
+            csv[i].sorties !== findExist.dataValues.original_sorties ||
+            csv[i].stock !== findExist.dataValues.original_stock)
+        ) {
+          await findExist.update({
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        } else if (!findExist) {
+          // else create
+          await Model.create({
+            hr_backup_id: HRBackupId,
+            periode,
+            contentieux_id: contentieuxIds[code],
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        }
+      }
+    }
+
+    for (let i = 0; i < listBackupId.length; i++) {
+      await Model.cleanActivities(listBackupId[i], minDate)
+    }
+  }
+
   return Model
 }
