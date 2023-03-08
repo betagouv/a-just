@@ -43,6 +43,7 @@ export default class RouteCalculator extends Route {
   })
   async filterList (ctx) {
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
+
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
     switch (categorySelected) {
@@ -139,6 +140,7 @@ export default class RouteCalculator extends Route {
     }))
 
     console.timeEnd('calculator-8')
+    console.log('Dates : ', dateStart, dateStop)
 
     this.sendOk(ctx, { fonctions, list })
   }

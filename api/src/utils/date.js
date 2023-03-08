@@ -113,18 +113,6 @@ export function month (date = new Date(), monthToAdd, lastDay) {
 }
 
 /**
- * Modifie la timezone d'une date
- * @param {*} date
- * @returns date
- */
-export function generalizeTimeZone (date) {
-  if (date === undefined) return undefined
-  else date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-
-  return date
-}
-
-/**
  * Calcul le nombre de mois entre 2 dates
  * @param {*} dateStart
  * @param {*} dateStop
