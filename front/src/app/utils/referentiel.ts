@@ -5,7 +5,7 @@
  */
 export function referentielMappingName (name: string): string {
   switch(name) {
-    case 'Soutien': return 'Soutien';
+    case 'Autres activités': return 'Autres activités';
     case 'Indisponibilité': return 'Indisp.';
     case 'Siège Pénal': return 'Pénal';
     case 'Contentieux JAF': return 'JAF';
@@ -26,7 +26,7 @@ export function referentielMappingName (name: string): string {
  */
 export function referentielMappingColor (name: string): string {
   switch(name) {
-    case 'Soutien': return '#424242';
+    case 'Autres activités': return '#424242';
     case 'Indisponibilité': return '#37474f';
     case 'Siège Pénal': return '#c62828';
     case 'Contentieux JAF': return '#0277bd';
@@ -51,7 +51,7 @@ export function referentielMappingColor (name: string): string {
  */
 export function referentielMappingIndex (name: string): number {
   switch(name) {
-    case 'Soutien': return 12;
+    case 'Autres activités': return 12;
     case 'Indisponibilité': return 13;
     case 'Siège Pénal': return 8;
     case 'Contentieux JAF': return 2;
