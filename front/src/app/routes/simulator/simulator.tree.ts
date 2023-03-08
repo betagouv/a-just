@@ -552,8 +552,8 @@ const tree = [
         toSimulate: [
           {
             locked: '',
-            toDisplay: [totalIn, realDTESInMonths, lastStock],
-            toCalculate: [totalOut, magRealTimePerCase, realCoverage, etpMag],
+            toDisplay: [totalIn, magRealTimePerCase, lastStock],
+            toCalculate: [totalOut, realDTESInMonths, realCoverage, etpMag],
           },
         ],
       },
