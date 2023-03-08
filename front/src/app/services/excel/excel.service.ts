@@ -82,11 +82,12 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    console.log(this.dateStart.getValue(), generalizeTimeZone(this.dateStart.getValue()))
     return this.serverService
       .post(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: generalizeTimeZone(this.dateStart.getValue()),
-        dateStop: generalizeTimeZone(this.dateStop.getValue()),
+        dateStart: this.dateStart.getValue(),
+        dateStop: this.dateStop.getValue(),
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {

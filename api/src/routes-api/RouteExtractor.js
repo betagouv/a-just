@@ -49,7 +49,6 @@ export default class RouteExtractor extends Route {
   })
   async filterList (ctx) {
     let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
-
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -165,6 +164,8 @@ export default class RouteExtractor extends Route {
     data = replaceZeroByDash(data)
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
+
+    console.log('Dates : ', dateStart, dateStop)
 
     this.sendOk(ctx, { values: data, columnSize })
   }
