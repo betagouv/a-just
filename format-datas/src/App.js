@@ -21,9 +21,9 @@ export default class App {
     const categoriesOfRules = this.getRules(inputFolder)
     const referentiel = await this.getReferentiel(inputFolder)
 
-    /*rmSync(tmpFolder, { recursive: true, force: true })
+    rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)*/
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
