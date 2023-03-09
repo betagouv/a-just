@@ -78,7 +78,22 @@ export class ImportsPage {
       .then(() => {
         alert('OK !');
         form.reset();
-        this.onLoad();
+      });
+  }
+
+  async onSendAllActivity(form: any) {
+    const file = form.file.files[0];
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    this.importService
+      .importAllActivities({ file: await exportFileToString(file) })
+      .then(() => {
+        alert('OK !');
+        form.reset();
       });
   }
 }

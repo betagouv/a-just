@@ -103,11 +103,11 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
     .map((human) => {
       const situations = (human.situations || []).map((situation) => {
         if (categoryId && situation.category && situation.category.id !== categoryId) {
-          situation.etp = 0
+          situation.etp = null
         }
 
         if (functionIds && !functionIds.includes(situation.fonction.id)) {
-          situation.etp = 0
+          situation.etp = null
         }
 
         return situation
@@ -120,10 +120,26 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
     })
     .filter((x) => {
       const situations = x.situations || []
-      const hasEtp = situations.some((s) => s.etp !== 0)
+      const hasEtp = situations.some((s) => s.etp !== null)
 
       return hasEtp
     })
+
+  // mouve null etp to 0 to fix calculs
+  hr = hr.map((human) => {
+    const situations = (human.situations || []).map((situation) => {
+      if (situation.etp === null) {
+        situation.etp = 0
+      }
+
+      return situation
+    })
+
+    return {
+      ...human,
+      situations,
+    }
+  })
 
   if (date) {
     date = today(date)

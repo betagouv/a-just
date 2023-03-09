@@ -38,6 +38,8 @@ logger.add(
   })
 )
 
+logger.log('info', 'Voici un log simple')
+
 export default logger
 export const log = (...args) => console.log(...args)
 export const logError = (...args) => logger.error(args)

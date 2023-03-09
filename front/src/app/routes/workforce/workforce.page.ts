@@ -33,6 +33,14 @@ export interface HumanResourceIsInInterface extends HumanResourceInterface {
    * Category name
    */
   categoryName?: string
+  /**
+   * Category rank
+   */
+  categoryRank?: number | null
+  /**
+   * Fonction rank
+   */
+  fonctionRank?: number | null
 }
 
 /**
@@ -439,9 +447,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             sitations.length && sitations[0].category
               ? sitations[0].category.label
               : '',
+          categoryRank:
+            sitations.length && sitations[0].category
+              ? sitations[0].category.rank
+              : null,
+          fonctionRank:
+            sitations.length && sitations[0].fonction
+              ? sitations[0].fonction.rank
+              : null,
         }
       })
+      this.allPersonsFiltered = orderBy(this.allPersonsFiltered, ['categoryRank', 'fonctionRank', 'lastName'])
     }
+
+    console.log(this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(
       this.allPersonsFiltered,

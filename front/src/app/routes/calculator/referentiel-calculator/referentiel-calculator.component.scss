@@ -67,6 +67,7 @@
       align-items: stretch;
 
       &.actual {
+        cursor: pointer;
         > div {
           align-self: stretch;
           margin: 0 2px;
