@@ -236,7 +236,7 @@ export default class App {
         }))
 
         console.log(ielst)
-        let formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
+        const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
         list = list.concat(formatMonthDataFromRules)
       })
 
