@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { MainClass } from 'src/app/libs/main-class'
-import { decimalToStringDate, generalizeTimeZone } from 'src/app/utils/dates'
+import { decimalToStringDate, setTimeToMidDay } from 'src/app/utils/dates'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
@@ -141,8 +141,8 @@ export class SimulatorService extends MainClass {
       {
         backupId: this.humanResourceService.backupId.getValue(),
         referentielId: referentielId,
-        dateStart: generalizeTimeZone(dateStart),
-        dateStop: generalizeTimeZone(dateStop),
+        dateStart: setTimeToMidDay(dateStart),
+        dateStop: setTimeToMidDay(dateStop),
         functionIds: this.selectedFonctionsIds.getValue(),
         categoryId: this.selectedCategory.getValue()?.id,
       },
@@ -158,8 +158,8 @@ export class SimulatorService extends MainClass {
         .post(`simulator/get-situation`, {
           backupId: this.humanResourceService.backupId.getValue(),
           referentielId: referentielId,
-          dateStart: generalizeTimeZone(dateStart),
-          dateStop: generalizeTimeZone(dateStop),
+          dateStart: setTimeToMidDay(dateStart),
+          dateStop: setTimeToMidDay(dateStop),
           functionIds: this.selectedFonctionsIds.getValue(),
           categoryId: this.selectedCategory.getValue()?.id,
         })
@@ -186,8 +186,8 @@ export class SimulatorService extends MainClass {
       backupId: this.humanResourceService.backupId.getValue(),
       params: params,
       simulation: simulation,
-      dateStart: generalizeTimeZone(this.dateStart.getValue()),
-      dateStop: generalizeTimeZone(this.dateStop.getValue()),
+      dateStart: setTimeToMidDay(this.dateStart.getValue()),
+      dateStop: setTimeToMidDay(this.dateStop.getValue()),
       selectedCategoryId: this.selectedCategory.getValue()?.id,
     })
 
@@ -196,8 +196,8 @@ export class SimulatorService extends MainClass {
         backupId: this.humanResourceService.backupId.getValue(),
         params: params,
         simulation: simulation,
-        dateStart: generalizeTimeZone(this.dateStart.getValue()),
-        dateStop: generalizeTimeZone(this.dateStop.getValue()),
+        dateStart: setTimeToMidDay(this.dateStart.getValue()),
+        dateStop: setTimeToMidDay(this.dateStop.getValue()),
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {

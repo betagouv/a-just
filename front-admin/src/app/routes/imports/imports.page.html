@@ -1,5 +1,21 @@
 <aj-wrapper title="Imports">
   <div class="import-item">
+    <h2>Importer toutes les activités</h2>
+    <p>L'import doit contenir une liste de contentieux, stocks et nom de juridiction</p>
+    <div class="form">
+      <form #formAllActivities>
+        <div>
+          <label>Fichier à importer</label>
+          <input name="file" type="file" accept=".csv" />
+        </div>
+      </form>
+    </div>
+    <div class="action">
+      <button (click)="onSendAllActivity(formAllActivities)">Envoyer</button>
+    </div>
+  </div>
+
+  <div class="import-item">
     <h2>Importer une liste d'activités</h2>
     <p>L'import doit contenir une liste de contentieux et leurs stocks</p>
     <div class="form">

@@ -174,7 +174,7 @@
     </div>
     <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
       <div *ngIf="allPersonsFilteredIsIn.length">{{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length >
-        1 ? 'Resultats' : 'Resultat'}}
+        1 ? 'résultats' : 'résultat'}}
         dans les effectifs</div>
       <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
         <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
@@ -184,7 +184,7 @@
         <i class="ri-user-follow-line" [style.background-color]="getCategoryColor(person.categoryName)"></i>
       </a>
       <div *ngIf="allPersonsFilteredNotIn.length">{{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length
-        > 1 ? 'Resultats' : 'Resultat'}}
+        > 1 ? 'résultats' : 'résultat'}}
         hors effectifs</div>
       <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
         <p>{{ filterParams && filterParams.display === 'nom/prénom' ?

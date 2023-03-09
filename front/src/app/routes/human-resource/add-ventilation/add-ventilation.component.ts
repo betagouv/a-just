@@ -242,7 +242,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (!(this.human && this.human.dateStart)) {
-      alert('Vous devez saisir une d\'arrivée !')
+      alert('Vous devez saisir une date d\'arrivée !')
       return
     }
     activitiesStartDate = new Date(activitiesStartDate)

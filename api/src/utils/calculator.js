@@ -129,9 +129,9 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
-  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? Math.floor(sumBy(activities, 'entrees') / nbMonth) : null
+  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? sumBy(activities, 'entrees') / nbMonth : null
 
-  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? Math.floor(sumBy(activities, 'sorties') / nbMonth) : null
+  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activities, 'sorties') / nbMonth : null
   let lastStock = null
   if (activities.length) {
     const lastActivities = activities[activities.length - 1]
@@ -299,6 +299,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     nbDay = 1
   }
 
+  console.log('nombre de jour : ', nbDay)
   // format render
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay
