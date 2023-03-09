@@ -80,4 +80,24 @@ export default class RouteImports extends Route {
     await this.model.models.Activities.importList(arrayOfHR, backupId)
     this.sendOk(ctx, 'OK')
   }
+
+  /**
+   * Route des activités pour importer une liste de juridiction
+   * @param {*} file
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      file: Types.string(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async importAllActivities (ctx) {
+    const { file } = this.body(ctx)
+
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
+      delimiter: ',',
+    })
+    await this.model.models.Activities.importMultipleJuridictions(arrayOfHR)
+    this.sendOk(ctx, 'OK')
+  }
 }

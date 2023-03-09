@@ -9,14 +9,20 @@
         <div [ngClass]="{ selected: sortBy === 'totalIn' }">
             <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">
                 <div>
-                    <p>{{ calculator.totalIn }}</p>
+                    <p #tooltip="matTooltip"
+                        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
+                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                        floor(calculator.totalIn) }}</p>
                 </div>
             </ng-template>
         </div>
         <div [ngClass]="{ selected: sortBy === 'totalOut' }">
             <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">
                 <div>
-                    <p>{{ calculator.totalOut }}</p>
+                    <p #tooltip="matTooltip"
+                        [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
+                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                        floor(calculator.totalOut) }}</p>
                 </div>
             </ng-template>
         </div>

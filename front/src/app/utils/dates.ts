@@ -409,7 +409,20 @@ export function nbHourInMonth(date: Date = new Date()) {
  * @param date 
  * @returns 
  */
-export function generalizeTimeZone(date: Date | undefined) {
-  if (date === undefined) return undefined
-  else return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+export function generalizeTimeZone(date: Date | undefined|null) {
+  if (date === undefined || date ===null) return undefined
+  else {return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())}
+}
+
+export function setTimeToMidDay(date: Date | undefined|null) {
+  if (date === undefined || date ===null) return undefined
+  date.setHours(12)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  date.setUTCHours(12)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  return date
 }

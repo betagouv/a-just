@@ -14,7 +14,7 @@ import {
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, first, groupBy, map, orderBy, reduce, sumBy } from 'lodash'
+import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
 import { generalizeTimeZone, month, monthDiffList } from '../utils/date'
 
@@ -49,7 +49,6 @@ export default class RouteExtractor extends Route {
   })
   async filterList (ctx) {
     let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
-
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -166,7 +165,9 @@ export default class RouteExtractor extends Route {
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
 
-    this.sendOk(ctx, { values: data, columnSize })
+    console.log('Dates : ', new Date(dateStart), dateStop)
+
+    this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }
 
   @Route.Post({
@@ -198,15 +199,15 @@ export default class RouteExtractor extends Route {
 
     Object.keys(sum).map((key) => {
       sumTab.push({
-        periode: replaceIfZero(first(sum[key]).periode),
+        periode: replaceIfZero(last(sum[key]).periode),
         entrees: replaceIfZero(sumBy(sum[key], 'entrees')),
         sorties: replaceIfZero(sumBy(sum[key], 'sorties')),
-        stock: replaceIfZero(first(sum[key]).stock),
+        stock: replaceIfZero(last(sum[key]).stock),
         originalEntrees: replaceIfZero(sumBy(sum[key], 'originalEntrees')),
         originalSorties: replaceIfZero(sumBy(sum[key], 'originalSorties')),
-        originalStock: replaceIfZero(first(sum[key]).originalStock),
-        idReferentiel: first(sum[key]).idReferentiel,
-        contentieux: { code_import: first(sum[key]).contentieux.code_import, label: first(sum[key]).contentieux.label },
+        originalStock: replaceIfZero(last(sum[key]).originalStock),
+        idReferentiel: last(sum[key]).idReferentiel,
+        contentieux: { code_import: last(sum[key]).contentieux.code_import, label: last(sum[key]).contentieux.label },
       })
     })
 

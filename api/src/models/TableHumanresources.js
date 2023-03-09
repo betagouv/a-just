@@ -224,6 +224,7 @@ export default (sequelizeInstance, Model) => {
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
           updated_at: updatedAt,
+          juridiction: list[i].juridiction || '',
         }
 
         list[i].date_aff = list[i].date_aff.replace(/#/, '')
@@ -244,6 +245,10 @@ export default (sequelizeInstance, Model) => {
 
         importSituation.push(list[i].nom_usage + ' ADDED')
       } else {
+        // force to save juridiction
+        await findHRToDB.update({
+          juridiction: list[i].juridiction || '',
+        })
         importSituation.push(list[i].nom_usage + ' no add by exist')
       }
     }

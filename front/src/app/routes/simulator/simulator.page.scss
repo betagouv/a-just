@@ -1018,51 +1018,20 @@
       }
 
       .shape {
-        background-color: white;
-        color: #000091;
+        background-color: #000091;
+        color: white;
       }
 
-      .shape::before {
-        content: '';
-        border-bottom: 6px solid transparent;
-        border-right: 6px solid #000091;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
     }
 
     p.title {
       color: fColor(titleSelect);
       white-space: nowrap;
       margin-right: 8px;
-      margin-left: 12px;
+      margin-left: 8px;
       font-size: 14px;
     }
 
-    .shape {
-      width: 18px;
-      height: 20px;
-      line-height: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      background-color: #929292;
-      font-weight: bold;
-      color: white;
-      font-size: 12px;
-      margin-left: 8px;
-    }
-
-    .shape::before {
-      content: '';
-      border-bottom: 6px solid transparent;
-      border-right: 6px solid fColor(bgSelect);
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
   }
 
   aj-date-select-blue {
