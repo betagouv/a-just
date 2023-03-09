@@ -16,17 +16,20 @@ export default class App {
     const tmpFolder = path.join(__dirname, '../tmp')
     const inputFolder = path.join(__dirname, '../inputs')
     const outputFolder = path.join(__dirname, '../outputs')
+    const outputAllFolder = path.join(__dirname, '../outputs_all')
 
     const categoriesOfRules = this.getRules(inputFolder)
     const referentiel = await this.getReferentiel(inputFolder)
 
-    rmSync(tmpFolder, { recursive: true, force: true })
+    /*rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)*/
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
-    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, categoriesOfRules, referentiel)
+    rmSync(outputAllFolder, { recursive: true, force: true })
+    mkdirSync(outputAllFolder)
+    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
 
     // WIP datas pénal
     //await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, categoriesOfRules, referentiel)
@@ -198,7 +201,7 @@ export default class App {
     return ' '
   }
 
-  async formatAndGroupJuridiction (tmpFolder, outputFolder, categoriesOfRules, referentiel) {
+  async formatAndGroupJuridiction (tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
     const JURIDICTIONS_EXPORTS = {}
 
@@ -222,6 +225,7 @@ export default class App {
         delimiter: ',',
       })
       const groupByMonthObject = groupBy(arrayOfCsv, 'periode')
+
       let list = []
       Object.values(groupByMonthObject).map((monthValues) => {
         // format string to integer
@@ -232,7 +236,7 @@ export default class App {
         }))
 
         console.log(ielst)
-        const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
+        let formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
         list = list.concat(formatMonthDataFromRules)
       })
 
@@ -277,6 +281,15 @@ export default class App {
           .join('\n')}`
       )
     }
+
+    writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
+      appendFileSync(
+        `${outputAllFolder}/AllJuridictions.csv`,
+        value.map((l) => `${key.replace(/[-_]/g, ' ')},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},\n`).join('')
+      )
+    }
   }
 
   formatMonthFromRules (monthValues, categoriesOfRules, referentiel) {
@@ -315,13 +328,13 @@ export default class App {
             // save values
             const totalKeyNode = (newRules.TOTAL || '').toLowerCase()
             const sumByValues = sumBy(lines, totalKeyNode)
-            /*console.log(
+            console.log(
               node,
               sumByValues,
               lines.map((l) => l[totalKeyNode]),
               rule['Code nomenclature'],
               list[rule['Code nomenclature']].periode
-            )*/
+            )
 
             list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + (sumByValues || 0)
           }
@@ -390,6 +403,91 @@ export default class App {
 
     return list
   }
+
+  /*async formatAndGroupAllJuridiction (tmpFolder, outputAllFolder, categoriesOfRules, referentiel) {
+    const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
+    const JURIDICTIONS_EXPORTS = {}
+
+    // id, code_import, periode, stock, entrees, sorties
+    // .....
+
+    for (let i = 0; i < files.length; i++) {
+      const fileName = files[i]
+      const ielst = fileName.replace('export-activities-', '').replace('.csv', '')
+      if (!I_ELST_LIST[ielst]) {
+        continue
+      }
+
+      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
+      }
+
+      console.log(fileName, fileName.replace('export-activities-', '').replace('.csv', ''), I_ELST_LIST[ielst])
+
+      const arrayOfCsv = await csvToArrayJson(readFileSync(`${tmpFolder}/${fileName}`, 'utf8'), {
+        delimiter: ',',
+      })
+      const groupByMonthObject = groupBy(arrayOfCsv, 'periode')
+      let list = []
+      Object.values(groupByMonthObject).map((monthValues) => {
+        // format string to integer
+        monthValues = monthValues.map((m) => ({
+          ...m,
+          nbaff: m.nbaff ? parseInt(m.nbaff) : null,
+          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : null,
+        }))
+
+        console.log(ielst)
+        let formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
+        formatMonthDataFromRules = formatMonthDataFromRules.map((data) => {
+          return { juridiction: I_ELST_LIST[ielst], ...data }
+        })
+        list = list.concat(formatMonthDataFromRules)
+      })
+      // merge to existing list
+      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
+        const index = acc.findIndex((a) => a.code_import === cur.code_import && a.periode === cur.periode)
+        if (index === -1) {
+          acc.push(cur)
+        } else {
+          let juridiction = I_ELST_LIST[ielst]
+          let entrees = acc[index].entrees
+          if (cur.entrees !== null) {
+            entrees = (entrees || 0) + (cur.entrees || 0)
+          }
+
+          let sorties = acc[index].sorties
+          if (cur.sorties !== null) {
+            sorties = (sorties || 0) + (cur.sorties || 0)
+          }
+
+          let stock = acc[index].stock
+          if (cur.stock !== null) {
+            stock = (stock || 0) + (cur.stock || 0)
+          }
+
+          acc[index] = {
+            ...acc[index],
+            juridiction,
+            entrees,
+            sorties,
+            stock,
+          }
+        }
+        return acc
+      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]])
+    }
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
+      console.log('VALUE:', value)
+      appendFileSync(
+        `${outputAllFolder}/AllJuridictions.csv`,
+        `${['juridiction,code_import,periode,entrees,sorties,stock,']
+          .concat(value.map((l) => `${l.juridiction},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`))
+          .join('\n')}`
+      )
+    }
+  }*/
 
   async formatAndGroupJuridictionPenal (inputFolder, outputFolder, categoriesOfRules, referentiel) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith('.csv'))
