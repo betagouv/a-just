@@ -182,5 +182,26 @@ export default (sequelizeInstance, Model) => {
     return find.id
   }
 
+  /**
+   * Récupération d'une juridiction par son nom
+   * @param {*} juridictionName
+   * @returns
+   */
+  Model.findByLabel = async (juridictionName) => {
+    const find = await Model.findOne({
+      attributes: ['id'],
+      where: {
+        label: juridictionName,
+      },
+      raw: true,
+    })
+
+    if (!find) {
+      return null
+    }
+
+    return find.id
+  }
+
   return Model
 }

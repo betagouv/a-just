@@ -242,7 +242,7 @@ export default class RouteUsers extends Route {
       where: { email, new_password_token: code },
     })
     if (user) {
-      if (await user.updatePassword(user.dataValues.id, password)) {
+      if (await this.model.updatePassword(user.dataValues.id, password)) {
         this.sendOk(ctx, {
           status: true,
           msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',

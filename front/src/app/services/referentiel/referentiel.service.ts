@@ -58,7 +58,7 @@ export class ReferentielService {
 
     this.idsIndispo = idsIndispo
 
-    const refSoutien = list.find((r) => r.label === 'Soutien')
+    const refSoutien = list.find((r) => r.label === 'Autres activités')
     const idsSoutien = []
     if (refSoutien) {
       idsSoutien.push(refSoutien.id)

@@ -1,7 +1,6 @@
 import { Injectable, OnInit } from '@angular/core'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { generalizeTimeZone, month } from 'src/app/utils/dates'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { BehaviorSubject } from 'rxjs'
 import { MainClass } from 'src/app/libs/main-class'
@@ -10,6 +9,7 @@ import { UserService } from '../user/user.service'
 import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
+import { setTimeToMidDay } from 'src/app/utils/dates'
 
 /**
  * Excel file details
@@ -82,16 +82,19 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    console.log(this.dateStart.getValue())
     return this.serverService
       .post(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: generalizeTimeZone(this.dateStart.getValue()),
-        dateStop: generalizeTimeZone(this.dateStop.getValue()),
+        dateStart:  setTimeToMidDay(this.dateStart.getValue()),
+        dateStop:  setTimeToMidDay(this.dateStop.getValue()),
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
         this.data = data.data.values
         this.columnSize = data.data.columnSize
+
+        console.log('apreès server', data.data.dateStart, new Date(data.data.dateStart))
         import('xlsx').then((xlsx) => {
           const worksheet = xlsx.utils.json_to_sheet(this.data, {})
           worksheet['!cols'] = this.columnSize
@@ -125,21 +128,11 @@ export class ExcelService extends MainClass {
   getFileName() {
     return `Extraction ETPT_du ${new Date(
       this.dateStart
-        .getValue()
-        .setMinutes(
-          this.dateStart.getValue().getMinutes() -
-            this.dateStart.getValue().getTimezoneOffset()
-        )
-    )
+        .getValue())
       .toJSON()
       .slice(0, 10)} au ${new Date(
       this.dateStop
-        .getValue()
-        .setMinutes(
-          this.dateStop.getValue().getMinutes() -
-            this.dateStop.getValue().getTimezoneOffset()
-        )
-    )
+        .getValue())
       .toJSON()
       .slice(0, 10)}_par ${
       this.userService.user.getValue()!.firstName
