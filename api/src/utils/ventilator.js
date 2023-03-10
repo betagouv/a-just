@@ -47,6 +47,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
     }
 
     if (fonctionsIds && hr.fonction) {
+      console.log(hr.id, hr.fonction, fonctionsIds.includes(hr.fonction.id), fonctionsIds)
       return fonctionsIds.includes(hr.fonction.id)
     }
 
