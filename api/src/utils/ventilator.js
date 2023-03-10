@@ -41,17 +41,21 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
     ['fonction.rank', 'lastName'],
     ['asc', 'asc']
   ).filter((hr) => {
+    let isFiltered = true
+
     if (referentielList) {
       const activities = hr.currentActivities || []
-      return activities.some((a) => referentielList.includes(a.contentieux.id))
+      if (!activities.some((a) => referentielList.includes(a.contentieux.id))) {
+        isFiltered = false
+      }
     }
 
-    console.log('FX - 1')
     if (fonctionsIds && hr.fonction) {
-      console.log('FX', hr.id, hr.fonction, fonctionsIds.includes(hr.fonction.id), fonctionsIds)
-      return fonctionsIds.includes(hr.fonction.id)
+      if (!fonctionsIds.includes(hr.fonction.id)) {
+        isFiltered = false
+      }
     }
 
-    return true
+    return isFiltered
   })
 }
