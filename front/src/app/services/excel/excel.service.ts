@@ -10,7 +10,6 @@ import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 import { setTimeToMidDay } from 'src/app/utils/dates'
-import { fromFileAsync } from 'xlsx-populate';
 
 /**
  * Excel file details
@@ -166,12 +165,7 @@ export class ExcelService extends MainClass {
       FileSaver.saveAs(datas, filename + EXCEL_EXTENSION)
     })
 
-    fromFileAsync('input.xlsx').then(workbook => {
-      let ws=workbook.sheet("Sheet1");
-      ws.cell("C1").value("value in C1");
-      ws.cell("C2").value("value in C2");
-      return workbook.toFileAsync('input.xlsx');
-  });
+
 
     console.log(file.name)
 
