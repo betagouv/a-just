@@ -16,4 +16,13 @@
     <mat-icon class="shape">save</mat-icon>
     <p>Télécharger le fichier au format Excel</p>
   </div>
+
+  <div>
+    <form #formVentilations>
+      <label>Fichier à importer et modifier</label>
+      <input name="file" type="file" accept=".xlsx" />
+    </form>
+    <button (click)="onSendActivity(formVentilations)">Envoyer</button>
+  </div>
+
 </div>

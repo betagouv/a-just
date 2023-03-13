@@ -69,7 +69,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getCurrentHr = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
       where: {
         backup_id: backupId,
       },
@@ -93,6 +93,7 @@ export default (sequelizeInstance, Model) => {
         coverUrl: list[i].cover_url,
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
+        juridiction: list[i].juridiction,
         comment: list[i]['HRComment.comment'],
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id, list[i].date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),

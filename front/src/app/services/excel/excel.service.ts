@@ -10,6 +10,7 @@ import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 import { setTimeToMidDay } from 'src/app/utils/dates'
+import { fromFileAsync } from 'xlsx-populate';
 
 /**
  * Excel file details
@@ -139,5 +140,40 @@ export class ExcelService extends MainClass {
     }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
       .toJSON()
       .slice(0, 10)}`
+  }
+
+  modifyExcel(file:any){
+
+    import('xlsx').then(async (xlsx) => {
+      const data = await file.arrayBuffer();
+      let wb = xlsx.read(data);
+      const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+      console.log(worksheet)
+
+      wb.Sheets[wb.SheetNames[0]] = worksheet
+      //const ws = wb.Sheets[wb.SheetNames[0]]
+      //xlsx.utils.book_append_sheet(wb, ws, 'Onglet 1')
+
+      const excelBuffer: any = xlsx.write(wb, {
+        bookType: 'xlsx',
+        type: 'array',
+      })
+      const filename = this.getFileName()
+      const datas: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
+      FileSaver.saveAs(datas, filename + EXCEL_EXTENSION)
+    })
+
+    fromFileAsync('input.xlsx').then(workbook => {
+      let ws=workbook.sheet("Sheet1");
+      ws.cell("C1").value("value in C1");
+      ws.cell("C2").value("value in C2");
+      return workbook.toFileAsync('input.xlsx');
+  });
+
+    console.log(file.name)
+
   }
 }

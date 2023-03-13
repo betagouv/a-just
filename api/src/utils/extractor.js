@@ -126,8 +126,8 @@ export const addSumLine = (data, selectedCategory) => {
     let headerSum = new Object({})
     Object.keys(data[0]).map((key) => {
       const sum = sumBy(data, key)
-      headerSum[key] = typeof sum === 'string' || key === 'Numéro A-JUST' ? '' : sum
-      if (key === 'Fonction') headerSum[key] = 'SOMME'
+      headerSum[key] = typeof sum === 'string' || ['Numéro A-JUST', 'TPROX', "Date d'arrivée", 'Date de départ'].includes(key) ? '' : sum
+      if (key === 'Date de départ') headerSum[key] = 'SOMME'
     })
     data.push(headerSum)
   }
