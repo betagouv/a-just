@@ -53,6 +53,8 @@ export default class RouteExtractor extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    const juridictionName = await this.models.HRBackups.findById(backupId)
+
     console.time('extractor-1')
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
     console.timeEnd('extractor-1')
@@ -142,12 +144,16 @@ export default class RouteExtractor extends Route {
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             data.push({
+              Juridiction: juridictionName.label,
               ['Numéro A-JUST']: human.id,
               Matricule: human.matricule,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,
               Fonction: fonctionName,
+              TPROX: human.juridiction,
+              ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
+              ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
               ['ETPT sur la période']: reelEtp,
               ['Temps ventilés sur la période  ']: totalEtpt,
               ...refObj,
@@ -160,12 +166,13 @@ export default class RouteExtractor extends Route {
 
     await data.sort((a, b) => sortByCatAndFct(a, b))
 
+    console.log(data)
     data = addSumLine(data, categoryFilter)
-    data = replaceZeroByDash(data)
+    //data = replaceZeroByDash(data)
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
 
-    console.log('Dates : ', new Date(dateStart), dateStop)
+    console.log(juridictionName.label)
 
     this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }
