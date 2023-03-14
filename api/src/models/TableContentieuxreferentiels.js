@@ -25,7 +25,7 @@ export default (sequelizeInstance, Model) => {
           where: {
             parent_id: parentId,
           },
-          order: [['code_import', 'asc']],
+          order: [['rank', 'asc']],
           raw: true,
         })
       ).map((r) => ({
@@ -197,6 +197,9 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
+    // order contentieux
+    await Model.setRankToContentieux(list)
+
     // force to reload referentiel to cache
     await Model.getReferentiels(true)
 
@@ -221,6 +224,37 @@ export default (sequelizeInstance, Model) => {
     })
 
     return listCont ? listCont.id : null
+  }
+
+  /**
+   * Update contentieux rank
+   * @param {*} list
+   */
+  Model.setRankToContentieux = async (list) => {
+    const listUpdated = []
+    let rank = 1
+
+    for (let i = 0; i < list.length; i++) {
+      const extract = extractCodeFromLabelImported(list[i].niveau_4)
+      if (extract && extract.code) {
+        const code = extract.code
+
+        if (!listUpdated.includes(code)) {
+          listUpdated.push(code)
+
+          const cont = await Model.findOne({
+            where: {
+              code_import: code,
+            },
+          })
+
+          if (cont) {
+            rank++
+            await cont.update({ rank })
+          }
+        }
+      }
+    }
   }
 
   Model.getReferentiels(true) // force to init
