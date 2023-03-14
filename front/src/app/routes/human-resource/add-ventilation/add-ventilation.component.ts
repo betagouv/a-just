@@ -8,12 +8,14 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
+import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -110,17 +112,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
-
   /**
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
    * @param humanResourceService
+   * @param appService
    */
   constructor(
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private appService: AppService
   ) {
     super()
   }
@@ -217,32 +220,50 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
     if (totalAffected > 100) {
-      alert(
-        `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
-      )
+      this.appService.alert.next({
+        title: 'Attention',
+        text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
+      })
+      return
+    } else if (totalAffected < 100) {
+      this.appService.alert.next({
+        title: 'Attention',
+        text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doivent constituer 100% de son temps de travail.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
+      })
       return
     }
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
     console.log(this.basicData)
-    if (this.basicData!.controls.lastName.value === '' || this.basicData!.controls.lastName.value === 'Nom') {
+    if (
+      this.basicData!.controls.lastName.value === '' ||
+      this.basicData!.controls.lastName.value === 'Nom'
+    ) {
       alert('Vous devez saisir un nom pour valider la création !')
       return
     }
-    if (this.basicData!.controls.firstName.value === '' || this.basicData!.controls.firstName.value === 'Prénom') {
+    if (
+      this.basicData!.controls.firstName.value === '' ||
+      this.basicData!.controls.firstName.value === 'Prénom'
+    ) {
       alert('Vous devez saisir un prénom pour valider la création !')
       return
     }
 
-    console.log('ACT start date',activitiesStartDate,' Start date', this.human!.dateStart)
+    console.log(
+      'ACT start date',
+      activitiesStartDate,
+      ' Start date',
+      this.human!.dateStart
+    )
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !')
       return
     }
 
     if (!(this.human && this.human.dateStart)) {
-      alert('Vous devez saisir une date d\'arrivée !')
+      alert("Vous devez saisir une date d'arrivée !")
       return
     }
     activitiesStartDate = new Date(activitiesStartDate)
@@ -383,7 +404,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Show panel to help
-   * @param type 
+   * @param type
    */
   openHelpPanel(type: string) {
     this.onOpenHelpPanel.emit(type)

@@ -17,6 +17,10 @@ import {
 })
 export class AlertComponent implements OnChanges {
   /**
+   * Titre text dans l'alerte
+   */
+  @Input() alertTitle: string | undefined = ''
+  /**
    * Message text dans l'alerte
    */
   @Input() alertMessage: string = ''
