@@ -257,6 +257,8 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.getReferentiels(true) // force to init
+  setTimeout(() => {
+    Model.getReferentiels(true) // force to init after 3 seconds
+  }, 3000)
   return Model
 }
