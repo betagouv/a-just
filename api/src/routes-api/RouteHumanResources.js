@@ -18,7 +18,9 @@ export default class RouteHumanResources extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
 
-    this.model.onPreload()
+    setTimeout(() => {
+      this.model.onPreload() // preload juridiction after 1 minute
+    }, 60000)
   }
 
   /**
