@@ -3,6 +3,10 @@
  */
 export interface AlertInterface {
 	/**
+	 * Titre du message d'alert
+	 */
+	title?: string;
+	/**
 	 * Texte du message d'alert
 	 */
 	text: string;

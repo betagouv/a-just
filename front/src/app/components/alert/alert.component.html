@@ -1,6 +1,6 @@
-<div class="alert animate__animated animate__fadeIn">
-  <p class="alert-message">{{alertMessage}}</p>
-  <div class="actions-row">
-    <button class="small primary strict-border cursor-pointer" (click)="onClose.emit()">OK</button>
-  </div>
-</div>
+<aj-popup [actions]="[
+    { id: 'close', content: 'Ok' },
+  ]" [closeIcon]="true" (onClose)="onClose.emit()" (selectedAction)="onClose.emit()" class="width-500"
+  [title]="alertTitle || ''">
+  <p [innerHTML]="alertMessage | sanitizeHtml"></p>
+</aj-popup>
