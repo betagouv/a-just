@@ -66,6 +66,10 @@ export class PanelHistoryVentilationComponent
    */
   @Input() canEditSituation: boolean = false
   /**
+   * Force to show sub contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
+  /**
    * Event lors du souhait de modifier la situation
    */
   @Output() editVentilation = new EventEmitter()

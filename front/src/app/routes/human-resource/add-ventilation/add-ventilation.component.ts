@@ -67,6 +67,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   @Input() isEdit: boolean = false
   @Input() basicData: FormGroup | null = null
   /**
+   * Force to show sub contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
+  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter()

@@ -59,6 +59,38 @@
   </div>
 </div>
 
+<ng-template [ngIf]="forceToShowContentieuxDetail">
+  <ng-template ngFor let-mainReferentiel [ngForOf]="referentiel">
+    <ng-template [ngIf]="mainReferentiel.percent">
+      <div class="sub-panel-activites" [ngStyle]="{
+  'border-top-color': referentielMappingColor(
+    mainReferentiel.label
+  )
+}">
+        <div class="sub-item">
+          <progression-bar [percent]="mainReferentiel.percent" [color]="referentielMappingColor(mainReferentiel.label)"
+            class="dark-mode">
+          </progression-bar>
+          <p>{{ referentielMappingName(mainReferentiel.label) }}</p>
+        </div>
+        <div class="sub-item sub-item-or" *ngIf="countNbSubItem(mainReferentiel)">
+          <p>Dont</p>
+        </div>
+        <div class="group-sub-item">
+          <ng-template ngFor let-ref [ngForOf]="mainReferentiel.childrens || []">
+            <div class="sub-item" *ngIf="ref.percent">
+              <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(mainReferentiel.label)"
+                class="dark-mode">
+              </progression-bar>
+              <p>{{ referentielMappingName(ref.label) }}</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</ng-template>
+
 <div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100 }">
   <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
   <div class="progress-bar-line">
