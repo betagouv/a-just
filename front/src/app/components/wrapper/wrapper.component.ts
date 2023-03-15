@@ -268,9 +268,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param header
    * @returns
    */
-  async exportAsPdf(filename: string, header: boolean = true): Promise<any> {
+  async exportAsPdf(filename: string, header: boolean = true, promptComment: boolean = false, exportName: string | null = null): Promise<any> {
     this.duringPrint = true
     const element = this[header ? 'contener' : 'content']?.nativeElement
+    let comment: string | null = null
+
+    if(promptComment) {
+      comment = prompt('Ajouter un commentaire ?')
+
+      if(comment === null) {
+        return
+      }
+    }
 
     if (!element) {
       return new Promise((resolve) => {
@@ -287,13 +296,40 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         }).then((canvas) => {
           var width = canvas.width
           var height = canvas.height
+          var doc
 
-          var doc = new jsPDF(
-            width > height ? 'l' : 'p',
-            'px',
-            [width / 2, height / 2],
-            true
-          )
+          if(comment) {
+            doc = new jsPDF(
+              'l',
+              'px',
+              [400, 1000],
+              true
+            )
+            doc.addImage(
+              '/assets/icons/logos/white-192x192.png',
+              'PNG',
+              30,
+              20,
+              50,
+              50,
+              '',
+              'FAST'
+            )
+            doc.setFontSize(36)
+            doc.text(exportName || '', 100, 150)
+            doc.setFontSize(16)
+            doc.text('Commentaire :', 100, 230)
+            doc.text(comment, 100, 250)
+            doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+          } else {
+            doc = new jsPDF(
+              width > height ? 'l' : 'p',
+              'px',
+              [width / 2, height / 2],
+              true
+            )
+          }
+
           doc.addImage(
             canvas.toDataURL('image/jpeg', 1),
             'JPEG',

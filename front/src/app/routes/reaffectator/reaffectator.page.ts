@@ -14,7 +14,6 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { AppService } from 'src/app/services/app/app.service'
-import { ServerService } from 'src/app/services/http-server/server.service'
 import { UserService } from 'src/app/services/user/user.service'
 
 /**
@@ -641,13 +640,23 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
+    const date = new Date()
+
     this.wrapper
       ?.exportAsPdf(
         `Simulation-D-Affectation_par ${
           this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
-          .slice(0, 10)}.pdf`
+          .slice(0, 10)}.pdf`,
+          true,
+          true,
+          `Simulation d'affectation par ${
+            this.userService.user.getValue()!.firstName
+          } ${this.userService.user.getValue()!.lastName!} le ${(date.getDate() + '').padStart(
+            2,
+            '0'
+          )} ${this.getShortMonthString(date)} ${date.getFullYear()}`
       )
       .then(() => {
         this.duringPrint = false
