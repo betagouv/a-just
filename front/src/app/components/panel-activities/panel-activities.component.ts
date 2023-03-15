@@ -52,6 +52,10 @@ export class PanelActivitiesComponent
    */
   @Input() canSelectedTopReferentiel: boolean = false
   /**
+   * Force pour afficher les sous contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
@@ -244,5 +248,14 @@ export class PanelActivitiesComponent
    */
   trackById(index: number, item: any) {
     return item.id
+  }
+
+  /**
+   * Compte le nombre de sous contentieux avec une valeure
+   * @param referentiel 
+   * @returns 
+   */
+  countNbSubItem(referentiel: ContentieuReferentielInterface) {
+    return (referentiel.childrens || []).filter(r => r.percent).length
   }
 }
