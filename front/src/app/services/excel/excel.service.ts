@@ -10,6 +10,7 @@ import * as FileSaver from 'file-saver'
 import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 import { setTimeToMidDay } from 'src/app/utils/dates'
+import XlsxPopulate from 'xlsx-populate';
 
 /**
  * Excel file details
@@ -166,6 +167,8 @@ export class ExcelService extends MainClass {
     })
 
 
+
+    //XlsxPopulate.fromFileAsync(file)
 
     console.log(file.name)
 
