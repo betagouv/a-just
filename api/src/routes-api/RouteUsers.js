@@ -55,7 +55,11 @@ export default class RouteUsers extends Route {
     }),
   })
   async createAccount (ctx) {
-    const { email, firstName, lastName, tj, fonction } = this.body(ctx)
+    const { firstName, lastName, tj, fonction } = this.body(ctx)
+    let { email } = this.body(ctx)
+
+    email = (email || '').toLowerCase() // force to lower case email
+
     try {
       await this.model.createAccount(this.body(ctx))
       await sentEmail(
