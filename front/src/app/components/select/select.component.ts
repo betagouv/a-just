@@ -4,6 +4,7 @@ import {
   OnChanges,
   Output,
   EventEmitter,
+  AfterViewInit,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
@@ -55,7 +56,9 @@ export interface childrenInterface {
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
-export class SelectComponent extends MainClass implements OnChanges {
+export class SelectComponent
+  extends MainClass
+  implements OnChanges, AfterViewInit {
   /**
    * Titre du bouton
    */
@@ -119,6 +122,30 @@ export class SelectComponent extends MainClass implements OnChanges {
     this.findRealValue()
   }
 
+  ngAfterViewInit() {
+
+    const elementToObserve = document.body;
+
+    const observer = new MutationObserver(() => {
+      const element =
+        Array.from(
+          document.getElementsByClassName(
+            'cdk-overlay-pane'
+          ) as HTMLCollectionOf<HTMLElement>
+        )[0] || null
+      if (element !== null) {
+        const delta =
+          +element.style.left.replace('px', '') +
+          element.getBoundingClientRect().width -
+          window.innerWidth
+        if (delta > 0)
+          element.style.left =
+            +element.style.left.replace('px', '') - delta + 'px'
+      }
+    });
+
+    observer.observe(elementToObserve, { subtree: true, childList: true });
+  }
   /**
    * Création et recherche du champ visible par humain soit le realValue
    */
@@ -144,14 +171,14 @@ export class SelectComponent extends MainClass implements OnChanges {
     ) {
       this.subReferentielData = []
       this.value = this.subList
-      ;[find.childrens].map((s) =>
-        s?.map((t) => {
-          this.subReferentielData.push(t)
-          tmpStr = (this.value as number[]).includes(t.id as never)
-            ? tmpStr.concat(t.value, ', ')
-            : tmpStr
-        })
-      )
+        ;[find.childrens].map((s) =>
+          s?.map((t) => {
+            this.subReferentielData.push(t)
+            tmpStr = (this.value as number[]).includes(t.id as never)
+              ? tmpStr.concat(t.value, ', ')
+              : tmpStr
+          })
+        )
       this.realValue = tmpStr.slice(0, -2)
     } else if (
       find &&
@@ -161,9 +188,9 @@ export class SelectComponent extends MainClass implements OnChanges {
     ) {
       this.subReferentielData = []
       this.value = this.subList
-      ;[find.childrens].map((s) =>
-        s?.map((t) => this.subReferentielData.push(t))
-      )
+        ;[find.childrens].map((s) =>
+          s?.map((t) => this.subReferentielData.push(t))
+        )
       this.realValue = 'Tous'
     } else if (Array.isArray(this.value) && this.value.length !== 0) {
       const arrayValues = Array.isArray(this.value) ? this.value : [this.value]

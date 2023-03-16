@@ -3,23 +3,13 @@
   <p class="bold-family">{{ realValue || defaultRealValue }}</p>
   <mat-icon>{{ icon }}</mat-icon>
 </div>
-<mat-select
-  [multiple]="multiple"
-  #matSelect
-  class="hide-visualisation"
-  [ngModel]="value"
-  (ngModelChange)="onSelectedChanged($event)"
-  #selectionModel="ngModel"
->
-  <app-select-check-all
-    *ngIf="multiple"
-    [model]="selectionModel"
-    [values]="this.subList ? this.subReferentielData : this.datas"
-    check="true"
-  >
+<mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
+  (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
+  <app-select-check-all *ngIf="multiple" [model]="selectionModel"
+    [values]="this.subList ? this.subReferentielData : this.datas" check="true">
   </app-select-check-all>
   <div *ngIf="!subList; else subListTemplate">
-    <mat-option *ngFor="let ref of datas" [value]="ref.id">
+    <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions">
       {{ ref.value }}
     </mat-option>
   </div>
