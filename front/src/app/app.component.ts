@@ -106,17 +106,17 @@ export class AppComponent implements AfterViewInit {
     this.appService.alert.next(null)
   }
 
-  listenSelectElement(){
-    const elementToObserve = document.body;
+  listenSelectElement() {
+    /*const elementToObserve = document.body;
 
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver(r() => {
       const element =
         Array.from(
           document.getElementsByClassName(
             'cdk-overlay-pane'
           ) as HTMLCollectionOf<HTMLElement>
         )[0] || null
-      if (element !== null) {
+      /*if (element !== null) {
         const delta =
           +element.style.left.replace('px', '') +
           element.getBoundingClientRect().width -
@@ -127,6 +127,31 @@ export class AppComponent implements AfterViewInit {
       }
     });
 
+
     observer.observe(elementToObserve, { subtree: true, childList: true });
+    */
+
+    /* document.addEventListener(
+      'DOMNodeInserted',
+      () => {
+        console.log('oui')
+        const element =
+          Array.from(
+            document.getElementsByClassName(
+              'cdk-overlay-pane'
+            ) as HTMLCollectionOf<HTMLElement>
+          )[0] || null
+        if (element !== null) {
+          const delta =
+            +element.style.left.replace('px', '') +
+            element.getBoundingClientRect().width -
+            window.innerWidth
+          if (delta > 0)
+            element.style.left =
+              +element.style.left.replace('px', '') - delta + 'px'
+        }
+      },
+      false
+    ) */
   }
 }
