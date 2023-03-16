@@ -26,6 +26,20 @@
 
 :host {
 
+  #comment-area-copy {
+    padding: 8px 16px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background-color: #eeeeee;
+    resize: none;
+    border: none;
+    border-bottom: 2px solid black;
+    font-size: 12px;
+    margin: 24px;
+    min-height: 40px;
+    display:none;
+  }
+
   .hide-by-category {
     display: none !important
   }

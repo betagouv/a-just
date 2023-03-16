@@ -593,7 +593,8 @@
         <div class="header-comment">
           <p><b>Notes et commentaires</b><br /></p>
         </div>
-        <textarea placeholder="Commentaire"></textarea>
+        <textarea id="comment-area" #commentaireSimulateur placeholder="Commentaire"></textarea>
+        <p id="comment-area-copy">{{commentaireSimulateur.value}}</p>
       </div>
       <div class="space"></div>
     </div>
