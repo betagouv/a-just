@@ -61,7 +61,9 @@ export class AppComponent implements AfterViewInit {
       }
     })
 
-    this.appService.alert.subscribe((a) => (this.alertMessage = a))
+    this.appService.alert.subscribe((a) => {
+      this.alertMessage = a
+    })
 
     if (environment.matomo !== null) {
       var _paq = (window._paq = window._paq || [])

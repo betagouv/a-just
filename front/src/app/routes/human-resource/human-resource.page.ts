@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { maxBy, minBy, orderBy, sumBy } from 'lodash'
-import { debounceTime, delay, last, mergeMap, of, takeLast } from 'rxjs'
+import { maxBy, minBy, orderBy } from 'lodash'
+import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -13,7 +13,6 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
-import { AppService } from 'src/app/services/app/app.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -155,7 +154,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private appService: AppService
   ) {
     super()
 
@@ -934,9 +932,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
     this.wrapper
       ?.exportAsPdf(
         `Fiche individuelle${
