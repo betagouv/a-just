@@ -24,7 +24,7 @@
   </div>
 </div>
 
-<div *ngIf="refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
+<div *ngIf="!forceToShowContentieuxDetail && refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
     'border-top-color': referentielMappingColor(
       referentiel[refIndexSelected].label
     )
