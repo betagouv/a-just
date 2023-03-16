@@ -58,7 +58,7 @@ export interface childrenInterface {
 })
 export class SelectComponent
   extends MainClass
-  implements OnChanges, AfterViewInit {
+  implements OnChanges {
   /**
    * Titre du bouton
    */
@@ -121,31 +121,7 @@ export class SelectComponent
   ngOnChanges() {
     this.findRealValue()
   }
-
-  ngAfterViewInit() {
-
-    const elementToObserve = document.body;
-
-    const observer = new MutationObserver(() => {
-      const element =
-        Array.from(
-          document.getElementsByClassName(
-            'cdk-overlay-pane'
-          ) as HTMLCollectionOf<HTMLElement>
-        )[0] || null
-      if (element !== null) {
-        const delta =
-          +element.style.left.replace('px', '') +
-          element.getBoundingClientRect().width -
-          window.innerWidth
-        if (delta > 0)
-          element.style.left =
-            +element.style.left.replace('px', '') - delta + 'px'
-      }
-    });
-
-    observer.observe(elementToObserve, { subtree: true, childList: true });
-  }
+  
   /**
    * Création et recherche du champ visible par humain soit le realValue
    */
