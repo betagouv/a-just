@@ -1250,12 +1250,20 @@ export class SimulatorPage extends MainClass implements OnInit {
     const ajWrapper = document.getElementById('simu-wrapper')
     ajWrapper?.classList.add('full-screen')
 
+    const commentAreaCopy = document.getElementById('comment-area-copy')!
+    commentAreaCopy.style.display = 'block'
+
+    const commentArea = document.getElementById('comment-area')!
+    commentArea.style.display = 'none'
+
     this.wrapper?.exportAsPdf(filename).then(() => {
       ajWrapper?.classList.remove('full-screen')
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
+      commentArea.style.display = 'block'
+      commentAreaCopy.style.display = 'none'
       title.style.display = 'none'
-    })
+    }) 
   }
 
   /**
