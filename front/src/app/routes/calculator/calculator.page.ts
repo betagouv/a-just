@@ -402,9 +402,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   onExport() {
     this.duringPrint = true
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
     this.wrapper
       ?.exportAsPdf(
         `Calculateur_par ${

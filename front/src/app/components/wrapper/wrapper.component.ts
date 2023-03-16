@@ -22,7 +22,29 @@ import { AppService } from 'src/app/services/app/app.service'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { addHTML } from 'src/app/utils/js-pdf'
 import { environment } from 'src/environments/environment'
+import { ActionsInterface } from '../popup/popup.component'
+
+declare const Quill: any
+
+/**
+ * Interface de génération d'un commentaire
+ */
+interface ExportPDFInterface {
+  /**
+   * Nom du fichier d'export
+   */
+  filename: string
+  /**
+   * Prend en compte le header pour l'export
+   */
+  header: boolean
+  /**
+   * Ajoute un text dans la page d'intro de l'export
+   */
+  exportName: string
+}
 
 /**
  * Composent de mise en page en mode connecté
@@ -89,7 +111,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Affiche une bulle d'aide avec une doc derriere
    */
-  @Input() documentation: DocumentationInterface | undefined | null
+  @Input() documentation: DocumentationInterface | undefined | null
   /**
    * Doc d'aide à afficher
    */
@@ -97,7 +119,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Popup open
    */
-  popin= false
+  popin = false
   /**
    * Dit si le paneau d'aide est visible ou non
    */
@@ -140,6 +162,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       path: 'dashboard',
     },
   ]
+  /**
+   * Answer of question
+   */
+  promptComment: boolean = false
+  /**
+   * Export PDF temp var
+   */
+  exportPDFTemp: ExportPDFInterface | null = null
+  /**
+   * Quill editor
+   */
+  quillEditor: any = null
 
   /**
    * Constructeur
@@ -154,7 +188,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService,
+    private appService: AppService
   ) {
     super()
 
@@ -195,10 +229,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     })
   }
 
-  onSelectAction(event:any){
-
-      this.onDisconnect() 
-
+  onSelectAction(event: any) {
+    this.onDisconnect()
   }
 
   /**
@@ -268,18 +300,38 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param header
    * @returns
    */
-  async exportAsPdf(filename: string, header: boolean = true, promptComment: boolean = false, exportName: string | null = null): Promise<any> {
+  async exportAsPdf(
+    filename: string,
+    header: boolean = true,
+    promptComment: boolean = false,
+    exportName: string | null = null
+  ): Promise<any> {
+    this.exportPDFTemp = {
+      filename,
+      header,
+      exportName: exportName || '',
+    }
+
+    if (promptComment) {
+      this.promptComment = true
+    } else {
+      this.askExportAsPdf()
+    }
+  }
+
+  /**
+   * Export PDF du contenu et aussi au besoin du header
+   * @param comment
+   * @returns
+   */
+  async askExportAsPdf(comment?: string): Promise<any> {
+    if (!this.exportPDFTemp) {
+      return
+    }
+
+    const { header, filename, exportName } = this.exportPDFTemp
     this.duringPrint = true
     const element = this[header ? 'contener' : 'content']?.nativeElement
-    let comment: string | null = null
-
-    if(promptComment) {
-      comment = prompt('Ajouter un commentaire ?')
-
-      if(comment === null) {
-        return
-      }
-    }
 
     if (!element) {
       return new Promise((resolve) => {
@@ -288,38 +340,64 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     }
     document.body.classList.add('remove-height')
     document.body.classList.add('on-print')
+    this.appService.alert.next({
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    })
 
     return new Promise((resolve) => {
       setTimeout(() => {
         html2canvas(element, {
           scale: 1.5,
-        }).then((canvas) => {
+        }).then(async (canvas) => {
           var width = canvas.width
           var height = canvas.height
           var doc
 
-          if(comment) {
-            doc = new jsPDF(
-              'l',
-              'px',
-              [400, 1000],
-              true
-            )
-            doc.addImage(
-              '/assets/icons/logos/white-192x192.png',
-              'PNG',
-              30,
-              20,
-              50,
-              50,
-              '',
-              'FAST'
-            )
-            doc.setFontSize(36)
-            doc.text(exportName || '', 100, 150)
-            doc.setFontSize(16)
-            doc.text('Commentaire :', 100, 230)
-            doc.text(comment, 100, 250)
+          if (comment) {
+            const mainHtmlContainer = document.createElement('div')
+            mainHtmlContainer.style.position = 'absolute'
+            mainHtmlContainer.style.left = '200%'
+            mainHtmlContainer.style.width = '400px'
+
+            const htmlContainer = document.createElement('div')
+            htmlContainer.style.position = 'relative'
+            htmlContainer.style.padding = '16px 32px 32px 32px'
+
+            const logo = document.createElement('img')
+            logo.src = '/assets/icons/logos/white-192x192.png'
+            logo.style.width = '50px'
+            logo.style.height = '50px'
+            logo.style.position = 'absolute'
+            logo.style.top = '20px'
+            logo.style.left = '30px'
+
+            const title = document.createElement('p')
+            title.style.fontSize = '24px'
+            title.style.marginTop = '64px'
+            title.style.fontWeight = 'bold'
+            title.innerHTML = exportName || ''
+
+            const pCom = document.createElement('p')
+            pCom.style.marginTop = '32px'
+            pCom.style.fontSize = '10px'
+            pCom.innerHTML = 'Commentaire :'
+
+            const commentDom = document.createElement('p')
+            commentDom.style.fontSize = '10px'
+            commentDom.innerHTML = comment
+            
+            htmlContainer.appendChild(logo)
+            htmlContainer.appendChild(title)
+            htmlContainer.appendChild(pCom)
+            htmlContainer.appendChild(commentDom)
+            mainHtmlContainer.appendChild(htmlContainer)
+            document.body.appendChild(mainHtmlContainer)
+            
+            const { width: w, height: h } = mainHtmlContainer.getBoundingClientRect()
+            doc = new jsPDF('l', 'px', [w, h + 50], true)
+            await addHTML(doc, htmlContainer)
+            mainHtmlContainer.remove()
+            
             doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
           } else {
             doc = new jsPDF(
@@ -349,6 +427,22 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         })
       })
     })
+  }
+
+  /**
+   * onActionComment
+   */
+  onActionComment(action: ActionsInterface, htmlComment?: string) {
+    switch (action.id) {
+      case 'export':
+        this.askExportAsPdf()
+        break
+      case 'export-with-comment':
+        this.askExportAsPdf(htmlComment)
+        break
+    }
+
+    this.promptComment = false
   }
 
   /**
