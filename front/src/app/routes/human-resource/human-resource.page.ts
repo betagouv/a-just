@@ -264,7 +264,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
-      console.log(findUser, { indisponibilityError: this.indisponibilityError })
+      // console.log(findUser, { indisponibilityError: this.indisponibilityError })
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
@@ -333,7 +333,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         .filter((i) => i.dateStop)
         .map((s) => today(s.dateStop))
     )
-    console.log(listAllDates)
+    // console.log(listAllDates)
 
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
@@ -354,7 +354,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       maxDate.setDate(maxDate.getDate() + 1)
     }
 
-    console.log(minDate, maxDate)
+    // console.log(minDate, maxDate)
 
     const currentDate = new Date(minDate)
     let idsDetected: number[] = []
@@ -514,12 +514,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.histories[this.indexOfTheFuture].dateStop
     }
 
-    console.log({
+    /* console.log({
       indexOfTheFuture: this.indexOfTheFuture,
       histories: this.histories,
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
-    })
+    }) */
   }
 
   /**
@@ -566,9 +566,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         false
       )
 
-      console.log({
+      /* console.log({
         [nodeName]: value,
-      })
+      }) */
     }
   }
 
@@ -909,7 +909,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
-      console.log({ indisponibilityError: this.indisponibilityError })
+      // console.log({ indisponibilityError: this.indisponibilityError })
     }
   }
 
@@ -919,7 +919,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
-    console.log(returnValue, this.histories.length, this.onEditIndex)
+    // console.log(returnValue, this.histories.length, this.onEditIndex)
     if (returnValue) {
       // force to not show on boarding after delete last situation
       this.onEditIndex = null
