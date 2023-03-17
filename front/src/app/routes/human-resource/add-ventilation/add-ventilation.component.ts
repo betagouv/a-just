@@ -318,6 +318,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       fonct
     )
 
+
     if (this.human) {
       console.log(this.basicData!.controls)
 
@@ -394,6 +395,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         activities,
       })
     }
+
+    console.log(isSameDate, situations)
 
     return situations
   }
