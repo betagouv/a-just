@@ -96,7 +96,9 @@
       </p>
     </div>
 
-    <div class="line-item orange-bg">
+    <div class="line-item orange-bg" #tooltip="matTooltip"
+      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',firstSituationData,false,true)"
+      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
       <input [value]="getFieldValue('totalIn',firstSituationData)" disabled />
     </div>
     <div class="line-item">
@@ -136,7 +138,9 @@
       </p>
     </div>
 
-    <div class="line-item grey-bg">
+    <div class="line-item grey-bg" #tooltip="matTooltip"
+      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',projectedSituationData,false,true)"
+      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
       <input [value]="getFieldValue('totalIn',projectedSituationData)" disabled />
     </div>
     <div class="line-item">
@@ -403,7 +407,9 @@
         </p>
       </div>
       <div class="item-container">
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('totalIn',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
