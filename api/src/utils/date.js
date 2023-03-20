@@ -335,3 +335,16 @@ export function monthDiffList (dateFrom, dateTo) {
   if (dateTo) return [...Array(1 + dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear())).keys()]
   else return []
 }
+
+export function setTimeToMidDay (date) {
+  if (date === undefined || date === null) return undefined
+  date.setHours(12)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  date.setUTCHours(12)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  return date
+}
