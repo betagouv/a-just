@@ -166,7 +166,7 @@ export default (sequelizeInstance, Model) => {
     const usersFinded = []
 
     for (let i = 0; i < users.length; i++) {
-      const lastLog = await Model.models.Logs.findLastLog(null, USER_AUTO_LOGIN, { userId: users[i].id })
+      const lastLog = await Model.models.Logs.findLastLog(users[i].id, USER_AUTO_LOGIN, { userId: users[i].id })
       let lastConnexionDate = new Date(2023, 2, 1) // date fictive base sur la date de mise en prod
       if (lastLog) {
         lastConnexionDate = new Date(lastLog.createdAt)
