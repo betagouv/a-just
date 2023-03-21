@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash'
 import { Op } from 'sequelize'
 import { extractCodeFromLabelImported } from '../utils/referentiel'
 
