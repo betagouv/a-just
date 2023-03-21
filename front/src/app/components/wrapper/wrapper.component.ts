@@ -238,43 +238,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param user
    */
   updateMenu(user: UserInterface | null) {
-    const menu = []
-
-    if (user && user.access && user.access.indexOf(2) !== -1) {
-      menu.push({
-        label: 'Ventilateur',
-        path: 'ventilations',
-      })
-    }
-    if (user && user.access && user.access.indexOf(3) !== -1) {
-      menu.push({
-        label: "Données d'activité",
-        path: 'donnees-d-activite',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(4) !== -1) {
-      menu.push({
-        label: 'Temps moyens',
-        path: 'temps-moyens',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(5) !== -1) {
-      menu.push({
-        label: 'Calculateur',
-        path: 'calculateur',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(6) !== -1) {
-      menu.push({
-        label: 'Simulateur',
-        path: 'simulateur',
-      })
-    }
-
-    this.menu = menu
+    this.menu = user ? this.userService.getAllUserPageUrl(user) : []
   }
 
   /**
