@@ -31,7 +31,7 @@
 
   <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"
     [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
-    [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1"
+    [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [editId]="histories[onEditIndex].id"
     [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"
     [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
     (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
