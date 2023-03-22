@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { USER_REMOVE_HR } from '../constants/log-codes'
+import { EXECUTE_EXTRACTOR, EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
@@ -190,6 +190,11 @@ export default class RouteHumanResources extends Route {
     const allCategories = await this.models.HRCategories.getAll()
 
     if (extractor === false) {
+      if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
+        // memorize first execution by user
+        await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
+      }
+
       let listFiltered = [...list]
       const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
       const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
@@ -238,6 +243,9 @@ export default class RouteHumanResources extends Route {
         allPersons: hr,
       })
     } else {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
+
       console.timeEnd('step5')
       console.log('step6')
 
