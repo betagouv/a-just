@@ -128,6 +128,7 @@ export default class RouteExtractor extends Route {
                   const label = getExcelLabel(referentiel, false)
                   if (isIndispoRef) {
                     refObj[label] = counterIndispo / 100
+                    if (human.id === 2308) console.log(label, counterIndispo / 100)
                     return {
                       indispo: counterIndispo / 100,
                     }
@@ -138,7 +139,11 @@ export default class RouteExtractor extends Route {
             })
           )),
         ]
-        console.log(indispoArray)
+
+        const key = getExcelLabel(refIndispo, true)
+
+        refObj[key] = sumBy(indispoArray, 'indispo')
+
         if (reelEtp === 0) {
           dateStart = setTimeToMidDay(dateStart)
           dateStop = setTimeToMidDay(dateStop)
@@ -152,7 +157,6 @@ export default class RouteExtractor extends Route {
             let countNbOfDays = undefined
 
             if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-            if (human.id === 2308) console.log(human)
             if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
               reelEtpObject.push({
                 etp: situation.etp * (countNbOfDays + 1),
@@ -160,12 +164,8 @@ export default class RouteExtractor extends Route {
               })
           })
 
-          reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')
+          reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
         }
-
-        const key = getExcelLabel(refIndispo, true)
-
-        refObj[key] = sumBy(indispoArray, 'indispo')
 
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
