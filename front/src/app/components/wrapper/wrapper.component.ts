@@ -394,7 +394,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
             document.body.appendChild(mainHtmlContainer)
             
             const { width: w, height: h } = mainHtmlContainer.getBoundingClientRect()
-            doc = new jsPDF('l', 'px', [w, h + 50], true)
+            doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
             await addHTML(doc, htmlContainer)
             mainHtmlContainer.remove()
             

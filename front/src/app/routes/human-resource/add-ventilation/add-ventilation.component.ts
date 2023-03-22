@@ -65,6 +65,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Modification / Création d'une situation
    */
   @Input() isEdit: boolean = false
+  /**
+   * Id de situation
+   */
+  @Input() editId: number | null = null
   @Input() basicData: FormGroup | null = null
   /**
    * Force to show sub contentieux
@@ -318,10 +322,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       fonct
     )
 
-
     if (this.human) {
-      console.log(this.basicData!.controls)
-
       if (
         await this.humanResourceService.updatePersonById(this.human, {
           firstName: this.basicData!.controls.firstName.value,
@@ -374,10 +375,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart)
-      return activitiesStartDate.getTime() === day.getTime()
+      return activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
     })
 
-    if (isSameDate !== -1) {
+    if (isSameDate !== -1) { 
+      console.log(situations[isSameDate])
+
       situations[isSameDate] = {
         ...situations[isSameDate],
         etp: profil.etp / 100,
@@ -385,6 +388,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         fonction: fonct,
         activities,
       }
+
+      situations = situations.filter(s => s.id !== this.editId)
     } else {
       situations.splice(0, 0, {
         id: -1,
@@ -396,7 +401,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       })
     }
 
-    console.log(isSameDate, situations)
+    console.log(isSameDate, situations, this.editId)
 
     return situations
   }
