@@ -59,7 +59,6 @@ export default (sequelizeInstance, Model) => {
         throw 'Mot de passe trop faible!'
       }
       password = crypt.encryptPassword(password)
-
       await Model.create({
         email,
         password,
@@ -122,10 +121,17 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    console.log('--------- Ventilations:', ventilations)
+    console.log('--------- user:', user)
     if (user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
+      console.log('--------- Before00')
       const oldVentilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort()
+      console.log('--------- Before01')
       const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
+      console.log('--------- Before02')
+      console.log('--------- VentilationsList:', ventilationsList)
+      console.log('--------- After')
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
