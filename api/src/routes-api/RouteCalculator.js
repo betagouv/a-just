@@ -5,6 +5,7 @@ import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
+import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 
 /**
  * Route des calculs de la page calcule
@@ -39,10 +40,15 @@ export default class RouteCalculator extends Route {
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewCalculator],
   })
   async filterList (ctx) {
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
+
+    if (!selectedFonctionsIds) {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_CALCULATOR, ctx.state.user.id)
+    }
 
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
