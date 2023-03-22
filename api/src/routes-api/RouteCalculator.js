@@ -40,7 +40,7 @@ export default class RouteCalculator extends Route {
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewCalculator],
   })
   async filterList (ctx) {
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
