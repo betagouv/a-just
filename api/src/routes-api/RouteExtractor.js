@@ -153,9 +153,9 @@ export default class RouteExtractor extends Route {
 
             if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
 
-            if (typeof countNbOfDays === 'number')
+            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
               reelEtpObject.push({
-                etp: situation.etp * countNbOfDays + 1,
+                etp: situation.etp * (countNbOfDays + 1),
                 countNbOfDays: countNbOfDays + 1,
               })
           })
