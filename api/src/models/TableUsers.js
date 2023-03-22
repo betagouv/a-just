@@ -41,6 +41,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (user) {
+      user.access = await Model.models.UsersAccess.getUserAccess(userId)
       return snakeToCamelObject(user)
     }
 

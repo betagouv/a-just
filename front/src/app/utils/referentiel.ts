@@ -45,31 +45,6 @@ export function referentielMappingColor (name: string): string {
 }
 
 /**
- * Récupération d'un index pour un référentiel pour le trier
- * @param name 
- * @returns 
- */
-export function referentielMappingIndex (name: string): number {
-  switch(name) {
-    case 'Autres activités': return 12;
-    case 'Indisponibilité': return 13;
-    case 'Siège Pénal': return 8;
-    case 'Contentieux JAF': return 2;
-    case 'Contentieux Social': return 1;
-    case 'Contentieux de la Protection': return 3;
-    case 'Juges des Enfants': return 7;
-    case 'Civil Non Spécialisé': return 4;
-    case 'Juges d\'Instruction': return 9;
-    case 'JLD Civil': return 6;
-    case 'JAP': return 10;
-    case 'JLD pénal': return 11;
-    case 'JLD civil': return 5;
-  }
-
-  return 0;
-}
-
-/**
  * Conversion d'un ETP en string humain
  * @param value 
  * @returns 

@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
 import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
 import { copyArray } from '../utils/array'
+import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 
 /**
  * Route de la page réaffectateur
@@ -43,6 +44,11 @@ export default class RouteReaffectator extends Route {
     let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
+    }
+
+    if (categoryId === 1 && !fonctionsIds && !referentielList) {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_REAFFECTATOR, ctx.state.user.id)
     }
 
     console.time('step1')
