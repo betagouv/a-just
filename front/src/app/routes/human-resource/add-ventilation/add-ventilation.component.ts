@@ -322,6 +322,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       fonct
     )
 
+    console.log(this.updatedReferentiels, situations)
+
     if (this.human) {
       if (
         await this.humanResourceService.updatePersonById(this.human, {
@@ -372,32 +374,44 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           })
       })
 
+      console.log('activities', JSON.stringify(activities.map(a => ({percent: a.percent, cid: a.contentieux.id, clabel: a.contentieux.label}))))
+
+
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart)
       return activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
     })
 
+    const options = {
+      etp: profil.etp / 100,
+      category: cat,
+      fonction: fonct,
+      activities,
+    }
+
     if (isSameDate !== -1) { 
       console.log(situations[isSameDate])
 
       situations[isSameDate] = {
         ...situations[isSameDate],
-        etp: profil.etp / 100,
-        category: cat,
-        fonction: fonct,
-        activities,
+        ...options
       }
 
       situations = situations.filter(s => s.id !== this.editId)
+    } else if(this.editId) {
+      const index = situations.findIndex(s => s.id === this.editId)
+      if(index !== -1) {
+        situations[index] = {
+          ...situations[index],
+          ...options,
+        }
+      }
     } else {
       situations.splice(0, 0, {
         id: -1,
-        etp: profil.etp / 100,
-        category: cat,
-        fonction: fonct,
+        ...options,
         dateStart: activitiesStartDate,
-        activities,
       })
     }
 
