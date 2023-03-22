@@ -39,7 +39,7 @@ export class LoginPage {
   ngOnInit() {
     this.userService.me().then((data) => {
       if (data) {
-        this.router.navigate(["/ventilations"]);
+        this.router.navigate([this.userService.getUserPageUrl(data)]);
       }
     });
   }
@@ -49,8 +49,8 @@ export class LoginPage {
    */
   onSubmit() {
     let { email, password } = this.form.value;
-    this.authService.login({ email, password }).then(() => {
-      this.router.navigate(["/ventilations"]);
+    this.authService.login({ email, password }).then((returnLogin) => {
+      this.router.navigate([this.userService.getUserPageUrl(returnLogin.user)]);
     });
   }
 }
