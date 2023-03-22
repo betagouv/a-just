@@ -23,16 +23,17 @@ export default class App {
 
     rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
     rmSync(outputAllFolder, { recursive: true, force: true })
-    mkdirSync(outputAllFolder)
-    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
+    mkdirSync(outputAllFolder, { recursive: true })
+
+    //await this.getGroupByJuridiction(tmpFolder, inputFolder)
+    //await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
 
     // WIP datas pénal
-    //await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, categoriesOfRules, referentiel)
+    await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, outputAllFolder, categoriesOfRules)
 
     this.done()
   }
@@ -48,7 +49,7 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
-      console.log(fileName)
+      //console.log(fileName)
 
       const file = readFileSync(`${inputFolder}/${fileName}`, 'utf8')
       const yamlParsed = YAML.parse(file)
@@ -64,7 +65,7 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -99,7 +100,7 @@ export default class App {
     // generate header
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -128,11 +129,11 @@ export default class App {
     }
     headerMap.push('type_juridiction')
 
-    console.log(headerMap)
+    //console.log(headerMap)
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       const regex = new RegExp('_RGC-(.*?)_', 'g')
       let testRegex
@@ -282,17 +283,17 @@ export default class App {
       )
     }
 
-    writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+    writeFileSync(`${outputAllFolder}/AllJuridictionsCiviles.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
 
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       appendFileSync(
-        `${outputAllFolder}/AllJuridictions.csv`,
+        `${outputAllFolder}/AllJuridictionsCiviles.csv`,
         value.map((l) => `${key.replace(/[-_]/g, ' ')},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},\n`).join('')
       )
     }
   }
 
-  formatMonthFromRules (monthValues, categoriesOfRules, referentiel) {
+  formatMonthFromRules (monthValues, categoriesOfRules, referentiel = []) {
     const list = {}
 
     categoriesOfRules.map((rule) => {
@@ -306,8 +307,7 @@ export default class App {
           code_import: rule['Code nomenclature'],
         }
       }
-
-      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202208'*/) {
+      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202206' && rule['Code nomenclature'] === '7.15.'*/) {
         const nodesToUse = ['entrees', 'sorties', 'stock']
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
@@ -321,7 +321,6 @@ export default class App {
             Object.keys(newRules)
               .filter((r) => r !== 'TOTAL')
               .map((ruleKey) => {
-                console.log(ruleKey, newRules)
                 lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
               })
 
@@ -349,15 +348,14 @@ export default class App {
     let nodeValues = rules[node]
     let include = true
     let listCodeToFind = []
+
     if (typeof nodeValues === 'undefined') {
       return lines
     }
-
     // force to read array of string of number
     if (typeof nodeValues === 'string' || typeof nodeValues === 'number') {
       nodeValues = [nodeValues]
     }
-
     nodeValues.map((value) => {
       value = ('' + value).trim() // clean string
       let label = value
@@ -376,7 +374,6 @@ export default class App {
 
       listCodeToFind = listCodeToFind.concat(codeList)
     })
-
     if (include) {
       lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) !== -1)
     } else {
@@ -404,92 +401,7 @@ export default class App {
     return list
   }
 
-  /*async formatAndGroupAllJuridiction (tmpFolder, outputAllFolder, categoriesOfRules, referentiel) {
-    const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
-    const JURIDICTIONS_EXPORTS = {}
-
-    // id, code_import, periode, stock, entrees, sorties
-    // .....
-
-    for (let i = 0; i < files.length; i++) {
-      const fileName = files[i]
-      const ielst = fileName.replace('export-activities-', '').replace('.csv', '')
-      if (!I_ELST_LIST[ielst]) {
-        continue
-      }
-
-      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
-        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
-      }
-
-      console.log(fileName, fileName.replace('export-activities-', '').replace('.csv', ''), I_ELST_LIST[ielst])
-
-      const arrayOfCsv = await csvToArrayJson(readFileSync(`${tmpFolder}/${fileName}`, 'utf8'), {
-        delimiter: ',',
-      })
-      const groupByMonthObject = groupBy(arrayOfCsv, 'periode')
-      let list = []
-      Object.values(groupByMonthObject).map((monthValues) => {
-        // format string to integer
-        monthValues = monthValues.map((m) => ({
-          ...m,
-          nbaff: m.nbaff ? parseInt(m.nbaff) : null,
-          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : null,
-        }))
-
-        console.log(ielst)
-        let formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
-        formatMonthDataFromRules = formatMonthDataFromRules.map((data) => {
-          return { juridiction: I_ELST_LIST[ielst], ...data }
-        })
-        list = list.concat(formatMonthDataFromRules)
-      })
-      // merge to existing list
-      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
-        const index = acc.findIndex((a) => a.code_import === cur.code_import && a.periode === cur.periode)
-        if (index === -1) {
-          acc.push(cur)
-        } else {
-          let juridiction = I_ELST_LIST[ielst]
-          let entrees = acc[index].entrees
-          if (cur.entrees !== null) {
-            entrees = (entrees || 0) + (cur.entrees || 0)
-          }
-
-          let sorties = acc[index].sorties
-          if (cur.sorties !== null) {
-            sorties = (sorties || 0) + (cur.sorties || 0)
-          }
-
-          let stock = acc[index].stock
-          if (cur.stock !== null) {
-            stock = (stock || 0) + (cur.stock || 0)
-          }
-
-          acc[index] = {
-            ...acc[index],
-            juridiction,
-            entrees,
-            sorties,
-            stock,
-          }
-        }
-        return acc
-      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]])
-    }
-
-    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
-      console.log('VALUE:', value)
-      appendFileSync(
-        `${outputAllFolder}/AllJuridictions.csv`,
-        `${['juridiction,code_import,periode,entrees,sorties,stock,']
-          .concat(value.map((l) => `${l.juridiction},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`))
-          .join('\n')}`
-      )
-    }
-  }*/
-
-  async formatAndGroupJuridictionPenal (inputFolder, outputFolder, categoriesOfRules, referentiel) {
+  async formatAndGroupJuridictionPenal (inputFolder, outputFolder, outputAllFolder, categoriesOfRules) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith('.csv'))
     const JURIDICTIONS_EXPORTS = {}
 
@@ -511,16 +423,17 @@ export default class App {
 
           const groupByMonthObject = groupBy(groupByTJ[tj], 'cod_moi') // group by month
           let list = []
+
           Object.values(groupByMonthObject).map((monthValues) => {
             // format string to integer
+
             monthValues = monthValues.map((m) => ({
               ...m,
               nb_aff_nouv: m.nb_aff_nouv ? parseInt(m.nb_aff_nouv) : null,
               nb_aff_old: m.nb_aff_old ? parseInt(m.nb_aff_old) : null,
               nb_aff_end: m.nb_aff_end ? parseInt(m.nb_aff_end) : null,
             }))
-
-            const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
+            const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules)
             list = list.concat(formatMonthDataFromRules)
           })
 
@@ -565,6 +478,15 @@ export default class App {
         `${['code_import,periode,entrees,sorties,stock,']
           .concat(value.map((l) => `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`))
           .join('\n')}`
+      )
+    }
+
+    writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
+      appendFileSync(
+        `${outputAllFolder}/AllJuridictionsPenal.csv`,
+        value.map((l) => `${key.replace(/[-_]/g, ' ')},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},\n`).join('')
       )
     }
   }
