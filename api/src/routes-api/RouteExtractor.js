@@ -138,7 +138,7 @@ export default class RouteExtractor extends Route {
             })
           )),
         ]
-
+        console.log(indispoArray)
         if (reelEtp === 0) {
           dateStart = setTimeToMidDay(dateStart)
           dateStop = setTimeToMidDay(dateStop)
@@ -152,7 +152,7 @@ export default class RouteExtractor extends Route {
             let countNbOfDays = undefined
 
             if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-
+            if (human.id === 2308) console.log(human)
             if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
               reelEtpObject.push({
                 etp: situation.etp * (countNbOfDays + 1),
@@ -171,13 +171,13 @@ export default class RouteExtractor extends Route {
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             data.push({
               Juridiction: juridictionName.label,
+              TPROX: human.juridiction,
               ['Numéro A-JUST']: human.id,
               Matricule: human.matricule,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,
               Fonction: fonctionName,
-              TPROX: human.juridiction,
               ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
               ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
               ['ETPT sur la période']: reelEtp,
