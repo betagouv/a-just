@@ -44,6 +44,10 @@ interface ExportPDFInterface {
    * Ajoute un text dans la page d'intro de l'export
    */
   exportName: string
+  /**
+   * Show hide popup
+   */
+  noPopup?: boolean
 }
 
 /**
@@ -179,8 +183,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   exportAsPdfPromiseResolve: Function | null = null
 
-  noPopup: boolean = false
-
   /**
    * Constructeur
    * @param authService
@@ -278,11 +280,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     noPopup: boolean = false
   ): Promise<any> {
 
-    this.noPopup = noPopup
     this.exportPDFTemp = {
       filename,
       header,
       exportName: exportName || '',
+      noPopup,
     }
 
     const newPro = new Promise((resolve) => {
@@ -308,7 +310,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       return
     }
 
-    const { header, filename, exportName } = this.exportPDFTemp
+    const { header, filename, exportName, noPopup } = this.exportPDFTemp
     this.duringPrint = true
 
     const element = this[header ? 'contener' : 'content']?.nativeElement
@@ -320,8 +322,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
     document.body.classList.add('remove-height')
     document.body.classList.add('on-print')
-    console.log(this.noPopup)
-    if(!this.noPopup)
+    if(!noPopup)
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })

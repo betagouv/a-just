@@ -26,7 +26,7 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    logging: false,
+    //logging: false,
   },
   /**
    * Code du cryptage JWT
