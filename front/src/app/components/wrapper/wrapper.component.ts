@@ -174,6 +174,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Quill editor
    */
   quillEditor: any = null
+  /**
+   * Promise resolve export
+   */
+  exportAsPdfPromiseResolve: Function | null = null
 
   noPopup: boolean = false
 
@@ -281,11 +285,17 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       exportName: exportName || '',
     }
 
+    const newPro = new Promise((resolve) => {
+      this.exportAsPdfPromiseResolve = resolve
+    })
+
     if (promptComment) {
       this.promptComment = true
     } else {
       this.askExportAsPdf()
     }
+
+    return newPro
   }
 
   /**
@@ -294,7 +304,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @returns
    */
   async askExportAsPdf(comment?: string): Promise<any> {
-    if (!this.exportPDFTemp) {
+    if (!this.exportPDFTemp || !this.exportAsPdfPromiseResolve) {
       return
     }
 
@@ -304,9 +314,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     const element = this[header ? 'contener' : 'content']?.nativeElement
 
     if (!element) {
-      return new Promise((resolve) => {
-        resolve(true)
-      })
+      this.exportAsPdfPromiseResolve(true)
+      return
     }
 
     document.body.classList.add('remove-height')
@@ -317,91 +326,90 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
 
-    return new Promise((resolve) => {
-        html2canvas(element, {
-          scale: 1.5,
-        }).then(async (canvas) => {
-          var width = canvas.width
-          var height = canvas.height
-          var doc
+    setTimeout(() => {
+      html2canvas(element, {
+        scale: 1.5,
+      }).then(async (canvas) => {
+        var width = canvas.width
+        var height = canvas.height
+        var doc
 
-          if (comment) {
-            const mainHtmlContainer = document.createElement('div')
-            mainHtmlContainer.style.position = 'absolute'
-            mainHtmlContainer.style.left = '200%'
-            mainHtmlContainer.style.width = '400px'
+        if (comment) {
+          const mainHtmlContainer = document.createElement('div')
+          mainHtmlContainer.style.position = 'absolute'
+          mainHtmlContainer.style.left = '200%'
+          mainHtmlContainer.style.width = '400px'
 
-            const htmlContainer = document.createElement('div')
-            htmlContainer.style.position = 'relative'
-            htmlContainer.style.padding = '16px 32px 32px 32px'
+          const htmlContainer = document.createElement('div')
+          htmlContainer.style.position = 'relative'
+          htmlContainer.style.padding = '16px 32px 32px 32px'
 
-            const logo = document.createElement('img')
-            logo.src = '/assets/icons/logos/white-192x192.png'
-            logo.style.width = '50px'
-            logo.style.height = '50px'
-            logo.style.position = 'absolute'
-            logo.style.top = '20px'
-            logo.style.left = '30px'
+          const logo = document.createElement('img')
+          logo.src = '/assets/icons/logos/white-192x192.png'
+          logo.style.width = '50px'
+          logo.style.height = '50px'
+          logo.style.position = 'absolute'
+          logo.style.top = '20px'
+          logo.style.left = '30px'
 
-            const title = document.createElement('p')
-            title.style.fontSize = '24px'
-            title.style.marginTop = '64px'
-            title.style.fontWeight = 'bold'
-            title.innerHTML = exportName || ''
+          const title = document.createElement('p')
+          title.style.fontSize = '24px'
+          title.style.marginTop = '64px'
+          title.style.fontWeight = 'bold'
+          title.innerHTML = exportName || ''
 
-            const pCom = document.createElement('p')
-            pCom.style.marginTop = '32px'
-            pCom.style.fontSize = '10px'
-            pCom.innerHTML = 'Commentaire :'
+          const pCom = document.createElement('p')
+          pCom.style.marginTop = '32px'
+          pCom.style.fontSize = '10px'
+          pCom.innerHTML = 'Commentaire :'
 
-            const commentDom = document.createElement('p')
-            commentDom.style.fontSize = '10px'
-            commentDom.innerHTML = comment
-            
-            htmlContainer.appendChild(logo)
-            htmlContainer.appendChild(title)
-            htmlContainer.appendChild(pCom)
-            htmlContainer.appendChild(commentDom)
-            mainHtmlContainer.appendChild(htmlContainer)
-            document.body.appendChild(mainHtmlContainer)
-            
-            const { width: w, height: h } = mainHtmlContainer.getBoundingClientRect()
-            doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
-            await addHTML(doc, htmlContainer)
-            mainHtmlContainer.remove()
-            
-            doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+          const commentDom = document.createElement('p')
+          commentDom.style.fontSize = '10px'
+          commentDom.innerHTML = comment
 
-            console.log('export 6')
+          htmlContainer.appendChild(logo)
+          htmlContainer.appendChild(title)
+          htmlContainer.appendChild(pCom)
+          htmlContainer.appendChild(commentDom)
+          mainHtmlContainer.appendChild(htmlContainer)
+          document.body.appendChild(mainHtmlContainer)
 
-          } else {
-            console.log('export 7')
+          const { width: w, height: h } =
+            mainHtmlContainer.getBoundingClientRect()
+          doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
+          await addHTML(doc, htmlContainer)
+          mainHtmlContainer.remove()
 
-            doc = new jsPDF(
-              width > height ? 'l' : 'p',
-              'px',
-              [width / 2, height / 2],
-              true
-            )
-          }
-
-          doc.addImage(
-            canvas.toDataURL('image/jpeg', 1),
-            'JPEG',
-            0,
-            0,
-            width / 2,
-            height / 2,
-            '',
-            'FAST'
+          doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+        } else {
+          doc = new jsPDF(
+            width > height ? 'l' : 'p',
+            'px',
+            [width / 2, height / 2],
+            true
           )
-          doc.save(filename)
+        }
 
-          this.duringPrint = false
-          document.body.classList.remove('remove-height')
-          document.body.classList.remove('on-print')
-          resolve(true)
-        })
+        doc.addImage(
+          canvas.toDataURL('image/jpeg', 1),
+          'JPEG',
+          0,
+          0,
+          width / 2,
+          height / 2,
+          '',
+          'FAST'
+        )
+        doc.save(filename)
+
+        this.duringPrint = false
+        document.body.classList.remove('remove-height')
+        document.body.classList.remove('on-print')
+
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+      })
     })
   }
 
