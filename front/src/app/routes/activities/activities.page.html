@@ -66,42 +66,42 @@
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalIn" [attr.disabled]="true" placeholder="-" />
+                <input type="number" [ngModel]="ref.originalIn" disabled placeholder="-" />
               </div>
               <div>
                 <span>
                   <ng-container
                     *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref, value: ref.in, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.in" [attr.disabled]="true" placeholder="-"
+                  <input type="number" [(ngModel)]="ref.in" disabled placeholder="-"
                     [ngClass]="{blue: ref.in !== null}" />
                 </span>
               </div>
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalOut" [attr.disabled]="true" placeholder="-" />
+                <input type="number" [ngModel]="ref.originalOut" disabled placeholder="-" />
               </div>
               <div>
                 <span>
                   <ng-container
                     *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref, value: ref.out, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.out" [attr.disabled]="true" placeholder="-"
+                  <input type="number" [(ngModel)]="ref.out" disabled placeholder="-"
                     [ngClass]="{blue: ref.out !== null}" />
                 </span>
               </div>
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalStock" [attr.disabled]="true" placeholder="-" />
+                <input type="number" [ngModel]="ref.originalStock" disabled placeholder="-" />
               </div>
               <div>
                 <span>
                   <ng-container
                     *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref, value: ref.stock, level: 3 }">
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.stock" [attr.disabled]="true" placeholder="-"
+                  <input type="number" [(ngModel)]="ref.stock" disabled placeholder="-"
                     [ngClass]="{blue: ref.stock !== null}" />
                 </span>
               </div>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalIn" [attr.disabled]="true" placeholder="-" />
+                    <input type="number" [ngModel]="itemGroup.originalIn" disabled placeholder="-" />
                   </div>
                   <div>
                     <span>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalOut" [attr.disabled]="true" placeholder="-" />
+                    <input type="number" [ngModel]="itemGroup.originalOut" disabled placeholder="-" />
                   </div>
                   <div>
                     <span>
@@ -148,7 +148,7 @@
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalStock" [attr.disabled]="true" placeholder="-" />
+                    <input type="number" [ngModel]="itemGroup.originalStock" disabled placeholder="-" />
                   </div>
                   <div>
                     <span>

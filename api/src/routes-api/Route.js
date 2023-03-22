@@ -1,5 +1,5 @@
 import { Route as RouteBase } from 'koa-smart'
-import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_VENTILATIONS } from '../constants/access'
+import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATOR, USER_ACCESS_SIMULATOR, USER_ACCESS_VENTILATIONS } from '../constants/access'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
@@ -165,6 +165,15 @@ function isSuperAdmin (ctx) {
 }
 
 /**
+ * Control si l'utilisateur des accès du Calculateur
+ * @param {*} ctx
+ * @returns
+ */
+function canVewCalculator (ctx) {
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
+}
+
+/**
  * Control si l'utilisateur des accès de Ventilation
  * @param {*} ctx
  * @returns
@@ -192,12 +201,23 @@ function canVewContentieuxOptions (ctx) {
 }
 
 /**
+ * Control si l'utiliusateur des simulations
+ * @param {*} ctx
+ * @returns
+ */
+function canVewSimulation (ctx) {
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+}
+
+/**
  * Model d'export
  */
 export const Access = {
   isLogin,
   isAdmin,
   canVewHR,
+  canVewCalculator,
   canVewActivities,
+  canVewSimulation,
   canVewContentieuxOptions,
 }

@@ -932,6 +932,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
+    console.log('oui?')
     this.wrapper
       ?.exportAsPdf(
         `Fiche individuelle${

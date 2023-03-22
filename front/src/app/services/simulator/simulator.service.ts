@@ -258,7 +258,7 @@ export class SimulatorService extends MainClass {
       }
       case 'totalIn': {
         if (data?.totalIn && data?.totalIn >= 0) {
-          return data?.totalIn
+          return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
         } else return '0'
       }
       case 'lastStock': {

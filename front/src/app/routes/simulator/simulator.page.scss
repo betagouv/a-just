@@ -37,6 +37,7 @@
     font-size: 12px;
     margin: 24px;
     min-height: 40px;
+    height: auto;
     display:none;
   }
 
@@ -171,6 +172,7 @@
     display: none;
 
     p {
+      margin-left: 8px;
       font-size: 24px;
       font-weight: bold;
       color: #3a3a3a;
@@ -188,7 +190,7 @@
       background-color: white;
       flex: 3;
       margin: 8px 0px;
-      height: 350px;
+      //height: 350px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -214,7 +216,7 @@
 
       >textarea {
         margin: 24px;
-        height: 200px;
+        min-height: 200px;
         flex: 1;
       }
     }
