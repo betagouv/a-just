@@ -405,6 +405,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         situations[index] = {
           ...situations[index],
           ...options,
+          dateStart: activitiesStartDate,
         }
       }
     } else {
