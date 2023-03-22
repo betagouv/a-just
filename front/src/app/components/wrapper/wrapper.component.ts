@@ -175,6 +175,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   quillEditor: any = null
 
+  noPopup: boolean = false
+
   /**
    * Constructeur
    * @param authService
@@ -268,8 +270,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     filename: string,
     header: boolean = true,
     promptComment: boolean = false,
-    exportName: string | null = null
+    exportName: string | null = null,
+    noPopup: boolean = false
   ): Promise<any> {
+
+    this.noPopup = noPopup
     this.exportPDFTemp = {
       filename,
       header,
@@ -295,6 +300,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
     const { header, filename, exportName } = this.exportPDFTemp
     this.duringPrint = true
+
     const element = this[header ? 'contener' : 'content']?.nativeElement
 
     if (!element) {
@@ -302,14 +308,16 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         resolve(true)
       })
     }
+
     document.body.classList.add('remove-height')
     document.body.classList.add('on-print')
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
+    console.log(this.noPopup)
+    if(!this.noPopup)
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
 
     return new Promise((resolve) => {
-      setTimeout(() => {
         html2canvas(element, {
           scale: 1.5,
         }).then(async (canvas) => {
@@ -363,7 +371,12 @@ export class WrapperComponent extends MainClass implements OnDestroy {
             mainHtmlContainer.remove()
             
             doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+
+            console.log('export 6')
+
           } else {
+            console.log('export 7')
+
             doc = new jsPDF(
               width > height ? 'l' : 'p',
               'px',
@@ -389,7 +402,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           document.body.classList.remove('on-print')
           resolve(true)
         })
-      })
     })
   }
 
