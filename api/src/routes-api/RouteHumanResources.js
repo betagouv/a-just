@@ -136,6 +136,32 @@ export default class RouteHumanResources extends Route {
   }
 
   /**
+   * Interface de suppression d'une fiche (For test only)
+   */
+  @Route.Delete({
+    path: 'remove-hr-test/:hrId',
+    accesses: [Access.canVewHR],
+  })
+  async removeHRTest (ctx) {
+    const { hrId } = ctx.params
+
+    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      const onRemoveHR = await this.model.removeHRTest(hrId)
+
+      if (onRemoveHR) {
+        this.sendOk(ctx, 'Ok')
+        // await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
+        //   hrId,
+        // })
+      } else {
+        ctx.throw(401, "Cette personne n'est pas supprimable !")
+      }
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  /**
    * Interface de suppression d'une situation d'une fiche
    */
   @Route.Delete({
@@ -256,7 +282,6 @@ export default class RouteHumanResources extends Route {
   })
   async readHr (ctx) {
     const { hrId } = ctx.params
-
     if (await this.model.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getHrDetails(hrId))
     } else {
