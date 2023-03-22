@@ -1333,4 +1333,14 @@ export class SimulatorPage extends MainClass implements OnInit {
       (this.startRealValue || "aujourd'hui")
     )
   }
+
+      /**
+   * Troncage valeur numérique
+   */
+      trunc(param: string,
+        data: SimulatorInterface | SimulationInterface | null,
+        initialValue = false,
+        toCompute = false){
+        return Math.trunc(Number(this.getFieldValue(param,data,initialValue,toCompute))*100000)/100000
+      }
 }

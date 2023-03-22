@@ -127,4 +127,62 @@ export class UserService {
       )
     })
   }
+
+  /**
+   * Retourne la page d'accès d'un utilisateur
+   */
+  getUserPageUrl(user: UserInterface) {
+    if (user) {
+      const allPages = this.getAllUserPageUrl(user)
+      console.log(allPages)
+      if (allPages) {
+        return `/${allPages[0].path}`
+      }
+    }
+
+    return ''
+  }
+
+  /**
+   * Retourne la liste des toutes les pages qu'un utilisateur à accès
+   */
+  getAllUserPageUrl(user: UserInterface) {
+    const menu = []
+
+    if (user && user.access && user.access.indexOf(2) !== -1) {
+      menu.push({
+        label: 'Ventilateur',
+        path: 'ventilations',
+      })
+    }
+    if (user && user.access && user.access.indexOf(3) !== -1) {
+      menu.push({
+        label: "Données d'activité",
+        path: 'donnees-d-activite',
+      })
+    }
+
+    if (user && user.access && user.access.indexOf(4) !== -1) {
+      menu.push({
+        label: 'Temps moyens',
+        path: 'temps-moyens',
+      })
+    }
+
+    if (user && user.access && user.access.indexOf(5) !== -1) {
+      menu.push({
+        label: 'Calculateur',
+        path: 'calculateur',
+      })
+    }
+
+    if (user && user.access && user.access.indexOf(6) !== -1) {
+      menu.push({
+        label: 'Simulateur',
+        path: 'simulateur',
+      })
+    }
+
+    return menu
+  }
 }

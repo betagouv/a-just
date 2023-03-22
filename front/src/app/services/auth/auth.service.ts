@@ -79,7 +79,7 @@ export class AuthService {
   login(params = {}): Promise<any> {
     return this.serverService.post('auths/login', params).then((data) => {
       this.serverService.setToken(data.token);
-      return true;
+      return data;
     });
   }
 

@@ -1,6 +1,5 @@
-import { orderBy, sortBy } from 'lodash'
 import { Op } from 'sequelize'
-import { extractCodeFromLabelImported, referentielMappingIndex } from '../utils/referentiel'
+import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 /**
  * Scripts intermediaires des contentieux
@@ -19,22 +18,14 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getReferentiels = async (force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
-      let list = (
-        await Model.findAll({
-          attributes: ['id', 'label', 'code_import'],
-          where: {
-            parent_id: parentId,
-          },
-          order: [['rank', 'asc']],
-          raw: true,
-        })
-      ).map((r) => ({
-        ...r,
-        codeImportDecimal: parseInt((r.code_import || '').replace(/\./g, '')),
-      }))
-
-      // force to order code_import with decimal 4.1. and 4.2. and 4.10.
-      list = sortBy(list, ['codeImportDecimal'])
+      let list = await Model.findAll({
+        attributes: ['id', 'label', 'code_import', 'rank'],
+        where: {
+          parent_id: parentId,
+        },
+        order: [['rank', 'asc']],
+        raw: true,
+      })
 
       if (list && list.length && index < 3) {
         for (let i = 0; i < list.length; i++) {
@@ -57,15 +48,6 @@ export default (sequelizeInstance, Model) => {
           })
         }
       })
-
-      // force to order list
-      list = orderBy(
-        list.map((r) => {
-          r.rank = referentielMappingIndex(r.label)
-          return r
-        }),
-        ['rank']
-      )
 
       Model.cacheReferentielMap = list
     }

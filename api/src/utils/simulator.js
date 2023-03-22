@@ -188,7 +188,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
   console.log('Value to compute mean : ', Object.keys(summedlastActivities).length, Object.keys(summedlastActivities), summedlastActivities)
   //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
-  let totalIn = Math.floor(meanBy(summedlastActivities, 'entrees')) || 0
+  let totalIn = meanBy(summedlastActivities, 'entrees') || 0
   let totalOut = meanBy(summedlastActivities, 'sorties') || 0
 
   console.log('Check total out', meanBy(summedlastActivities, 'sorties'), ' Precise', Math.floor(meanBy(summedlastActivities, 'sorties')))
@@ -266,6 +266,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
+    console.log('To compare computeCoverage :', Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
 
     if (checkIfDateIsNotToday(dateStart)) {
