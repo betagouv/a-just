@@ -35,7 +35,7 @@ export default class RouteSimulator extends Route {
       functionIds: Types.array(),
       categoryId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewSimulation],
   })
   async getSituation (ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
@@ -94,7 +94,7 @@ export default class RouteSimulator extends Route {
       dateStop: Types.date().required(),
       selectedCategoryId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewSimulation],
   })
   async toSimulate (ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
