@@ -212,12 +212,12 @@ export default (sequelizeInstance, Model) => {
    * Update contentieux rank
    * @param {*} list
    */
-  Model.setRankToContentieux = async (list) => {
+  Model.setRankToContentieux = async (list, nodeLevel = 2) => {
     const listUpdated = []
     let rank = 1
 
     for (let i = 0; i < list.length; i++) {
-      const extract = extractCodeFromLabelImported(list[i].niveau_4)
+      const extract = extractCodeFromLabelImported(list[i][`niveau_${nodeLevel}`])
       if (extract && extract.code) {
         const code = extract.code
 
@@ -236,6 +236,10 @@ export default (sequelizeInstance, Model) => {
           }
         }
       }
+    }
+
+    if (nodeLevel < 4) {
+      await Model.setRankToContentieux(list, nodeLevel + 1)
     }
   }
 
