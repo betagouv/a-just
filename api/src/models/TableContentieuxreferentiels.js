@@ -212,7 +212,7 @@ export default (sequelizeInstance, Model) => {
    * Update contentieux rank
    * @param {*} list
    */
-  Model.setRankToContentieux = async (list, nodeLevel = 2) => {
+  Model.setRankToContentieux = async (list, nodeLevel = 1) => {
     const listUpdated = []
     let rank = 1
 
