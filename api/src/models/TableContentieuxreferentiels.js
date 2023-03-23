@@ -218,22 +218,38 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < list.length; i++) {
       const extract = extractCodeFromLabelImported(list[i][`niveau_${nodeLevel}`])
-      if (extract && extract.code) {
-        const code = extract.code
+      if (extract) {
+        let cont
 
-        if (!listUpdated.includes(code)) {
-          listUpdated.push(code)
+        if (extract.code) {
+          const code = extract.code
 
-          const cont = await Model.findOne({
-            where: {
-              code_import: code,
-            },
-          })
+          if (!listUpdated.includes(code)) {
+            listUpdated.push(code)
 
-          if (cont) {
-            rank++
-            await cont.update({ rank })
+            cont = await Model.findOne({
+              where: {
+                code_import: code,
+              },
+            })
           }
+        } else {
+          const label = extract.label
+
+          if (!listUpdated.includes(label)) {
+            listUpdated.push(label)
+
+            cont = await Model.findOne({
+              where: {
+                label,
+              },
+            })
+          }
+        }
+
+        if (cont) {
+          rank++
+          await cont.update({ rank })
         }
       }
     }
