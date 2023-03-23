@@ -1,4 +1,6 @@
+import { orderBy } from 'lodash'
 import { Op } from 'sequelize'
+import { referentielMappingIndex } from '../constants/referentiel'
 import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 /**
@@ -48,6 +50,15 @@ export default (sequelizeInstance, Model) => {
           })
         }
       })
+
+      // force to order list
+      list = orderBy(
+        list.map((r) => {
+          r.rank = referentielMappingIndex(r.label, r.rank)
+          return r
+        }),
+        ['rank']
+      )
 
       Model.cacheReferentielMap = list
     }

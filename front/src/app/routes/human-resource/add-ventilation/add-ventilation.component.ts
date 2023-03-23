@@ -68,7 +68,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Id de situation
    */
-  @Input() editId: number | null = null
+  @Input() editId: number | null = null
   @Input() basicData: FormGroup | null = null
   /**
    * Force to show sub contentieux
@@ -220,25 +220,32 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Control du formulaire lors de la sauvegarde
    * @returns
    */
-  async onSave() {
+  async onSave(withoutPercentControl = false) {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError)
       return
     }
 
-    const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
-    if (totalAffected > 100) {
-      this.appService.alert.next({
-        title: 'Attention',
-        text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
-      })
-      return
-    } else if (totalAffected < 100) {
-      this.appService.alert.next({
-        title: 'Attention',
-        text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doivent constituer 100% de son temps de travail.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
-      })
-      return
+    if (!withoutPercentControl) {
+      const totalAffected = fixDecimal(
+        sumBy(this.updatedReferentiels, 'percent')
+      )
+      if (totalAffected > 100) {
+        this.appService.alert.next({
+          title: 'Attention',
+          text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
+        })
+        return
+      } else if (totalAffected < 100) {
+        this.appService.alert.next({
+          title: 'Attention',
+          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
+          callback: () => {
+            this.onSave(true)
+          },
+        })
+        return
+      }
     }
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
@@ -374,13 +381,23 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           })
       })
 
-      console.log('activities', JSON.stringify(activities.map(a => ({percent: a.percent, cid: a.contentieux.id, clabel: a.contentieux.label}))))
-
+    console.log(
+      'activities',
+      JSON.stringify(
+        activities.map((a) => ({
+          percent: a.percent,
+          cid: a.contentieux.id,
+          clabel: a.contentieux.label,
+        }))
+      )
+    )
 
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart)
-      return activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
+      return (
+        activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
+      )
     })
 
     const options = {
@@ -390,18 +407,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       activities,
     }
 
-    if (isSameDate !== -1) { 
+    if (isSameDate !== -1) {
       console.log(situations[isSameDate])
 
       situations[isSameDate] = {
         ...situations[isSameDate],
-        ...options
+        ...options,
       }
 
-      situations = situations.filter(s => s.id !== this.editId)
-    } else if(this.editId) {
-      const index = situations.findIndex(s => s.id === this.editId)
-      if(index !== -1) {
+      situations = situations.filter((s) => s.id !== this.editId)
+    } else if (this.editId) {
+      const index = situations.findIndex((s) => s.id === this.editId)
+      if (index !== -1) {
         situations[index] = {
           ...situations[index],
           ...options,
