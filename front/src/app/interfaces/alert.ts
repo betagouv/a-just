@@ -14,4 +14,8 @@ export interface AlertInterface {
 	 * Optionnel saisie d'un temps de fermeture automatique
 	 */
 	delay?: number;
+	/**
+	 * Callback on click to ok
+	 */
+	callback?: Function;
 }
