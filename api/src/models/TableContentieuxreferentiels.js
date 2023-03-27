@@ -1,4 +1,6 @@
+import { orderBy } from 'lodash'
 import { Op } from 'sequelize'
+import { referentielMappingIndex } from '../constants/referentiel'
 import { extractCodeFromLabelImported } from '../utils/referentiel'
 
 /**
@@ -37,7 +39,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     if ((force === true || !Model.cacheReferentielMap) && Model) {
-      const mainList = await await formatToGraph()
+      const mainList = await formatToGraph()
       let list = []
       mainList.map((main) => {
         if (main.childrens) {
@@ -48,6 +50,15 @@ export default (sequelizeInstance, Model) => {
           })
         }
       })
+
+      // force to order list
+      list = orderBy(
+        list.map((r) => {
+          r.rank = referentielMappingIndex(r.label, r.rank)
+          return r
+        }),
+        ['rank']
+      )
 
       Model.cacheReferentielMap = list
     }
@@ -212,30 +223,50 @@ export default (sequelizeInstance, Model) => {
    * Update contentieux rank
    * @param {*} list
    */
-  Model.setRankToContentieux = async (list) => {
+  Model.setRankToContentieux = async (list, nodeLevel = 1) => {
     const listUpdated = []
     let rank = 1
 
     for (let i = 0; i < list.length; i++) {
-      const extract = extractCodeFromLabelImported(list[i].niveau_4)
-      if (extract && extract.code) {
-        const code = extract.code
+      const extract = extractCodeFromLabelImported(list[i][`niveau_${nodeLevel}`])
+      if (extract) {
+        let cont
 
-        if (!listUpdated.includes(code)) {
-          listUpdated.push(code)
+        if (extract.code) {
+          const code = extract.code
 
-          const cont = await Model.findOne({
-            where: {
-              code_import: code,
-            },
-          })
+          if (!listUpdated.includes(code)) {
+            listUpdated.push(code)
 
-          if (cont) {
-            rank++
-            await cont.update({ rank })
+            cont = await Model.findOne({
+              where: {
+                code_import: code,
+              },
+            })
+          }
+        } else {
+          const label = extract.label
+
+          if (!listUpdated.includes(label)) {
+            listUpdated.push(label)
+
+            cont = await Model.findOne({
+              where: {
+                label,
+              },
+            })
           }
         }
+
+        if (cont) {
+          rank++
+          await cont.update({ rank })
+        }
       }
+    }
+
+    if (nodeLevel < 4) {
+      await Model.setRankToContentieux(list, nodeLevel + 1)
     }
   }
 

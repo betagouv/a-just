@@ -156,7 +156,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * URL de la nomenclature
    */
   NOMENCLATURE_DOWNLOAD_URL =
-    '/assets/Nomenclature_A-JUST_20221019_utilisateurs.html'
+    '/assets/Nomenclature_A-JUST_MàJ_20230322.html'
   /**
    * Menu de gauche
    */
