@@ -229,7 +229,7 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false) => {
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -250,7 +250,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     // only working day
     if (workingDay(now)) {
       nbDay++
-      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter)
+      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
       if (nextDeltaDate) {
         nextDateFinded = new Date(nextDeltaDate)
       }
@@ -303,13 +303,12 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay
     list[property].indispo = list[property].indispo / nbDay
-    if (hr.id === 2308 && referentielId === 506) console.log('inds', nbDay, list[property])
+    //if (hr.id === 2308 && referentielId === 506) console.log('inds', nbDay, list[property])
 
     list[property].reelEtp = list[property].reelEtp / nbDay
   }
 
-  if (!ddgFilter) return list
-  else return { hrVentilation: list, nbVentilationDays: nbDay }
+  return list
 }
 
 /**

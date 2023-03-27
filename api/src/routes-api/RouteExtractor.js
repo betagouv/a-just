@@ -19,6 +19,7 @@ import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sortBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
 import { generalizeTimeZone, month, monthDiffList, nbOfDays, setTimeToMidDay, today } from '../utils/date'
+import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
 
 /**
  * Route de la page extrateur
@@ -69,6 +70,7 @@ export default class RouteExtractor extends Route {
     const hr = await this.model.getCache(backupId)
     console.timeEnd('extractor-3')
     console.time('extractor-4')
+    console.log('dates exodia', dateStart, dateStop)
 
     const categories = await this.models.HRCategories.getAll()
 
@@ -101,6 +103,7 @@ export default class RouteExtractor extends Route {
         allIndispRefIds = allIndispRefIds.filter((x) => x.label !== 'Décharge syndicale')
         //console.log(allIndispRefIds, refIndispo)
         //if (human.id === 2592) console.log(human)
+        let CETTotalEtp = 0
 
         indispoArray = [
           ...(await Promise.all(
@@ -108,7 +111,7 @@ export default class RouteExtractor extends Route {
               const situations = human.situations || []
               const indisponibilities = human.indisponibilities || []
 
-              if (human.id === 2308 && referentiel.id === 506) console.log('on est indispo', indisponibilities)
+              //if (human.id === 2308 && referentiel.id === 506) console.log('on est indispo', indisponibilities)
 
               if (
                 situations.some((s) => {
@@ -119,17 +122,18 @@ export default class RouteExtractor extends Route {
                   return indisponibility.contentieux.id === referentiel.id
                 })
               ) {
-                const { hrVentilation, nbVentilationDays } = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true)
-                //if (human.id === 2308 && referentiel.id === 506) console.log('on est la', referentiel.id, 'nbVentilationDays', nbVentilationDays)
-                //let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
-                if (human.id === 2308 && referentiel.id === 506) console.log('Proro', human.indisponibilities)
+                let nbCETDays = 0
 
-                const nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
+                //xxxxxxxxxxx CALCULER LE NOMBRE DE JOUR DE CET
+                if (human.id === 2608 && referentiel.label === CET_LABEL) {
+                  nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
+                  console.log('local nbCETDays', nbCETDays)
+                }
+                let absLabels = new Array(ABSENTEISME_LABELS)
+                if (nbCETDays < 30) absLabels.push(CET_LABEL)
 
-
-                xxxxxxxxxxx CALCULER LE NOMBRE DE JOUR DE CET 
-                if (human.id === 2608 && referentiel.id === 506) console.log({ nbCETDays })
-                etpAffected = hrVentilation
+                console.log('LBL LIST', absLabels)
+                const etpAffected = await getHRVentilation(human, referentiel.id, [...categories], new Date(dateStart), new Date(dateStop), true, absLabels)
 
                 const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -147,12 +151,17 @@ export default class RouteExtractor extends Route {
                   const label = getExcelLabel(referentiel, false)
                   if (isIndispoRef) {
                     refObj[label] = counterIndispo / 100
-                    if (referentiel.label === 'Décharge syndicale') absenteisme += refObj[label]
+                    if (referentiel.label === CET_LABEL) CETTotalEtp = refObj[label]
+                    if (human.id === 2308) console.log(referentiel.label)
+
+                    if (absLabels.includes(referentiel.label)) absenteisme += refObj[label]
                     else
                       return {
                         indispo: counterIndispo / 100,
                       }
-                  } else refObj[label] = counterEtpSubTotal
+                  } else {
+                    refObj[label] = counterEtpSubTotal
+                  }
                 }
               }
               return { indispo: 0 }
@@ -172,8 +181,8 @@ export default class RouteExtractor extends Route {
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             onglet1.push({
-              Juridiction: juridictionName.label,
-              TPROX: human.juridiction,
+              Arrondissement: juridictionName.label,
+              Juridiction: human.juridiction || juridictionName.label,
               ['Numéro A-JUST']: human.id,
               Matricule: human.matricule,
               Prénom: human.firstName,
@@ -182,6 +191,7 @@ export default class RouteExtractor extends Route {
               Fonction: fonctionName,
               ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
               ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
+              CET: CETTotalEtp,
               ['ETPT sur la période']: reelEtp,
               ['Temps ventilés sur la période  ']: totalEtpt,
               ['Ecart à vérifier']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
