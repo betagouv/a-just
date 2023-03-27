@@ -1,4 +1,5 @@
-import { sumBy } from 'lodash'
+import { sortBy, sumBy } from 'lodash'
+import { nbOfDays, setTimeToMidDay, today, workingDay } from './date'
 
 /**
  * Tri par catégorie et par fonction
@@ -72,7 +73,6 @@ export const countEtp = (etpAffected, referentiel) => {
     if (referentiel.childrens !== undefined) {
       counterEtpTotal += etpAffected[key].etpt
       counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
-      console.log(etpAffected[key].reelEtp)
     } else {
       counterEtpSubTotal += etpAffected[key].etpt
       counterIndispo += etpAffected[key].indispo
@@ -192,4 +192,56 @@ export const replaceZeroByDash = (data) => {
  */
 export const replaceIfZero = (value) => {
   return value === 0 ? null : value
+}
+
+export const computeEtpt = (dateStart, dateStop, human, indispo) => {
+  dateStart = setTimeToMidDay(dateStart)
+  dateStop = setTimeToMidDay(dateStop)
+
+  let reelEtpObject = []
+  sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
+    let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
+    nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
+    const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
+    const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+    let countNbOfDays = undefined
+
+    if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
+    if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
+      reelEtpObject.push({
+        etp: situation.etp * (countNbOfDays + 1),
+        countNbOfDays: countNbOfDays + 1,
+      })
+  })
+
+  return sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (indispo || 0)
+}
+
+export const computeCETDays = (indisponibilities, dateStartp, dateStopp) => {
+  let now = new Date(dateStartp)
+
+  let nbDay = 0
+  do {
+    if (workingDay(now)) {
+      nbDay++
+      indisponibilities = indisponibilities.filter((hra) => {
+        const dateStart = today(hra.dateStart)
+        if (now && dateStart.getTime() <= now.getTime()) {
+          if (hra.dateStop) {
+            const dateStop = today(hra.dateStop)
+            if (dateStop.getTime() >= now.getTime()) {
+              if (hra.contentieux.label !== 'Décharge syndicale') return true
+            }
+          } else {
+            // return true if they are no end date
+            if (hra.contentieux.label !== 'Décharge syndicale') return true
+          }
+        }
+        return false
+      })
+    }
+    now.setDate(now.getDate() + 1)
+  } while (now.getTime() <= dateStopp.getTime())
+
+  return nbDay
 }

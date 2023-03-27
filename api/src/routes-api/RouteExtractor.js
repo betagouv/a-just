@@ -4,6 +4,8 @@ import { getHRVentilation } from '../utils/calculator'
 import {
   addSumLine,
   autofitColumns,
+  computeCETDays,
+  computeEtpt,
   countEtp,
   emptyRefObj,
   flatListOfContentieuxAndSousContentieux,
@@ -72,7 +74,9 @@ export default class RouteExtractor extends Route {
 
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
 
-    let data = new Array()
+    let onglet1 = new Array()
+    let onglet2 = new Array()
+
     console.timeEnd('extractor-4')
 
     console.time('extractor-5')
@@ -89,17 +93,22 @@ export default class RouteExtractor extends Route {
         let refObj = { ...emptyRefObj(flatReferentielsList) }
         let totalEtpt = 0
         let reelEtp = 0
+        let absenteisme = 0
 
         let indispoArray = new Array([])
-        const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
+        let { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
 
-        if (human.id === 2592) console.log(human)
+        allIndispRefIds = allIndispRefIds.filter((x) => x.label !== 'Décharge syndicale')
+        //console.log(allIndispRefIds, refIndispo)
+        //if (human.id === 2592) console.log(human)
 
         indispoArray = [
           ...(await Promise.all(
             flatReferentielsList.map(async (referentiel) => {
               const situations = human.situations || []
               const indisponibilities = human.indisponibilities || []
+
+              if (human.id === 2308 && referentiel.id === 506) console.log('on est indispo', indisponibilities)
 
               if (
                 situations.some((s) => {
@@ -110,7 +119,17 @@ export default class RouteExtractor extends Route {
                   return indisponibility.contentieux.id === referentiel.id
                 })
               ) {
-                etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
+                const { hrVentilation, nbVentilationDays } = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true)
+                //if (human.id === 2308 && referentiel.id === 506) console.log('on est la', referentiel.id, 'nbVentilationDays', nbVentilationDays)
+                //let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
+                if (human.id === 2308 && referentiel.id === 506) console.log('Proro', human.indisponibilities)
+
+                const nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
+
+
+                xxxxxxxxxxx CALCULER LE NOMBRE DE JOUR DE CET 
+                if (human.id === 2608 && referentiel.id === 506) console.log({ nbCETDays })
+                etpAffected = hrVentilation
 
                 const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -128,10 +147,11 @@ export default class RouteExtractor extends Route {
                   const label = getExcelLabel(referentiel, false)
                   if (isIndispoRef) {
                     refObj[label] = counterIndispo / 100
-                    if (human.id === 2308) console.log(label, counterIndispo / 100)
-                    return {
-                      indispo: counterIndispo / 100,
-                    }
+                    if (referentiel.label === 'Décharge syndicale') absenteisme += refObj[label]
+                    else
+                      return {
+                        indispo: counterIndispo / 100,
+                      }
                   } else refObj[label] = counterEtpSubTotal
                 }
               }
@@ -144,32 +164,14 @@ export default class RouteExtractor extends Route {
 
         refObj[key] = sumBy(indispoArray, 'indispo')
 
+        //console.log(indispoArray)
         if (reelEtp === 0) {
-          dateStart = setTimeToMidDay(dateStart)
-          dateStop = setTimeToMidDay(dateStop)
-
-          let reelEtpObject = []
-          sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
-            let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
-            nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
-            const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
-            const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
-            let countNbOfDays = undefined
-
-            if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
-              reelEtpObject.push({
-                etp: situation.etp * (countNbOfDays + 1),
-                countNbOfDays: countNbOfDays + 1,
-              })
-          })
-
-          reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+          reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key])
         }
 
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
-            data.push({
+            onglet1.push({
               Juridiction: juridictionName.label,
               TPROX: human.juridiction,
               ['Numéro A-JUST']: human.id,
@@ -182,6 +184,8 @@ export default class RouteExtractor extends Route {
               ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
               ['ETPT sur la période']: reelEtp,
               ['Temps ventilés sur la période  ']: totalEtpt,
+              ['Ecart à vérifier']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+              ['Absentéisme']: absenteisme,
               ...refObj,
             })
       })
@@ -190,14 +194,14 @@ export default class RouteExtractor extends Route {
 
     console.time('extractor-6')
 
-    await data.sort((a, b) => sortByCatAndFct(a, b))
+    await onglet1.sort((a, b) => sortByCatAndFct(a, b))
 
-    data = addSumLine(data, categoryFilter)
-    //data = replaceZeroByDash(data)
-    const columnSize = await autofitColumns(data)
+    onglet1 = addSumLine(onglet1, categoryFilter)
+
+    const columnSize = await autofitColumns(onglet1)
     console.timeEnd('extractor-6')
 
-    this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
+    this.sendOk(ctx, { values: onglet1, values2: onglet1, columnSize, dateStart: dateStart })
   }
 
   @Route.Post({
