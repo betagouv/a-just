@@ -1,4 +1,5 @@
 import { sortBy, sumBy } from 'lodash'
+import { CET_LABEL } from '../constants/referentiel'
 import { nbOfDays, setTimeToMidDay, today, workingDay } from './date'
 
 /**
@@ -217,31 +218,31 @@ export const computeEtpt = (dateStart, dateStop, human, indispo) => {
   return sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (indispo || 0)
 }
 
-export const computeCETDays = (indisponibilities, dateStartp, dateStopp) => {
-  let now = new Date(dateStartp)
-
+export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
+  let now = new Date(dateStart)
   let nbDay = 0
   do {
     if (workingDay(now)) {
-      nbDay++
-      indisponibilities = indisponibilities.filter((hra) => {
-        const dateStart = today(hra.dateStart)
-        if (now && dateStart.getTime() <= now.getTime()) {
+      indisponibilities.filter((hra) => {
+        if (now && today(hra.dateStart).getTime() <= now.getTime()) {
           if (hra.dateStop) {
-            const dateStop = today(hra.dateStop)
-            if (dateStop.getTime() >= now.getTime()) {
-              if (hra.contentieux.label !== 'Décharge syndicale') return true
+            if (today(hra.dateStop).getTime() >= now.getTime()) {
+              if (hra.contentieux.label === CET_LABEL) {
+                nbDay++
+                return true
+              }
             }
           } else {
-            // return true if they are no end date
-            if (hra.contentieux.label !== 'Décharge syndicale') return true
+            if (hra.contentieux.label === CET_LABEL) {
+              nbDay++
+              return true
+            }
           }
         }
         return false
       })
     }
     now.setDate(now.getDate() + 1)
-  } while (now.getTime() <= dateStopp.getTime())
-
+  } while (now.getTime() <= dateStop.getTime())
   return nbDay
 }

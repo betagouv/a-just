@@ -1,4 +1,5 @@
 import { minBy, sumBy } from 'lodash'
+import { ABSENTEISME_LABELS } from '../constants/referentiel'
 import { today } from '../utils/date'
 
 /**
@@ -8,7 +9,7 @@ import { today } from '../utils/date'
  * @param {*} hr
  * @returns objet d'ETP détaillé
  */
-export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false) {
+export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
   if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
     return {
       etp: null,
@@ -24,8 +25,8 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
 
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
-    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter)
-    if (hr.id === 2308 && referentielId === 506) console.log('on est la', referentielId, situation.etp, indispoFiltred)
+    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels)
+    //if (hr.id === 2308 && referentielId === 506) console.log('on est la', referentielId, situation.etp, indispoFiltred)
 
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {
@@ -210,7 +211,7 @@ export const findAllSituations = (hr, date) => {
  * @param {*} date
  * @returns liste des indisponibilités filtrées
  */
-const findAllIndisponibilities = (hr, date, ddgFilter = false) => {
+const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) => {
   let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
 
   if (date instanceof Date) {
@@ -223,12 +224,12 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false) => {
           if (dateStop.getTime() >= date.getTime()) {
             if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
             if (!ddgFilter) return true
-            else if (hra.contentieux.label !== 'Décharge syndicale') return true
+            else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
         } else {
           // return true if they are no end date
-          if (hr.id === 2608) console.log('indisp 2', hra.contentieux.label, date)
-          return true
+          if (!ddgFilter) return true
+          else if (absLabels.includes(hra.contentieux.label) === false) return true
         }
       }
 

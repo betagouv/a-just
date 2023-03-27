@@ -1,6 +1,15 @@
 import { fixDecimal } from '../utils/number'
 
 /**
+ * Constante utilisé dans l'extracteur pour les cas particuliers de dialogue de gestion
+ */
+export const CET_LABEL = 'Compte épargne temps' //'Décharge syndicale' //'CONGÉ LONGUE MALADIE'
+/**
+ * Categorie utilisée dans l'extracteur pour l'absentéisme lors des dialogues de gestion
+ */
+export const ABSENTEISME_LABELS = ['Congé maladie ordinaire', 'Congé maternité/paternité']
+
+/**
  * Conversion d'un nom de référentiel en raccourise
  * @param {*} name
  * @returns
