@@ -8,7 +8,7 @@ import { today } from '../utils/date'
  * @param {*} hr
  * @returns objet d'ETP détaillé
  */
-export function getEtpByDateAndPerson (referentielId, date, hr) {
+export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false) {
   if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
     return {
       etp: null,
@@ -24,7 +24,9 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
 
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
-    const indispoFiltred = findAllIndisponibilities(hr, date)
+    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter)
+    if (hr.id === 2308 && referentielId === 506) console.log('on est la', referentielId, situation.etp, indispoFiltred)
+
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {
       reelEtp = 0
@@ -43,7 +45,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
       reelEtp,
       situation,
-      indispoFiltred,
+      indispoFiltred: !ddgFilter ? indispoFiltred : findAllIndisponibilities(hr, date),
       nextDeltaDate, // find the next date with have changes
     }
   }
@@ -208,7 +210,7 @@ export const findAllSituations = (hr, date) => {
  * @param {*} date
  * @returns liste des indisponibilités filtrées
  */
-const findAllIndisponibilities = (hr, date) => {
+const findAllIndisponibilities = (hr, date, ddgFilter = false) => {
   let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
 
   if (date instanceof Date) {
@@ -219,10 +221,13 @@ const findAllIndisponibilities = (hr, date) => {
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
           if (dateStop.getTime() >= date.getTime()) {
-            return true
+            if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+            if (!ddgFilter) return true
+            else if (hra.contentieux.label !== 'Décharge syndicale') return true
           }
         } else {
           // return true if they are no end date
+          if (hr.id === 2608) console.log('indisp 2', hra.contentieux.label, date)
           return true
         }
       }

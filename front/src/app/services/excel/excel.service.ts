@@ -61,6 +61,8 @@ export class ExcelService extends MainClass {
    */
   columnSize: Array<any> = []
 
+  tabs:Array<any>=[]
+
   /**
    * Constructeur
    * @param humanResourceService
@@ -92,19 +94,23 @@ export class ExcelService extends MainClass {
       })
       .then((data) => {
         this.data = data.data.values
+        this.tabs[0] = data.data.values
+        this.tabs[1] = data.data.values2
         this.columnSize = data.data.columnSize
 
-        console.log('apreès server', data.data.dateStart, new Date(data.data.dateStart))
+        console.log(this.tabs[1])
         import('xlsx').then((xlsx) => {
           const worksheet = xlsx.utils.json_to_sheet(this.data, {})
           worksheet['!cols'] = this.columnSize
+
+          const worksheet1 = xlsx.utils.json_to_sheet(this.tabs[1], {})
 
           const workbook = {
             Sheets: { data: worksheet },
             SheetNames: ['data'],
           }
 
-          //xlsx.utils.book_append_sheet(workbook, worksheet, 'Onglet 1')
+          xlsx.utils.book_append_sheet(workbook, worksheet1, 'Onglet 1')
 
           const excelBuffer: any = xlsx.write(workbook, {
             bookType: 'xlsx',
