@@ -333,7 +333,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param item
    * @returns
    */
-  trackBy(index: number, item: CalculatorInterface) {
+  trackByCont(index: number, item: CalculatorInterface) {
     return item.contentieux.id
   }
 

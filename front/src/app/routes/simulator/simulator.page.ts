@@ -1005,16 +1005,6 @@ export class SimulatorPage extends MainClass implements OnInit {
   }
 
   /**
-   * Cast d'une string en float
-   * @param value string
-   * @returns float
-   */
-  parseFloat(value: string): number {
-    if (value !== '') return parseFloat(value)
-    else return 0
-  }
-
-  /**
    * Générate simulation
    * @param allButton liste de tous les boutons clickables
    */
