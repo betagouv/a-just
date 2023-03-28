@@ -156,7 +156,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * URL de la nomenclature
    */
   NOMENCLATURE_DOWNLOAD_URL =
-    '/assets/Nomenclature_A-JUST_MàJ_20230322.html'
+    '/assets/nomenclature-A-Just.html'
   /**
    * Menu de gauche
    */
@@ -456,12 +456,5 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
-  }
-
-  /**
-   * Ouverture de la nomenclature dans un nouvel onglet
-   */
-  onDownloadNomenclature() {
-    window.open(this.NOMENCLATURE_DOWNLOAD_URL)
   }
 }
