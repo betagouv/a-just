@@ -64,7 +64,8 @@ export class MainClass {
    * @returns
    */
   parseFloat(s: string): number {
-    return parseFloat(s.replace(/,/, '.'))
+    if (s !== '') return parseFloat(s.replace(/,/, '.'))
+    else return 0
   }
 
   /**

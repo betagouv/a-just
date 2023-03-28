@@ -160,7 +160,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.lastDateStart) {
+    if (changes['lastDateStart']) {
       this.onStart()
     }
   }
@@ -252,15 +252,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     console.log(this.basicData)
     if (
-      this.basicData!.controls.lastName.value === '' ||
-      this.basicData!.controls.lastName.value === 'Nom'
+      this.basicData!.controls['lastName'].value === '' ||
+      this.basicData!.controls['lastName'].value === 'Nom'
     ) {
       alert('Vous devez saisir un nom pour valider la création !')
       return
     }
     if (
-      this.basicData!.controls.firstName.value === '' ||
-      this.basicData!.controls.firstName.value === 'Prénom'
+      this.basicData!.controls['firstName'].value === '' ||
+      this.basicData!.controls['firstName'].value === 'Prénom'
     ) {
       alert('Vous devez saisir un prénom pour valider la création !')
       return
@@ -334,9 +334,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if (this.human) {
       if (
         await this.humanResourceService.updatePersonById(this.human, {
-          firstName: this.basicData!.controls.firstName.value,
-          lastName: this.basicData!.controls.lastName.value,
-          matricule: this.basicData!.controls.matricule.value,
+          firstName: this.basicData!.controls['firstName'].value,
+          lastName: this.basicData!.controls['lastName'].value,
+          matricule: this.basicData!.controls['matricule'].value,
           situations,
           indisponibilities: this.indisponibilities,
         })

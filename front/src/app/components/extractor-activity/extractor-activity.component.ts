@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import FileSaver from 'file-saver'
+import * as FileSaver from 'file-saver'
 import { orderBy } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'

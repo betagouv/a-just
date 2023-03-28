@@ -199,7 +199,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.route.params.subscribe((params) => {
-        if (params.id) {
+        if (params['id']) {
           this.onLoad()
         }
       })
@@ -245,7 +245,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (cacheHr) {
       findUser = cacheHr
     } else {
-      const id = +this.route.snapshot.params.id
+      const id = +this.route.snapshot.params['id']
       findUser = await this.humanResourceService.loadRemoteHR(id)
     }
     console.log('userFinded', findUser)

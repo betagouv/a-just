@@ -116,7 +116,7 @@ export class RadioButtonComponent implements OnChanges, OnInit {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value) {
+    if (changes['value']) {
       this.o.checked = this.value
     }
   }

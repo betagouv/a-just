@@ -154,16 +154,6 @@ export class OptionsBackupPanelComponent
   }
 
   /**
-   * Accélérateur de l'affichage de la liste
-   * @param index 
-   * @param item 
-   * @returns 
-   */
-  trackBy(index: number, item: any) {
-    return item.id
-  }
-
-  /**
    * Demande de création d'une sauvegarde vide
    */
   onCreateEmptyBackup() {
