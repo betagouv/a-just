@@ -14,3 +14,7 @@ export const DOCUMENTATION_CREATE_NEW_PERSON = 'https://docs.a-just.beta.gouv.fr
  * Lien pour modifier une fiche
  */
 export const DOCUMENTATION_UPDATE_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation'
+/**
+ * Lien pour la ventilation
+ */
+export const DOCUMENTATION_VENTILATEUR_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'

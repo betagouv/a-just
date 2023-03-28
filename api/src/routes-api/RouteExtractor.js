@@ -14,9 +14,9 @@ import {
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sumBy } from 'lodash'
+import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sortBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
-import { generalizeTimeZone, month, monthDiffList } from '../utils/date'
+import { generalizeTimeZone, month, monthDiffList, nbOfDays, setTimeToMidDay, today } from '../utils/date'
 
 /**
  * Route de la page extrateur
@@ -52,6 +52,8 @@ export default class RouteExtractor extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+
+    const juridictionName = await this.models.HRBackups.findById(backupId)
 
     console.time('extractor-1')
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
@@ -91,6 +93,8 @@ export default class RouteExtractor extends Route {
         let indispoArray = new Array([])
         const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
 
+        if (human.id === 2592) console.log(human)
+
         indispoArray = [
           ...(await Promise.all(
             flatReferentielsList.map(async (referentiel) => {
@@ -124,6 +128,7 @@ export default class RouteExtractor extends Route {
                   const label = getExcelLabel(referentiel, false)
                   if (isIndispoRef) {
                     refObj[label] = counterIndispo / 100
+                    if (human.id === 2308) console.log(label, counterIndispo / 100)
                     return {
                       indispo: counterIndispo / 100,
                     }
@@ -139,15 +144,42 @@ export default class RouteExtractor extends Route {
 
         refObj[key] = sumBy(indispoArray, 'indispo')
 
+        if (reelEtp === 0) {
+          dateStart = setTimeToMidDay(dateStart)
+          dateStop = setTimeToMidDay(dateStop)
+
+          let reelEtpObject = []
+          sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
+            let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
+            nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
+            const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
+            const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+            let countNbOfDays = undefined
+
+            if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
+            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
+              reelEtpObject.push({
+                etp: situation.etp * (countNbOfDays + 1),
+                countNbOfDays: countNbOfDays + 1,
+              })
+          })
+
+          reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        }
+
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
           if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
             data.push({
+              Juridiction: juridictionName.label,
+              TPROX: human.juridiction,
               ['Numéro A-JUST']: human.id,
               Matricule: human.matricule,
               Prénom: human.firstName,
               Nom: human.lastName,
               Catégorie: categoryName,
               Fonction: fonctionName,
+              ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
+              ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
               ['ETPT sur la période']: reelEtp,
               ['Temps ventilés sur la période  ']: totalEtpt,
               ...refObj,
@@ -161,11 +193,9 @@ export default class RouteExtractor extends Route {
     await data.sort((a, b) => sortByCatAndFct(a, b))
 
     data = addSumLine(data, categoryFilter)
-    data = replaceZeroByDash(data)
+    //data = replaceZeroByDash(data)
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
-
-    console.log('Dates : ', new Date(dateStart), dateStop)
 
     this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }

@@ -1,0 +1,19 @@
+.ql-container.ql-snow {
+  border: none;
+}
+
+.ql-toolbar.ql-snow {
+  border: none;
+  position: absolute;
+  right: 0;
+  top: -40px;
+}
+
+.ql-editor {
+  padding: 0;
+  min-height: 150px;
+
+  p {
+    font-size: 14px;
+  }
+}

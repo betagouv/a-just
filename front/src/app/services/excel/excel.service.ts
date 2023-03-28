@@ -140,4 +140,34 @@ export class ExcelService extends MainClass {
       .toJSON()
       .slice(0, 10)}`
   }
+
+  modifyExcel(file:any){
+
+    import('xlsx').then(async (xlsx) => {
+      const data = await file.arrayBuffer();
+      let wb = xlsx.read(data);
+      const worksheet = xlsx.utils.json_to_sheet(this.data, {})
+      console.log(worksheet)
+
+      wb.Sheets[wb.SheetNames[0]] = worksheet
+      //const ws = wb.Sheets[wb.SheetNames[0]]
+      //xlsx.utils.book_append_sheet(wb, ws, 'Onglet 1')
+
+      const excelBuffer: any = xlsx.write(wb, {
+        bookType: 'xlsx',
+        type: 'array',
+      })
+      const filename = this.getFileName()
+      const datas: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
+      FileSaver.saveAs(datas, filename + EXCEL_EXTENSION)
+    })
+
+
+
+    console.log(file.name)
+
+  }
 }

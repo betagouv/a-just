@@ -62,6 +62,10 @@ export class ActualPanelSituationComponent
    */
   @Input() indisponibilities: RHActivityInterface[] = []
   /**
+   * Force to show sub contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
+  /**
    * Event lors du choix d'éditer une ventilation
    */
   @Output() editVentilation = new EventEmitter()

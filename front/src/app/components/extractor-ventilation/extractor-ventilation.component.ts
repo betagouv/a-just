@@ -137,4 +137,16 @@ export class ExtractorVentilationComponent extends MainClass  {
     else this.classSelected = 'disabled'
   }
 
+  async onSendActivity(form: any) {
+    const file = form.file.files[0];
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    this.excelService.modifyExcel(file)
+    
+  }
+
 }

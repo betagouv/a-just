@@ -44,7 +44,8 @@
               "raf",
               "rgbcolor",
               "html2canvas",
-              "file-saver"
+              "file-saver",
+              "quill"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
@@ -55,10 +56,11 @@
             "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/quill/dist/quill.snow.css",
               "src/app/styles/styles.scss",
               "node_modules/animate.css/animate.min.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/quill/dist/quill.min.js"]
           },
           "configurations": {
             "production": {
@@ -66,7 +68,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -87,7 +89,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -108,7 +110,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",

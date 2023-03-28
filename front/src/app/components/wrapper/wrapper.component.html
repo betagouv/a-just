@@ -143,3 +143,12 @@
     subtitleName
     }}</label>
 </ng-template>
+
+<aj-popup *ngIf="promptComment" [actions]="[
+    { id: 'close', content: 'Annuler' },
+    { id: 'export', content: 'Exporter sans commentaire', fill: true },
+    { id: 'export-with-comment', content: 'Export avec le commentaire', fill: true }
+  ]" [closeIcon]="true" (onClose)="onActionComment({id: 'close', content: 'Annuler'})"
+  (selectedAction)="onActionComment($event, editor.value)" title="Export en PDF">
+  <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor></aj-text-editor>
+</aj-popup>

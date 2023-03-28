@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { AfterViewInit, Component } from '@angular/core'
 import { Router } from '@angular/router'
 import { environment } from 'src/environments/environment'
 import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
@@ -21,7 +21,7 @@ declare const window: any
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   /**
    * Variable pour savoir si on change le serveur
    */
@@ -61,7 +61,9 @@ export class AppComponent {
       }
     })
 
-    this.appService.alert.subscribe((a) => (this.alertMessage = a))
+    this.appService.alert.subscribe((a) => {
+      this.alertMessage = a
+    })
 
     if (environment.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
@@ -83,6 +85,9 @@ export class AppComponent {
     }
   }
 
+  ngAfterViewInit(): void {
+    this.listenSelectElement()
+  }
   /**
    * Control si on est en SSL ou non
    */
@@ -97,7 +102,61 @@ export class AppComponent {
   /**
    * Suppression de l'alert et du texte dans le service
    */
-  onCloseAlert() {
+  onCloseAlert(clickToOk = false) {
+    const alertObject = this.appService.alert.getValue()
+    if(clickToOk && alertObject && alertObject.callback) {
+      alertObject.callback()
+    }
+    
     this.appService.alert.next(null)
+  }
+
+  listenSelectElement() {
+    /*const elementToObserve = document.body;
+
+    const observer = new MutationObserver(r() => {
+      const element =
+        Array.from(
+          document.getElementsByClassName(
+            'cdk-overlay-pane'
+          ) as HTMLCollectionOf<HTMLElement>
+        )[0] || null
+      /*if (element !== null) {
+        const delta =
+          +element.style.left.replace('px', '') +
+          element.getBoundingClientRect().width -
+          window.innerWidth
+        if (delta > 0)
+          element.style.left =
+            +element.style.left.replace('px', '') - delta + 'px'
+      }
+    });
+
+
+    observer.observe(elementToObserve, { subtree: true, childList: true });
+    */
+
+    /* document.addEventListener(
+      'DOMNodeInserted',
+      () => {
+        console.log('oui')
+        const element =
+          Array.from(
+            document.getElementsByClassName(
+              'cdk-overlay-pane'
+            ) as HTMLCollectionOf<HTMLElement>
+          )[0] || null
+        if (element !== null) {
+          const delta =
+            +element.style.left.replace('px', '') +
+            element.getBoundingClientRect().width -
+            window.innerWidth
+          if (delta > 0)
+            element.style.left =
+              +element.style.left.replace('px', '') - delta + 'px'
+        }
+      },
+      false
+    ) */
   }
 }

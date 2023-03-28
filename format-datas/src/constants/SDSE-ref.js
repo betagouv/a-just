@@ -37,4 +37,33 @@ export const I_ELST_LIST = {
   '00100144': 'TJ_DUNKERQUE', // Dunkerque
   '00963010': 'TJ_DUNKERQUE', // Hazebrouck
   '00100147': 'TJ_VALENCIENNES', // Valenciennes
+
+  // CA RENNES
+  '00100135': 'TJ_LORIENT', // Lorient
+  '00100114': 'TJ_NANTES', // Nantes
+  '00100088': 'TJ_QUIMPER', // Quimper
+  '00100098': 'TJ_RENNES', // Rennes
+  '00963002': 'TJ_RENNES', // Fougeres
+  '00963053': 'TJ_RENNES', // Redon
+  '00100076': 'TJ_ST_BRIEUC', // Saint Brieuc
+  '00963008': 'TJ_ST_BRIEUC', // Guingamp
+  '00100099': 'TJ_ST_MALO', // St Malo
+  '00962992': 'TJ_ST_MALO', // Dinan
+  '00100115': 'TJ_ST_NAZAIRE', // St Nazaire
+  '00100136': 'TJ_VANNES', // Vannes
+
+  // CA BORDEAUX
+  '00100078': 'TJ_BERGERAC', // Bergerac
+  '00963060': 'TJ_BERGERAC', // Sarlat la caneda
+  '00100094': 'TJ_BORDEAUX', // Bordeaux
+  '00962961': 'TJ_BORDEAUX', // Arcachon
+  '00100095': 'TJ_LIBOURNE', // Libourne
+  '00100079': 'TJ_PERIGUEUX', // Perigueux
+
+  // CA PARIS
+  '00100208': 'TJ_EVRY', // Evry
+  '00962996': 'TJ_EVRY', // Etampes
+  '00963014': 'TJ_EVRY', // Juvisy sur orge
+  '00963017': 'TJ_EVRY', // Longjumeau
+  '00963043': 'TJ_EVRY', // Palaiseau
 }
