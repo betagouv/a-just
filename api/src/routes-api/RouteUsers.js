@@ -61,7 +61,7 @@ export default class RouteUsers extends Route {
     email = (email || '').toLowerCase() // force to lower case email
 
     try {
-      await this.model.createAccount(this.body(ctx))
+      await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(
         {
           email: config.contactEmail,
