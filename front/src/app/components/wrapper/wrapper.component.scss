@@ -1,28 +1,27 @@
 @import '../../styles/utils.scss';
 
-
 :host {
   height: 100%;
 
-
-.content-popup {
-  margin-top: 16px;
-  margin-bottom: 24px;
-  display: flex;
-  align-self: center;
-  :first-child {
-    background-color: #000091;
-    color: white;
-   }
-  button {
- width: 80px;
-  margin: 0px 4px 0px 4px ;
+  .content-popup {
+    margin-top: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    align-self: center;
+    :first-child {
+      background-color: #000091;
+      color: white;
+    }
+    button {
+      width: 80px;
+      margin: 0px 4px 0px 4px;
+    }
   }
-}
 
-  .logo-ajust{
-  cursor: pointer;
+  .logo-ajust {
+    cursor: pointer;
   }
+
   > div {
     display: flex;
     height: 100%;
@@ -34,7 +33,7 @@
     padding: 3px 6px;
   }
 
-  .logo-ajust{
+  .logo-ajust {
     cursor: pointer;
   }
   .dark-mode {
@@ -87,6 +86,12 @@
     }
   }
 
+  &.content-margin-16 {
+    .contener .content {
+      padding: 16px;
+    }
+  }
+
   &.header-border-none {
     .header {
       border-bottom: none;
@@ -109,7 +114,6 @@
       z-index: 200;
 
       .menu-item {
-
         &.disconnect,
         a,
         p {
@@ -145,6 +149,10 @@
   &.action-fit-width .actions {
     width: 100%;
   }
+
+  &.no-header .contener .header {
+    display: none;
+  }
 }
 
 .menu {
@@ -162,7 +170,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    >div {
+    > div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -222,7 +230,6 @@
     }
 
     &.selected {
-
       a,
       p {
         color: fColor(cbluedark);
@@ -369,7 +376,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  >div.panel-header {
+  > div.panel-header {
     background-color: fColor(bgHelper);
     padding: 14px 0 84px 0;
 
@@ -407,7 +414,7 @@
     }
   }
 
-  >iframe {
+  > iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);

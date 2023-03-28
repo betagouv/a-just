@@ -1,0 +1,17 @@
+<div class="header-panel">
+  <div class="situation">
+    <p>Situation administrative :</p>
+    <div class="tags">
+      <p *ngIf="fonction" class="fonction">
+        {{ fonction.code }}
+      </p>
+      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+    </div>
+  </div>
+  <div class="etp">
+
+    <p>ETPTravaillé :</p>
+    <etp-preview [etp]="etp - indisponibility" [width]="56" [height]="56" [indisponibility]="indisponibility">
+    </etp-preview>
+  </div>
+</div>
