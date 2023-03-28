@@ -16,20 +16,24 @@ export default class App {
     const tmpFolder = path.join(__dirname, '../tmp')
     const inputFolder = path.join(__dirname, '../inputs')
     const outputFolder = path.join(__dirname, '../outputs')
+    const outputAllFolder = path.join(__dirname, '../outputs_all')
 
     const categoriesOfRules = this.getRules(inputFolder)
     const referentiel = await this.getReferentiel(inputFolder)
 
     rmSync(tmpFolder, { recursive: true, force: true })
     mkdirSync(tmpFolder, { recursive: true })
-    await this.getGroupByJuridiction(tmpFolder, inputFolder)
 
     rmSync(outputFolder, { recursive: true, force: true })
     mkdirSync(outputFolder, { recursive: true })
-    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, categoriesOfRules, referentiel)
+    rmSync(outputAllFolder, { recursive: true, force: true })
+    mkdirSync(outputAllFolder, { recursive: true })
+
+    //await this.getGroupByJuridiction(tmpFolder, inputFolder)
+    //await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
 
     // WIP datas pénal
-    //await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, categoriesOfRules, referentiel)
+    await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, outputAllFolder, categoriesOfRules)
 
     this.done()
   }
@@ -45,7 +49,7 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
-      console.log(fileName)
+      //console.log(fileName)
 
       const file = readFileSync(`${inputFolder}/${fileName}`, 'utf8')
       const yamlParsed = YAML.parse(file)
@@ -61,7 +65,7 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -96,7 +100,7 @@ export default class App {
     // generate header
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -125,11 +129,11 @@ export default class App {
     }
     headerMap.push('type_juridiction')
 
-    console.log(headerMap)
+    //console.log(headerMap)
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(file)
+      //console.log(file)
 
       const regex = new RegExp('_RGC-(.*?)_', 'g')
       let testRegex
@@ -198,7 +202,7 @@ export default class App {
     return ' '
   }
 
-  async formatAndGroupJuridiction (tmpFolder, outputFolder, categoriesOfRules, referentiel) {
+  async formatAndGroupJuridiction (tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
     const JURIDICTIONS_EXPORTS = {}
 
@@ -222,6 +226,7 @@ export default class App {
         delimiter: ',',
       })
       const groupByMonthObject = groupBy(arrayOfCsv, 'periode')
+
       let list = []
       Object.values(groupByMonthObject).map((monthValues) => {
         // format string to integer
@@ -277,9 +282,18 @@ export default class App {
           .join('\n')}`
       )
     }
+
+    writeFileSync(`${outputAllFolder}/AllJuridictionsCiviles.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
+      appendFileSync(
+        `${outputAllFolder}/AllJuridictionsCiviles.csv`,
+        value.map((l) => `${key.replace(/[-_]/g, ' ')},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},\n`).join('')
+      )
+    }
   }
 
-  formatMonthFromRules (monthValues, categoriesOfRules, referentiel) {
+  formatMonthFromRules (monthValues, categoriesOfRules, referentiel = []) {
     const list = {}
 
     categoriesOfRules.map((rule) => {
@@ -293,8 +307,7 @@ export default class App {
           code_import: rule['Code nomenclature'],
         }
       }
-
-      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202208'*/) {
+      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202206' && rule['Code nomenclature'] === '7.15.'*/) {
         const nodesToUse = ['entrees', 'sorties', 'stock']
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
@@ -308,20 +321,19 @@ export default class App {
             Object.keys(newRules)
               .filter((r) => r !== 'TOTAL')
               .map((ruleKey) => {
-                console.log(ruleKey, newRules)
                 lines = this.filterDatasByNomenc(newRules, lines, ruleKey, referentiel)
               })
 
             // save values
             const totalKeyNode = (newRules.TOTAL || '').toLowerCase()
             const sumByValues = sumBy(lines, totalKeyNode)
-            /*console.log(
+            console.log(
               node,
               sumByValues,
               lines.map((l) => l[totalKeyNode]),
               rule['Code nomenclature'],
               list[rule['Code nomenclature']].periode
-            )*/
+            )
 
             list[rule['Code nomenclature']][node] = (list[rule['Code nomenclature']][node] || 0) + (sumByValues || 0)
           }
@@ -336,15 +348,14 @@ export default class App {
     let nodeValues = rules[node]
     let include = true
     let listCodeToFind = []
+
     if (typeof nodeValues === 'undefined') {
       return lines
     }
-
     // force to read array of string of number
     if (typeof nodeValues === 'string' || typeof nodeValues === 'number') {
       nodeValues = [nodeValues]
     }
-
     nodeValues.map((value) => {
       value = ('' + value).trim() // clean string
       let label = value
@@ -363,7 +374,6 @@ export default class App {
 
       listCodeToFind = listCodeToFind.concat(codeList)
     })
-
     if (include) {
       lines = lines.filter((m) => listCodeToFind.indexOf(m[node.toLowerCase()]) !== -1)
     } else {
@@ -391,7 +401,7 @@ export default class App {
     return list
   }
 
-  async formatAndGroupJuridictionPenal (inputFolder, outputFolder, categoriesOfRules, referentiel) {
+  async formatAndGroupJuridictionPenal (inputFolder, outputFolder, outputAllFolder, categoriesOfRules) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith('.csv'))
     const JURIDICTIONS_EXPORTS = {}
 
@@ -413,16 +423,17 @@ export default class App {
 
           const groupByMonthObject = groupBy(groupByTJ[tj], 'cod_moi') // group by month
           let list = []
+
           Object.values(groupByMonthObject).map((monthValues) => {
             // format string to integer
+
             monthValues = monthValues.map((m) => ({
               ...m,
               nb_aff_nouv: m.nb_aff_nouv ? parseInt(m.nb_aff_nouv) : null,
               nb_aff_old: m.nb_aff_old ? parseInt(m.nb_aff_old) : null,
               nb_aff_end: m.nb_aff_end ? parseInt(m.nb_aff_end) : null,
             }))
-
-            const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules, referentiel)
+            const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules)
             list = list.concat(formatMonthDataFromRules)
           })
 
@@ -467,6 +478,15 @@ export default class App {
         `${['code_import,periode,entrees,sorties,stock,']
           .concat(value.map((l) => `${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},`))
           .join('\n')}`
+      )
+    }
+
+    writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+
+    for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
+      appendFileSync(
+        `${outputAllFolder}/AllJuridictionsPenal.csv`,
+        value.map((l) => `${key.replace(/[-_]/g, ' ')},${l.code_import},${l.periode},${l.entrees},${l.sorties},${l.stock},\n`).join('')
       )
     }
   }

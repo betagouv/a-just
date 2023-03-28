@@ -4,6 +4,7 @@ import {
   OnChanges,
   Output,
   EventEmitter,
+  AfterViewInit,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
@@ -55,7 +56,9 @@ export interface childrenInterface {
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
-export class SelectComponent extends MainClass implements OnChanges {
+export class SelectComponent
+  extends MainClass
+  implements OnChanges {
   /**
    * Titre du bouton
    */
@@ -118,7 +121,7 @@ export class SelectComponent extends MainClass implements OnChanges {
   ngOnChanges() {
     this.findRealValue()
   }
-
+  
   /**
    * Création et recherche du champ visible par humain soit le realValue
    */
@@ -144,14 +147,14 @@ export class SelectComponent extends MainClass implements OnChanges {
     ) {
       this.subReferentielData = []
       this.value = this.subList
-      ;[find.childrens].map((s) =>
-        s?.map((t) => {
-          this.subReferentielData.push(t)
-          tmpStr = (this.value as number[]).includes(t.id as never)
-            ? tmpStr.concat(t.value, ', ')
-            : tmpStr
-        })
-      )
+        ;[find.childrens].map((s) =>
+          s?.map((t) => {
+            this.subReferentielData.push(t)
+            tmpStr = (this.value as number[]).includes(t.id as never)
+              ? tmpStr.concat(t.value, ', ')
+              : tmpStr
+          })
+        )
       this.realValue = tmpStr.slice(0, -2)
     } else if (
       find &&
@@ -161,9 +164,9 @@ export class SelectComponent extends MainClass implements OnChanges {
     ) {
       this.subReferentielData = []
       this.value = this.subList
-      ;[find.childrens].map((s) =>
-        s?.map((t) => this.subReferentielData.push(t))
-      )
+        ;[find.childrens].map((s) =>
+          s?.map((t) => this.subReferentielData.push(t))
+        )
       this.realValue = 'Tous'
     } else if (Array.isArray(this.value) && this.value.length !== 0) {
       const arrayValues = Array.isArray(this.value) ? this.value : [this.value]

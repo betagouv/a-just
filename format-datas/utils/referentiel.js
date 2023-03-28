@@ -56,39 +56,6 @@ export function referentielMappingColor(name) {
   return "";
 }
 
-export function referentielMappingIndex(name) {
-  switch (name) {
-    case "Autres activités":
-      return 12;
-    case "Indisponibilité":
-      return 13;
-    case "Siège Pénal":
-      return 8;
-    case "Contentieux JAF":
-      return 2;
-    case "Contentieux Social":
-      return 1;
-    case "Contentieux de la Protection":
-      return 3;
-    case "Juges des Enfants":
-      return 7;
-    case "Civil Non Spécialisé":
-      return 4;
-    case "Juges d'Instruction":
-      return 9;
-    case "JLD Civil":
-      return 6;
-    case "JAP":
-      return 10;
-    case "JLD pénal":
-      return 11;
-    case "JLD civil":
-      return 5;
-  }
-
-  return 0;
-}
-
 export function getIdsIndispo(list) {
   const refIndispo = list.find((r) => r.label === "Indisponibilité");
   const idsIndispo = [];

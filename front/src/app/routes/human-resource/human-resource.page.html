@@ -10,7 +10,8 @@
     [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
     (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
     (addIndispiniblity)="onAddIndispiniblity($event)"
-    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true">
+    (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
+    [forceToShowContentieuxDetail]="duringPrint">
   </actual-panel-situation>
 
   <ng-template [ngIf]="!duringPrint">
@@ -31,11 +32,12 @@
   <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"
     [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
     [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1"
+    [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
     [lastDateStart]="onEditIndex !== -1 ? histories[onEditIndex].dateStart : (histories.length ? histories[0].dateStart : null)"
     [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
     (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
     [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
-    (onOpenHelpPanel)="openHelpPanel($event)">
+    (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint">
   </add-ventilation>
 
   <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
@@ -48,7 +50,7 @@
       [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
       [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
       [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-      (onRemove)="onRemoveSituation(h.id)">
+      (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">
     </panel-history-ventilation>
   </div>
 
@@ -63,7 +65,7 @@
       [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
       [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
       [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-      (onRemove)="onRemoveSituation(h.id)">
+      (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">
     </panel-history-ventilation>
   </div>
 

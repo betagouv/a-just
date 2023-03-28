@@ -36,6 +36,7 @@ import { NewsComponent } from './news/news.component'
 import { HelpButtonComponent } from './help-button/help-button.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
+import { TextEditorComponent } from './text-editor/text-editor.component'
 
 /**
  * Liste des composants à importer
@@ -72,6 +73,7 @@ const list = [
   HelpButtonComponent,
   ExtractorActivityComponent,
   ExtractorVentilationComponent,
+  TextEditorComponent,
 ]
 
 /**
