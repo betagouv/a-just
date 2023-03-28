@@ -10,13 +10,13 @@ import {
   getExcelLabel,
   getIndispoDetails,
   replaceIfZero,
-  replaceZeroByDash,
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sortBy, sumBy } from 'lodash'
+import { cloneDeep, groupBy, last, orderBy, sortBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
-import { generalizeTimeZone, month, monthDiffList, nbOfDays, setTimeToMidDay, today } from '../utils/date'
+import { month, nbOfDays, setTimeToMidDay } from '../utils/date'
+import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 
 /**
  * Route de la page extrateur
@@ -196,6 +196,9 @@ export default class RouteExtractor extends Route {
     //data = replaceZeroByDash(data)
     const columnSize = await autofitColumns(data)
     console.timeEnd('extractor-6')
+
+    // memorize first execution by user
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
     this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }
