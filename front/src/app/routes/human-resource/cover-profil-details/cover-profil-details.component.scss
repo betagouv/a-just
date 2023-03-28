@@ -1,0 +1,177 @@
+@import "../../../styles/utils.scss";
+
+:host {
+  display: block;
+  margin-bottom: 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-panel {
+  display: flex;
+
+  > .situation {
+    width: 350px;
+    background-color: white;
+    padding: 17px 26px;
+
+    > p {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+  }
+
+  > .etp {
+    padding: 17px 0;
+    background-color: fColor(bgSelect);
+    width: 135px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > p {
+      color: fColor(cgreenstrong);
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+  }
+
+  > .indisponibilities {
+    flex: 1;
+    background-color: fColor(bgIndisponibilitiesPanel);
+    padding: 17px 26px;
+    position: relative;
+
+    > img {
+      position: absolute;
+      left: -42px;
+      top: 25px;
+    }
+
+    > p {
+      font-size: 16px;
+      font-weight: bold;
+      color: fColor(titleIndisponibilitiesPanel);
+      margin-bottom: 16px;
+    }
+  }
+}
+
+.details {
+  display: flex;
+
+  .activities-panel {
+    padding: 18px 4px 0px 4px;
+    background-color: white;
+    flex: 1;
+
+    > div {
+      display: flex;
+      align-items: center;
+      margin: 2px 0 4px 24px;
+      flex-wrap: wrap;
+
+      > p {
+        color: fColor(cgreenstrong);
+        font-size: 16px;
+        font-weight: bold;
+        margin-right: 16px;
+        white-space: nowrap;
+        margin: 8px 0;
+      }
+
+      > .tags {
+        display: inline-flex;
+        justify-content: flex-end;
+
+        p {
+          font-size: 14px;
+          color: fColor(cbluedark);
+          background-color: fColor(cbluemiddle);
+          margin-right: 0;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  .comment {
+    background-color: white;
+    margin-left: 2px;
+    width: 400px;
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+
+    > .header-comment {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+
+      mat-icon {
+        margin-right: 16px;
+        color: fColor(borderProgressBar);
+      }
+
+      p {
+        font-size: 12px;
+        color: fColor(cgray);
+
+        b {
+          font-size: 16px;
+        }
+      }
+    }
+
+    > textarea {
+      flex: 1;
+    }
+  }
+}
+
+.tags {
+  flex: 1;
+
+  p {
+    margin-right: 8px;
+    font-size: 14px;
+    line-height: 32px;
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 29px;
+    background-color: fColor(bgTag);
+    color: fColor(colorTag);
+    display: inline-block;
+    white-space: nowrap;
+    margin-bottom: 4px;
+
+    &.fonction {
+      color: white;
+      background-color: fColor(cbluedark);
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      position: relative;
+      top: 2px;
+    }
+  }
+}
+
+.actions-panel {
+  padding: 8px 4px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > button {
+    margin-right: 8px;
+  }
+}

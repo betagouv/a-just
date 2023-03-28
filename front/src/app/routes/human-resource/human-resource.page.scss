@@ -1,5 +1,12 @@
 @import '../../styles/utils.scss';
 
+.wrapper-content {
+  margin-top: 16px;
+  padding: 0 16px 16px 16px;
+  overflow: auto;
+}
+
+
 .title {
   margin-right: 16px;
   display: flex;
