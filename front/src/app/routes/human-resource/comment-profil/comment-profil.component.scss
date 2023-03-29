@@ -7,3 +7,34 @@
   border: solid 1px fColor(lightBorder);
   background-color: #fff;
 }
+
+.header-panel {
+  display: flex;
+  height: 56px;
+  align-items: center;
+  background-color: fColor(bgSelect);
+  border-bottom: solid 1px fColor(lightBorder);
+  padding: 0 16px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+
+  i {
+    color: fColor(bgSelectSelected);
+    margin-right: 9px;
+  }
+
+  div {
+    margin-right: 8px;
+
+    .com {
+      color: fColor(cblack);
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .com-at {
+      color: fColor(titleSelect);
+      font-size: 12px;
+    }
+  }
+}

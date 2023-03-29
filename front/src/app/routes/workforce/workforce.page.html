@@ -109,7 +109,7 @@
 
                   <div *ngIf="hr.comment" class="tooltip">
                     <mat-icon>message</mat-icon>
-                    <span class="tooltiptext">{{ hr.comment }}</span>
+                    <span class="tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
                   </div>
                 </div>
                 <div class="tags">

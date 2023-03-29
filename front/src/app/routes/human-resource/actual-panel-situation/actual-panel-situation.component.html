@@ -36,18 +36,6 @@
     <panel-activities [etp]="etp - indisponibility" [activities]="activities"
       [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
   </div>
-
-  <div class="comment">
-    <div class="header-comment">
-      <mat-icon>message</mat-icon>
-      <p>
-        <b>Commentaire</b><br />
-        <ng-template [ngIf]="commentUpdatedAt">Enregistré {{ formatDate(commentUpdatedAt) }}</ng-template>
-      </p>
-    </div>
-
-    <textarea placeholder="Commentaire" [ngModel]="comment" (ngModelChange)="updateComment($event)"></textarea>
-  </div>
 </div>
 
 <div class="actions-panel" *ngIf="canEdit">
