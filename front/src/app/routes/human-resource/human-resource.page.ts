@@ -121,13 +121,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   indexOfTheFuture: number | null = null
   /**
-   * Documentation patch
-   */
-  documentation: DocumentationInterface = {
-    title: 'Fiche individuelle :',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
-  }
-  /**
    * Variable en cours d'export de page
    */
   duringPrint: boolean = false
@@ -153,7 +146,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService,
+    private hrCategoryService: HRCategoryService
   ) {
     super()
 
@@ -558,7 +551,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ...this.currentHR,
         [nodeName]: value,
       }
-      
+
       this.onLoad(
         await this.humanResourceService.updatePersonById(this.currentHR, {
           [nodeName]: value,
@@ -610,7 +603,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onNewUpdate() {
     this.onEditIndex = null
-    this.onLoad(null, false)  
+    this.onLoad(null, false)
   }
 
   /**
@@ -958,7 +951,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Force to open help panel
    * @param type
    */
-  openHelpPanel(type: string) {
+  openHelpPanel(type: string | undefined) {
     switch (type) {
       case 'indispo':
         this.wrapper?.onForcePanelHelperToShow({
@@ -967,18 +960,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           subTitle: "Qu'est-ce que c'est ?",
         })
         break
+      default:
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Fiche individuelle :',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+        })
     }
-  }
-
-  /**
-   * Update form with contenteditable event
-   * @param node
-   * @param object
-   */
-  completeFormWithDomObject(
-    node: 'firstName' | 'lastName' | 'matricule',
-    object: any
-  ) {
-    this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
   }
 }

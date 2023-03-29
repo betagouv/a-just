@@ -153,24 +153,19 @@ export class MainClass {
    * @param opacity
    * @returns
    */
-  public getCategoryColor(
-    label: string | undefined,
-    opacity: number = 1
-  ) {
+  public getCategoryColor(label: string | undefined, opacity: number = 1) {
     return getCategoryColor('' + label, opacity)
   }
 
-    /**
+  /**
    * Récupération d'une coleur de fond d'une catégorie
    * @param label
    * @param opacity
    * @returns
    */
-    public getBgCategoryColor(
-      label: string | undefined
-    ) {
-      return getBgCategoryColor('' + label)
-    }
+  public getBgCategoryColor(label: string | undefined) {
+    return getBgCategoryColor('' + label)
+  }
 
   /**
    * Transforme une date en text
@@ -286,7 +281,23 @@ export class MainClass {
     return decimalToStringDate(decimal)
   }
 
+  /**
+   * Show log with html rendering
+   * @param event
+   */
   public log(event: any) {
     console.log(event)
+  }
+
+  /**
+   * On focus HTML élément
+   * @param dom
+   */
+  public onFocus(dom: any) {
+    if (!dom) {
+      return
+    }
+
+    dom.focus()
   }
 }

@@ -1,15 +1,21 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
 } from '@angular/core'
+import { FormGroup } from '@angular/forms'
 import { sumBy } from 'lodash'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { etpLabel } from 'src/app/utils/referentiel'
 
 /**
  * Panneau de présentation d'une fiche
@@ -29,13 +35,13 @@ export class CoverProfilDetailsComponent
    */
   @Input() currentHR: HumanResourceInterface | null = null
   /**
-  * Ajout d'un bouton "back" avec un url
-  */
- @Input() backUrl: string = ''
- /**
-  * Ajouter d'une ancre sur le lien de retour
-  */
- @Input() backAnchor: string | undefined
+   * Ajout d'un bouton "back" avec un url
+   */
+  @Input() backUrl: string = ''
+  /**
+   * Ajouter d'une ancre sur le lien de retour
+   */
+  @Input() backAnchor: string | undefined
   /**
    * Affiche l'ETP calculé
    */
@@ -45,9 +51,37 @@ export class CoverProfilDetailsComponent
    */
   @Input() fonction: HRFonctionInterface | null = null
   /**
+   * Categorie courante
+   */
+  @Input() category: HRCategoryInterface | null = null
+  /**
    * Liste des indispo courrante
    */
   @Input() indisponibilities: RHActivityInterface[] = []
+  /**
+   * Mode d'édition courant
+   */
+  @Input() onEditIndex: number | null = null
+  /**
+   * Formulaire
+   */
+  @Input() basicHrInfo: FormGroup | null = null
+  /** 
+   * Date de début de la situation actuelle
+   */
+  @Input() dateStart: Date | null = null
+  /**
+   * Request an PDF export
+   */
+  @Output() exportPDF = new EventEmitter()
+  /**
+   * Request to help panel
+   */
+  @Output() onOpenHelpPanel = new EventEmitter()
+  /**
+   * Request to to update screen
+   */
+  @Output() ficheIsUpdated = new EventEmitter()
   /**
    * Temps de travail en text
    */
@@ -59,11 +93,9 @@ export class CoverProfilDetailsComponent
 
   /**
    * Constructeur
-   * @param humanResourceService 
+   * @param humanResourceService
    */
-  constructor(
-    private humanResourceService: HumanResourceService
-  ) {
+  constructor(private humanResourceService: HumanResourceService) {
     super()
   }
 
@@ -78,7 +110,7 @@ export class CoverProfilDetailsComponent
       this.indisponibility = 1
     }
 
-    /*const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
+    const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
     if (
       dateEndToJuridiction &&
       this.dateStart &&
@@ -87,6 +119,62 @@ export class CoverProfilDetailsComponent
       this.timeWorked = 'Parti'
     } else {
       this.timeWorked = etpLabel(this.etp)
-    }*/
+    }
+  }
+
+  /**
+   * Request an PDF export
+   */
+  onExport() {
+    this.exportPDF.emit()
+  }
+
+  /**
+   * Update form with contenteditable event
+   * @param node
+   * @param object
+   */
+  completeFormWithDomObject(
+    node: 'firstName' | 'lastName' | 'matricule',
+    object: any
+  ) {
+    if (this.basicHrInfo) {
+      this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
+    }
+  }
+
+  /**
+   * Force to open help panel
+   * @param type
+   */
+  openHelpPanel(type: string | undefined = undefined) {
+    this.onOpenHelpPanel.emit(type)
+  }
+
+  /**
+   * Demande de modification d'une fiche
+   * @param nodeName
+   * @param value
+   */
+  async updateHuman(nodeName: string, value: any) {
+    if (this.currentHR) {
+      if (value && typeof value.innerText !== 'undefined') {
+        value = value.innerText
+      }
+
+      this.currentHR = {
+        ...this.currentHR,
+        [nodeName]: value,
+      }
+
+      await this.humanResourceService.updatePersonById(this.currentHR, {
+        [nodeName]: value,
+      })
+
+      const cacheHR = await this.humanResourceService.updatePersonById(this.currentHR, {
+        [nodeName]: value,
+      })
+      this.ficheIsUpdated.emit(cacheHR)
+    }
   }
 }

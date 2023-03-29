@@ -226,6 +226,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     title: 'Le ventilateur :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
   }
+  /**
+   * En cours de chargement
+   */
+  isLoading: boolean = false
 
   /**
    * Constructor
@@ -491,6 +495,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       selectedReferentielIds = this.selectedReferentielIds
     }
 
+    this.isLoading = true
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -511,6 +516,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }))
 
         this.orderListWithFiltersParams()
+        this.isLoading = false
       })
 
     if (this.route.snapshot.fragment) {
