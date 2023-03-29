@@ -285,9 +285,6 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
             nbGlobalDaysCET = nbCETDays
 
-            //if (human.id === 2609) console.log('=>', referentiel, nbGlobalDaysCET, dateStart, dateStop)
-            //}
-
             if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
 
             if (
@@ -359,7 +356,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
             ['Temps ventilés sur la période  ']: totalEtpt,
-            ['Ecart à vérifier']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+            ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ['Absentéisme']: absenteisme,
             ['CET de + de 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ['CET de - de 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
@@ -369,4 +366,120 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
   )
 
   return onglet1
+}
+
+export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
+  let data = []
+
+  await Promise.all(
+    allHuman.map(async (human) => {
+      const { currentSituation } = findSituation(human)
+
+      let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
+      let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.label ? currentSituation.fonction.label : 'pas de fonction'
+
+      let etpAffected = new Array()
+      let refObj = { ...emptyRefObj(flatReferentielsList) }
+      let totalEtpt = 0
+      let reelEtp = 0
+
+      let indispoArray = new Array([])
+      const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
+
+      if (human.id === 2592) console.log(human)
+
+      indispoArray = [
+        ...(await Promise.all(
+          flatReferentielsList.map(async (referentiel) => {
+            const situations = human.situations || []
+            const indisponibilities = human.indisponibilities || []
+
+            if (
+              situations.some((s) => {
+                const activities = s.activities || []
+                return activities.some((a) => a.contentieux.id === referentiel.id)
+              }) ||
+              indisponibilities.some((indisponibility) => {
+                return indisponibility.contentieux.id === referentiel.id
+              })
+            ) {
+              etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
+
+              const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
+                ...(await countEtp({ ...etpAffected }, referentiel)),
+              }
+
+              reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
+
+              const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
+
+              if (referentiel.childrens !== undefined && !isIndispoRef) {
+                const label = getExcelLabel(referentiel, true)
+                refObj[label] = counterEtpTotal
+                totalEtpt += counterEtpTotal
+              } else {
+                const label = getExcelLabel(referentiel, false)
+                if (isIndispoRef) {
+                  refObj[label] = counterIndispo / 100
+                  if (human.id === 2308) console.log(label, counterIndispo / 100)
+                  return {
+                    indispo: counterIndispo / 100,
+                  }
+                } else refObj[label] = counterEtpSubTotal
+              }
+            }
+            return { indispo: 0 }
+          })
+        )),
+      ]
+
+      const key = getExcelLabel(refIndispo, true)
+
+      refObj[key] = sumBy(indispoArray, 'indispo')
+
+      if (reelEtp === 0) {
+        dateStart = setTimeToMidDay(dateStart)
+        dateStop = setTimeToMidDay(dateStop)
+
+        let reelEtpObject = []
+        sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
+          let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
+          nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
+          const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
+          const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+          let countNbOfDays = undefined
+
+          if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
+          if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
+            reelEtpObject.push({
+              etp: situation.etp * (countNbOfDays + 1),
+              countNbOfDays: countNbOfDays + 1,
+            })
+        })
+
+        reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+      }
+
+      if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
+        if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
+          data.push({
+            Arrondissement: juridictionName.label,
+            Juridiction: human.juridiction || juridictionName.label,
+            ['Numéro A-JUST']: human.id,
+            Matricule: human.matricule,
+            Prénom: human.firstName,
+            Nom: human.lastName,
+            Catégorie: categoryName,
+            Fonction: fonctionName,
+            ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
+            ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
+            ['ETPT sur la période']: reelEtp,
+            ['Temps ventilés sur la période  ']: totalEtpt,
+            ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+            ...refObj,
+          })
+    })
+  )
+
+  return data
 }

@@ -57,11 +57,16 @@ export class ExcelService extends MainClass {
    */
   data: Array<any> = []
   /**
-   * Taille des colonnes dans le fichier excel extrait
+   * Taille des colonnes dans l'onglet 1 du fichier excel extrait
    */
   columnSize: Array<any> = []
+  /**
+   * Taille des colonnes dans l'longlet 2 fichier excel extrait
+   */
+  columnSizeSecondTab: Array<any> = []
 
-  tabs:Array<any>=[]
+  
+  tabs:any={onglet1:{values:null,columnSize:null},onglet2:{values:null,columnSize:null}}
 
   /**
    * Constructeur
@@ -93,24 +98,20 @@ export class ExcelService extends MainClass {
         categoryFilter: this.selectedCategory.getValue(),
       })
       .then((data) => {
-        this.data = data.data.values
-        this.tabs[0] = data.data.values
-        this.tabs[1] = data.data.values2
-        this.columnSize = data.data.columnSize
+        this.tabs = data.data
 
-        console.log(this.tabs[1])
         import('xlsx').then((xlsx) => {
-          const worksheet = xlsx.utils.json_to_sheet(this.data, {})
-          worksheet['!cols'] = this.columnSize
+          const worksheet = xlsx.utils.json_to_sheet(this.tabs.onglet1.values, {})
+          worksheet['!cols'] = this.tabs.onglet1.columnSize
 
-          const worksheet1 = xlsx.utils.json_to_sheet(this.tabs[1], {})
+          const worksheet1 = xlsx.utils.json_to_sheet(this.tabs.onglet2.values, {})
+          worksheet1['!cols'] = this.tabs.onglet2.columnSize
 
-          const workbook = {
-            Sheets: { data: worksheet },
-            SheetNames: ['data'],
-          }
+          const workbook = {Sheets: {},SheetNames: []}
 
-          xlsx.utils.book_append_sheet(workbook, worksheet1, 'Onglet 1')
+          xlsx.utils.book_append_sheet(workbook, {}, 'NOTICE et COMMENTAIRES')
+          xlsx.utils.book_append_sheet(workbook, worksheet, 'ETPT A-JUST')
+          xlsx.utils.book_append_sheet(workbook, worksheet1, 'ETPT Format DDG')
 
           const excelBuffer: any = xlsx.write(workbook, {
             bookType: 'xlsx',

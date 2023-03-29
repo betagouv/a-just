@@ -6,6 +6,7 @@ import {
   autofitColumns,
   computeCETDays,
   computeEtpt,
+  computeExtract,
   computeExtractDdg,
   countEtp,
   emptyRefObj,
@@ -69,35 +70,34 @@ export default class RouteExtractor extends Route {
     console.time('extractor-3')
     const hr = await this.model.getCache(backupId)
     console.timeEnd('extractor-3')
+
     console.time('extractor-4')
-    console.log('dates exodia', dateStart, dateStop)
-
     const categories = await this.models.HRCategories.getAll()
-
-    let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
-
-    let onglet1 = new Array()
-    let onglet2 = new Array()
-
     console.timeEnd('extractor-4')
 
-    //ICI
-    onglet1 = await computeExtractDdg(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.time('extractor-5')
-
+    let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
     console.timeEnd('extractor-5')
 
     console.time('extractor-6')
-
-    //ICI
-    await onglet1.sort((a, b) => sortByCatAndFct(a, b))
-
-    onglet1 = addSumLine(onglet1, categoryFilter)
-
-    const columnSize = await autofitColumns(onglet1)
+    let onglet1 = await computeExtract(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
-    this.sendOk(ctx, { values: onglet1, values2: onglet1, columnSize, dateStart: dateStart })
+    console.time('extractor-7')
+    let onglet2 = await computeExtractDdg(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    console.timeEnd('extractor-7')
+
+    console.time('extractor-8')
+    await onglet1.sort((a, b) => sortByCatAndFct(a, b))
+    await onglet2.sort((a, b) => sortByCatAndFct(a, b))
+    onglet1 = addSumLine(onglet1, categoryFilter)
+    onglet2 = addSumLine(onglet2, categoryFilter)
+    const columnSize1 = await autofitColumns(onglet1)
+    const columnSize2 = await autofitColumns(onglet2)
+    console.timeEnd('extractor-8')
+
+    console.log(onglet1)
+    this.sendOk(ctx, { onglet1: { values: onglet1, columnSize: columnSize1 }, onglet2: { values: onglet2, columnSize: columnSize2 } })
   }
 
   @Route.Post({
