@@ -1,8 +1,23 @@
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
+    const findAllMTIT = await models.HRFonctions.findAll({
+      where: {
+        code: ['P', '1VP', '1VPA', '1VPCP', '1VPE', '1VPI', 'VPSG', '1VPAP', '1VPLD', 'VP', 'VPCP', 'VPI', 'VPAP', 'VPLD', 'J', 'JCP', 'JE', 'JI', 'JAP'],
+        category_id: 1,
+      },
+    })
+    for (let i = 0; i < findAllMTIT.length; i++) {
+      await findAllMTIT[i].update({
+        category_detail: 'M-TIT',
+      })
+    }
+
+    throw new Error('Parameter is not a number!')
+
     const findBP = await models.HRFonctions.findOne({
       where: {
-        code: 'B placé',
+        code: 'P',
+        category_id: 1,
       },
     })
     if (findBP) {
@@ -70,22 +85,6 @@ module.exports = {
       rank: 100,
       category_id: findFonc.id,
     })
-
-    // reorder
-    const findAllFonctionnaire = await models.HRFonctions.findAll({
-      where: {
-        category_id: findFonc.id,
-      },
-      order: [
-        ['rank', 'asc'],
-        ['id', 'asc'],
-      ],
-    })
-    for (let i = 0; i < findAllFonctionnaire.length; i++) {
-      await findAllFonctionnaire[i].update({
-        rank: i,
-      })
-    }
   },
   down: (/*queryInterface , Sequelize*/) => {},
 }
