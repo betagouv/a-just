@@ -1,4 +1,78 @@
-<div class="header-panel">
+<div class="group-first-row">
+  <div class="first-row" [style.background-color]="category ? getBgCategoryColor(category && category.label) : null"
+    [style.border-bottom-color]="category ? getCategoryColor(category && category.label) : null">
+    <a [routerLink]="backUrl" [fragment]="backAnchor">
+      < Retour</a>
+
+        <button class="primary light small no-print" (click)="onExport()">
+          <mat-icon>save</mat-icon>
+          Exporter en PDF
+        </button>
+  </div>
+
+  <div class="disk-etp">
+    <big-etp-preview [etp]="0.7" [indisponibility]="0.2">
+    </big-etp-preview>
+  </div>
+</div>
+
+<div class="second-row">
+  <div class="left-second-row">
+    <div class="user-name">
+      <p contenteditable #firstNameDom data-placeholder="Prénom"
+        (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
+        (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{ currentHR?.firstName
+        }}</p>&nbsp;<p contenteditable data-placeholder="Nom"
+        (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
+        (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{ currentHR?.lastName
+        }}</p>
+
+      <mat-icon class="iconPen no-print cursor-pointer"
+        (click)="onFocus(firstNameDom)">drive_file_rename_outline</mat-icon>
+
+      <aj-help-button (click)="openHelpPanel()" class="no-print help-icon"
+        text="Qu'est-ce que c'est ?"></aj-help-button>
+    </div>
+    <div class="matricule">
+      <p contenteditable #matriculeDom data-placeholder="Matricule"
+        (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
+        (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR?.matricule
+        }}</p>
+      <mat-icon class="iconPenSmall no-print cursor-pointer"
+        (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
+    </div>
+    <div class="flex-1"></div>
+    <div class="tags">
+      <p *ngIf="fonction" class="fonction"
+        [style.background-color]="category ? getCategoryColor(category && category.label) : null"
+        [style.color]="category ? 'white' : null">
+        {{ fonction.code }}
+      </p>
+      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+    </div>
+  </div>
+
+  <div class="right-second-row">
+    <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
+      {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+      getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
+      + ' ' + getFullYear(currentHR.updatedAt) : '' }}
+    </p>
+    <div class="flex-1"></div>
+    <div class="dates">
+      <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
+        (valueChange)="updateHuman('dateStart', $event)">
+      </aj-date-select>
+      <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
+        (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true">
+      </aj-date-select>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- <div class="header-panel">
   <div class="situation">
     <p>Situation administrative :</p>
     <div class="tags">
@@ -14,4 +88,4 @@
     <etp-preview [etp]="etp - indisponibility" [width]="56" [height]="56" [indisponibility]="indisponibility">
     </etp-preview>
   </div>
-</div>
+</div> -->

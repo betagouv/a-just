@@ -1,17 +1,17 @@
-<aj-wrapper [documentation]="!duringPrint ? documentation : null" class="content-margin-null no-header" #wrapper>
+<aj-wrapper class="content-margin-null no-header" #wrapper>
   <div class="wrapper-content">
-    <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''"
-      [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined"></cover-profil-details>
-
-    <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-    <ng-container *ngTemplateOutlet="actions"></ng-container>
+    <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
+      [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" [onEditIndex]="onEditIndex"
+      [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
+      [category]="indexOfTheFuture !== null ? histories[indexOfTheFuture].category : null" [basicHrInfo]="basicHrInfo"
+      [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()" (onOpenHelpPanel)="openHelpPanel($event)"
+      (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
 
     <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
       [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
       [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
-      [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (addIndispiniblity)="onAddIndispiniblity($event)"
@@ -62,8 +62,8 @@
     <div class="panel-hsitory-group">
       <p *ngIf="historiesOfThePast.length" class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
-        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{ categoryName
-        }}
+        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
+        categoryName }}
       </p>
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
         [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
@@ -92,58 +92,6 @@
     </div>
   </div>
 </aj-wrapper>
-
-<ng-template #actions>
-  <div class="actions">
-    <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
-      (valueChange)="updateHuman('dateStart', $event)">
-    </aj-date-select>
-    <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
-      (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true">
-    </aj-date-select>
-  </div>
-
-  <button *ngIf="!duringPrint" class="primary light" (click)="onExport()">
-    <mat-icon>save</mat-icon>
-    Exporter en PDF
-  </button>
-</ng-template>
-
-<ng-template #titleTemplate>
-  <div class="title" *ngIf="currentHR">
-    <div class="personal-name">
-      <p class="page-name">Fiche individuelle de</p>
-      <div class="flex-center">
-        <p class="user-name">
-          <span contenteditable data-placeholder="Prénom"
-            (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
-            (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{ currentHR.firstName
-            }}</span>&nbsp;<span contenteditable data-placeholder="Nom"
-            (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
-            (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{ currentHR.lastName
-            }}</span>
-          <mat-icon class="iconPen" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
-        </p>
-      </div>
-    </div>
-    <div>
-      <div>
-        <p><span class="matricule" [style.height]="duringPrint? '20px':'auto'" contenteditable
-            data-placeholder="Matricule"
-            (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
-            (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR.matricule
-            }}</span>
-          <mat-icon class="iconPenSmall" *ngIf="!duringPrint">drive_file_rename_outline</mat-icon>
-        </p>
-      </div>
-      <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
-        {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-        getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
-        + ' ' + getFullYear(currentHR.updatedAt) : '' }}
-      </p>
-    </div>
-  </div>
-</ng-template>
 
 <aj-popup *ngIf="updateIndisponiblity" [actions]="[
     { id: 'close', content: 'Annuler' },

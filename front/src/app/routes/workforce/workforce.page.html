@@ -1,7 +1,7 @@
 <aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
-  [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
+  [isLoading]="isLoading" [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
   <div class="container">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">

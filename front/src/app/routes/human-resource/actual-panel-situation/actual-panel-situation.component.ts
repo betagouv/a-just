@@ -54,10 +54,6 @@ export class ActualPanelSituationComponent
    */
   @Input() etp: number = 0
   /**
-   * Fonction courante
-   */
-  @Input() fonction: HRFonctionInterface | null = null
-  /**
    * Liste des indispo courrante
    */
   @Input() indisponibilities: RHActivityInterface[] = []
@@ -123,24 +119,6 @@ export class ActualPanelSituationComponent
       today()
     )
     this.activities = (findSituation && findSituation.activities) || []
-
-    this.indisponibility = fixDecimal(
-      sumBy(this.indisponibilities, 'percent') / 100
-    )
-    if (this.indisponibility > 1) {
-      this.indisponibility = 1
-    }
-
-    const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
-    if (
-      dateEndToJuridiction &&
-      this.dateStart &&
-      dateEndToJuridiction.getTime() <= this.dateStart.getTime()
-    ) {
-      this.timeWorked = 'Parti'
-    } else {
-      this.timeWorked = etpLabel(this.etp)
-    }
 
     this.onLoadComment()
   }
