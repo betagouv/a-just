@@ -5,58 +5,6 @@
   margin-bottom: 32px;
 }
 
-.header-panel {
-  display: flex;
-
-  > .situation {
-    width: 350px;
-    background-color: white;
-    padding: 17px 26px;
-
-    > p {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 16px;
-    }
-  }
-
-  > .etp {
-    padding: 17px 0;
-    background-color: fColor(bgSelect);
-    width: 135px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    > p {
-      color: fColor(cgreenstrong);
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 16px;
-    }
-  }
-
-  > .indisponibilities {
-    flex: 1;
-    background-color: fColor(bgIndisponibilitiesPanel);
-    padding: 17px 26px;
-    position: relative;
-
-    > img {
-      position: absolute;
-      left: -42px;
-      top: 25px;
-    }
-
-    > p {
-      font-size: 16px;
-      font-weight: bold;
-      color: fColor(titleIndisponibilitiesPanel);
-      margin-bottom: 16px;
-    }
-  }
-}
-
 .details {
   display: flex;
 

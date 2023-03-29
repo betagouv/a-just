@@ -66,10 +66,6 @@ export class ActualPanelSituationComponent
    */
   @Output() editVentilation = new EventEmitter()
   /**
-   * Event lors du choix d'ajouter une indispo
-   */
-  @Output() addIndispiniblity = new EventEmitter()
-  /**
    * Event lors du choix de supprimer une indispo
    */
   @Output() onRemove = new EventEmitter()

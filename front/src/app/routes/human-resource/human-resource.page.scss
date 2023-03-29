@@ -84,3 +84,18 @@ add-ventilation {
   z-index: 100;
   pointer-events: none;
 }
+
+.first-panel {
+  display: flex;
+  align-items: stretch;
+  margin: 8px 0;
+
+  > indispo-profil {
+    width: 304px;
+    margin-right: 8px;
+  }
+
+  > comment-profil {
+    flex: 1;
+  }
+}

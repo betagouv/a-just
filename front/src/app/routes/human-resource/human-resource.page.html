@@ -2,10 +2,19 @@
   <div class="wrapper-content">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" [onEditIndex]="onEditIndex"
+      [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
+      [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null ? histories[indexOfTheFuture].category : null" [basicHrInfo]="basicHrInfo"
       [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()" (onOpenHelpPanel)="openHelpPanel($event)"
       (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
+
+    <div class="first-panel">
+      <indispo-profil
+        [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
+        (onOpenHelpPanel)="openHelpPanel($event)" (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
+      <comment-profil></comment-profil>
+    </div>
 
     <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
@@ -14,7 +23,6 @@
       [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
-      (addIndispiniblity)="onAddIndispiniblity($event)"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
       [forceToShowContentieuxDetail]="duringPrint">
     </actual-panel-situation>
