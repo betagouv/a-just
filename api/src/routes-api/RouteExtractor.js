@@ -6,19 +6,19 @@ import {
   autofitColumns,
   computeCETDays,
   computeEtpt,
+  computeExtractDdg,
   countEtp,
   emptyRefObj,
   flatListOfContentieuxAndSousContentieux,
   getExcelLabel,
   getIndispoDetails,
   replaceIfZero,
-  replaceZeroByDash,
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, first, groupBy, last, map, orderBy, reduce, sortBy, sumBy } from 'lodash'
+import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
-import { generalizeTimeZone, month, monthDiffList, nbOfDays, setTimeToMidDay, today } from '../utils/date'
+import { month } from '../utils/date'
 import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
 
 /**
@@ -81,129 +81,15 @@ export default class RouteExtractor extends Route {
 
     console.timeEnd('extractor-4')
 
+    //ICI
+    onglet1 = await computeExtractDdg(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.time('extractor-5')
-    await Promise.all(
-      allHuman.map(async (human) => {
-        const { currentSituation } = findSituation(human)
 
-        let categoryName =
-          currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
-        let fonctionName =
-          currentSituation && currentSituation.fonction && currentSituation.fonction.label ? currentSituation.fonction.label : 'pas de fonction'
-
-        let etpAffected = new Array()
-        let refObj = { ...emptyRefObj(flatReferentielsList) }
-        let totalEtpt = 0
-        let reelEtp = 0
-        let absenteisme = 0
-
-        let indispoArray = new Array([])
-        let { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-
-        allIndispRefIds = allIndispRefIds.filter((x) => x.label !== 'Décharge syndicale')
-        //console.log(allIndispRefIds, refIndispo)
-        //if (human.id === 2592) console.log(human)
-        let CETTotalEtp = 0
-
-        indispoArray = [
-          ...(await Promise.all(
-            flatReferentielsList.map(async (referentiel) => {
-              const situations = human.situations || []
-              const indisponibilities = human.indisponibilities || []
-
-              //if (human.id === 2308 && referentiel.id === 506) console.log('on est indispo', indisponibilities)
-
-              if (
-                situations.some((s) => {
-                  const activities = s.activities || []
-                  return activities.some((a) => a.contentieux.id === referentiel.id)
-                }) ||
-                indisponibilities.some((indisponibility) => {
-                  return indisponibility.contentieux.id === referentiel.id
-                })
-              ) {
-                let nbCETDays = 0
-
-                //xxxxxxxxxxx CALCULER LE NOMBRE DE JOUR DE CET
-                if (human.id === 2608 && referentiel.label === CET_LABEL) {
-                  nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
-                  console.log('local nbCETDays', nbCETDays)
-                }
-                let absLabels = new Array(ABSENTEISME_LABELS)
-                if (nbCETDays < 30) absLabels.push(CET_LABEL)
-
-                console.log('LBL LIST', absLabels)
-                const etpAffected = await getHRVentilation(human, referentiel.id, [...categories], new Date(dateStart), new Date(dateStop), true, absLabels)
-
-                const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
-                  ...(await countEtp({ ...etpAffected }, referentiel)),
-                }
-
-                reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
-
-                const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
-
-                if (referentiel.childrens !== undefined && !isIndispoRef) {
-                  const label = getExcelLabel(referentiel, true)
-                  refObj[label] = counterEtpTotal
-                  totalEtpt += counterEtpTotal
-                } else {
-                  const label = getExcelLabel(referentiel, false)
-                  if (isIndispoRef) {
-                    refObj[label] = counterIndispo / 100
-                    if (referentiel.label === CET_LABEL) CETTotalEtp = refObj[label]
-                    if (human.id === 2308) console.log(referentiel.label)
-
-                    if (absLabels.includes(referentiel.label)) absenteisme += refObj[label]
-                    else
-                      return {
-                        indispo: counterIndispo / 100,
-                      }
-                  } else {
-                    refObj[label] = counterEtpSubTotal
-                  }
-                }
-              }
-              return { indispo: 0 }
-            })
-          )),
-        ]
-
-        const key = getExcelLabel(refIndispo, true)
-
-        refObj[key] = sumBy(indispoArray, 'indispo')
-
-        //console.log(indispoArray)
-        if (reelEtp === 0) {
-          reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key])
-        }
-
-        if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
-          if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
-            onglet1.push({
-              Arrondissement: juridictionName.label,
-              Juridiction: human.juridiction || juridictionName.label,
-              ['Numéro A-JUST']: human.id,
-              Matricule: human.matricule,
-              Prénom: human.firstName,
-              Nom: human.lastName,
-              Catégorie: categoryName,
-              Fonction: fonctionName,
-              ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
-              ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
-              CET: CETTotalEtp,
-              ['ETPT sur la période']: reelEtp,
-              ['Temps ventilés sur la période  ']: totalEtpt,
-              ['Ecart à vérifier']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
-              ['Absentéisme']: absenteisme,
-              ...refObj,
-            })
-      })
-    )
     console.timeEnd('extractor-5')
 
     console.time('extractor-6')
 
+    //ICI
     await onglet1.sort((a, b) => sortByCatAndFct(a, b))
 
     onglet1 = addSumLine(onglet1, categoryFilter)

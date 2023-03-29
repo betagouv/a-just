@@ -25,13 +25,24 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
 
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
+
     const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels)
-    //if (hr.id === 2308 && referentielId === 506) console.log('on est la', referentielId, situation.etp, indispoFiltred)
 
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {
       reelEtp = 0
     }
+    if (hr.id === 2609 && referentielId === 507)
+      console.log('on est la', {
+        ddgFilter,
+        absLabels,
+        referentielId,
+        reelEtp,
+        pp: sumBy(activitiesFiltred, 'percent') / 100,
+        situ: situation.etp,
+        xx: sumBy(indispoFiltred, 'percent'),
+        indispoFiltred,
+      })
 
     //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
     let nextDeltaDate = null
@@ -71,7 +82,8 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
+    console.log(referentielId, date, hr)
+    const activitiesFiltred = await (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
@@ -222,7 +234,7 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
           if (dateStop.getTime() >= date.getTime()) {
-            if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+            //if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
@@ -236,6 +248,12 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
+  if (hr.id === 2609)
+    console.log(
+      '=>',
+      absLabels,
+      indisponibilities.map((x) => x.contentieux.label)
+    )
 
   return indisponibilities
 }
