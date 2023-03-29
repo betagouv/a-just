@@ -8,7 +8,6 @@ import {
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
-import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { today } from 'src/app/utils/dates'
 
