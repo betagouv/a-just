@@ -150,7 +150,7 @@ export class BigEtpPreviewComponent implements OnChanges {
     ctx.fillStyle = 'white'
     ctx.arc(
       8,
-      49,
+      50,
       3,
       0,
       degreesToRadians(360)

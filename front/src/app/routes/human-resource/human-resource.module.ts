@@ -11,6 +11,8 @@ import { ActualPanelSituationComponent } from './actual-panel-situation/actual-p
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 import { CoverProfilDetailsComponent } from './cover-profil-details/cover-profil-details.component'
 import { BigEtpPreviewComponent } from './big-etp-preview/big-etp-preview.component'
+import { IndispoProfilComponent } from './indispo-profil/indispo-profil.component'
+import { CommentProfilComponent } from './comment-profil/comment-profil.component'
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { BigEtpPreviewComponent } from './big-etp-preview/big-etp-preview.compon
     AddVentilationComponent,
     CoverProfilDetailsComponent,
     BigEtpPreviewComponent,
+    IndispoProfilComponent,
+    CommentProfilComponent,
   ],
   imports: [
     HumanResourcePageModule,

@@ -11,7 +11,7 @@
   </div>
 
   <div class="disk-etp">
-    <big-etp-preview [etp]="0.7" [indisponibility]="0.2">
+    <big-etp-preview [etp]="etp - indisponibility" [indisponibility]="indisponibility">
     </big-etp-preview>
   </div>
 </div>
@@ -69,23 +69,3 @@
     </div>
   </div>
 </div>
-
-
-
-<!-- <div class="header-panel">
-  <div class="situation">
-    <p>Situation administrative :</p>
-    <div class="tags">
-      <p *ngIf="fonction" class="fonction">
-        {{ fonction.code }}
-      </p>
-      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
-    </div>
-  </div>
-  <div class="etp">
-
-    <p>ETPTravaillé :</p>
-    <etp-preview [etp]="etp - indisponibility" [width]="56" [height]="56" [indisponibility]="indisponibility">
-    </etp-preview>
-  </div>
-</div> -->
