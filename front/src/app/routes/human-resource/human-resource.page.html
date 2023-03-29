@@ -13,7 +13,7 @@
       <indispo-profil
         [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
         (onOpenHelpPanel)="openHelpPanel($event)" (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
-      <comment-profil></comment-profil>
+      <comment-profil [currentHR]="currentHR"></comment-profil>
     </div>
 
     <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
