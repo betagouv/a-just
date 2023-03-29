@@ -1,45 +1,46 @@
-@import "../../../styles/utils.scss";
+@import '../../../styles/utils.scss';
 
 :host {
   display: block;
-  margin-bottom: 32px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px fColor(lightBorder);
+  background-color: #fff;
 }
 
-.details {
-  display: flex;
+.header-panel {
+  background-color: fColor(bgSelect);
+  border-bottom: solid 1px fColor(lightBorder);
+  padding: 12px 16px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
-  .activities-panel {
-    padding: 18px 4px 0px 4px;
-    background-color: white;
-    flex: 1;
+  > p {
+    color: fColor(cblack);
+    font-size: 16px;
+    font-weight: bold;
+  }
 
-    > div {
-      display: flex;
-      align-items: center;
-      margin: 2px 0 4px 24px;
-      flex-wrap: wrap;
+  > div {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
 
-      > p {
-        color: fColor(cgreenstrong);
-        font-size: 16px;
-        font-weight: bold;
-        margin-right: 16px;
-        white-space: nowrap;
-        margin: 8px 0;
+    > .tags {
+      display: inline-flex;
+      justify-content: flex-end;
+
+      p {
+        font-size: 14px;
+        color: fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+        margin-right: 0;
+        margin-right: 8px;
       }
+    }
 
-      > .tags {
-        display: inline-flex;
-        justify-content: flex-end;
-
-        p {
-          font-size: 14px;
-          color: fColor(cbluedark);
-          background-color: fColor(cbluemiddle);
-          margin-right: 0;
-          margin-left: 8px;
-        }
-      }
+    button {
+      margin-left: 8px;
     }
   }
 }
@@ -76,14 +77,6 @@
   }
 }
 
-.actions-panel {
-  padding: 8px 4px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  > button {
-    margin-right: 8px;
-  }
+panel-activities {
+  margin: 7px 44px 16px 44px;
 }

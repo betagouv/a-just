@@ -953,10 +953,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   openHelpPanel(type: string | undefined) {
     switch (type) {
-      case 'indispo':
+      case 'indispo': 
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'nouvelle-situation':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Enregistrer une nouvelle situation',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
           subTitle: "Qu'est-ce que c'est ?",
         })
         break
