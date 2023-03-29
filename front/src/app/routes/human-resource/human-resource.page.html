@@ -29,16 +29,12 @@
 
     <ng-template [ngIf]="!duringPrint">
       <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
-        <button class="outline primary small" (click)="onAddIndispiniblity()">
-          Ajouter une indisponibilité
-        </button>
-
-        <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
-          text="Qu'est-ce que c'est ?"></aj-help-button>
-
         <button class="fill primary small" (click)="onSelectSituationToEdit()">
           Renseigner une nouvelle situation
         </button>
+
+        <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
+          text="Qu'est-ce que c'est ?"></aj-help-button>
       </div>
     </ng-template>
 
