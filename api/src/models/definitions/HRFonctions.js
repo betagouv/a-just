@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'HRFonctions'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -29,6 +29,10 @@ export default sequelizeInstance => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      category_detail: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -51,7 +55,7 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {
     return models
   }
 
