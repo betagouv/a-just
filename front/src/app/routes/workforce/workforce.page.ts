@@ -242,7 +242,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param appService
    */
   constructor(
-    private humanResourceService: HumanResourceService,
+    public humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
