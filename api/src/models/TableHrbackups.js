@@ -20,6 +20,7 @@ export default (sequelizeInstance, Model) => {
           },
         },
       ],
+      order: [['label', 'asc']],
       raw: true,
     })
 
