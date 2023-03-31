@@ -20,6 +20,7 @@ import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
+import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -36,11 +37,11 @@ export interface HumanResourceIsInInterface extends HumanResourceInterface {
   /**
    * Category rank
    */
-  categoryRank?: number | null
+  categoryRank?: number | null
   /**
    * Fonction rank
    */
-  fonctionRank?: number | null
+  fonctionRank?: number | null
 }
 
 /**
@@ -247,7 +248,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService
+    private userService: UserService,
+    private hrFonctionService: HRFonctionService
   ) {
     super()
   }
@@ -461,7 +463,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               : null,
         }
       })
-      this.allPersonsFiltered = orderBy(this.allPersonsFiltered, ['categoryRank', 'fonctionRank', 'lastName'])
+      this.allPersonsFiltered = orderBy(this.allPersonsFiltered, [
+        'categoryRank',
+        'fonctionRank',
+        'lastName',
+      ])
     }
 
     console.log(this.allPersonsFiltered)
@@ -474,6 +480,34 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.allPersonsFiltered,
       false
     )
+  }
+
+  /**
+   * force to change filter values
+   */
+  async onSelectCategory(category: HRCategorySelectedInterface) {
+    if (
+      category.selected &&
+      this.filterParams &&
+      this.filterParams.filterValues
+    ) {
+      const fonctions = await this.hrFonctionService.getAll()
+      const getIdOfFonctions = fonctions
+        .filter((f) => category.id === f.categoryId)
+        .map((f) => f.id)
+      const filterValues =
+        (this.filterParams && this.filterParams.filterValues) || []
+
+      getIdOfFonctions.map((fId) => {
+        if (!filterValues.includes(fId)) {
+          filterValues.push(fId)
+        }
+      })
+
+      this.filterParams.filterValues = filterValues
+    }
+
+    this.onFilterList()
   }
 
   /**
