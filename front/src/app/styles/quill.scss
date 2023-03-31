@@ -10,10 +10,22 @@
 }
 
 .ql-editor {
-  padding: 0;
+  padding: 10px 0px;
   min-height: 150px;
 
   p {
     font-size: 14px;
   }
+}
+
+.ql-editor.ql-blank::before {
+  font-style: normal;
+  left: 0px;
+  pointer-events: none;
+  position: absolute;
+  right: 15px;
+  font-size: 14px;
+  top: 8px;
+  font-family: 'Marianne';
+  color: #929292;
 }

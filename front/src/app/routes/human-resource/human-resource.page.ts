@@ -859,6 +859,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
+    console.log(history)
+
     const index = history
       ? this.histories.findIndex(
           (h) => h.id === history.id && h.dateStart === history.dateStart
@@ -873,23 +875,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // edit situation
         this.onEditIndex = index
       }
-
-      setTimeout(() => {
-        const findContent = document.getElementById('content')
-        if (findContent) {
-          const findElements =
-            findContent.getElementsByTagName('add-ventilation')
-          if (findElements && findElements.length) {
-            findContent.scrollTo({
-              behavior: 'smooth',
-              top:
-                findElements[0].getBoundingClientRect().top -
-                87 +
-                findContent.scrollTop,
-            })
-          }
-        }
-      }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
     }
