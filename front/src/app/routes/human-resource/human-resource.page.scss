@@ -9,12 +9,12 @@
 .new-action {
   margin: 32px auto;
   display: grid;
-	grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   max-width: 300px;
-	grid-gap: 16px 8px;
+  grid-gap: 16px 8px;
 
   aj-help-button {
-    margin-top: 6px;
+    margin-top: 3px;
   }
 }
 
@@ -22,6 +22,7 @@
   margin: 16px auto;
   background-color: white;
   border-radius: 8px;
+  width: fit-content;
 
   &.futur {
     background-color: fColor(cgrayDefault);
@@ -53,7 +54,16 @@
 
 add-ventilation {
   margin: 24px auto;
-  z-index: 101;
+
+  &:not(.empty-user) {
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    bottom: 0;
+    left: calc(50% + 111px);
+    transform: translateX(-50%);
+    overflow: auto;
+  }
 }
 
 .sticky-action-footer {
@@ -65,9 +75,11 @@ add-ventilation {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  bottom: 0;
-  z-index: 102;
+  position: absolute;
+    bottom: 0;
+    z-index: 102;
+    left: 0;
+    right: 0;
 
   button:first-child {
     margin-right: 16px;

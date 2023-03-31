@@ -1,13 +1,15 @@
 <div class="group-first-row">
   <div class="first-row" [style.background-color]="category ? getBgCategoryColor(category && category.label) : null"
     [style.border-bottom-color]="category ? getCategoryColor(category && category.label) : null">
-    <a [routerLink]="backUrl" [fragment]="backAnchor">
-      < Retour</a>
+    <div>
+      <a [routerLink]="backUrl" [fragment]="backAnchor" class="no-print">
+        < Retour</a>
+    </div>
 
-        <button class="primary light small no-print" (click)="onExport()">
-          <mat-icon>save</mat-icon>
-          Exporter en PDF
-        </button>
+    <button class="primary light small no-print" (click)="onExport()">
+      <mat-icon>save</mat-icon>
+      Exporter en PDF
+    </button>
   </div>
 
   <div class="disk-etp">

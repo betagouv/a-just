@@ -30,6 +30,10 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() title: string | undefined
   /**
+   * Title
+   */
+  @Input() placeholder: string | undefined
+  /**
    * Value
    */
   @Input() value: string = ''
@@ -77,6 +81,7 @@ export class TextEditorComponent extends MainClass {
       modules: {
         toolbar: ['bold', 'italic', 'underline', 'strike'],
       },
+      placeholder: this.placeholder,
       theme: 'snow',
     })
 

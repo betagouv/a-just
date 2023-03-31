@@ -9,7 +9,7 @@
       [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()" (onOpenHelpPanel)="openHelpPanel($event)"
       (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
 
-    <div class="first-panel">
+    <div class="first-panel" *ngIf="histories.length !== 0">
       <indispo-profil
         [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
         (onOpenHelpPanel)="openHelpPanel($event)" (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
@@ -46,7 +46,8 @@
       [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
-      (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint">
+      (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
+      [class.empty-user]="histories.length === 0">
     </add-ventilation>
 
     <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
