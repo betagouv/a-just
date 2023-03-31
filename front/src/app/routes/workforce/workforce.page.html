@@ -15,7 +15,7 @@
         (click)="checkboxCategory.click()">
         <div>
           <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
-            (ngModelChange)="onFilterList()"
+            (ngModelChange)="onSelectCategory(category)"
             [ngStyle]="{'border-color': category.textColor, 'background-color': category.selected ? category.textColor : null}" />
         </div>
         <div>
