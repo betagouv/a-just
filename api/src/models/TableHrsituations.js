@@ -24,7 +24,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.HRCategories,
         },
         {
-          attributes: ['id', 'rank', 'code', 'label'],
+          attributes: ['id', 'rank', 'code', 'label', 'category_detail'],
           model: Model.models.HRFonctions,
         },
       ],
@@ -49,6 +49,7 @@ export default (sequelizeInstance, Model) => {
           rank: list[i]['HRFonction.rank'],
           code: list[i]['HRFonction.code'],
           label: list[i]['HRFonction.label'],
+          category_detail: list[i]['HRFonction.category_detail'],
         },
         activities: await Model.models.HRActivities.getAll(list[i].id),
       }

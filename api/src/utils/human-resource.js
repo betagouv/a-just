@@ -32,6 +32,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     if (reelEtp < 0) {
       reelEtp = 0
     }
+    /**
     if (hr.id === 2609 && referentielId === 507)
       console.log('on est la', {
         ddgFilter,
@@ -42,7 +43,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
         situ: situation.etp,
         xx: sumBy(indispoFiltred, 'percent'),
         indispoFiltred,
-      })
+      })*/
 
     //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
     let nextDeltaDate = null
@@ -248,12 +249,12 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
-  if (hr.id === 2609)
+  /**if (hr.id === 2609)
     console.log(
       '=>',
       absLabels,
       indisponibilities.map((x) => x.contentieux.label)
-    )
+    )*/
 
   return indisponibilities
 }

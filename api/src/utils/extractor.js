@@ -129,7 +129,8 @@ export const addSumLine = (data, selectedCategory) => {
     let headerSum = new Object({})
     Object.keys(data[0]).map((key) => {
       const sum = sumBy(data, key)
-      headerSum[key] = typeof sum === 'string' || ['Numéro A-JUST', 'TPROX', "Date d'arrivée", 'Date de départ'].includes(key) ? '' : sum
+      headerSum[key] =
+        typeof sum === 'string' || ['Numéro A-JUST', 'Ecart -> à contrôler', 'Matricule', 'TPROX', "Date d'arrivée", 'Date de départ'].includes(key) ? '' : sum
       if (key === 'Date de départ') headerSum[key] = 'SOMME'
     })
     data.push(headerSum)
@@ -347,7 +348,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             Arrondissement: juridictionName.label,
             Juridiction: human.juridiction || juridictionName.label,
             ['Numéro A-JUST']: human.id,
-            Matricule: human.matricule,
+            Matricule: Number(human.matricule),
             Prénom: human.firstName,
             Nom: human.lastName,
             Catégorie: categoryName,
@@ -377,6 +378,8 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
       let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.label ? currentSituation.fonction.label : 'pas de fonction'
+      let fonctionCategory =
+        currentSituation && currentSituation.fonction && currentSituation.fonction.category_detail ? currentSituation.fonction.category_detail : ''
 
       let etpAffected = new Array()
       let refObj = { ...emptyRefObj(flatReferentielsList) }
@@ -385,8 +388,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
 
       let indispoArray = new Array([])
       const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-
-      if (human.id === 2592) console.log(human)
 
       indispoArray = [
         ...(await Promise.all(
@@ -421,7 +422,7 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
                 const label = getExcelLabel(referentiel, false)
                 if (isIndispoRef) {
                   refObj[label] = counterIndispo / 100
-                  if (human.id === 2308) console.log(label, counterIndispo / 100)
+                  //if (human.id === 2308) console.log(label, counterIndispo / 100)
                   return {
                     indispo: counterIndispo / 100,
                   }
@@ -466,11 +467,12 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
             Arrondissement: juridictionName.label,
             Juridiction: human.juridiction || juridictionName.label,
             ['Numéro A-JUST']: human.id,
-            Matricule: human.matricule,
+            Matricule: Number(human.matricule),
             Prénom: human.firstName,
             Nom: human.lastName,
             Catégorie: categoryName,
             Fonction: fonctionName,
+            ['Fonction catégorie']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
@@ -478,6 +480,8 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
             ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
           })
+
+      if (human.id === 2609) console.log(currentSituation.fonction)
     })
   )
 

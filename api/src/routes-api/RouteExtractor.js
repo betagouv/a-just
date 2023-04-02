@@ -1,26 +1,17 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { getHRVentilation } from '../utils/calculator'
 import {
   addSumLine,
   autofitColumns,
-  computeCETDays,
-  computeEtpt,
   computeExtract,
   computeExtractDdg,
-  countEtp,
-  emptyRefObj,
   flatListOfContentieuxAndSousContentieux,
-  getExcelLabel,
-  getIndispoDetails,
   replaceIfZero,
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
-import { findSituation } from '../utils/human-resource'
 import { month } from '../utils/date'
-import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
 
 /**
  * Route de la page extrateur
@@ -96,7 +87,6 @@ export default class RouteExtractor extends Route {
     const columnSize2 = await autofitColumns(onglet2)
     console.timeEnd('extractor-8')
 
-    console.log(onglet1)
     this.sendOk(ctx, { onglet1: { values: onglet1, columnSize: columnSize1 }, onglet2: { values: onglet2, columnSize: columnSize2 } })
   }
 

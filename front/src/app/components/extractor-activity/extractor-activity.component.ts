@@ -11,6 +11,9 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { UserService } from 'src/app/services/user/user.service'
 import { generalizeTimeZone, getShortMonthString } from 'src/app/utils/dates'
 import * as xlsx from 'xlsx'
+import { Workbook } from "exceljs";
+import { Renderer } from "xlsx-renderer";
+
 
 /**
  * Excel file details
@@ -264,6 +267,7 @@ export class ExtractorActivityComponent extends MainClass {
         dateStop: generalizeTimeZone(this.dateStop || this.today),
       })
       .then((data) => {
+        /** 
         this.data = data.data.list
         this.sumTab = data.data.sumTab
 
@@ -310,7 +314,223 @@ export class ExtractorActivityComponent extends MainClass {
             monthTabName
           )
         })
+*/
 
+        const userList = [
+          {name: 'miloud',  designation: 'Software Developer',address: 'Delhi',gender: 'Male'},
+          {
+          name: 'Kapil',
+          designation: 'QA',
+          address: 'Noida',
+          gender: 'Male'
+          }, {
+          name: 'Sunita',
+          designation: 'HR',
+          address: 'Gurgaon',
+          gender: 'Female'
+          }
+          ]
+/** template 2
+       const viewModel=   {
+        "author": {
+          "firstName": "Paweł",
+          "lastName": "Siemienik",
+          "hobby": "OSS development"
+        }
+      }  
+      */
+
+      const viewModel=   {
+        "projects": [
+            {
+                "name": "ExcelJS",
+                "role": "maintainer",
+                "platform": "github",
+                "link": "https://github.com/exceljs/exceljs",
+                "stars": 5300,
+                "forks": 682
+            },
+            {
+                "name": "xlsx-import",
+                "role": "owner",
+                "platform": "github",
+                "link": "https://github.com/siemienik/xlsx-import",
+                "stars": 2,
+                "forks": 0
+            },
+            {
+                "name": "xlsx-import",
+                "role": "owner",
+                "platform": "npm",
+                "link": "https://www.npmjs.com/package/xlsx-import",
+                "stars": "n.o.",
+                "forks": "n.o."
+            },
+            {
+                "name": "xlsx-renderer",
+                "role": "owner",
+                "platform": "github",
+                "link": "https://github.com/siemienik/xlsx-renderer",
+                "stars": 2,
+                "forks": 0
+            },
+            {
+                "name": "xlsx-renderer",
+                "role": "owner",
+                "platform": "npm",
+                "link": "https://www.npmjs.com/package/xlsx-renderer",
+                "stars": "n.o.",
+                "forks": "n.o."
+            },
+            {
+                "name": "TS Package Structure",
+                "role": "owner",
+                "platform": "github",
+                "link": "https://github.com/Siemienik/ts-package-structure",
+                "stars": 3,
+                "forks": 0
+            }
+        ]
+    }
+
+    const viewModel1 =
+    {
+      "subtitles": [ //-6 items
+        "",
+    ],
+      "days": [
+          "01/04/2020",
+          "02/04/2020",
+          "03/04/2020",
+          "04/04/2020",
+          "05/04/2020",
+          "06/04/2020",
+          "07/04/2020"
+      ],
+      "stats": [
+          {
+              "actions": [
+                  2,
+                  4,
+                  8,
+                  16,
+                  32,
+                  64,
+                  128
+              ]
+          },          {
+            "actions": [
+                2,
+                4,
+                8,
+                16,
+                32,
+                64,
+                128
+            ]
+        },          {
+          "actions": [
+              2,
+              4,
+              8,
+              16,
+              32,
+              64,
+              128
+          ]
+      },          {
+        "actions": [
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128
+        ]
+    },
+          {
+              "actions": [
+                  1,
+                  2,
+                  2,
+                  6,
+                  2,
+                  4,
+                  28
+              ]
+          },
+          {
+              "actions": [
+                  12,
+                  14,
+                  18,
+                  116,
+                  132,
+                  164,
+                  1128
+              ]
+          }
+      ]
+  }
+
+
+
+          fetch("/assets/template3.xlsx")
+  // 2. Get template as ArrayBuffer.
+  .then((response) => response.arrayBuffer())
+  // 3. Fill the template with data (generate a report).
+  .then((buffer) => new Renderer().renderFromArrayBuffer(buffer, viewModel1))
+  // 4. Get a report as buffer.
+  .then((report) => {          
+    report.worksheets[0].columns = [  
+      { width: 5 },{ width: 5 },{ width: 5 },{ width: 5 },{ width: 5 },
+    ]
+return report.xlsx.writeBuffer()})
+  // 5. Use `saveAs` to download on browser site.
+  .then((buffer) => FileSaver.saveAs(new Blob([buffer]), `${Date.now()}_report.xlsx`))
+  // Handle errors.
+  .catch((err) => console.log("Error writing excel export", err));
+
+          /**
+          const title = 'User Data'
+          const header = Object.keys(userList[0])
+          const workbook = new Workbook()
+          const worksheet = workbook.addWorksheet('User Report')
+          // Add new row
+          const titleRow = worksheet.addRow([title])
+          // Set font family, font size, and style in title row.
+
+          titleRow.font = { name: 'Saysettha OT', family: 4, size: 16, bold: true }
+          // Blank Row
+          worksheet.addRow([])
+          // Add Header Row
+          const headerRow = worksheet.addRow(header)
+          // Cell Style : Fill and Border
+          headerRow.eachCell(cell => {
+          cell.font = { name: 'Saysettha OT', bold: true }
+          })
+          // Add Data and Conditional Formatting
+          
+          userList.forEach(d => {
+          let row = worksheet.addRow(Object.values(d))
+          row.font = { name: 'Saysettha OT' }
+          })
+
+          console.log(Object.keys(worksheet))
+          worksheet.columns = [  
+            { width: 25 }, { width: 20 }, { width: 20 }, { width: 30 }, { width: 30 }, { width: 15 }
+          ]
+
+          workbook.xlsx.writeBuffer().then(excelData => {
+          const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          FileSaver.saveAs(blob, 'UserReport.xlsx')
+          })
+          
+          
+*/
+
+/** 
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
           type: 'array',
@@ -320,7 +540,8 @@ export class ExtractorActivityComponent extends MainClass {
         this.appService.alert.next({
           text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
         })
-        FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION)
+        FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION)*/
       })
   }
 }
+
