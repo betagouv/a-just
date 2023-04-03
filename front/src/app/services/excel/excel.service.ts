@@ -114,12 +114,15 @@ export class ExcelService extends MainClass {
           },
         }
 
+        this.appService.alert.next({
+          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+        })
+        
         fetch('/assets/template3.xlsx')
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
           // 3. Fill the template with data (generate a report).
           .then((buffer) => {
-            console.log(buffer)
             return new Renderer().renderFromArrayBuffer(buffer, viewModel)
           })
           // 4. Get a report as buffer.
@@ -141,8 +144,6 @@ export class ExcelService extends MainClass {
               ...this.tabs.onglet2.columnSize,
             ]
 
-            console.log([...this.tabs.onglet1.values.map((item: any) => ['',...Object.keys(item).map((key: any) => item[key])])])
-            console.log(report.worksheets[0].getSheetValues())
             return report.xlsx.writeBuffer()
           })
           // 5. Use `saveAs` to download on browser site.

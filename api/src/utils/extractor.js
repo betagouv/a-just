@@ -368,6 +368,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             ['ETPT sur la période']: reelEtp,
             ['Temps ventilés sur la période  ']: totalEtpt,
             ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+            ['Total indispo sur la période']: refObj[key],
             ['Absentéisme']: absenteisme,
             ['CET de + de 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ['CET de - de 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
