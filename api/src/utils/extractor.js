@@ -271,6 +271,8 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
       let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.label ? currentSituation.fonction.label : 'pas de fonction'
+      let fonctionCategory =
+        currentSituation && currentSituation.fonction && currentSituation.fonction.category_detail ? currentSituation.fonction.category_detail : ''
 
       let refObj = { ...emptyRefObj(flatReferentielsList) }
       let totalEtpt = 0
@@ -363,6 +365,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             Nom: human.lastName,
             Catégorie: categoryName,
             Fonction: fonctionName,
+            ['Fonction catégorie']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
