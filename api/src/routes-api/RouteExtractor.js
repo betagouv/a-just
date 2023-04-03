@@ -1,22 +1,17 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { getHRVentilation } from '../utils/calculator'
 import {
   addSumLine,
   autofitColumns,
-  countEtp,
-  emptyRefObj,
+  computeExtract,
+  computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
-  getExcelLabel,
-  getIndispoDetails,
   replaceIfZero,
   sortByCatAndFct,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, groupBy, last, orderBy, sortBy, sumBy } from 'lodash'
-import { findSituation } from '../utils/human-resource'
-import { month, nbOfDays, nbWorkingDays, setTimeToMidDay } from '../utils/date'
-import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
+import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
+import { month } from '../utils/date'
 
 /**
  * Route de la page extrateur
@@ -66,153 +61,33 @@ export default class RouteExtractor extends Route {
     console.time('extractor-3')
     const hr = await this.model.getCache(backupId)
     console.timeEnd('extractor-3')
+
     console.time('extractor-4')
-
     const categories = await this.models.HRCategories.getAll()
-
-    let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
-
-    let data = new Array()
     console.timeEnd('extractor-4')
 
     console.time('extractor-5')
-    await Promise.all(
-      allHuman.map(async (human) => {
-        const { currentSituation } = findSituation(human)
-
-        let categoryName =
-          currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
-        let fonctionName =
-          currentSituation && currentSituation.fonction && currentSituation.fonction.label ? currentSituation.fonction.label : 'pas de fonction'
-
-        let etpAffected = new Array()
-        let refObj = { ...emptyRefObj(flatReferentielsList) }
-        let totalEtpt = 0
-        let reelEtp = 0
-
-        let indispoArray = new Array([])
-        const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-
-        //if (human.id === 2592) console.log(human)
-
-        indispoArray = [
-          ...(await Promise.all(
-            flatReferentielsList.map(async (referentiel) => {
-              const situations = human.situations || []
-              const indisponibilities = human.indisponibilities || []
-
-              if (
-                situations.some((s) => {
-                  const activities = s.activities || []
-                  return activities.some((a) => a.contentieux.id === referentiel.id)
-                }) ||
-                indisponibilities.some((indisponibility) => {
-                  return indisponibility.contentieux.id === referentiel.id
-                })
-              ) {
-                etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
-
-                const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
-                  ...(await countEtp({ ...etpAffected }, referentiel)),
-                }
-                reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
-
-                const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
-
-                if (referentiel.childrens !== undefined && !isIndispoRef) {
-                  const label = getExcelLabel(referentiel, true)
-                  refObj[label] = counterEtpTotal
-                  totalEtpt += counterEtpTotal
-                } else {
-                  const label = getExcelLabel(referentiel, false)
-                  if (isIndispoRef) {
-                    refObj[label] = counterIndispo / 100
-                    return {
-                      indispo: counterIndispo / 100,
-                    }
-                  } else refObj[label] = counterEtpSubTotal
-                }
-              }
-              return { indispo: 0 }
-            })
-          )),
-        ]
-
-        const key = getExcelLabel(refIndispo, true)
-
-        refObj[key] = sumBy(indispoArray, 'indispo')
-
-        if (reelEtp === 0) {
-          dateStart = setTimeToMidDay(dateStart)
-          dateStop = setTimeToMidDay(dateStop)
-
-          let reelEtpObject = []
-          sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
-            let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
-            nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
-            const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
-            let nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
-            if (index === human.situations.length - 1 && human.dateEnd < dateStop) {
-              nextEndDate = human.dateEnd
-            }
-
-            let countNbOfDays = undefined
-
-            if (nextDateStart && nextEndDate && nextDateStart <= nextEndDate) countNbOfDays = nbWorkingDays(new Date(nextDateStart), new Date(nextEndDate))
-            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
-              reelEtpObject.push({
-                etp: situation.etp * (countNbOfDays + 1),
-                countNbOfDays: countNbOfDays + 1,
-              })
-            }
-          })
-
-          reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
-          //console.log(human.id, sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key] || 0)
-        }
-
-        const isGone = human.dateEnd < dateStop
-        if (isGone) {
-          if (refObj[key] + reelEtp !== 1) {
-            refObj[key] = (refObj[key] * etpAffected['1'].nbDay + etpAffected['1'].nbDaysGone) / etpAffected['1'].nbDay
-          }
-        }
-
-        if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
-          if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
-            data.push({
-              Juridiction: juridictionName.label,
-              TPROX: human.juridiction,
-              ['Numéro A-JUST']: human.id,
-              Matricule: human.matricule,
-              Prénom: human.firstName,
-              Nom: human.lastName,
-              Catégorie: categoryName,
-              Fonction: fonctionName,
-              ["Date d'arrivée"]: human.dateStart === null ? null : new Date(human.dateStart).toISOString().split('T')[0],
-              ['Date de départ']: human.dateEnd === null ? null : new Date(human.dateEnd).toISOString().split('T')[0],
-              ['ETPT sur la période']: reelEtp,
-              ['Temps ventilés sur la période  ']: totalEtpt,
-              ...refObj,
-            })
-      })
-    )
+    let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
     console.timeEnd('extractor-5')
 
     console.time('extractor-6')
-
-    await data.sort((a, b) => sortByCatAndFct(a, b))
-
-    data = addSumLine(data, categoryFilter)
-    //data = replaceZeroByDash(data)
-    const columnSize = await autofitColumns(data)
+    let onglet1 = await computeExtract(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
-    // memorize first execution by user
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
+    console.time('extractor-7')
+    let onglet2 = await computeExtractDdg(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    console.timeEnd('extractor-7')
 
-    console.log(dateStart, dateStop)
-    this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
+    console.time('extractor-8')
+    await onglet1.sort((a, b) => sortByCatAndFct(a, b))
+    await onglet2.sort((a, b) => sortByCatAndFct(a, b))
+    onglet1 = addSumLine(onglet1, categoryFilter)
+    onglet2 = addSumLine(onglet2, categoryFilter)
+    const columnSize1 = await autofitColumns(onglet1)
+    const columnSize2 = await autofitColumns(onglet2)
+    console.timeEnd('extractor-8')
+
+    this.sendOk(ctx, { onglet1: { values: onglet1, columnSize: columnSize1 }, onglet2: { values: onglet2, columnSize: columnSize2 } })
   }
 
   @Route.Post({
