@@ -70,12 +70,21 @@ export const countEtp = (etpAffected, referentiel) => {
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
-      counterEtpTotal += etpAffected[key].etpt
-      counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
-      console.log(etpAffected[key].reelEtp)
+      if (etpAffected[key].nbDaysGone === 0) {
+        counterEtpTotal += etpAffected[key].etpt
+        counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
+      } else {
+        counterEtpTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+        counterReelEtp += (etpAffected[key].reelEtp * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+      }
     } else {
-      counterEtpSubTotal += etpAffected[key].etpt
-      counterIndispo += etpAffected[key].indispo
+      if (etpAffected[key].nbDaysGone === 0) {
+        counterEtpSubTotal += etpAffected[key].etpt
+        counterIndispo += etpAffected[key].indispo
+      } else {
+        counterEtpSubTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+        counterIndispo += (etpAffected[key].indispo * etpAffected[key].nbDay) / (etpAffected[key].nbDay - etpAffected[key].nbDaysGone)
+      }
     }
   })
 

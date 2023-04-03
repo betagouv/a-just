@@ -242,6 +242,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
   let now = new Date(dateStart)
   let nbDay = 0
+  let nbDaysGone = 0
   do {
     let nextDateFinded = null
     let lastEtpAdded = null
@@ -249,6 +250,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
     // only working day
     if (workingDay(now)) {
+      let sumByInd = 0
+      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now > hr.dateEnd) nbDaysGone++
       nbDay++
       const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr)
       if (nextDeltaDate) {
@@ -264,7 +267,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         list[categoryId].etpt += etp
       }
 
-      const sumByInd = sumBy(indispoFiltred, 'percent')
+      sumByInd += sumBy(indispoFiltred, 'percent')
+
       if (sumByInd !== 0) {
         indispoFiltred.map((c) => {
           if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
@@ -299,12 +303,14 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     nbDay = 1
   }
 
-  console.log('nombre de jour : ', nbDay)
+  if (hr.id === 1240) console.log('nombre de jour : ', nbDay)
   // format render
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay
     list[property].indispo = list[property].indispo / nbDay
     list[property].reelEtp = list[property].reelEtp / nbDay
+    list[property].nbDaysGone = nbDaysGone
+    list[property].nbDay = nbDay
   }
 
   return list
