@@ -15,7 +15,7 @@ import {
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sortBy, sumBy } from 'lodash'
 import { findSituation } from '../utils/human-resource'
-import { month, nbOfDays, setTimeToMidDay } from '../utils/date'
+import { month, nbOfDays, nbWorkingDays, setTimeToMidDay } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 
 /**
@@ -93,7 +93,7 @@ export default class RouteExtractor extends Route {
         let indispoArray = new Array([])
         const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
 
-        if (human.id === 2592) console.log(human)
+        //if (human.id === 2592) console.log(human)
 
         indispoArray = [
           ...(await Promise.all(
@@ -115,7 +115,6 @@ export default class RouteExtractor extends Route {
                 const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                   ...(await countEtp({ ...etpAffected }, referentiel)),
                 }
-
                 reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
 
                 const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
@@ -128,7 +127,6 @@ export default class RouteExtractor extends Route {
                   const label = getExcelLabel(referentiel, false)
                   if (isIndispoRef) {
                     refObj[label] = counterIndispo / 100
-                    if (human.id === 2308) console.log(label, counterIndispo / 100)
                     return {
                       indispo: counterIndispo / 100,
                     }
@@ -153,18 +151,31 @@ export default class RouteExtractor extends Route {
             let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
             nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
             const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
-            const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+            let nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+            if (index === human.situations.length - 1 && human.dateEnd < dateStop) {
+              nextEndDate = human.dateEnd
+            }
+
             let countNbOfDays = undefined
 
-            if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
+            if (nextDateStart && nextEndDate && nextDateStart <= nextEndDate) countNbOfDays = nbWorkingDays(new Date(nextDateStart), new Date(nextEndDate))
+            if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
               reelEtpObject.push({
                 etp: situation.etp * (countNbOfDays + 1),
                 countNbOfDays: countNbOfDays + 1,
               })
+            }
           })
 
           reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+          //console.log(human.id, sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key] || 0)
+        }
+
+        const isGone = human.dateEnd < dateStop
+        if (isGone) {
+          if (refObj[key] + reelEtp !== 1) {
+            refObj[key] = (refObj[key] * etpAffected['1'].nbDay + etpAffected['1'].nbDaysGone) / etpAffected['1'].nbDay
+          }
         }
 
         if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
@@ -200,6 +211,7 @@ export default class RouteExtractor extends Route {
     // memorize first execution by user
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
+    console.log(dateStart, dateStop)
     this.sendOk(ctx, { values: data, columnSize, dateStart: dateStart })
   }
 
@@ -243,8 +255,6 @@ export default class RouteExtractor extends Route {
         contentieux: { code_import: last(sum[key]).contentieux.code_import, label: last(sum[key]).contentieux.label },
       })
     })
-
-    console.log(sumTab)
 
     this.sendOk(ctx, {
       list: groupBy(activities, 'periode'),
