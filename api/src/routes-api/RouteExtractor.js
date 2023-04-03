@@ -71,13 +71,13 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-5')
 
     console.time('extractor-6')
-    let onglet1 = await computeExtract(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    let onglet1 = await computeExtract(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
     console.time('extractor-7')
-    let onglet2 = await computeExtractDdg(allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    let onglet2 = await computeExtractDdg(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-7')
-
+    console.log(dateStart, dateStop)
     console.time('extractor-8')
     await onglet1.sort((a, b) => sortByCatAndFct(a, b))
     await onglet2.sort((a, b) => sortByCatAndFct(a, b))

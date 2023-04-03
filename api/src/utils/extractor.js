@@ -1,6 +1,6 @@
 import { sortBy, sumBy } from 'lodash'
 import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
-import { nbOfDays, setTimeToMidDay, today, workingDay } from './date'
+import { nbOfDays, nbWorkingDays, setTimeToMidDay, today, workingDay } from './date'
 import { findSituation } from './human-resource'
 import { getHRVentilation } from '../utils/calculator'
 
@@ -66,7 +66,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
  * @param {*} referentiel
  * @returns objet d'ETP
  */
-export const countEtp = (etpAffected, referentiel) => {
+export const countEtp = (etpAffected, referentiel, isGone = false) => {
   let counterEtpTotal = 0
   let counterEtpSubTotal = 0
   let counterIndispo = 0
@@ -74,21 +74,23 @@ export const countEtp = (etpAffected, referentiel) => {
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
-      if (etpAffected[key].nbDaysGone === 0) {
-        counterEtpTotal += etpAffected[key].etpt
-        counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
-      } else {
-        counterEtpTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-        counterReelEtp += (etpAffected[key].reelEtp * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-      }
+      //if (etpAffected[key].nbDaysGone === 0) {
+
+      counterEtpTotal += etpAffected[key].etpt
+      counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
+      //}
+      //else {
+      //counterEtpTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+      //counterReelEtp += (etpAffected[key].reelEtp * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+      //}
     } else {
-      if (etpAffected[key].nbDaysGone === 0) {
-        counterEtpSubTotal += etpAffected[key].etpt
-        counterIndispo += etpAffected[key].indispo
-      } else {
-        counterEtpSubTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-        counterIndispo += (etpAffected[key].indispo * etpAffected[key].nbDay) / (etpAffected[key].nbDay - etpAffected[key].nbDaysGone)
-      }
+      //if (etpAffected[key].nbDaysGone === 0) {
+      counterEtpSubTotal += etpAffected[key].etpt
+      counterIndispo += etpAffected[key].indispo
+      //} else {
+      //counterEtpSubTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
+      //counterIndispo += (etpAffected[key].indispo * etpAffected[key].nbDay) / (etpAffected[key].nbDay - etpAffected[key].nbDaysGone)
+      //}
     }
   })
 
@@ -208,29 +210,6 @@ export const replaceIfZero = (value) => {
   return value === 0 ? null : value
 }
 
-export const computeEtpt = (dateStart, dateStop, human, indispo) => {
-  dateStart = setTimeToMidDay(dateStart)
-  dateStop = setTimeToMidDay(dateStop)
-
-  let reelEtpObject = []
-  sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
-    let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
-    nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
-    const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
-    const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
-    let countNbOfDays = undefined
-
-    if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-    if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
-      reelEtpObject.push({
-        etp: situation.etp * (countNbOfDays + 1),
-        countNbOfDays: countNbOfDays + 1,
-      })
-  })
-
-  return sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (indispo || 0)
-}
-
 export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
   let now = new Date(dateStart)
   let nbDay = 0
@@ -278,11 +257,11 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
       let totalEtpt = 0
       let reelEtp = 0
       let absenteisme = 0
+      let totalDaysGone = 0
+      let totalDays = 0
 
       let indispoArray = new Array([])
       let { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-
-      //allIndispRefIds = allIndispRefIds.filter((x) => x.label !== 'Décharge syndicale')
 
       let CETTotalEtp = 0
       let nbGlobalDaysCET = 0
@@ -309,11 +288,16 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              const etpAffected = await getHRVentilation(human, referentiel.id, [...categories], new Date(dateStart), new Date(dateStop), true, absLabels)
+              const etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
               }
+
+              Object.keys(etpAffected).map((key) => {
+                totalDaysGone = totalDaysGone === 0 && etpAffected[key].nbDaysGone > 0 ? etpAffected[key].nbDaysGone : totalDaysGone
+                totalDays = totalDays === 0 && etpAffected[key].nbDay > 0 ? etpAffected[key].nbDay : totalDays
+              })
 
               reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
 
@@ -328,7 +312,6 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
                 if (isIndispoRef) {
                   refObj[label] = counterIndispo / 100
                   if (referentiel.label === CET_LABEL) CETTotalEtp = refObj[label]
-
                   if (absLabels.includes(referentiel.label)) absenteisme += refObj[label]
                   else
                     return {
@@ -350,7 +333,42 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 
       //console.log(indispoArray)
       if (reelEtp === 0) {
-        reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key])
+        //reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key], totalDays, totalDaysGone)
+
+        if (human.id === 2612) console.log('Forza 2611')
+
+        if (human.id === 2612) console.log('LATIFA 0', totalDaysGone)
+        dateStart = setTimeToMidDay(dateStart)
+        dateStop = setTimeToMidDay(dateStop)
+
+        let reelEtpObject = []
+
+        sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
+          let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
+          nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
+          const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
+          const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
+          let countNbOfDays = undefined
+          if (nextDateStart && nextEndDate) countNbOfDays = nbWorkingDays(new Date(nextDateStart), new Date(nextEndDate))
+          if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
+            reelEtpObject.push({
+              etp: situation.etp * countNbOfDays,
+              countNbOfDays: countNbOfDays,
+            })
+          }
+          if (human.id === 2612) console.log('ETP Object =>', reelEtpObject, totalDaysGone, situation)
+        })
+
+        const isGone = dateStop > human.dateEnd
+        if (human.id === 2612)
+          console.log('LATIFA => isGone', isGone, sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays'), refObj[key], totalDays, totalDaysGone)
+
+        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+          if (human.id === 2612) console.log('LATIFA ', reelEtp)
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
       //AJOUTER COLONNE CET DIFFERENCIER PUIS DUPLIQUER LE CALCUL POUR LES 2 ONGLETS
@@ -399,6 +417,8 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
       let refObj = { ...emptyRefObj(flatReferentielsList) }
       let totalEtpt = 0
       let reelEtp = 0
+      let totalDaysGone = 0
+      let totalDays = 0
 
       let indispoArray = new Array([])
       const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
@@ -419,10 +439,18 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
               })
             ) {
               etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
+              if (human.id === 2612) console.log(etpAffected)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
               }
+              if (human.id === 2612) console.log('Ici 2612 => ', { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp })
+              if (human.id === 2611) console.log('Ici 2611 => ', { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp })
+
+              Object.keys(etpAffected).map((key) => {
+                totalDaysGone = totalDaysGone === 0 && etpAffected[key].nbDaysGone > 0 ? etpAffected[key].nbDaysGone : totalDaysGone
+                totalDays = totalDays === 0 && etpAffected[key].nbDay > 0 ? etpAffected[key].nbDay : totalDays
+              })
 
               reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
 
@@ -436,7 +464,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
                 const label = getExcelLabel(referentiel, false)
                 if (isIndispoRef) {
                   refObj[label] = counterIndispo / 100
-                  //if (human.id === 2308) console.log(label, counterIndispo / 100)
                   return {
                     indispo: counterIndispo / 100,
                   }
@@ -451,28 +478,41 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
       const key = getExcelLabel(refIndispo, true)
 
       refObj[key] = sumBy(indispoArray, 'indispo')
+      //if (human.id === 2611) console.log(sortBy(human.situations, 'dateStart', 'asc'))
 
       if (reelEtp === 0) {
+        //reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key], totalDays, totalDaysGone)
+
+        if (human.id === 2611) console.log('Forza 2611')
+
+        if (human.id === 2612) console.log('LATIFA 0', totalDaysGone)
         dateStart = setTimeToMidDay(dateStart)
         dateStop = setTimeToMidDay(dateStop)
 
         let reelEtpObject = []
+
         sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
           let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
           nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
           const middleDate = human.situations[index].dateStart <= dateStop ? new Date(human.situations[index].dateStart) : null
           const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
           let countNbOfDays = undefined
-
-          if (nextDateStart && nextEndDate) countNbOfDays = nbOfDays(new Date(nextDateStart), new Date(nextEndDate))
-          if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate)
+          if (nextDateStart && nextEndDate) countNbOfDays = nbWorkingDays(new Date(nextDateStart), new Date(nextEndDate))
+          if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
             reelEtpObject.push({
-              etp: situation.etp * (countNbOfDays + 1),
-              countNbOfDays: countNbOfDays + 1,
+              etp: situation.etp * countNbOfDays,
+              countNbOfDays: countNbOfDays,
             })
+          }
+          //          if (human.id === 2612) console.log('ETP Object =>', reelEtpObject, totalDaysGone, situation)
         })
 
-        reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        const isGone = dateStop > human.dateEnd
+        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
@@ -491,11 +531,10 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
             ['Temps ventilés sur la période  ']: totalEtpt,
+            ['Total indispo sur la période']: refObj[key],
             ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
           })
-
-      if (human.id === 2609) console.log(currentSituation.fonction)
     })
   )
 

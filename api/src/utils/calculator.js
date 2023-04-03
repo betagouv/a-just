@@ -251,7 +251,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     // only working day
     if (workingDay(now)) {
       let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now > hr.dateEnd) nbDaysGone++
+      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
       nbDay++
       const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
       if (nextDeltaDate) {
@@ -299,17 +299,17 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     }
   } while (now.getTime() <= dateStop.getTime())
 
+  if (hr.id === 2611) console.log(now)
+
   if (nbDay === 0) {
     nbDay = 1
   }
 
-  if (hr.id === 1240) console.log('nombre de jour : ', nbDay)
+  if (hr.id === 2612) console.log('nombre de jour : ', nbDay, nbDaysGone, dateStart, dateStop, hr.dateEnd, hr.dateStart)
   // format render
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay
     list[property].indispo = list[property].indispo / nbDay
-    //if (hr.id === 2308 && referentielId === 506) console.log('inds', nbDay, list[property])
-
     list[property].reelEtp = list[property].reelEtp / nbDay
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
