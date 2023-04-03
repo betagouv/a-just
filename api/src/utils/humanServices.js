@@ -28,7 +28,6 @@ export async function getHumanRessourceList (preformatedAllHumanResource, conten
 
     return isOk
   })
-  console.timeEnd('step3')
   console.time('step4')
 
   if (!contentieuxIds) return list

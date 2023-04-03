@@ -1,4 +1,5 @@
 import { minBy, sumBy } from 'lodash'
+import { ABSENTEISME_LABELS } from '../constants/referentiel'
 import { today } from '../utils/date'
 
 /**
@@ -8,7 +9,7 @@ import { today } from '../utils/date'
  * @param {*} hr
  * @returns objet d'ETP détaillé
  */
-export function getEtpByDateAndPerson (referentielId, date, hr) {
+export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
   if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
     return {
       etp: null,
@@ -24,11 +25,25 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
 
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
-    const indispoFiltred = findAllIndisponibilities(hr, date)
+
+    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels)
+
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {
       reelEtp = 0
     }
+    /**
+    if (hr.id === 2609 && referentielId === 507)
+      console.log('on est la', {
+        ddgFilter,
+        absLabels,
+        referentielId,
+        reelEtp,
+        pp: sumBy(activitiesFiltred, 'percent') / 100,
+        situ: situation.etp,
+        xx: sumBy(indispoFiltred, 'percent'),
+        indispoFiltred,
+      })*/
 
     //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
     let nextDeltaDate = null
@@ -43,7 +58,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr) {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
       reelEtp,
       situation,
-      indispoFiltred,
+      indispoFiltred: !ddgFilter ? indispoFiltred : findAllIndisponibilities(hr, date),
       nextDeltaDate, // find the next date with have changes
     }
   }
@@ -68,7 +83,8 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
+    console.log(referentielId, date, hr)
+    const activitiesFiltred = await (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
@@ -208,7 +224,7 @@ export const findAllSituations = (hr, date) => {
  * @param {*} date
  * @returns liste des indisponibilités filtrées
  */
-const findAllIndisponibilities = (hr, date) => {
+const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) => {
   let indisponibilities = hr && hr.indisponibilities && hr.indisponibilities.length ? hr.indisponibilities : []
 
   if (date instanceof Date) {
@@ -219,17 +235,26 @@ const findAllIndisponibilities = (hr, date) => {
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
           if (dateStop.getTime() >= date.getTime()) {
-            return true
+            //if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+            if (!ddgFilter) return true
+            else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
         } else {
           // return true if they are no end date
-          return true
+          if (!ddgFilter) return true
+          else if (absLabels.includes(hra.contentieux.label) === false) return true
         }
       }
 
       return false
     })
   }
+  /**if (hr.id === 2609)
+    console.log(
+      '=>',
+      absLabels,
+      indisponibilities.map((x) => x.contentieux.label)
+    )*/
 
   return indisponibilities
 }
