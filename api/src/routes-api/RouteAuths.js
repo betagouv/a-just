@@ -63,8 +63,6 @@ export default class RouteAuths extends Route {
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
 
-    console.log('TEST', password, email)
-
     const user = await this.model.findOne({ where: { email, role: [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN] } })
     if (user && user.dataValues.status === 0) {
       ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
