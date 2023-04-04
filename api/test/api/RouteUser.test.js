@@ -13,7 +13,7 @@ module.exports = function () {
      */
     it('Login - Login admin', async () => {
       const email = 'redwane.zafari@a-just.fr'
-      const password = '123456'
+      const password = '1234566'
 
       // Connexion de l'admin
       const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
