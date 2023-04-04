@@ -88,4 +88,8 @@ module.exports = {
    * Sentry api Key
    */
   sentryApi: process.env.SENTRY_API,
+  /**
+   * Sent Email
+   */
+  sentEmail: true,
 }
