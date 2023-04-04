@@ -16,17 +16,13 @@ module.exports = function () {
       const password = '123456'
 
       // Connexion de l'admin
-      try {
-        const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
-          email,
-          password,
-        })
-        // Récupération du token associé pour l'identifier
-        adminToken = response.data.token
-        assert.strictEqual(response.status, 201)
-      } catch (err) {
-        assert.strictEqual(err.status, 201)
-      }
+      const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
+        email,
+        password,
+      })
+      // Récupération du token associé pour l'identifier
+      adminToken = response.data.token
+      assert.strictEqual(response.status, 201)
     })
 
     /**
