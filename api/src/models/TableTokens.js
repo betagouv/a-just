@@ -20,13 +20,11 @@ export default (sequelizeInstance, Model) => {
    */
   Model.isConsumable = async function ({ entity_id, token, type }) {
     const ref = await Model.findOne({ where: { entity_id, token, type }, logging: false })
-    console.log('REF', ref)
 
     if (ref) {
       const date = new Date()
       const tokenCreateAt = new Date(ref.dataValues.created_at)
       const nbDays = getNbDay(tokenCreateAt, date)
-      console.log(nbDays)
 
       if (nbDays <= config.nbMaxDayTokenLife) {
         return ref
