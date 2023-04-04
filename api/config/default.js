@@ -92,4 +92,8 @@ module.exports = {
    * Sent Email
    */
   sentEmail: true,
+  /**
+   * Token expiration delay
+   */
+  nbMaxDayTokenLife: 30,
 }
