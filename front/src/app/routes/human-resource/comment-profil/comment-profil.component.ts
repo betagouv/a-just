@@ -2,7 +2,6 @@ import { Component, Input, OnChanges } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 
 /**
  * Panneau de présentation d'une fiche
