@@ -63,7 +63,6 @@ export class CalculatorService extends MainClass {
    * @returns 
    */
   filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
-    console.log(this.dateStart.getValue())
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),

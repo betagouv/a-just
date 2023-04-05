@@ -229,7 +229,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         console.log(date)
         date = new Date(date ? date : '')
         const max = month(date, 0, 'lastday')
-        console.log('max ; ' , max)
         this.maxDateSelectionDate = max
         console.log(max)
 
@@ -260,7 +259,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             : null
         )
         .then(({ list, fonctions }) => {
-          console.log(list)
           if (this.lastCategorySelected !== this.categorySelected) {
             this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
               id: f.id,

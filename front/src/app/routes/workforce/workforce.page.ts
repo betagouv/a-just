@@ -345,9 +345,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         nbPersonal: personal.length,
       }
     })
-
-    console.log(this.categoriesFilterList)
-
     this.calculateTotalAffected()
   }
 
