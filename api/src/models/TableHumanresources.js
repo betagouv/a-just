@@ -324,8 +324,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
-    console.log(hr)
-
     return await Model.getHr(hr.id)
   }
 

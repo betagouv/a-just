@@ -299,13 +299,10 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     }
   } while (now.getTime() <= dateStop.getTime())
 
-  if (hr.id === 2611) console.log(now)
-
   if (nbDay === 0) {
     nbDay = 1
   }
 
-  if (hr.id === 2612) console.log('nombre de jour : ', nbDay, nbDaysGone, dateStart, dateStop, hr.dateEnd, hr.dateStart)
   // format render
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay

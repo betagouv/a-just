@@ -6,7 +6,6 @@ module.exports = {
       },
       raw: true,
     })
-    console.log('PARIS', findCont)
 
     if (findCont) {
       const created = await models.ContentieuxReferentiels.create({
@@ -14,8 +13,6 @@ module.exports = {
         parent_id: findCont.id,
         code_import: '12.99',
       })
-
-      console.log('PARISA', created)
 
       //throw new Error('ERR')
     }

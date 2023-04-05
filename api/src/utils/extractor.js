@@ -220,7 +220,6 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
           if (hra.dateStop) {
             if (today(hra.dateStop).getTime() >= now.getTime()) {
               if (hra.contentieux.label === CET_LABEL) {
-                //console.log('ADD DAY ', now)
                 nbDay++
                 return true
               }
@@ -331,13 +330,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 
       refObj[key] = sumBy(indispoArray, 'indispo')
 
-      //console.log(indispoArray)
       if (reelEtp === 0) {
-        //reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key], totalDays, totalDaysGone)
-
-        if (human.id === 2612) console.log('Forza 2611')
-
-        if (human.id === 2612) console.log('LATIFA 0', totalDaysGone)
         dateStart = setTimeToMidDay(dateStart)
         dateStop = setTimeToMidDay(dateStop)
 
@@ -356,19 +349,14 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
               countNbOfDays: countNbOfDays,
             })
           }
-          if (human.id === 2612) console.log('ETP Object =>', reelEtpObject, totalDaysGone, situation)
         })
 
         const isGone = dateStop > human.dateEnd
         if (human.id === 2612)
-          console.log('LATIFA => isGone', isGone, sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays'), refObj[key], totalDays, totalDaysGone)
-
-        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
-          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
-          if (human.id === 2612) console.log('LATIFA ', reelEtp)
-        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
-        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
+          if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+            let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+            reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+          } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
       //AJOUTER COLONNE CET DIFFERENCIER PUIS DUPLIQUER LE CALCUL POUR LES 2 ONGLETS
@@ -439,13 +427,10 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
               })
             ) {
               etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
-              if (human.id === 2612) console.log(etpAffected)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
               }
-              if (human.id === 2612) console.log('Ici 2612 => ', { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp })
-              if (human.id === 2611) console.log('Ici 2611 => ', { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp })
 
               Object.keys(etpAffected).map((key) => {
                 totalDaysGone = totalDaysGone === 0 && etpAffected[key].nbDaysGone > 0 ? etpAffected[key].nbDaysGone : totalDaysGone
@@ -478,14 +463,8 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
       const key = getExcelLabel(refIndispo, true)
 
       refObj[key] = sumBy(indispoArray, 'indispo')
-      //if (human.id === 2611) console.log(sortBy(human.situations, 'dateStart', 'asc'))
 
       if (reelEtp === 0) {
-        //reelEtp = computeEtpt(dateStart, dateStop, human, refObj[key], totalDays, totalDaysGone)
-
-        if (human.id === 2611) console.log('Forza 2611')
-
-        if (human.id === 2612) console.log('LATIFA 0', totalDaysGone)
         dateStart = setTimeToMidDay(dateStart)
         dateStop = setTimeToMidDay(dateStop)
 
