@@ -19,6 +19,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          required: true,
           model: Model.models.ContentieuxReferentiels,
         },
       ],
