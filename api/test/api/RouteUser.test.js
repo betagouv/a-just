@@ -166,7 +166,6 @@ module.exports = function () {
       })
       userToken = response.status === 201 && response.data.token
       userId = response.data.user.id
-      console.log('USER ID', userId)
 
       assert.isOk(userToken, 'response 201 and user token created')
     })
