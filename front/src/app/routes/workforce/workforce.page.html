@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div class="content-list" id="container-list">
+    <div class="content-list" id="container-list" #containerList>
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
@@ -96,57 +96,9 @@
         </div>
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
-          <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id">
-            <div class="profil item">
-              <a [routerLink]="['/resource-humaine', hr.id]" class="text">
-                <div class="name">
-                  <p>
-                    {{ filterParams && filterParams.display === 'nom/prénom' ?
-                    hr.lastName:hr.firstName}} {{ filterParams &&
-                    filterParams.display === 'nom/prénom' ? hr.firstName :
-                    hr.lastName}}
-                  </p>
-
-                  <div *ngIf="hr.comment" class="tooltip">
-                    <mat-icon>message</mat-icon>
-                    <span class="tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
-                  </div>
-                </div>
-                <div class="tags">
-                  <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="list.textColor">
-                    {{ hr.fonction && hr.fonction.code}}
-                  </p>
-                  <p class="etp">{{ hr.etpLabel }}</p>
-                </div>
-                <div class="flex-1"></div>
-                <div class="updated-at">
-                  Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
-                  getShortMonthString(hr.updatedAt) }} {{ hr.updatedAt |
-                  date:"YYYY" }}
-                </div>
-              </a>
-              <div class="read-etp">
-                <p class="label">ETP Travaillé :</p>
-                <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-                  [indisponibility]="hr.hasIndisponibility">
-                </etp-preview>
-                <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                  <mat-icon>error</mat-icon> Indispo
-                </p>
-              </div>
-            </div>
-            <div class="activities">
-              <div class="space"></div>
-              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
-              </panel-activities>
-            </div>
-            <div class="actions">
-              <a [routerLink]="['/resource-humaine', hr.id]">
-                <mat-icon>chevron_right</mat-icon>
-              </a>
-            </div>
-          </div>
+          <person-preview *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
+            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"
+            [parentDom]="containerList"></person-preview>
         </div>
       </ng-template>
     </div>
