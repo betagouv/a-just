@@ -1,7 +1,7 @@
-import { default as server } from '../dist/index'
+import { default as server } from '../dist/index' //'../src/index'
 import routeIndex from './api/Route.test'
 import routeUser from './api/RouteUser.test'
-// import routeChangeUserData from './api/Route.ChangeUserData.test'
+import routeChangeUserData from './api/RouteChangeUserData.test'
 /*import routeUnauthorizedAccess from './api/RouteUnauthorizedAccess.test'
 import routeConnexion from './api/RouteConnexion'
 import routeImport from './api/RouteImports.test'
@@ -21,7 +21,7 @@ describe('Test server is ready', () => {
 
   routeIndex()
   routeUser()
-  // routeChangeUserData()
+  routeChangeUserData()
   /*routeUnauthorizedAccess(),
   routeChangeData(),
   routeImport()

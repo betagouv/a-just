@@ -424,5 +424,60 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Suppression d'une fiche et se ses éléments rattachés (For test only)
+   * @param {*} hrId
+   * @returns
+   */
+  Model.removeHRTest = async (hrId) => {
+    const hrFromDB = await Model.findOne({
+      attributes: ['id', 'backup_id'],
+      where: {
+        id: hrId,
+      },
+      raw: true,
+    })
+    if (hrFromDB) {
+      const camelCaseReturn = snakeToCamelObject(hrFromDB)
+      // control if have existing situations
+      const situations = await Model.models.HRSituations.getListByHumanId(hrId)
+      if (situations.length) {
+        return false
+      }
+
+      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+
+      await Model.destroy({
+        where: {
+          id: hrId,
+        },
+        force: true,
+      })
+
+      // delete force all references
+      await Model.models.HRVentilations.destroy({
+        where: {
+          rh_id: hrId,
+        },
+        force: true,
+      })
+
+      // delete force all situations
+      await Model.models.HRSituations.destroy({
+        where: {
+          human_id: hrId,
+        },
+        force: true,
+      })
+
+      // remove to cache
+      await Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
+
+      return camelCaseReturn
+    } else {
+      return false
+    }
+  }
+
   return Model
 }
