@@ -8,18 +8,17 @@ import Route from './Route'
 // eslint-disable-next-line
 export default class RouteIndex extends Route {
   constructor(params) {
-    super({ ...params });
+    super({ ...params })
   }
 
   @Route.Get({
     path: '*',
   })
-  async readFile (ctx) {
+  async readFile(ctx) {
     let url = ctx.request.url.replace('/admin', '')
     const file = `${__dirname}/../front-admin${url}`
-    console.log(file)
 
-    if(url && url !== '/' && existsSync(file)) {
+    if (url && url !== '/' && existsSync(file)) {
       const src = createReadStream(file)
       ctx.type = mime.getType(file)
       ctx.body = src
