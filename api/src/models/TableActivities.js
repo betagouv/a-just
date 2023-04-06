@@ -245,7 +245,6 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log('minPeriode', minPeriode)
     if (!minPeriode) {
       return // stop we don't have values to analyse
     }
@@ -265,7 +264,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} nodeUpdated
    */
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
-    console.log('updateBy', contentieuxId, date, values, hrBackupId, userId, nodeUpdated)
     date = new Date(date)
 
     let findActivity = await Model.findOne({
@@ -311,14 +309,11 @@ export default (sequelizeInstance, Model) => {
     date = new Date(date) // detach date reference
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
-    // console.log(ref)
-    console.log('startOfMonth(date), endOfMonth(date)', date, startOfMonth(date), endOfMonth(date))
 
     if (ref) {
       let continueToDo = false
       do {
         const childrens = ref.childrens || []
-        // console.log('check date', date, mainContentieuxId, hrBackupId)
 
         for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
           // IF not exist, create it
@@ -358,8 +353,6 @@ export default (sequelizeInstance, Model) => {
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
           const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
-
-          //console.log('currentStock', currentStock, getUserUpdateStock)
 
           // do not updated if updated by user
           if (!getUserUpdateStock || getUserUpdateStock.value === null) {

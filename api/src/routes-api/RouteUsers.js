@@ -168,8 +168,6 @@ export default class RouteUsers extends Route {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
     }
 
-    console.log('user connected', ctx.body.user)
-
     try {
       await this.model.updateAccount(this.body(ctx))
       await this.models.Logs.addLog(ADMIN_CHANGE_USER_ACCESS, ctx.state.user.id, { userId })
