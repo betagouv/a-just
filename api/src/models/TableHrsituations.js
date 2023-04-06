@@ -110,7 +110,6 @@ export default (sequelizeInstance, Model) => {
       if (findToBdd) {
         await findToBdd.update(options)
       } else {
-        console.log(options, humanId)
         findToBdd = await Model.create({
           ...options,
           human_id: humanId,

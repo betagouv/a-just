@@ -38,7 +38,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
-    console.log(human)
     const backupId = human.backupId
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
 
@@ -257,7 +256,6 @@ export default (sequelizeInstance, Model) => {
     // remove cache
     cacheJuridictionPeoples = {}
     await Model.onPreload()
-    //console.log(importSituation)
   }
 
   /**

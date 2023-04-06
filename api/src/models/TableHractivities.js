@@ -64,14 +64,8 @@ export default (sequelizeInstance, Model) => {
       }))
 
       if (findToBdd) {
-        if (hRSituationId === 7418) {
-          console.log('UPDATE', options)
-        }
         await findToBdd.update(options)
       } else {
-        if (hRSituationId === 7418) {
-          console.log('CREATE', options)
-        }
         findToBdd = await Model.create({
           ...options,
         })
@@ -93,9 +87,6 @@ export default (sequelizeInstance, Model) => {
       })
     ).map((h) => h.id)
     for (let i = 0; i < oldNewHRList.length; i++) {
-      if (hRSituationId === 7418) {
-        console.log('REMOVE', oldNewHRList[i])
-      }
       await Model.destroyById(oldNewHRList[i])
     }
   }

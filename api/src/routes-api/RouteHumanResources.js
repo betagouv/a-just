@@ -275,7 +275,6 @@ export default class RouteHumanResources extends Route {
             categoryId: category.id,
           }
         })
-      console.log('step7')
 
       // if filter by user access to categories
       if (categories.length !== allCategories.length) {
@@ -292,7 +291,6 @@ export default class RouteHumanResources extends Route {
       await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
       console.timeEnd('step5')
-      console.log('step6')
 
       this.sendOk(ctx, {
         list,
