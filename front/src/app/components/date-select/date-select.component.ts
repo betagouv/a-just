@@ -161,7 +161,6 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     datepicker: MatDatepicker<Moment>
   ) {
     if (this.dateType === 'month') {
-      //console.log(normalizedMonthAndYear, datepicker)
       const date = new Date(
         normalizedMonthAndYear.year(),
         normalizedMonthAndYear.month()

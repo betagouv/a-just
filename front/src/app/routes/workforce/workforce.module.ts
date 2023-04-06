@@ -9,9 +9,10 @@ import { MaterialModule } from 'src/app/libs/material.module'
 import { FilterPanelComponent } from './filter-panel/filter-panel.component'
 import { NgSelectModule } from '@ng-select/ng-select'
 import { PipesModule } from 'src/app/pipes/pipes.module'
+import { PersonPreviewComponent } from './person-preview/person-preview.component'
 
 @NgModule({
-  declarations: [WorkforcePage, FilterPanelComponent],
+  declarations: [WorkforcePage, FilterPanelComponent, PersonPreviewComponent],
   imports: [
     WorkforcePageModule,
     NgSelectModule,

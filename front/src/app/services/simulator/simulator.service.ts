@@ -136,19 +136,6 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
-    console.log(
-      'getSituation',
-      {
-        backupId: this.humanResourceService.backupId.getValue(),
-        referentielId: referentielId,
-        dateStart: setTimeToMidDay(dateStart),
-        dateStop: setTimeToMidDay(dateStop),
-        functionIds: this.selectedFonctionsIds.getValue(),
-        categoryId: this.selectedCategory.getValue()?.id,
-      },
-      referentielId
-    )
-
     if (
       this.selectedCategory.getValue()?.id !== null &&
       this.selectedFonctionsIds.getValue() !== null
@@ -167,8 +154,6 @@ export class SimulatorService extends MainClass {
           if (dateStop) {
             this.situationProjected.next(data.data.situation.endSituation)
           } else this.situationActuelle.next(data.data.situation)
-
-          console.log('Situation result', data)
         })
         .then(() => this.isLoading.next(false))
     } else return null
@@ -180,16 +165,7 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   toSimulate(params: any, simulation: SimulationInterface) {
-    console.log('Yoko1', { params, simulation })
     this.isLoading.next(true)
-    console.log('PARAM Simulation', {
-      backupId: this.humanResourceService.backupId.getValue(),
-      params: params,
-      simulation: simulation,
-      dateStart: setTimeToMidDay(this.dateStart.getValue()),
-      dateStop: setTimeToMidDay(this.dateStop.getValue()),
-      selectedCategoryId: this.selectedCategory.getValue()?.id,
-    })
 
     this.serverService
       .post(`simulator/to-simulate`, {
@@ -201,7 +177,6 @@ export class SimulatorService extends MainClass {
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
-        console.log('Simulation result', data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })

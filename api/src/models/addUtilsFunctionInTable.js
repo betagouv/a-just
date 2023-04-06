@@ -79,7 +79,6 @@ export function addUtilsFunctionInTable (Table, sequelizeInstance) {
     return Table.destroy({ ...options, individualHooks: true })
   }
   Table.destroyById = async (id, options) => {
-    console.log('ID:', id)
     options = options || {}
     options.where = options.where || {}
     options.where.id = id

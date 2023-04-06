@@ -181,6 +181,25 @@ export default class RouteHumanResources extends Route {
   }
 
   /**
+   * Interface de suppression d'une situation d'une fiche (For test only)
+   */
+  @Route.Delete({
+    path: 'remove-situation-test/:situationId',
+    accesses: [Access.canVewHR],
+  })
+  async removeSituationTest (ctx) {
+    const { situationId } = ctx.params
+    const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
+    if (hrId) {
+      if (await this.models.HRSituations.destroyById(situationId, { force: true })) {
+        this.sendOk(ctx, await this.model.getHr(hrId))
+      }
+    }
+
+    this.sendOk(ctx, null)
+  }
+
+  /**
    * Interface de la liste des fiches d'une juridiction
    * @param {*} backupId
    * @param {*} date
@@ -256,7 +275,6 @@ export default class RouteHumanResources extends Route {
             categoryId: category.id,
           }
         })
-      console.log('step7')
 
       // if filter by user access to categories
       if (categories.length !== allCategories.length) {
@@ -273,7 +291,6 @@ export default class RouteHumanResources extends Route {
       await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
       console.timeEnd('step5')
-      console.log('step6')
 
       this.sendOk(ctx, {
         list,

@@ -290,7 +290,6 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         this.hrBackups = this.humanResourceService.backups.getValue()
-        console.log(this.hrBackups)
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
@@ -300,7 +299,6 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
-        console.log('test de contentieux')
         this.resetParams()
       })
     )
@@ -1086,7 +1084,6 @@ export class SimulatorPage extends MainClass implements OnInit {
         if (objSecond !== null) {
           this.pickersParamsToLock = objSecond
         } else {
-          console.log('toSimulate = false')
           this.toSimulate = false
           this.toDisplaySimulation = true
           this.toDisplay = find.toDisplay
@@ -1261,7 +1258,6 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     const commentArea = document.getElementById('comment-area')!
     commentArea.style.display = 'none'
-    console.log('export 1')
 
     this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
       ajWrapper?.classList.remove('full-screen')

@@ -117,6 +117,12 @@ export class CoverProfilDetailsComponent
       dateEndToJuridiction.getTime() <= this.dateStart.getTime()
     ) {
       this.timeWorked = 'Parti'
+
+      // force to memorize last category
+      if(this.currentHR && this.currentHR.situations.length) {
+        this.category = this.currentHR.situations[0].category
+      }
+
     } else {
       this.timeWorked = etpLabel(this.etp)
     }

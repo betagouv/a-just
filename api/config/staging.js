@@ -4,7 +4,7 @@ module.exports = {
   serverUrl: process.env.SERVER_URL,
   frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   preloadHumanResourcesDatas: true,
-  nbMaxMonthCanBeInactive: null,
+  nbMaxDayCanBeInactive: null,
   sendingBlue: {
     usersListId: 7,
   },

@@ -23,6 +23,13 @@ export function sentEmail (to, templateId, params) {
     params: { ...params, envName: config.displayEnvName },
   }
 
+  if (!config.sentEmail) {
+    console.log('TEST Mail sent', sendSmtpEmail)
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
+
   return apiInstance.sendTransacEmail(sendSmtpEmail).then(
     function () {
       console.log('Mail sent', sendSmtpEmail)
