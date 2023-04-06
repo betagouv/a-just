@@ -38,7 +38,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
-    console.log(human)
     const backupId = human.backupId
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
 
@@ -257,7 +256,6 @@ export default (sequelizeInstance, Model) => {
     // remove cache
     cacheJuridictionPeoples = {}
     await Model.onPreload()
-    //console.log(importSituation)
   }
 
   /**
@@ -323,8 +321,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
-
-    console.log(hr)
 
     return await Model.getHr(hr.id)
   }
@@ -399,6 +395,61 @@ export default (sequelizeInstance, Model) => {
         where: {
           id: hrId,
         },
+      })
+
+      // delete force all references
+      await Model.models.HRVentilations.destroy({
+        where: {
+          rh_id: hrId,
+        },
+        force: true,
+      })
+
+      // delete force all situations
+      await Model.models.HRSituations.destroy({
+        where: {
+          human_id: hrId,
+        },
+        force: true,
+      })
+
+      // remove to cache
+      await Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
+
+      return camelCaseReturn
+    } else {
+      return false
+    }
+  }
+
+  /**
+   * Suppression d'une fiche et se ses éléments rattachés (For test only)
+   * @param {*} hrId
+   * @returns
+   */
+  Model.removeHRTest = async (hrId) => {
+    const hrFromDB = await Model.findOne({
+      attributes: ['id', 'backup_id'],
+      where: {
+        id: hrId,
+      },
+      raw: true,
+    })
+    if (hrFromDB) {
+      const camelCaseReturn = snakeToCamelObject(hrFromDB)
+      // control if have existing situations
+      const situations = await Model.models.HRSituations.getListByHumanId(hrId)
+      if (situations.length) {
+        return false
+      }
+
+      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+
+      await Model.destroy({
+        where: {
+          id: hrId,
+        },
+        force: true,
       })
 
       // delete force all references

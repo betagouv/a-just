@@ -460,10 +460,7 @@ export class HumanResourceService {
         backupId: this.backupId.getValue(),
       })
       .then((response) => {
-        console.log(response)
-
         const newHR = this.formatHR(response.data)
-        console.log(response.data)
 
         const hrBackups = this.backups.getValue()
         const backupIndex = hrBackups.findIndex(
@@ -657,7 +654,6 @@ export class HumanResourceService {
       })
       .then((data) => {
         console.log(data.data)
-
         return data.data
       })
   }

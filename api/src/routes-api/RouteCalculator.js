@@ -146,7 +146,6 @@ export default class RouteCalculator extends Route {
     }))
 
     console.timeEnd('calculator-8')
-    console.log('Dates : ', dateStart, dateStop)
 
     this.sendOk(ctx, { fonctions, list })
   }

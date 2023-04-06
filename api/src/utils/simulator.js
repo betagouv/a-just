@@ -69,8 +69,6 @@ export function mergeSituations (situationFiltered, situation, categories, categ
       if (x.id === 2) situationFiltered.etpFon = situation.etpFon
       if (x.id === 3) situationFiltered.etpCont = situation.etpCont
       if (situation.endSituation) {
-        console.log(JSON.stringify(situationFiltered.endSituation.monthlyReport))
-
         situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
         if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
         if (x.id === 2) situationFiltered.endSituation.etpFon = situation.endSituation.etpFon
@@ -79,7 +77,6 @@ export function mergeSituations (situationFiltered, situation, categories, categ
     }
   })
 
-  console.log(situationFiltered)
   situationFiltered = {
     ...situationFiltered,
     etpMag: etpMagAccess ? situationFiltered.etpMag : 0,
@@ -178,26 +175,19 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
 
-  //console.log('lasts act', lastActivities.length, lastActivities)
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
-    console.log({ sorties: sumBy(val, 'sorties') })
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
-  console.log('LOCKED', summedlastActivities)
-  //console.log('ltmpTotalIn', Object.keys(tmpTotalIn).length, Object.keys(tmpTotalIn), tmpTotalIn)
-  console.log('Value to compute mean : ', Object.keys(summedlastActivities).length, Object.keys(summedlastActivities), summedlastActivities)
-  //console.log('End result entree', Math.floor(meanBy(lastActivities, 'entrees')), Math.floor(meanBy(tmpTotalIn, 'entrees')))
   // calcul des entrées/sorties sur les 12 derniers mois
   let totalIn = meanBy(summedlastActivities, 'entrees') || 0
   let totalOut = meanBy(summedlastActivities, 'sorties') || 0
 
-  console.log('Check total out', meanBy(summedlastActivities, 'sorties'), ' Precise', Math.floor(meanBy(summedlastActivities, 'sorties')))
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
 
-  console.log('To compare totalIn : ', totalIn)
-  console.log('To compare totalOut : ', totalOut)
-  console.log('To compare lastStock : ', lastStock)
+  //console.log('To compare totalIn : ', totalIn)
+  //console.log('To compare totalOut : ', totalOut)
+  //console.log('To compare lastStock : ', lastStock)
 
   let realTimePerCase = undefined
   let DTES = undefined
@@ -224,9 +214,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
   else {
     // Compute etpAffected & etpMag today (on specific date) to display & output
     etpAffectedToday = await getHRPositions(hr, referentielId, categories)
-    // console.log(etpAffectedToday)
+
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
-    // console.log('ETPMAG 1', referentielId, etpMag)
 
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
@@ -235,7 +224,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
-    // console.log('realTimePerCase', realTimePerCase)
+
+    /**
     console.log(
       'To compare realTimePerCase : ',
       realTimePerCase,
@@ -244,10 +234,11 @@ export async function getSituation (referentielId, hr, allActivities, categories
       'Total out used :',
       totalOut
     )
+    */
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-    console.log('To compare final totalOut : ', totalOut, 'Tmd used : ', realTimePerCase, 'ETP used : ', selectedCategoryId === 1 ? etpMag : etpFon)
+    //console.log('To compare final totalOut : ', totalOut, 'Tmd used : ', realTimePerCase, 'ETP used : ', selectedCategoryId === 1 ? etpMag : etpFon)
 
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
@@ -266,7 +257,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute realCoverage & realDTESInMonths using last available stock
     Coverage = computeCoverage(totalOut, totalIn)
-    console.log('To compare computeCoverage :', Coverage, totalOut, totalIn)
+    //console.log('To compare computeCoverage :', Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
 
     if (checkIfDateIsNotToday(dateStart)) {
@@ -326,7 +317,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
       )
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn)
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
-      console.log({ monthlyReport: monthlyReport[2] })
 
       endSituation = {
         totalIn,
@@ -401,6 +391,7 @@ function computeDTES (lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+  /**
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
@@ -416,6 +407,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
   })
+   */
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
   let stock = Math.floor(
@@ -495,7 +487,6 @@ export async function getCSActivities (referentielId, allActivities) {
       },
       ['desc']
     )
-    console.log('FTP:', dateStart, dateStop, lastActivities)
 
     const startDateCs = month(lastActivities.length ? lastActivities[lastActivities.length - 1].periode : new Date())
     const endDateCs = month(lastActivities.length ? lastActivities[0].periode : new Date(), 0, 'lastday')
@@ -560,7 +551,6 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
   let emptyList = new Object({})
 
   emptyList = { ...getRangeOfMonthsAsObject(date, dateStop, true) }
-  console.log('&&&&', emptyList)
   Object.keys(emptyList).map((x) => {
     emptyList[x] = {
       ...{
@@ -816,8 +806,6 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
       }
       if (x === 'totalOut') {
         if ((simulation.etpMag || simulation.etpFon) && simulation.magRealTimePerCase) {
-          console.log('Sim=>', simulation.etpMag, simulation.magRealTimePerCase)
-
           if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
             simulation.totalOut = Math.floor(
               Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
@@ -903,7 +891,6 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix) 
           ) / 100
       }
     })
-    console.log(simulation)
   } while (
     !(
       simulation.totalIn !== undefined &&

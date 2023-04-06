@@ -81,7 +81,6 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < list.length; i++) {
       const ref = list[i]
-      //console.log(ref)
       let parentId = null
       for (let i = minLevel - 1; i <= nbLevel; i++) {
         if (i === minLevel - 1) {

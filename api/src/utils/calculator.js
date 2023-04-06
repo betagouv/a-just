@@ -83,8 +83,6 @@ export const emptyCalulatorValues = (referentiels) => {
  * @returns
  */
 export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
-  console.log('syncCalculatorDatas')
-  console.log('list hr', hr.map((h) => `${h.firstName} ${h.lastName}`).join(', '))
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
@@ -278,7 +276,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
     //
     if (nextDateFinded) {
-      //console.log(hr.id, nextDateFinded, now)
       if (nextDateFinded.getTime() > dateStop.getTime()) {
         nextDateFinded = new Date(dateStop)
         nextDateFinded.setDate(nextDateFinded.getDate() + 1)
@@ -293,19 +290,15 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
       // quick move to the next date
       now = new Date(nextDateFinded)
-      // console.log(nextDateFinded)
     } else {
       now.setDate(now.getDate() + 1)
     }
   } while (now.getTime() <= dateStop.getTime())
 
-  if (hr.id === 2611) console.log(now)
-
   if (nbDay === 0) {
     nbDay = 1
   }
 
-  if (hr.id === 2612) console.log('nombre de jour : ', nbDay, nbDaysGone, dateStart, dateStop, hr.dateEnd, hr.dateStart)
   // format render
   for (const property in list) {
     list[property].etpt = list[property].etpt / nbDay

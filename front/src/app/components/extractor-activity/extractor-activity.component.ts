@@ -171,12 +171,10 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
-    //console.log(act.contentieux.code_import)
     const sortCodeArray = act.contentieux.code_import
       .split('.').filter((y : String) => y !== '').map((x: string) => x==='0'? 0.1 : Number(x))
 
       const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x=>x.id).includes(act.idReferentiel)===true ? true: false
-      console.log(this.humanResourceService.contentieuxReferentielOnly.value)
     return {
       [' ']: ref===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
@@ -218,7 +216,6 @@ export class ExtractorActivityComponent extends MainClass {
    */
   sortByCodeImport(sumTab: any) {
     sumTab = orderBy(sumTab, ['codeUnit', 'codeCent'], ['asc'])
-    //console.log(sumTab)
     sumTab.forEach(function (v: any) {
       delete v['codeUnit']
       delete v['codeCent']

@@ -33,7 +33,6 @@ module.exports = {
       })
     }
 
-    console.log(findAllMTIT)
     const findAllMPLACADD = await models.HRFonctions.findAll({
       where: {
         code: ['VP PLACÉ', 'J. PLACÉ'],

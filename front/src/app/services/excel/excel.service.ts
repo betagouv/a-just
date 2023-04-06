@@ -92,7 +92,6 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
-    console.log(this.dateStart.getValue())
     return this.serverService
       .post(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -210,11 +209,8 @@ export class ExcelService extends MainClass {
       const data = await file.arrayBuffer()
       let wb = xlsx.read(data)
       const worksheet = xlsx.utils.json_to_sheet(this.data, {})
-      console.log(worksheet)
 
       wb.Sheets[wb.SheetNames[0]] = worksheet
-      //const ws = wb.Sheets[wb.SheetNames[0]]
-      //xlsx.utils.book_append_sheet(wb, ws, 'Onglet 1')
 
       const excelBuffer: any = xlsx.write(wb, {
         bookType: 'xlsx',
@@ -227,7 +223,5 @@ export class ExcelService extends MainClass {
       })
       FileSaver.saveAs(datas, filename + EXCEL_EXTENSION)
     })
-
-    console.log(file.name)
   }
 }

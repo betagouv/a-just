@@ -1,0 +1,195 @@
+@import "../../../styles/utils.scss";
+
+
+:host {
+  display: flex;
+  width: calc(100% - 32px);
+  margin-left: 16px;
+  border-radius: 4px;
+  margin-top: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  min-height: 140px;
+  background-color: white;
+
+  &:last-child {
+    margin-bottom: 16px;
+  }
+
+  .activities {
+    flex-direction: column;
+    display: flex;
+    padding: 8px 0px;
+
+    .space {
+      flex: 1;
+      min-height: 16px;
+    }
+  }
+
+  .actions {
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    a {
+      padding: 16px;
+      color: fColor(titleEtpGraph);
+      cursor: pointer;
+    }
+  }
+}
+
+
+.profil {
+  width: 370px;
+
+  &.item {
+    display: flex;
+
+    .text {
+      flex: 1;
+      padding: 8px 24px 8px 24px;
+      display: flex;
+      flex-direction: column;
+      //justify-content: space-between;
+      text-decoration: none;
+
+      .name {
+        margin-bottom: 8px;
+        display: flex;
+
+        p {
+          font-weight: bold;
+          //color: fColor(titleSelect);
+          flex: 1;
+          color: #161616;
+        }
+
+        .tooltip {
+          margin-left: 8px;
+          position: relative;
+
+          &:hover .tooltiptext {
+            visibility: visible;
+          }
+
+          mat-icon {
+            color: fColor(borderProgressBar);
+          }
+
+          .tooltiptext {
+            visibility: hidden;
+            background-color: fColor(borderProgressBar);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            top: -5px;
+            left: 105%;
+          }
+        }
+      }
+
+      .tags {
+        margin-bottom: 8px;
+
+        > p {
+          display: inline-block;
+          height: 24px;
+          padding: 2px 8px;
+          border-radius: 40px;
+          font-size: 12px;
+          margin-right: 8px;
+          margin-bottom: 4px;
+
+          &.function {
+            color: white;
+            background-color: fColor(cbluelight);
+
+            mat-icon {
+              color: fColor(white);
+            }
+          }
+
+          &.etp {
+            color: fColor(cblack);
+            background-color: fColor(cgrayDefault);
+
+            mat-icon {
+              color: fColor(cblack);
+            }
+          }
+
+          &.unavailable {
+            font-size: 14px;
+
+            mat-icon {
+              font-size: 17px;
+              height: 17px;
+              width: 17px;
+            }
+          }
+
+          mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            position: relative;
+            top: 3px;
+          }
+        }
+      }
+
+      .updated-at {
+        font-size: 12px;
+        line-height: 20px;
+        color: fColor(grayRow);
+      }
+    }
+
+    .read-etp {
+      width: 100px !important;
+      background-color: fColor(bgSelect);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+
+      .label {
+        margin: 16px 0px 8px 0px;
+        font-size: 14px;
+        color: fColor(cgreen);
+      }
+    }
+  }
+}
+
+.activities {
+  flex: 1;
+}
+
+.empty-element {
+  flex: 1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("/assets/images/placeholder_agent.svg");
+}
+
+.unavailable {
+  color: fColor(titleIndisponibilitiesPanel);
+  margin-bottom: 8px;
+
+  mat-icon {
+    color: fColor(titleIndisponibilitiesPanel);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    position: relative;
+    top: 5px;
+  }
+}

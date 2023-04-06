@@ -64,9 +64,9 @@
             <div class="taux-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="taux"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
                   <aj-speedometer class="with-auto small-text"
-                    [classTextBlue]="!showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday ? true : false"
+                    [classTextBlue]="!showReelValues && ref.totalAffected !== ref.etpUseToday ? true : false"
                     [classDarkMode]="true"
                     [percent]="showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage">
                   </aj-speedometer>
@@ -76,7 +76,7 @@
             <div class="dtes-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
                 <div class="dtes"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
                   <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
               </ng-template>
@@ -135,7 +135,7 @@
                   <p>{{ referentielMappingName(ref.label) }}</p>
                 </div>
                 <div class="etp"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected && ref.totalAffected !== ref.etpUseToday}">
+                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
                   <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number:
                     "0.2-2"}}</p>
                 </div>
