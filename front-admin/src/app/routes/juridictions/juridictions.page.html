@@ -1,0 +1,52 @@
+<aj-wrapper title="Liste des juridictions dans la base">
+  <p>Cliquer sur le champ souhaité pour les modifier</p>
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="desc">
+    <ng-container matColumnDef="iElst">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="iElst">I ELST</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.iElst }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="label">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="label">
+        Nom
+      </th>
+      <td mat-cell *matCellDef="let element">{{element.label}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="latitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="latitude">
+        Latitude
+      </th>
+      <td mat-cell *matCellDef="let element" class="cursor-pointer" (click)="onUpdate('latitude', element)">
+        {{element.latitude || '-'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="longitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="longitude">
+        Longitude
+      </th>
+      <td mat-cell *matCellDef="let element" class="cursor-pointer" (click)="onUpdate('longitude', element)">
+        {{element.longitude || '-'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="population">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="population">
+        Population
+      </th>
+      <td mat-cell *matCellDef="let element" class="cursor-pointer" (click)="onUpdate('population', element)">
+        {{element.population || '-'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="enabled">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="enabled">Actif</th>
+      <td mat-cell *matCellDef="let element" class="cursor-pointer" (click)="onUpdate('enabled', element)">
+        {{element.enabled ? 'Oui' : 'Non'}}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>

@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize'
-import { controlPassword, validateEmail } from '../../utils/utils'
-import { crypt } from '../../utils'
+import { validateEmail } from '../../utils/utils'
 
 const tableName = 'Users'
 
@@ -52,6 +51,10 @@ export default (sequelizeInstance) => {
       },
       fonction: {
         type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       created_at: {
