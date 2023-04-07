@@ -8,6 +8,10 @@
     min-height: inherit;
   }
 
+  &.small .popup > div {
+    width: 60%;
+  }
+
   &.large .popup > div {
     width: 80%;
   }
