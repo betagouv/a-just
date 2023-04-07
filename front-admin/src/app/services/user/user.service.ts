@@ -43,4 +43,8 @@ export class UserService {
   updateUser(params = {}): Promise<any> {
     return this.serverService.post('users/update-account', params);
   }
+
+  deleteUser(userId: number) : Promise<any> {
+    return this.serverService.delete(`users/remove-account/${userId}`)
+  }
 }
