@@ -6,5 +6,15 @@ export default (sequelizeInstance, Model) => {
     })
   }
 
+  Model.getAllVisibles = () => {
+    return Model.findAll({
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      where: {
+        enabled: true,
+      },
+      order: [['label', 'asc']],
+    })
+  }
+
   return Model
 }

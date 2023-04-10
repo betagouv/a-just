@@ -16,6 +16,15 @@ export default class RouteJuridictions extends Route {
   /**
    * Interface qui retourne toutes les juridictions
    */
+  @Route.Get()
+  async getAllVisibles (ctx) {
+    const list = await this.model.getAllVisibles()
+    this.sendOk(ctx, list)
+  }
+
+  /**
+   * Interface qui retourne toutes les juridictions
+   */
   @Route.Get({
     accesses: [Access.isAdmin],
   })

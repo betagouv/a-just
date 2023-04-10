@@ -14,4 +14,5 @@ export const environment = {
   version: packageJSON.version,
   matomo: 261,
   forceSSL: true,
+  mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w'
 };
