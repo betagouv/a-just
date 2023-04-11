@@ -6,6 +6,7 @@ import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
+import { today } from '../utils/date'
 
 /**
  * Route des fiches
@@ -224,6 +225,8 @@ export default class RouteHumanResources extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+
+    date = today(date)
 
     console.time('step1')
     let hr = await this.model.getCache(backupId)
