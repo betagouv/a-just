@@ -106,7 +106,7 @@ export default class RouteUsers extends Route {
   async removeAccountTest (ctx) {
     const { id } = ctx.params
 
-    if (await this.model.removeAccountTest(id)) {
+    if (await this.model.removeAccount(id, { force: true })) {
       this.sendOk(ctx, 'Ok')
     } else {
       ctx.throw(401, ctx.state.__('Code non valide!'))
