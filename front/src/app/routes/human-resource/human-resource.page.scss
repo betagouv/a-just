@@ -53,10 +53,11 @@
 }
 
 add-ventilation {
-  margin: 24px auto;
+  margin: 24px auto 60px auto;
 
   &:not(.empty-user) {
     position: fixed;
+    margin: 24px auto;
     z-index: 101;
     top: 0;
     bottom: 0;
@@ -103,7 +104,7 @@ add-ventilation {
   margin: 8px 0;
 
   > indispo-profil {
-    width: 304px;
+    width: 438px;
     margin-right: 8px;
   }
 

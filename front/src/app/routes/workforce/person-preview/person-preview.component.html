@@ -17,7 +17,7 @@
 
         <div *ngIf="hr.comment" class="tooltip">
           <mat-icon>message</mat-icon>
-          <span class="tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
+          <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
         </div>
       </div>
       <div class="tags">

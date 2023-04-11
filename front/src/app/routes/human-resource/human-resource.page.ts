@@ -896,10 +896,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
+    this.onEditIndex = null
+
     // console.log(returnValue, this.histories.length, this.onEditIndex)
     if (returnValue) {
       // force to not show on boarding after delete last situation
-      this.onEditIndex = null
       this.onLoad(returnValue)
     }
   }
@@ -947,6 +948,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Enregistrer une nouvelle situation',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'fix-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Corriger une fiche préexistante',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
           subTitle: "Qu'est-ce que c'est ?",
         })
         break
