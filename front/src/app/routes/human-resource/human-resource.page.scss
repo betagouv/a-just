@@ -20,9 +20,10 @@
 
 .panel-hsitory-group {
   margin: 16px auto;
+  max-width: 894px;
   background-color: white;
   border-radius: 8px;
-  width: fit-content;
+  padding-bottom: 8px;
 
   &.futur {
     background-color: fColor(cgrayDefault);

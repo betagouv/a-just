@@ -461,7 +461,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       (a) => a.dateStop && a.dateStop.getTime() < today().getTime()
     )
     this.historiesOfTheFutur = this.histories.filter(
-      (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
+      (a) => a.dateStart && a.dateStart.getTime() > today().getTime()
     )
 
     // find the actuel index of situation
