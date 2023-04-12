@@ -7,7 +7,6 @@ import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay } from '../utils/date'
-import { log } from '../utils/log'
 
 /**
  * Table des utilisateurs
@@ -165,7 +164,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const users = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'email'],
+      attributes: ['id', 'first_name', 'last_name', 'email', 'fonction'],
       raw: true,
     })
     const usersFinded = []
@@ -179,11 +178,27 @@ export default (sequelizeInstance, Model) => {
 
       const nbDays = getNbDay(lastConnexionDate, new Date())
       if (nbDays >= config.nbMaxDayCanBeInactive) {
-        usersFinded.push({ name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''), email: users[i].email, nbDays })
+        usersFinded.push({
+          name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''),
+          email: users[i].email,
+          fonction: users[i].fonction || '',
+          juridictions: (await Model.models.HRBackups.list(users[i].id)).map((t) => t.label),
+          nbDays,
+        })
       }
     }
 
     if (usersFinded.length) {
+      const userCSV = [
+        'prénom nom,email,nb jours,fonction,juridictions,',
+        ...usersFinded.map((u) => `${u.name},${u.email},${u.nbDays},${u.fonction},${u.juridictions.join(' - ')}`),
+      ].join('\n')
+
+      let buff = Buffer.from(userCSV)
+      const options = {
+        attachment: [{ content: buff.toString('base64'), name: 'export.csv' }],
+      }
+
       await sentEmail(
         {
           email: config.supportEmail,
@@ -191,7 +206,8 @@ export default (sequelizeInstance, Model) => {
         TEMPLATE_CRON_USERS_NOT_CONNECTED,
         {
           userList: usersFinded,
-        }
+        },
+        options
       )
     }
   }
