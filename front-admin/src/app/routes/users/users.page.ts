@@ -43,7 +43,7 @@ export class UsersPage
   ];
 
   popupDeleteAction = [
-    { id: 'confirm', content: 'Confirmer', fill: true},
+    { id: 'confirm', content: 'Confirmer', fill: true, red: true },
     { id: 'cancel', content: 'Annuler' },
   ]
 
