@@ -89,7 +89,7 @@ export class JuridictionsInstalledPage {
         const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
           .addTo(map)
-        const popup = new mapboxgl.Popup({ offset: 25 }).setText(j.label)
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' personnes' : ''}`)
         m.setPopup(popup)
       })
     })
