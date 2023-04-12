@@ -80,7 +80,6 @@ describe('Test server is ready', () => {
     assert.isOk(userToken, 'response 201 and user token created')
   })
 
-  console.log('USER_TOKEN_00:', userToken)
   routeIndex()
   routeUser(userToken, adminToken)
   //routeChangeUserData()
