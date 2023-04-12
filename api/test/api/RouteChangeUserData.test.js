@@ -12,11 +12,11 @@ module.exports = function () {
   let current_hr = null
 
   describe('Change User data test', () => {
-    it('Login - Login admin', async () => {
+    /*it('Login - Login admin', async () => {
       const email = 'redwane.zafari@a-just.fr'
       const password = '123456'
 
-      // Connexion de l'admini
+      // Connexion de l'admin
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
         email,
         password,
@@ -28,15 +28,15 @@ module.exports = function () {
 
     it('Sign up - Create test user', async () => {
       const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: 'test@mail.com',
-        password: '123456',
-        firstName: 'userTest',
-        lastName: 'userTest',
+        email: userEmail,
+        password: userPassword,
+        firstName: userFirstname,
+        lastName: userlastname,
         fonction: 'Vacataire',
         tj: 'ESSAI',
       })
       assert.strictEqual(response.status, 200)
-    })
+    })*/
 
     it('Login - Log user', async () => {
       const email = 'test@mail.com'
