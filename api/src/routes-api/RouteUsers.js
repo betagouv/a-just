@@ -119,8 +119,7 @@ export default class RouteUsers extends Route {
       } else {
         ctx.throw(401, ctx.state.__('Code non valide!'))
       }
-    }
-    ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))
+    } else ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))
   }
 
   /**
@@ -136,17 +135,16 @@ export default class RouteUsers extends Route {
       where: { id: id },
     })
 
-    /*if (user) {
+    if (user) {
       if (ctx.state.user.id === user.id || user.role === USER_ROLE_SUPER_ADMIN || ctx.state.user.role !== USER_ROLE_ADMIN)
-        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))*/
+        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))
 
-    if (await this.model.removeAccount(id)) {
-      this.sendOk(ctx, 'Ok')
-    } else {
-      ctx.throw(401, ctx.state.__('Code non valide!'))
-    }
-    /*}
-    ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))*/
+      if (await this.model.removeAccount(id, {})) {
+        this.sendOk(ctx, 'Ok')
+      } else {
+        ctx.throw(401, ctx.state.__('Code non valide!'))
+      }
+    } else ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))
   }
 
   /**

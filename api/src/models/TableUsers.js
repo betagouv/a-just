@@ -7,6 +7,7 @@ import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay } from '../utils/date'
+import { log } from '../utils/log'
 
 /**
  * Table des utilisateurs
