@@ -6,7 +6,7 @@ import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHAN
 import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
-import { getNbDay } from '../utils/date'
+import { getNbDay, humanDate } from '../utils/date'
 
 /**
  * Table des utilisateurs
@@ -164,34 +164,45 @@ export default (sequelizeInstance, Model) => {
     }
 
     const users = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'email', 'fonction'],
+      attributes: ['id', 'first_name', 'last_name', 'email', 'fonction', 'created_at'],
       raw: true,
     })
     const usersFinded = []
 
     for (let i = 0; i < users.length; i++) {
+      const juridictions = (await Model.models.HRBackups.list(users[i].id)).map((t) => t.label)
       const lastLog = await Model.models.Logs.findLastLog(users[i].id, USER_AUTO_LOGIN, { userId: users[i].id })
-      let lastConnexionDate = new Date(2023, 2, 1) // date fictive base sur la date de mise en prod
-      if (lastLog) {
-        lastConnexionDate = new Date(lastLog.createdAt)
+      let lastConnexionDate = null
+
+      const userInfos = {
+        name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''),
+        email: users[i].email,
+        fonction: users[i].fonction || '',
+        created_at: users[i].created_at,
+        juridictions,
       }
 
-      const nbDays = getNbDay(lastConnexionDate, new Date())
-      if (nbDays >= config.nbMaxDayCanBeInactive) {
+      if (!lastLog) {
         usersFinded.push({
-          name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''),
-          email: users[i].email,
-          fonction: users[i].fonction || '',
-          juridictions: (await Model.models.HRBackups.list(users[i].id)).map((t) => t.label),
-          nbDays,
+          ...userInfos,
+          nbDays: 'jamais',
         })
+      } else if (lastLog) {
+        lastConnexionDate = new Date(lastLog.createdAt)
+        const nbDays = getNbDay(lastConnexionDate, new Date())
+        if (lastConnexionDate === null && nbDays >= config.nbMaxDayCanBeInactive) {
+          usersFinded.push({
+            ...userInfos,
+            nbDays: nbDays + ' jours',
+          })
+        }
       }
     }
 
     if (usersFinded.length) {
       const userCSV = [
-        'prénom nom,email,nb jours,fonction,juridictions,',
-        ...usersFinded.map((u) => `${u.name},${u.email},${u.nbDays},${u.fonction},${u.juridictions.join(' - ')}`),
+        'prénom nom,email,nb jours,date de creation de compte,fonction,juridictions,date de creation,',
+        ...usersFinded.map((u) => `${u.name},${u.email},${u.nbDays},${humanDate(u.created_at)},${u.fonction},${u.juridictions.join(' - ')}`),
       ].join('\n')
 
       let buff = Buffer.from(userCSV)
