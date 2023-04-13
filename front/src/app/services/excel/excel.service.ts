@@ -108,7 +108,6 @@ export class ExcelService extends MainClass {
         const uniqueJur = sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
         const uniqueJurIndex = uniqueJur.map((value, index) => [value, index])
 
-        console.log(this.tabs.onglet2.excelRef)
         const viewModel = {
           agregat: this.tabs.onglet2.excelRef,
           referentiel: data.data.referentiels.map((x: any) => {

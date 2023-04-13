@@ -13,6 +13,7 @@ import {
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { month } from '../utils/date'
+import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
 
 /**
  * Route de la page extrateur
@@ -75,15 +76,30 @@ export default class RouteExtractor extends Route {
     let onglet1 = await computeExtract(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
+    const absenteismeList = []
+
+    const formatedExcelList = flatReferentielsList
+      .filter((elem) => {
+        if (ABSENTEISME_LABELS.includes(elem.label) === false) return true
+        else {
+          absenteismeList.push(elem)
+          return false
+        }
+      })
+      .map((x) => {
+        return x.childrens !== undefined ? { global: getExcelLabel(x, true), sub: null } : { global: null, sub: getExcelLabel(x, false) }
+      })
+
     const excelRef = [
       { global: null, sub: 'ETPT sur la période' },
       { global: null, sub: 'Temps ventilés sur la période' },
-      ...flatReferentielsList.map((x) =>
-        x.childrens !== undefined ? { global: getExcelLabel(x, true), sub: null } : { global: null, sub: getExcelLabel(x, false) }
-      ),
+      ...formatedExcelList,
       { global: null, sub: 'CET de + de 30 jours' },
       { global: 'Absentéisme réintégré (CMO + Congé maternité + CET de - de 30 jours)', sub: null },
       { global: null, sub: 'CET de - de 30 jours' },
+      ...absenteismeList.map((y) => {
+        return { global: null, sub: getExcelLabel(y, false) }
+      }),
     ]
 
     console.time('extractor-7')
@@ -99,8 +115,12 @@ export default class RouteExtractor extends Route {
     const columnSize2 = await autofitColumns(onglet2)
     console.timeEnd('extractor-8')
 
-    console.log(orderBy(flatReferentielsList, 'rank'))
-    console.log(juridictionName.label)
+    console.log(
+      absenteismeList,
+      ...absenteismeList.map((y) => {
+        return { global: null, sub: getExcelLabel(y, false) }
+      })
+    )
 
     const tproxs = await this.models.tproxs.getByTj(new String(juridictionName.label).toUpperCase())
 
