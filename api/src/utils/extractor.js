@@ -66,7 +66,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
  * @param {*} referentiel
  * @returns objet d'ETP
  */
-export const countEtp = (etpAffected, referentiel, isGone = false) => {
+export const countEtp = (etpAffected, referentiel) => {
   let counterEtpTotal = 0
   let counterEtpSubTotal = 0
   let counterIndispo = 0
@@ -74,23 +74,11 @@ export const countEtp = (etpAffected, referentiel, isGone = false) => {
 
   Object.keys(etpAffected).map((key) => {
     if (referentiel.childrens !== undefined) {
-      //if (etpAffected[key].nbDaysGone === 0) {
-
       counterEtpTotal += etpAffected[key].etpt
       counterReelEtp = counterReelEtp < etpAffected[key].reelEtp ? etpAffected[key].reelEtp : counterReelEtp
-      //}
-      //else {
-      //counterEtpTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-      //counterReelEtp += (etpAffected[key].reelEtp * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-      //}
     } else {
-      //if (etpAffected[key].nbDaysGone === 0) {
       counterEtpSubTotal += etpAffected[key].etpt
       counterIndispo += etpAffected[key].indispo
-      //} else {
-      //counterEtpSubTotal += (etpAffected[key].etpt * etpAffected[key].nbDay) / (etpAffected[key].nbDaysGone + etpAffected[key].nbDay)
-      //counterIndispo += (etpAffected[key].indispo * etpAffected[key].nbDay) / (etpAffected[key].nbDay - etpAffected[key].nbDaysGone)
-      //}
     }
   })
 
