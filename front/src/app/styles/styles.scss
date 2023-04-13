@@ -101,3 +101,9 @@ body {
 body:not(.iIOS) .window-scrool-width-margin {
 	margin-right: 10px;
 }
+
+// global vars
+
+.global-tooltiptext * {
+	color: white;
+}

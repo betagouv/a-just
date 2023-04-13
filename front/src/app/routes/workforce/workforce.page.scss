@@ -207,20 +207,6 @@
   }
 }
 
-.unavailable {
-  color: fColor(titleIndisponibilitiesPanel);
-  margin-bottom: 8px;
-
-  mat-icon {
-    color: fColor(titleIndisponibilitiesPanel);
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    position: relative;
-    top: 5px;
-  }
-}
-
 .work-time {
   width: 80px;
   margin-right: 16px;

@@ -1,7 +1,7 @@
 @import '../../styles/utils.scss';
 
 .wrapper-content {
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0 16px 16px 16px;
   overflow: auto;
 }
@@ -20,9 +20,10 @@
 
 .panel-hsitory-group {
   margin: 16px auto;
+  max-width: 894px;
   background-color: white;
   border-radius: 8px;
-  width: fit-content;
+  padding-bottom: 8px;
 
   &.futur {
     background-color: fColor(cgrayDefault);
@@ -53,10 +54,11 @@
 }
 
 add-ventilation {
-  margin: 24px auto;
+  margin: 24px auto 60px auto;
 
   &:not(.empty-user) {
     position: fixed;
+    margin: 24px auto;
     z-index: 101;
     top: 0;
     bottom: 0;
@@ -103,7 +105,7 @@ add-ventilation {
   margin: 8px 0;
 
   > indispo-profil {
-    width: 304px;
+    width: 438px;
     margin-right: 8px;
   }
 

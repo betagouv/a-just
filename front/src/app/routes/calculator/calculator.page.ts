@@ -8,7 +8,6 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { AppService } from 'src/app/services/app/app.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -125,7 +124,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private appService: AppService,
     private userService: UserService
   ) {
     super()
@@ -191,8 +189,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
           (r) =>
-            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-            this.referentielService.idsSoutien.indexOf(r.id) === -1
+            this.referentielService.idsIndispo.indexOf(r.id) === -1
         )
 
         if (this.referentielIds.length === 0) {

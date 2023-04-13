@@ -425,6 +425,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       case 'export-with-comment':
         this.askExportAsPdf(htmlComment)
         break
+      default:
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+        break;
     }
 
     this.promptComment = false

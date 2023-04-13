@@ -43,6 +43,7 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async filterList (ctx) {
+    console.log('\n\n\n\n\n\n\n\n\n\n--------- FilterList -------- \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
 
     if (!selectedFonctionsIds) {

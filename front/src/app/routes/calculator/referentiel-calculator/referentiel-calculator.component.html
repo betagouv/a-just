@@ -7,30 +7,36 @@
     </div>
     <div class="item actual">
         <div [ngClass]="{ selected: sortBy === 'totalIn' }">
-            <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">
-                <div>
-                    <p #tooltip="matTooltip"
-                        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
-                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-                        floor(calculator.totalIn) }}</p>
-                </div>
+            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+                <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">
+                    <div>
+                        <p #tooltip="matTooltip"
+                            [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
+                            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                            floor(calculator.totalIn) }}</p>
+                    </div>
+                </ng-template>
             </ng-template>
         </div>
         <div [ngClass]="{ selected: sortBy === 'totalOut' }">
-            <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">
-                <div>
-                    <p #tooltip="matTooltip"
-                        [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
-                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-                        floor(calculator.totalOut) }}</p>
-                </div>
+            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+                <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">
+                    <div>
+                        <p #tooltip="matTooltip"
+                            [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
+                            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                            floor(calculator.totalOut) }}</p>
+                    </div>
+                </ng-template>
             </ng-template>
         </div>
         <div [ngClass]="{ selected: sortBy === 'lastStock' }">
-            <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
-                <div>
-                    <p>{{ calculator.lastStock }}</p>
-                </div>
+            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+                <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
+                    <div>
+                        <p>{{ calculator.lastStock }}</p>
+                    </div>
+                </ng-template>
             </ng-template>
         </div>
         <div *ngIf="canViewMagistrat" [ngClass]="{
@@ -56,7 +62,7 @@
         </div>
     </div>
     <div class="item activity">
-        <div>
+        <div *ngIf="!isSoutien(calculator.contentieux.id)">
             <div [ngClass]="{ selected: sortBy === 'realCoverage' }">
                 <div class="block">
                     <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
@@ -101,7 +107,7 @@
         </div>
     </div>
     <div class="item calculate">
-        <div>
+        <div *ngIf="!isSoutien(calculator.contentieux.id)">
             <div [ngClass]="{ selected: sortBy === 'magCalculateCoverage' }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">

@@ -19,6 +19,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          required: true,
           model: Model.models.ContentieuxReferentiels,
         },
       ],
@@ -54,7 +55,6 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < indisponibilities.length; i++) {
       const indispo = indisponibilities[i]
-      console.log(indispo)
 
       const options = {
         nac_id: indispo.contentieux.id,

@@ -8,7 +8,7 @@ import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ON
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
-import { USER_ROLE_SUPER_ADMIN } from '../constants/roles'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
 /**
  * Route de la gestion des utilisateurs
@@ -106,11 +106,20 @@ export default class RouteUsers extends Route {
   async removeAccountTest (ctx) {
     const { id } = ctx.params
 
-    if (await this.model.removeAccountTest(id)) {
-      this.sendOk(ctx, 'Ok')
-    } else {
-      ctx.throw(401, ctx.state.__('Code non valide!'))
-    }
+    const user = this.model.findOne({
+      where: { id: id },
+    })
+
+    if (user) {
+      if (ctx.state.user.id === user.id || user.role === USER_ROLE_SUPER_ADMIN || ctx.state.user.role !== USER_ROLE_ADMIN)
+        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))
+
+      if (await this.model.removeAccount(id, { force: true })) {
+        this.sendOk(ctx, 'Ok')
+      } else {
+        ctx.throw(401, ctx.state.__('Code non valide!'))
+      }
+    } else ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))
   }
 
   /**
@@ -122,12 +131,20 @@ export default class RouteUsers extends Route {
   })
   async removeAccount (ctx) {
     const { id } = ctx.params
+    const user = this.model.findOne({
+      where: { id: id },
+    })
 
-    if (await this.model.removeAccount(id)) {
-      this.sendOk(ctx, 'Ok')
-    } else {
-      ctx.throw(401, ctx.state.__('Code non valide!'))
-    }
+    if (user) {
+      if (ctx.state.user.id === user.id || user.role === USER_ROLE_SUPER_ADMIN || ctx.state.user.role !== USER_ROLE_ADMIN)
+        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))
+
+      if (await this.model.removeAccount(id, {})) {
+        this.sendOk(ctx, 'Ok')
+      } else {
+        ctx.throw(401, ctx.state.__('Code non valide!'))
+      }
+    } else ctx.throw(401, ctx.state.__('Utilisateur non trouvé'))
   }
 
   /**
@@ -167,8 +184,6 @@ export default class RouteUsers extends Route {
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
     }
-
-    console.log('user connected', ctx.body.user)
 
     try {
       await this.model.updateAccount(this.body(ctx))

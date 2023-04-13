@@ -51,6 +51,10 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
    * Show component is visible
    */
   showComponent: boolean = false
+  /**
+   * Timeout to folow update of component
+   */
+  intervalCatcher: any = null
 
   /**
    * Constructeur
@@ -68,6 +72,10 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
         'scroll',
         this.checkScrollEvent.bind(this)
       )
+
+      this.intervalCatcher = setInterval(() => {
+        this.checkScrollEvent()
+      }, 300)
 
       this.checkScrollEvent()
     }
@@ -90,6 +98,11 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
         this.checkScrollEvent.bind(this),
         true
       )
+    }
+
+    if(this.intervalCatcher) {
+      clearInterval(this.intervalCatcher)
+      this.intervalCatcher = null
     }
   }
 

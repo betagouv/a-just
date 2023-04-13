@@ -83,7 +83,7 @@ export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    console.log(referentielId, date, hr)
+    // console.log(referentielId, date, hr)
     const activitiesFiltred = await (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
