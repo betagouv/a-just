@@ -11,6 +11,7 @@ import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 import { setTimeToMidDay } from 'src/app/utils/dates'
 import { Renderer } from 'xlsx-renderer'
+import { map, sortBy, uniq } from 'lodash'
 
 /**
  * Excel file details
@@ -101,13 +102,37 @@ export class ExcelService extends MainClass {
       })
       .then((data) => {
         this.tabs = data.data
-        const keys = Object.keys(this.tabs.onglet1.values[0])
+        const keys1 = Object.keys(this.tabs.onglet1.values[0])
+        const keys2 = Object.keys(this.tabs.onglet2.values[0])
 
+        const uniqueJur = sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
+        const uniqueJurIndex = uniqueJur.map((value, index) => [value, index])
+
+        console.log(this.tabs.onglet2.excelRef)
         const viewModel = {
-          subtitles: [...Array(keys.length - 6 || 0)],
-          days: keys,
+          agregat: this.tabs.onglet2.excelRef,
+          referentiel: data.data.referentiels.map((x: any) => {
+            return {
+              ...x,
+              childrens: [
+                ...x.childrens.map((y: any) => {
+                  return y.label
+                }),
+              ],
+            }
+          }),
+          arrondissement: uniqueJur[0],
+          subtitles: [...Array(keys1.length - 6 || 0)],
+          days: keys1,
           stats: {
             ...this.tabs.onglet1.values.map((item: any) => {
+              return { actions: Object.keys(item).map((key: any) => item[key]) }
+            }),
+          },
+          subtitles1: [...Array(keys2.length - 6 || 0)],
+          days1: keys2,
+          stats1: {
+            ...this.tabs.onglet2.values.map((item: any) => {
               return { actions: Object.keys(item).map((key: any) => item[key]) }
             }),
           },
@@ -116,7 +141,7 @@ export class ExcelService extends MainClass {
         this.appService.alert.next({
           text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
         })
-        
+
         fetch('/assets/template3.xlsx')
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
@@ -126,22 +151,43 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
-            report.worksheets[0].columns = [
-              { width: 5 },
-              ...this.tabs.onglet1.columnSize,
-            ]
-            
-            report.worksheets[1].insertRows(4,new Array(['',...Object.keys(this.tabs.onglet2.values[0])].map((x)=> x)), 'i+') //report.worksheets[0].getSheetValues().slice(3,4)
+            report.worksheets[3].insertRows(1, uniqueJurIndex, 'o')
 
-            report.worksheets[1].spliceRows(5,1)
-            report.worksheets[1].insertRows(5,[],'n')
-            report.worksheets[1].spliceRows(3,1)            
+            report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
+            report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
-            report.worksheets[1].insertRows(4,[...this.tabs.onglet2.values.map((item: any) => ['',...Object.keys(item).map((key: any) => item[key])])],'n')
-            report.worksheets[1].columns = [
-              { width: 5 },
-              ...this.tabs.onglet2.columnSize,
-            ]
+            report.worksheets[2].getCell('A' + +2).dataValidation = {
+              type: 'list',
+              allowBlank: false,
+              formulae: ['"' + uniqueJur.join(',') + '"'],
+              error: 'Veuillez selectionner une valeur dans le menu déroulant',
+              prompt: 'je suis un prompteur',
+              showErrorMessage: true,
+              showInputMessage: true,
+            }
+
+            this.tabs.onglet1.values.forEach((element: any, index: number) => {
+              report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
+                {
+                  type: 'list',
+                  allowBlank: true,
+                  formulae: ['"' + uniqueJur.join(',') + '"'],
+                  error:
+                    'Veuillez selectionner une valeur dans le menu déroulant',
+                  //prompt: 'je suis un prompteur',
+                  showErrorMessage: true,
+                  showInputMessage: true,
+                }
+            })
+
+            this.tabs.onglet2.values.forEach((element: any, index: number) => {
+              report.worksheets[1].getCell('I' + (+index + 3)).dataValidation =
+                {
+                  type: 'list',
+                  allowBlank: true,
+                  formulae: ['"M-TIT,M-PLAC-ADD,F-TIT,F-PLAC-ADD,C"'],
+                }
+            })
 
             return report.xlsx.writeBuffer()
           })
@@ -153,38 +199,7 @@ export class ExcelService extends MainClass {
               filename + EXCEL_EXTENSION
             )
           })
-          // Handle errors.
           .catch((err) => console.log('Error writing excel export', err))
-
-        /**
-        this.tabs = data.data
-
-        console.log(this.tabs.onglet1.columnSize)
-        import('xlsx').then((xlsx) => {
-          const worksheet = xlsx.utils.json_to_sheet(this.tabs.onglet1.values, {})
-          worksheet['!cols'] = this.tabs.onglet1.columnSize
-
-          const worksheet1 = xlsx.utils.json_to_sheet(this.tabs.onglet2.values, {})
-          worksheet1['!cols'] = this.tabs.onglet2.columnSize
-
-          const workbook = {Sheets: {},SheetNames: []}
-
-          xlsx.utils.book_append_sheet(workbook, {}, 'NOTICE et COMMENTAIRES')
-          xlsx.utils.book_append_sheet(workbook, worksheet, 'ETPT A-JUST')
-          xlsx.utils.book_append_sheet(workbook, worksheet1, 'ETPT Format DDG')
-
-          const excelBuffer: any = xlsx.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          })
-
-          const filename = this.getFileName()
-          const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
-          this.appService.alert.next({
-            text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-          })
-          FileSaver.saveAs(data, filename + EXCEL_EXTENSION)
-        }) */
       })
   }
 

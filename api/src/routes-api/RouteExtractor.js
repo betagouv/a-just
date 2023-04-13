@@ -6,6 +6,7 @@ import {
   computeExtract,
   computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
+  getExcelLabel,
   replaceIfZero,
   sortByCatAndFct,
 } from '../utils/extractor'
@@ -74,6 +75,17 @@ export default class RouteExtractor extends Route {
     let onglet1 = await computeExtract(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
+    const excelRef = [
+      { global: null, sub: 'ETPT sur la période' },
+      { global: null, sub: 'Temps ventilés sur la période' },
+      ...flatReferentielsList.map((x) =>
+        x.childrens !== undefined ? { global: getExcelLabel(x, true), sub: null } : { global: null, sub: getExcelLabel(x, false) }
+      ),
+      { global: null, sub: 'CET de + de 30 jours' },
+      { global: 'Absentéisme réintégré (CMO + Congé maternité + CET de - de 30 jours)', sub: null },
+      { global: null, sub: 'CET de - de 30 jours' },
+    ]
+
     console.time('extractor-7')
     let onglet2 = await computeExtractDdg(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-7')
@@ -83,11 +95,21 @@ export default class RouteExtractor extends Route {
     await onglet2.sort((a, b) => sortByCatAndFct(a, b))
     onglet1 = addSumLine(onglet1, categoryFilter)
     onglet2 = addSumLine(onglet2, categoryFilter)
-    const columnSize1 = await autofitColumns(onglet1)
+    const columnSize1 = await autofitColumns(onglet1, true)
     const columnSize2 = await autofitColumns(onglet2)
     console.timeEnd('extractor-8')
 
-    this.sendOk(ctx, { onglet1: { values: onglet1, columnSize: columnSize1 }, onglet2: { values: onglet2, columnSize: columnSize2 } })
+    console.log(orderBy(flatReferentielsList, 'rank'))
+    console.log(juridictionName.label)
+
+    const tproxs = await this.models.tproxs.getByTj(new String(juridictionName.label).toUpperCase())
+
+    this.sendOk(ctx, {
+      referentiels,
+      tproxs,
+      onglet1: { values: onglet1, columnSize: columnSize1 },
+      onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
+    })
   }
 
   @Route.Post({
