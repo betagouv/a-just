@@ -165,7 +165,7 @@ export class ExcelService extends MainClass {
               showInputMessage: true,
             }
 
-            this.tabs.onglet1.values.forEach((element: any, index: number) => {
+            this.tabs.onglet2.values.forEach((element: any, index: number) => {
               report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
                 {
                   type: 'list',

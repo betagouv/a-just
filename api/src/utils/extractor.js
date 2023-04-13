@@ -57,7 +57,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
       }
     }
   }
-  return orderBy(allReferentiels, 'rank')
+  return allReferentiels //orderBy(allReferentiels, 'rank')
 }
 
 /**
@@ -143,7 +143,7 @@ export const addSumLine = (data, selectedCategory) => {
  * @param {*} json
  * @returns object
  */
-export const autofitColumns = (json, firstTab = false) => {
+export const autofitColumns = (json, firstTab = false, len = 10) => {
   if (json.length !== 0) {
     const jsonKeys = Object.keys(json[0])
 
@@ -171,7 +171,7 @@ export const autofitColumns = (json, firstTab = false) => {
 
     if (firstTab)
       return wscols.map((w, index) => {
-        if (index > 10) return { width: 27 }
+        if (index > len) return { width: 27 }
         else return { width: w.width }
       })
 

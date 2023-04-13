@@ -112,15 +112,10 @@ export default class RouteExtractor extends Route {
     onglet1 = addSumLine(onglet1, categoryFilter)
     onglet2 = addSumLine(onglet2, categoryFilter)
     const columnSize1 = await autofitColumns(onglet1, true)
-    const columnSize2 = await autofitColumns(onglet2)
+    const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
 
-    console.log(
-      absenteismeList,
-      ...absenteismeList.map((y) => {
-        return { global: null, sub: getExcelLabel(y, false) }
-      })
-    )
+    console.log(flatReferentielsList)
 
     const tproxs = await this.models.tproxs.getByTj(new String(juridictionName.label).toUpperCase())
 
