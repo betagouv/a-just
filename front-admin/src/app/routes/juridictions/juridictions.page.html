@@ -1,0 +1,21 @@
+<aj-wrapper title="Liste des juridictions dans la base">
+  <p>Cliquer sur le champ souhaité pour les modifier</p>
+  <table (matSortChange)="sortData($event)" matSort>
+    <tr>
+      <th mat-sort-header="iElst">I ELST</th>
+      <th mat-sort-header="label">Nom</th>
+      <th mat-sort-header="latitude">Latitude</th>
+      <th mat-sort-header="longitude">Longitude</th>
+      <th mat-sort-header="population">Population</th>
+      <th mat-sort-header="enabled">Actif</th>
+    </tr>
+
+    <tr *ngFor="let element of datasSource">
+      <td>{{element.iElst}}</td>
+      <td>{{element.label}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('latitude', element)">{{element.latitude || '-'}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('longitude', element)">{{element.longitude || '-'}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('population', element)">{{element.population || '-'}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('enabled', element)">{{element.enabled ? 'Oui' : 'Non'}}</td>
+    </tr>
+  </table>

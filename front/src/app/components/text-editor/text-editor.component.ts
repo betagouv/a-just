@@ -97,7 +97,7 @@ export class TextEditorComponent extends MainClass {
         } else if (source == 'user') {
           if (this.ignoreUpdate === false) {
             // console.log('A user action triggered this change.')
-            this.value = this.quillEditor.root.innerHTML
+            this.value = !(this.quillEditor.root.innerText.trim()) ? '' : this.quillEditor.root.innerHTML
             this.valueChange.emit(this.value)
           } else {
             this.ignoreUpdate = false

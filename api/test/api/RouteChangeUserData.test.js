@@ -5,40 +5,38 @@ import { accessList } from '../../src/constants/access'
 
 module.exports = function () {
   let adminToken = null
-  let adminId = null
   let userToken = null
   let userId = null
   let hrId = null
-  let hrSituationId = null
+  let hrSituationId = []
   let current_hr = null
 
   describe('Change User data test', () => {
-    it('Login - Login admin', async () => {
+    /*it('Login - Login admin', async () => {
       const email = 'redwane.zafari@a-just.fr'
       const password = '123456'
 
-      // Connexion de l'admini
+      // Connexion de l'admin
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
         email,
         password,
       })
       // Récupération du token associé pour l'identifier
       adminToken = response.data.token
-      adminId = response.data.user.id
       assert.strictEqual(response.status, 201)
     })
 
     it('Sign up - Create test user', async () => {
       const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: 'test@mail.com',
-        password: '123456',
-        firstName: 'userTest',
-        lastName: 'userTest',
+        email: userEmail,
+        password: userPassword,
+        firstName: userFirstname,
+        lastName: userlastname,
         fonction: 'Vacataire',
         tj: 'ESSAI',
       })
       assert.strictEqual(response.status, 200)
-    })
+    })*/
 
     it('Login - Log user', async () => {
       const email = 'test@mail.com'
@@ -185,7 +183,7 @@ module.exports = function () {
         }
       )
 
-      hrSituationId = response.data.data.situations[0].id
+      hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -213,7 +211,7 @@ module.exports = function () {
       const now = new Date()
       const dateStart = now.setDate(now.getDate() + 20)
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT' }
 
       const situatiuons = [
         current_hr.situations[0],
@@ -243,7 +241,7 @@ module.exports = function () {
         }
       )
 
-      hrSituationId = response.data.data.situations[0].id
+      hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.strictEqual(response.data.data.situations.length, 2)
@@ -297,7 +295,7 @@ module.exports = function () {
         oldSituation[0],
         {
           ...oldSituation[1],
-          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT' },
+          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: 'M-TIT' },
         },
       ]
 
@@ -322,20 +320,21 @@ module.exports = function () {
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[1].fonction, newSituation[1].fonction)
-      assert.deepEqual({ id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT' }, newSituation[1].fonction)
+      assert.deepEqual(correctedSituation[1].fonction, newSituation[1].fonction)
     })
 
     it('Correct a situation - Change agent Category and Fonction', async () => {
-      const oldSituation = current_hr.situations[0]
+      const oldSituation = current_hr.situations
 
       const hr = {
         ...current_hr,
         situations: [
           {
-            ...oldSituation,
+            ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
-            fonction: { id: 43, rank: 1, code: 'B greffier', label: 'B greffier' },
+            fonction: { id: 43, rank: 1, code: 'B greffier', label: 'B greffier', category_detail: 'F-TIT' },
           },
+          oldSituation[1],
         ],
       }
       const response = await axios.post(
@@ -356,20 +355,21 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation.category, newSituation.category)
       assert.notDeepEqual(oldSituation.fonction, newSituation.fonction)
-      assert.deepEqual({ id: 2, rank: 2, label: 'Fonctionnaire' }, newSituation.category)
-      assert.deepEqual({ id: 43, rank: 1, code: 'B greffier', label: 'B greffier' }, newSituation.fonction)
+      assert.deepEqual(hr.situations[0].category, newSituation.category)
+      assert.deepEqual(hr.situations[0].fonction, newSituation.fonction)
     })
 
     it('Correct a situation - Change one situation etp', async () => {
-      const oldSituation = current_hr.situations[0]
+      const oldSituation = current_hr.situations
 
       const hr = {
         ...current_hr,
         situations: [
           {
-            ...oldSituation,
+            ...oldSituation[0],
             etp: 0.7,
           },
+          oldSituation[1],
         ],
       }
       const response = await axios.post(
@@ -420,12 +420,16 @@ module.exports = function () {
 
     it('Remove created situation', async () => {
       // ⚠️ This route must not be use in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
-      const response = await axios.delete(`${config.serverUrl}/human-resources/remove-situation-test/${hrSituationId}`, {
-        headers: {
-          authorization: adminToken,
-        },
-      })
-      assert.strictEqual(response.status, 200)
+
+      let response = null
+      for (let id of hrSituationId) {
+        response = await axios.delete(`${config.serverUrl}/human-resources/remove-situation-test/${id}`, {
+          headers: {
+            authorization: adminToken,
+          },
+        })
+      }
+      assert.isEmpty(response.data.data.situations)
     })
 
     it('Remove created hr', async () => {

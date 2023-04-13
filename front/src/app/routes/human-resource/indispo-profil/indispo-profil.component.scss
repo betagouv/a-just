@@ -37,7 +37,7 @@
 }
 
 .indispo-content {
-  padding: 17px;
+  padding: 8px;
   margin-top: 0;
 
   .empty {
@@ -49,5 +49,6 @@
   > div {
     margin-right: 0;
     margin-bottom: 4px;
+    display: flex;
   }
 }

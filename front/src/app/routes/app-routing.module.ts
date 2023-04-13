@@ -105,6 +105,13 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'carte-juridictions',
+    loadChildren: () =>
+      import('./juridictions-installed/juridictions-installed.module').then(
+        (mod) => mod.JuridictionsInstalledModule
+      ),
+  },
 ]
 
 @NgModule({

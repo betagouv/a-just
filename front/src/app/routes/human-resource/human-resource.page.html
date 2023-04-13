@@ -2,12 +2,12 @@
   <div class="wrapper-content">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" [onEditIndex]="onEditIndex"
-      [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
-      [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
-      [fonction]="indexOfTheFuture !== null ? histories[indexOfTheFuture].fonction : null"
-      [category]="indexOfTheFuture !== null ? histories[indexOfTheFuture].category : null" [basicHrInfo]="basicHrInfo"
-      [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()" (onOpenHelpPanel)="openHelpPanel($event)"
-      (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
+      [etp]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].etp : 0"
+      [indisponibilities]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []"
+      [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
+      [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
+      [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
+      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
 
     <div class="first-panel" *ngIf="histories.length !== 0">
       <indispo-profil
@@ -64,8 +64,8 @@
       </panel-history-ventilation>
     </div>
 
-    <div class="panel-hsitory-group">
-      <p *ngIf="historiesOfThePast.length" class="title-history">
+    <div *ngIf="historiesOfThePast.length" class="panel-hsitory-group">
+      <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
         antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
         categoryName }}
