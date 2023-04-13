@@ -1,4 +1,4 @@
-import { sortBy, sumBy } from 'lodash'
+import { orderBy, sortBy, sumBy } from 'lodash'
 import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
 import { nbOfDays, nbWorkingDays, setTimeToMidDay, today, workingDay } from './date'
 import { findSituation } from './human-resource'
@@ -57,7 +57,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
       }
     }
   }
-  return allReferentiels
+  return orderBy(allReferentiels, 'rank')
 }
 
 /**
@@ -155,7 +155,7 @@ export const addSumLine = (data, selectedCategory) => {
  * @param {*} json
  * @returns object
  */
-export const autofitColumns = (json) => {
+export const autofitColumns = (json, firstTab = false) => {
   if (json.length !== 0) {
     const jsonKeys = Object.keys(json[0])
 
@@ -180,6 +180,12 @@ export const autofitColumns = (json) => {
     const wscols = objectMaxLength.map((w) => {
       return { width: w }
     })
+
+    if (firstTab)
+      return wscols.map((w, index) => {
+        if (index > 10) return { width: 27 }
+        else return { width: w.width }
+      })
 
     return wscols
   } else return []
@@ -240,7 +246,7 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
 }
 
 export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
-  let onglet1 = []
+  let onglet2 = []
 
   console.time('extractor-5')
   await Promise.all(
@@ -362,31 +368,30 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
       //AJOUTER COLONNE CET DIFFERENCIER PUIS DUPLIQUER LE CALCUL POUR LES 2 ONGLETS
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
-          onglet1.push({
+          onglet2.push({
+            ['Réf.']: String(human.id),
             Arrondissement: juridictionName.label,
-            Juridiction: human.juridiction || juridictionName.label,
-            ['Numéro A-JUST']: human.id,
-            Matricule: Number(human.matricule),
-            Prénom: human.firstName,
+            Juridiction: (human.juridiction || juridictionName.label).toUpperCase(),
             Nom: human.lastName,
+            Prénom: human.firstName,
+            Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            ['Fonction catégorie']: fonctionCategory,
+            ['Code fonction']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
-            ['Temps ventilés sur la période  ']: totalEtpt,
+            ['Temps ventilés sur la période']: totalEtpt,
             ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
-            ['Total indispo sur la période']: refObj[key],
-            ['Absentéisme']: absenteisme,
+            ...refObj,
             ['CET de + de 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ['CET de - de 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-            ...refObj,
+            ['Absentéisme réintégré (CMO + Congé maternité + CET de - de 30 jours)']: absenteisme,
           })
     })
   )
 
-  return onglet1
+  return onglet2
 }
 
 export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
@@ -497,21 +502,21 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({
+            ['Réf.']: String(human.id),
             Arrondissement: juridictionName.label,
-            Juridiction: human.juridiction || juridictionName.label,
-            ['Numéro A-JUST']: human.id,
-            Matricule: Number(human.matricule),
-            Prénom: human.firstName,
             Nom: human.lastName,
+            Prénom: human.firstName,
+            //Juridiction: human.juridiction || juridictionName.label,
+            Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            ['Fonction catégorie']: fonctionCategory,
+            //['Fonction catégorie']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période']: reelEtp,
-            ['Temps ventilés sur la période  ']: totalEtpt,
-            ['Total indispo sur la période']: refObj[key],
-            ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+            ['Temps ventilés sur la période']: totalEtpt,
+            //['Total indispo sur la période']: refObj[key],
+            //['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
           })
     })
