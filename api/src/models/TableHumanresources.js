@@ -253,6 +253,8 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
+    console.log(importSituation)
+
     // remove cache
     cacheJuridictionPeoples = {}
     await Model.onPreload()

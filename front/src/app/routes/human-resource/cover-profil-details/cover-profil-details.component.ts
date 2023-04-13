@@ -66,7 +66,7 @@ export class CoverProfilDetailsComponent
    * Formulaire
    */
   @Input() basicHrInfo: FormGroup | null = null
-  /** 
+  /**
    * Date de début de la situation actuelle
    */
   @Input() dateStart: Date | null = null
@@ -110,21 +110,25 @@ export class CoverProfilDetailsComponent
       this.indisponibility = 1
     }
 
-    const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
-    if (
-      dateEndToJuridiction &&
-      this.dateStart &&
-      dateEndToJuridiction.getTime() <= this.dateStart.getTime()
-    ) {
-      this.timeWorked = 'Parti'
+    if (this.currentHR && this.currentHR.situations.length) {
+      const dateEndToJuridiction =
+        this.currentHR && this.currentHR.dateEnd
+          ? today(this.currentHR.dateEnd)
+          : null
+      if (
+        dateEndToJuridiction &&
+        this.dateStart &&
+        dateEndToJuridiction.getTime() <= this.dateStart.getTime()
+      ) {
+        this.timeWorked = 'Parti'
 
-      // force to memorize last category
-      if(this.currentHR && this.currentHR.situations.length) {
-        this.category = this.currentHR.situations[0].category
+        // force to memorize last category
+        if (this.currentHR && this.currentHR.situations.length) {
+          this.category = this.currentHR.situations[0].category
+        }
+      } else {
+        this.timeWorked = etpLabel(this.etp)
       }
-
-    } else {
-      this.timeWorked = etpLabel(this.etp)
     }
   }
 
@@ -153,7 +157,7 @@ export class CoverProfilDetailsComponent
    * Force to open help panel
    * @param type
    */
-  openHelpPanel(type: string | undefined = undefined) {
+  openHelpPanel(type: string | undefined = undefined) {
     this.onOpenHelpPanel.emit(type)
   }
 
@@ -177,9 +181,12 @@ export class CoverProfilDetailsComponent
         [nodeName]: value,
       })
 
-      const cacheHR = await this.humanResourceService.updatePersonById(this.currentHR, {
-        [nodeName]: value,
-      })
+      const cacheHR = await this.humanResourceService.updatePersonById(
+        this.currentHR,
+        {
+          [nodeName]: value,
+        }
+      )
       this.ficheIsUpdated.emit(cacheHR)
     }
   }

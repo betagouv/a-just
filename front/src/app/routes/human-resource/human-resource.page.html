@@ -64,8 +64,8 @@
       </panel-history-ventilation>
     </div>
 
-    <div class="panel-hsitory-group">
-      <p *ngIf="historiesOfThePast.length" class="title-history">
+    <div *ngIf="historiesOfThePast.length" class="panel-hsitory-group">
+      <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
         antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
         categoryName }}
