@@ -9,7 +9,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.list = async (userId) => {
-    const list = await Model.findAll({
+    const listAll = await Model.findAll({
       attributes: ['id', 'label', ['updated_at', 'date']],
       include: [
         {
@@ -23,12 +23,15 @@ export default (sequelizeInstance, Model) => {
       order: [['label', 'asc']],
       raw: true,
     })
+    const list = []
 
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i].id,
-        label: list[i].label,
-        date: list[i].date,
+    for (let i = 0; i < listAll.length; i++) {
+      if (await Model.models.TJ.isVisible(listAll[i].label)) {
+        list.push({
+          id: listAll[i].id,
+          label: listAll[i].label,
+          date: listAll[i].date,
+        })
       }
     }
 
@@ -114,16 +117,19 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getAll = async () => {
-    const list = await Model.findAll({
+    const listAll = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
       raw: true,
     })
+    const list = []
 
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i].id,
-        label: list[i].label,
-        date: list[i].date,
+    for (let i = 0; i < listAll.length; i++) {
+      if (await Model.models.TJ.isVisible(listAll[i].label)) {
+        list.push({
+          id: listAll[i].id,
+          label: listAll[i].label,
+          date: listAll[i].date,
+        })
       }
     }
 
@@ -141,8 +147,7 @@ export default (sequelizeInstance, Model) => {
       where: {
         id,
       },
-      attributes: ['id'],
-      model: Model.models.HRBackups,
+      attributes: ['id', 'label'],
       include: [
         {
           attributes: ['id'],
@@ -156,7 +161,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    return hr ? true : false
+    return hr && (await Model.models.TJ.isVisible(hr.label)) ? true : false
   }
 
   /**

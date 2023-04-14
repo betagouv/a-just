@@ -9,7 +9,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getUserVentilations = async (userId) => {
-    const list = await Model.findAll({
+    const listAll = await Model.findAll({
       attributes: ['id', 'user_id', 'hr_backup_id'],
       where: {
         user_id: userId,
@@ -22,11 +22,14 @@ export default (sequelizeInstance, Model) => {
       ],
       raw: true,
     })
+    const list = []
 
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i]['HRBackup.id'],
-        label: list[i]['HRBackup.label'],
+    for (let i = 0; i < listAll.length; i++) {
+      if (await Model.models.TJ.isVisible(listAll[i]['HRBackup.label'])) {
+        list.push({
+          id: listAll[i]['HRBackup.id'],
+          label: listAll[i]['HRBackup.label'],
+        })
       }
     }
 
