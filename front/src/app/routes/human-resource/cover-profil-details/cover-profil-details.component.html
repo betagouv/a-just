@@ -32,8 +32,8 @@
       <mat-icon class="iconPen no-print cursor-pointer"
         (click)="onFocus(firstNameDom)">drive_file_rename_outline</mat-icon>
 
-      <aj-help-button (click)="openHelpPanel('fix-fiche')" class="no-print help-icon"
-        text="Qu'est-ce que c'est ?"></aj-help-button>
+      <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
+        class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
     </div>
     <div class="matricule">
       <p contenteditable #matriculeDom data-placeholder="Matricule"

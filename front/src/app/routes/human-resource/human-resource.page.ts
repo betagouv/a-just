@@ -958,6 +958,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           subTitle: "Qu'est-ce que c'est ?",
         })
         break
+      case 'add-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Créer ou modifier une fiche',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
       default:
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Fiche individuelle :',
