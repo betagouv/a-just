@@ -100,13 +100,17 @@ export class ExcelService extends MainClass {
         dateStop: setTimeToMidDay(this.dateStop.getValue()),
         categoryFilter: this.selectedCategory.getValue(),
       })
-      .then((data) => {
+      .then(async (data) => {
         this.tabs = data.data
         const keys1 = Object.keys(this.tabs.onglet1.values[0])
         const keys2 = Object.keys(this.tabs.onglet2.values[0])
 
-        const uniqueJur = sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
-        const uniqueJurIndex = uniqueJur.map((value, index) => [value, index])
+        const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
+        const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
+        const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"']
+
+        console.log(uniqueJur)
+        console.log(uniqueJurIndex)
 
         const viewModel = {
           agregat: this.tabs.onglet2.excelRef,
@@ -155,12 +159,17 @@ export class ExcelService extends MainClass {
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
+            console.log( ['"' + uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"'])
+
+            console.log(['"M-TIT,M-PLAC-ADD,F-TIT,F-PLAC-ADD,C"'])
+
+
             report.worksheets[2].getCell('A' + +2).dataValidation = {
               type: 'list',
               allowBlank: false,
-              formulae: ['"' + uniqueJur.join(',') + '"'],
+              formulae: tProximite,
               error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'je suis un prompteur',
+              prompt: 'Selectionner une juridiction pour de mettre à jour le tableau de synthèse ci-après',
               showErrorMessage: true,
               showInputMessage: true,
             }
@@ -170,7 +179,7 @@ export class ExcelService extends MainClass {
                 {
                   type: 'list',
                   allowBlank: true,
-                  formulae: ['"' + uniqueJur.join(',') + '"'],
+                  formulae: tProximite,
                   error:
                     'Veuillez selectionner une valeur dans le menu déroulant',
                   //prompt: 'je suis un prompteur',
