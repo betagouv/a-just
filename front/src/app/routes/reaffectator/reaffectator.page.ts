@@ -653,7 +653,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           true,
           `Simulation d'affectation par ${
             this.userService.user.getValue()!.firstName
-          } ${this.userService.user.getValue()!.lastName!} le ${(date.getDate() + '').padStart(
+          } ${this.userService.user.getValue()!.lastName} - le ${(date.getDate() + '').padStart(
             2,
             '0'
           )} ${this.getShortMonthString(date)} ${date.getFullYear()}`
