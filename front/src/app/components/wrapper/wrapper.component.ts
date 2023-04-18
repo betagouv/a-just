@@ -385,7 +385,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
             mainHtmlContainer.getBoundingClientRect()
           doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
           await addHTML(doc, htmlContainer)
-          //mainHtmlContainer.remove()
+          mainHtmlContainer.remove()
 
           doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
         } else {
