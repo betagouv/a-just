@@ -159,17 +159,12 @@ export class ExcelService extends MainClass {
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
-            console.log( ['"' + uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"'])
-
-            console.log(['"M-TIT,M-PLAC-ADD,F-TIT,F-PLAC-ADD,C"'])
-
-
             report.worksheets[2].getCell('A' + +2).dataValidation = {
               type: 'list',
               allowBlank: false,
               formulae: tProximite,
               error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner une juridiction pour de mettre à jour le tableau de synthèse ci-après',
+              prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
               showErrorMessage: true,
               showInputMessage: true,
             }
