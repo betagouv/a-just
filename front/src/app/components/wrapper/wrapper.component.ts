@@ -354,18 +354,24 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           logo.style.left = '30px'
 
           const title = document.createElement('p')
-          title.style.fontSize = '24px'
+          title.style.fontSize = '18px'
+          title.style.textAlign = 'left'
+          title.style.fontFamily = 'Helvetica'
           title.style.marginTop = '64px'
           title.style.fontWeight = 'bold'
           title.innerHTML = exportName || ''
 
           const pCom = document.createElement('p')
           pCom.style.marginTop = '32px'
-          pCom.style.fontSize = '10px'
+          pCom.style.fontSize = '14px'
+          pCom.style.textAlign = 'left'
+          pCom.style.fontFamily = 'Helvetica'
           pCom.innerHTML = 'Commentaire :'
 
           const commentDom = document.createElement('p')
           commentDom.style.fontSize = '10px'
+          commentDom.style.textAlign = 'left'
+          commentDom.style.fontFamily = 'Helvetica'
           commentDom.innerHTML = comment
 
           htmlContainer.appendChild(logo)
