@@ -37,6 +37,14 @@ export default (sequelizeInstance) => {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      type: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      parent_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
