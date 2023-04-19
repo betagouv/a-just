@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core'
+import * as FileSaver from 'file-saver'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -10,11 +11,16 @@ import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import { Renderer } from 'xlsx-renderer'
+
+/**
+ * Excel file extension
+ */
+const EXCEL_EXTENSION = '.xlsx'
 
 /**
  * Page des temps moyens par dossier
  */
-
 @Component({
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],
@@ -32,6 +38,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * En cours de chargement
    */
   isLoading: boolean = false
+  /**
+   * Label du referentiel selectionné
+   */
+  refNameSelected: string |null= null
   /**
    * Titre de la page
    */
@@ -223,7 +233,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * @param backupId
    */
   onLoad(backupId: number) {
-    if(this.categorySelected === null) {
+    if (this.categorySelected === null) {
       return
     }
 
@@ -333,8 +343,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * @param unit
    * @returns
    */
-  getInputValue(avgProcessTime: any, unit: string) {
-    switch (this.getCategoryStr()) {
+  getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
+    switch (category || this.getCategoryStr()) {
       case 'averageProcessingTime':
         if (unit === 'hour') {
           return avgProcessTime
@@ -400,5 +410,85 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   getCategoryModifStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'isModified'
     else return 'isModifiedFonc'
+  }
+
+  /**
+   * Extraction des référentiels au format Excel
+   */
+  extractionExcel() {
+    const tmpList = new Array()
+    this.referentiel.map((x) => {
+      if (x.childrens) {
+        tmpList.push({
+          ...this.getFileValues(x),
+          ...x,
+        })
+        x.childrens.map((y) => {
+          tmpList.push({
+            ...this.getFileValues(y),
+            ...y,
+          })
+        })
+      } else tmpList.push(x)
+    })
+
+    this.refNameSelected = this.formDatas.find(x => x.id === this.contentieuxOptionsService.backupId.getValue())?.value || ''
+
+    const viewModel = {
+      referentiels: tmpList,
+      name: this.refNameSelected+' - MAGISTRATS',
+      referentielsFonc: tmpList,
+      nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
+    }
+
+    fetch('/assets/template2.xlsx')
+      // 2. Get template as ArrayBuffer.
+      .then((response) => response.arrayBuffer())
+      // 3. Fill the template with data (generate a report).
+      .then((buffer) => {
+        return new Renderer().renderFromArrayBuffer(buffer, viewModel)
+      })
+      // 4. Get a report as buffer.
+      .then(async (report) => {
+        return report.xlsx.writeBuffer()
+      })
+      // 5. Use `saveAs` to download on browser site.
+      .then((buffer) => {
+        const filename = this.getFileName(this.refNameSelected)
+        return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
+      })
+      .catch((err) => console.log('Error writing excel export', err))
+  }
+  /**
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
+   */
+  getFileName(label:string|null) {
+    console.log(new Date().toJSON().slice(0, 10))
+    return `Extraction_Référentiel de temps moyen - `+ (label||'')
+  }
+
+
+  getFileValues(ref:any){
+    return {nbPerDay: this.getInputValue(
+      ref.averageProcessingTime,
+      'nbPerDay',
+      'averageProcessingTime'
+    ),
+    nbPerMonth: this.getInputValue(
+      ref.averageProcessingTime,
+      'nbPerMonth',
+      'averageProcessingTime'
+    ),
+    nbPerDayFonc: this.getInputValue(
+      ref.averageProcessingTimeFonc,
+      'nbPerDay',
+      'averageProcessingTimeFonc'
+    ),
+    nbPerMonthFonc: this.getInputValue(
+      ref.averageProcessingTimeFonc,
+      'nbPerMonth',
+      'averageProcessingTimeFonc'
+    )}
   }
 }
