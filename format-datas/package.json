@@ -13,7 +13,7 @@
     "n-readlines": "^1.0.1",
     "path": "^0.12.7",
     "stream": "^0.0.2",
-    "yaml": "^2.1.0"
+    "yaml": "^2.2.2"
   },
   "devDependencies": {
     "eslint": "^7.13.0",
