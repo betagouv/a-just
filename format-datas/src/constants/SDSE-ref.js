@@ -66,4 +66,21 @@ export const I_ELST_LIST = {
   '00963014': 'TJ_EVRY', // Juvisy sur orge
   '00963017': 'TJ_EVRY', // Longjumeau
   '00963043': 'TJ_EVRY', // Palaiseau
+
+  // CA Versailles
+  '00100027': 'TJ_VERSAILLES', // Versailles
+  '00963004': 'TJ_VERSAILLES', // St_Germain_en_laye
+  '00963021': 'TJ_VERSAILLES', // Mantes La Jolie
+  '00963048': 'TJ_VERSAILLES', // Poissy
+  '00963052': 'TJ_VERSAILLES', // Rambouillet
+
+  // CA Pointoise
+  '00100212': 'TJ_PONTOISE', // Pontoise
+  '00963006': 'TJ_PONTOISE', // Gonesse
+  '00963033': 'TJ_PONTOISE', // Montmorency
+  '00963059': 'TJ_PONTOISE', // Sannois
+
+  // CA Chartres
+  '00100085': 'TJ_CHARTRES', // Chartres
+  '00962995': 'TJ_CHARTRES', // Dreux
 }
