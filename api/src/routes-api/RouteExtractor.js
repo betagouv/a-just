@@ -117,9 +117,10 @@ export default class RouteExtractor extends Route {
 
     console.log(flatReferentielsList)
 
-    let tproxs = await this.models.tproxs.getByTj(new String(juridictionName.label).toUpperCase())
+    const label = (juridictionName.label || '').toUpperCase()
+    let tproxs = (await this.models.TJ.getByTj(label, {}, { type: 'TPRX' })).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox }))
     if (tproxs.length === 0) {
-      tproxs = [{ id: 0, tj: juridictionName.label.toUpperCase(), tprox: juridictionName.label.toUpperCase() }]
+      tproxs = [{ id: 0, tj: label, tprox: label }]
     }
 
     this.sendOk(ctx, {
