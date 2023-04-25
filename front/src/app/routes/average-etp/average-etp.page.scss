@@ -7,6 +7,22 @@
 :host {
     position: relative;
 
+    .export-button {
+        margin-left: 6px;
+        background-color: #000091;
+        height: 55px;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+        cursor: pointer;
+        
+        p {
+            font-size: 12px;
+            color: #f6f6f6
+        }
+    }
+    
     .empty-separator {
         display: flex;
         padding-left: 300px;

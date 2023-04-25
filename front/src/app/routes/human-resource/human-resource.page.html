@@ -1,5 +1,5 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  <div class="wrapper-content">
+  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" [onEditIndex]="onEditIndex"
       [etp]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].etp : 0"

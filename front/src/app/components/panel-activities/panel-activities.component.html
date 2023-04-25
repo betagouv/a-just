@@ -31,7 +31,7 @@
   }">
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
-      [lockedMessage]="REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Vous ne pouvez pas modifier le référentiel \''+referentiel[refIndexSelected].label+'\' !' : null"
+      [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Vous ne pouvez pas modifier le référentiel \''+referentiel[refIndexSelected].label+'\' !' : null"
       [color]=" referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
       (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
