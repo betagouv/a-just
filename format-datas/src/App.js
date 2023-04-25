@@ -29,11 +29,12 @@ export default class App {
     rmSync(outputAllFolder, { recursive: true, force: true })
     mkdirSync(outputAllFolder, { recursive: true })
 
-    //await this.getGroupByJuridiction(tmpFolder, inputFolder)
-    //await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
+    await this.getGroupByJuridiction(tmpFolder, inputFolder)
+    await this.formatAndGroupJuridiction(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules, referentiel)
 
     // WIP datas pénal
-    await this.formatAndGroupJuridictionPenal(inputFolder, outputFolder, outputAllFolder, categoriesOfRules)
+    //await this.getGroupByJuridictionPenal(tmpFolder, inputFolder)
+    //await this.formatAndGroupJuridictionPenal(tmpFolder, outputFolder, outputAllFolder, categoriesOfRules)
 
     this.done()
   }
@@ -49,7 +50,6 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
-      //console.log(fileName)
 
       const file = readFileSync(`${inputFolder}/${fileName}`, 'utf8')
       const yamlParsed = YAML.parse(file)
@@ -65,7 +65,6 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -93,6 +92,10 @@ export default class App {
     return `${tmpFolder}/export-activities-${juridiction}.csv`
   }
 
+  getCsvOutputPathPenal (inputFileName, tmpFolder, juridiction) {
+    return `${tmpFolder}/${inputFileName}-export-activities-${juridiction}.csv`
+  }
+
   async getGroupByJuridiction (tmpFolder, inputFolder) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith('.xml') && f.toLowerCase().indexOf('nomenc') === -1)
 
@@ -100,7 +103,6 @@ export default class App {
     // generate header
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      //console.log(file)
 
       let liner = new lineByLine(`${inputFolder}/${file}`)
       let line
@@ -129,11 +131,8 @@ export default class App {
     }
     headerMap.push('type_juridiction')
 
-    //console.log(headerMap)
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      //console.log(file)
 
       const regex = new RegExp('_RGC-(.*?)_', 'g')
       let testRegex
@@ -163,6 +162,7 @@ export default class App {
         } else if (`</${secondTag}>` === lineFormated) {
           // create file if not exist and only for authorizes jurdiction
           const codeJuridiction = dataLines[0]
+
           if (!existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))) {
             // create file
             writeFileSync(this.getCsvOutputPath(tmpFolder, codeJuridiction), `${headerMap.join(',')},\n`)
@@ -189,6 +189,49 @@ export default class App {
     }
   }
 
+  async getGroupByJuridictionPenal (tmpFolder, inputFolder) {
+    const files = readdirSync(inputFolder).filter((f) => f.endsWith('.csv'))
+    console.log('FILES:', files)
+    // generate header
+    let header = null
+    let codeJuridiction = null
+    const ielstNames = ['tj', 'tgi_code', 'id_jur']
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      console.log('File:', file)
+      let liner = new lineByLine(`${inputFolder}/${file}`)
+      let line = null
+      // get header
+      line = liner.next()
+      header = line.toString('ascii')
+      //let getTypeOfJuridiction
+      while ((line = liner.next()) !== false) {
+        let lineFormated = ''
+        const data = line.toString('ascii')
+        lineFormated = header.concat('\n', data)
+        const lineobject = await csvToArrayJson(lineFormated, 'utf8').then((res) => {
+          return res[0]
+        })
+        for (let ielst of ielstNames) {
+          if (ielst in lineobject) {
+            codeJuridiction = lineobject[ielst]
+            break
+          }
+        }
+        if (codeJuridiction.length === 6) codeJuridiction = `00${codeJuridiction}`
+        if (I_ELST_LIST[codeJuridiction]) {
+          const fileName = file.replace('.csv', '')
+          if (!existsSync(this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction))) {
+            // create file
+            writeFileSync(this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction), header + '\n')
+          }
+          appendFileSync(this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction), `${data}\n`)
+        }
+      }
+    }
+  }
+
   getTagName (stringNotFormated) {
     let tag = stringNotFormated.trim().split('>')[0].replace(/(<|>)/g, '')
     return tag.split(' ')[0]
@@ -212,6 +255,7 @@ export default class App {
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i]
       const ielst = fileName.replace('export-activities-', '').replace('.csv', '')
+
       if (!I_ELST_LIST[ielst]) {
         continue
       }
@@ -303,16 +347,15 @@ export default class App {
           entrees: null,
           sorties: null,
           stock: null,
-          periode: monthValues.length ? monthValues[0].periode || monthValues[0].cod_moi : null,
+          periode: monthValues.length ? monthValues[0].periode || monthValues[0].cod_moi || monthValues[0].mois : null,
           code_import: rule['Code nomenclature'],
         }
       }
-      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202206' && rule['Code nomenclature'] === '7.15.'*/) {
+      if (rule.filtres /* && list[rule['Code nomenclature']].periode === '202101' && rule['Code nomenclature'] === '7.7.'*/) {
         const nodesToUse = ['entrees', 'sorties', 'stock']
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i]
           const newRules = rule.filtres[node]
-
           // control il node exist
           if (newRules) {
             let lines = monthValues
@@ -401,77 +444,164 @@ export default class App {
     return list
   }
 
-  async formatAndGroupJuridictionPenal (inputFolder, outputFolder, outputAllFolder, categoriesOfRules) {
-    const files = readdirSync(inputFolder).filter((f) => f.endsWith('.csv'))
+  async formatAndGroupJuridictionPenal (tmpFolder, outputFolder, outputAllFolder, categoriesOfRules) {
+    const files = readdirSync(tmpFolder).filter((f) => f.endsWith('.csv'))
     const JURIDICTIONS_EXPORTS = {}
 
     for (let i = 0; i < files.length; i++) {
-      const fileName = files[i]
+      const fileName = files[i].replace(/-export-activities-.*/, '')
 
-      console.log(fileName)
+      let ielst = files[i]
+        .replace(/.+?(?=export-activities-)/, '')
+        .replace('export-activities-', '')
+        .replace('.csv', '')
 
-      const arrayOfCsv = await csvToArrayJson(readFileSync(`${inputFolder}/${fileName}`, 'utf8'))
+      if (!I_ELST_LIST[ielst]) {
+        continue
+      }
 
-      const groupByTJ = groupBy(arrayOfCsv, 'tj') // group by tj
-      Object.keys(groupByTJ).map((tj) => {
-        const ielst = `00${tj}` // format tj to ielst
+      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
+      }
 
-        if (I_ELST_LIST[ielst]) {
-          if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
-            JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = []
+      const arrayOfCsv = await csvToArrayJson(readFileSync(`${tmpFolder}/${files[i]}`, 'utf8'))
+
+      const tmpCategoriesOfRules = categoriesOfRules.filter((rule) => {
+        return fileName.includes(rule.fichier)
+      })
+      console.log('tmpCategoriesOfRules:', tmpCategoriesOfRules)
+
+      //let nodeIelst = ''
+      let dateInFile = null
+      if (arrayOfCsv.length) {
+        const line1 = arrayOfCsv[0]
+        //const ielstNames = ['tj', 'tgi_code', 'id_jur']
+        const datesNames = ['cod_moi', 'annee', 'mois']
+
+        /*for (let ielst of ielstNames) {
+                    if (ielst in line1) {
+                      nodeIelst = ielst
+                      break
+                    }
+                  }*/
+        for (let date of datesNames) {
+          if (date in line1) {
+            if (date === datesNames[0]) {
+              dateInFile = date
+              break
+            } else if (date === datesNames[1] || date === datesNames[2]) {
+              if (date === datesNames[2] && !(datesNames[1] in line1)) {
+                dateInFile = date
+              } else {
+                dateInFile = [datesNames[1], datesNames[2]]
+              }
+              break
+            }
+          }
+        }
+      }
+
+      //for (let i = 0; i < Object.keys(juridictionsGrouped).length; i++) {}
+      // Object.keys(juridictionsGrouped).map((tj) => {
+      //let ielst = tj
+      //if (ielst.length === 6) ielst = `00${ielst}` // format tj to ielst
+      //if (I_ELST_LIST[ielst]) {
+
+      // group by month
+      let groupByMonthObject = null
+      if (!Array.isArray(dateInFile)) {
+        groupByMonthObject = groupBy(arrayOfCsv, dateInFile)
+      } else {
+        const tmp = arrayOfCsv.map((tj) => {
+          const mois = tj.mois.length < 2 ? tj.annee + `0${tj.mois}` : tj.annee + tj.mois
+          delete tj.annee
+          return { ...tj, mois: mois }
+        })
+        groupByMonthObject = groupBy(tmp, dateInFile[1])
+      }
+
+      let list = []
+      const entreeNames = ['nb_aff_nouv', 'instr_nb_aff_nouv']
+      const sortieNames = ['nb_aff_end', 'instr_nb_aff_cloturee', 'nb_aff']
+      const stockNames = ['nb_aff_old', 'instr_nb_aff_stock']
+      Object.values(groupByMonthObject).map((monthValues) => {
+        // format string to integer
+
+        monthValues = monthValues.map((m) => {
+          for (let entree of entreeNames) {
+            if (entree in m) {
+              m[entree] = m[entree] ? parseInt(m[entree]) : null
+              break
+            }
+          }
+          for (let sortie of sortieNames) {
+            if (sortie in m) {
+              m[sortie] = m[sortie] ? parseInt(m[sortie]) : null
+              break
+            }
+          }
+          for (let stock of stockNames) {
+            if (stock in m) {
+              m[stock] = m[stock] ? parseInt(m[stock]) : null
+              break
+            }
           }
 
-          const groupByMonthObject = groupBy(groupByTJ[tj], 'cod_moi') // group by month
-          let list = []
+          return m
+        })
 
-          Object.values(groupByMonthObject).map((monthValues) => {
-            // format string to integer
+        const actualDate = new Date()
+        const year = actualDate.getFullYear().toString()
+        let month = (actualDate.getMonth() + 1).toString()
+        if (month.length < 2) month = `0${month}`
+        const now = year + month
 
-            monthValues = monthValues.map((m) => ({
-              ...m,
-              nb_aff_nouv: m.nb_aff_nouv ? parseInt(m.nb_aff_nouv) : null,
-              nb_aff_old: m.nb_aff_old ? parseInt(m.nb_aff_old) : null,
-              nb_aff_end: m.nb_aff_end ? parseInt(m.nb_aff_end) : null,
-            }))
-            const formatMonthDataFromRules = this.formatMonthFromRules(monthValues, categoriesOfRules)
-            list = list.concat(formatMonthDataFromRules)
-          })
+        let tmp_date = null
+        if (!Array.isArray(dateInFile)) {
+          tmp_date = monthValues[0][dateInFile]
+        } else {
+          tmp_date = monthValues[0][dateInFile[1]]
+        }
 
-          // merge to existing list
-          JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
-            const index = acc.findIndex((a) => a.code_import === cur.code_import && a.periode === cur.periode)
-            if (index === -1) {
-              acc.push(cur)
-            } else {
-              let entrees = acc[index].entrees
-              if (cur.entrees !== null) {
-                entrees = (entrees || 0) + (cur.entrees || 0)
-              }
-
-              let sorties = acc[index].sorties
-              if (cur.sorties !== null) {
-                sorties = (sorties || 0) + (cur.sorties || 0)
-              }
-
-              let stock = acc[index].stock
-              if (cur.stock !== null) {
-                stock = (stock || 0) + (cur.stock || 0)
-              }
-
-              acc[index] = {
-                ...acc[index],
-                entrees,
-                sorties,
-                stock,
-              }
-            }
-
-            return acc
-          }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]])
+        if (tmp_date < now) {
+          let formatMonthDataFromRules = null
+          formatMonthDataFromRules = this.formatMonthFromRules(monthValues, tmpCategoriesOfRules)
+          list = list.concat(formatMonthDataFromRules)
         }
       })
-    }
 
+      // merge to existing list
+      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
+        const index = acc.findIndex((a) => a.code_import === cur.code_import && a.periode === cur.periode)
+        if (index === -1) {
+          acc.push(cur)
+        } else {
+          let entrees = acc[index].entrees
+          if (cur.entrees !== null) {
+            entrees = (entrees || 0) + (cur.entrees || 0)
+          }
+
+          let sorties = acc[index].sorties
+          if (cur.sorties !== null) {
+            sorties = (sorties || 0) + (cur.sorties || 0)
+          }
+
+          let stock = acc[index].stock
+          if (cur.stock !== null) {
+            stock = (stock || 0) + (cur.stock || 0)
+          }
+
+          acc[index] = {
+            ...acc[index],
+            entrees,
+            sorties,
+            stock,
+          }
+        }
+
+        return acc
+      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]])
+    }
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       writeFileSync(
         `${outputFolder}/${key}.csv`,
@@ -481,7 +611,7 @@ export default class App {
       )
     }
 
-    writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+    //writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
 
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       appendFileSync(
