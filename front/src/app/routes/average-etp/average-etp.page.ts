@@ -5,13 +5,18 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+import { ServerService } from 'src/app/services/http-server/server.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import * as xlsx from 'xlsx'
 import { Renderer } from 'xlsx-renderer'
+import readXlsxFile from 'read-excel-file'
+import { groupBy } from 'lodash'
+import { ContentieuxOptionsInterface } from 'src/app/interfaces/contentieux-options'
 
 /**
  * Excel file extension
@@ -86,7 +91,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private userService: UserService
+    private userService: UserService,
+    private serverService: ServerService
   ) {
     super()
 
@@ -219,6 +225,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         )} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
       }
     })
+
+    this.contentieuxOptionsService.formDatas.next(this.formDatas)
+
   }
 
   /**
@@ -286,6 +295,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
         return ref
       })
+
+      this.contentieuxOptionsService.referentiel.next(this.referentiel)
 
       this.isLoading = false
     })
@@ -416,22 +427,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Extraction des référentiels au format Excel
    */
   extractionExcel() {
-    const tmpList = new Array()
-    this.referentiel.map((x) => {
-      if (x.childrens) {
-        tmpList.push({
-          ...this.getFileValues(x),
-          ...x,
-        })
-        x.childrens.map((y) => {
-          tmpList.push({
-            ...this.getFileValues(y),
-            ...y,
-          })
-        })
-      } else tmpList.push(x)
-    })
-
+    const tmpList = this.generateFlateList()
     this.refNameSelected = this.formDatas.find(x => x.id === this.contentieuxOptionsService.backupId.getValue())?.value || ''
 
     const viewModel = {
@@ -464,13 +460,33 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * @returns String - Nom du fichier téléchargé
    */
   getFileName(label:string|null) {
-    console.log(new Date().toJSON().slice(0, 10))
     return `Extraction_Référentiel de temps moyen - `+ (label||'')
   }
 
+  generateFlateList(){
+    const flatList = new Array()
+    this.referentiel.map((x) => {
+      if (x.childrens) {
+        flatList.push({
+          ...this.getFileValues(x),
+          ...x,
+        })
+        x.childrens.map((y) => {
+          flatList.push({
+            ...this.getFileValues(y),
+            ...y,
+          })
+        })
+      } else flatList.push({
+        ...this.getFileValues(x),
+        ...x,
+      })
+    })
+    return flatList
+  }
 
   getFileValues(ref:any){
-    return {nbPerDay: this.getInputValue(
+    return {id:Number(ref.id),nbPerDay: this.getInputValue(
       ref.averageProcessingTime,
       'nbPerDay',
       'averageProcessingTime'
@@ -491,4 +507,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
       'averageProcessingTimeFonc'
     )}
   }
+
 }
+
+
