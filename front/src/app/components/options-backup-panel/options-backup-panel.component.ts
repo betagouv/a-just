@@ -153,6 +153,9 @@ export class OptionsBackupPanelComponent
     this.contentieuxOptionsService.onSaveDatas(isCopy)
   }
 
+  onSendAllActivity(elem:any){
+    this.contentieuxOptionsService.onSendAllActivity(elem)
+  }
   /**
    * Demande de création d'une sauvegarde vide
    */
@@ -172,5 +175,19 @@ export class OptionsBackupPanelComponent
    */
   onBackBackup() {
     this.contentieuxOptionsService.setInitValue()
+  }
+
+  /**
+   * Télécharger le referentiel au format excel
+   */
+  downloadTemplate(){
+    this.contentieuxOptionsService.downloadTemplate()
+  }
+
+  /**
+   * Ouvre le selecteur de fichier
+   */
+  openFilePicker(){
+    document.getElementById('filePicker')!.click();
   }
 }

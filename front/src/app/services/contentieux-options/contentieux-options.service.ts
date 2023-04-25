@@ -6,6 +6,17 @@ import { ContentieuxOptionsInterface } from 'src/app/interfaces/contentieux-opti
 import { MainClass } from 'src/app/libs/main-class'
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
+import readXlsxFile from 'read-excel-file'
+import { groupBy } from 'lodash'
+import { dataInterface } from 'src/app/components/select/select.component'
+import { Renderer } from 'xlsx-renderer'
+import * as FileSaver from 'file-saver'
+
+/**
+ * Excel file extension
+ */
+const EXCEL_EXTENSION = '.xlsx'
+
 
 /**
  * Service des options des contentieux donc aujourd'hui le temps moyens / dossier
@@ -45,6 +56,19 @@ export class ContentieuxOptionsService extends MainClass {
    * Si c'est la première fois que l'on charge les données
    */
   initValue: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+    /**
+   * Liste des sauvegardes formatés pour le menu roulant
+   */
+  formDatas: BehaviorSubject< dataInterface[] > = new BehaviorSubject< dataInterface[]>([])
+  /**
+   * Label du referentiel selectionné
+   */
+  refNameSelected: string |null= null
+    /**
+   * Référentiel complet
+   */
+    referentiel: BehaviorSubject< ContentieuReferentielInterface[]  > = new BehaviorSubject< ContentieuReferentielInterface[] >([])
 
   /**
    * Constructeur
@@ -292,4 +316,173 @@ export class ContentieuxOptionsService extends MainClass {
     this.initValue.next(true)
     this.optionsIsModify.next(false)
   }
+
+
+  async onSendAllActivity(form: any) {
+    const file = form.file.files[0];
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    const MagRefList = await readXlsxFile(file,{ sheet: 1 }).then((rows) => {
+      rows.splice(0,2)
+      const optionsMag = rows.filter(y=>{
+        if (y[2]!== null) return true
+        else return false
+      }).map(x=>{
+       return {averageProcessingTime: x[2], contentieux: {id:x[0], label: x[1]}} 
+      })
+      return optionsMag
+    }).then(data=>data)
+
+    const FoncRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
+      rows.splice(0,2)
+      const optionsFonc = rows.filter(y=>{
+        if (y[2]!== null) return true
+        else return false
+      }).map(x=>{
+       return {averageProcessingTimeFonc: x[2], contentieux: {id:x[0], label: x[1]}} 
+      })
+      return optionsFonc    }).then(data=>data)
+
+    const res = groupBy([...MagRefList,...FoncRefList],'contentieux.id')
+    const resultat =await Object.keys(res).map(key=>{
+    if (res[key].length >1)
+      return {...res[key][0],...res[key][1]} as ContentieuxOptionsInterface
+    else return res[key][0] as ContentieuxOptionsInterface
+    })
+
+    this.contentieuxOptions.next(resultat)
+    this.optionsIsModify.next(true)
+
+    await this.onSaveDatas(true)
+
+  }
+
+  /**
+   * Télécharger le referentiel au format excel
+   */
+  downloadTemplate(){
+    const tmpList = this.generateFlateList()
+    this.refNameSelected = this.formDatas.getValue().find(x => x.id === this.backupId.getValue())?.value || ''
+
+    const viewModel = {
+      referentiels: tmpList,
+      name: this.refNameSelected+' - MAGISTRATS',
+      referentielsFonc: tmpList,
+      nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
+    }
+
+    fetch('/assets/template1.xlsx')
+    // 2. Get template as ArrayBuffer.
+    .then((response) => response.arrayBuffer())
+    // 3. Fill the template with data (generate a report).
+    .then((buffer) => {
+      return new Renderer().renderFromArrayBuffer(buffer, viewModel)
+    })
+    // 4. Get a report as buffer.
+    .then(async (report) => {
+      return report.xlsx.writeBuffer()
+    })
+    // 5. Use `saveAs` to download on browser site.
+    .then((buffer) => {
+      const filename = this.getFileName('Template_')
+      return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
+    })
+    .catch((err) => console.log('Error writing excel export', err))
+  }
+
+  /**
+   * Génère une liste de contentieux/sous contentieux à plat
+   * @returns 
+   */
+  generateFlateList(){
+    const flatList = new Array()
+    this.referentiel.getValue().map((x) => {
+      if (x.childrens) {
+        flatList.push({
+          ...this.getFileValues(x),
+          ...x,
+        })
+        x.childrens.map((y) => {
+          flatList.push({
+            ...this.getFileValues(y),
+            ...y,
+          })
+        })
+      } else flatList.push({
+        ...this.getFileValues(x),
+        ...x,
+      })
+    })
+    return flatList
+  }
+   /**
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
+   */
+   getFileName(label:string|null) {
+    return `Extraction_Référentiel de temps moyen - `+ (label||'')
+  }
+
+  /**
+   * Récupère les valeurs pour chaque contentieux
+   * @param ref 
+   * @returns 
+   */
+  getFileValues(ref:any){
+    return {id:Number(ref.id),nbPerDay: this.getInputValue(
+      ref.averageProcessingTime,
+      'nbPerDay',
+      'averageProcessingTime'
+    ),
+    nbPerMonth: this.getInputValue(
+      ref.averageProcessingTime,
+      'nbPerMonth',
+      'averageProcessingTime'
+    ),
+    nbPerDayFonc: this.getInputValue(
+      ref.averageProcessingTimeFonc,
+      'nbPerDay',
+      'averageProcessingTimeFonc'
+    ),
+    nbPerMonthFonc: this.getInputValue(
+      ref.averageProcessingTimeFonc,
+      'nbPerMonth',
+      'averageProcessingTimeFonc'
+    )}
+  }
+  
+    /**
+   * Retourne le temps de traitement d'un point de vue humain
+   * @param avgProcessTime
+   * @param unit
+   * @returns
+   */
+    getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
+      switch (category || 'averageProcessingTime') {
+        case 'averageProcessingTime':
+          if (unit === 'hour') {
+            return avgProcessTime
+          } else if (unit === 'nbPerDay') {
+            return 8 / avgProcessTime
+          } else if (unit === 'nbPerMonth') {
+            return (8 / avgProcessTime) * (208 / 12)
+          }
+          break
+        case 'averageProcessingTimeFonc':
+          if (unit === 'hour') {
+            return avgProcessTime
+          } else if (unit === 'nbPerDay') {
+            return 7 / avgProcessTime
+          } else if (unit === 'nbPerMonth') {
+            return (7 / avgProcessTime) * (229.57 / 12)
+          }
+          break
+      }
+      return '0'
+    }
 }
+  

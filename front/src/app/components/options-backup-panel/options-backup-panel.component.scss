@@ -5,6 +5,8 @@
   align-items: center;
   width: 100%;
 
+
+
   .header-selection {
     font-weight: bold;
   }
@@ -45,6 +47,10 @@
       }
     }
   }
+}
+
+input[type='file'] {
+  display: none !important;
 }
 
 .enable {
