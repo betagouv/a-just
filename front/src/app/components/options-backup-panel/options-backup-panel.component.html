@@ -16,6 +16,23 @@
     </mat-icon>
   </button>
   <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openFilePicker()">
+      <mat-icon>upload</mat-icon>
+      <div class="form">
+        <form #formAllActivities>
+          <div>
+            <label class="custom-file-upload">Importer
+              <input id="filePicker" name="file" type="file" accept=".xlsx"
+                (change)="onSendAllActivity(formAllActivities)" />
+            </label>
+          </div>
+        </form>
+      </div>
+    </button>
+    <button mat-menu-item (click)="downloadTemplate();$event.stopPropagation();">
+      <mat-icon>download</mat-icon>
+      <span>Exporter sous Excel</span>
+    </button>
     <button mat-menu-item (click)="onRenameBackup()">
       <mat-icon>edit</mat-icon>
       <span>Renommer</span>

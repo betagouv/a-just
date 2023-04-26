@@ -36,7 +36,16 @@ export class CalculatorService extends MainClass {
    * Liste des réferentiels sélectionnées
    */
   referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+ /**
+   * Liste des fonctions selectionnées
+   */
+ selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+ /**
+   * Liste des fonctions selectionnées
+   */
+ categorySelected: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null)
 
+ 
   /**
    * Constructeur
    * @param serverService 
