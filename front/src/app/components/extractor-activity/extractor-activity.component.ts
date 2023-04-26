@@ -292,6 +292,7 @@ export class ExtractorActivityComponent extends MainClass {
         )
 
         this.data = Object.keys(this.data).map((key: any) => {
+          console.log(this.data[key])
           this.data[key] = this.data[key].map((act: any) => {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)
@@ -300,6 +301,8 @@ export class ExtractorActivityComponent extends MainClass {
               this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           )
+          console.log(this.data[key])
+
           this.data[key] = this.sortByCodeImport(this.data[key])
           xlsx.utils.book_append_sheet(
             workbook,
