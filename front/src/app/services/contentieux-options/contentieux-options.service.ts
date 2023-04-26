@@ -77,7 +77,7 @@ export class ContentieuxOptionsService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
   ) {
     super()
   }
@@ -225,6 +225,7 @@ export class ContentieuxOptionsService extends MainClass {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
+    console.log("LIST",this.contentieuxOptions.getValue())
     return this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
@@ -354,6 +355,7 @@ export class ContentieuxOptionsService extends MainClass {
     else return res[key][0] as ContentieuxOptionsInterface
     })
 
+    console.log(resultat)
     this.contentieuxOptions.next(resultat)
     this.optionsIsModify.next(true)
 
@@ -365,7 +367,7 @@ export class ContentieuxOptionsService extends MainClass {
    * Télécharger le referentiel au format excel
    */
   downloadTemplate(){
-    const tmpList = this.generateFlateList()
+    const tmpList = this.generateFlateList(this.referentiel)
     this.refNameSelected = this.formDatas.getValue().find(x => x.id === this.backupId.getValue())?.value || ''
 
     const viewModel = {
@@ -398,15 +400,15 @@ export class ContentieuxOptionsService extends MainClass {
    * Génère une liste de contentieux/sous contentieux à plat
    * @returns 
    */
-  generateFlateList(){
+  generateFlateList(list:any){
     const flatList = new Array()
-    this.referentiel.getValue().map((x) => {
+    list.getValue().map((x:any) => {
       if (x.childrens) {
         flatList.push({
           ...this.getFileValues(x),
           ...x,
         })
-        x.childrens.map((y) => {
+        x.childrens.map((y:any) => {
           flatList.push({
             ...this.getFileValues(y),
             ...y,
@@ -484,5 +486,6 @@ export class ContentieuxOptionsService extends MainClass {
       }
       return '0'
     }
+
 }
   
