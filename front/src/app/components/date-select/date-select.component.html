@@ -12,4 +12,4 @@
 <input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)" [min]="min"
   [max]="max" />
 <mat-datepicker #picker (monthSelected)="setMonthAndYear($event, picker)"
-  [startView]="dateType === 'month' ? 'year' : 'month'"></mat-datepicker>
+  [startView]="dateType === 'month' ? 'year' : 'month'" [dateClass]="dateClass"></mat-datepicker>
