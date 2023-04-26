@@ -10,6 +10,10 @@
         class="date-stop bg-white" [max]="maxDateSelectionDate" [dateClass]="dateClass">
       </aj-date-select>
       <div class="flex-1"></div>
+      <button (click)="calculatorSaver();$event.stopPropagation();">
+        <mat-icon>save</mat-icon>
+        <span>Enregistrer le référentiel</span>
+      </button>
       <aj-options-backup-panel [readOnly]="true" class="bg-white"></aj-options-backup-panel>
     </div>
     <div class="header-calculator window-scrool-width-margin">

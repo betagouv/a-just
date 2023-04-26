@@ -151,6 +151,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             "Vos droits ne vous permettent pas d'exécuter un calcul, veuillez contacter un administrateur."
           )
         }
+        this.calculatorService.categorySelected.next(this.categorySelected)
       })
     )
 
@@ -266,6 +267,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.selectedFonctionsIds = fonctions.map(
               (f: HRFonctionInterface) => f.id
             )
+            this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
           }
           this.formatDatas(list)
           this.isLoading = false
@@ -354,7 +356,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
-
+    this.calculatorService.categorySelected.next(this.categorySelected)
     this.onLoad()
   }
 
@@ -364,6 +366,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
     this.onLoad()
   }
 
@@ -426,4 +429,39 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
     return '';
   };
+
+
+  calculatorSaver(){
+    console.log(this.datas)
+    let refToSave = new Array()
+
+    this.datas.map(x=>{
+    if (x.childrens.length>0)
+      x.childrens.map(y=>{
+        refToSave.push({
+          contentieux:{
+          id:y.contentieux.id,
+          label:y.contentieux.label},
+          averageProcessingTime: y.magRealTimePerCase,
+          averageProcessingTimeFonc: y.fonRealTimePerCase,
+        })
+      })
+    
+      refToSave.push({
+        contentieux:{
+        id:x.contentieux.id,
+        label:x.contentieux.label},
+        averageProcessingTime: x.magRealTimePerCase,
+        averageProcessingTimeFonc: x.fonRealTimePerCase,
+      })
+    
+    })
+
+    console.log(refToSave)
+    this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
+    this.contentieuxOptionsService.optionsIsModify.next(true)
+    
+    this.contentieuxOptionsService.onSaveDatas(true)
+
+  }
 }
