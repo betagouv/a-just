@@ -189,5 +189,7 @@ export class OptionsBackupPanelComponent
    */
   openFilePicker(){
     document.getElementById('filePicker')!.click();
+    document.getElementById('trigger-drop-down')!.click();
+
   }
 }

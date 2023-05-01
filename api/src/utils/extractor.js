@@ -372,9 +372,9 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             ['Temps ventilés sur la période']: totalEtpt,
             ['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
-            ['CET de + de 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
-            ['CET de - de 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-            ['Absentéisme réintégré (CMO + Congé maternité + CET de - de 30 jours)']: absenteisme,
+            ['CET > 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
+            ['CET < 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
+            ['Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)']: absenteisme,
           })
     })
   )
