@@ -145,7 +145,7 @@ export class ExcelService extends MainClass {
           text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
         })
 
-        fetch('/assets/template3.xlsx')
+        fetch('/assets/template4.xlsx')
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
           // 3. Fill the template with data (generate a report).
@@ -161,7 +161,7 @@ export class ExcelService extends MainClass {
 
             console.log( ['"' + uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"'])
 
-            console.log(['"M-TIT,M-PLAC-ADD,F-TIT,F-PLAC-ADD,C"'])
+            console.log(['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'])
 
 
             report.worksheets[2].getCell('A' + +2).dataValidation = {
@@ -193,7 +193,7 @@ export class ExcelService extends MainClass {
                 {
                   type: 'list',
                   allowBlank: true,
-                  formulae: ['"M-TIT,M-PLAC-ADD,F-TIT,F-PLAC-ADD,C"'],
+                  formulae: ['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'],
                 }
             })
 

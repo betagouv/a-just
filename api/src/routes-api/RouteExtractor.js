@@ -94,9 +94,9 @@ export default class RouteExtractor extends Route {
       { global: null, sub: 'ETPT sur la période' },
       { global: null, sub: 'Temps ventilés sur la période' },
       ...formatedExcelList,
-      { global: null, sub: 'CET de + de 30 jours' },
-      { global: 'Absentéisme réintégré (CMO + Congé maternité + CET de - de 30 jours)', sub: null },
-      { global: null, sub: 'CET de - de 30 jours' },
+      { global: null, sub: 'CET > 30 jours' },
+      { global: 'Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)', sub: null },
+      { global: null, sub: 'CET < 30 jours' },
       ...absenteismeList.map((y) => {
         return { global: null, sub: getExcelLabel(y, false) }
       }),
