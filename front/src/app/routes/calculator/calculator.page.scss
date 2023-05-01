@@ -1,5 +1,24 @@
 @import '../../styles/utils.scss';
 
+
+:host{
+.ref-button{
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+  mat-icon{
+    position: inherit;
+  }
+  div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+      p{line-height: 18px;}
+  }
+}
+}
 .container {
   display: flex;
   flex-direction: column;

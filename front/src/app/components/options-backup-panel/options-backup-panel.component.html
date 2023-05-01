@@ -9,21 +9,21 @@
   </button>
   <div class="flex-1"></div>
 
-  <button class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"
+  <button id="trigger-drop-down" class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"
     aria-label="Example icon-button with a menu">
     Options
     <mat-icon class="no-margin">{{ !t.menuOpen ? 'expand_less' : 'expand_more' }}
     </mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="openFilePicker()">
+    <button mat-menu-item (click)="openFilePicker();$event.stopPropagation();">
       <mat-icon>upload</mat-icon>
       <div class="form">
         <form #formAllActivities>
           <div>
             <label class="custom-file-upload">Importer
               <input id="filePicker" name="file" type="file" accept=".xlsx"
-                (change)="onSendAllActivity(formAllActivities)" />
+                (change)="onSendAllActivity(formAllActivities);" (click)="$event.stopPropagation();" />
             </label>
           </div>
         </form>
