@@ -13,7 +13,7 @@ import {
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { month } from '../utils/date'
-import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
+import { ABSENTEISME_LABELS } from '../constants/referentiel'
 
 /**
  * Route de la page extrateur
@@ -155,7 +155,10 @@ export default class RouteExtractor extends Route {
       .filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
       .map((x) => (x.periode = { periode: x.periode.setHours(0, 0, 0, 0), ...x }))
 
-    console.log(activities)
+    activities.map((x) => {
+      if (x.idReferentiel === 589) console.log(x)
+    })
+    //console.log(activities)
 
     let sum = cloneDeep(activities)
     sum = groupBy(sum, 'contentieux.id')
