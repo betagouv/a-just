@@ -575,12 +575,12 @@
         </div>
       </div>
     </div>
-    <!--<aj-dtes-chart></aj-dtes-chart>
+    <aj-dtes-chart></aj-dtes-chart>
 
     <aj-etp-chart *ngIf="categorySelected" [categorySelected]="categorySelected" [canViewMagistrat]="canViewMagistrat"
       [canViewGreffier]="canViewGreffier" [canViewContractuel]="canViewContractuel"></aj-etp-chart>
 
-    <aj-in-out-chart></aj-in-out-chart>-->
+    <aj-in-out-chart></aj-in-out-chart>
 
     <div class="widgets">
       <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
@@ -603,7 +603,7 @@
         </div>
         <textarea id="comment-area" #commentaireSimulateur placeholder="Commentaire"
           (keyup)="setComment($event)"></textarea>
-        <p id="comment-area-copy">{{commentaire}}</p>
+        <div id="comment-area-copy">{{commentaire}}</div>
       </div>
       <div class="space"></div>
     </div>
