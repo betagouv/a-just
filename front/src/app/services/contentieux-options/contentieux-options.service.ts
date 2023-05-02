@@ -11,6 +11,7 @@ import { groupBy } from 'lodash'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { Renderer } from 'xlsx-renderer'
 import * as FileSaver from 'file-saver'
+import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
 
 /**
  * Excel file extension
@@ -333,7 +334,7 @@ export class ContentieuxOptionsService extends MainClass {
         if (y[2]!== null) return true
         else return false
       }).map(x=>{
-       return {averageProcessingTime: x[2], contentieux: {id:x[0], label: x[1]}} 
+    return {averageProcessingTime: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
       })
       return optionsMag
     }).then(data=>data)
@@ -344,7 +345,7 @@ export class ContentieuxOptionsService extends MainClass {
         if (y[2]!== null) return true
         else return false
       }).map(x=>{
-       return {averageProcessingTimeFonc: x[2], contentieux: {id:x[0], label: x[1]}} 
+   return {averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
       })
       return optionsFonc    }).then(data=>data)
 
@@ -363,11 +364,19 @@ export class ContentieuxOptionsService extends MainClass {
 
   }
 
+  castToDecimalTime(value:string){
+    if (value ===null) return null
+    const arrayValue = value.split(':') 
+  if (arrayValue.length >1)
+    return parseFloat(arrayValue[0])+parseFloat(arrayValue[1])/60
+  else return Number(value)
+  }
   /**
    * Télécharger le referentiel au format excel
    */
   downloadTemplate(){
     const tmpList = this.generateFlateList(this.referentiel)
+    console.log(tmpList)
     this.refNameSelected = this.formDatas.getValue().find(x => x.id === this.backupId.getValue())?.value || ''
 
     const viewModel = {
@@ -377,7 +386,7 @@ export class ContentieuxOptionsService extends MainClass {
       nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
     }
 
-    fetch('/assets/template1.xlsx')
+    fetch('/assets/template0.xlsx')
     // 2. Get template as ArrayBuffer.
     .then((response) => response.arrayBuffer())
     // 3. Fill the template with data (generate a report).
@@ -403,21 +412,35 @@ export class ContentieuxOptionsService extends MainClass {
   generateFlateList(list:any){
     const flatList = new Array()
     list.getValue().map((x:any) => {
+      console.log(x)
+      const magAvg= decimalToStringDate(x.averageProcessingTime,':')
+      const foncAvg= decimalToStringDate(x.averageProcessingTimeFonc,':')
+
+    
       if (x.childrens) {
         flatList.push({
           ...this.getFileValues(x),
           ...x,
+          averageProcessingTime: magAvg==='0'?'': magAvg,
+          averageProcessingTimeFonc:  foncAvg==='0'?'': foncAvg ,
         })
         x.childrens.map((y:any) => {
+          const magAvgChild= decimalToStringDate(y.averageProcessingTime,':')
+          const foncAvgChild= decimalToStringDate(y.averageProcessingTimeFonc,':')
           flatList.push({
             ...this.getFileValues(y),
             ...y,
+            averageProcessingTime:  magAvgChild==='0'?'': magAvgChild ,
+            averageProcessingTimeFonc:  foncAvgChild==='0'?'': foncAvgChild ,
           })
         })
       } else flatList.push({
         ...this.getFileValues(x),
         ...x,
+        averageProcessingTime: magAvg==='0'?'': magAvg,
+        averageProcessingTimeFonc:  foncAvg==='0'?'': foncAvg
       })
+
     })
     return flatList
   }
@@ -467,7 +490,7 @@ export class ContentieuxOptionsService extends MainClass {
       switch (category || 'averageProcessingTime') {
         case 'averageProcessingTime':
           if (unit === 'hour') {
-            return avgProcessTime
+            return decimalToStringDate(avgProcessTime)
           } else if (unit === 'nbPerDay') {
             return 8 / avgProcessTime
           } else if (unit === 'nbPerMonth') {
@@ -476,7 +499,7 @@ export class ContentieuxOptionsService extends MainClass {
           break
         case 'averageProcessingTimeFonc':
           if (unit === 'hour') {
-            return avgProcessTime
+            return decimalToStringDate(avgProcessTime)
           } else if (unit === 'nbPerDay') {
             return 7 / avgProcessTime
           } else if (unit === 'nbPerMonth') {
