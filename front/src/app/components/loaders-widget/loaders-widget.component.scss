@@ -3,7 +3,13 @@
 :host {
     background-color: white;
     position: relative;
-
+    .print-shadow{
+        border: solid 1px rgb(207, 207, 207);
+    }
+    .print-shadow-bottom{
+        border-bottom: solid 1px rgb(207, 207, 207);
+    }
+    
     .title {
         height: 96px;
         padding: 24px 24px;

@@ -153,8 +153,8 @@ export class OptionsBackupPanelComponent
     this.contentieuxOptionsService.onSaveDatas(isCopy)
   }
 
-  onSendAllActivity(elem:any){
-    this.contentieuxOptionsService.onSendAllActivity(elem)
+  async onSendAllActivity(elem:any){
+    await this.contentieuxOptionsService.onSendAllActivity(elem)
   }
   /**
    * Demande de création d'une sauvegarde vide

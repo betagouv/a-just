@@ -323,29 +323,30 @@ export class ContentieuxOptionsService extends MainClass {
   async onSendAllActivity(form: any) {
     const file = form.file.files[0];
 
+    console.log(form.file.files)
     if (!file) {
       alert('Vous devez saisir une fichier !');
       return;
     }
 
-    const MagRefList = await readXlsxFile(file,{ sheet: 1 }).then((rows) => {
+    const MagRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
       rows.splice(0,2)
       const optionsMag = rows.filter(y=>{
         if (y[2]!== null) return true
         else return false
       }).map(x=>{
-    return {averageProcessingTime: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
+        return {averageProcessingTime: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
       })
       return optionsMag
     }).then(data=>data)
 
-    const FoncRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
+    const FoncRefList = await readXlsxFile(file,{ sheet: 3 }).then((rows) => {
       rows.splice(0,2)
       const optionsFonc = rows.filter(y=>{
         if (y[2]!== null) return true
         else return false
       }).map(x=>{
-   return {averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
+        return {averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
       })
       return optionsFonc    }).then(data=>data)
 
@@ -381,9 +382,9 @@ export class ContentieuxOptionsService extends MainClass {
 
     const viewModel = {
       referentiels: tmpList,
-      name: this.refNameSelected+' - MAGISTRATS',
+      name: this.refNameSelected+' (MAGISTRATS)',
       referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
+      nameFonc: this.refNameSelected+' (FONCTIONNAIRES)',
     }
 
     fetch('/assets/template0.xlsx')
@@ -399,7 +400,7 @@ export class ContentieuxOptionsService extends MainClass {
     })
     // 5. Use `saveAs` to download on browser site.
     .then((buffer) => {
-      const filename = this.getFileName('Template_')
+      const filename = this.getFileName(this.refNameSelected)
       return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
     })
     .catch((err) => console.log('Error writing excel export', err))
