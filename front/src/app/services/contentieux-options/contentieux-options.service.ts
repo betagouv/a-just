@@ -329,7 +329,7 @@ export class ContentieuxOptionsService extends MainClass {
       return;
     }
 
-    const MagRefList = await readXlsxFile(file,{ sheet: 1 }).then((rows) => {
+    const MagRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
       rows.splice(0,2)
       const optionsMag = rows.filter(y=>{
         if (y[2]!== null) return true
@@ -340,7 +340,7 @@ export class ContentieuxOptionsService extends MainClass {
       return optionsMag
     }).then(data=>data)
 
-    const FoncRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
+    const FoncRefList = await readXlsxFile(file,{ sheet: 3 }).then((rows) => {
       rows.splice(0,2)
       const optionsFonc = rows.filter(y=>{
         if (y[2]!== null) return true
