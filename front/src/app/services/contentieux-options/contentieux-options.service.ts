@@ -323,6 +323,7 @@ export class ContentieuxOptionsService extends MainClass {
   async onSendAllActivity(form: any) {
     const file = form.file.files[0];
 
+    console.log(form.file.files)
     if (!file) {
       alert('Vous devez saisir une fichier !');
       return;
