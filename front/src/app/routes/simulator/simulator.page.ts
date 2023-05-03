@@ -176,6 +176,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   selectedFonctionsIds: number[] = []
   /**
+   * Constante en cours d'impression
+   */
+  onPrint:boolean=false
+  /**
    * Documentation widget
    */
   documentation: DocumentationInterface = {
@@ -1259,7 +1263,10 @@ export class SimulatorPage extends MainClass implements OnInit {
     const commentArea = document.getElementById('comment-area')!
     commentArea.style.display = 'none'
 
+    this.onPrint = true
+
     this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
+      this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
