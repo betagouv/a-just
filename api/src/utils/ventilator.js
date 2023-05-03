@@ -1,6 +1,6 @@
 import { orderBy, sumBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { findAllSituations, findSituation } from './human-resource'
+import { findSituation } from './human-resource'
 import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
 
@@ -18,14 +18,6 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
         etp = 0
       }
 
-      let firstSituation = currentSituation
-
-      if (!firstSituation) {
-        const allSituation = findAllSituations(h)
-        firstSituation = allSituation.length ? allSituation[allSituation.length - 1] : null
-        etp = 1
-      }
-
       return {
         ...h,
         currentActivities: (currentSituation && currentSituation.activities) || [],
@@ -34,8 +26,8 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
         hasIndisponibility,
         currentSituation,
         etp: fixDecimal(etp, 100),
-        category: firstSituation && firstSituation.category,
-        fonction: firstSituation && firstSituation.fonction,
+        category: currentSituation && currentSituation.category,
+        fonction: currentSituation && currentSituation.fonction,
       }
     }),
     ['fonction.rank', 'lastName'],
