@@ -372,7 +372,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           commentDom.style.fontSize = '10px'
           commentDom.style.textAlign = 'left'
           commentDom.style.fontFamily = 'Helvetica'
-          commentDom.innerHTML = comment
+          commentDom.classList.add('p-with-child-Helvetica')
+          commentDom.innerHTML = comment || ''
+          console.log('comment', comment)
 
           htmlContainer.appendChild(logo)
           htmlContainer.appendChild(title)
