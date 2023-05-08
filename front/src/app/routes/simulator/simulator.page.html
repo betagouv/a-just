@@ -366,7 +366,7 @@
     </div>
   </div>
 
-  <div class="simulation-bottom">
+  <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)">
     <p class="simulation-title">Résultat de la simulation</p>
     <div class="simulation-table">
       <div class="items">
@@ -575,9 +575,9 @@
         </div>
       </div>
     </div>
-    <aj-dtes-chart></aj-dtes-chart>
+    <!--<aj-dtes-chart></aj-dtes-chart>
 
-    <!--<aj-etp-chart *ngIf="categorySelected" [categorySelected]="categorySelected" [canViewMagistrat]="canViewMagistrat"
+    <aj-etp-chart *ngIf="categorySelected" [categorySelected]="categorySelected" [canViewMagistrat]="canViewMagistrat"
       [canViewGreffier]="canViewGreffier" [canViewContractuel]="canViewContractuel"></aj-etp-chart>
 
     <aj-in-out-chart></aj-in-out-chart>-->

@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-//import annotationPlugin from 'chartjs-plugin-annotation'
+import annotationPlugin from 'chartjs-plugin-annotation'
 import { fixDecimal } from 'src/app/utils/numbers'
 /**
  * Composant graphique DTES simulateur
@@ -150,7 +150,7 @@ export class DtesChartComponent {
 
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
-    //Chart.register(annotationPlugin)
+    Chart.register(annotationPlugin)
   }
 
   /**
@@ -584,31 +584,10 @@ export class DtesChartComponent {
       plugins: [yScaleTextStock, yScaleTextDTES],
     }
 
-    setTimeout(()=>{
-      this.myChart = new Chart(
-        document.getElementById('dtes-chart') as ChartItem,
-        {
-          type: 'line',
-          data: {
-            datasets: [{
-                data: [0, 0],
-            }, {
-                data: [0, 1]
-            }, {
-                data: [1, 0],
-                showLine: true // overrides the `line` dataset default
-            }, {
-                type: 'scatter', // 'line' dataset default does not affect this dataset since it's a 'scatter'
-                data: [1, 1]
-            }]
-        },
-          options: {},
-          plugins: []
-        }
-        //config
-      )
-    },10000)
-
+    this.myChart = new Chart(
+      document.getElementById('dtes-chart') as ChartItem,
+      config
+    )
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
