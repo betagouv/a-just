@@ -203,7 +203,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < activities.length; i++) {
-      const periode = activities[i].periode
+      const periode = new Date(activities[i].periode)
 
       const duplicateActivities = await Model.findAll({
         where: {
@@ -215,6 +215,10 @@ export default (sequelizeInstance, Model) => {
         },
         order: ['updated_at', 'id'],
       })
+
+      if (activities[i].contentieux_id === 475 && periode.getFullYear() === 2022 && periode.getMonth() === 0) {
+        console.log(activities[i].periode, [startOfMonth(periode), endOfMonth(periode)], duplicateActivities)
+      }
 
       if (duplicateActivities.length >= 2) {
         for (let z = 1; z < duplicateActivities.length; z++) {

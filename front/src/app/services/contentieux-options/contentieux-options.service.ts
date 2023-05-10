@@ -18,7 +18,6 @@ import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
  */
 const EXCEL_EXTENSION = '.xlsx'
 
-
 /**
  * Service des options des contentieux donc aujourd'hui le temps moyens / dossier
  */
@@ -58,18 +57,21 @@ export class ContentieuxOptionsService extends MainClass {
    */
   initValue: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
-    /**
+  /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
-  formDatas: BehaviorSubject< dataInterface[] > = new BehaviorSubject< dataInterface[]>([])
+  formDatas: BehaviorSubject<dataInterface[]> = new BehaviorSubject<
+    dataInterface[]
+  >([])
   /**
    * Label du referentiel selectionné
    */
-  refNameSelected: string |null= null
-    /**
+  refNameSelected: string | null = null
+  /**
    * Référentiel complet
    */
-    referentiel: BehaviorSubject< ContentieuReferentielInterface[]  > = new BehaviorSubject< ContentieuReferentielInterface[] >([])
+  referentiel: BehaviorSubject<ContentieuReferentielInterface[]> =
+    new BehaviorSubject<ContentieuReferentielInterface[]>([])
 
   /**
    * Constructeur
@@ -78,7 +80,7 @@ export class ContentieuxOptionsService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService,
+    private humanResourceService: HumanResourceService
   ) {
     super()
   }
@@ -226,7 +228,7 @@ export class ContentieuxOptionsService extends MainClass {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-    console.log("LIST",this.contentieuxOptions.getValue())
+    console.log('LIST', this.contentieuxOptions.getValue())
     return this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
@@ -319,42 +321,56 @@ export class ContentieuxOptionsService extends MainClass {
     this.optionsIsModify.next(false)
   }
 
-
   async onSendAllActivity(form: any) {
-    const file = form.file.files[0];
+    const file = form.file.files[0]
 
     console.log(form.file.files)
     if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
+      alert('Vous devez saisir une fichier !')
+      return
     }
 
-    const MagRefList = await readXlsxFile(file,{ sheet: 2 }).then((rows) => {
-      rows.splice(0,2)
-      const optionsMag = rows.filter(y=>{
-        if (y[2]!== null) return true
-        else return false
-      }).map(x=>{
-        return {averageProcessingTime: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
+    const MagRefList = await readXlsxFile(file, { sheet: 2 })
+      .then((rows: any) => {
+        rows.splice(0, 2)
+        const optionsMag = rows
+          .filter((y: any) => {
+            if (y[2] !== null) return true
+            else return false
+          })
+          .map((x: any) => {
+            return {
+              averageProcessingTime: this.castToDecimalTime(String(x[2])),
+              contentieux: { id: x[0], label: x[1] },
+            }
+          })
+        return optionsMag
       })
-      return optionsMag
-    }).then(data=>data)
+      .then((data: any) => data)
 
-    const FoncRefList = await readXlsxFile(file,{ sheet: 3 }).then((rows) => {
-      rows.splice(0,2)
-      const optionsFonc = rows.filter(y=>{
-        if (y[2]!== null) return true
-        else return false
-      }).map(x=>{
-        return {averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])), contentieux: {id:x[0], label: x[1]}} 
+    const FoncRefList = await readXlsxFile(file, { sheet: 3 })
+      .then((rows: any) => {
+        rows.splice(0, 2)
+        const optionsFonc = rows
+          .filter((y: any) => {
+            if (y[2] !== null) return true
+            else return false
+          })
+          .map((x: any) => {
+            return {
+              averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])),
+              contentieux: { id: x[0], label: x[1] },
+            }
+          })
+        return optionsFonc
       })
-      return optionsFonc    }).then(data=>data)
+      .then((data: any) => data)
 
-    const res = groupBy([...MagRefList,...FoncRefList],'contentieux.id')
-    const resultat =await Object.keys(res).map(key=>{
-    if (res[key].length >1)
-      return {...res[key][0],...res[key][1]} as ContentieuxOptionsInterface
-    else return res[key][0] as ContentieuxOptionsInterface
+    const res = groupBy([...MagRefList, ...FoncRefList], 'contentieux.id')
+    const resultat = await Object.keys(res).map((key) => {
+      if (res[key].length > 1)
+        return { ...res[key][0], ...res[key][1] } as ContentieuxOptionsInterface
+      else return res[key][0] as ContentieuxOptionsInterface
     })
 
     console.log(resultat)
@@ -362,154 +378,158 @@ export class ContentieuxOptionsService extends MainClass {
     this.optionsIsModify.next(true)
 
     await this.onSaveDatas(true)
-
   }
 
-  castToDecimalTime(value:string){
-    if (value ===null) return null
-    const arrayValue = value.split(':') 
-  if (arrayValue.length >1)
-    return parseFloat(arrayValue[0])+parseFloat(arrayValue[1])/60
-  else return Number(value)
+  castToDecimalTime(value: string) {
+    if (value === null) return null
+    const arrayValue = value.split(':')
+    if (arrayValue.length > 1)
+      return parseFloat(arrayValue[0]) + parseFloat(arrayValue[1]) / 60
+    else return Number(value)
   }
   /**
    * Télécharger le referentiel au format excel
    */
-  downloadTemplate(){
+  downloadTemplate() {
     const tmpList = this.generateFlateList(this.referentiel)
     console.log(tmpList)
-    this.refNameSelected = this.formDatas.getValue().find(x => x.id === this.backupId.getValue())?.value || ''
+    this.refNameSelected =
+      this.formDatas.getValue().find((x) => x.id === this.backupId.getValue())
+        ?.value || ''
 
     const viewModel = {
       referentiels: tmpList,
-      name: this.refNameSelected+' (MAGISTRATS)',
+      name: this.refNameSelected + ' (MAGISTRATS)',
       referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected+' (FONCTIONNAIRES)',
+      nameFonc: this.refNameSelected + ' (FONCTIONNAIRES)',
     }
 
     fetch('/assets/template0.xlsx')
-    // 2. Get template as ArrayBuffer.
-    .then((response) => response.arrayBuffer())
-    // 3. Fill the template with data (generate a report).
-    .then((buffer) => {
-      return new Renderer().renderFromArrayBuffer(buffer, viewModel)
-    })
-    // 4. Get a report as buffer.
-    .then(async (report) => {
-      return report.xlsx.writeBuffer()
-    })
-    // 5. Use `saveAs` to download on browser site.
-    .then((buffer) => {
-      const filename = this.getFileName(this.refNameSelected)
-      return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
-    })
-    .catch((err) => console.log('Error writing excel export', err))
+      // 2. Get template as ArrayBuffer.
+      .then((response) => response.arrayBuffer())
+      // 3. Fill the template with data (generate a report).
+      .then((buffer) => {
+        return new Renderer().renderFromArrayBuffer(buffer, viewModel)
+      })
+      // 4. Get a report as buffer.
+      .then(async (report) => {
+        return report.xlsx.writeBuffer()
+      })
+      // 5. Use `saveAs` to download on browser site.
+      .then((buffer) => {
+        const filename = this.getFileName(this.refNameSelected)
+        return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
+      })
+      .catch((err) => console.log('Error writing excel export', err))
   }
 
   /**
    * Génère une liste de contentieux/sous contentieux à plat
-   * @returns 
+   * @returns
    */
-  generateFlateList(list:any){
+  generateFlateList(list: any) {
     const flatList = new Array()
-    list.getValue().map((x:any) => {
+    list.getValue().map((x: any) => {
       console.log(x)
-      const magAvg= decimalToStringDate(x.averageProcessingTime,':')
-      const foncAvg= decimalToStringDate(x.averageProcessingTimeFonc,':')
+      const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
+      const foncAvg = decimalToStringDate(x.averageProcessingTimeFonc, ':')
 
-    
       if (x.childrens) {
         flatList.push({
           ...this.getFileValues(x),
           ...x,
-          averageProcessingTime: magAvg==='0'?'': magAvg,
-          averageProcessingTimeFonc:  foncAvg==='0'?'': foncAvg ,
+          averageProcessingTime: magAvg === '0' ? '' : magAvg,
+          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
         })
-        x.childrens.map((y:any) => {
-          const magAvgChild= decimalToStringDate(y.averageProcessingTime,':')
-          const foncAvgChild= decimalToStringDate(y.averageProcessingTimeFonc,':')
+        x.childrens.map((y: any) => {
+          const magAvgChild = decimalToStringDate(y.averageProcessingTime, ':')
+          const foncAvgChild = decimalToStringDate(
+            y.averageProcessingTimeFonc,
+            ':'
+          )
           flatList.push({
             ...this.getFileValues(y),
             ...y,
-            averageProcessingTime:  magAvgChild==='0'?'': magAvgChild ,
-            averageProcessingTimeFonc:  foncAvgChild==='0'?'': foncAvgChild ,
+            averageProcessingTime: magAvgChild === '0' ? '' : magAvgChild,
+            averageProcessingTimeFonc: foncAvgChild === '0' ? '' : foncAvgChild,
           })
         })
-      } else flatList.push({
-        ...this.getFileValues(x),
-        ...x,
-        averageProcessingTime: magAvg==='0'?'': magAvg,
-        averageProcessingTimeFonc:  foncAvg==='0'?'': foncAvg
-      })
-
+      } else
+        flatList.push({
+          ...this.getFileValues(x),
+          ...x,
+          averageProcessingTime: magAvg === '0' ? '' : magAvg,
+          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
+        })
     })
     return flatList
   }
-   /**
+  /**
    * Fonction qui génère automatiquement le nom du fichier téléchargé
    * @returns String - Nom du fichier téléchargé
    */
-   getFileName(label:string|null) {
-    return `Extraction_Référentiel de temps moyen - `+ (label||'')
+  getFileName(label: string | null) {
+    return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
   /**
    * Récupère les valeurs pour chaque contentieux
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
-  getFileValues(ref:any){
-    return {id:Number(ref.id),nbPerDay: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerDay',
-      'averageProcessingTime'
-    ),
-    nbPerMonth: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerMonth',
-      'averageProcessingTime'
-    ),
-    nbPerDayFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerDay',
-      'averageProcessingTimeFonc'
-    ),
-    nbPerMonthFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerMonth',
-      'averageProcessingTimeFonc'
-    )}
+  getFileValues(ref: any) {
+    return {
+      id: Number(ref.id),
+      nbPerDay: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerDay',
+        'averageProcessingTime'
+      ),
+      nbPerMonth: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerMonth',
+        'averageProcessingTime'
+      ),
+      nbPerDayFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerDay',
+        'averageProcessingTimeFonc'
+      ),
+      nbPerMonthFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerMonth',
+        'averageProcessingTimeFonc'
+      ),
+    }
   }
-  
-    /**
+
+  /**
    * Retourne le temps de traitement d'un point de vue humain
    * @param avgProcessTime
    * @param unit
    * @returns
    */
-    getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
-      switch (category || 'averageProcessingTime') {
-        case 'averageProcessingTime':
-          if (unit === 'hour') {
-            return decimalToStringDate(avgProcessTime)
-          } else if (unit === 'nbPerDay') {
-            return 8 / avgProcessTime
-          } else if (unit === 'nbPerMonth') {
-            return (8 / avgProcessTime) * (208 / 12)
-          }
-          break
-        case 'averageProcessingTimeFonc':
-          if (unit === 'hour') {
-            return decimalToStringDate(avgProcessTime)
-          } else if (unit === 'nbPerDay') {
-            return 7 / avgProcessTime
-          } else if (unit === 'nbPerMonth') {
-            return (7 / avgProcessTime) * (229.57 / 12)
-          }
-          break
-      }
-      return '0'
+  getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
+    switch (category || 'averageProcessingTime') {
+      case 'averageProcessingTime':
+        if (unit === 'hour') {
+          return decimalToStringDate(avgProcessTime)
+        } else if (unit === 'nbPerDay') {
+          return 8 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (8 / avgProcessTime) * (208 / 12)
+        }
+        break
+      case 'averageProcessingTimeFonc':
+        if (unit === 'hour') {
+          return decimalToStringDate(avgProcessTime)
+        } else if (unit === 'nbPerDay') {
+          return 7 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (7 / avgProcessTime) * (229.57 / 12)
+        }
+        break
     }
-
+    return '0'
+  }
 }
-  

@@ -197,23 +197,26 @@ export class SelectComponent
    * @returns void
    */
   onSelectedChanged(list: number[] | number) {
-    /**if (this.parent && Array.isArray(list)) {
-      if (list.length === 0) this.value = this.subList = []
-      else if (list.length === 1) this.value = list
-      else if (list.length === 2 && this.subReferentielData.length !== 2)
-        this.value = this.subList = list.filter(
-          (v) => ![this.value as number[]][0].includes(v)
-        )
-      else if (list.length === this.subReferentielData.length) this.value = list
-      else if (list.length === this.subReferentielData.length - 1)
-        this.value = this.subList = [this.value as number[]][0].filter(
-          (v) => !list.includes(v)
-        )
-    } else */
     if (typeof list === 'number') this.value = [list]
     else this.value = list
 
     this.valueChange.emit(this.value as number[])
     this.findRealValue()
   }
+
+    /**
+   * Verification de l'emplacement du menu déroulent lorsqu'il est ouvert
+   */
+    openDropDown(matSelect:any){
+      matSelect.open()
+      setTimeout(()=>{
+        var dropDowns = document.querySelectorAll('[id^="cdk-overlay"]')
+        dropDowns.forEach(el=>{
+        var rect = el.getBoundingClientRect();
+        if(rect.left+rect.width>window.innerWidth) {
+         (el as HTMLElement).style.left = "auto";
+         (el as HTMLElement).style.right = "0px";
+        }
+      })},1)
+      }
 }
