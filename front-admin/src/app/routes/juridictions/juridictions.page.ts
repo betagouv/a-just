@@ -10,8 +10,9 @@ import { compare } from 'src/app/utils/array';
   styleUrls: ['./juridictions.page.scss'],
 })
 export class JuridictionsPage extends MainClass implements OnInit {
-  datas: JuridictionInterface[] = []
+  datas: JuridictionInterface[] = [];
   datasSource: JuridictionInterface[] = [];
+  selectedJuridiction: JuridictionInterface | null = null;
 
   constructor(private juridictionsService: JuridictionsService) {
     super();
@@ -29,16 +30,21 @@ export class JuridictionsPage extends MainClass implements OnInit {
   }
 
   onUpdate(node: string, element: any) {
-    let getValue = null
-    
-    if(node !== 'enabled') {
-      getValue = prompt(`Remplacer le champ '${node}' par`, element[node] || '')
+    let getValue = null;
+
+    if (node !== 'enabled') {
+      getValue = prompt(
+        `Remplacer le champ '${node}' par`,
+        element[node] || ''
+      );
     } else {
-      getValue = confirm('Activer ou non la juridiction ?')
-    }    
-    
-    if(getValue !== null) {
-      this.juridictionsService.updateJuridiction(node, getValue, element.id).then(() => this.onLoad())
+      getValue = confirm('Activer ou non la juridiction ?');
+    }
+
+    if (getValue !== null) {
+      this.juridictionsService
+        .updateJuridiction(node, getValue, element.id)
+        .then(() => this.onLoad());
     }
   }
 
@@ -52,7 +58,7 @@ export class JuridictionsPage extends MainClass implements OnInit {
     this.datasSource = data.sort((a, b) => {
       const isAsc = sort.direction === 'asc';
       // @ts-ignore
-      return compare(a[sort.active], b[sort.active], isAsc)
+      return compare(a[sort.active], b[sort.active], isAsc);
     });
   }
 }
