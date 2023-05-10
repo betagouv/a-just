@@ -3,6 +3,7 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
+  nbOfDays,
 } from 'src/app/utils/dates'
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -267,8 +268,14 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-
+/**
+   * Commentaires pour PDF
+   */
   commentaire: String = ''
+  /**
+   * Activation du simulator à blanc
+   */
+  whiteSimulator:boolean =false
 
   /**
    * Constructeur
@@ -490,6 +497,20 @@ export class SimulatorPage extends MainClass implements OnInit {
     }
   }
 
+  /**
+   * Action lors de la selection d'une date simulateur à blanc
+   */
+  whiteDateSelector(type: string = '', event: any = null){
+    if (type === 'dateStart') {
+      this.dateStart = new Date(event)
+      this.simulatorService.dateStart.next(this.dateStart)
+    }
+    else if (type === 'dateStop') {
+      this.dateStop = new Date(event)
+      this.simulatorService.dateStop.next(this.dateStop)
+      console.log(nbOfDays(this.dateStart,this.dateStop))
+    }
+  }
   /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
