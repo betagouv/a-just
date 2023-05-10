@@ -43,7 +43,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridicitonLabel
    * @returns
    */
-  Model.getUserVentilations = async (juridicitonLabel) => {
+  Model.getUserVentilationsWithLabel = async (juridicitonLabel) => {
     const listAll = groupBy(
       await Model.findAll({
         attributes: ['id', 'user_id', 'hr_backup_id'],
