@@ -1,5 +1,5 @@
-<p (click)="matSelect.open()" class="title">{{ title }}</p>
-<div (click)="matSelect.open()">
+<p (click)="openDropDown(matSelect)" class="title">{{ title }}</p>
+<div (click)="openDropDown(matSelect)">
   <p class="bold-family">{{ realValue || defaultRealValue }}</p>
   <mat-icon>{{ icon }}</mat-icon>
 </div>
