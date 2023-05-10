@@ -4,7 +4,6 @@ import {
   OnChanges,
   Output,
   EventEmitter,
-  AfterViewInit,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
@@ -20,6 +19,10 @@ export interface dataInterface {
    * Valeur
    */
   value: string
+  /**
+   * Force rendered 
+   */
+  renderHTML?: string
   /**
    * Valeur précédente
    */
