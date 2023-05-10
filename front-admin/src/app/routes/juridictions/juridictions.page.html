@@ -12,7 +12,7 @@
 
     <tr *ngFor="let element of datasSource">
       <td>{{element.iElst}}</td>
-      <td>{{element.label}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('label', element)">{{element.label}}</td>
       <td class="cursor-pointer" (click)="onUpdate('latitude', element)">{{element.latitude || '-'}}</td>
       <td class="cursor-pointer" (click)="onUpdate('longitude', element)">{{element.longitude || '-'}}</td>
       <td class="cursor-pointer" (click)="onUpdate('population', element)">{{element.population || '-'}}</td>

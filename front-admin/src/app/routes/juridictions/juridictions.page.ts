@@ -32,7 +32,7 @@ export class JuridictionsPage extends MainClass implements OnInit {
     let getValue = null
     
     if(node !== 'enabled') {
-      getValue = prompt("Remplacer le champ par", element[node] || '')
+      getValue = prompt(`Remplacer le champ '${node}' par`, element[node] || '')
     } else {
       getValue = confirm('Activer ou non la juridiction ?')
     }    

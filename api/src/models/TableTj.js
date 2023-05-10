@@ -73,10 +73,26 @@ export default (sequelizeInstance, Model) => {
 
     return list
   }
-  /*[
-    { id: 230, tj: 'TJ BREST', tprox: 'TJ BREST' },
-    { id: 233, tj: 'TJ BREST', tprox: 'TPRX MORLAIX' }
-  ]*/
+
+  /**
+   * Update juridiction value
+   */
+  Model.updateJuridiction = async (juridictionId, values) => {
+    const element = await Model.findOne({
+      where: {
+        id: juridictionId,
+      },
+    })
+
+    if (element) {
+      await element.update(values)
+
+      if (values.enabled) {
+        // check and create juridiction
+        await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+      }
+    }
+  }
 
   return Model
 }
