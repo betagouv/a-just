@@ -1,12 +1,33 @@
+import { groupBy, sumBy } from 'lodash'
+import { preformatHumanResources } from '../utils/ventilator'
+
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
-    return await Model.findAll({
+    const list = await Model.findAll({
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
       where: {
         parent_id: null,
       },
       order: [['label', 'asc']],
+      raw: true,
     })
+
+    for (let i = 0; i < list.length; i++) {
+      list[i].users = await Model.models.UserVentilations.getUserVentilations(list[i].label)
+      const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
+      const agents = getBackupId ? preformatHumanResources(await Model.models.HumanResources.getCache(getBackupId), new Date()) : []
+      const group = groupBy(
+        agents.filter((a) => a.category),
+        'category.label'
+      )
+      list[i].categoriesAgents = []
+      for (const [key, value] of Object.entries(group)) {
+        list[i].categoriesAgents.push({ label: key, nbAgents: value.length })
+      }
+      list[i].nbAgents = sumBy(list[i].categoriesAgents, 'nbAgents')
+    }
+
+    return list
   }
 
   Model.getAllVisibles = async () => {
