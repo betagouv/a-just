@@ -122,7 +122,6 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
     const list = []
-
     for (let i = 0; i < listAll.length; i++) {
       if (await Model.models.TJ.isVisible(listAll[i].label)) {
         list.push({

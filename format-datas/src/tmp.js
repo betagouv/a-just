@@ -434,9 +434,7 @@ export default class App {
         };
       }
       if (
-        rule.filtres /* &&
-        list[rule["Code nomenclature"]].periode !==
-          "202304" && rule['Code nomenclature'] === '7.7.'*/
+        rule.filtres /* && list[rule['Code nomenclature']].periode === '202101' && rule['Code nomenclature'] === '7.7.'*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {

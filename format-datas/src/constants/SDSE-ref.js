@@ -119,4 +119,8 @@ export const I_ELST_LIST = {
   // CA Chartres
   "00100085": "TJ_CHARTRES", // Chartres
   "00962995": "TJ_CHARTRES", // Dreux
+
+  "00100131": "TJ_VAL_DE_BRIEY", // Val-De-Briey
+  "00100133": "TJ_BAR_LE_DUC", //  Bar-Le-Duc
+  "00100134": "TJ_VERDUN", // Verdun
 };
