@@ -310,12 +310,14 @@ export default (sequelizeInstance, Model) => {
       backup_id: backupId,
       updated_at: new Date(),
     }
+    console.log('-------- HR:', hr)
 
     if (hr.id && hr.id > 0) {
       // update
       await Model.updateById(hr.id, options)
     } else {
       // create
+      console.log('-------- HR CREATION')
       const newHr = await Model.create(options)
       hr.id = newHr.dataValues.id
     }

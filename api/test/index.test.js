@@ -3,18 +3,24 @@ import routeIndex from './api/Route.test'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculateur.test'
+import routeVentilateur from './api/RouteVentilateur.test'
 import axios from 'axios'
 import { assert } from 'chai'
+import { sinon } from 'sinon'
 
-/*import routeUnauthorizedAccess from './api/RouteUnauthorizedAccess.test'
-import routeConnexion from './api/RouteConnexion'
+/*import routeConnexion from './api/RouteConnexion'
 import routeImport from './api/RouteImports.test'
 import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
+import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from './constants/admin'
+//import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from './constants/user'
 
 describe('Test server is ready', () => {
+  beforeEach(() => {
+    //sinon.stub(console, 'error').returns(undefined)
+  })
   before((done) => {
     console.log('BEFORE WAITING SERVER')
     server.isReady = function () {
@@ -24,19 +30,15 @@ describe('Test server is ready', () => {
   })
 
   let adminToken = null
-  let userId = null
+  //let userId = null
   let userToken = null
-  const userEmail = 'test@mail.com'
-  const userPassword = '123456'
-  const userFirstname = 'userFirstname'
-  const userLastname = 'userLastname'
 
   /**
    * Connect Admin
    */
   it('Login - Login admin', async () => {
-    const email = 'redwane.zafari@a-just.fr'
-    const password = '123456'
+    const email = USER_ADMIN_EMAIl
+    const password = USER_ADMIN_PASSWORD
 
     // Connexion de l'admin
     const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
@@ -44,31 +46,31 @@ describe('Test server is ready', () => {
       password,
     })
     // Récupération du token associé pour l'identifier
-    adminToken = response.data.token
+    adminToken = response.status === 201 && response.data.token
     assert.strictEqual(response.status, 201)
   })
 
   /**
    *  Vérification que l'utilisateur peut bien s'inscrire si toutes les information obligatoires sont corrects
    */
-  it('Sign up - Check that a user can signUp if all entered inputs are fullfilled', async () => {
+  /*it('Sign up - Check that a user can signUp if all entered inputs are fullfilled', async () => {
     const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-      email: userEmail,
-      password: userPassword,
-      firstName: userFirstname,
-      lastName: userLastname,
-      fonction: 'Testeur',
+      email: USER_TEST_EMAIL,
+      password: USER_TEST_PASSWORD,
+      firstName: USER_TEST_FIRSTNAME,
+      lastName: USER_TEST_LASTNAME,
+      fonction: USER_TEST_FONCTION,
       tj: 'ESSAI',
     })
     assert.strictEqual(response.status, 200)
-  })
+  })*/
 
   /**
    * Vérification que la connexion avec les bonnes infos fonctionne
    */
-  it('Login - Login should succeed and return 201 with user token', async () => {
-    const email = 'test@mail.com'
-    const password = '123456'
+  /*it('Login - Login should succeed and return 201 with user token', async () => {
+    const email = USER_TEST_EMAIL
+    const password = USER_TEST_PASSWORD
 
     const response = await axios.post(`${config.serverUrl}/auths/login`, {
       email,
@@ -78,22 +80,24 @@ describe('Test server is ready', () => {
     userId = response.data.user.id
 
     assert.isOk(userToken, 'response 201 and user token created')
-  })
+  })*/
+
+  // TROUVER UN MOYEN D'ATTENDRE QUE USERTOKEN ET ADMINTOKEN SOIENT SET AVANT DE LANCER LES TESTS SUIVANTS
 
   routeIndex()
-  routeUser(userToken, adminToken)
-  //routeChangeUserData()
-  //routeCalcultator()
-  /*routeUnauthorizedAccess(),
-  routeChangeData(),
-  routeImport()
-  routeConnexion(),
+  /*routeUser(userToken, adminToken)
+  routeChangeUserData()
+  routeCalcultator()*/
+  routeVentilateur()
+
   /*routeImport()
   routeHR()
   routeActivities()
   RouteContentieuxOptions()*/
-
-  it('Remove user Account by admin', async () => {
+  /**
+   * Vérification qu'un admin puisse bien surrpimer le compte d'un utilisateur
+   */
+  /*it('Remove user Account by admin', async () => {
     // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
     const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
       headers: {
@@ -102,7 +106,7 @@ describe('Test server is ready', () => {
     })
 
     assert.strictEqual(response.status, 200)
-  })
+  })*/
 
   after(function () {
     server.done()

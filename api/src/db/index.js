@@ -21,12 +21,12 @@ function addMethod (client) {
     return elems[0] || null
   }
 
-  queryInterface.lastId = async tableName => {
+  queryInterface.lastId = async (tableName) => {
     const elem = await queryInterface.findOne(tableName, { order: [['id', 'DESC']], limit: 1 })
     return elem ? elem.id : 0
   }
 
-  queryInterface.nextId = async tableName => {
+  queryInterface.nextId = async (tableName) => {
     const lastId = await queryInterface.lastId(tableName)
     return lastId + 1
   }
@@ -47,7 +47,7 @@ function getUmzug ({ tableName = 'migrations', folder = 'migrations' }, dbInstan
       params: [client.getQueryInterface(), Sequelize, client.models],
       path: `${__dirname}/${folder}`,
       pattern: /^\d+[\w-]+\.js$/,
-      wrap: fun => {
+      wrap: (fun) => {
         if (fun.length === 4) {
           return Bluebird.promisify(fun)
         }
