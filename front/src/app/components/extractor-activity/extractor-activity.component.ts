@@ -49,7 +49,7 @@ const headersSum = [
   'Total sorties logiciel',
   'Total sorties après A-JUSTements',
   'Stock logiciel',
-  'Stock A-JUSTé',
+  'Stock après A-JUSTements',
 ]
 @Component({
   selector: 'aj-extractor-activity',
@@ -196,10 +196,10 @@ export class ExtractorActivityComponent extends MainClass {
       Période: monthTabName,
       [total===true?'Total entrées logiciel':'Entrées logiciel']: act.originalEntrees,
       [total===true?'Total entrées après A-JUSTements':'Entrées A-JUSTées']: act.entrees,
-      ['Sorties logiciel']: act.originalSorties,
-      ['Sorties A-JUSTées']: act.sorties,
+      [total===true?'Total sorties logiciel':'Sorties logiciel']: act.originalSorties,
+      [total===true?'Total sorties après A-JUSTements':'Sorties A-JUSTées']: act.sorties,
       ['Stock logiciel']: act.originalStock,
-      ['Stock A-JUSTé']: act.stock,
+      ['Stock après A-JUSTements']: act.stock,
     }
   }
 
