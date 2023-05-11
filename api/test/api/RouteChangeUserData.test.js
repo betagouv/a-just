@@ -1,7 +1,9 @@
-import axios from 'axios'
-import config from 'config'
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
+import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
+import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
+import { OnRemoveHrApi, OnRemoveSituationApi, OnUpdateHrApi } from '../routes/hr'
+import { USER_ADMIN_EMAIl } from '../constants/admin'
 
 module.exports = function () {
   let adminToken = null
@@ -12,40 +14,35 @@ module.exports = function () {
   let current_hr = null
 
   describe('Change User data test', () => {
-    /*it('Login - Login admin', async () => {
-      const email = 'redwane.zafari@a-just.fr'
-      const password = '123456'
-
+    it('Login - Login admin', async () => {
       // Connexion de l'admin
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
+      const response = await onLoginAdminApi({
+        email: USER_ADMIN_EMAIl,
+        password: USER_TEST_PASSWORD,
       })
       // Récupération du token associé pour l'identifier
-      adminToken = response.data.token
+      adminToken = response.data && response.data.token
       assert.strictEqual(response.status, 201)
     })
 
     it('Sign up - Create test user', async () => {
-      const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: userEmail,
-        password: userPassword,
-        firstName: userFirstname,
-        lastName: userlastname,
-        fonction: 'Vacataire',
+      const response = await onSignUpApi({
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
+        firstName: USER_TEST_FIRSTNAME,
+        lastName: USER_TEST_LASTNAME,
+        fonction: USER_TEST_FONCTION,
         tj: 'ESSAI',
       })
       assert.strictEqual(response.status, 200)
-    })*/
+    })
 
     it('Login - Log user', async () => {
-      const email = 'test@mail.com'
-      const password = '123456'
-
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
+      const response = await onLoginApi({
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
       })
+
       userToken = response.status === 201 && response.data.token
       userId = response.data.user.id
 
@@ -56,19 +53,12 @@ module.exports = function () {
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
-      const response = await axios.post(
-        `${config.serverUrl}/users/update-account`,
-        {
-          userId: userId,
-          access: accessIds,
-          ventilations: [], //{ id: 11, label: 'ESSAI' },
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateAccountApi({
+        userToken: adminToken,
+        userId: userId,
+        accessIds: accessIds,
+        ventilations: [], //{ id: 11, label: 'ESSAI' },
+      })
       assert.strictEqual(response.status, 200)
     })
 
@@ -81,18 +71,12 @@ module.exports = function () {
         dateStart: new Date(),
         indisponibilities: [],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       hrId = response.data.data.id
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
@@ -103,18 +87,11 @@ module.exports = function () {
         ...current_hr,
         firstName: 'firstname',
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -124,18 +101,11 @@ module.exports = function () {
         ...current_hr,
         lastName: 'lastname',
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -170,18 +140,11 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
@@ -228,18 +191,11 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
@@ -272,18 +228,11 @@ module.exports = function () {
         indisponibilities: indisponibilities,
       }
 
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -303,18 +252,11 @@ module.exports = function () {
         ...current_hr,
         situations: correctedSituation,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       const newSituation = response.data.data.situations
 
       current_hr = response.data.data
@@ -337,18 +279,11 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       const newSituation = response.data.data.situations[0]
 
       current_hr = response.data.data
@@ -372,18 +307,11 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       const newSituation = response.data.data.situations[0]
 
       current_hr = response.data.data
@@ -401,54 +329,44 @@ module.exports = function () {
         dateEnd,
       }
 
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await OnUpdateHrApi({
+        userToken: adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.strictEqual(new Date(response.data.data.dateEnd).getTime(), dateEnd.getTime())
     })
 
     it('Remove created situation', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
+      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
 
       let response = null
       for (let id of hrSituationId) {
-        response = await axios.delete(`${config.serverUrl}/human-resources/remove-situation-test/${id}`, {
-          headers: {
-            authorization: adminToken,
-          },
+        response = await OnRemoveSituationApi({
+          userToken: adminToken,
+          id: id,
         })
       }
       assert.isEmpty(response.data.data.situations)
     })
 
     it('Remove created hr', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
-      const response = await axios.delete(`${config.serverUrl}/human-resources/remove-hr-test/${hrId}`, {
-        headers: {
-          authorization: adminToken,
-        },
+      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
+      const response = await OnRemoveHrApi({
+        userToken: adminToken,
+        hrId: hrId,
       })
 
       assert.strictEqual(response.status, 200)
     })
 
     it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
-        headers: {
-          authorization: adminToken,
-        },
+      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/users/remove-account/:id'
+      const response = await onRemoveApi({
+        userId: userId,
+        userToken: adminToken,
       })
 
       assert.strictEqual(response.status, 200)

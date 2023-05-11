@@ -1,21 +1,19 @@
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
-import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
-import { onGetUserDataApi, onLoginAdminApi, onLoginApi, onRemoveAccountApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
-import { OnGetBackupListHrApi } from '../routes/hr'
-import { OnGetLastMonth } from '../routes/activities'
-import { OnFilterList } from '../routes/calculator'
+import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
+import { onGetContentiousApi } from '../routes/ventilateur'
+import { onLoginAdminApi, onSignUpApi, onLoginApi, onUpdateAccountApi, onRemoveAccountApi, onGetUserDataApi } from '../routes/user'
+import { onGetBackupListHrApi } from '../routes/hr'
+import { onFilterListApi } from '../routes/humanRessources'
 
 module.exports = function () {
-  //let data = null
   let backups = null
   let adminToken = null
   let userToken = null
   let userId = null
-  let lastMonth = null
 
-  describe('Check calcul ', () => {
+  describe('Check calcul -- Ventilateur ', () => {
     it('Login - Login admin', async () => {
       // Connexion de l'admin
       const response = await onLoginAdminApi({
@@ -23,7 +21,7 @@ module.exports = function () {
         password: USER_ADMIN_PASSWORD,
       })
       // Récupération du token associé pour l'identifier
-      adminToken = response.data.token
+      adminToken = response.data && response.data.token
       assert.strictEqual(response.status, 201)
     })
 
@@ -34,7 +32,6 @@ module.exports = function () {
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
         fonction: USER_TEST_FONCTION,
-        tj: 'ESSAI',
       })
       assert.strictEqual(response.status, 200)
     })
@@ -51,56 +48,37 @@ module.exports = function () {
     })
 
     it('Give user accesses and add user to a tj by Admin', async () => {
-      let response = await OnGetBackupListHrApi({
+      let response = await onGetBackupListHrApi({
         userToken: adminToken,
       })
       backups = response.data.data
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
+
       response = await onUpdateAccountApi({
         userToken: adminToken,
         userId: userId,
         accessIds: accessIds,
         ventilations: [backups[0].id],
       })
+
       assert.strictEqual(response.status, 200)
     })
 
-    it('Get my datas as a connected user. Should return 200', async () => {
-      const response = await onGetUserDataApi({
-        userToken: userToken,
-      })
+    it('Check calcul ETP affected to each contentious', async () => {
+      //Catch contentious
+      let response = await onGetContentiousApi({ userToken: adminToken, backupId: 12 })
+      //console.log('----- ok00')
+      const tmp = await onFilterListApi({ userToken: userToken, backupId: 12 })
+      console.log('----- Response Global:', tmp.data.data.list[0].hr[0].referentiel[0])
+      console.log('----- Response list:', tmp.data.data.list[0].hr[0].currentActivities)
+      console.log('----- Response allPersons:', tmp.data.data.list[0].hr[0].currentSituation.etp)
       assert.strictEqual(response.status, 200)
-    })
 
-    it('Get last month', async () => {
-      //get last month data for specific jurisdiction
-      let response = await OnGetLastMonth({
-        userToken: adminToken,
-        hrBackupId: backups[0].id,
-      })
-      lastMonth = response.data.date
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Catch data', async () => {
-      const dateStop = new Date(lastMonth)
-      const dateStart = new Date(new Date(dateStop).setDate(dateStop.getDate() - 30))
-      const categorySelected = 'magistrats'
-      const contentieuxIds = [447, 440, 460, 451, 467, 471, 486, 475, 480, 485, 497]
-
-      const response = await OnFilterList({
-        userToken: userToken,
-        backupId: backups[0].id,
-        dateStart,
-        dateStop,
-        contentieuxIds,
-        optionBackupId: null,
-        categorySelected,
-        selectedFonctionsIds: null,
-      })
-      console.log('Reponse catch data:', response.data.data.list[0].childrens[0])
+      //response = await onFilterListApi({ userToken: userToken, backupId: 20 })
+      //console.log('----- ok01')
+      //console.log('----- Response:', response)
     })
 
     it('Remove user Account by admin', async () => {
