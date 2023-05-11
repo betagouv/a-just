@@ -3,4 +3,5 @@ module.exports = {
   displayEnvName: '[DEV] ',
   logsPassword: 'FXM',
   nbMaxDayCanBeInactive: null,
+  corsUrl: '*',
 }
