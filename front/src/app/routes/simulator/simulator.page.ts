@@ -188,6 +188,17 @@ export class SimulatorPage extends MainClass implements OnInit {
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
+  whiteSimulationBegin={
+  totalIn:'',
+  totalOut:null,
+  lastStock:null,
+  etpMag:null,
+  etpFon:null,
+  etpCont:null,
+  realCoverage:null,
+  realDTESInMonths:null,
+  magRealTimePerCase:null,
+  }
   /**
    * Paramètres de simulation
    */
@@ -1378,4 +1389,23 @@ export class SimulatorPage extends MainClass implements OnInit {
       setComment(event:any){
       this.commentaire = event.target.value      
       }
+
+      /**
+       * Validate beginning situation for white simulator
+       */
+      validateWhiteSimulator(){
+      console.log(this.whiteSimulationBegin)
+      }
+
+      updateWhiteValue(value:string, event:any){
+        console.log(event)
+        switch(value) {
+      case 'totalIn':{
+        console.log(event)
+      this.whiteSimulationBegin.totalIn = event
+      }
+      }
+
+      }
+
 }

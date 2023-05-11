@@ -621,23 +621,8 @@
       (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
     </aj-date-select-blue>
   </div>
-  <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
-    <p>Situation de début : &nbsp; &nbsp;</p>
-    <input placeholder="Entrées" style="width: 100px;" />
-    <input placeholder="Stock" style="width: 100px;" />
-    <input placeholder="Sorties" style="width: 100px;" />
-    <input placeholder="ETP" style="width: 100px;" />
-    <input placeholder="Temps moyen par dossier" style="width: 100px;" />
-    <div
-      style="background-color: #000091; height: 28px; margin: 0px 8px; border-radius: 6px; color:white; padding: 0px 6px;">
-      Valider
-    </div>
-    <div style="background-color: #e5e5e580; height: 28px; margin: 0px 8px; border-radius: 6px; padding: 0px 6px;">
-      Editer</div>
-  </div>
 
-
-  <div class="white-date-selector situation-white" [ngClass]="{'hide': whiteSimulator === false}">
+  <div class="white-begin-situation" [ngClass]="{'hide': whiteSimulator === false}">
     <div class="items before-after">
       <div class="item blue-bg">
         <p>Entrées</p>
@@ -648,10 +633,10 @@
       <div class="item blue-bg">
         <p>Stock</p>
       </div>
-      <div *ngIf="canViewMagistrat" class="item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
+      <div *ngIf="canViewMagistrat" class="item">
         <p>ETPT mag</p>
       </div>
-      <div *ngIf="canViewGreffier" class="item blue-bg" [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}">
+      <div *ngIf="canViewGreffier" class="item blue-bg">
         <p>ETPT greffe</p>
       </div>
       <div *ngIf="canViewContractuel" class="item">
@@ -660,66 +645,64 @@
       <div class="item blue-bg">
         <p>Taux de couverture</p>
       </div>
-      <div class="item"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}">
+      <div class="item">
         <p>DTES</p>
       </div>
-      <div class="item blue-bg"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}">
+      <div class="item blue-bg">
         <p>Temps moyen / dossier</p>
       </div>
-    </div>
-
-  </div>
-  <div class="white-date-selector situation-white" [ngClass]="{'hide': whiteSimulator === false}">
-    <div class="actual-situation" [@fadeInOut]>
-      <div class="line-title">
-        <p>
-          Situation de début
-        </p>
-      </div>
-
-      <div class="line-item orange-bg" #tooltip="matTooltip"
-        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',firstSituationData,false,true)"
-        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-        <input [value]="getFieldValue('totalIn',firstSituationData)" disabled />
-      </div>
-      <div class="line-item">
-        <input [value]="getFieldValue('totalOut',firstSituationData)" disabled />
-      </div>
-      <div class="line-item orange-bg">
-        <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
-      </div>
-      <div *ngIf="canViewMagistrat" class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
-        <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
-      </div>
-      <div *ngIf="canViewGreffier" class="line-item orange-bg"
-        [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}">
-        <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
-      </div>
-      <div *ngIf="canViewContractuel" class="line-item">
-        <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
-      </div>
-      <div class="line-item orange-bg">
-        <input [value]="getFieldValue('realCoverage',firstSituationData)" disabled />
-      </div>
-      <div class="line-item"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}">
-        <input [value]="getFieldValue('realDTESInMonths',firstSituationData)" disabled />
-      </div>
-      <div class="line-item orange-bg"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'FONCTIONNAIRE'}">
-        <input [value]="getFieldValue('magRealTimePerCase',firstSituationData)" disabled />
+      <div class="item">
+        <p></p>
       </div>
     </div>
 
+    <div class="white-date-selector situation-white">
+      <div class="actual-situation" [@fadeInOut]>
+        <div class="line-title">
+          <p>
+            Situation de début (à compléter)
+          </p>
+        </div>
+
+        <div class="line-item orange-bg">
+          <input #whiteIn [value]="whiteSimulationBegin.totalIn" (valueChange)="updateWhiteValue('totalIn',$event)" />
+        </div>
+        <div class="line-item">
+          <input #whiteOut [value]="whiteSimulationBegin.totalOut" />
+        </div>
+        <div class="line-item orange-bg">
+          <input #whiteStock [value]="whiteSimulationBegin.lastStock" />
+        </div>
+        <div *ngIf="canViewMagistrat" class="line-item">
+          <input #whiteEtpMag />
+        </div>
+        <div *ngIf="canViewGreffier" class="line-item grey-bg-disabled"
+          [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}">
+          <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
+        </div>
+        <div *ngIf="canViewContractuel" class="line-item grey-bg-disabled">
+          <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input [value]="getFieldValue('realCoverage',firstSituationData)" disabled />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input [value]="getFieldValue('realDTESInMonths',firstSituationData)" disabled />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input [value]="getFieldValue('magRealTimePerCase',firstSituationData)" disabled />
+        </div>
+        <div class="line-item" style="display:block; margin: auto;">
+          <div class="validate-button" (click)="validateWhiteSimulator()">
+            Valider
+          </div>
+          <div class="edit-button">
+            Editer</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
-    <p>Paramètre(s) cible(s) : &nbsp; &nbsp;</p>
-  </div>
-  <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
-    <p>Paramètre(s) bloqué(s) : &nbsp; &nbsp;</p>
-  </div>
+
   <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}"
     style="display: flex;justify-content: center;">
     <div
