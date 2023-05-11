@@ -34,13 +34,23 @@
     .aj-date-select-blue{
     margin:0px!important ;
     }
-
-    &.situation-white{
-      padding: 0px 160px 0px 160px!important;
-
-    }
+  }
+  .white-begin-situation{
     .items{
-      top: 24px!important;}
+      top: auto!important;
+      height: 60px!important;
+    }
+    .actual-situation{
+      top: auto!important;
+    }
+
+    .validate-button{
+      background-color: #000091; height: 22px; border-radius: 6px; color:white; text-align: center;
+    }
+
+    .edit-button{
+      background-color: #e5e5e580; height: 28px; margin: 0px 8px; border-radius: 6px; padding: 0px 6px;
+    }
   }
 
   #comment-area-copy {
@@ -386,6 +396,10 @@
           mix-blend-mode: multiply;
           background-color: #ececfe !important;
         }
+      }
+
+      &.grey-bg-disabled {
+        background-color: #b9b8b64a;
       }
 
       &.selected {
@@ -747,6 +761,10 @@
           mix-blend-mode: multiply;
           background-color: #dcdcfb !important;
         }
+      }
+
+      &.grey-bg-disabled {
+        background-color: #b9b8b64a;
       }
 
       &.selected {
