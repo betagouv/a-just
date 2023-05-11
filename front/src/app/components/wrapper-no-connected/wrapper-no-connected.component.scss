@@ -3,6 +3,10 @@
 :host {
   display: block;
   width: 100%;
+
+  &.small-left-panel .main-container > .title-panel {
+    flex: 26;
+  }
 }
 
 .main-container {
