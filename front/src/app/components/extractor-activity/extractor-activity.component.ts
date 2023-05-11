@@ -46,8 +46,8 @@ const headersSum = [
   'Période',
   'Total entrées logiciel',
   'Total entrées après A-JUSTements',
-  'Sorties logiciel',
-  'Sorties A-JUSTées',
+  'Total sorties logiciel',
+  'Total sorties après A-JUSTements',
   'Stock logiciel',
   'Stock A-JUSTé',
 ]
