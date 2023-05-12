@@ -153,7 +153,6 @@ const routes: Routes = [
       import('./stats/stats.module').then(
         (mod) => mod.StatsModule
       ),
-    canActivate: [AuthGuard],
   },
 ]
 
