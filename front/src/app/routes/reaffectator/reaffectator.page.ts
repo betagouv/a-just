@@ -403,7 +403,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     ) {
       selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
     }
-
+    
     console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
