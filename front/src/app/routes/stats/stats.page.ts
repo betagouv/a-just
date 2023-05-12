@@ -93,7 +93,7 @@ export class StatsPage {
         const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
           .addTo(map)
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' personnes' : ''}`)
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' habitants' : ''}`)
         m.setPopup(popup)
       })
     })
