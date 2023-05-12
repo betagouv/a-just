@@ -53,6 +53,7 @@
     "@angular/cli": "~15.1.5",
     "@angular/compiler-cli": "^15.1.0",
     "@types/file-saver": "^2.0.5",
+    "@types/iframe-resizer": "^3.5.9",
     "@types/jasmine": "~4.3.0",
     "@types/lodash": "^4.14.191",
     "jasmine-core": "~4.5.0",
