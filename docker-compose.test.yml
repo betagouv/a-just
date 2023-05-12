@@ -66,6 +66,7 @@ services:
       - SERVER_URL=http://173.0.0.20:8080/api
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
+      - PORT=8080
 
 networks:
   ajust_network:

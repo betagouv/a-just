@@ -1,3 +1,4 @@
+@import "~remixicon/fonts/remixicon.css";
 @import "./utils.scss";
 @import "./typography.scss";
 @import "./form.scss";
@@ -32,4 +33,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 8px;
+}
+
+.cursor-pointer {
+	cursor: pointer;
 }

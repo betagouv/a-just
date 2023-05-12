@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
 declare const Quill: any
@@ -22,13 +30,25 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() title: string | undefined
   /**
+   * Title
+   */
+  @Input() placeholder: string | undefined
+  /**
+   * Value
+   */
+  @Input() value: string = ''
+  /**
+   * Emit value
+   */
+  @Output() valueChange = new EventEmitter()
+  /**
    * Quill editor
    */
   quillEditor: any = null
   /**
-   * Value
+   * Ignore update
    */
-  value: string = ''
+  ignoreUpdate: boolean = false
 
   /**
    * Constructeur
@@ -42,6 +62,17 @@ export class TextEditorComponent extends MainClass {
   }
 
   /**
+   * Detect on text change top update content
+   * @param change
+   */
+  ngOnChanges(change: SimpleChanges) {
+    if (change['value'] && this.quillEditor) {
+      this.ignoreUpdate = true
+      this.quillEditor.root.innerHTML = this.value
+    }
+  }
+
+  /**
    * Init Quill text editor
    */
   initQuillEditor() {
@@ -50,16 +81,29 @@ export class TextEditorComponent extends MainClass {
       modules: {
         toolbar: ['bold', 'italic', 'underline', 'strike'],
       },
+      placeholder: this.placeholder,
       theme: 'snow',
     })
 
-    this.quillEditor.on('text-change', (delta: any, oldDelta: any, source: string) => {
-      if (source == 'api') {
-        // console.log('An API call triggered this change.')
-      } else if (source == 'user') {
-        // console.log('A user action triggered this change.')
-        this.value = this.quillEditor.root.innerHTML
+    if (this.value) {
+      this.quillEditor.setText(this.value, 'api')
+    }
+
+    this.quillEditor.on(
+      'text-change',
+      (delta: any, oldDelta: any, source: string) => {
+        if (source == 'api') {
+          // console.log('An API call triggered this change.')
+        } else if (source == 'user') {
+          if (this.ignoreUpdate === false) {
+            // console.log('A user action triggered this change.')
+            this.value = !(this.quillEditor.root.innerText.trim()) ? '' : this.quillEditor.root.innerHTML
+            this.valueChange.emit(this.value)
+          } else {
+            this.ignoreUpdate = false
+          }
+        }
       }
-    })
+    )
   }
 }

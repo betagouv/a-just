@@ -6,7 +6,6 @@ import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
@@ -121,13 +120,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   indexOfTheFuture: number | null = null
   /**
-   * Documentation patch
-   */
-  documentation: DocumentationInterface = {
-    title: 'Fiche individuelle :',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
-  }
-  /**
    * Variable en cours d'export de page
    */
   duringPrint: boolean = false
@@ -153,7 +145,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService,
+    private hrCategoryService: HRCategoryService
   ) {
     super()
 
@@ -469,7 +461,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       (a) => a.dateStop && a.dateStop.getTime() < today().getTime()
     )
     this.historiesOfTheFutur = this.histories.filter(
-      (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
+      (a) => a.dateStart && a.dateStart.getTime() > today().getTime()
     )
 
     // find the actuel index of situation
@@ -558,7 +550,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ...this.currentHR,
         [nodeName]: value,
       }
-      
+
       this.onLoad(
         await this.humanResourceService.updatePersonById(this.currentHR, {
           [nodeName]: value,
@@ -610,7 +602,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onNewUpdate() {
     this.onEditIndex = null
-    this.onLoad(null, false)  
+    this.onLoad(null, false)
   }
 
   /**
@@ -867,6 +859,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
+    console.log(history)
+
     const index = history
       ? this.histories.findIndex(
           (h) => h.id === history.id && h.dateStart === history.dateStart
@@ -881,23 +875,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // edit situation
         this.onEditIndex = index
       }
-
-      setTimeout(() => {
-        const findContent = document.getElementById('content')
-        if (findContent) {
-          const findElements =
-            findContent.getElementsByTagName('add-ventilation')
-          if (findElements && findElements.length) {
-            findContent.scrollTo({
-              behavior: 'smooth',
-              top:
-                findElements[0].getBoundingClientRect().top -
-                87 +
-                findContent.scrollTop,
-            })
-          }
-        }
-      }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
     }
@@ -919,10 +896,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
+    this.onEditIndex = null
+
     // console.log(returnValue, this.histories.length, this.onEditIndex)
     if (returnValue) {
       // force to not show on boarding after delete last situation
-      this.onEditIndex = null
       this.onLoad(returnValue)
     }
   }
@@ -932,7 +910,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
-    console.log('oui?')
     this.wrapper
       ?.exportAsPdf(
         `Fiche individuelle${
@@ -958,27 +935,41 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Force to open help panel
    * @param type
    */
-  openHelpPanel(type: string) {
+  openHelpPanel(type: string | undefined) {
     switch (type) {
-      case 'indispo':
+      case 'indispo': 
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
           subTitle: "Qu'est-ce que c'est ?",
         })
         break
+      case 'nouvelle-situation':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Enregistrer une nouvelle situation',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'fix-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Corriger une fiche préexistante',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'add-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Créer ou modifier une fiche',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      default:
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Fiche individuelle :',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+        })
     }
-  }
-
-  /**
-   * Update form with contenteditable event
-   * @param node
-   * @param object
-   */
-  completeFormWithDomObject(
-    node: 'firstName' | 'lastName' | 'matricule',
-    object: any
-  ) {
-    this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
   }
 }

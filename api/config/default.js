@@ -12,15 +12,19 @@ module.exports = {
   /**
    * Url du serveur (idéal pour le contenu des mails)
    */
-  serverUrl: process.env.SERVER_URL || 'http://localhost:8080/api',
+  serverUrl: process.env.SERVER_URL || 'http://localhost:8081/api',
   /**
    * Url du font (idéal pour le contenu des mails)
    */
   frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
+   * Url du cors
+   */
+  corsUrl: process.env.FRONT_URL,
+  /**
    * Port utilisé pour démarrer le serveur
    */
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 8081,
   /**
    * Path de la base
    */
@@ -88,4 +92,12 @@ module.exports = {
    * Sentry api Key
    */
   sentryApi: process.env.SENTRY_API,
+  /**
+   * Sent Email
+   */
+  sentEmail: true,
+  /**
+   * Token expiration delay
+   */
+  nbMaxDayTokenLife: 30,
 }

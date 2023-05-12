@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
+import { REFERENTIELS_CANT_UPDATED } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -72,6 +73,10 @@ export class PanelActivitiesComponent
    * Contientieux sélectionné
    */
   refIndexSelected: number = -1
+  /**
+   * Réfentiels que l'on ne peut pas modifier
+   */
+  REFERENTIELS_CANT_UPDATED = REFERENTIELS_CANT_UPDATED
 
   /**
    * Constructeur

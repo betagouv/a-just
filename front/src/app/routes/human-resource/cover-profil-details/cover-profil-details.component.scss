@@ -1,0 +1,139 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  margin-bottom: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: white;
+}
+
+.first-row {
+  position: relative;
+  height: 71px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 24px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-style: solid;
+  border-bottom-color: fColor(cgrayDefault);
+  border-bottom-width: 1px;
+
+  a {
+    position: absolute;
+    left: 16px;
+    top: 20px;
+    font-size: 14px;
+  }
+}
+
+.group-first-row {
+  height: 85px;
+  overflow: hidden;
+  position: relative;
+
+  .disk-etp {
+    width: 112px;
+    height: 112px;
+    padding: 6px;
+    border-radius: 112px;
+    background-color: white;
+    position: absolute;
+    left: 100px;
+    top: 14px;
+  }
+}
+
+.second-row {
+  padding: 0 24px 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+
+    &.right-second-row {
+      align-items: flex-end;
+    }
+  }
+
+  .user-name {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+
+    p {
+      font-size: 20px;
+      font-weight: bold;
+      white-space: nowrap;
+      color: fColor(cblack);
+    }
+
+    mat-icon {
+      width: 12px;
+      height: 12px;
+      font-size: 12px;
+      margin-left: 10px;
+      margin-top: 4px;
+    }
+
+    aj-help-button {
+      margin-left: 22px;
+    }
+  }
+
+  .matricule {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    p {
+      font-size: 12px;
+      white-space: nowrap;
+      color: fColor(cgray);
+    }
+
+    mat-icon {
+      width: 7px;
+      height: 7px;
+      font-size: 7px;
+      margin-left: 5px;
+      margin-top: 1px;
+    }
+  }
+
+  .tags {
+    display: flex;
+    align-items: center;
+
+    p {
+      font-size: 14px;
+      color: fColor(cblackdark);
+      background-color: fColor(cgrayDefault);
+      margin-right: 8px;
+      padding: 2px 8px;
+      border-radius: 40px;
+    }
+  }
+
+  .user-updated-at {
+    font-size: 12px;
+    color: fColor(cgray);
+  }
+
+  .dates {
+    display: flex;
+
+    aj-date-select {
+      margin-left: 8px;
+      width: 150px;
+    }
+  }
+}

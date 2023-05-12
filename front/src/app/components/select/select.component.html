@@ -1,5 +1,5 @@
-<p (click)="matSelect.open()" class="title">{{ title }}</p>
-<div (click)="matSelect.open()">
+<p (click)="openDropDown(matSelect)" class="title">{{ title }}</p>
+<div (click)="openDropDown(matSelect)">
   <p class="bold-family">{{ realValue || defaultRealValue }}</p>
   <mat-icon>{{ icon }}</mat-icon>
 </div>
@@ -9,13 +9,12 @@
     [values]="this.subList ? this.subReferentielData : this.datas" check="true">
   </app-select-check-all>
   <div *ngIf="!subList; else subListTemplate">
-    <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions">
-      {{ ref.value }}
+    <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions"
+      [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml">
     </mat-option>
   </div>
   <ng-template #subListTemplate>
-    <mat-option *ngFor="let ref of subReferentielData" [value]="ref.id">
-      {{ ref.value }}
+    <mat-option *ngFor="let ref of subReferentielData" [value]="ref.id" [innerHTML]="ref.value | sanitizeHtml">
     </mat-option>
   </ng-template>
 </mat-select>

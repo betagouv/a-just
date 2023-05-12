@@ -105,6 +105,48 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'carte-juridictions',
+    loadChildren: () =>
+      import('./juridictions-installed/juridictions-installed.module').then(
+        (mod) => mod.JuridictionsInstalledModule
+      ),
+  },
+  {
+    path: 'plan-du-site',
+    loadChildren: () =>
+      import('./sitemap/sitemap.module').then(
+        (mod) => mod.SiteMapModule
+      ),
+  },
+  {
+    path: 'mentions-legales',
+    loadChildren: () =>
+      import('./legale-notice/legale-notice.module').then(
+        (mod) => mod.LegaleNoticeModule
+      ),
+  },
+  {
+    path: 'donnees-personnelles',
+    loadChildren: () =>
+      import('./privacy/privacy.module').then(
+        (mod) => mod.PrivacyModule
+      ),
+  },
+  {
+    path: 'declaration-accessibilite',
+    loadChildren: () =>
+      import('./accessibilities/accessibilities.module').then(
+        (mod) => mod.AccessibilitiesModule
+      ),
+  },
+  {
+    path: 'contact',
+    loadChildren: () =>
+      import('./contact/contact.module').then(
+        (mod) => mod.ContactModule
+      ),
+  },
 ]
 
 @NgModule({

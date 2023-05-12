@@ -1,7 +1,7 @@
 <aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
-  [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
+  [isLoading]="isLoading" [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
   <div class="container">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
@@ -15,7 +15,7 @@
         (click)="checkboxCategory.click()">
         <div>
           <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
-            (ngModelChange)="onFilterList()"
+            (ngModelChange)="onSelectCategory(category)"
             [ngStyle]="{'border-color': category.textColor, 'background-color': category.selected ? category.textColor : null}" />
         </div>
         <div>
@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div class="content-list" id="container-list">
+    <div class="content-list" id="container-list" #containerList>
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
@@ -41,6 +41,7 @@
                   <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
                   <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
                     [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+                    [categories]="humanResourceService.categoriesFilterListIds"
                     [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = -1">
                   </filter-panel>
                 </div>
@@ -95,57 +96,9 @@
         </div>
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
-          <div class="item-list" *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id">
-            <div class="profil item">
-              <a [routerLink]="['/resource-humaine', hr.id]" class="text">
-                <div class="name">
-                  <p>
-                    {{ filterParams && filterParams.display === 'nom/prénom' ?
-                    hr.lastName:hr.firstName}} {{ filterParams &&
-                    filterParams.display === 'nom/prénom' ? hr.firstName :
-                    hr.lastName}}
-                  </p>
-
-                  <div *ngIf="hr.comment" class="tooltip">
-                    <mat-icon>message</mat-icon>
-                    <span class="tooltiptext">{{ hr.comment }}</span>
-                  </div>
-                </div>
-                <div class="tags">
-                  <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="list.textColor">
-                    {{ hr.fonction && hr.fonction.code}}
-                  </p>
-                  <p class="etp">{{ hr.etpLabel }}</p>
-                </div>
-                <div class="flex-1"></div>
-                <div class="updated-at">
-                  Dernière mise à jour le {{ hr.updatedAt | date:"dd" }} {{
-                  getShortMonthString(hr.updatedAt) }} {{ hr.updatedAt |
-                  date:"YYYY" }}
-                </div>
-              </a>
-              <div class="read-etp">
-                <p class="label">ETP Travaillé :</p>
-                <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-                  [indisponibility]="hr.hasIndisponibility">
-                </etp-preview>
-                <p class="unavailable" *ngIf="hr.hasIndisponibility">
-                  <mat-icon>error</mat-icon> Indispo
-                </p>
-              </div>
-            </div>
-            <div class="activities">
-              <div class="space"></div>
-              <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
-              </panel-activities>
-            </div>
-            <div class="actions">
-              <a [routerLink]="['/resource-humaine', hr.id]">
-                <mat-icon>chevron_right</mat-icon>
-              </a>
-            </div>
-          </div>
+          <person-preview *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
+            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"
+            [parentDom]="containerList"></person-preview>
         </div>
       </ng-template>
     </div>
@@ -173,24 +126,30 @@
       </mat-icon>
     </div>
     <div class="show-search-panel" *ngIf="allPersonsFiltered !== null">
-      <div *ngIf="allPersonsFilteredIsIn.length">{{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length >
-        1 ? 'résultats' : 'résultat'}}
-        dans les effectifs</div>
+      <div *ngIf="allPersonsFilteredIsIn.length">
+        {{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length > 1
+        ? 'résultats' : 'résultat'}} dans les effectifs
+      </div>
       <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
-        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
+        <p>
+          {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}</p>
+          person.lastName}}
+        </p>
         <i class="ri-user-follow-line" [style.background-color]="getCategoryColor(person.categoryName)"></i>
       </a>
-      <div *ngIf="allPersonsFilteredNotIn.length">{{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length
-        > 1 ? 'résultats' : 'résultat'}}
-        hors effectifs</div>
+      <div *ngIf="allPersonsFilteredNotIn.length">
+        {{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length >
+        1 ? 'résultats' : 'résultat'}} hors effectifs
+      </div>
       <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
-        <p>{{ filterParams && filterParams.display === 'nom/prénom' ?
+        <p>
+          {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}</p>
+          person.lastName}}
+        </p>
         <i class="ri-user-shared-line"
           [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
           [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null"></i>

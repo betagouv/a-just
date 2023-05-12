@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import {
   userCanViewContractuel,
@@ -55,7 +56,10 @@ export class ReferentielCalculatorComponent extends MainClass {
   /**
    * Constructor
    */
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private referentielService: ReferentielService
+  ) {
     super()
 
     this.watch(
@@ -87,14 +91,21 @@ export class ReferentielCalculatorComponent extends MainClass {
   /**
    * Arrondi valeur numérique
    */
-  floor(value:number){
+  floor(value: number) {
     return Math.floor(value)
   }
 
-    /**
+  /**
+   * Id contentieux soutien
+   */
+  isSoutien(id: number) {
+    return this.referentielService.idsSoutien.indexOf(id) !== -1
+  }
+
+  /**
    * Troncage valeur numérique
    */
-    trunc(value:number){
-      return Math.trunc(value*100000)/100000
-    }
+  trunc(value: number) {
+    return Math.trunc(value * 100000) / 100000
+  }
 }

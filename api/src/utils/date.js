@@ -16,6 +16,16 @@ export const convertHourMinutesToTimestamps = (hour, minute) => {
 }
 
 /**
+ * Converte date to human format
+ * @param {*} date
+ */
+export const humanDate = (date) => {
+  date = new Date(date)
+
+  return `${dayName(date)} ${date.getDate()} ${monthName(date)} ${date.getFullYear()}`
+}
+
+/**
  * Retourne le nom du jour
  * @param {*} date
  * @returns le jour string

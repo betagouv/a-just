@@ -12,6 +12,8 @@ import { UserService } from 'src/app/services/user/user.service'
 import { generalizeTimeZone, getShortMonthString } from 'src/app/utils/dates'
 import * as xlsx from 'xlsx'
 
+
+
 /**
  * Excel file details
  */
@@ -36,6 +38,19 @@ const headers = [
   'Stock A-JUSTé',
 ]
 
+/**
+ * Excel file headers sum
+ */
+const headersSum = [
+  ' ',
+  'Période',
+  'Total entrées logiciel',
+  'Total entrées après A-JUSTements',
+  'Total sorties logiciel',
+  'Total sorties après A-JUSTements',
+  'Stock logiciel',
+  'Stock après A-JUSTements',
+]
 @Component({
   selector: 'aj-extractor-activity',
   templateUrl: './extractor-activity.component.html',
@@ -169,24 +184,22 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
-    //console.log(act.contentieux.code_import)
     const sortCodeArray = act.contentieux.code_import
       .split('.').filter((y : String) => y !== '').map((x: string) => x==='0'? 0.1 : Number(x))
 
       const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x=>x.id).includes(act.idReferentiel)===true ? true: false
-      console.log(this.humanResourceService.contentieuxReferentielOnly.value)
     return {
       [' ']: ref===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
       ['codeCent']: sortCodeArray[1]*10 || -1,
       ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
-      ['Entrées logiciel']: act.originalEntrees,
-      ['Entrées A-JUSTées']: act.entrees,
-      ['Sorties logiciel']: act.originalSorties,
-      ['Sorties A-JUSTées']: act.sorties,
+      [total===true?'Total entrées logiciel':'Entrées logiciel']: act.originalEntrees,
+      [total===true?'Total entrées après A-JUSTements':'Entrées A-JUSTées']: act.entrees,
+      [total===true?'Total sorties logiciel':'Sorties logiciel']: act.originalSorties,
+      [total===true?'Total sorties après A-JUSTements':'Sorties A-JUSTées']: act.sorties,
       ['Stock logiciel']: act.originalStock,
-      ['Stock A-JUSTé']: act.stock,
+      ['Stock après A-JUSTements']: act.stock,
     }
   }
 
@@ -216,7 +229,6 @@ export class ExtractorActivityComponent extends MainClass {
    */
   sortByCodeImport(sumTab: any) {
     sumTab = orderBy(sumTab, ['codeUnit', 'codeCent'], ['asc'])
-    //console.log(sumTab)
     sumTab.forEach(function (v: any) {
       delete v['codeUnit']
       delete v['codeCent']
@@ -285,16 +297,15 @@ export class ExtractorActivityComponent extends MainClass {
             this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
         )
 
-        //console.log(this.sumTab)
-
         this.sumTab = this.sortByCodeImport(this.sumTab)
         xlsx.utils.book_append_sheet(
           workbook,
-          this.generateWorkSheet(headers, this.sumTab),
+          this.generateWorkSheet(headersSum, this.sumTab),
           'Total sur la période'
         )
 
         this.data = Object.keys(this.data).map((key: any) => {
+          console.log(this.data[key])
           this.data[key] = this.data[key].map((act: any) => {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)
@@ -303,6 +314,8 @@ export class ExtractorActivityComponent extends MainClass {
               this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           )
+          console.log(this.data[key])
+
           this.data[key] = this.sortByCodeImport(this.data[key])
           xlsx.utils.book_append_sheet(
             workbook,
@@ -324,3 +337,4 @@ export class ExtractorActivityComponent extends MainClass {
       })
   }
 }
+
