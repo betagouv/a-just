@@ -1,11 +1,13 @@
 import axios from 'axios'
 import config from 'config'
 import { assert } from 'chai'
+import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
+import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
 
 module.exports = function () {
   describe('Login tests that should fail', () => {
     it('Bad password, should return 401', async () => {
-      const email = 'redwane.zafari@a-just.fr'
+      const email = USER_ADMIN_EMAIl
       const password = '1234859'
 
       try {
@@ -18,8 +20,8 @@ module.exports = function () {
       }
     })
     it('Bad email, should return 401', async () => {
-      const email = 'redwane.zafari@a-just.com'
-      const password = '123456'
+      const email = 'badEmail@mail.com'
+      const password = USER_ADMIN_PASSWORD
 
       try {
         await axios.post(`${config.serverUrl}/auths/login`, {
@@ -31,7 +33,7 @@ module.exports = function () {
       }
     })
     it('Bad email AND bad password, should return 401', async () => {
-      const email = 'redwane.zafari@a-just.com'
+      const email = 'badEmail@mail.com'
       const password = '1243627'
 
       try {
@@ -47,8 +49,8 @@ module.exports = function () {
   describe('Login test that should succeed then logout', () => {
     let token = null
     it('Login should return 201 with user token', async () => {
-      const email = 'redwane.zafari@a-just.fr'
-      const password = '123456'
+      const email = USER_ADMIN_EMAIl
+      const password = USER_ADMIN_PASSWORD
 
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
         email,
@@ -70,7 +72,7 @@ module.exports = function () {
     it('Bad email, should return 401', async () => {
       try {
         await axios.post(`${config.serverUrl}/users/forgot-password`, {
-          email: 'redwane.zafari@a-just.com',
+          email: 'badEmail@mail.com',
         })
       } catch (error) {
         assert.strictEqual(error.response.status, 401)
@@ -78,7 +80,7 @@ module.exports = function () {
     })
     it('Good email, should return 200', async () => {
       const response = await axios.post(`${config.serverUrl}/users/forgot-password`, {
-        email: 'redwane.zafari@a-just.fr',
+        email: USER_ADMIN_EMAIl,
       })
 
       assert.strictEqual(response.status, 200)
@@ -88,10 +90,10 @@ module.exports = function () {
     it('Missing email, should return 400', async () => {
       try {
         await axios.post(`${config.serverUrl}/users/create-account`, {
-          password: '123456',
-          firstName: 'userTest',
-          lastName: 'userTest',
-          fonction: 'tester',
+          password: USER_TEST_PASSWORD,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
+          fonction: USER_TEST_FONCTION,
         })
       } catch (error) {
         assert.strictEqual(error.response.status, 400)
@@ -100,7 +102,18 @@ module.exports = function () {
     it('Missing password, should return 400', async () => {
       try {
         await axios.post(`${config.serverUrl}/users/create-account`, {
-          email: 'test@mail.com',
+          email: USER_ADMIN_EMAIl,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
+          fonction: USER_TEST_FONCTION,
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 400)
+      }
+    })
+    it('Sign up - Missing email and password, should return 400', async () => {
+      try {
+        await axios.post(`${config.serverUrl}/users/create-account`, {
           firstName: 'userTest',
           lastName: 'userTest',
           fonction: 'tester',
@@ -111,11 +124,11 @@ module.exports = function () {
     })
     it('Correct inputs, should return 200', async () => {
       const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: 'test@mail.com',
-        password: '123456',
-        firstName: 'userTest',
-        lastName: 'userTest',
-        fonction: 'tester',
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
+        firstName: USER_TEST_FIRSTNAME,
+        lastName: USER_TEST_LASTNAME,
+        fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 200)
     })

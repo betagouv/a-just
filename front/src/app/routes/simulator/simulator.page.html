@@ -575,23 +575,23 @@
         </div>
       </div>
     </div>
-    <!--<aj-dtes-chart></aj-dtes-chart>
+    <aj-dtes-chart></aj-dtes-chart>
 
     <aj-etp-chart *ngIf="categorySelected" [categorySelected]="categorySelected" [canViewMagistrat]="canViewMagistrat"
       [canViewGreffier]="canViewGreffier" [canViewContractuel]="canViewContractuel"></aj-etp-chart>
 
-    <aj-in-out-chart></aj-in-out-chart>-->
+    <aj-in-out-chart></aj-in-out-chart>
 
     <div class="widgets">
-      <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueAt]="getFieldValue('realDTESInMonths',firstSituationData)"
         [valueProjected]="getFieldValue('realDTESInMonths',projectedSituationData)"
         [valueSimulated]="getFieldValue('realDTESInMonths',simulatedSationData)"></aj-loaders-widget>
-      <aj-figures-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-figures-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueAt]="getFieldValue('magRealTimePerCase',firstSituationData)"
         [valueProjected]="getFieldValue('magRealTimePerCase',projectedSituationData)"
         [valueSimulated]="getFieldValue('magRealTimePerCase',simulatedSationData)"></aj-figures-widget>
-      <aj-dial-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-dial-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueProjected]="getFieldValue('realCoverage',projectedSituationData)"
         [valueSimulated]="getFieldValue('realCoverage',simulatedSationData)"></aj-dial-widget>
     </div>
@@ -603,7 +603,7 @@
         </div>
         <textarea id="comment-area" #commentaireSimulateur placeholder="Commentaire"
           (keyup)="setComment($event)"></textarea>
-        <p id="comment-area-copy">{{commentaire}}</p>
+        <div id="comment-area-copy">{{commentaire}}</div>
       </div>
       <div class="space"></div>
     </div>

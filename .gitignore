@@ -9,4 +9,5 @@ front/.angular
 front-admin/.angular
 format-datas/outputs*
 format-datas/inputs*
+format-datas/assets/*.csv
 node_modules

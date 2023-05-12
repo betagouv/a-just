@@ -31,7 +31,8 @@
   }">
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
-      [color]="referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
+      [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Pour les “'+referentiel[refIndexSelected].label+'”, il est impératif de renseigner la ou les sous-rubriques concernées. Le total se calcule automatiquement.' : null"
+      [color]=" referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
       (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
     <p>{{ referentielMappingName(referentiel[refIndexSelected].label) }}</p>

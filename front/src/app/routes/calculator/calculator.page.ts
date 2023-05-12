@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import { orderBy } from 'lodash'
+import { Moment } from 'moment'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
@@ -8,7 +10,6 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { AppService } from 'src/app/services/app/app.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -125,7 +126,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private appService: AppService,
     private userService: UserService
   ) {
     super()
@@ -151,6 +151,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             "Vos droits ne vous permettent pas d'exécuter un calcul, veuillez contacter un administrateur."
           )
         }
+        this.calculatorService.categorySelected.next(this.categorySelected)
       })
     )
 
@@ -191,8 +192,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
           (r) =>
-            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-            this.referentielService.idsSoutien.indexOf(r.id) === -1
+            this.referentielService.idsIndispo.indexOf(r.id) === -1
         )
 
         if (this.referentielIds.length === 0) {
@@ -229,7 +229,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         console.log(date)
         date = new Date(date ? date : '')
         const max = month(date, 0, 'lastday')
-        console.log('max ; ' , max)
         this.maxDateSelectionDate = max
         console.log(max)
 
@@ -260,7 +259,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             : null
         )
         .then(({ list, fonctions }) => {
-          console.log(list)
           if (this.lastCategorySelected !== this.categorySelected) {
             this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
               id: f.id,
@@ -269,6 +267,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.selectedFonctionsIds = fonctions.map(
               (f: HRFonctionInterface) => f.id
             )
+            this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
           }
           this.formatDatas(list)
           this.isLoading = false
@@ -357,7 +356,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   changeCategorySelected(category: string) {
     this.categorySelected = category
-
+    this.calculatorService.categorySelected.next(this.categorySelected)
     this.onLoad()
   }
 
@@ -367,6 +366,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
     this.onLoad()
   }
 
@@ -414,5 +414,54 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       .then(() => {
         this.duringPrint = false
       })
+  }
+
+  /**
+   * Custom renderer on dates calendar visible
+   * @param cellDate 
+   * @param view 
+   * @returns 
+   */
+  dateClass: MatCalendarCellClassFunction<Moment> = (cellDate, view) => {
+    /*if (view === 'month') {
+      return 'material-date-calendar-no-datas';
+    }*/
+
+    return '';
+  };
+
+
+  calculatorSaver(){
+    console.log(this.datas)
+    let refToSave = new Array()
+
+    this.datas.map(x=>{
+    if (x.childrens.length>0)
+      x.childrens.map(y=>{
+        refToSave.push({
+          contentieux:{
+          id:y.contentieux.id,
+          label:y.contentieux.label},
+          averageProcessingTime: y.magRealTimePerCase,
+          averageProcessingTimeFonc: y.fonRealTimePerCase,
+        })
+      })
+    
+      refToSave.push({
+        contentieux:{
+        id:x.contentieux.id,
+        label:x.contentieux.label},
+        averageProcessingTime: x.magRealTimePerCase,
+        averageProcessingTimeFonc: x.fonRealTimePerCase,
+      })
+    
+    })
+
+    console.log(refToSave)
+    this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
+    this.contentieuxOptionsService.optionsIsModify.next(true)
+    
+    this.contentieuxOptionsService.onSaveDatas(true)
+
   }
 }

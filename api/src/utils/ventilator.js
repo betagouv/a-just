@@ -1,6 +1,6 @@
 import { orderBy, sumBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { findAllSituations, findSituation } from './human-resource'
+import { findSituation } from './human-resource'
 import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
 

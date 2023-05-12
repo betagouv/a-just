@@ -1,89 +1,29 @@
 @import '../../styles/utils.scss';
 
-.title {
-  margin-right: 16px;
-  display: flex;
-
-  .personal-name {
-    margin-right: 16px;
-  }
-
-  .page-name {
-    font-size: 16px;
-    color: fColor(titleSelect);
-    font-weight: bold;
-  }
-
-  .iconPenSmall {
-    font-size: 12px;
-    position: relative;
-    color: fColor(primary) !important;
-    width: 12px;
-    height: 12px;
-  }
-
-  .user-name {
-    font-size: 22px;
-    color: fColor(primary);
-    font-weight: bold;
-
-    mat-icon {
-      position: relative;
-      top: 4px;
-      margin-left: 8px;
-    }
-  }
-}
-
-.matricule {
-  font-size: 12px;
-  color: #666666;
-  align-items: center;
-  margin-right: 4px;
-}
-
-.user-updated-at {
-  font-size: 12px;
+.wrapper-content {
   margin-top: 8px;
+  padding: 0 16px 16px 16px;
+  overflow: auto;
 }
 
 .new-action {
   margin: 32px auto;
   display: grid;
-	grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   max-width: 300px;
-	grid-gap: 16px 8px;
+  grid-gap: 16px 8px;
 
   aj-help-button {
-    margin-top: 6px;
+    margin-top: 3px;
   }
-}
-
-.actions {
-  display: flex;
-  margin-right: 16px;
-
-  aj-date-select {
-    margin-left: 16px;
-  }
-}
-
-.profil {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 16px;
-}
-
-.activities {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 16px;
 }
 
 .panel-hsitory-group {
   margin: 16px auto;
+  max-width: 894px;
   background-color: white;
   border-radius: 8px;
+  padding-bottom: 8px;
 
   &.futur {
     background-color: fColor(cgrayDefault);
@@ -114,8 +54,18 @@
 }
 
 add-ventilation {
-  margin: 24px auto;
-  z-index: 101;
+  margin: 24px auto 60px auto;
+
+  &:not(.empty-user) {
+    position: fixed;
+    margin: 24px auto;
+    z-index: 101;
+    top: 0;
+    bottom: 0;
+    left: calc(50% + 111px);
+    transform: translateX(-50%);
+    overflow: auto;
+  }
 }
 
 .sticky-action-footer {
@@ -127,9 +77,11 @@ add-ventilation {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  bottom: 0;
-  z-index: 102;
+  position: absolute;
+    bottom: 0;
+    z-index: 102;
+    left: 0;
+    right: 0;
 
   button:first-child {
     margin-right: 16px;
@@ -145,4 +97,19 @@ add-ventilation {
   bottom: 0;
   z-index: 100;
   pointer-events: none;
+}
+
+.first-panel {
+  display: flex;
+  align-items: stretch;
+  margin: 8px 0;
+
+  > indispo-profil {
+    width: 438px;
+    margin-right: 8px;
+  }
+
+  > comment-profil {
+    flex: 1;
+  }
 }

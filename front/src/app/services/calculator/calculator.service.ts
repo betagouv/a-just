@@ -36,7 +36,16 @@ export class CalculatorService extends MainClass {
    * Liste des réferentiels sélectionnées
    */
   referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+ /**
+   * Liste des fonctions selectionnées
+   */
+ selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+ /**
+   * Liste des fonctions selectionnées
+   */
+ categorySelected: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null)
 
+ 
   /**
    * Constructeur
    * @param serverService 
@@ -63,7 +72,6 @@ export class CalculatorService extends MainClass {
    * @returns 
    */
   filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
-    console.log(this.dateStart.getValue())
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),

@@ -1,111 +1,47 @@
 <div class="header-panel">
-  <div class="situation">
-    <p>Situation administrative :</p>
+  <p>Répartition actuelle du temps disponible par activité</p>
+  <div>
     <div class="tags">
-      <p *ngIf="fonction" class="fonction">
-        {{ fonction.code }}
+      <p *ngIf="dateStart" class="date">
+        <mat-icon>calendar_today</mat-icon>
+        <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
+          {{
+          dateStart && dateStart.getTime() > getToday().getTime()
+          ? 'À partir du'
+          : 'Depuis le'
+          }}
+          {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
+          {{ dateStart.getFullYear() }}
+        </ng-template>
+        <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
+          {{
+          dateStart && dateStart.getTime() > getToday().getTime()
+          ? "À partir d'Aujourd'hui"
+          : "Depuis Aujourd'hui"
+          }}
+        </ng-template>
       </p>
-      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
-    </div>
-  </div>
-  <div class="etp">
-    <p>ETPTravaillé :</p>
-    <etp-preview [etp]="etp - indisponibility" [width]="56" [height]="56" [indisponibility]="indisponibility">
-    </etp-preview>
-  </div>
-  <div class="indisponibilities" *ngIf="indisponibilities.length">
-    <img src="/assets/images/a-just-fleche.svg" />
-    <p>Indisponibilités :</p>
-    <div class="indispo-content">
-      <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
-        <div class="icon">
-          <mat-icon>event_busy</mat-icon>
-        </div>
-        <div class="text">
-          <p>
-            {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
-            ({{ indisp.percent || 0 }}%)
-          </p>
-          <p>
-            <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: 'dd' }}
-              {{ getShortMonthString(indisp.dateStart) }}
-              {{ getFullYear(indisp.dateStart) }}</ng-template>
-            <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
-              au
-            </ng-template>
-            <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
-              jusqu'au
-            </ng-template>
-            <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: 'dd' }}
-              {{ getShortMonthString(indisp.dateStop) }}
-              {{ getFullYear(indisp.dateStop) }}</ng-template>
-          </p>
-        </div>
-        <div class="action no-print">
-          <mat-icon>drive_file_rename_outline</mat-icon>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="details">
-  <div class="activities-panel">
-    <div>
-      <p>Répartition actuelle du temps disponible par activité</p>
-      <div class="tags">
-        <p *ngIf="dateStart" class="date">
-          <mat-icon>calendar_today</mat-icon>
-          <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
-            {{
-            dateStart && dateStart.getTime() > getToday().getTime()
-            ? 'À partir du'
-            : 'Depuis le'
-            }}
-            {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-            {{ dateStart.getFullYear() }}
-          </ng-template>
-          <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
-            {{
-            dateStart && dateStart.getTime() > getToday().getTime()
-            ? "À partir d'Aujourd'hui"
-            : "Depuis Aujourd'hui"
-            }}
-          </ng-template>
-        </p>
-        <p *ngIf="dateStop" class="date">
-          <mat-icon>calendar_today</mat-icon>
-          <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au {{ dateStop | date: 'dd' }}
-            {{ getShortMonthString(dateStop) }}
-            {{ dateStop.getFullYear() }}
-          </ng-template>
-          <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
-          </ng-template>
-        </p>
-      </div>
-    </div>
-    <panel-activities [etp]="etp - indisponibility" [activities]="activities"
-      [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
-  </div>
-
-  <div class="comment">
-    <div class="header-comment">
-      <mat-icon>message</mat-icon>
-      <p>
-        <b>Commentaire</b><br />
-        <ng-template [ngIf]="commentUpdatedAt">Enregistré {{ formatDate(commentUpdatedAt) }}</ng-template>
+      <p *ngIf="dateStop" class="date">
+        <mat-icon>calendar_today</mat-icon>
+        <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au {{ dateStop | date : 'dd' }}
+          {{ getShortMonthString(dateStop) }}
+          {{ dateStop.getFullYear() }}
+        </ng-template>
+        <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
+        </ng-template>
       </p>
+      <div class="flex-1"></div>
+      <ng-template [ngIf]="canEdit">
+        <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">
+          Corriger
+        </button>
+        <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="light small outline red no-print">
+          Supprimer la situation
+        </button>
+      </ng-template>
     </div>
-
-    <textarea placeholder="Commentaire" [ngModel]="comment" (ngModelChange)="updateComment($event)"></textarea>
   </div>
 </div>
 
-<div class="actions-panel" *ngIf="canEdit">
-  <button (click)="editVentilation.emit(true)" class="outline small primary">
-    Corriger cette situation
-  </button>
-  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">
-    Supprimer la situation
-  </button>
-</div>
+<panel-activities [etp]="etp - indisponibility" [activities]="activities"
+  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>

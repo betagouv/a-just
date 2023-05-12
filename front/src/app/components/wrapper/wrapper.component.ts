@@ -354,19 +354,27 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           logo.style.left = '30px'
 
           const title = document.createElement('p')
-          title.style.fontSize = '24px'
+          title.style.fontSize = '18px'
+          title.style.textAlign = 'left'
+          title.style.fontFamily = 'Helvetica'
           title.style.marginTop = '64px'
           title.style.fontWeight = 'bold'
           title.innerHTML = exportName || ''
 
           const pCom = document.createElement('p')
           pCom.style.marginTop = '32px'
-          pCom.style.fontSize = '10px'
+          pCom.style.fontSize = '14px'
+          pCom.style.textAlign = 'left'
+          pCom.style.fontFamily = 'Helvetica'
           pCom.innerHTML = 'Commentaire :'
 
           const commentDom = document.createElement('p')
           commentDom.style.fontSize = '10px'
-          commentDom.innerHTML = comment
+          commentDom.style.textAlign = 'left'
+          commentDom.style.fontFamily = 'Helvetica'
+          commentDom.classList.add('p-with-child-Helvetica')
+          commentDom.innerHTML = comment || ''
+          console.log('comment', comment)
 
           htmlContainer.appendChild(logo)
           htmlContainer.appendChild(title)
@@ -425,6 +433,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       case 'export-with-comment':
         this.askExportAsPdf(htmlComment)
         break
+      default:
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+        break;
     }
 
     this.promptComment = false

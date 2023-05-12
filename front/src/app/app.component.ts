@@ -7,6 +7,7 @@ import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
+import { copy } from './utils'
 
 /**
  * Variable d'environement en global
@@ -104,11 +105,10 @@ export class AppComponent implements AfterViewInit {
    */
   onCloseAlert(clickToOk = false) {
     const alertObject = this.appService.alert.getValue()
+    this.appService.alert.next(null)
     if(clickToOk && alertObject && alertObject.callback) {
       alertObject.callback()
     }
-    
-    this.appService.alert.next(null)
   }
 
   listenSelectElement() {
