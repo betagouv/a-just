@@ -147,6 +147,14 @@ const routes: Routes = [
         (mod) => mod.ContactModule
       ),
   },
+  {
+    path: 'stats',
+    loadChildren: () =>
+      import('./stats/stats.module').then(
+        (mod) => mod.StatsModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ]
 
 @NgModule({
