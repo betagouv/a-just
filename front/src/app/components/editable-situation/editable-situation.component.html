@@ -1,0 +1,126 @@
+<div class="white-begin-situation">
+  <div class="items before-after">
+    <div class="item blue-bg">
+      <p>Entrées</p>
+    </div>
+    <div class="item">
+      <p>Sorties</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Stock</p>
+    </div>
+    <div class="item">
+      <p>ETPT mag</p>
+    </div>
+    <div class="item blue-bg">
+      <p>ETPT greffe</p>
+    </div>
+    <div class="item">
+      <p>ETPT cont</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Taux de couverture</p>
+    </div>
+    <div class="item">
+      <p>DTES</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Temps moyen / dossier</p>
+    </div>
+    <div class="item">
+      <p></p>
+    </div>
+  </div>
+
+  <div class="white-date-selector situation-white">
+    <div class="actual-situation">
+      <div class="line-title">
+        <p>
+          Situation de début (à compléter)
+        </p>
+      </div>
+      <form class="editable-line" [formGroup]="formWhiteSim">
+        <div class="line-item orange-bg">
+          <input formControlName="totalIn" (keypress)="validateNo($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="totalOut" (keypress)="validateNo($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item orange-bg">
+          <input formControlName="lastStock" (keypress)="validateNo($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="etpMag" (keypress)="validateNo($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input formControlName="etpFon" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input formControlName="etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input formControlName="realCoverage" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input formControlName="realDTESInMonths" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg-disabled">
+          <input formControlName="magRealTimePerCase" type="text" class="disabled" />
+        </div>
+      </form>
+
+      <div class="line-item" style="display:block; margin: auto;">
+        <div class="validate-button" (click)="validateWhiteSimulator()" *ngIf="!isValidatedWhiteSimu; else locked">
+          Valider
+        </div>
+        <ng-template #locked>
+          <div class="edit-button" (click)="editWhiteSimulator()">
+            Editer</div>
+        </ng-template>
+
+      </div>
+    </div>
+    <div class="actual-situation color-blue" *ngIf="displayEndSituation">
+      <div class="line-title">
+        <p>
+          Situation de fin
+        </p>
+      </div>
+      <form class="editable-line" [formGroup]="formWhiteSim">
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.totalIn" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituation.totalOut" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.lastStock" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituation.etpMag" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.etpFon" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituation.etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.realCoverage" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituation.realDTESInMonths" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.magRealTimePerCase" type="text" class="disabled" />
+        </div>
+      </form>
+      <div class="line-item" style="display:block; margin: auto;">
+      </div>
+    </div>
+  </div>
+</div>
