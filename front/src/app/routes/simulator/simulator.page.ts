@@ -188,17 +188,6 @@ export class SimulatorPage extends MainClass implements OnInit {
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
-  whiteSimulationBegin={
-  totalIn:'',
-  totalOut:null,
-  lastStock:null,
-  etpMag:null,
-  etpFon:null,
-  etpCont:null,
-  realCoverage:null,
-  realDTESInMonths:null,
-  magRealTimePerCase:null,
-  }
   /**
    * Paramètres de simulation
    */
@@ -287,6 +276,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Activation du simulator à blanc
    */
   whiteSimulator:boolean =false
+/**
+ * Nombre de jour de simulation à blanc
+ */
+ whiteNbOfDays:number = 0
 
   /**
    * Constructeur
@@ -513,13 +506,16 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   whiteDateSelector(type: string = '', event: any = null){
     if (type === 'dateStart') {
+      this.disabled = 'disabled-date'
       this.dateStart = new Date(event)
       this.simulatorService.dateStart.next(this.dateStart)
     }
     else if (type === 'dateStop') {
+      this.disabled = 'disabled-date'
       this.dateStop = new Date(event)
       this.simulatorService.dateStop.next(this.dateStop)
       console.log(nbOfDays(this.dateStart,this.dateStop))
+      this.whiteNbOfDays= nbOfDays(this.dateStart,this.dateStop)
     }
   }
   /**
@@ -1389,23 +1385,4 @@ export class SimulatorPage extends MainClass implements OnInit {
       setComment(event:any){
       this.commentaire = event.target.value      
       }
-
-      /**
-       * Validate beginning situation for white simulator
-       */
-      validateWhiteSimulator(){
-      console.log(this.whiteSimulationBegin)
-      }
-
-      updateWhiteValue(value:string, event:any){
-        console.log(event)
-        switch(value) {
-      case 'totalIn':{
-        console.log(event)
-      this.whiteSimulationBegin.totalIn = event
-      }
-      }
-
-      }
-
 }
