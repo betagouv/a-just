@@ -1,17 +1,16 @@
 @import '../../styles/utils.scss';
 
-
 ::ng-deep .mat-mdc-tooltip-panel-left {
-  width:100px!important;
-  min-width: 100px!important;
+  width: 100px !important;
+  min-width: 100px !important;
   .mdc-tooltip__surface {
     background-color: #000091;
     border: solid 1px #000091;
   }
   .tooltip-orange {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     .mdc-tooltip__surface {
       background-color: #fa7a35;
       border: solid 1px #fa7a35;
@@ -22,34 +21,79 @@
   }
 }
 
-
 :host {
-  .white-date-selector{
-    display:flex;
+  .white-date-selector {
+    display: flex;
     align-items: center;
     margin-bottom: 28px;
-    p{
-    font-size: 14px;
+    justify-content: center;
+
+    &.white-action-container{
+    margin-top: 16px;
     }
-    .aj-date-select-blue{
-    margin:0px!important ;
+
+    p {
+      font-size: 16px;
+    }
+    .aj-date-select-blue {
+      margin: 0px !important ;
+    }
+
+    .init-button {
+      pointer-events: all;
+      cursor: pointer;
+      width: 122px;
+      height: 40px;
+      margin: 0 8px 0 0;
+      padding: 8px 16px;
+      color: #e5e5e5;
+      border: solid 1px #e5e5e5;
+      background-color: white;
+    }
+
+    .simulate-button {
+      pointer-events: all;
+      cursor: pointer;
+      width: 91px;
+      height: 40px;
+      margin: 0 0 0 8px;
+      padding: 8px 16px;
+      background-color: #000091;
+
+      &.disabled {
+        pointer-events: none;
+        cursor: auto;
+        opacity: 0.5;
+      }
+
+      p {
+        color: white;
+      }
     }
   }
-  .white-begin-situation{
-    .items{
-      top: auto!important;
-      height: 60px!important;
+  .white-begin-situation {
+    .items {
+      top: auto !important;
+      height: 60px !important;
     }
-    .actual-situation{
-      top: auto!important;
-    }
-
-    .validate-button{
-      background-color: #000091; height: 22px; border-radius: 6px; color:white; text-align: center;
+    .actual-situation {
+      top: auto !important;
     }
 
-    .edit-button{
-      background-color: #e5e5e580; height: 28px; margin: 0px 8px; border-radius: 6px; padding: 0px 6px;
+    .validate-button {
+      background-color: #000091;
+      height: 22px;
+      border-radius: 6px;
+      color: white;
+      text-align: center;
+    }
+
+    .edit-button {
+      background-color: #e5e5e580;
+      height: 28px;
+      margin: 0px 8px;
+      border-radius: 6px;
+      padding: 0px 6px;
     }
   }
 
@@ -66,15 +110,15 @@
     margin: 24px;
     min-height: 40px;
     height: auto;
-    display:none;
+    display: none;
   }
 
   .hide-by-category {
-    display: none !important
+    display: none !important;
   }
 
   .hide {
-    display: none !important
+    display: none !important;
   }
 
   .categories-switch {
@@ -83,7 +127,7 @@
     height: 55px;
     z-index: 0;
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
       padding: 0 16px;
@@ -102,7 +146,7 @@
       }
     }
 
-    >.magistrats {
+    > .magistrats {
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
 
@@ -112,7 +156,7 @@
       }
     }
 
-    >.fonctionnaires {
+    > .fonctionnaires {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
 
@@ -148,7 +192,7 @@
       //border: solid 1px #eee4d9;
       background-color: #f6f6f6;
       //box-shadow: 0 10px 10px -5px rgb(0 0 0 / 4%),
-        //0 20px 25px -5px rgb(0 0 0 / 10%);
+      //0 20px 25px -5px rgb(0 0 0 / 10%);
     }
   }
 
@@ -228,7 +272,7 @@
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
         0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
-      >.header-comment {
+      > .header-comment {
         display: flex;
         align-items: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -246,7 +290,7 @@
         }
       }
 
-      >textarea {
+      > textarea {
         margin: 24px;
         min-height: 200px;
         flex: 1;
@@ -679,12 +723,14 @@
     }
   }
 
-  .actual-situation {
+  .actual-situation{
     background-color: #fef6e3;
     position: relative;
     display: flex;
     top: -24px;
-
+    &.actual-situation-white{
+    top:0px;
+    }
     &.color-white {
       background-color: white;
       border-bottom: solid 1px #e5e5e5;
@@ -976,14 +1022,13 @@
     padding: 0px 0px 0px 32px;
     top: -24px;
     //box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-      //0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    //0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
     p {
       white-space: nowrap;
       padding-top: 24px;
       z-index: 1;
     }
-
 
     &::before {
       content: '';
@@ -995,7 +1040,6 @@
       bottom: -1px;
       top: -25px;
       right: -48px;
-
     }
 
     .container-timeline {
@@ -1077,10 +1121,8 @@
         background-color: #000091;
         color: white;
       }
-
     }
   }
-
 
   .export-button {
     pointer-events: none;
@@ -1111,7 +1153,6 @@
         background-color: #000091;
         color: white;
       }
-
     }
 
     p.title {
@@ -1121,7 +1162,6 @@
       margin-left: 8px;
       font-size: 14px;
     }
-
   }
 
   aj-date-select-blue {
@@ -1131,6 +1171,10 @@
     transition-duration: 0.1s;
     pointer-events: all;
 
+    &.aj-date-white{
+      margin: 0 30px;
+
+    }
     &.future {
       margin-left: 208px;
     }

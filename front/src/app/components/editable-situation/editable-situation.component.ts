@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { decimalToStringDate } from 'src/app/utils/dates'
 
 @Component({
@@ -74,7 +75,7 @@ export class EditableSituationComponent implements OnChanges{
   /**
    * Constructor
    */
-  constructor() {}
+  constructor(private simulatorService: SimulatorService) {}
 
   ngOnChanges(changes: any){
     console.log(changes)
@@ -88,6 +89,8 @@ export class EditableSituationComponent implements OnChanges{
     console.log(this.nbOfDays)
     this.isValidatedWhiteSimu = true
     this.displayEndSituation = true
+    this.simulatorService.isValidatedWhiteSimu.next(this.isValidatedWhiteSimu)
+    //this.simulatorService.situationActuelle.next()
   }
   editWhiteSimulator(){
     this.isValidatedWhiteSimu = false
@@ -100,26 +103,53 @@ Math.floor((this.nbOfDays / (365 / 12)) * Number(this.formWhiteSim.controls['tot
 Math.floor(( this.nbOfDays / (365 / 12)) * Number(this.formWhiteSim.controls['totalOut'].value))
 newStock = newStock<0?0:newStock
 
-
-    const coverage = Number(this.formWhiteSim.controls['totalOut'].value) / Number(this.formWhiteSim.controls['totalIn'].value)*100
+const startTotalIn = Number(this.formWhiteSim.controls['totalIn'].value)
+const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
+const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
+const startetpMag= Number(this.formWhiteSim.controls['etpMag'].value)
+const startetpFon= Number(this.formWhiteSim.controls['etpFon'].value)
+const startetpCont= Number(this.formWhiteSim.controls['etpCont'].value)
+const startrealCoverage= String(this.formWhiteSim.controls['realCoverage'].value)
+const startrealDTESInMonths= String(this.formWhiteSim.controls['realDTESInMonths'].value)
+const startmagRealTimePerCase= String(this.formWhiteSim.controls['magRealTimePerCase'].value)
+// AJUSTER LES PROCHAINS PARAMETRE SET UP LA SITUATION PROJETEE
+this.simulatorService.situationActuelle.next({
+  totalIn: startTotalIn,
+  totalOut: startTotalOut,
+  lastStock: startLastStock,
+  etpMag: startetpMag,
+  etpFon: startetpFon,
+  etpCont: startetpCont,
+  realCoverage: Number(startrealCoverage),
+  realDTESInMonths: Number(startrealDTESInMonths),
+  magRealTimePerCase: Number(startmagRealTimePerCase),
+  magCalculateCoverage: null,
+  fonCalculateCoverage: null,
+  magCalculateDTESInMonths: null,
+  fonCalculateDTESInMonths: null,
+  magCalculateTimePerCase: null,
+  nbMonth: 0, // A CORIGER
+  etpAffected: null
+})
+    const coverage = startTotalOut / startTotalIn*100
     this.formWhiteSim.controls['realCoverage'].setValue(String(Math.round(coverage))+'%')
-    const dtes = Number(this.formWhiteSim.controls['lastStock'].value)/Number(this.formWhiteSim.controls['totalOut'].value)
+    const dtes = startLastStock/startTotalOut
     this.formWhiteSim.controls['realDTESInMonths'].setValue(String(Math.round(dtes))+' mois')
-    const tmd = (17.333 * 8 * Number(this.formWhiteSim.controls['totalOut'].value))/Number(this.formWhiteSim.controls['etpMag'].value)
+    const tmd = (17.333 * 8 * startTotalOut)/startetpMag
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(decimalToStringDate(tmd))
     this.endSituation = {
-      totalIn: Number(this.formWhiteSim.controls['totalIn'].value),
-      totalOut: Number(this.formWhiteSim.controls['totalOut'].value),
-      lastStock: Math.floor(Number(this.formWhiteSim.controls['lastStock'].value)) +
-            Math.floor((this.nbOfDays / (365 / 12)) * Number(this.formWhiteSim.controls['totalIn'].value)) -
-            Math.floor(( this.nbOfDays / (365 / 12)) * Number(this.formWhiteSim.controls['totalOut'].value))
+      totalIn: startTotalIn,
+      totalOut: startTotalOut,
+      lastStock: Math.floor(startLastStock) +
+            Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+            Math.floor(( this.nbOfDays / (365 / 12)) * startTotalOut)
       ,
-      etpMag: Number(this.formWhiteSim.controls['etpMag'].value),
-      etpFon: Number(this.formWhiteSim.controls['etpFon'].value),
-      etpCont: Number(this.formWhiteSim.controls['etpCont'].value),
-      realCoverage: String(this.formWhiteSim.controls['realCoverage'].value),
-      realDTESInMonths: String(this.formWhiteSim.controls['realDTESInMonths'].value),
-      magRealTimePerCase: String(this.formWhiteSim.controls['magRealTimePerCase'].value)
+      etpMag: startetpMag,
+      etpFon: startetpFon,
+      etpCont: startetpCont,
+      realCoverage: String(startrealCoverage),
+      realDTESInMonths: String(startrealDTESInMonths),
+      magRealTimePerCase: String(startmagRealTimePerCase)
     }
   }
   validateNo(e:any){
