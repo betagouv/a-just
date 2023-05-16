@@ -15,6 +15,8 @@ const logger = winston.createLogger({
           dsn: config.sentryApi,
           environment: process.env.NODE_ENV || 'developpement',
           release: `${packageJson.name}@${packageJson.version}`,
+          integrations: [...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
+          tracesSampleRate: 1.0,
         },
         level: 'error',
       }),
