@@ -119,6 +119,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
+/**
+ * Activation de la calculatrice
+ */
+calculatriceIsActive: boolean = true
+/**
+ * Ouverture de la calculatrice
+ */
+openCalculatricePopup: boolean = false
 
   /**
    * Constructeur
@@ -452,5 +460,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   openHelpPanel(type: string) {
     this.onOpenHelpPanel.emit(type)
+  }
+
+  convertirEtpt(event:Event){
+    console.log(event)
+    this.openCalculatricePopup=false
   }
 }
