@@ -72,6 +72,11 @@ export class SimulatorService extends MainClass {
     })
 
   /**
+   * Validation de la situation de début sur simulateur à blanc
+   */
+  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+  /**
    * Constructeur
    * @param serverService
    * @param humanResourceService

@@ -280,6 +280,10 @@ export class SimulatorPage extends MainClass implements OnInit {
  * Nombre de jour de simulation à blanc
  */
  whiteNbOfDays:number = 0
+/**
+ * Affichage des boutons ajuster et simuler
+ */
+displayWhiteElements:boolean = false
 
   /**
    * Constructeur
@@ -317,6 +321,14 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.resetParams()
       })
     )
+
+
+    this.watch(
+      this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
+        this.displayWhiteElements = b
+      })
+    )
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -575,6 +587,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.toDisplay = []
     this.toCalculate = []
     this.simulateButton = 'disabled'
+    this.displayWhiteElements = false
   }
 
   /**
@@ -965,6 +978,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },
     }
+    this.simulatorService.isValidatedWhiteSimu.next(false)
   }
 
   /**
