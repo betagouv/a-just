@@ -137,3 +137,28 @@
 .help-icon {
   margin-left: 8px;
 }
+
+.calculatrice-button-container {
+  display: flex;
+
+  .open-calculatrice {
+    cursor: pointer;
+    display: flex;
+    width: 350px;
+    height: 40px;
+    margin-right: 6px;
+    padding: 8px 12px 8px 16px;
+    border: solid 1px #000091;
+    text-align: center;
+    color: #000091;
+    align-items: center;
+    justify-content: center;
+    
+    svg {
+      fill:#000091;
+      height: 18px;
+      width: 18px;
+      margin-left: 8px;
+    }
+  }
+}
