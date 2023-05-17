@@ -11,10 +11,7 @@ Sentry.init({
   // for finer control
   tracesSampleRate: 1.0,
 
-  /*integrations: [
-    // Automatically instrument Node.js libraries and frameworks
-    ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
-  ],*/
+  integrations: [...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
 })
 
 /*const logger = winston.createLogger({
