@@ -1,9 +1,35 @@
-import winston from 'winston'
+//import winston from 'winston'
 import config from 'config'
-import Sentry from 'winston-sentry-log'
-import packageJson from '../../package.json'
+//import Sentry from 'winston-sentry-log'
+//import packageJson from '../../package.json'
+//import Sentry from '@sentry/node'
+//import Sentry from 'winston-transport-sentry-node'
+import * as Sentry from '@sentry/node'
 
-const logger = winston.createLogger({
+/*const options = {
+  sentry: {
+    dsn: config.sentryApi,
+    environment: process.env.NODE_ENV || 'developpement',
+    release: `${packageJson.name}@${packageJson.version}`,
+    tracesSampleRate: 1.0,
+    integrations: [Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
+  },
+  level: 'error',
+}*/
+
+Sentry.init({
+  dsn: config.sentryApi,
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
+  ],
+
+  // To set a uniform sample rate
+  tracesSampleRate: 1.0,
+})
+
+/*const logger = winston.createLogger({
   level: 'info',
   exitOnError: false,
   format: winston.format.json(),
@@ -16,6 +42,7 @@ const logger = winston.createLogger({
           environment: process.env.NODE_ENV || 'developpement',
           release: `${packageJson.name}@${packageJson.version}`,
           tracesSampleRate: 1.0,
+          integrations: [new Sentry.BrowserTracing()],
         },
         level: 'error',
       }),
@@ -43,4 +70,4 @@ logger.log('info', 'Voici un log simple')
 
 export default logger
 export const log = (...args) => console.log(...args)
-export const logError = (...args) => logger.error(args)
+export const logError = (...args) => logger.error(args)*/
