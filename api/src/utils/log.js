@@ -2,7 +2,7 @@
 import config from 'config'
 /*import Sentry from 'winston-sentry-log'
 import packageJson from '../../package.json'*/
-import Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node'
 
 Sentry.init({
   dsn: config.sentryApi,
@@ -11,10 +11,10 @@ Sentry.init({
   // for finer control
   tracesSampleRate: 1.0,
 
-  integrations: [
+  /*integrations: [
     // Automatically instrument Node.js libraries and frameworks
     ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
-  ],
+  ],*/
 })
 
 /*const logger = winston.createLogger({
