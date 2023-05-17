@@ -1,32 +1,20 @@
-//import winston from 'winston'
+++import winston from 'winston'
 import config from 'config'
-//import Sentry from 'winston-sentry-log'
-//import packageJson from '../../package.json'
-//import Sentry from '@sentry/node'
-//import Sentry from 'winston-transport-sentry-node'
-import * as Sentry from '@sentry/node'
-
-/*const options = {
-  sentry: {
-    dsn: config.sentryApi,
-    environment: process.env.NODE_ENV || 'developpement',
-    release: `${packageJson.name}@${packageJson.version}`,
-    tracesSampleRate: 1.0,
-    integrations: [Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
-  },
-  level: 'error',
-}*/
+/*import Sentry from 'winston-sentry-log'
+import packageJson from '../../package.json'*/
+import Sentry from '@sentry/node'
 
 Sentry.init({
   dsn: config.sentryApi,
+
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0,
+
   integrations: [
-    // enable HTTP calls tracing
-    new Sentry.Integrations.Http({ tracing: true }),
+    // Automatically instrument Node.js libraries and frameworks
     ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
   ],
-
-  // To set a uniform sample rate
-  tracesSampleRate: 1.0,
 })
 
 /*const logger = winston.createLogger({
@@ -41,8 +29,6 @@ Sentry.init({
           dsn: config.sentryApi,
           environment: process.env.NODE_ENV || 'developpement',
           release: `${packageJson.name}@${packageJson.version}`,
-          tracesSampleRate: 1.0,
-          integrations: [new Sentry.BrowserTracing()],
         },
         level: 'error',
       }),

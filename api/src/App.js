@@ -10,7 +10,7 @@ import auth from './routes-api/middlewares/authentification'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
-import logger from './utils/log'
+//import logger from './utils/log'
 //import koaLogger from 'koa-logger-winston'
 
 export default class App extends AppBase {
