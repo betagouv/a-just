@@ -23,7 +23,6 @@
     "@babel/runtime": "^7.21.0",
     "@babel/runtime-corejs2": "^7.21.0",
     "@sentry/node": "^7.52.1",
-    "@synapsestudios/winston-sentry": "^2.1.0",
     "base64-stream": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.2",

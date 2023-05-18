@@ -31,7 +31,6 @@ export default class Route extends RouteBase {
 
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
-      console.log('error')
       logError(e)
       throw e
     }
