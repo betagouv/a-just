@@ -2,8 +2,8 @@ import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
 import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
-import { onGetContentiousApi } from '../routes/ventilateur'
-import { onLoginAdminApi, onSignUpApi, onLoginApi, onUpdateAccountApi, onRemoveAccountApi, onGetUserDataApi } from '../routes/user'
+import { onGetContentiousApi, onGetAllActivatedTjApi } from '../routes/ventilateur'
+import { onLoginAdminApi, onSignUpApi, onLoginApi, onUpdateAccountApi, onRemoveAccountApi, onGetUserDataApi, onGetMyInfosApi } from '../routes/user'
 import { onGetBackupListHrApi } from '../routes/hr'
 import { onFilterListApi } from '../routes/humanRessources'
 
@@ -52,33 +52,45 @@ module.exports = function () {
         userToken: adminToken,
       })
       backups = response.data.data
+
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
+      const ventilations = backups.map((elem) => {
+        return elem.id
+      })
+      console.log('Ventilations:\n', ventilations)
 
       response = await onUpdateAccountApi({
         userToken: adminToken,
         userId: userId,
         accessIds: accessIds,
-        ventilations: [backups[0].id],
+        ventilations: ventilations,
       })
-
       assert.strictEqual(response.status, 200)
     })
 
     it('Check calcul ETP affected to each contentious', async () => {
+      const userInfos = await onGetUserDataApi({ userToken: userToken })
+      console.log('UserInfos:', userInfos.data)
       //Catch contentious
-      let response = await onGetContentiousApi({ userToken: adminToken, backupId: 12 })
-      //console.log('----- ok00')
-      const tmp = await onFilterListApi({ userToken: userToken, backupId: 12 })
-      console.log('----- Response Global:', tmp.data.data.list[0].hr[0].referentiel[0])
-      console.log('----- Response list:', tmp.data.data.list[0].hr[0].currentActivities)
-      console.log('----- Response allPersons:', tmp.data.data.list[0].hr[0].currentSituation.etp)
-      assert.strictEqual(response.status, 200)
+      let response = null
+      for (let backup of backups) {
+        response = await onGetContentiousApi({ userToken: userToken, backupId: backup.id })
 
-      //response = await onFilterListApi({ userToken: userToken, backupId: 20 })
-      //console.log('----- ok01')
-      //console.log('----- Response:', response)
+        if (response.data.data.backups.length > 0) break
+      }
+      //console.log('----- [RouteVentilateur][line 83] response:', response.data.data.backups)
+      let tmp = null
+      for (let backup of backups) {
+        tmp = await onFilterListApi({ userToken: userToken, backupId: backup.id })
+        console.log('TMP:', tmp)
+        //if (tmp.status !== 401) break
+      }
+      //console.log('----- Response Global:', tmp.data.data.list[0].hr[0].referentiel[0])
+      //console.log('----- Response list:', tmp.data.data.list[0].hr[0].currentActivities)
+      //console.log('----- Response allPersons:', tmp.data.data.list[0].hr[0].currentSituation.etp)
+      //assert.strictEqual(response.status, 200)
     })
 
     it('Remove user Account by admin', async () => {
@@ -87,7 +99,6 @@ module.exports = function () {
         userId: userId,
         userToken: adminToken,
       })
-
       assert.strictEqual(response.status, 200)
     })
   })

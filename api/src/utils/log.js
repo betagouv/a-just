@@ -1,20 +1,10 @@
-//import winston from 'winston'
+import winston from 'winston'
 import config from 'config'
-/*import Sentry from 'winston-sentry-log'
-import packageJson from '../../package.json'*/
-import * as Sentry from '@sentry/node'
+import Sentry from 'winston-sentry-log'
+import packageJson from '../../package.json'
+//import * as Sentry from '@sentry/node'
 
-Sentry.init({
-  dsn: config.sentryApi,
-
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 1.0,
-
-  integrations: [...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()],
-})
-
-/*const logger = winston.createLogger({
+const logger = winston.createLogger({
   level: 'info',
   exitOnError: false,
   format: winston.format.json(),
@@ -53,4 +43,4 @@ logger.log('info', 'Voici un log simple')
 
 export default logger
 export const log = (...args) => console.log(...args)
-export const logError = (...args) => logger.error(args)*/
+export const logError = (...args) => logger.error(args)

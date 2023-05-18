@@ -28,7 +28,6 @@ export default class RouteContentieuxOptions extends Route {
   })
   async getAll (ctx) {
     let { juridictionId, backupId } = this.body(ctx)
-    console.log('---USER_ID:', ctx.state.user.id)
     const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id, juridictionId)
     backupId = backups.find((b) => b.id === backupId) ? backupId : backups.length ? backups[backups.length - 1].id : null
 
