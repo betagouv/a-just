@@ -1,0 +1,42 @@
+<div class="headers">
+  <div class="header" [ngClass]="{'selected': selectedTab === 'Vacations'}" (click)="openTab('Vacations')">
+    <label>Vacations</label>
+  </div>
+  <div class="header" [ngClass]="{'selected': selectedTab === 'Volumes'}" (click)="openTab('Volumes')">
+    <label>Volume horaire</label>
+  </div>
+</div>
+
+<div *ngIf="selectedTab === 'Vacations'; else volume">
+  <div class="rectangle">
+    <span>L’agent effectue</span>
+    <input type="number" #volume />
+    <span>heures par</span>
+    <div class="radio-container">
+      <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
+        <input type="radio" id="{{item}}" name="radios" value="{{item}}" [checked]="isFirst">
+        <label for="{{item}}">{{item}}</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="rectangle">
+    <span>L’agent effectue</span>
+    <input type="number" #volume />
+    <span>heures par</span>
+  </div>
+</div>
+
+<ng-template #volume>
+  <div class="rectangle">
+    <span>L’agent effectue</span>
+    <input type="number" #volume />
+    <span>heures par</span>
+    <div class="radio-container">
+      <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
+        <input type="radio" id="{{item}}" name="radios" value="{{item}}" [checked]="isFirst">
+        <label for="{{item}}">{{item}}</label>
+      </div>
+    </div>
+  </div>
+</ng-template>

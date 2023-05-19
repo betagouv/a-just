@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AlertComponent } from './components/alert/alert.component'
 import { PipesModule } from './pipes/pipes.module'
 import { ComponentsModule } from './components/components.module'
-
 /**
  * Module principal du projet
  */
