@@ -37,6 +37,8 @@ import { HelpButtonComponent } from './help-button/help-button.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
 import { TextEditorComponent } from './text-editor/text-editor.component'
+import {MatTabsModule} from '@angular/material/tabs';
+import { CalculatriceComponent } from './calculatrice/calculatrice.component';
 
 /**
  * Liste des composants à importer
@@ -74,6 +76,7 @@ const list = [
   ExtractorActivityComponent,
   ExtractorVentilationComponent,
   TextEditorComponent,
+  CalculatriceComponent
 ]
 
 /**
