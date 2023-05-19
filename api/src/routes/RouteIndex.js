@@ -1,6 +1,7 @@
 import { createReadStream, existsSync } from 'fs'
 import mime from 'mime'
 import Route from './Route'
+import config from 'config'
 
 @Route.Route({
   routeBase: '',
@@ -15,6 +16,8 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
+    console.log('ctx.request.url', ctx.secure, ctx.request)
+
     const file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
 
     if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
@@ -24,10 +27,18 @@ export default class RouteIndex extends Route {
       ctx.type = mime.getType(file)
       ctx.body = src
     } else {
-      const indexFile = `${__dirname}/../front/index.html`
-      const src = createReadStream(indexFile)
-      ctx.type = mime.getType(indexFile)
-      ctx.body = src
+      if (config.forceSSL && !ctx.secure) {
+        ctx.res
+          .writeHead(301, {
+            Location: `https://${ctx.request.header.host}${ctx.request.url}`,
+          })
+          .end()
+      } else {
+        const indexFile = `${__dirname}/../front/index.html`
+        const src = createReadStream(indexFile)
+        ctx.type = mime.getType(indexFile)
+        ctx.body = src
+      }
     }
   }
 }
