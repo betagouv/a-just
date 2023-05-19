@@ -55,7 +55,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/favicon.svg",
+              "src/assets",
+              "./node_modules/remixicon/fonts"
+            ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/quill/dist/quill.snow.css",
