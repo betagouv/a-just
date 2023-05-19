@@ -100,4 +100,8 @@ module.exports = {
    * Token expiration delay
    */
   nbMaxDayTokenLife: 30,
+  /**
+   * Force SSL
+   */
+  forceSSL: true,
 }
