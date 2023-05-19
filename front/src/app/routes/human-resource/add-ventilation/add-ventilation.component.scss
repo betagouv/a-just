@@ -13,9 +13,9 @@
       margin-bottom: 32px;
     }
 
-    #circle {
-      width: 70px;
-      height: 70px;
+    .circle {
+      min-width: 70px;
+      min-height: 70px;
       background: #ececfe;
       border-radius: 70px;
       margin: auto;

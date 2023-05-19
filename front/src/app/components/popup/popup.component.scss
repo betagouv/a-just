@@ -23,10 +23,21 @@
     max-height: 90% !important;
   }
 
-  &.fix-height {
+  &.fix-height .popup>div {
     height: 535px !important;
-    border-radius: 8px;
+    width: 700px;
+    border-radius: 6px;
   }
+
+  &.fix-height .popup>div>.content {
+    flex: unset;
+    overflow-y: overlay !important;
+  }
+
+  &.fix-height .popup>div>.actions>button {
+    height: 40px;
+  }
+
 
   &.extra-large-bottom .popup {
     align-items: flex-end;
