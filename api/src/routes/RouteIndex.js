@@ -16,6 +16,7 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
+    console.log('ctx', ctx, ctx.secure)
     const file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
 
     if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
@@ -25,18 +26,18 @@ export default class RouteIndex extends Route {
       ctx.type = mime.getType(file)
       ctx.body = src
     } else {
-      if (config.forceSSL && !ctx.secure) {
+      /*if (config.forceSSL && !ctx.secure) {
         ctx.res
           .writeHead(301, {
             Location: `https://${ctx.request.header.host}${ctx.request.url}`,
           })
           .end()
-      } else {
-        const indexFile = `${__dirname}/../front/index.html`
-        const src = createReadStream(indexFile)
-        ctx.type = mime.getType(indexFile)
-        ctx.body = src
-      }
+      } else {*/
+      const indexFile = `${__dirname}/../front/index.html`
+      const src = createReadStream(indexFile)
+      ctx.type = mime.getType(indexFile)
+      ctx.body = src
+      // }
     }
   }
 }
