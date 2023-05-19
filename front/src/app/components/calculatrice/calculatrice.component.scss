@@ -44,15 +44,22 @@
   }
 
   .rectangle {
-    width: 536px;
+    width: 600px;
+    height: 84px;
     display: flex;
     justify-content: center;
-    padding: 12px 24px;
-    border-radius: 8px;
-    background-color: #f6f6f6;
-    display: flex;
     align-items: center;
+    padding: 12px 24px;
+    border-radius: 6px;
+    background-color: #f6f6f6;
     margin-top: 8px;
+    border: 1px solid #f6f6f6;
+
+    &:focus-within {
+      border: solid 1px #8585f6;
+      background-color: #f5f5fe;
+
+    }
 
     span {
       font-size: 16px;
@@ -70,13 +77,13 @@
       .radio-button {
 
         &:first-child label {
-          border-bottom-left-radius: 8px;
-          border-top-left-radius: 8px;
+          border-bottom-left-radius: 6px;
+          border-top-left-radius: 6px;
         }
 
         &:last-child label {
-          border-bottom-right-radius: 8px;
-          border-top-right-radius: 8px;
+          border-bottom-right-radius: 6px;
+          border-top-right-radius: 6px;
         }
 
         input[type="radio"] {
