@@ -40,10 +40,10 @@ export default (sequelizeInstance, Model) => {
 
   /**
    * Retourne la liste des utilisateurs par label de juridiction
-   * @param {*} juridicitonLabel
+   * @param {*} juridictionLabel
    * @returns
    */
-  Model.getUserVentilationsWithLabel = async (juridicitonLabel) => {
+  Model.getUserVentilationsWithLabel = async (juridictionLabel) => {
     const listAll = groupBy(
       await Model.findAll({
         attributes: ['id', 'user_id', 'hr_backup_id'],
@@ -52,7 +52,7 @@ export default (sequelizeInstance, Model) => {
             attributes: ['id', 'label'],
             model: Model.models.HRBackups,
             where: {
-              label: juridicitonLabel,
+              label: juridictionLabel,
             },
           },
         ],

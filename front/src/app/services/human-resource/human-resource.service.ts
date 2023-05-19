@@ -185,7 +185,7 @@ export class HumanResourceService {
   }
 
   /**
-   * Dupplication d'une juridiciton
+   * Dupplication d'une juridiction
    * @returns
    */
   duplicateBackup() {

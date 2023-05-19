@@ -39,7 +39,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Suppression d'une juridiciton
+   * Suppression d'une juridiction
    * @param {*} backupId
    */
   Model.removeBackup = async (backupId) => {
