@@ -1,4 +1,6 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
+import { CalculatriceInterface } from 'src/app/interfaces/calculatrice'
+import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.service'
 
 const calculatriceTabs = ['Vacations', 'Volumes']
 @Component({
@@ -6,7 +8,7 @@ const calculatriceTabs = ['Vacations', 'Volumes']
   templateUrl: './calculatrice.component.html',
   styleUrls: ['./calculatrice.component.scss'],
 })
-export class CalculatriceComponent {
+export class CalculatriceComponent implements OnInit {
   /**
    * Option radio button
    */
@@ -15,10 +17,24 @@ export class CalculatriceComponent {
   /**
    * Model utilisé pour les calculs d'ETPT
    */
-  model = { 
-    vacation : { value : null, option:'semaine',unit: null},
-    volume : { value : null, option:'semaine'},
-    selectedTab : 'vacation'
+  model :CalculatriceInterface = { 
+    vacation : { value : null, option:null,unit: null},
+    volume : { value : null, option:null},
+    selectedTab : ''
+  }
+
+  /**
+   * Constructeur
+   * @param calculatriceService 
+   */
+  constructor(private calculatriceService:CalculatriceService){}
+
+  /**
+   * Déclenchemet à la création du composent
+   */
+  ngOnInit(): void {
+    this.model = this.calculatriceService.dataCalculatrice.value
+    console.log(this.model)
   }
 
   /**
@@ -29,6 +45,11 @@ export class CalculatriceComponent {
     this.model.selectedTab = tabName
   }
 
+  /**
+   * Verifie si le char tapé est bien un chiffre
+   * @param e 
+   * @returns boolean si chiffre ou non
+   */
   validateNumber(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -37,7 +58,8 @@ export class CalculatriceComponent {
     return true
   }
 
-  print() {
+  updateModel() {
     console.log(this.model)
+    this.calculatriceService.dataCalculatrice.next(this.model)
   }
 }

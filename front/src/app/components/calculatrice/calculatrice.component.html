@@ -11,7 +11,7 @@
   <div class="rectangle">
     <span>L’agent effectue</span>
     <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.vacation.value"
-      [value]="model.vacation.value" />
+      [value]="model.vacation.value" (ngModelChange)="updateModel()" />
     <span>vacations par</span>
     <div class="radio-container">
       <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
@@ -25,7 +25,7 @@
   <div class="rectangle">
     <span>Une vacation dure :</span>
     <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.vacation.unit"
-      [value]="model.vacation.unit" />
+      [value]="model.vacation.unit" (ngModelChange)="updateModel()" />
     <span>heures</span>
   </div>
 </div>
@@ -33,8 +33,8 @@
 <ng-template #volume>
   <div class="rectangle">
     <span>L’agent effectue</span>
-    <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.volume.value"
-      [value]="model.volume.value" />
+    <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.volume.value" [value]="model.volume.value"
+      (ngModelChange)="updateModel()" />
     <span>heures par</span>
     <div class="radio-container">
       <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
