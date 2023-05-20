@@ -16,6 +16,7 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { AppService } from 'src/app/services/app/app.service'
+import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -139,7 +140,8 @@ openCalculatricePopup: boolean = false
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
+    private calculatriceService: CalculatriceService
   ) {
     super()
   }
@@ -464,6 +466,9 @@ openCalculatricePopup: boolean = false
 
   convertirEtpt(event:Event){
     console.log(event)
+    console.log(this.calculatriceService.dataCalculatrice.value )
+    console.log()
     this.openCalculatricePopup=false
+    this.form.get('etp')?.setValue(Number(this.calculatriceService.dataCalculatrice.value.vacation.value))
   }
 }
