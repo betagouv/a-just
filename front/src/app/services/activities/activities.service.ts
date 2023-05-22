@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { ActivityInterface } from 'src/app/interfaces/activity'
+import { setTimeToMidDay } from 'src/app/utils/dates'
 import { ServerService } from '../http-server/server.service'
 
 /**
@@ -44,7 +45,7 @@ export class ActivitiesService {
     return this.serverService
       .postWithoutError(`activities/update-by`, {
         contentieuxId,
-        date,
+        date:setTimeToMidDay(date),
         values,
         hrBackupId: this.hrBackupId,
         nodeUpdated,
@@ -75,7 +76,7 @@ export class ActivitiesService {
   loadMonthActivities(date: Date) {
     return this.serverService
       .post(`activities/get-by-month`, {
-        date,
+        date:setTimeToMidDay(date),
         hrBackupId: this.hrBackupId,
       })
       .then((data) => data.data || null)

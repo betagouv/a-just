@@ -8,6 +8,10 @@
     min-height: inherit;
   }
 
+  &.small .popup > div {
+    width: 60%;
+  }
+
   &.large .popup > div {
     width: 80%;
   }
@@ -159,12 +163,12 @@
         cursor: pointer;
 
         &.red {
-          color: fColor(cred);
+          color: fColor(creddark);
 
           &.fill {
             color: white;
-            background-color: fColor(cred);
-            border: solid 1px fColor(cred);
+            background-color: fColor(creddark);
+            border: solid 1px fColor(creddark);
           }
         }
 

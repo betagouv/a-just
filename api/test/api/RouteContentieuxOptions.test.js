@@ -1,6 +1,7 @@
 import axios from 'axios'
 import config from 'config'
 import { assert } from 'chai'
+import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
 
 module.exports = function () {
   let userToken = null
@@ -11,8 +12,8 @@ module.exports = function () {
   describe('Générate user auth', () => {
     it('has token response code', async () => {
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email: 'fx@a-just.fr',
-        password: '123456',
+        email: USER_ADMIN_EMAIl,
+        password: USER_ADMIN_PASSWORD,
       })
       userToken = response.data && response.data.token
       assert.isOk(userToken, 'cannot generate token')
@@ -21,14 +22,11 @@ module.exports = function () {
 
   describe('Test Contentieux Options', () => {
     it('load Referentiel', async () => {
-      const response = await axios.get(
-        `${config.serverUrl}/referentiels/get-referentiels`,
-        {
-          headers: {
-            Authorization: userToken,
-          },
-        }
-      )
+      const response = await axios.get(`${config.serverUrl}/referentiels/get-referentiels`, {
+        headers: {
+          Authorization: userToken,
+        },
+      })
 
       referentiels = response.data && response.data.data
       assert.isOk(referentiels.length !== 0, 'missing referentiel')
@@ -56,10 +54,12 @@ module.exports = function () {
       const response = await axios.post(
         `${config.serverUrl}/contentieux-options/save-backup`,
         {
-          list: [{
-            averageProcessingTime: 8,
-            contentieux: referentiels[0],
-          }],
+          list: [
+            {
+              averageProcessingTime: 8,
+              contentieux: referentiels[0],
+            },
+          ],
           backupId,
           backupName: 'test copy',
         },
@@ -92,14 +92,11 @@ module.exports = function () {
     })
 
     it('delete Copy', async () => {
-      const response = await axios.delete(
-        `${config.serverUrl}/contentieux-options/remove-backup/${backupId}`,
-        {
-          headers: {
-            Authorization: userToken,
-          },
-        }
-      )
+      const response = await axios.delete(`${config.serverUrl}/contentieux-options/remove-backup/${backupId}`, {
+        headers: {
+          Authorization: userToken,
+        },
+      })
 
       assert.equal(response.status, 200, 'delete backup fail')
     })

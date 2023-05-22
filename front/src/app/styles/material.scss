@@ -1,20 +1,34 @@
-.mat-form-field-wrapper {
+.mat-mdc-form-field-wrapper {
   margin-bottom: -1.25em;
+}
+
+.mdc-list-item__primary-text {
+  white-space: nowrap !important;
+}
+
+.cdk-overlay-pane {
+  width: auto !important;
+  min-width: 180px;
 }
 
 .hide-visualisation {
   height: 0;
   display: block !important;
 
-  .mat-select-trigger {
+  .mat-mdc-select-trigger {
     height: 0;
   }
 
-  .mat-select-value {
+  .mat-mdc-select-value {
     display: none;
   }
 
-  .mat-select-arrow-wrapper {
+  .mat-mdc-select-arrow-wrapper {
     display: none;
   }
+}
+
+button.material-date-calendar-no-datas {
+  background: orange;
+  border-radius: 100%;
 }

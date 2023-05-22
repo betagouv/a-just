@@ -19,6 +19,10 @@ import { Component, Input, OnInit } from '@angular/core'
   ],
 })
 export class DialWidgetComponent {
+        /**
+   * Date de début de simulation
+   */
+        @Input() print: boolean = false
   /**
    * Date de début de simulation
    */

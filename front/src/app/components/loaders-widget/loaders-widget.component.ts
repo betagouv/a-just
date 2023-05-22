@@ -9,6 +9,10 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core'
   styleUrls: ['./loaders-widget.component.scss'],
 })
 export class LoadersWidgetComponent implements OnChanges {
+      /**
+   * Date de début de simulation
+   */
+      @Input() print: boolean = false
   /**
    * Date de début de simulation
    */

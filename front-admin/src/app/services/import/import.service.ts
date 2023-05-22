@@ -20,4 +20,8 @@ export class ImportService {
   importActivities(params: any) {
     return this.serverService.post('imports/import-activities', params);
   }
+
+  importAllActivities(params: any) {
+    return this.serverService.post('imports/import-all-activities', params);
+  }
 }

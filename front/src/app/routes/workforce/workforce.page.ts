@@ -20,6 +20,7 @@ import { FilterPanelInterface } from './filter-panel/filter-panel.component'
 import { UserService } from 'src/app/services/user/user.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
+import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -29,6 +30,18 @@ export interface HumanResourceIsInInterface extends HumanResourceInterface {
    * Est présent dans l'interface
    */
   isIn: boolean
+  /**
+   * Category name
+   */
+  categoryName?: string
+  /**
+   * Category rank
+   */
+  categoryRank?: number | null
+  /**
+   * Fonction rank
+   */
+  fonctionRank?: number | null
 }
 
 /**
@@ -214,6 +227,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     title: 'Le ventilateur :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
   }
+  /**
+   * En cours de chargement
+   */
+  isLoading: boolean = false
 
   /**
    * Constructor
@@ -226,12 +243,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param appService
    */
   constructor(
-    private humanResourceService: HumanResourceService,
+    public humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService
+    private userService: UserService,
+    private hrFonctionService: HRFonctionService
   ) {
     super()
   }
@@ -320,16 +338,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt += realETP
         })
       }
-console.log(etpt)
+      console.log(etpt)
       return {
         ...c,
         etpt,
         nbPersonal: personal.length,
       }
     })
-
-    console.log(this.categoriesFilterList)
-
     this.calculateTotalAffected()
   }
 
@@ -394,23 +409,102 @@ console.log(etpt)
         }
       }),
     }))
-    console.log(this.listFormated)
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
     this.indexValuesFinded = 0
 
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
-    if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
+    if (
+      list.length <= FILTER_LIMIT_ON_SEARCH &&
+      this.allPersons.length !== list.length
+    ) {
       if (this.valuesFinded && this.valuesFinded.length) {
         this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
       }
 
-      this.allPersonsFiltered = list
+      let allPersonIds: number[] = []
+      this.listFormated.map((l) => {
+        allPersonIds = allPersonIds.concat(l.hrFiltered.map((h) => h.id))
+      })
+
+      this.allPersonsFiltered = list.map((person) => {
+        let sitations = this.humanResourceService.findAllSituations(
+          person,
+          this.dateSelected
+        )
+        if (sitations.length === 0) {
+          // if no situation in the past get to the future
+          sitations = this.humanResourceService.findAllSituations(
+            person,
+            this.dateSelected,
+            true,
+            true
+          )
+        }
+
+        return {
+          ...person,
+          isIn: allPersonIds.includes(person.id),
+          categoryName:
+            sitations.length && sitations[0].category
+              ? sitations[0].category.label
+              : '',
+          categoryRank:
+            sitations.length && sitations[0].category
+              ? sitations[0].category.rank
+              : null,
+          fonctionRank:
+            sitations.length && sitations[0].fonction
+              ? sitations[0].fonction.rank
+              : null,
+        }
+      })
+      this.allPersonsFiltered = orderBy(this.allPersonsFiltered, [
+        'categoryRank',
+        'fonctionRank',
+        'lastName',
+      ])
     }
 
-    this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn = this.filterFindedPerson(this.allPersonsFiltered, false)
+    console.log(this.allPersonsFiltered)
+
+    this.allPersonsFilteredIsIn = this.filterFindedPerson(
+      this.allPersonsFiltered,
+      true
+    )
+    this.allPersonsFilteredNotIn = this.filterFindedPerson(
+      this.allPersonsFiltered,
+      false
+    )
+  }
+
+  /**
+   * force to change filter values
+   */
+  async onSelectCategory(category: HRCategorySelectedInterface) {
+    if (
+      category.selected &&
+      this.filterParams &&
+      this.filterParams.filterValues
+    ) {
+      const fonctions = await this.hrFonctionService.getAll()
+      const getIdOfFonctions = fonctions
+        .filter((f) => category.id === f.categoryId)
+        .map((f) => f.id)
+      const filterValues =
+        (this.filterParams && this.filterParams.filterValues) || []
+
+      getIdOfFonctions.map((fId) => {
+        if (!filterValues.includes(fId)) {
+          filterValues.push(fId)
+        }
+      })
+
+      this.filterParams.filterValues = filterValues
+    }
+
+    this.onFilterList()
   }
 
   /**
@@ -432,6 +526,7 @@ console.log(etpt)
       selectedReferentielIds = this.selectedReferentielIds
     }
 
+    this.isLoading = true
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -448,11 +543,11 @@ console.log(etpt)
         })
         this.allPersons = allPersons.map((p: HumanResourceInterface) => ({
           ...p,
-          isIn: allPersonIds.includes(p.id),
+          isIn: false,
         }))
 
         this.orderListWithFiltersParams()
-        this.onSearchBy()
+        this.isLoading = false
       })
 
     if (this.route.snapshot.fragment) {
@@ -499,6 +594,7 @@ console.log(etpt)
     })
 
     this.updateCategoryValues()
+    this.onSearchBy()
   }
 
   /**
@@ -685,11 +781,11 @@ console.log(etpt)
 
   /**
    * Filtre la liste des personnes trouvées dans la recherche
-   * @param list 
-   * @param isIn 
-   * @returns 
+   * @param list
+   * @param isIn
+   * @returns
    */
   filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
-    return (list || []).filter(h => h.isIn === isIn)
+    return (list || []).filter((h) => h.isIn === isIn)
   }
 }

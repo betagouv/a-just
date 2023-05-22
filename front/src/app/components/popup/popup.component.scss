@@ -1,23 +1,23 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
-  &.fit-content .popup>div {
+  &.fit-content .popup > div {
     width: inherit;
     height: inherit;
     min-width: inherit;
     min-height: inherit;
   }
 
-  &.large .popup>div {
+  &.large .popup > div {
     width: 80%;
   }
 
-  &.width-500 .popup>div {
+  &.width-500 .popup > div {
     width: 90%;
     max-width: 500px;
   }
 
-  &.extra-large .popup>div {
+  &.extra-large .popup > div {
     width: 90%;
     height: 90% !important;
     max-height: 90% !important;
@@ -27,7 +27,7 @@
     align-items: flex-end;
     padding-bottom: 48px;
 
-    >div {
+    > div {
       width: 90%;
       height: inherit;
       min-height: inherit;
@@ -50,13 +50,13 @@
     .popup {
       background-color: rgba(255, 255, 255, 0.46);
 
-      >div {
+      > div {
         padding: 16px 0 16px 16px;
         border-radius: 6px;
         min-width: auto;
         min-height: auto;
 
-        >* {
+        > * {
           padding-right: 16px;
         }
       }
@@ -76,13 +76,15 @@
   background-color: rgba(fColor(cblack), 0.37);
   z-index: 200;
 
-  >div {
+  > div {
     background-color: white;
     width: fit-content;
     box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.19);
     display: flex;
     flex-direction: column;
     height: fit-content;
+    max-width: 90%;
+    max-height: 90%;
   }
 
   .title {
@@ -117,7 +119,7 @@
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    padding: 16px 72px;
+    padding: 16px 72px 32px 72px;
     min-width: 480px;
   }
 
@@ -128,10 +130,10 @@
       0 -8px 8px 0 rgba(0, 0, 0, 0.1);
 
     &.noShadow {
-      box-shadow: initial !important
+      box-shadow: initial !important;
     }
 
-    >button {
+    > button {
       margin-left: 8px;
       border-radius: 0;
 
@@ -144,7 +146,7 @@
 
 @media screen and (max-width: 576px) {
   :host {
-    .popup>div {
+    .popup > div {
       width: 100%;
       height: 100%;
     }

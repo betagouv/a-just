@@ -12,7 +12,7 @@ export async function getHumanRessourceList (preformatedAllHumanResource, conten
       isOk = false
     }
 
-    if (hr.dateEnd && hr.dateEnd.getTime() < date.getTime()) {
+    if (hr.dateEnd && today(hr.dateEnd).getTime() <= date.getTime()) {
       isOk = false
     }
 
@@ -28,7 +28,6 @@ export async function getHumanRessourceList (preformatedAllHumanResource, conten
 
     return isOk
   })
-  console.timeEnd('step3')
   console.time('step4')
 
   if (!contentieuxIds) return list

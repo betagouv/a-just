@@ -18,7 +18,7 @@ import { NgModel } from '@angular/forms';
       {{ text }}
     </mat-checkbox>
   `,
-  styles: [''],
+  styleUrls: ['./select-check-all.component.scss'],
 })
 export class SelectCheckAllComponent {
   /**
