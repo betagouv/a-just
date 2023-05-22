@@ -260,7 +260,6 @@ openCalculatricePopup: boolean = false
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
-    console.log(this.basicData)
     if (
       this.basicData!.controls['lastName'].value === '' ||
       this.basicData!.controls['lastName'].value === 'Nom'
@@ -465,10 +464,7 @@ openCalculatricePopup: boolean = false
   }
 
   convertirEtpt(event:Event){
-    console.log(event)
-    console.log(this.calculatriceService.dataCalculatrice.value )
-    console.log()
     this.openCalculatricePopup=false
-    this.form.get('etp')?.setValue(Number(this.calculatriceService.dataCalculatrice.value.vacation.value))
+    this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice('mag')))
   }
 }
