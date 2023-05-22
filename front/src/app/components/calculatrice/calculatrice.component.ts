@@ -53,13 +53,16 @@ export class CalculatriceComponent implements OnInit {
   validateNumber(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      if (charCode=== 46) return true
       return false
     }
     return true
   }
 
+  /**
+   * Update le model de donnée de la calculatrice
+   */
   updateModel() {
-    console.log(this.model)
     this.calculatriceService.dataCalculatrice.next(this.model)
   }
 }
