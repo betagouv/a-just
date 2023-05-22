@@ -3,6 +3,10 @@
  */
 export interface AlertInterface {
 	/**
+	 * Titre du message d'alert
+	 */
+	title?: string;
+	/**
 	 * Texte du message d'alert
 	 */
 	text: string;
@@ -10,4 +14,8 @@ export interface AlertInterface {
 	 * Optionnel saisie d'un temps de fermeture automatique
 	 */
 	delay?: number;
+	/**
+	 * Callback on click to ok
+	 */
+	callback?: Function;
 }

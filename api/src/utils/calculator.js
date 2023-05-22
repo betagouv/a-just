@@ -83,8 +83,6 @@ export const emptyCalulatorValues = (referentiels) => {
  * @returns
  */
 export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
-  console.log('syncCalculatorDatas')
-  console.log('list hr', hr.map((h) => `${h.firstName} ${h.lastName}`).join(', '))
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
@@ -129,9 +127,9 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
-  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? Math.floor(sumBy(activities, 'entrees') / nbMonth) : null
+  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? sumBy(activities, 'entrees') / nbMonth : null
 
-  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? Math.floor(sumBy(activities, 'sorties') / nbMonth) : null
+  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activities, 'sorties') / nbMonth : null
   let lastStock = null
   if (activities.length) {
     const lastActivities = activities[activities.length - 1]
@@ -229,7 +227,7 @@ const getHRPositions = (hr, categories, referentielId, dateStart, dateStop) => {
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop) => {
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -242,6 +240,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
   let now = new Date(dateStart)
   let nbDay = 0
+  let nbDaysGone = 0
   do {
     let nextDateFinded = null
     let lastEtpAdded = null
@@ -249,8 +248,10 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
     // only working day
     if (workingDay(now)) {
+      let sumByInd = 0
+      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
       nbDay++
-      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr)
+      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
       if (nextDeltaDate) {
         nextDateFinded = new Date(nextDeltaDate)
       }
@@ -264,7 +265,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         list[categoryId].etpt += etp
       }
 
-      const sumByInd = sumBy(indispoFiltred, 'percent')
+      sumByInd += sumBy(indispoFiltred, 'percent')
+
       if (sumByInd !== 0) {
         indispoFiltred.map((c) => {
           if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
@@ -274,7 +276,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
     //
     if (nextDateFinded) {
-      //console.log(hr.id, nextDateFinded, now)
       if (nextDateFinded.getTime() > dateStop.getTime()) {
         nextDateFinded = new Date(dateStop)
         nextDateFinded.setDate(nextDateFinded.getDate() + 1)
@@ -289,7 +290,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
       // quick move to the next date
       now = new Date(nextDateFinded)
-      // console.log(nextDateFinded)
     } else {
       now.setDate(now.getDate() + 1)
     }
@@ -304,6 +304,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     list[property].etpt = list[property].etpt / nbDay
     list[property].indispo = list[property].indispo / nbDay
     list[property].reelEtp = list[property].reelEtp / nbDay
+    list[property].nbDaysGone = nbDaysGone
+    list[property].nbDay = nbDay
   }
 
   return list
@@ -346,8 +348,8 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
     //fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
     magCalculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
     fonCalculateCoverage = fixDecimal(fonCalculateOut / (totalIn || 0))
-    magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut)
-    fonCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / fonCalculateOut)
+    magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut, 100)
+    fonCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / fonCalculateOut, 100)
   } else {
     magCalculateOut = null
     fonCalculateOut = null

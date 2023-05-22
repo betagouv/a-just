@@ -23,6 +23,10 @@ export class ProgressionBarComponent {
    */
   @Input() selected: boolean = true
   /**
+   * Is locked message
+   */
+  @Input() lockedMessage: string | null = null
+  /**
    * Remonté au parent du nouveau pourcentage
    */
   @Output() percentChange: EventEmitter<number> = new EventEmitter()
@@ -31,11 +35,20 @@ export class ProgressionBarComponent {
    * Changement du pourcentage avec une saisie utilisateur
    */
   changePercent() {
+    if(this.lockedMessage) {
+      alert(this.lockedMessage)
+      return
+    }
+
     if (this.selected) {
       const newPercent = prompt(
         'Nouveau pourcentage ?',
         '' + (this.percent || 0)
       )
+
+      if(newPercent === null) {
+        return
+      }
 
       const valueFormated =
         parseFloat((newPercent || '').replace(/,/, '.')) || 0

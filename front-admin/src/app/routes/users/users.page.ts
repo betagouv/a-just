@@ -35,11 +35,17 @@ export class UsersPage
   access: FormSelection[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
+  userDelete: UserInterface | null = null;
   userConnected: UserInterface | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
     { id: 'close', content: 'Fermer' },
   ];
+
+  popupDeleteAction = [
+    { id: 'confirm', content: 'Confirmer', fill: true, red: true },
+    { id: 'cancel', content: 'Annuler' },
+  ]
 
   constructor(private userService: UserService) {
     super();
@@ -134,6 +140,45 @@ export class UsersPage
         break;
       case 'close':
         this.userEdit = null;
+        break;
+    }
+  }
+
+  onDelete(user: UserInterface) {
+    if (
+      user &&
+      user.role &&
+      user.role === this.USER_ROLE_SUPER_ADMIN &&
+      this.userConnected &&
+      this.userConnected.role !== this.USER_ROLE_SUPER_ADMIN
+    ) {
+      alert(
+        "Vous n'avez pas le droit de supprimer un super administrateur."
+      );
+      return;
+    }
+    this.userDelete = user
+  }
+
+
+  onPopupDeleteAction(action: any) {
+    switch (action.id) {
+      case 'confirm':
+        {
+          const userId = this.userDelete && this.userDelete.id
+          if (userId) {
+            this.userService
+            .deleteUser(userId)
+            .then(() => {
+              this.userDelete = null;
+              this.onLoad();
+            })
+        
+          }
+        }
+        break;
+      case 'cancel':
+        this.userDelete = null;
         break;
     }
   }

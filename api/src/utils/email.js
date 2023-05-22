@@ -14,13 +14,21 @@ apiKey.apiKey = config.sendinblue
  * @param {*} params
  * @returns instance de transaction mail
  */
-export function sentEmail (to, templateId, params) {
+export function sentEmail (to, templateId, params, options = {}) {
   var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
   var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
   sendSmtpEmail = {
     to: [to],
     templateId,
     params: { ...params, envName: config.displayEnvName },
+    ...options,
+  }
+
+  if (!config.sentEmail) {
+    console.log('TEST Mail sent', sendSmtpEmail)
+    return new Promise((resolve) => {
+      resolve()
+    })
   }
 
   return apiInstance.sendTransacEmail(sendSmtpEmail).then(

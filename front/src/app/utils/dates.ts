@@ -256,9 +256,9 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
  * @param str 
  * @returns 
  */
-export function stringToDecimalDate (str: string) {
+export function stringToDecimalDate (str: string, sep ='h') {
   if (str !== null || str !== '') {
-    const strArray = str.split('h')
+    const strArray = str.split(sep)
     return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
   }
 
@@ -270,13 +270,13 @@ export function stringToDecimalDate (str: string) {
  * @param decimal 
  * @returns 
  */
-export function decimalToStringDate(decimal: number | null | undefined) {
+export function decimalToStringDate(decimal: number | null | undefined, sep='h') {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
     const dMin = decimal - parseInt(strArray[0])
     let minute = strArray[1] ? String(Math.round(dMin * 60)) : '00'
     minute = minute.length === 1 ? '0' + minute : minute
-    return strArray[0] + 'h' + minute
+    return strArray[0] + sep + minute
   }
   return '0'
 }
@@ -409,7 +409,20 @@ export function nbHourInMonth(date: Date = new Date()) {
  * @param date 
  * @returns 
  */
-export function generalizeTimeZone(date: Date | undefined) {
-  if (date === undefined) return undefined
-  else return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+export function generalizeTimeZone(date: Date | undefined|null) {
+  if (date === undefined || date ===null) return undefined
+  else {return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())}
+}
+
+export function setTimeToMidDay(date: Date | undefined|null) {
+  if (date === undefined || date ===null) return undefined
+  date.setHours(12)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  date.setUTCHours(12)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  return date
 }

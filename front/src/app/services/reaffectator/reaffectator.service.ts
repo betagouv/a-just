@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { setTimeToMidDay } from 'src/app/utils/dates'
 import { ServerService } from '../http-server/server.service'
 
 /**
@@ -46,7 +47,7 @@ export class ReaffectatorService {
     return this.serverService
       .post(`reaffectator/filter-list`, {
         backupId,
-        date,
+        date: setTimeToMidDay(date),
         categoryId,
         fonctionsIds,
         referentielList,

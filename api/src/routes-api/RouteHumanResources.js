@@ -1,11 +1,12 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { USER_REMOVE_HR } from '../constants/log-codes'
+import { EXECUTE_EXTRACTOR, EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
+import { today } from '../utils/date'
 
 /**
  * Route des fiches
@@ -18,7 +19,9 @@ export default class RouteHumanResources extends Route {
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
 
-    this.model.onPreload()
+    setTimeout(() => {
+      this.model.onPreload() // preload juridiction after 1 minute
+    }, 60000)
   }
 
   /**
@@ -134,6 +137,32 @@ export default class RouteHumanResources extends Route {
   }
 
   /**
+   * Interface de suppression d'une fiche (For test only)
+   */
+  @Route.Delete({
+    path: 'remove-hr-test/:hrId',
+    accesses: [Access.canVewHR],
+  })
+  async removeHRTest (ctx) {
+    const { hrId } = ctx.params
+
+    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      const onRemoveHR = await this.model.removeHRTest(hrId)
+
+      if (onRemoveHR) {
+        this.sendOk(ctx, 'Ok')
+        // await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
+        //   hrId,
+        // })
+      } else {
+        ctx.throw(401, "Cette personne n'est pas supprimable !")
+      }
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  /**
    * Interface de suppression d'une situation d'une fiche
    */
   @Route.Delete({
@@ -145,6 +174,25 @@ export default class RouteHumanResources extends Route {
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
       if (await this.models.HRSituations.destroyById(situationId)) {
+        this.sendOk(ctx, await this.model.getHr(hrId))
+      }
+    }
+
+    this.sendOk(ctx, null)
+  }
+
+  /**
+   * Interface de suppression d'une situation d'une fiche (For test only)
+   */
+  @Route.Delete({
+    path: 'remove-situation-test/:situationId',
+    accesses: [Access.canVewHR],
+  })
+  async removeSituationTest (ctx) {
+    const { situationId } = ctx.params
+    const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
+    if (hrId) {
+      if (await this.models.HRSituations.destroyById(situationId, { force: true })) {
         this.sendOk(ctx, await this.model.getHr(hrId))
       }
     }
@@ -178,6 +226,8 @@ export default class RouteHumanResources extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    date = today(date)
+
     console.time('step1')
     let hr = await this.model.getCache(backupId)
     console.timeEnd('step1')
@@ -188,6 +238,11 @@ export default class RouteHumanResources extends Route {
     const allCategories = await this.models.HRCategories.getAll()
 
     if (extractor === false) {
+      if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
+        // memorize first execution by user
+        await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
+      }
+
       let listFiltered = [...list]
       const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
       const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
@@ -223,7 +278,6 @@ export default class RouteHumanResources extends Route {
             categoryId: category.id,
           }
         })
-      console.log('step7')
 
       // if filter by user access to categories
       if (categories.length !== allCategories.length) {
@@ -236,8 +290,10 @@ export default class RouteHumanResources extends Route {
         allPersons: hr,
       })
     } else {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
+
       console.timeEnd('step5')
-      console.log('step6')
 
       this.sendOk(ctx, {
         list,
@@ -254,7 +310,6 @@ export default class RouteHumanResources extends Route {
   })
   async readHr (ctx) {
     const { hrId } = ctx.params
-
     if (await this.model.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getHrDetails(hrId))
     } else {

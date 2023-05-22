@@ -4,12 +4,20 @@
     <div class="sub-main-header">
       <aj-date-select title="Pour la période du" [value]="dateStart"
         (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white"
-        [max]="maxDateSelectionDate">
+        [max]="maxDateSelectionDate" [dateClass]="dateClass">
       </aj-date-select>
       <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-        class="date-stop bg-white" [max]="maxDateSelectionDate">
+        class="date-stop bg-white" [max]="maxDateSelectionDate" [dateClass]="dateClass">
       </aj-date-select>
       <div class="flex-1"></div>
+      <button class="ref-button" (click)="calculatorSaver();$event.stopPropagation();">
+        <mat-icon>save</mat-icon>
+        <div>
+          <p>Enregistrer les temps </p>
+          <p>moyens constatés</p>
+        </div>
+
+      </button>
       <aj-options-backup-panel [readOnly]="true" class="bg-white"></aj-options-backup-panel>
     </div>
     <div class="header-calculator window-scrool-width-margin">
@@ -168,7 +176,7 @@
       </div>
     </div>
     <div class="content-list">
-      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackBy" [calculator]="r" [sortBy]="sortBy"
+      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackByCont" [calculator]="r" [sortBy]="sortBy"
         [categorySelected]="categorySelected">
       </aj-referentiel-calculator>
     </div>

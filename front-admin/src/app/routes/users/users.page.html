@@ -46,6 +46,9 @@
         <button
           *ngIf="!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN)"
           mat-button color="primary" (click)="onEdit(element)">Modifier les accès</button>
+        <button
+          *ngIf="element && userConnected && element.id !== userConnected.id && !(element.role && element.role === USER_ROLE_SUPER_ADMIN)"
+          mat-button color="warn" (click)="onDelete(element)">Supprimer</button>
         <p *ngIf="element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN"
           class="super-administrateur">
           <i>Super administrateur</i>
@@ -82,6 +85,13 @@
             }}</label>
         </p>
       </div>
+    </div>
+  </aj-popup>
+
+  <aj-popup *ngIf="userDelete" class="small" title="Suppression d'un utilisateur" [actions]="popupDeleteAction"
+    (selectedAction)="onPopupDeleteAction($event)">
+    <div>
+      <p>Êtes vous sûr de vouloir supprimer {{ userDelete.firstName }} {{ userDelete.lastName }} ?</p>
     </div>
   </aj-popup>
 </aj-wrapper>

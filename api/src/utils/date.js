@@ -16,6 +16,16 @@ export const convertHourMinutesToTimestamps = (hour, minute) => {
 }
 
 /**
+ * Converte date to human format
+ * @param {*} date
+ */
+export const humanDate = (date) => {
+  date = new Date(date)
+
+  return `${dayName(date)} ${date.getDate()} ${monthName(date)} ${date.getFullYear()}`
+}
+
+/**
  * Retourne le nom du jour
  * @param {*} date
  * @returns le jour string
@@ -108,18 +118,6 @@ export function month (date = new Date(), monthToAdd, lastDay) {
   if (monthToAdd && monthToAdd !== 0) {
     date.setMonth(date.getMonth() + monthToAdd)
   }
-
-  return date
-}
-
-/**
- * Modifie la timezone d'une date
- * @param {*} date
- * @returns date
- */
-export function generalizeTimeZone (date) {
-  if (date === undefined) return undefined
-  else date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
 
   return date
 }
@@ -335,4 +333,28 @@ export function decimalToStringDate (decimal) {
     return strArray[0] + 'h' + minute
   }
   return ''
+}
+
+/**
+ * Génération d'un tableau qui liste chaque mois entre deux dates sous forme de tableau
+ * @param dateFrom
+ * @param dateTo
+ * @returns
+ */
+export function monthDiffList (dateFrom, dateTo) {
+  if (dateTo) return [...Array(1 + dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear())).keys()]
+  else return []
+}
+
+export function setTimeToMidDay (date) {
+  if (date === undefined || date === null) return undefined
+  date.setHours(12)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  date.setUTCHours(12)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  return date
 }

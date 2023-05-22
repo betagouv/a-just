@@ -13,8 +13,6 @@ import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
-import { AppService } from 'src/app/services/app/app.service'
-import { ServerService } from 'src/app/services/http-server/server.service'
 import { UserService } from 'src/app/services/user/user.service'
 
 /**
@@ -266,13 +264,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param humanResourceService
    * @param workforceService
    * @param reaffectatorService
-   * @param appService
    * @param  serverService
    */
   constructor(
     private humanResourceService: HumanResourceService,
     private workforceService: WorkforceService,
-    private appService: AppService,
     private rs: ReaffectatorService,
     private userService: UserService
   ) {
@@ -338,6 +334,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         )} ETPT)`
       }
 
+      if (c.id === this.reaffectatorService.selectedCategoriesId) {
+        c.renderHTML = `<b>${c.value}</b>`
+      } else {
+        c.renderHTML = c.value
+      }
+
       return c
     })
 
@@ -360,8 +362,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns opacity
    */
   checkHROpacity(hr: HumanResourceInterface) {
-    const name =
-      (hr.firstName || '') + ' ' + (hr.lastName || '')
+    const name = (hr.firstName || '') + ' ' + (hr.lastName || '')
 
     if (
       !this.searchValue ||
@@ -395,23 +396,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
-    const allFonctions = this.humanResourceService.fonctions.getValue()
     let selectedFonctionsIds = null
     if (
       this.reaffectatorService.selectedFonctionsIds.length !==
       this.formFilterFonctionsSelect.length
     ) {
-      console.log(this.reaffectatorService.selectedReferentielIds.length)
       selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
-      selectedFonctionsIds = selectedFonctionsIds.concat(
-        allFonctions
-          .filter(
-            (f) =>
-              f.categoryId !== this.reaffectatorService.selectedCategoriesId
-          )
-          .map((f) => f.id)
-      )
     }
+    
     console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
@@ -641,19 +633,27 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
+    const date = new Date()
+
     this.wrapper
       ?.exportAsPdf(
         `Simulation-D-Affectation_par ${
           this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
-          .slice(0, 10)}.pdf`
+          .slice(0, 10)}.pdf`,
+        true,
+        true,
+        `Simulation d'affectation par ${
+          this.userService.user.getValue()!.firstName
+        } ${this.userService.user.getValue()!.lastName} - le ${(
+          date.getDate() + ''
+        ).padStart(2, '0')} ${this.getShortMonthString(
+          date
+        )} ${date.getFullYear()}`
       )
       .then(() => {
         this.duringPrint = false
-        this.appService.alert.next({
-          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-        })
       })
   }
 
@@ -768,7 +768,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               : fixDecimal(lastStock / outValue),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
-          realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
+          realCoverage:
+            this.reaffectatorService.selectedReferentielIds.includes(ref.id)
+              ? ref.realCoverage
+              : 0, // make empty data if the referentiel id is not selected
         }
       })
 

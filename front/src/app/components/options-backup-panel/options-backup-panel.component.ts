@@ -153,16 +153,9 @@ export class OptionsBackupPanelComponent
     this.contentieuxOptionsService.onSaveDatas(isCopy)
   }
 
-  /**
-   * Accélérateur de l'affichage de la liste
-   * @param index 
-   * @param item 
-   * @returns 
-   */
-  trackBy(index: number, item: any) {
-    return item.id
+  async onSendAllActivity(elem:any){
+    await this.contentieuxOptionsService.onSendAllActivity(elem)
   }
-
   /**
    * Demande de création d'une sauvegarde vide
    */
@@ -182,5 +175,21 @@ export class OptionsBackupPanelComponent
    */
   onBackBackup() {
     this.contentieuxOptionsService.setInitValue()
+  }
+
+  /**
+   * Télécharger le referentiel au format excel
+   */
+  downloadTemplate(){
+    this.contentieuxOptionsService.downloadTemplate()
+  }
+
+  /**
+   * Ouvre le selecteur de fichier
+   */
+  openFilePicker(){
+    document.getElementById('filePicker')!.click();
+    document.getElementById('trigger-drop-down')!.click();
+
   }
 }

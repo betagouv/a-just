@@ -1,19 +1,17 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { maxBy, minBy, orderBy, sumBy } from 'lodash'
-import { debounceTime, delay, last, mergeMap, of, takeLast } from 'rxjs'
+import { maxBy, minBy, orderBy } from 'lodash'
+import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HRSituationInterface } from 'src/app/interfaces/hr-situation'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
-import { AppService } from 'src/app/services/app/app.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -122,13 +120,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   indexOfTheFuture: number | null = null
   /**
-   * Documentation patch
-   */
-  documentation: DocumentationInterface = {
-    title: 'Fiche individuelle :',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
-  }
-  /**
    * Variable en cours d'export de page
    */
   duringPrint: boolean = false
@@ -154,16 +145,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService,
-    private appService: AppService
+    private hrCategoryService: HRCategoryService
   ) {
     super()
 
     this.basicHrInfo.valueChanges.pipe(debounceTime(500)).subscribe((v) => {
-      if (this.currentHR) {
+      if (this.currentHR && this.onEditIndex === null) {
         let options = {}
 
-        if (v.firstName !== (this.currentHR.firstName || '')) {
+        if (v.firstName !== (this.currentHR.firstName || '')) {
           options = { ...options, firstName: v.firstName }
         }
         if (v.lastName !== (this.currentHR.lastName || '')) {
@@ -173,14 +163,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           options = { ...options, matricule: v.matricule }
         }
 
-        if (Object.keys(options).length && this.onEditIndex === null) {
+        if (Object.keys(options).length) {
           // @ts-ignore
-          if (options.lastName === '') {
+          if (options.lastName === '' || options.lastName === 'Nom') {
             alert('Vous devez saisir un nom pour valider la création !')
             return
           }
           // @ts-ignore
-          if (options.firstName === '') {
+          if (options.firstName === '' || options.firstName === 'Prénom') {
             alert('Vous devez saisir un prénom pour valider la création !')
             return
           }
@@ -201,7 +191,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.route.params.subscribe((params) => {
-        if (params.id) {
+        if (params['id']) {
           this.onLoad()
         }
       })
@@ -236,23 +226,25 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param cacheHr
    * @returns
    */
-  async onLoad(cacheHr: HumanResourceInterface | null = null, updated = false) {
+  async onLoad(cacheHr: HumanResourceInterface | null = null, updated = true) {
     if (this.categories.length === 0 || this.fonctions.length === 0) {
       return
     }
+
+    this.currentHR = null
 
     let findUser
     if (cacheHr) {
       findUser = cacheHr
     } else {
-      const id = +this.route.snapshot.params.id
+      const id = +this.route.snapshot.params['id']
       findUser = await this.humanResourceService.loadRemoteHR(id)
     }
     console.log('userFinded', findUser)
     if (findUser) {
       this.currentHR = findUser
 
-      if (!updated) {
+      if (updated) {
         this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
         this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
         this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
@@ -264,7 +256,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
-      console.log(findUser, { indisponibilityError: this.indisponibilityError })
+      // console.log(findUser, { indisponibilityError: this.indisponibilityError })
 
       const currentSituation = this.humanResourceService.findSituation(
         this.currentHR
@@ -333,7 +325,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         .filter((i) => i.dateStop)
         .map((s) => today(s.dateStop))
     )
-    console.log(listAllDates)
+    // console.log(listAllDates)
 
     const minDate = minBy(listAllDates, (d) => d.getTime())
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
@@ -354,7 +346,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       maxDate.setDate(maxDate.getDate() + 1)
     }
 
-    console.log(minDate, maxDate)
+    // console.log(minDate, maxDate)
 
     const currentDate = new Date(minDate)
     let idsDetected: number[] = []
@@ -469,7 +461,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       (a) => a.dateStop && a.dateStop.getTime() < today().getTime()
     )
     this.historiesOfTheFutur = this.histories.filter(
-      (a) => a.dateStart && a.dateStart.getTime() >= today().getTime()
+      (a) => a.dateStart && a.dateStart.getTime() > today().getTime()
     )
 
     // find the actuel index of situation
@@ -514,12 +506,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.histories[this.indexOfTheFuture].dateStop
     }
 
-    console.log({
+    /* console.log({
       indexOfTheFuture: this.indexOfTheFuture,
       histories: this.histories,
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
-    })
+    }) */
   }
 
   /**
@@ -554,20 +546,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         value = value.innerText
       }
 
-      this.onLoad(
-        await this.humanResourceService.updatePersonById(this.currentHR, {
-          [nodeName]: value,
-        })
-      )
-
       this.currentHR = {
         ...this.currentHR,
         [nodeName]: value,
       }
 
-      console.log({
+      this.onLoad(
+        await this.humanResourceService.updatePersonById(this.currentHR, {
+          [nodeName]: value,
+        }),
+        false
+      )
+
+      /* console.log({
         [nodeName]: value,
-      })
+      }) */
     }
   }
 
@@ -609,7 +602,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onNewUpdate() {
     this.onEditIndex = null
-    this.onLoad()
+    this.onLoad(null, false)
   }
 
   /**
@@ -866,6 +859,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
+    console.log(history)
+
     const index = history
       ? this.histories.findIndex(
           (h) => h.id === history.id && h.dateStart === history.dateStart
@@ -880,23 +875,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // edit situation
         this.onEditIndex = index
       }
-
-      setTimeout(() => {
-        const findContent = document.getElementById('content')
-        if (findContent) {
-          const findElements =
-            findContent.getElementsByTagName('add-ventilation')
-          if (findElements && findElements.length) {
-            findContent.scrollTo({
-              behavior: 'smooth',
-              top:
-                findElements[0].getBoundingClientRect().top -
-                87 +
-                findContent.scrollTop,
-            })
-          }
-        }
-      }, 100)
     } else {
       alert('Vous ne pouvez pas modifier plusieurs situations en même temps !')
     }
@@ -908,7 +886,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           this.currentHR,
           this.currentHR.indisponibilities
         )
-      console.log({ indisponibilityError: this.indisponibilityError })
+      // console.log({ indisponibilityError: this.indisponibilityError })
     }
   }
 
@@ -918,10 +896,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const returnValue = await this.humanResourceService.removeSituation(id)
-    console.log(returnValue, this.histories.length, this.onEditIndex)
+    this.onEditIndex = null
+
+    // console.log(returnValue, this.histories.length, this.onEditIndex)
     if (returnValue) {
       // force to not show on boarding after delete last situation
-      this.onEditIndex = null
       this.onLoad(returnValue)
     }
   }
@@ -931,9 +910,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onExport() {
     this.duringPrint = true
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
     this.wrapper
       ?.exportAsPdf(
         `Fiche individuelle${
@@ -957,29 +933,43 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Force to open help panel
-   * @param type 
+   * @param type
    */
-  openHelpPanel(type: string) {
+  openHelpPanel(type: string | undefined) {
     switch (type) {
-      case 'indispo':
+      case 'indispo': 
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
-          subTitle: 'Qu\'est-ce que c\'est ?',
+          subTitle: "Qu'est-ce que c'est ?",
         })
         break
+      case 'nouvelle-situation':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Enregistrer une nouvelle situation',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'fix-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Corriger une fiche préexistante',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      case 'add-fiche':
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Créer ou modifier une fiche',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche',
+          subTitle: "Qu'est-ce que c'est ?",
+        })
+        break
+      default:
+        this.wrapper?.onForcePanelHelperToShow({
+          title: 'Fiche individuelle :',
+          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
+        })
     }
-  }
-
-  /**
-   * Update form with contenteditable event
-   * @param node 
-   * @param object 
-   */
-  completeFormWithDomObject(
-    node: 'firstName' | 'lastName' | 'matricule',
-    object: any
-  ) {
-    this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
   }
 }

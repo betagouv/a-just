@@ -44,6 +44,10 @@ textarea {
   content: attr(data-placeholder);
 }
 
+[contenteditable]:focus {
+  outline: none;
+}
+
 [contenteditable] {
   cursor: text;
 }

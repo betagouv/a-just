@@ -1,5 +1,21 @@
 <aj-wrapper title="Imports">
   <div class="import-item">
+    <h2>Importer toutes les activités</h2>
+    <p>L'import doit contenir une liste de contentieux, stocks et nom de juridiction</p>
+    <div class="form">
+      <form #formAllActivities>
+        <div>
+          <label>Fichier à importer</label>
+          <input name="file" type="file" accept=".csv" />
+        </div>
+      </form>
+    </div>
+    <div class="action">
+      <button (click)="onSendAllActivity(formAllActivities)">Envoyer</button>
+    </div>
+  </div>
+
+  <div class="import-item">
     <h2>Importer une liste d'activités</h2>
     <p>L'import doit contenir une liste de contentieux et leurs stocks</p>
     <div class="form">
@@ -24,18 +40,11 @@
   </div>
 
   <div class="import-item">
-    <h2>Importer une liste de Magistrat SANS la Ventilation</h2>
-    <p>L'import doit contenir une liste de magistrat.</p>
-    <p>Pour informations, voici la liste des juriictions :</p>
-    <select name="backupId">
-      <option *ngFor="let o of HRBackupList" [value]="o.id">
-        {{o.label}} du {{o.date | date:"dd/MM/yyyy"}}
-      </option>
-    </select>
+    <h2>Importer une liste d'agent SANS sa Ventilation</h2>
 
     <div class="form">
       <form #formHR>
-        <label>Fichier à importer</label>
+        <label>Fichier à importer</label><br />
         <input name="file" type="file" accept=".csv" />
       </form>
     </div>

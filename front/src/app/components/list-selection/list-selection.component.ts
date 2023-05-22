@@ -97,7 +97,7 @@ export class ListSelectionComponent implements OnChanges {
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.value || changes.list || changes.values) {
+    if (changes['value'] || changes['list'] || changes['values']) {
       if (this.multiple === false) {
         const value = this.value
           ? this.list.find((l) => l.id === this.value) || null

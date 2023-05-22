@@ -5,7 +5,7 @@
  */
 export function referentielMappingName (name: string): string {
   switch(name) {
-    case 'Soutien': return 'Soutien';
+    case 'Autres activités': return 'Autres activités';
     case 'Indisponibilité': return 'Indisp.';
     case 'Siège Pénal': return 'Pénal';
     case 'Contentieux JAF': return 'JAF';
@@ -26,7 +26,7 @@ export function referentielMappingName (name: string): string {
  */
 export function referentielMappingColor (name: string): string {
   switch(name) {
-    case 'Soutien': return '#424242';
+    case 'Autres activités': return '#424242';
     case 'Indisponibilité': return '#37474f';
     case 'Siège Pénal': return '#c62828';
     case 'Contentieux JAF': return '#0277bd';
@@ -42,31 +42,6 @@ export function referentielMappingColor (name: string): string {
   }
 
   return '';
-}
-
-/**
- * Récupération d'un index pour un référentiel pour le trier
- * @param name 
- * @returns 
- */
-export function referentielMappingIndex (name: string): number {
-  switch(name) {
-    case 'Soutien': return 12;
-    case 'Indisponibilité': return 13;
-    case 'Siège Pénal': return 8;
-    case 'Contentieux JAF': return 2;
-    case 'Contentieux Social': return 1;
-    case 'Contentieux de la Protection': return 3;
-    case 'Juges des Enfants': return 7;
-    case 'Civil Non Spécialisé': return 4;
-    case 'Juges d\'Instruction': return 9;
-    case 'JLD Civil': return 6;
-    case 'JAP': return 10;
-    case 'JLD pénal': return 11;
-    case 'JLD civil': return 5;
-  }
-
-  return 0;
 }
 
 /**

@@ -5,8 +5,18 @@ import {
 } from '../utils/referentiel'
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
-import { decimalToStringDate, getMonthString, getShortMonthString, today } from '../utils/dates'
-import { FONCTIONNAIRES, MAGISTRATS } from '../constants/category'
+import {
+  decimalToStringDate,
+  getMonthString,
+  getShortMonthString,
+  today,
+} from '../utils/dates'
+import {
+  FONCTIONNAIRES,
+  getBgCategoryColor,
+  getCategoryColor,
+  MAGISTRATS,
+} from '../constants/category'
 
 /**
  * Class principal pour simplifier les doublons de méthodes générales
@@ -17,7 +27,7 @@ export class MainClass {
    */
   watcherList: Subscription[] = []
   /**
-   * Config d'environment 
+   * Config d'environment
    */
   environment = environment
   /**
@@ -31,9 +41,9 @@ export class MainClass {
 
   /**
    * Methode d'arrondi
-   * @param n 
-   * @param base 
-   * @returns 
+   * @param n
+   * @param base
+   * @returns
    */
   fixDecimal(n: number, base?: number): number {
     return fixDecimal(n)
@@ -41,8 +51,8 @@ export class MainClass {
 
   /**
    * Transformation d'une string en entirer
-   * @param s 
-   * @returns 
+   * @param s
+   * @returns
    */
   parseInt(s: string): number {
     return parseInt(s)
@@ -50,16 +60,17 @@ export class MainClass {
 
   /**
    * Transformation d'une string en chiffre à virgule
-   * @param s 
-   * @returns 
+   * @param s
+   * @returns
    */
   parseFloat(s: string): number {
-    return parseFloat(s.replace(/,/, '.'))
+    if (s !== '') return parseFloat(s.replace(/,/, '.'))
+    else return 0
   }
 
   /**
    * Ajout d'un observable à la liste des observables à supprimer après
-   * @param sub 
+   * @param sub
    */
   watch(sub: any) {
     this.watcherList.push(sub)
@@ -76,7 +87,7 @@ export class MainClass {
     })
   }
 
-  /** 
+  /**
    * Methode de reprise des noms de référentiel
    */
   public referentielMappingName(name: string): string {
@@ -85,8 +96,8 @@ export class MainClass {
 
   /**
    * Methode de reprise des couleur des référentiel
-   * @param name 
-   * @returns 
+   * @param name
+   * @returns
    */
   public referentielMappingColor(name: string): string {
     return referentielMappingColor(name)
@@ -94,7 +105,7 @@ export class MainClass {
 
   /**
    * Méthode de reconnaissance si c'est un IOS
-   * @returns 
+   * @returns
    */
   public isOS() {
     return navigator.userAgent.indexOf('AppleWebKit') !== -1
@@ -102,7 +113,7 @@ export class MainClass {
 
   /**
    * Méthode d'exclusion si c'est un IOS
-   * @returns 
+   * @returns
    */
   public isNotOS() {
     return !this.isOS()
@@ -110,9 +121,9 @@ export class MainClass {
 
   /**
    * Méthode d'accélaration des liste
-   * @param index 
-   * @param item 
-   * @returns 
+   * @param index
+   * @param item
+   * @returns
    */
   public trackBy(index: number, item: any) {
     return item.id
@@ -120,8 +131,8 @@ export class MainClass {
 
   /**
    * Récupération du mois à partir d'une date
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public getMonthString(date: Date | undefined): string {
     return date ? getMonthString(date) : ''
@@ -129,8 +140,8 @@ export class MainClass {
 
   /**
    * Récupération du diminutif du mois à partir d'une date
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public getShortMonthString(date: Date | undefined): string {
     return date ? getShortMonthString(date) : ''
@@ -138,28 +149,28 @@ export class MainClass {
 
   /**
    * Récupération d'une coleur d'une catégorie
-   * @param label 
-   * @param opacity 
-   * @returns 
+   * @param label
+   * @param opacity
+   * @returns
    */
-  public getCategoryColor(label: string, opacity: number = 1) {
-    switch (label) {
-      case 'Magistrat':
-      case 'Magistrat du siège':
-      case 'Magistrats du siège':
-        return `rgba(0, 0, 145, ${opacity})`
-      case 'Fonctionnaire':
-      case 'Fonctionnaires':
-        return `rgba(165, 88, 160, ${opacity})`
-    }
+  public getCategoryColor(label: string | undefined, opacity: number = 1) {
+    return getCategoryColor('' + label, opacity)
+  }
 
-    return `rgba(121, 104, 48, ${opacity})`
+  /**
+   * Récupération d'une coleur de fond d'une catégorie
+   * @param label
+   * @param opacity
+   * @returns
+   */
+  public getBgCategoryColor(label: string | undefined) {
+    return getBgCategoryColor('' + label)
   }
 
   /**
    * Transforme une date en text
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public formatDate(date: Date) {
     if (!date) {
@@ -197,8 +208,8 @@ export class MainClass {
 
   /**
    * Vérification si une date est la meme que aujourd'hui
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public isToday(date: Date) {
     const now = new Date()
@@ -212,8 +223,8 @@ export class MainClass {
 
   /**
    * Retourne la date d'aujourd'hui sinon du jour de la date choisie
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public getToday(date: Date | null | undefined = new Date()): Date {
     return today(date)
@@ -221,8 +232,8 @@ export class MainClass {
 
   /**
    * Retourne l'année d'une date en string ou objet
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public getFullYear(date: Date | string) {
     if (typeof date === 'string') {
@@ -234,8 +245,8 @@ export class MainClass {
 
   /**
    * Transforme une date string en date objet
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   public getDate(date: Date | string) {
     if (typeof date === 'string') {
@@ -247,9 +258,9 @@ export class MainClass {
 
   /**
    * Compare deux dates et regarde si c'est le même mois
-   * @param date1 
-   * @param date2 
-   * @returns 
+   * @param date1
+   * @param date2
+   * @returns
    */
   public isSameMonthAndYear(date1: Date | null, date2: Date | null) {
     date1 = new Date(date1 ? date1 : '')
@@ -260,17 +271,33 @@ export class MainClass {
       date1.getFullYear() === date2.getFullYear()
     )
   }
-  
+
   /**
    * Converti un chiffre en heure humaine
-   * @param decimal 
-   * @returns 
+   * @param decimal
+   * @returns
    */
   public decimalToStringDate(decimal: number | null) {
     return decimalToStringDate(decimal)
   }
 
+  /**
+   * Show log with html rendering
+   * @param event
+   */
   public log(event: any) {
     console.log(event)
+  }
+
+  /**
+   * On focus HTML élément
+   * @param dom
+   */
+  public onFocus(dom: any) {
+    if (!dom) {
+      return
+    }
+
+    dom.focus()
   }
 }
