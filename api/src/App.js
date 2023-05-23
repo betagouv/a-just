@@ -12,6 +12,7 @@ import db from './models'
 import { start as startCrons } from './crons'
 import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
+import { tracingMiddleWare, requestHandler } from './utils/sentry'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -60,6 +61,8 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
+      requestHandler,
+      tracingMiddleWare,
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
