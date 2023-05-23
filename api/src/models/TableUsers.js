@@ -6,7 +6,7 @@ import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHAN
 import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
-import { getNbDay } from '../utils/date'
+import { getNbDay, humanDate } from '../utils/date'
 
 /**
  * Table des utilisateurs
@@ -41,6 +41,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (user) {
+      user.access = await Model.models.UsersAccess.getUserAccess(userId)
       return snakeToCamelObject(user)
     }
 
@@ -59,7 +60,6 @@ export default (sequelizeInstance, Model) => {
         throw 'Mot de passe trop faible!'
       }
       password = crypt.encryptPassword(password)
-
       await Model.create({
         email,
         password,
@@ -72,6 +72,26 @@ export default (sequelizeInstance, Model) => {
     } else {
       throw 'Email déjà existant'
     }
+  }
+
+  /**
+   * Supprimer un compte utilisateur
+   * @params {*} param0
+   */
+  Model.removeAccount = async (userId, options = {}) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+    })
+
+    if (user) {
+      sentEmailSendinblueUserList(user, false)
+
+      return await Model.destroyById(userId, options)
+    }
+
+    return null
   }
 
   /**
@@ -144,25 +164,52 @@ export default (sequelizeInstance, Model) => {
     }
 
     const users = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'email'],
+      attributes: ['id', 'first_name', 'last_name', 'email', 'fonction', 'created_at'],
       raw: true,
     })
     const usersFinded = []
 
     for (let i = 0; i < users.length; i++) {
-      const lastLog = await Model.models.Logs.findLastLog(null, USER_AUTO_LOGIN, { userId: users[i].id })
-      let lastConnexionDate = new Date(2023, 1, 15) // date fictive base sur la date de mise en prod
-      if (lastLog) {
-        lastConnexionDate = new Date(lastLog.createdAt)
+      const juridictions = (await Model.models.HRBackups.list(users[i].id)).map((t) => t.label)
+      const lastLog = await Model.models.Logs.findLastLog(users[i].id, USER_AUTO_LOGIN, { userId: users[i].id })
+      let lastConnexionDate = null
+
+      const userInfos = {
+        name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''),
+        email: users[i].email,
+        fonction: users[i].fonction || '',
+        created_at: users[i].created_at,
+        juridictions,
       }
 
-      const nbDays = getNbDay(lastConnexionDate, new Date())
-      if (nbDays >= config.nbMaxDayCanBeInactive) {
-        usersFinded.push({ name: (users[i].first_name || '') + ' ' + (users[i].last_name || ''), email: users[i].email, nbDays })
+      if (!lastLog) {
+        usersFinded.push({
+          ...userInfos,
+          nbDays: 'jamais',
+        })
+      } else if (lastLog) {
+        lastConnexionDate = new Date(lastLog.createdAt)
+        const nbDays = getNbDay(lastConnexionDate, new Date())
+        if (lastConnexionDate === null && nbDays >= config.nbMaxDayCanBeInactive) {
+          usersFinded.push({
+            ...userInfos,
+            nbDays: nbDays + ' jours',
+          })
+        }
       }
     }
 
     if (usersFinded.length) {
+      const userCSV = [
+        'prénom nom,email,nb jours,date de creation de compte,fonction,juridictions,date de creation,',
+        ...usersFinded.map((u) => `${u.name},${u.email},${u.nbDays},${humanDate(u.created_at)},${u.fonction},${u.juridictions.join(' - ')}`),
+      ].join('\n')
+
+      let buff = Buffer.from(userCSV)
+      const options = {
+        attachment: [{ content: buff.toString('base64'), name: 'export.csv' }],
+      }
+
       await sentEmail(
         {
           email: config.supportEmail,
@@ -170,7 +217,8 @@ export default (sequelizeInstance, Model) => {
         TEMPLATE_CRON_USERS_NOT_CONNECTED,
         {
           userList: usersFinded,
-        }
+        },
+        options
       )
     }
   }

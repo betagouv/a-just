@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { MainClass } from 'src/app/libs/main-class'
-import { decimalToStringDate, generalizeTimeZone } from 'src/app/utils/dates'
+import { decimalToStringDate, setTimeToMidDay } from 'src/app/utils/dates'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
@@ -136,19 +136,6 @@ export class SimulatorService extends MainClass {
     dateStart?: Date,
     dateStop?: Date
   ) {
-    console.log(
-      'getSituation',
-      {
-        backupId: this.humanResourceService.backupId.getValue(),
-        referentielId: referentielId,
-        dateStart: generalizeTimeZone(dateStart),
-        dateStop: generalizeTimeZone(dateStop),
-        functionIds: this.selectedFonctionsIds.getValue(),
-        categoryId: this.selectedCategory.getValue()?.id,
-      },
-      referentielId
-    )
-
     if (
       this.selectedCategory.getValue()?.id !== null &&
       this.selectedFonctionsIds.getValue() !== null
@@ -158,8 +145,8 @@ export class SimulatorService extends MainClass {
         .post(`simulator/get-situation`, {
           backupId: this.humanResourceService.backupId.getValue(),
           referentielId: referentielId,
-          dateStart: generalizeTimeZone(dateStart),
-          dateStop: generalizeTimeZone(dateStop),
+          dateStart: setTimeToMidDay(dateStart),
+          dateStop: setTimeToMidDay(dateStop),
           functionIds: this.selectedFonctionsIds.getValue(),
           categoryId: this.selectedCategory.getValue()?.id,
         })
@@ -167,8 +154,6 @@ export class SimulatorService extends MainClass {
           if (dateStop) {
             this.situationProjected.next(data.data.situation.endSituation)
           } else this.situationActuelle.next(data.data.situation)
-
-          console.log('Situation result', data)
         })
         .then(() => this.isLoading.next(false))
     } else return null
@@ -181,26 +166,17 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface) {
     this.isLoading.next(true)
-    console.log('PARAM Simulation', {
-      backupId: this.humanResourceService.backupId.getValue(),
-      params: params,
-      simulation: simulation,
-      dateStart: generalizeTimeZone(this.dateStart.getValue()),
-      dateStop: generalizeTimeZone(this.dateStop.getValue()),
-      selectedCategoryId: this.selectedCategory.getValue()?.id,
-    })
 
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
         params: params,
         simulation: simulation,
-        dateStart: generalizeTimeZone(this.dateStart.getValue()),
-        dateStop: generalizeTimeZone(this.dateStop.getValue()),
+        dateStart: setTimeToMidDay(this.dateStart.getValue()),
+        dateStop: setTimeToMidDay(this.dateStop.getValue()),
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
-        console.log('Simulation result', data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })
@@ -257,7 +233,7 @@ export class SimulatorService extends MainClass {
       }
       case 'totalIn': {
         if (data?.totalIn && data?.totalIn >= 0) {
-          return data?.totalIn
+          return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
         } else return '0'
       }
       case 'lastStock': {

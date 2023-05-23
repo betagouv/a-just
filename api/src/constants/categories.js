@@ -22,14 +22,21 @@ export const getCategoryColor = (label, opacity = 1) => {
 /**
  * Récupération de la couleur de fond d'une catégories
  * @param {*} label
- * @param {*} opacity
  * @returns
  */
 export const getBgCategoryColor = (label) => {
   switch (label) {
+  case 'magistrat':
+  case 'magistrats':
+  case 'magistrat du siège':
+  case 'magistrats du siège':
+    return '#e3e3fd'
+  case 'fonctionnaire':
+  case 'fonctionnaires':
+    return '#fee7fc'
   case 'Contractuel':
   case 'Contractuels':
-    return 'rgba(239, 203, 58, 0.2)'
+    return '#fef6e3'
   }
 
   return getCategoryColor(label, 0.2)

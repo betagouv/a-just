@@ -6,6 +6,8 @@ import { AppComponent } from './app.component'
 import { HttpClientModule } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AlertComponent } from './components/alert/alert.component'
+import { PipesModule } from './pipes/pipes.module'
+import { ComponentsModule } from './components/components.module'
 
 /**
  * Module principal du projet
@@ -18,6 +20,8 @@ import { AlertComponent } from './components/alert/alert.component'
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    PipesModule,
+    ComponentsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

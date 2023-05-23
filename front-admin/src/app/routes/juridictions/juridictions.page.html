@@ -1,0 +1,57 @@
+<aj-wrapper title="Liste des juridictions dans la base">
+  <p>Cliquer sur le champ souhaité pour les modifier</p>
+  <table (matSortChange)="sortData($event)" matSort>
+    <tr>
+      <th mat-sort-header="iElst">I ELST</th>
+      <th mat-sort-header="label">Nom</th>
+      <th mat-sort-header="latitude">Latitude</th>
+      <th mat-sort-header="longitude">Longitude</th>
+      <th mat-sort-header="population">Population</th>
+      <th mat-sort-header="enabled">Actif</th>
+    </tr>
+
+    <tr *ngFor="let element of datasSource">
+      <td>{{element.iElst}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('label', element)">
+        {{element.label}}
+        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
+          '(' + element.users.length
+          + ' utilisateurs)' : ''}}</i>
+        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
+          '(' +
+          element.nbAgents + ' agents)' : ''}}</i>
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
+        {{element.latitude || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
+        {{element.longitude || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('population', element)">
+        {{element.population || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
+        {{element.enabled ? 'Oui' : 'Non'}}
+      </td>
+    </tr>
+  </table>
+
+  <aj-popup *ngIf="selectedJuridiction" [closeIcon]="true" (onClose)="selectedJuridiction = null">
+    <h3>Détails de la juridiction</h3>
+    <div class="grid-double">
+      <div>
+        <p><b>Liste des personnes ayant accès :</b></p>
+        <p *ngFor="let e of (selectedJuridiction.users || [])">
+          {{e.firstName}} {{e.lastName}}
+        </p>
+      </div>
+
+      <div>
+        <p><b>Nombre de type d'agents :</b></p>
+        <p *ngFor="let e of (selectedJuridiction.categoriesAgents || [])">
+          {{e.nbAgents}} {{e.label}}
+        </p>
+      </div>
+    </div>
+  </aj-popup>
+</aj-wrapper>

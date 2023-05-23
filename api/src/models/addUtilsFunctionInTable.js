@@ -17,16 +17,16 @@ export function addUtilsFunctionInTable (Table, sequelizeInstance) {
   Table.throw = (status, message) => {
     throw new ErrorApp(status, message, true)
   }
-  Table.throwBadRequest = error => {
+  Table.throwBadRequest = (error) => {
     Table.throw(400, error || 'Bad request')
   }
-  Table.throwUnauthorized = error => {
+  Table.throwUnauthorized = (error) => {
     Table.throw(401, error || 'Unauthorized')
   }
-  Table.throwForbidden = error => {
+  Table.throwForbidden = (error) => {
     Table.throw(403, error || 'Forbidden')
   }
-  Table.throwNotFound = error => {
+  Table.throwNotFound = (error) => {
     Table.throw(403, error || 'Not found')
   }
 
@@ -74,7 +74,7 @@ export function addUtilsFunctionInTable (Table, sequelizeInstance) {
     return Table.updateOne(values, options)
   }
 
-  Table.destroyOne = async options => {
+  Table.destroyOne = async (options) => {
     // individualHooks to allow call 'before / after' insteaceof 'beforeBulk / afterBulk'
     return Table.destroy({ ...options, individualHooks: true })
   }
@@ -116,7 +116,7 @@ export function addUtilsFunctionInTable (Table, sequelizeInstance) {
     delete obj[name]
   }
   Table.deleteElems = (obj, namesArray) => {
-    namesArray.forEach(name => Table.deleteElem(obj, name))
+    namesArray.forEach((name) => Table.deleteElem(obj, name))
   }
   Table.updateElem = (obj, name, value) => {
     if (obj[name]) {

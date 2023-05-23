@@ -8,7 +8,7 @@ import {
   AfterViewInit,
   OnChanges,
   ViewChild,
-  OnInit,
+  SimpleChanges,
 } from '@angular/core'
 import { orderBy, sortBy, sumBy } from 'lodash'
 import { ItemInterface } from 'src/app/interfaces/item'
@@ -60,7 +60,6 @@ export interface FilterPanelInterface {
   display?: string | number | null
 }
 
-
 /**
  * Paneau de filtre de la page workforce
  */
@@ -71,7 +70,7 @@ export interface FilterPanelInterface {
 })
 export class FilterPanelComponent
   extends MainClass
-  implements AfterViewInit, OnChanges, OnInit
+  implements AfterViewInit, OnChanges
 {
   /**
    * Event au père lors d'une mise à jour
@@ -175,6 +174,10 @@ export class FilterPanelComponent
    */
   @Input() displayValue: string | number | null = 'prénom/nom'
   /**
+   * Categories déjà selectionnée
+   */
+  @Input() categories: number[] = []
+  /**
    * Dom de la popin
    */
   @ViewChild('popin') popin: ElementRef<HTMLElement> | null = null
@@ -213,9 +216,9 @@ export class FilterPanelComponent
 
   /**
    * Constructeur
-   * @param hrFonctionService 
-   * @param elementRef 
-   * @param referentielService 
+   * @param hrFonctionService
+   * @param elementRef
+   * @param referentielService
    */
   constructor(
     private hrFonctionService: HRFonctionService,
@@ -226,21 +229,18 @@ export class FilterPanelComponent
   }
 
   /**
-   * Au chargement lister les fonctions possibles
-   */
-  ngOnInit() {
-    this.loadFonctions()
-  }
-
-  /**
    * A chaque changement chercher l'élement de filtre selectionnée
    */
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     if (!this.sortList.find((o) => o.id === this.sortValue)) {
       this.sortValue = this.sortList[1].id
     }
     if (!this.orderList.find((o) => o.id === this.orderValue)) {
       this.orderValue = this.orderList[0].id
+    }
+
+    if (changes['categories']) {
+      this.loadFonctions()
     }
   }
 
@@ -272,11 +272,13 @@ export class FilterPanelComponent
    */
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
-    // tempory fix to load only Magistrat and Fonctionnaires fonctions
     const listUsedFunctions = orderBy(
       [...fonctions],
       ['categoryId', 'rank']
-    ).filter((f) => f.categoryId === 1 || f.categoryId === 2)
+    ).filter((f) => this.categories.includes(f.categoryId))
+    const idsToExclude = fonctions
+      .filter((f) => !this.categories.includes(f.categoryId))
+      .map((v) => +v.id)
 
     this.filterList = listUsedFunctions.map((f) => ({
       id: f.id,
@@ -285,7 +287,8 @@ export class FilterPanelComponent
     this.filterValues =
       this.filterValues === null
         ? listUsedFunctions.map((f) => f.id)
-        : this.filterValues
+        : this.filterValues.filter((f) => !idsToExclude.includes(+f))
+
     this.defaultFilterValues = listUsedFunctions.map((f) => f.id)
   }
 

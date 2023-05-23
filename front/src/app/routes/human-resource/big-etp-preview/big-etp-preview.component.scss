@@ -1,0 +1,30 @@
+@import "../../../styles/utils.scss";
+
+:host {
+  display: block;
+  position: relative;
+  padding-top: 16px;
+
+  .preview {
+    text-align: center;
+    font-size: 12px;
+    color: fColor(cgreen);
+    font-weight: bold;
+
+    span {
+      color: fColor(titleInput);
+      position: relative;
+      top: 6px;
+    }
+
+    p {
+      font-size: 26px;
+    }
+  }
+
+  canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+}

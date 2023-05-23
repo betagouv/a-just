@@ -28,13 +28,13 @@ export class ReferentielService {
 
   /**
    * Constructor
-   * @param humanResourceService 
+   * @param humanResourceService
    */
   constructor(private humanResourceService: HumanResourceService) {}
 
   /**
    * Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts
-   * @param list 
+   * @param list
    */
   formatDatas(list: ContentieuReferentielInterface[]) {
     const refIndispo = list.find((r) => r.label === 'Indisponibilité')
@@ -58,7 +58,7 @@ export class ReferentielService {
 
     this.idsIndispo = idsIndispo
 
-    const refSoutien = list.find((r) => r.label === 'Soutien')
+    const refSoutien = list.find((r) => r.label === 'Autres activités')
     const idsSoutien = []
     if (refSoutien) {
       idsSoutien.push(refSoutien.id)
@@ -70,19 +70,14 @@ export class ReferentielService {
 
     this.mainActivitiesId = list.map((r) => r.id)
 
-    // feach all id of contentieux
-    let listAll: ContentieuReferentielInterface[] = []
-    list.map((cont) => {
-      listAll.push(cont)
-      listAll = list.concat(cont.childrens || [])
-    })
-    this.humanResourceService.selectedReferentielIds = listAll
+    this.humanResourceService.selectedReferentielIds = list
+      .filter((r) => r.label !== 'Indisponibilité')
       .filter((a) => idsIndispo.indexOf(a.id) === -1)
       .map((r) => r.id)
 
     this.humanResourceService.contentieuxReferentiel.next(list)
-    this.humanResourceService.contentieuxReferentielOnly.next(list.filter(
-      (r) => idsIndispo.indexOf(r.id) === -1
-    ))
+    this.humanResourceService.contentieuxReferentielOnly.next(
+      list.filter((r) => idsIndispo.indexOf(r.id) === -1)
+    )
   }
 }

@@ -2,6 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
+import { EXECUTE_SIMULATION } from '../constants/log-codes'
 
 /**
  * Route pour la page du simulateur
@@ -34,7 +35,7 @@ export default class RouteSimulator extends Route {
       functionIds: Types.array(),
       categoryId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewSimulation],
   })
   async getSituation (ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
@@ -88,7 +89,7 @@ export default class RouteSimulator extends Route {
       dateStop: Types.date().required(),
       selectedCategoryId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewSimulation],
   })
   async toSimulate (ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
@@ -97,12 +98,14 @@ export default class RouteSimulator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    // memorize first execution by user
+    await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
+
     const categories = await this.models.HRCategories.getAll()
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
-    console.log('Yoko', params)
 
     this.sendOk(ctx, simulatedSituation)
   }

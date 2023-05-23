@@ -8,6 +8,13 @@
     display: flex;
     flex-direction: column;
 
+        .print-shadow{
+        border: solid 1px rgb(207, 207, 207);
+    }
+    .print-shadow-bottom{
+        border-bottom: solid 1px rgb(207, 207, 207);
+    }
+    
     .space-flex {
         flex: 1;
     }
@@ -18,7 +25,7 @@
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         background-color: #fff;
         position: relative;
-        z-index: 3;
+        z-index: 1;
 
         p {
             font-size: 16px;

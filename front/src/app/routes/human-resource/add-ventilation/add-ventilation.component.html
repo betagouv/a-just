@@ -53,7 +53,8 @@
     <div class="activities">
       <p>Répartition du temps disponible</p>
       <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
-        (referentielChange)="onNewReferentiel($event)" #panelActivities>
+        (referentielChange)="onNewReferentiel($event)" #panelActivities
+        [forceToShowContentieuxDetail]="forceToShowContentieuxDetail">
       </panel-activities>
     </div>
 

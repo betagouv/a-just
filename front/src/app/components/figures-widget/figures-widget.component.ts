@@ -8,6 +8,10 @@ import { Component, Input, OnInit } from '@angular/core'
   styleUrls: ['./figures-widget.component.scss'],
 })
 export class FiguresWidgetComponent {
+    /**
+   * Date de début de simulation
+   */
+  @Input() print: boolean = false
   /**
    * Date de début de simulation
    */

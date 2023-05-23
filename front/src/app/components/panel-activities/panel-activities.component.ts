@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
+import { REFERENTIELS_CANT_UPDATED } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -52,6 +53,10 @@ export class PanelActivitiesComponent
    */
   @Input() canSelectedTopReferentiel: boolean = false
   /**
+   * Force pour afficher les sous contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
@@ -68,6 +73,10 @@ export class PanelActivitiesComponent
    * Contientieux sélectionné
    */
   refIndexSelected: number = -1
+  /**
+   * Réfentiels que l'on ne peut pas modifier
+   */
+  REFERENTIELS_CANT_UPDATED = REFERENTIELS_CANT_UPDATED
 
   /**
    * Constructeur
@@ -244,5 +253,14 @@ export class PanelActivitiesComponent
    */
   trackById(index: number, item: any) {
     return item.id
+  }
+
+  /**
+   * Compte le nombre de sous contentieux avec une valeure
+   * @param referentiel 
+   * @returns 
+   */
+  countNbSubItem(referentiel: ContentieuReferentielInterface) {
+    return (referentiel.childrens || []).filter(r => r.percent).length
   }
 }

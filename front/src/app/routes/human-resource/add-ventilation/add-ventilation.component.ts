@@ -8,12 +8,14 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
+import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -63,7 +65,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Modification / Création d'une situation
    */
   @Input() isEdit: boolean = false
+  /**
+   * Id de situation
+   */
+  @Input() editId: number | null = null
   @Input() basicData: FormGroup | null = null
+  /**
+   * Force to show sub contentieux
+   */
+  @Input() forceToShowContentieuxDetail: boolean = false
   /**
    * Event lors de la sauvegarde
    */
@@ -110,17 +120,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
 
-
   /**
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
    * @param humanResourceService
+   * @param appService
    */
   constructor(
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private appService: AppService
   ) {
     super()
   }
@@ -149,7 +160,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.lastDateStart) {
+    if (changes['lastDateStart']) {
       this.onStart()
     }
   }
@@ -209,37 +220,67 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Control du formulaire lors de la sauvegarde
    * @returns
    */
-  async onSave() {
+  async onSave(withoutPercentControl = false) {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError)
       return
     }
 
-    const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
-    if (totalAffected > 100) {
-      alert(
-        `Attention, avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`
+    if (!withoutPercentControl) {
+      const totalAffected = fixDecimal(
+        sumBy(this.updatedReferentiels, 'percent')
       )
-      return
+      if (totalAffected > 100) {
+        this.appService.alert.next({
+          title: 'Attention',
+          text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
+        })
+        return
+      } else if (totalAffected < 100) {
+        this.appService.alert.next({
+          title: 'Attention',
+          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
+          callback: () => {
+            this.onSave(true)
+          },
+        })
+        return
+      }
     }
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
     console.log(this.basicData)
-    if (this.basicData!.controls.lastName.value === '') {
+    if (
+      this.basicData!.controls['lastName'].value === '' ||
+      this.basicData!.controls['lastName'].value === 'Nom'
+    ) {
       alert('Vous devez saisir un nom pour valider la création !')
       return
     }
-    if (this.basicData!.controls.firstName.value === '') {
+    if (
+      this.basicData!.controls['firstName'].value === '' ||
+      this.basicData!.controls['firstName'].value === 'Prénom'
+    ) {
       alert('Vous devez saisir un prénom pour valider la création !')
       return
     }
 
+    console.log(
+      'ACT start date',
+      activitiesStartDate,
+      ' Start date',
+      this.human!.dateStart
+    )
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !')
       return
     }
 
+    if (!(this.human && this.human.dateStart)) {
+      alert("Vous devez saisir une date d'arrivée !")
+      return
+    }
     activitiesStartDate = new Date(activitiesStartDate)
     if (this.human && this.human.dateEnd && activitiesStartDate) {
       const dateEnd = new Date(this.human.dateEnd)
@@ -288,12 +329,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       fonct
     )
 
+    console.log(this.updatedReferentiels, situations)
+
     if (this.human) {
       if (
         await this.humanResourceService.updatePersonById(this.human, {
-          firstName: this.basicData!.controls.firstName.value,
-          lastName: this.basicData!.controls.lastName.value,
-          matricule: this.basicData!.controls.matricule.value,
+          firstName: this.basicData!.controls['firstName'].value,
+          lastName: this.basicData!.controls['lastName'].value,
+          matricule: this.basicData!.controls['matricule'].value,
           situations,
           indisponibilities: this.indisponibilities,
         })
@@ -338,30 +381,59 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           })
       })
 
+    console.log(
+      'activities',
+      JSON.stringify(
+        activities.map((a) => ({
+          percent: a.percent,
+          cid: a.contentieux.id,
+          clabel: a.contentieux.label,
+        }))
+      )
+    )
+
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart)
-      return activitiesStartDate.getTime() === day.getTime()
+      return (
+        activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
+      )
     })
 
+    const options = {
+      etp: profil.etp / 100,
+      category: cat,
+      fonction: fonct,
+      activities,
+    }
+
     if (isSameDate !== -1) {
+      console.log(situations[isSameDate])
+
       situations[isSameDate] = {
         ...situations[isSameDate],
-        etp: profil.etp / 100,
-        category: cat,
-        fonction: fonct,
-        activities,
+        ...options,
+      }
+
+      situations = situations.filter((s) => s.id !== this.editId)
+    } else if (this.editId) {
+      const index = situations.findIndex((s) => s.id === this.editId)
+      if (index !== -1) {
+        situations[index] = {
+          ...situations[index],
+          ...options,
+          dateStart: activitiesStartDate,
+        }
       }
     } else {
       situations.splice(0, 0, {
         id: -1,
-        etp: profil.etp / 100,
-        category: cat,
-        fonction: fonct,
+        ...options,
         dateStart: activitiesStartDate,
-        activities,
       })
     }
+
+    console.log(isSameDate, situations, this.editId)
 
     return situations
   }
@@ -376,7 +448,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Show panel to help
-   * @param type 
+   * @param type
    */
   openHelpPanel(type: string) {
     this.onOpenHelpPanel.emit(type)

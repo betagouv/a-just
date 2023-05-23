@@ -22,7 +22,33 @@ import { AppService } from 'src/app/services/app/app.service'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { addHTML } from 'src/app/utils/js-pdf'
 import { environment } from 'src/environments/environment'
+import { ActionsInterface } from '../popup/popup.component'
+
+declare const Quill: any
+
+/**
+ * Interface de génération d'un commentaire
+ */
+interface ExportPDFInterface {
+  /**
+   * Nom du fichier d'export
+   */
+  filename: string
+  /**
+   * Prend en compte le header pour l'export
+   */
+  header: boolean
+  /**
+   * Ajoute un text dans la page d'intro de l'export
+   */
+  exportName: string
+  /**
+   * Show hide popup
+   */
+  noPopup?: boolean
+}
 
 /**
  * Composent de mise en page en mode connecté
@@ -89,7 +115,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Affiche une bulle d'aide avec une doc derriere
    */
-  @Input() documentation: DocumentationInterface | undefined | null
+  @Input() documentation: DocumentationInterface | undefined | null
   /**
    * Doc d'aide à afficher
    */
@@ -97,7 +123,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Popup open
    */
-  popin= false
+  popin = false
   /**
    * Dit si le paneau d'aide est visible ou non
    */
@@ -130,7 +156,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * URL de la nomenclature
    */
   NOMENCLATURE_DOWNLOAD_URL =
-    '/assets/Nomenclature_A-JUST_20221019_utilisateurs.html'
+    '/assets/nomenclature-A-Just.html'
   /**
    * Menu de gauche
    */
@@ -140,6 +166,22 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       path: 'dashboard',
     },
   ]
+  /**
+   * Answer of question
+   */
+  promptComment: boolean = false
+  /**
+   * Export PDF temp var
+   */
+  exportPDFTemp: ExportPDFInterface | null = null
+  /**
+   * Quill editor
+   */
+  quillEditor: any = null
+  /**
+   * Promise resolve export
+   */
+  exportAsPdfPromiseResolve: Function | null = null
 
   /**
    * Constructeur
@@ -154,7 +196,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService,
+    private appService: AppService
   ) {
     super()
 
@@ -195,10 +237,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     })
   }
 
-  onSelectAction(event:any){
-
-      this.onDisconnect() 
-
+  onSelectAction(event: any) {
+    this.onDisconnect()
   }
 
   /**
@@ -206,43 +246,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param user
    */
   updateMenu(user: UserInterface | null) {
-    const menu = []
-
-    if (user && user.access && user.access.indexOf(2) !== -1) {
-      menu.push({
-        label: 'Ventilateur',
-        path: 'ventilations',
-      })
-    }
-    if (user && user.access && user.access.indexOf(3) !== -1) {
-      menu.push({
-        label: "Données d'activité",
-        path: 'donnees-d-activite',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(4) !== -1) {
-      menu.push({
-        label: 'Temps moyens',
-        path: 'temps-moyens',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(5) !== -1) {
-      menu.push({
-        label: 'Calculateur',
-        path: 'calculateur',
-      })
-    }
-
-    if (user && user.access && user.access.indexOf(6) !== -1) {
-      menu.push({
-        label: 'Simulateur',
-        path: 'simulateur',
-      })
-    }
-
-    this.menu = menu
+    this.menu = user ? this.userService.getAllUserPageUrl(user) : []
   }
 
   /**
@@ -268,51 +272,175 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param header
    * @returns
    */
-  async exportAsPdf(filename: string, header: boolean = true): Promise<any> {
+  async exportAsPdf(
+    filename: string,
+    header: boolean = true,
+    promptComment: boolean = false,
+    exportName: string | null = null,
+    noPopup: boolean = false
+  ): Promise<any> {
+
+    this.exportPDFTemp = {
+      filename,
+      header,
+      exportName: exportName || '',
+      noPopup,
+    }
+
+    const newPro = new Promise((resolve) => {
+      this.exportAsPdfPromiseResolve = resolve
+    })
+
+    if (promptComment) {
+      this.promptComment = true
+    } else {
+      this.askExportAsPdf()
+    }
+
+    return newPro
+  }
+
+  /**
+   * Export PDF du contenu et aussi au besoin du header
+   * @param comment
+   * @returns
+   */
+  async askExportAsPdf(comment?: string): Promise<any> {
+    if (!this.exportPDFTemp || !this.exportAsPdfPromiseResolve) {
+      return
+    }
+
+    const { header, filename, exportName, noPopup } = this.exportPDFTemp
     this.duringPrint = true
+
     const element = this[header ? 'contener' : 'content']?.nativeElement
 
     if (!element) {
-      return new Promise((resolve) => {
-        resolve(true)
-      })
+      this.exportAsPdfPromiseResolve(true)
+      return
     }
+
     document.body.classList.add('remove-height')
     document.body.classList.add('on-print')
+    if(!noPopup)
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        html2canvas(element, {
-          scale: 1.5,
-        }).then((canvas) => {
-          var width = canvas.width
-          var height = canvas.height
+    setTimeout(() => {
+      html2canvas(element, {
+        scale: 1.5,
+      }).then(async (canvas) => {
+        var width = canvas.width
+        var height = canvas.height
+        var doc
 
-          var doc = new jsPDF(
+        if (comment) {
+          const mainHtmlContainer = document.createElement('div')
+          mainHtmlContainer.style.position = 'absolute'
+          mainHtmlContainer.style.left = '200%'
+          mainHtmlContainer.style.width = '400px'
+
+          const htmlContainer = document.createElement('div')
+          htmlContainer.style.position = 'relative'
+          htmlContainer.style.padding = '16px 32px 32px 32px'
+
+          const logo = document.createElement('img')
+          logo.src = '/assets/icons/logos/white-192x192.png'
+          logo.style.width = '50px'
+          logo.style.height = '50px'
+          logo.style.position = 'absolute'
+          logo.style.top = '20px'
+          logo.style.left = '30px'
+
+          const title = document.createElement('p')
+          title.style.fontSize = '18px'
+          title.style.textAlign = 'left'
+          title.style.fontFamily = 'Helvetica'
+          title.style.marginTop = '64px'
+          title.style.fontWeight = 'bold'
+          title.innerHTML = exportName || ''
+
+          const pCom = document.createElement('p')
+          pCom.style.marginTop = '32px'
+          pCom.style.fontSize = '14px'
+          pCom.style.textAlign = 'left'
+          pCom.style.fontFamily = 'Helvetica'
+          pCom.innerHTML = 'Commentaire :'
+
+          const commentDom = document.createElement('p')
+          commentDom.style.fontSize = '10px'
+          commentDom.style.textAlign = 'left'
+          commentDom.style.fontFamily = 'Helvetica'
+          commentDom.classList.add('p-with-child-Helvetica')
+          commentDom.innerHTML = comment || ''
+          console.log('comment', comment)
+
+          htmlContainer.appendChild(logo)
+          htmlContainer.appendChild(title)
+          htmlContainer.appendChild(pCom)
+          htmlContainer.appendChild(commentDom)
+          mainHtmlContainer.appendChild(htmlContainer)
+          document.body.appendChild(mainHtmlContainer)
+
+          const { width: w, height: h } =
+            mainHtmlContainer.getBoundingClientRect()
+          doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
+          await addHTML(doc, htmlContainer)
+          mainHtmlContainer.remove()
+
+          doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+        } else {
+          doc = new jsPDF(
             width > height ? 'l' : 'p',
             'px',
             [width / 2, height / 2],
             true
           )
-          doc.addImage(
-            canvas.toDataURL('image/jpeg', 1),
-            'JPEG',
-            0,
-            0,
-            width / 2,
-            height / 2,
-            '',
-            'FAST'
-          )
-          doc.save(filename)
+        }
 
-          this.duringPrint = false
-          document.body.classList.remove('remove-height')
-          document.body.classList.remove('on-print')
-          resolve(true)
-        })
+        doc.addImage(
+          canvas.toDataURL('image/jpeg', 1),
+          'JPEG',
+          0,
+          0,
+          width / 2,
+          height / 2,
+          '',
+          'FAST'
+        )
+        doc.save(filename)
+
+        this.duringPrint = false
+        document.body.classList.remove('remove-height')
+        document.body.classList.remove('on-print')
+
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
       })
     })
+  }
+
+  /**
+   * onActionComment
+   */
+  onActionComment(action: ActionsInterface, htmlComment?: string) {
+    switch (action.id) {
+      case 'export':
+        this.askExportAsPdf()
+        break
+      case 'export-with-comment':
+        this.askExportAsPdf(htmlComment)
+        break
+      default:
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+        break;
+    }
+
+    this.promptComment = false
   }
 
   /**
@@ -341,12 +469,5 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
-  }
-
-  /**
-   * Ouverture de la nomenclature dans un nouvel onglet
-   */
-  onDownloadNomenclature() {
-    window.open(this.NOMENCLATURE_DOWNLOAD_URL)
   }
 }

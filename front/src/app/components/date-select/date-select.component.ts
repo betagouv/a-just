@@ -7,6 +7,7 @@ import {
   HostBinding,
   ViewChild,
 } from '@angular/core'
+import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import { MatDatepicker } from '@angular/material/datepicker'
 import { Moment } from 'moment'
 import { MainClass } from 'src/app/libs/main-class'
@@ -56,6 +57,12 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * Date maximal
    */
   @Input() max: Date | null = null
+  /**
+   * Date class du calendrier
+   */
+  @Input() dateClass: MatCalendarCellClassFunction<Moment> = (cellDate, view) => {
+    return ''
+  }
   /**
    * Rémontée au parent en cas de changement de date sélectionnée
    */
@@ -130,7 +137,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   /**
    * Conversion du champ date material en date JS
-   * @param event 
+   * @param event
    */
   onDateChanged(event: any) {
     if (event && event._i.year) {
@@ -153,19 +160,19 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   /**
    * Forcer ou non de fermer le selecteur de date de material en fonction du type de date
-   * @param normalizedMonthAndYear 
-   * @param datepicker 
+   * @param normalizedMonthAndYear
+   * @param datepicker
    */
   setMonthAndYear(
     normalizedMonthAndYear: Moment,
     datepicker: MatDatepicker<Moment>
   ) {
     if (this.dateType === 'month') {
-      console.log(normalizedMonthAndYear, datepicker)
       const date = new Date(
         normalizedMonthAndYear.year(),
         normalizedMonthAndYear.month()
       )
+
       this.value = date
       this.valueChange.emit(this.value)
       this.findRealValue()

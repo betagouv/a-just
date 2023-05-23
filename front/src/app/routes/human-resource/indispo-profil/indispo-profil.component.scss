@@ -1,0 +1,54 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px fColor(lightBorder);
+  background-color: #fff;
+}
+
+.header-panel {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background-color: fColor(bgSelect);
+  border-bottom: solid 1px fColor(lightBorder);
+  padding: 0 16px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+
+  i {
+    color: fColor(creddark);
+    margin-right: 9px;
+  }
+
+  p {
+    color: fColor(cblack);
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  button {
+    margin-left: 6px;
+    background-color: transparent;
+  }
+}
+
+.indispo-content {
+  padding: 8px;
+  margin-top: 0;
+
+  .empty {
+    text-align: center;
+    font-size: 14px;
+    color: fColor(grayRow);
+  }
+
+  > div {
+    margin-right: 0;
+    margin-bottom: 4px;
+    display: flex;
+  }
+}

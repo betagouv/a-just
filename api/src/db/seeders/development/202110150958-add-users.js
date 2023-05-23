@@ -1,3 +1,5 @@
+import { crypt } from '../../../utils'
+
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     await models.Users.create(
@@ -5,13 +7,12 @@ module.exports = {
         email: 'fx@a-just.fr',
         first_name: 'François-Xavier',
         last_name: 'Montigny',
-        password: '123456',
+        password: crypt.encryptPassword('123456'),
         status: 1,
         role: 1,
       },
-      true,
+      true
     )
   },
-  down: (/*queryInterface , Sequelize*/) => {
-  },
+  down: (/*queryInterface , Sequelize*/) => {},
 }
