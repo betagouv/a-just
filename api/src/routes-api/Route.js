@@ -90,18 +90,6 @@ export default class Route extends RouteBase {
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
 
-    const transaction = Sentry.startTransaction({ name: 'Loging' })
-    // Set transaction on scope to associate with errors and get included span instrumentation
-    // If there's currently an unfinished transaction, it may be dropped
-    Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
-    const span = transaction.startChild({
-      op: 'task',
-      description: 'User Loging',
-    })
-    span.setStatus(200)
-    span.finish()
-    transaction.finish()
-
     return user
   }
 
