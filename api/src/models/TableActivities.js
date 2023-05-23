@@ -59,6 +59,49 @@ export default (sequelizeInstance, Model) => {
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
+          code_import: list[i]['ContentieuxReferentiel.code_import'],
+        },
+      }
+    }
+
+    return list
+  }
+
+  /**
+   * Retour la liste de l'ensemble des activités d'une jurdicition avec le détail des sorties
+   * @param {*} HRBackupId
+   * @returns
+   */
+  Model.getAllDetails = async (HRBackupId) => {
+    const list = await Model.findAll({
+      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+      include: [
+        {
+          model: Model.models.ContentieuxReferentiels,
+        },
+      ],
+      order: [['periode', 'asc']],
+      raw: true,
+    })
+
+    for (let i = 0; i < list.length; i++) {
+      list[i] = {
+        id: list[i].id,
+        periode: list[i].periode,
+        entrees: list[i].entrees,
+        sorties: list[i].sorties,
+        stock: list[i].stock,
+        originalEntrees: list[i].original_entrees,
+        originalSorties: list[i].original_sorties,
+        originalStock: list[i].original_stock,
+        idReferentiel: list[i]['ContentieuxReferentiel.id'],
+        contentieux: {
+          id: list[i]['ContentieuxReferentiel.id'],
+          label: list[i]['ContentieuxReferentiel.label'],
+          code_import: list[i]['ContentieuxReferentiel.code_import'],
         },
       }
     }
@@ -160,7 +203,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < activities.length; i++) {
-      const periode = activities[i].periode
+      const periode = new Date(activities[i].periode)
 
       const duplicateActivities = await Model.findAll({
         where: {
@@ -172,6 +215,10 @@ export default (sequelizeInstance, Model) => {
         },
         order: ['updated_at', 'id'],
       })
+
+      if (activities[i].contentieux_id === 475 && periode.getFullYear() === 2022 && periode.getMonth() === 0) {
+        console.log(activities[i].periode, [startOfMonth(periode), endOfMonth(periode)], duplicateActivities)
+      }
 
       if (duplicateActivities.length >= 2) {
         for (let z = 1; z < duplicateActivities.length; z++) {
@@ -202,7 +249,6 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log('minPeriode', minPeriode)
     if (!minPeriode) {
       return // stop we don't have values to analyse
     }
@@ -222,7 +268,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} nodeUpdated
    */
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
-    console.log('updateBy', contentieuxId, date, values, hrBackupId, userId, nodeUpdated)
     date = new Date(date)
 
     let findActivity = await Model.findOne({
@@ -268,14 +313,11 @@ export default (sequelizeInstance, Model) => {
     date = new Date(date) // detach date reference
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
-    // console.log(ref)
-    console.log('startOfMonth(date), endOfMonth(date)', date, startOfMonth(date), endOfMonth(date))
 
     if (ref) {
       let continueToDo = false
       do {
         const childrens = ref.childrens || []
-        // console.log('check date', date, mainContentieuxId, hrBackupId)
 
         for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
           // IF not exist, create it
@@ -315,8 +357,6 @@ export default (sequelizeInstance, Model) => {
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
           const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
-
-          //console.log('currentStock', currentStock, getUserUpdateStock)
 
           // do not updated if updated by user
           if (!getUserUpdateStock || getUserUpdateStock.value === null) {
@@ -512,6 +552,97 @@ export default (sequelizeInstance, Model) => {
     }
 
     return list
+  }
+
+  /**
+   * Importe une liste d'activités à une liste de juridiction. Et reformate et recalcul les stocks calculés.
+   * @param {*} csv
+   */
+  Model.importMultipleJuridictions = async (csv) => {
+    const contentieuxIds = {}
+    const listBackupId = []
+    let minDate = null
+
+    for (let i = 0; i < csv.length; i++) {
+      const code = csv[i].code_import
+      const HRBackupId = await Model.models.HRBackups.findByLabel(csv[i].juridiction)
+
+      if (HRBackupId === null) {
+        continue
+      }
+
+      // save id to clean base after import
+      if (!listBackupId.includes(HRBackupId)) {
+        listBackupId.push(HRBackupId)
+      }
+
+      if (!contentieuxIds[code]) {
+        const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+          attributes: ['id'],
+          where: {
+            code_import: code,
+          },
+          raw: true,
+        })
+
+        if (contentieux) {
+          contentieuxIds[code] = contentieux.id
+        }
+      }
+
+      if (contentieuxIds[code]) {
+        const year = csv[i].periode.slice(0, 4)
+        const month = +csv[i].periode.slice(-2) - 1
+        const periode = new Date(year, month)
+
+        if (minDate === null || periode.getTime() < minDate.getTime()) {
+          minDate = new Date(periode)
+        }
+
+        const findExist = await Model.findOne({
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: contentieuxIds[code],
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+            },
+          },
+        })
+
+        // clean null values
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : csv[i].stock
+
+        // if existe update content
+        if (
+          findExist &&
+          (csv[i].entrees !== findExist.dataValues.original_entrees ||
+            csv[i].sorties !== findExist.dataValues.original_sorties ||
+            csv[i].stock !== findExist.dataValues.original_stock)
+        ) {
+          await findExist.update({
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        } else if (!findExist) {
+          // else create
+          await Model.create({
+            hr_backup_id: HRBackupId,
+            periode,
+            contentieux_id: contentieuxIds[code],
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        }
+      }
+    }
+
+    for (let i = 0; i < listBackupId.length; i++) {
+      await Model.cleanActivities(listBackupId[i], minDate)
+    }
   }
 
   return Model

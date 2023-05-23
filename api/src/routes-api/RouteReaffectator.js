@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { preformatHumanResources } from '../utils/ventilator'
 import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
 import { copyArray } from '../utils/array'
+import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 
 /**
  * Route de la page réaffectateur
@@ -45,13 +46,13 @@ export default class RouteReaffectator extends Route {
       referentielList = null
     }
 
-    console.time('step1')
+    if (categoryId === 1 && !fonctionsIds && !referentielList) {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_REAFFECTATOR, ctx.state.user.id)
+    }
+
     const hr = await this.model.getCache(backupId)
-    console.timeEnd('step1')
-    console.time('step3')
     let hrfiltered = filterByCategoryAndFonction(copyArray(hr), null, fonctionsIds)
-    console.timeEnd('step3')
-    console.time('step4')
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupId, date)
 
@@ -61,15 +62,23 @@ export default class RouteReaffectator extends Route {
         ...(await getSituation(referentiel[i].id, hrfiltered, activities, categories, date, null, categoryId)),
       }
     }
-    console.timeEnd('step4')
 
     this.sendOk(ctx, {
-      list: categories.map((category) => ({
-        originalLabel: category.label,
-        allHr: preformatHumanResources(filterByCategoryAndFonction(copyArray(hr), category.id, fonctionsIds, date), date, referentielList, fonctionsIds),
-        categoryId: category.id,
-        referentiel,
-      })),
+      list: categories.map((category) => {
+        const filterFonctionsIds = category.id === categoryId ? fonctionsIds : null
+
+        return {
+          originalLabel: category.label,
+          allHr: preformatHumanResources(
+            filterByCategoryAndFonction(copyArray(hr), category.id, filterFonctionsIds, date),
+            date,
+            referentielList,
+            filterFonctionsIds
+          ),
+          categoryId: category.id,
+          referentiel,
+        }
+      }),
     })
   }
 }

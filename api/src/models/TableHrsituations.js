@@ -24,7 +24,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.HRCategories,
         },
         {
-          attributes: ['id', 'rank', 'code', 'label'],
+          attributes: ['id', 'rank', 'code', 'label', 'category_detail'],
           model: Model.models.HRFonctions,
         },
       ],
@@ -49,19 +49,20 @@ export default (sequelizeInstance, Model) => {
           rank: list[i]['HRFonction.rank'],
           code: list[i]['HRFonction.code'],
           label: list[i]['HRFonction.label'],
+          category_detail: list[i]['HRFonction.category_detail'],
         },
         activities: await Model.models.HRActivities.getAll(list[i].id),
       }
     }
 
     // create artificial situation if date start if before the first situation
-    if (dateStart && list.length && today(dateStart) < today(list[0].dateStart)) {
+    if (dateStart && list.length && today(dateStart) < today(list[list.length - 1].dateStart)) {
       list.push({
         etp: 1,
         dateStart: today(dateStart),
         dateStartTimesTamps: today(dateStart).getTime(),
-        category: list[0].category,
-        fonction: list[0].fonction,
+        category: list[list.length - 1].category,
+        fonction: list[list.length - 1].fonction,
         activities: [],
       })
     }
@@ -109,7 +110,6 @@ export default (sequelizeInstance, Model) => {
       if (findToBdd) {
         await findToBdd.update(options)
       } else {
-        console.log(options, humanId)
         findToBdd = await Model.create({
           ...options,
           human_id: humanId,

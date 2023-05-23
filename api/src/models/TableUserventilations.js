@@ -2,6 +2,8 @@
  * Liste des juridictions qui ont accès
  */
 
+import { groupBy } from 'lodash'
+
 export default (sequelizeInstance, Model) => {
   /**
    * Retourne les accès des juridictions à un utilisateur
@@ -9,7 +11,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getUserVentilations = async (userId) => {
-    const list = await Model.findAll({
+    const listAll = await Model.findAll({
       attributes: ['id', 'user_id', 'hr_backup_id'],
       where: {
         user_id: userId,
@@ -22,11 +24,49 @@ export default (sequelizeInstance, Model) => {
       ],
       raw: true,
     })
+    const list = []
 
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i]['HRBackup.id'],
-        label: list[i]['HRBackup.label'],
+    for (let i = 0; i < listAll.length; i++) {
+      if (await Model.models.TJ.isVisible(listAll[i]['HRBackup.label'])) {
+        list.push({
+          id: listAll[i]['HRBackup.id'],
+          label: listAll[i]['HRBackup.label'],
+        })
+      }
+    }
+
+    return list
+  }
+
+  /**
+   * Retourne la liste des utilisateurs par label de juridiction
+   * @param {*} juridictionLabel
+   * @returns
+   */
+  Model.getUserVentilationsWithLabel = async (juridictionLabel) => {
+    const listAll = groupBy(
+      await Model.findAll({
+        attributes: ['id', 'user_id', 'hr_backup_id'],
+        include: [
+          {
+            attributes: ['id', 'label'],
+            model: Model.models.HRBackups,
+            where: {
+              label: juridictionLabel,
+            },
+          },
+        ],
+        raw: true,
+      }),
+      'user_id'
+    )
+    const uniqueUserId = Object.keys(listAll)
+    const list = []
+    for (let i = 0; i < uniqueUserId.length; i++) {
+      const user = await Model.models.Users.userPreview(uniqueUserId[i])
+
+      if (user) {
+        list.push(user)
       }
     }
 

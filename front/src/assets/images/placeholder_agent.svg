@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="958px" height="131px" viewBox="0 0 958 131" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>A-Just/Effectif/Magisrtat/v0.1/Large Copy 20</title>
+    <g id="1---Ventilateur" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="A-Just/Effectif/Magisrtat/v0.1/Large-Copy-20">
+            <rect id="Rectangle" fill-rule="nonzero" x="0" y="0" width="958" height="131" rx="4"></rect>
+            <rect id="Rectangle" fill-rule="nonzero" x="349" y="0" width="609" height="131"></rect>
+            <g id="ETPT-" transform="translate(245.000000, 0.000000)">
+                <rect id="Rectangle" fill-rule="nonzero" x="0" y="0" width="104" height="131"></rect>
+                <g id="Group-9" transform="translate(21.000000, 38.000000)">
+                    <path d="M30,56 C45.463973,56 58,43.463973 58,28 C58,12.536027 45.463973,0 30,0 C14.536027,0 2,12.536027 2,28 C2,43.463973 14.536027,56 30,56 Z" id="Oval" stroke="#E5E5E5" stroke-width="8" stroke-linecap="round" stroke-dasharray="88,176" transform="translate(30.000000, 28.000000) scale(1, -1) rotate(90.000000) translate(-30.000000, -28.000000) "></path>
+                    <path d="M30,56 C45.463973,56 58,43.463973 58,28 C58,12.536027 45.463973,0 30,0 C14.536027,0 2,12.536027 2,28 C2,43.463973 14.536027,56 30,56 Z" id="Oval" stroke="#DDDDDD" stroke-width="8" stroke-linecap="round" stroke-dasharray="35.2,176" transform="translate(30.000000, 28.000000) scale(1, -1) rotate(90.000000) translate(-30.000000, -28.000000) "></path>
+                    <circle id="Oval" cx="2" cy="28" r="2"></circle>
+                    <line x1="53.5" y1="28.5" x2="62.5" y2="28.5" id="Line-2" stroke="#49835E" stroke-width="2" stroke-linecap="round"></line>
+                </g>
+            </g>
+            <g id="Group-25" transform="translate(643.964393, 111.000000)" fill="#E5E5E5">
+                <rect id="Rectangle" x="5.68434189e-14" y="0" width="295.177498" height="6" rx="3"></rect>
+            </g>
+            <g id="Contentieux" transform="translate(357.000000, 32.000000)" fill="#E5E5E5">
+                <g id="Group-3-Copy" transform="translate(0.000000, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="44" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-3-Copy-4" transform="translate(326.024958, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-3-Copy-2" transform="translate(108.674986, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-3-Copy-3" transform="translate(217.349972, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-2-Copy" transform="translate(54.337493, 0.000000)">
+                    <rect id="Rectangle-Copy-5" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-2-Copy-2" transform="translate(163.012479, 0.000000)">
+                    <rect id="Rectangle-Copy-5" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-2-Copy-3" transform="translate(271.687465, 0.000000)">
+                    <rect id="Rectangle-Copy-5" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-3-Copy-5" transform="translate(434.699944, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-2-Copy-4" transform="translate(380.362451, 0.000000)">
+                    <rect id="Rectangle-Copy-5" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-3-Copy-6" transform="translate(543.374930, 0.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+                <g id="Group-2-Copy-5" transform="translate(489.037437, 0.000000)">
+                    <rect id="Rectangle-Copy-5" x="0" y="0" width="41.3457556" height="62" rx="4"></rect>
+                </g>
+            </g>
+            <g id="Identité" transform="translate(218.000000, 10.000000)" fill="#E5E5E5" fill-rule="nonzero">
+                <path d="M18,0 L2,0 C0.9,0 0.01,0.9 0.01,2 L0,20 L4,16 L18,16 C19.1,16 20,15.1 20,14 L20,2 C20,0.9 19.1,0 18,0 Z M16,12 L4,12 L4,10 L16,10 L16,12 Z M16,9 L4,9 L4,7 L16,7 L16,9 Z M16,6 L4,6 L4,4 L16,4 L16,6 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

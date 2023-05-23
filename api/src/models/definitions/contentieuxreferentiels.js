@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'ContentieuxReferentiels'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -22,6 +22,10 @@ export default sequelizeInstance => {
         allowNull: true,
       },
       parent_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      rank: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
@@ -47,7 +51,7 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {
     return models
   }
 

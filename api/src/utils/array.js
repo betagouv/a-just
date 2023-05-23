@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from "lodash";
 
 /**
  * Création d'une nouvelle référence mémoire
@@ -7,5 +7,5 @@ import { cloneDeep } from 'lodash'
  */
 export const copyArray = (arrayToCopy) => {
   //return JSON.parse(JSON.stringify(arrayToCopy))
-  return cloneDeep(arrayToCopy)
-}
+  return cloneDeep(arrayToCopy);
+};

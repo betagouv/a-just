@@ -44,8 +44,8 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.route.queryParams
         .subscribe((params) => {
-          if(params.p) {
-            this.form.get('code')?.setValue(params.p);
+          if(params['p']) {
+            this.form.get('code')?.setValue(params['p']);
           }
         })
     );

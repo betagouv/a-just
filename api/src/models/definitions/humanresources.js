@@ -25,6 +25,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
+      juridiction: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       cover_url: {
         type: Sequelize.TEXT,
         allowNull: true,

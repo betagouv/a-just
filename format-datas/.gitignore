@@ -16,6 +16,7 @@ inputs/*
 inputs-old
 inputs-v2
 outputs/*
+outputs_all/*
 outputs-old
 inputs copy/*
 inputs-test

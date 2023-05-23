@@ -5,6 +5,7 @@ import { getNbMonth } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
+import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 
 /**
  * Route des calculs de la page calcule
@@ -35,14 +36,21 @@ export default class RouteCalculator extends Route {
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
       contentieuxIds: Types.array().required(),
-      optionBackupId: Types.number().required(),
+      optionBackupId: Types.number(),
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewCalculator],
   })
   async filterList (ctx) {
+    console.log('\n\n\n\n\n\n\n\n\n\n--------- FilterList -------- \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
+
+    if (!selectedFonctionsIds) {
+      // memorize first execution by user
+      await this.models.Logs.addLog(EXECUTE_CALCULATOR, ctx.state.user.id)
+    }
+
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
     switch (categorySelected) {
@@ -68,7 +76,7 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')
-    const optionsBackups = await this.models.ContentieuxOptions.getAllById(optionBackupId)
+    const optionsBackups = optionBackupId ? await this.models.ContentieuxOptions.getAllById(optionBackupId) : []
     console.timeEnd('calculator-2')
 
     console.time('calculator-3')

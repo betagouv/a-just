@@ -1,6 +1,7 @@
 import { createReadStream, existsSync } from 'fs'
 import mime from 'mime'
 import Route from './Route'
+import config from 'config'
 
 @Route.Route({
   routeBase: '',
@@ -8,25 +9,35 @@ import Route from './Route'
 // eslint-disable-next-line
 export default class RouteIndex extends Route {
   constructor(params) {
-    super({ ...params });
+    super({ ...params })
   }
 
   @Route.Get({
     path: '*',
   })
-  async readFile (ctx) {
+  async readFile(ctx) {
+    console.log('ctx secure', ctx.secure)
     const file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
-    console.log(file, existsSync(file))
 
-    if(ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
+    if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
+      console.log('load page', file)
+
       const src = createReadStream(file)
       ctx.type = mime.getType(file)
       ctx.body = src
     } else {
+      /*if (config.forceSSL && !ctx.secure) {
+        ctx.res
+          .writeHead(301, {
+            Location: `https://${ctx.request.header.host}${ctx.request.url}`,
+          })
+          .end()
+      } else {*/
       const indexFile = `${__dirname}/../front/index.html`
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
       ctx.body = src
+      // }
     }
   }
 }

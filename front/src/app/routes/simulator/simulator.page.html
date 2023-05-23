@@ -4,11 +4,13 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
   <div class="action-simulator-bar">
-    <aj-select title="Contentieux (obligatoire)" class="contentieux {{disabled}}"
+    <img src="assets/images/logo-ajust.png" class="logo-ajust" width="60px" height="46px" />
+
+    <aj-select title="Contentieux (obligatoire)" class="contentieux width-auto {{disabled}}"
       [defaultRealValue]="'Sélectionner un contentieux'" [value]="contentieuId" [datas]="formReferentiel"
       (valueChange)="updateReferentielSelected('referentiel', $event)" [multiple]="false">
     </aj-select>
-    <aj-select title="Sous-contentieux (option)" class=" contentieux {{disabled}}"
+    <aj-select title="Sous-contentieux (option)" class="contentieux width-auto {{disabled}}"
       [class.notSelectable]="contentieuId===null" [value]="subList" [datas]="formReferentiel" [subList]="subList"
       [parent]="contentieuId" (valueChange)="updateReferentielSelected('subList', $event)">
     </aj-select>
@@ -26,7 +28,7 @@
         <p>Fonctionnaires</p>
       </div>
     </div>
-    <aj-select class="contentieux fonctions-selection {{disabled}}" title="Choix des fonctions (option)"
+    <aj-select class="contentieux fonctions-selection width-auto {{disabled}}" title="Choix des fonctions (option)"
       [value]="selectedFonctionsIds" [datas]="functionsList" [defaultAllValue]="'Toutes'"
       (valueChange)="onChangeFonctionsSelected($event)">
     </aj-select>
@@ -96,7 +98,9 @@
       </p>
     </div>
 
-    <div class="line-item orange-bg">
+    <div class="line-item orange-bg" #tooltip="matTooltip"
+      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',firstSituationData,false,true)"
+      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
       <input [value]="getFieldValue('totalIn',firstSituationData)" disabled />
     </div>
     <div class="line-item">
@@ -136,7 +140,9 @@
       </p>
     </div>
 
-    <div class="line-item grey-bg">
+    <div class="line-item grey-bg" #tooltip="matTooltip"
+      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',projectedSituationData,false,true)"
+      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
       <input [value]="getFieldValue('totalIn',projectedSituationData)" disabled />
     </div>
     <div class="line-item">
@@ -253,8 +259,7 @@
     <div class="line-item blue-bg">
       <input class="ajusted-button" id="totalIn" [class.filled]="totalIn.value!=='Ajuster'"
         (click)="openPopupWithParams(totalIn)" value="Ajuster" readonly="readonly" #totalIn />
-      <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-        [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+      <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id" [@fadeInOut]>
         {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',firstSituationData))}}%
@@ -404,7 +409,9 @@
         </p>
       </div>
       <div class="item-container">
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('totalIn',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -576,15 +583,15 @@
     <aj-in-out-chart></aj-in-out-chart>
 
     <div class="widgets">
-      <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueAt]="getFieldValue('realDTESInMonths',firstSituationData)"
         [valueProjected]="getFieldValue('realDTESInMonths',projectedSituationData)"
         [valueSimulated]="getFieldValue('realDTESInMonths',simulatedSationData)"></aj-loaders-widget>
-      <aj-figures-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-figures-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueAt]="getFieldValue('magRealTimePerCase',firstSituationData)"
         [valueProjected]="getFieldValue('magRealTimePerCase',projectedSituationData)"
         [valueSimulated]="getFieldValue('magRealTimePerCase',simulatedSationData)"></aj-figures-widget>
-      <aj-dial-widget [dateStart]="startRealValue" [dateStop]="stopRealValue"
+      <aj-dial-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueProjected]="getFieldValue('realCoverage',projectedSituationData)"
         [valueSimulated]="getFieldValue('realCoverage',simulatedSationData)"></aj-dial-widget>
     </div>
@@ -594,7 +601,9 @@
         <div class="header-comment">
           <p><b>Notes et commentaires</b><br /></p>
         </div>
-        <textarea placeholder="Commentaire"></textarea>
+        <textarea id="comment-area" #commentaireSimulateur placeholder="Commentaire"
+          (keyup)="setComment($event)"></textarea>
+        <div id="comment-area-copy">{{commentaire}}</div>
       </div>
       <div class="space"></div>
     </div>
@@ -602,12 +611,12 @@
 </aj-wrapper>
 <ng-template #actions>
   <div id="print-title">
-    <img width="60px" height="46px" src="/assets/images/logo-ajust.png" class="logo-ajust" />
+    <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
 
     <p class="title">{{printTitle}}</p>
   </div>
   <div id="export-button" class="export-button" [class.enable]="toDisplaySimulation" (click)="print()">
-    <div class="shape">D</div>
+    <mat-icon class="shape">save</mat-icon>
     <p class="title">Exporter en PDF</p>
   </div>
 

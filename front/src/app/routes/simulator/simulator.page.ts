@@ -4,7 +4,7 @@ import {
   findRealValue,
   monthDiffList,
 } from 'src/app/utils/dates'
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -176,6 +176,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   selectedFonctionsIds: number[] = []
   /**
+   * Constante en cours d'impression
+   */
+  onPrint:boolean=false
+  /**
    * Documentation widget
    */
   documentation: DocumentationInterface = {
@@ -264,6 +268,8 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   canViewContractuel: boolean = false
 
+  commentaire: String = ''
+
   /**
    * Constructeur
    */
@@ -275,6 +281,25 @@ export class SimulatorPage extends MainClass implements OnInit {
     private contentieuxOptionsService: ContentieuxOptionsService
   ) {
     super()
+
+    this.watch(
+      this.humanResourceService.backups.subscribe((backups) => {
+        this.hrBackups = backups
+        this.hrBackup = this.hrBackups.find((b) => b.id === this.humanResourceService.backupId.getValue())
+        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
+          .toJSON()
+          .slice(0, 10)}`
+        }))
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        this.hrBackups = this.humanResourceService.backups.getValue()
+        this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
+        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
+          .toJSON()
+          .slice(0, 10)}`          
+      })
+    )
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
@@ -305,15 +330,6 @@ export class SimulatorPage extends MainClass implements OnInit {
       })
     )
 
-    this.watch(
-      this.humanResourceService.backupId.subscribe((backupId) => {
-        this.hrBackups = this.humanResourceService.backups.getValue()
-        this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`
-      })
-    )
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
         if (this.categorySelected !== null) {
@@ -991,16 +1007,6 @@ export class SimulatorPage extends MainClass implements OnInit {
   }
 
   /**
-   * Cast d'une string en float
-   * @param value string
-   * @returns float
-   */
-  parseFloat(value: string): number {
-    if (value !== '') return parseFloat(value)
-    else return 0
-  }
-
-  /**
    * Générate simulation
    * @param allButton liste de tous les boutons clickables
    */
@@ -1237,6 +1243,8 @@ export class SimulatorPage extends MainClass implements OnInit {
       .toJSON()
       .slice(0, 10)}.pdf`
 
+
+
     const title: any = document.getElementById('print-title')!
     title.style.display = 'flex'
 
@@ -1249,12 +1257,23 @@ export class SimulatorPage extends MainClass implements OnInit {
     const ajWrapper = document.getElementById('simu-wrapper')
     ajWrapper?.classList.add('full-screen')
 
-    this.wrapper?.exportAsPdf(filename).then(() => {
+    const commentAreaCopy = document.getElementById('comment-area-copy')!
+    commentAreaCopy.style.display = 'block'
+
+    const commentArea = document.getElementById('comment-area')!
+    commentArea.style.display = 'none'
+
+    this.onPrint = true
+
+    this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
+      this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
+      commentArea.style.display = 'block'
+      commentAreaCopy.style.display = 'none'
       title.style.display = 'none'
-    })
+    })  
   }
 
   /**
@@ -1324,4 +1343,18 @@ export class SimulatorPage extends MainClass implements OnInit {
       (this.startRealValue || "aujourd'hui")
     )
   }
+
+      /**
+   * Troncage valeur numérique
+   */
+      trunc(param: string,
+        data: SimulatorInterface | SimulationInterface | null,
+        initialValue = false,
+        toCompute = false){
+        return Math.trunc(Number(this.getFieldValue(param,data,initialValue,toCompute))*100000)/100000
+      }
+
+      setComment(event:any){
+      this.commentaire = event.target.value      
+      }
 }

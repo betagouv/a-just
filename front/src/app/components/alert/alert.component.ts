@@ -17,6 +17,10 @@ import {
 })
 export class AlertComponent implements OnChanges {
   /**
+   * Titre text dans l'alerte
+   */
+  @Input() alertTitle: string | undefined = ''
+  /**
    * Message text dans l'alerte
    */
   @Input() alertMessage: string = ''
@@ -27,7 +31,7 @@ export class AlertComponent implements OnChanges {
   /**
    * Event, clique sur le bouton pour fermer l'alert
    */
-  @Output() onClose: EventEmitter<any> = new EventEmitter()
+  @Output() onClose: EventEmitter<boolean> = new EventEmitter()
   /**
    * Instance du timeout en cas de delay
    */
@@ -44,7 +48,7 @@ export class AlertComponent implements OnChanges {
       }
 
       this.timeout = setTimeout(() => {
-        this.onClose.emit()
+        this.onClose.emit(false)
         this.timeout = undefined
       }, this.delay * 1000)
     }
