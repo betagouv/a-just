@@ -29,7 +29,7 @@
       <div class="grid-triple">
         <div>
           <div class="label-aj">Catégorie :</div>
-          <select formControlName="categoryId">
+          <select formControlName="categoryId" (change)="setCat($event.target)">
             <option *ngFor="let cat of categories" [value]="cat.id">
               {{ cat.label }}
             </option>
@@ -37,7 +37,7 @@
         </div>
         <div>
           <div class="label-aj">Fonction :</div>
-          <select formControlName="fonctionId">
+          <select formControlName="fonctionId" (change)="setFonc($event.target)">
             <option *ngFor="let fonc of fonctions" [value]="fonc.id">
               {{ fonc.label }}
             </option>
