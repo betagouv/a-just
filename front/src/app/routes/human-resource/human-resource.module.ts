@@ -13,6 +13,7 @@ import { CoverProfilDetailsComponent } from './cover-profil-details/cover-profil
 import { BigEtpPreviewComponent } from './big-etp-preview/big-etp-preview.component'
 import { IndispoProfilComponent } from './indispo-profil/indispo-profil.component'
 import { CommentProfilComponent } from './comment-profil/comment-profil.component'
+import { PopupModule } from 'src/app/components/popup/popup.module'
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { CommentProfilComponent } from './comment-profil/comment-profil.componen
     ReactiveFormsModule,
     CommonModule,
     MaterialModule,
+    PopupModule,
   ],
 })
 export class HumanResourceModule {}
