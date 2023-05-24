@@ -64,9 +64,10 @@ export default class App extends AppBase {
       csp({
         enableWarn: true,
         policy: {
-          'default-src': ['self', config.frontUrl],
-          'img-src': ['self'],
-          'script-src': ['*.googleapis.com', '*.gstatic.com', 'js-eu1.hsforms.net', '*.gouv.fr', 'unsafe-inline', 'script-src-elem'],
+          'default-src': ['self', config.frontUrl, 'unsafe-inline'],
+          'img-src': [],
+          'style-src': [],
+          'script-src': ['*.googleapis.com', '*.gstatic.com', 'js-eu1.hsforms.net', '*.gouv.fr', 'script-src-elem'],
         },
       }),
     ])
