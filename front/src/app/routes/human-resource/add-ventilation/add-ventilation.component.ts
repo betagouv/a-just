@@ -123,7 +123,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 /**
  * Activation de la calculatrice
  */
-calculatriceIsActive: boolean = true
+calculatriceIsActive: boolean = false
 /**
  * Ouverture de la calculatrice
  */
@@ -466,5 +466,15 @@ openCalculatricePopup: boolean = false
   convertirEtpt(event:Event){
     this.openCalculatricePopup=false
     this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice('mag')))
+  }
+
+  setCat(event:any){
+    console.log("Issy",event.value)
+    this.calculatriceService.isCalculable(event.value, this.form.get('fonctionId')?.value)
+  }
+
+  setFonc(event:any){
+    console.log("Issy",event.value)
+    this.calculatriceIsActive=this.calculatriceService.isCalculable(this.form.get('categoryId')?.value,event.value)
   }
 }

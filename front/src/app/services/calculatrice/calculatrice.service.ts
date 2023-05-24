@@ -84,4 +84,11 @@ export class CalculatriceService {
     return value*periodicData[cat][option]/(periodicData[cat]['jour']*basicEtptData[nbHoursPerDay])*100
     }
   }
+
+  isCalculable(cat:number|null = null, fonc:number|null = null){
+    if (cat && fonc){
+      return true
+    }
+    return false
+  }
 }
