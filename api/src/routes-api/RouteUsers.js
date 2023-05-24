@@ -64,7 +64,7 @@ export default class RouteUsers extends Route {
       await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(
         {
-          email: config.contactEmail,
+          email: config.supportEmail,
         },
         TEMPLATE_NEW_USER_SIGNIN,
         {

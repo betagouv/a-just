@@ -6,6 +6,7 @@ import { ComponentsModule } from 'src/app/components/components.module'
 import { MaterialModule } from 'src/app/libs/material.module'
 import { CommonModule } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { PopupModule } from 'src/app/components/popup/popup.module'
 
 @NgModule({
   declarations: [SimulatorPage],
@@ -16,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     MaterialModule,
     CommonModule,
     MatTooltipModule,
+    PopupModule,
   ],
 })
 export class SimulatorModule {}
