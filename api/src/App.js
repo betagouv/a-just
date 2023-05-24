@@ -61,18 +61,18 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      csp({
+      /*csp({
         enableWarn: true,
         policy: {
           'default-src': ['none'],
           'connect-src': ["'self'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
-          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js", 'blob:' + config.frontUrl],
+          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js", "'unsafe-inline' blob:" + config.frontUrl],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr'],
         },
-      }),
+      }),*/
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
