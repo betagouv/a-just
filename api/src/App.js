@@ -66,7 +66,7 @@ export default class App extends AppBase {
         policy: {
           'default-src': ['self', config.frontUrl],
           'img-src': ['self'],
-          'script-src': ['*.googleapis.com', '*.gstatic.com', 'js-eu1.hsforms.net', '*.gouv.fr'],
+          'script-src': ['*.googleapis.com', '*.gstatic.com', 'js-eu1.hsforms.net', '*.gouv.fr', 'unsafe-inline'],
         },
       }),
     ])
