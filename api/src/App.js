@@ -66,7 +66,7 @@ export default class App extends AppBase {
         policy: {
           'default-src': ['none'],
           'connect-src': ["'self'"],
-          'font-src': ['https://fonts.gstatic.com'],
+          'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
           'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js"],
           'style-src': ["'self'", "'unsafe-inline'"],
