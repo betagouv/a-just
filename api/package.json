@@ -39,6 +39,7 @@
     "koa-csp": "^1.2.1",
     "koa-logger-winston": "^0.0.2",
     "koa-smart": "^2.2.0",
+    "koa-sslify": "^5.0.1",
     "lodash": "^4.17.20",
     "mime": "^2.5.2",
     "nyc": "^15.1.0",
