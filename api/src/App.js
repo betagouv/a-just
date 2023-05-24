@@ -68,8 +68,9 @@ export default class App extends AppBase {
           'connect-src': ["'self'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
-          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js"],
+          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js", 'blob:' + config.frontUrl],
           'style-src': ["'self'", "'unsafe-inline'"],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr'],
         },
       }),
     ])
