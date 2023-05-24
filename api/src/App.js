@@ -12,7 +12,6 @@ import db from './models'
 import { start as startCrons } from './crons'
 import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
-import sslify from 'koa-sslify'
 import csp from 'koa-csp'
 
 export default class App extends AppBase {
@@ -71,10 +70,6 @@ export default class App extends AppBase {
         },
       }),*/
     ])
-
-    if (config.forceSSL) {
-      super.addMiddlewares([sslify])
-    }
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
