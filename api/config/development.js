@@ -4,5 +4,4 @@ module.exports = {
   logsPassword: 'FXM',
   nbMaxDayCanBeInactive: null,
   corsUrl: '*',
-  forceSSL: false,
 }
