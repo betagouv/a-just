@@ -14,7 +14,7 @@ module.exports = {
           label: 'Magistrat honoraire (MHFJ)',
         },
       })
-      await findMHFJ.update({ label: 'MAGISTRAT HONORAIRE JURIDICTIONNEL', code: 'MHFJ', category_id: findMag.id, rank: 23 })
+      if (findMHFJ) await findMHFJ.update({ label: 'MAGISTRAT HONORAIRE JURIDICTIONNEL', code: 'MHFJ', category_id: findMag.id, rank: 23 })
 
       await models.HRFonctions.create({
         label: 'MAGISTRAT HONORAIRE NON JURIDICTIONNEL',
