@@ -19,7 +19,7 @@ export default class RouteIndex extends Route {
     let file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
     const fileSplited = file.split('?')
     file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
-    console.log(fileSplited, file, existsSync(file), ctx.request.URL.protocol)
+    console.log(ctx.request.URL)
 
     if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
       console.log('load page', file)
