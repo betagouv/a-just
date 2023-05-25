@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { EXECUTE_EXTRACTOR, EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
+import { EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
@@ -215,13 +215,12 @@ export default class RouteHumanResources extends Route {
       date: Types.date().required(),
       contentieuxIds: Types.array(),
       categoriesIds: Types.array().required(),
-      extractor: Types.boolean().required(),
       endPeriodToCheck: Types.date(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, extractor } = this.body(ctx)
+    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -234,71 +233,66 @@ export default class RouteHumanResources extends Route {
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     console.timeEnd('step2')
+    console.time('step3')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
+    console.timeEnd('step3')
     const allCategories = await this.models.HRCategories.getAll()
 
-    if (extractor === false) {
-      if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
-        // memorize first execution by user
-        await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
-      }
-
-      let listFiltered = [...list]
-      const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
-      const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
-
-      const listFormated = categories
-        .filter((c) => categoriesIds.indexOf(c.id) !== -1)
-        .map((category) => {
-          let label = category.label
-
-          let referentiel = copyArray(originalReferentiel)
-            .filter((r) => r.label !== 'Indisponibilité')
-            .map((ref) => {
-              ref.totalAffected = 0
-              return ref
-            })
-
-          let group = listFiltered.filter((h) => h.category && h.category.id === category.id)
-
-          if (group.length > 1) {
-            if (label.indexOf('agistrat') !== -1) {
-              label = label.replace('agistrat', 'agistrats du siège')
-            } else {
-              label += 's'
-            }
-          }
-
-          return {
-            textColor: getCategoryColor(label),
-            bgColor: getBgCategoryColor(label),
-            referentiel,
-            label,
-            hr: group,
-            categoryId: category.id,
-          }
-        })
-
-      // if filter by user access to categories
-      if (categories.length !== allCategories.length) {
-        const ids = categories.map((c) => c.id)
-        hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
-      }
-
-      this.sendOk(ctx, {
-        list: listFormated,
-        allPersons: hr,
-      })
-    } else {
+    if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
       // memorize first execution by user
-      await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
-
-      console.timeEnd('step5')
-
-      this.sendOk(ctx, {
-        list,
-      })
+      this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
     }
+
+    console.time('step4')
+    let listFiltered = [...list]
+    const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
+
+    const listFormated = categories
+      .filter((c) => categoriesIds.indexOf(c.id) !== -1)
+      .map((category) => {
+        let label = category.label
+
+        let referentiel = copyArray(originalReferentiel)
+          .filter((r) => r.label !== 'Indisponibilité')
+          .map((ref) => {
+            ref.totalAffected = 0
+            return ref
+          })
+
+        let group = listFiltered.filter((h) => h.category && h.category.id === category.id)
+
+        if (group.length > 1) {
+          if (label.indexOf('agistrat') !== -1) {
+            label = label.replace('agistrat', 'agistrats du siège')
+          } else {
+            label += 's'
+          }
+        }
+
+        return {
+          textColor: getCategoryColor(label),
+          bgColor: getBgCategoryColor(label),
+          referentiel,
+          label,
+          hr: group,
+          categoryId: category.id,
+        }
+      })
+    console.timeEnd('step4')
+
+    // if filter by user access to categories
+    console.time('step5')
+    if (categories.length !== allCategories.length) {
+      const ids = categories.map((c) => c.id)
+      hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
+    }
+    console.timeEnd('step5')
+
+    this.sendOk(ctx, {
+      list: listFormated,
+      allPersons: hr,
+    })
   }
 
   /**

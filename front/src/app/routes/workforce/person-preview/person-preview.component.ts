@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   Input,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'

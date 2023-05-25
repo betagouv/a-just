@@ -338,7 +338,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           etpt += realETP
         })
       }
-      console.log(etpt)
       return {
         ...c,
         etpt,
