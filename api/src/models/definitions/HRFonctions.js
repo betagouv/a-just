@@ -46,6 +46,14 @@ export default (sequelizeInstance) => {
       deleted_at: {
         type: Sequelize.DATE,
       },
+      calculatrice_is_active: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      position: {
+        type: Sequelize.STRING(255),
+        defaultValue: 'Titulaire',
+      },
     },
     {
       timestamps: true,
