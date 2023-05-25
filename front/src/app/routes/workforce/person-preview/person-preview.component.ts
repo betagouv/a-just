@@ -52,6 +52,10 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
    */
   showComponent: boolean = false
   /**
+   * Interval to folow update of component
+   */
+  timeoutCatcher: any = null
+  /**
    * Timeout to folow update of component
    */
   intervalCatcher: any = null
@@ -70,12 +74,12 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
     if (this.parentDom) {
       this.parentDom.addEventListener(
         'scroll',
-        this.checkScrollEvent.bind(this)
+        this.delayScroolEvent.bind(this)
       )
 
       this.intervalCatcher = setInterval(() => {
         this.checkScrollEvent()
-      }, 300)
+      }, 2000)
 
       this.checkScrollEvent()
     }
@@ -86,6 +90,20 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
    */
   ngOnDestroy() {
     this.removeScrollEvent()
+  }
+
+  /**
+   * Delai before renderer
+   */
+  delayScroolEvent() {
+    if (this.timeoutCatcher) {
+      clearTimeout(this.timeoutCatcher)
+    }
+
+    this.timeoutCatcher = setTimeout(() => {
+      this.checkScrollEvent()
+      this.timeoutCatcher = null
+    }, 50)
   }
 
   /**
@@ -110,12 +128,18 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
    * Control position of element
    */
   checkScrollEvent() {
-    if (!this.showComponent && this.nativeElement && this.nativeElement.nativeElement && this.parentDom) {
-      const { top: topElement } = this.nativeElement.nativeElement.getBoundingClientRect()
-      const { bottom: bottomParent } = this.parentDom.getBoundingClientRect()
+    if (
+      !this.showComponent &&
+      this.nativeElement &&
+      this.nativeElement.nativeElement &&
+      this.parentDom
+    ) {
+      const { top: topElement } =
+        this.nativeElement.nativeElement.getBoundingClientRect()
+      const { bottom: bottomParent } = this.parentDom.getBoundingClientRect()
       const marginTopLoad = 500
 
-      if(topElement - marginTopLoad < bottomParent) {
+      if (topElement - marginTopLoad < bottomParent) {
         this.showComponent = true
         this.removeScrollEvent()
       }

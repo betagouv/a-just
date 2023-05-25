@@ -535,17 +535,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.categoriesFilterListIds
       )
       .then(({ list, allPersons }) => {
-        /*this.listFormated = list
-        let allPersonIds: number[] = []
-        this.listFormated.map((l) => {
-          allPersonIds = allPersonIds.concat(l.hr.map((h) => h.id))
-        })
+        this.listFormated = list
         this.allPersons = allPersons.map((p: HumanResourceInterface) => ({
           ...p,
           isIn: false,
         }))
 
-        this.orderListWithFiltersParams()*/
+        this.orderListWithFiltersParams()
         this.isLoading = false
       })
 
