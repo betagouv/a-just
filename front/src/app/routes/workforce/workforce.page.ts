@@ -534,9 +534,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         selectedReferentielIds,
         this.humanResourceService.categoriesFilterListIds
       )
-      .then((returnServeur) => {
-        const { list, allPersons } = returnServeur
-        this.listFormated = list
+      .then(({ list, allPersons }) => {
+        /*this.listFormated = list
         let allPersonIds: number[] = []
         this.listFormated.map((l) => {
           allPersonIds = allPersonIds.concat(l.hr.map((h) => h.id))
@@ -546,7 +545,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           isIn: false,
         }))
 
-        this.orderListWithFiltersParams()
+        this.orderListWithFiltersParams()*/
         this.isLoading = false
       })
 
