@@ -42,10 +42,10 @@ export class StatsPage {
   }
 
   ngAfterViewInit() {
-    /*this.juridictionsService.getAllVisible().then((l) => {
+    this.juridictionsService.getAllVisible().then((l) => {
       this.list = l
       this.updateMap()
-    })*/
+    })
   }
 
   updateMap() {

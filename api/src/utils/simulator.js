@@ -1,16 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import {
-  checkIfDateIsNotToday,
-  decimalToStringDate,
-  getRangeOfMonthsAsObject,
-  getShortMonthString,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-  workingDay,
-} from './date'
+import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'

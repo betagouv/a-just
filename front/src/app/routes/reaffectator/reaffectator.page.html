@@ -194,7 +194,7 @@
             <p>{{ hr.firstName}} {{ hr.lastName}}</p>
             <div *ngIf="hr.comment" class="tooltip">
               <mat-icon>message</mat-icon>
-              <span class="tooltiptext">{{ hr.comment }}</span>
+              <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
             </div>
           </div>
           <div class="tags">
