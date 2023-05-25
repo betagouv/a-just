@@ -1,9 +1,0 @@
-
-> a-just-api@0.0.1 start
-> TZ='Europe/Paris' nodemon --exec babel-node src/index.js
-
-[33m[nodemon] 2.0.22[39m
-[33m[nodemon] to restart at any time, enter `rs`[39m
-[33m[nodemon] watching path(s): *.*[39m
-[33m[nodemon] watching extensions: js,mjs,json[39m
-[32m[nodemon] starting `babel-node src/index.js`[39m
