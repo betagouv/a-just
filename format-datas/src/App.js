@@ -41,17 +41,23 @@ export default class App {
     rmSync(outputAllFolder, { recursive: true, force: true });
     mkdirSync(outputAllFolder, { recursive: true });
 
-    //await this.getGroupByJuridiction(tmpFolder, inputFolder)
-    //await this.formatAndGroupJuridiction(tmpFolder,outputFolder,outputAllFolder,categoriesOfRules,referentiel)
+    await this.getGroupByJuridiction(tmpFolder, inputFolder);
+    await this.formatAndGroupJuridiction(
+      tmpFolder,
+      outputFolder,
+      outputAllFolder,
+      categoriesOfRules,
+      referentiel
+    );
 
     // WIP datas pénal
-    await this.getGroupByJuridictionPenal(tmpFolder, inputFolder);
+    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder);
     await this.formatAndGroupJuridictionPenal(
       tmpFolder,
       outputFolder,
       outputAllFolder,
       categoriesOfRules
-    );
+    );*/
 
     this.done();
   }
@@ -443,7 +449,7 @@ export default class App {
           const node = nodesToUse[i];
           const newRules = rule.filtres[node];
           // control il node exist
-          if (newRules) {
+          if (newRules && newRules !== "-") {
             let lines = monthValues;
 
             // EXCLUDES INCLUDES QUERIES
@@ -471,6 +477,10 @@ export default class App {
 
             list[rule["Code nomenclature"]][node] =
               (list[rule["Code nomenclature"]][node] || 0) + (sumByValues || 0);
+          } else if (newRules === 0) list[rule["Code nomenclature"]][node] = 0;
+          else if (newRules === "-") {
+            // A SUPPRIMER APRES IMPORT DATA AVRIL 2023
+            list[rule["Code nomenclature"]][node] = null;
           }
         }
       }
