@@ -1,7 +1,6 @@
 {
   "name": "a-just-api",
   "version": "0.0.1",
-  "type": "module",
   "scripts": {
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
     "start:production": "TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 dist/index.js",
@@ -38,6 +37,7 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "9.0.0",
     "koa-body": "^4.0.6",
+    "koa-csp": "^1.2.1",
     "koa-logger-winston": "^0.0.2",
     "koa-smart": "^2.2.0",
     "koa-sslify": "^5.0.1",
