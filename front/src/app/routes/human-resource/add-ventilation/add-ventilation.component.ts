@@ -468,13 +468,12 @@ openCalculatricePopup: boolean = false
     this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice('mag')))
   }
 
-  setCat(event:any){
-    console.log("Issy",event.value)
-    this.calculatriceService.isCalculable(event.value, this.form.get('fonctionId')?.value)
-  }
-
   setFonc(event:any){
     console.log("Issy",event.value)
-    this.calculatriceIsActive=this.calculatriceService.isCalculable(this.form.get('categoryId')?.value,event.value)
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,event.value)
+    console.log("Issy",fonct)
+if (fonct)
+    this.calculatriceIsActive=fonct.calculatrice_is_active||false
   }
 }
