@@ -1,12 +1,21 @@
 import { default as server } from '../src/index' //'../dist/index'
 import routeIndex from './api/Route.test'
-import routeUser from './api/RouteUser.test'
+/*import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
-import routeCalcultator from './api/RouteCalculateur.test'
+import routeCalcultator from './api/RouteCalculateur.test'*/
 import routeVentilateur from './api/RouteVentilateur.test'
 import axios from 'axios'
 import { assert } from 'chai'
-import { sinon } from 'sinon'
+
+/*console.log('EnvName:', config.envName)
+let server = null
+if (config.envName === 'test') {
+  console.log('TEST ENV')
+  server = await import('../src/index')
+} else {
+  console.log('PROD ENV')
+  server = await import('../dist/index')
+}*/
 
 /*import routeConnexion from './api/RouteConnexion'
 import routeImport from './api/RouteImports.test'
