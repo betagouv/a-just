@@ -23,7 +23,7 @@ module.exports = {
         category_id: findMag.id,
       })
 
-      const findMTT = await models.HRCategories.findOne({
+      const findMTT = await models.HRFonctions.findOne({
         where: {
           label: 'Magistrat à titre temporaire',
         },
