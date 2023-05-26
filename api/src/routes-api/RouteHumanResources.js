@@ -7,6 +7,8 @@ import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { today } from '../utils/date'
+import { findAllSituations } from '../utils/human-resource'
+import { orderBy } from 'lodash'
 
 /**
  * Route des fiches
@@ -291,7 +293,26 @@ export default class RouteHumanResources extends Route {
 
     this.sendOk(ctx, {
       list: listFormated,
-      allPersons: hr,
+      allPersons: orderBy(
+        hr.map((person) => {
+          let sitations = findAllSituations(person, this.dateSelected)
+          if (sitations.length === 0) {
+            // if no situation in the past get to the future
+            sitations = findAllSituations(person, this.dateSelected, true, true)
+          }
+
+          return {
+            id: person.id,
+            lastName: person.lastName,
+            firstName: person.firstName,
+            isIn: false,
+            categoryName: sitations.length && sitations[0].category ? sitations[0].category.label : '',
+            categoryRank: sitations.length && sitations[0].category ? sitations[0].category.rank : null,
+            fonctionRank: sitations.length && sitations[0].fonction ? sitations[0].fonction.rank : null,
+          }
+        }),
+        ['categoryRank', 'fonctionRank', 'lastName']
+      ),
     })
   }
 
