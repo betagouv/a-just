@@ -22,6 +22,10 @@ export interface HRCategoryInterface {
    * Couleur de fond de la catégorie
    */
 	bgColor: string;
+  /**
+   * Ouverture du sous menu de filtre
+   */
+  openSubMenu?: boolean;
 }
 
 /**
@@ -44,4 +48,28 @@ export interface HRCategorySelectedInterface extends HRCategoryInterface {
    * String pour afficher au pluriel ou non
    */
   labelPlural: string;
+  /**
+   * String pour afficher le nom de substitution
+   */
+  headerLabel?: string;
+  /**
+   * Fonction role
+   */
+  poste: HRCategorypositionInterface[];
 }
+
+export interface HRCategorypositionInterface {
+  /** Nom de la position */
+  name: string;
+  /**
+   * Selectionnée ou non
+   */
+  selected: boolean;
+  /**
+   * Somme des ETPT calculé
+   */
+  etpt: number;
+  /**
+   * Nom de personne de la catégorie
+   */
+  nbPersonal: number;}

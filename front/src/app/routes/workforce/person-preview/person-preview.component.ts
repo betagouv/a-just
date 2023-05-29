@@ -1,9 +1,8 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   Input,
+  OnInit,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceSelectedInterface } from '../workforce.page'
@@ -17,7 +16,7 @@ import { FilterPanelInterface } from '../filter-panel/filter-panel.component'
   templateUrl: './person-preview.component.html',
   styleUrls: ['./person-preview.component.scss'],
 })
-export class PersonPreviewComponent extends MainClass implements AfterViewInit {
+export class PersonPreviewComponent extends MainClass implements OnInit {
   /**
    * Fiche
    */
@@ -66,7 +65,7 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
   /**
    * After DOM is create fetch event
    */
-  ngAfterViewInit() {
+  ngOnInit() {
     if (this.parentDom) {
       this.parentDom.addEventListener(
         'scroll',

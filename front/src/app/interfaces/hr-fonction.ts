@@ -21,7 +21,7 @@ export interface HRFonctionInterface {
 	/**
 	 * Position Titulaire Placé Cont
 	 */
-		position?: number;
+	position: string;
 	/**
 	 * Position Titulaire Placé Cont
 	 */
