@@ -2,10 +2,8 @@
   <div class="title">
     <p>
       Evolution des ETPT &nbsp;
-      <label
-        >{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
-        {{ startRealValue }} au {{ stopRealValue }}</label
-      >
+      <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
+        {{ startRealValue }} au {{ stopRealValue }}</label>
     </p>
   </div>
   <div class="container">
@@ -36,24 +34,19 @@
             <div class="rounded-label">
               <label>
                 {{
-                  getDeltaInPercent(
-                    tooltip.simulatedMag,
-                    tooltip.projectedMag
-                  ) || 0
+                getDeltaInPercent(
+                tooltip.simulatedMag,
+                tooltip.projectedMag
+                ) || 0
                 }}
-                %</label
-              >
+                %</label>
             </div>
           </div>
         </div>
 
         <div class="popin-raw" style="display: flex">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #f083a0"
-            ></div>
+            <div _ngcontent-vmx-c83="" class="circle" style="background-color: #f083a0"></div>
             <b>Agents</b> &nbsp;
           </div>
           <p class="low-value">
@@ -66,10 +59,10 @@
             <div class="rounded-label">
               <label>
                 {{
-                  getDeltaInPercent(
-                    tooltip.simulatedFon,
-                    tooltip.projectedFon
-                  ) || 0
+                getDeltaInPercent(
+                tooltip.simulatedFon,
+                tooltip.projectedFon
+                ) || 0
                 }}
                 %
               </label>
@@ -100,76 +93,34 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label
-    [title]="'projectedMag'"
-    [label]="'Magistrats (projeté)'"
-    [dotColor]="'#e07dd8'"
-    [bgColor]="'#fdc0f8'"
-    [disabledEl]="!canViewMagistrat"
-    [ngClass]="{
+  <aj-legend-label [title]="'projectedMag'" [label]="'Siège (projeté)'" [dotColor]="'#e07dd8'" [bgColor]="'#fdc0f8'"
+    [disabledEl]="!canViewMagistrat" [ngClass]="{
       'disabled-label': !canViewMagistrat
-    }"
-    (value)="display($event)"
-  ></aj-legend-label>
+    }" (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedMag'"
-    [label]="'Magistrats (simulé)'"
-    [dotColor]="'#fdc0f8'"
-    [bgColor]="'#e07dd8'"
-    (value)="display($event)"
-    [disabledEl]="
+  <aj-legend-label [title]="'simulatedMag'" [label]="'Siège (simulé)'" [dotColor]="'#fdc0f8'" [bgColor]="'#e07dd8'"
+    (value)="display($event)" [disabledEl]="
       !canViewMagistrat || categorySelected !== 'MAGISTRAT' ? true : false
-    "
-    [ngClass]="{
+    " [ngClass]="{
       'disabled-label': !canViewMagistrat || categorySelected !== 'MAGISTRAT'
-    }"
-  ></aj-legend-label>
+    }"></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label
-    [title]="'projectedGref'"
-    [label]="'Greffe (projeté)'"
-    [dotColor]="'#f083a0'"
-    [bgColor]="'#ffcade'"
-    (value)="display($event)"
-    [disabledEl]="!canViewGreffier"
-    [ngClass]="{
+  <aj-legend-label [title]="'projectedGref'" [label]="'Greffe (projeté)'" [dotColor]="'#f083a0'" [bgColor]="'#ffcade'"
+    (value)="display($event)" [disabledEl]="!canViewGreffier" [ngClass]="{
       'disabled-label': !canViewGreffier
-    }"
-  ></aj-legend-label>
+    }"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedGref'"
-    [label]="'Greffe (simulé)'"
-    [dotColor]="'#ffcade'"
-    [bgColor]="'#f083a0'"
-    (value)="display($event)"
-    [disabledEl]="
+  <aj-legend-label [title]="'simulatedGref'" [label]="'Greffe (simulé)'" [dotColor]="'#ffcade'" [bgColor]="'#f083a0'"
+    (value)="display($event)" [disabledEl]="
       !canViewGreffier || categorySelected !== 'FONCTIONNAIRE' ? true : false
-    "
-    [ngClass]="{
+    " [ngClass]="{
       'disabled-label': !canViewGreffier || categorySelected !== 'FONCTIONNAIRE'
-    }"
-  ></aj-legend-label>
+    }"></aj-legend-label>
 
   <div class="space"></div>
-  <aj-legend-label
-    [title]="'projectedCont'"
-    [label]="'Contractuels (projeté)'"
-    [dotColor]="'#fdbfb7'"
-    [bgColor]="'#fcd7d3'"
-    (value)="display($event)"
-    [disabledEl]="true"
-    class="disabled-label"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'" [bgColor]="'#fcd7d3'"
+    (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedCont'"
-    [label]="'Contractuels (simulé)'"
-    [dotColor]="'#fcd7d3'"
-    [bgColor]="'#eba89f'"
-    (value)="display($event)"
-    [disabledEl]="true"
-    class="disabled-label"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'" [bgColor]="'#eba89f'"
+    (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
 </div>
