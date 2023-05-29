@@ -12,7 +12,7 @@ export class CalculatriceComponent implements OnInit {
   /**
    * Option radio button
    */
-  radioItems = 'semaine mois an'.split(' ')
+  radioItems = 'jour mois an'.split(' ')
 
   /**
    * Model utilisé pour les calculs d'ETPT
