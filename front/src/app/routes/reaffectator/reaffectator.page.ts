@@ -14,6 +14,7 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { getCategoryTitle } from 'src/app/utils/category'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -295,7 +296,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           this.formFilterSelect = categories.map((f) => ({
             id: f.id,
             value: f.label,
-            orignalValue: f.label,
+            orignalValue: getCategoryTitle(f.label),
           }))
 
           this.onSelectedCategoriesIdChanged(
