@@ -33,8 +33,8 @@ export class CalculatriceService {
    */
   dataCalculatrice: BehaviorSubject<CalculatriceInterface> =
     new BehaviorSubject<CalculatriceInterface>({
-      vacation: { value: null, option: 'semaine', unit: null },
-      volume: { value: null, option: 'semaine' },
+      vacation: { value: null, option: 'jour', unit: null },
+      volume: { value: null, option: 'jour' },
       selectedTab: 'vacation',
     })
 
