@@ -20,6 +20,27 @@ export const getCategoryColor = (label, opacity = 1) => {
 }
 
 /**
+ * Récupération de la couleur d'une catégories
+ * @param {*} label
+ * @param {*} opacity
+ * @returns
+ */
+export const getHoverCategoryColor = (label) => {
+  switch (label) {
+  case 'Magistrat':
+  case 'Magistrats':
+  case 'Magistrat du siège':
+  case 'Magistrats du siège':
+    return '#c8c8ff'
+  case 'Greffe':
+  case 'Greffes':
+    return '#fabff5'
+  }
+
+  return 'white'
+}
+
+/**
  * Récupération de la couleur d'une catégories sans jeu d'opacité
  * @param {*} label
  * @param {*} opacity

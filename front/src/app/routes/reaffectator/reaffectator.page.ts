@@ -74,6 +74,10 @@ interface listFormatedInterface {
    */
   bgColor: string
   /**
+   * Couleur de fond de la categories au hover
+   */
+  hoveColor: string
+  /**
    * Nom de la catégorie (pluriel ou non)
    */
   label: string
