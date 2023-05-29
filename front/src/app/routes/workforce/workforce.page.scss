@@ -322,8 +322,11 @@
   border-width: 1px;
   border-style: solid;
   margin-left: 8px;
-  cursor: pointer;
   position: relative;
+
+  aj-radio-button {
+    cursor: pointer;
+  }
 
   p.etp {
     font-weight: bold;
@@ -393,7 +396,7 @@
       padding: 4px 8px 4px 8px;
       border-width: 1px;
       border-style: solid;
-      cursor: pointer;
+      //cursor: pointer;
       position: relative;
       flex-direction: column;
 

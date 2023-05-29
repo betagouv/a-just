@@ -22,6 +22,10 @@ export interface HRCategoryInterface {
    * Couleur de fond de la catégorie
    */
 	bgColor: string;
+    /**
+   * Couleur de fond de la catégorie au survol
+   */
+	hoverColor: string;
   /**
    * Ouverture du sous menu de filtre
    */

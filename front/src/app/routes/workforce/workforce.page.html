@@ -31,9 +31,11 @@
         </div>
         <div *ngIf="category.openSubMenu && category.headerLabel!=='Autour du Juge' && category.selected"
           class="open-menu">
-          <div *ngFor="let poste of category.poste" class="checkbox-button-cont"
-            [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
-            <div class="rectangle" [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
+          <div #rectangleElem *ngFor="let poste of category.poste" class="checkbox-button-cont"
+            [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
+            (mouseenter)="print(rectangleElem,category.hoverColor)"
+            (mouseleave)="print(rectangleElem,category.bgColor)">
+            <div class="rectangle">
               <span class="nb-personal">{{poste.nbPersonal}}</span>&nbsp;
               <label class="poste-title">{{poste.nbPersonal > 1 ? poste.name+'s': poste.name }}</label>&nbsp;
               <label class="poste-etp">{{poste.etpt | number:".2-2"}}</label>

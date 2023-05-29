@@ -1,4 +1,4 @@
-import { getCategoryColor, getBgCategoryColor } from '../constants/categories'
+import { getCategoryColor, getBgCategoryColor, getHoverCategoryColor } from '../constants/categories'
 
 /**
  * Liste des categories d'un magistrat
@@ -20,6 +20,7 @@ export default (sequelizeInstance, Model) => {
       ...c,
       textColor: getCategoryColor(c.label),
       bgColor: getBgCategoryColor(c.label),
+      hoverColor: getHoverCategoryColor(c.label),
     }))
   }
 

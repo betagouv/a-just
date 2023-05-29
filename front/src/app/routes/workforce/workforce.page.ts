@@ -101,6 +101,10 @@ interface listFormatedInterface {
    * Couleur de fond de la categories
    */
   bgColor: string
+    /**
+   * Couleur de fond de la categories
+   */
+  hoverColor: string
   /**
    * Nom de la catégorie (pluriel ou non)
    */
@@ -944,5 +948,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
-  getLabels() {}
+  print(category:any,color:string){
+    category.style['background-color'] = color
+  }
 }
