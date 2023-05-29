@@ -11,12 +11,33 @@ export const getCategoryColor = (label, opacity = 1) => {
   case 'Magistrat du siège':
   case 'Magistrats du siège':
     return `rgba(0, 0, 145, ${opacity})`
-  case 'Fonctionnaire':
-  case 'Fonctionnaires':
+  case 'Greffe':
+  case 'Greffes':
     return `rgba(165, 88, 160, ${opacity})`
   }
 
   return `rgba(121, 104, 48, ${opacity})`
+}
+
+/**
+ * Récupération de la couleur d'une catégories sans jeu d'opacité
+ * @param {*} label
+ * @param {*} opacity
+ * @returns
+ */
+export const getCategoryColorNoOpacity = (label) => {
+  switch (label) {
+  case 'Magistrat':
+  case 'Magistrats':
+  case 'Magistrat du siège':
+  case 'Magistrats du siège':
+    return '#e3e3fd'
+  case 'Greffe':
+  case 'Greffes':
+    return '#fee7fc'
+  }
+
+  return '#fef6e3'
 }
 
 /**
@@ -31,15 +52,14 @@ export const getBgCategoryColor = (label) => {
   case 'magistrat du siège':
   case 'magistrats du siège':
     return '#e3e3fd'
-  case 'fonctionnaire':
-  case 'fonctionnaires':
+  case 'greffe':
+  case 'greffes':
     return '#fee7fc'
-  case 'Contractuel':
-  case 'Contractuels':
+  case 'Autour du juge':
     return '#fef6e3'
   }
 
-  return getCategoryColor(label, 0.2)
+  return getCategoryColorNoOpacity(label)
 }
 
 /**

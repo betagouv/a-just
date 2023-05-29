@@ -22,11 +22,11 @@
     padding-left: 24px;
     width: 386px;
 
-    > .label-container {
+    >.label-container {
       flex: 1;
       align-self: stretch;
 
-      > .category-name {
+      >.category-name {
         display: flex;
         align-items: center;
         align-self: stretch;
@@ -36,15 +36,15 @@
           margin-right: 8px;
         }
 
-        > .blue {
+        >.blue {
           color: #000091;
         }
 
-        > .label {
+        >.label {
           flex: 1;
         }
 
-        > .filter-button {
+        >.filter-button {
           mat-icon {
             margin-right: 16px;
             width: 34px;
@@ -59,12 +59,12 @@
         }
       }
 
-      > .filters {
+      >.filters {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
 
-        > .tag {
+        >.tag {
           border-radius: 12px;
           height: 24px;
           display: inline-flex;
@@ -91,13 +91,13 @@
       }
     }
 
-    > .contentieux-label {
+    >.contentieux-label {
       align-self: stretch;
       display: flex;
       background-color: fColor(bgSelect);
       width: 100px !important;
 
-      > .text {
+      >.text {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -116,19 +116,19 @@
           color: fColor(cgraylightv2);
         }
 
-        > .label {
+        >.label {
           flex: 1;
           display: flex;
           align-items: flex-end;
         }
 
-        > .etp {
+        >.etp {
           display: flex;
           align-items: flex-end;
           height: 22px;
         }
 
-        > .filter {
+        >.filter {
           display: flex;
           align-items: center;
           height: 26px;
@@ -138,18 +138,18 @@
   }
 
   .activities {
-    > .sub-item {
+    >.sub-item {
       cursor: pointer;
 
       &.selected {
         background-color: fColor(bgHeaderSelected);
 
-        > div.text .filter mat-icon {
+        >div.text .filter mat-icon {
           color: fColor(sortIconHeaderSelected);
         }
       }
 
-      > div.text {
+      >div.text {
         .label {
           flex: 1;
           align-items: flex-end;
@@ -323,6 +323,7 @@
   border-style: solid;
   margin-left: 8px;
   cursor: pointer;
+  position: relative;
 
   p.etp {
     font-weight: bold;
@@ -347,12 +348,82 @@
     }
   }
 
-  p.label {
-    font-size: 14px;
+  .label-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    p.label {
+      font-size: 14px;
+
+      .bold {
+        font-weight: bold;
+      }
+
+    }
+
+    .etp {
+      font-weight: bold;
+
+      .moovable {
+        font-size: 14px;
+        font-weight: initial;
+      }
+    }
   }
 
-  p.etp {
-    font-weight: bold;
+  .radio-border-left {
+    padding-left: 6px;
+    margin-left: 6px;
+    border-left: solid 1px #000091;
+    display: flex;
+  }
+
+  .open-menu {
+    position: absolute;
+    right: 0px;
+    bottom: -112px;
+    z-index: 2;
+    height: 112px;
+    padding-top: 3px;
+
+    .checkbox-button-cont {
+      display: flex;
+      border-radius: 4px;
+      padding: 4px 8px 4px 8px;
+      border-width: 1px;
+      border-style: solid;
+      cursor: pointer;
+      position: relative;
+      flex-direction: column;
+
+      .rectangle {
+        position: relative;
+        align-items: center;
+        justify-content: flex-end;
+        display: flex;
+
+        .nb-personal,
+        .poste-title {
+          font-size: 12px;
+          line-height: 2;
+          text-align: right;
+          color: #000091;
+        }
+
+        .poste-etp {
+          font-size: 12px;
+          font-weight: bold;
+          line-height: 1.67;
+          text-align: right;
+          color: #161616;
+        }
+      }
+    }
+
+    .rectangle {
+      height: 38px;
+    }
   }
 }
 
@@ -369,7 +440,7 @@ progression-bar {
   margin-right: 8px;
   text-decoration: none;
 
-  > button {
+  >button {
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -385,7 +456,7 @@ progression-bar {
   align-items: center;
   position: relative;
 
-  > aj-input-button {
+  >aj-input-button {
     margin-left: 8px;
   }
 
@@ -401,7 +472,7 @@ progression-bar {
     background-color: white;
     min-width: 250px;
 
-    > * {
+    >* {
       border-bottom: 1px solid fColor(lightBorder);
 
       &:first-child {
@@ -416,7 +487,7 @@ progression-bar {
       }
     }
 
-    > div {
+    >div {
       background-color: fColor(bgSelect);
       color: fColor(cgray);
       font-size: 12px;
@@ -426,21 +497,21 @@ progression-bar {
       height: 32px;
     }
 
-    > a {
+    >a {
       display: flex;
       align-items: center;
       height: 40px;
       white-space: nowrap;
       text-decoration: none;
 
-      > p {
+      >p {
         color: fColor(cgray);
         font-size: 12px;
         margin: 0 16px;
         flex: 1;
       }
 
-      > i {
+      >i {
         color: white;
         background-color: rgb(fColor(cgray), 0.6);
         width: 24px;
