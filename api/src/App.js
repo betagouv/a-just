@@ -65,7 +65,14 @@ export default class App extends AppBase {
         enableWarn: true,
         policy: {
           'default-src': ['none'],
-          'connect-src': ["'self'", 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://stats.data.gouv.fr'],
+          'connect-src': [
+            "'self'",
+            'https://api.mapbox.com',
+            'https://events.mapbox.com',
+            'https://stats.data.gouv.fr',
+            'https://forms-eu1.hsforms.com',
+            'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+          ],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
           'script-src': ["'self'", "'unsafe-inline' *.hsforms.net", 'stats.data.gouv.fr', "'unsafe-inline' blob:" + config.frontUrl],
