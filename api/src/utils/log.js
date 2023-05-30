@@ -8,7 +8,7 @@ const logger = winston.createLogger({
   exitOnError: false,
   format: winston.format.json(),
   // defaultMeta: { service: 'user-service' },
-  transports: config.sentryApi
+  transports: /*config.sentryApi
     ? [
       new Sentry({
         config: {
@@ -27,7 +27,7 @@ const logger = winston.createLogger({
       //new winston.transports.File({ filename: 'combined.log' }),
       new winston.transports.File({ filename: 'error.log' }),
     ]
-    : [],
+    :*/ [],
 })
 
 logger.add(

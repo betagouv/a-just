@@ -3,6 +3,7 @@ import { crypt } from '../utils'
 import { Types } from '../utils/types'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { USER_AUTO_LOGIN, USER_USER_LOGIN } from '../constants/log-codes'
+import * as Sentry from '@sentry/node'
 
 /**
  * Route des authentification
@@ -85,6 +86,19 @@ export default class RouteAuths extends Route {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, { userId: ctx.state.user.id })
+
+      const transaction = Sentry.startTransaction({ name: 'Logingg' })
+      Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
+      const span = transaction.startChild({
+        data: {
+          res: '',
+        },
+        op: 'task',
+        description: 'auto loging',
+      })
+      span.finish() // Remember that only finished spans will be sent with the transaction
+      transaction.finish()
+
       this.sendOk(ctx)
     } else {
       ctx.throw(401)

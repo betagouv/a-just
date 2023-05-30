@@ -55,4 +55,13 @@ export default class RouteJuridictions extends Route {
 
     this.sendOk(ctx, 'Ok')
   }
+
+  /**
+   * Obtenir la liste de tout les TGI et TPRX avec leurs IELST
+   */
+  @Route.Get()
+  async getAllIelst (ctx) {
+    const list = await this.model.getAllIelst()
+    this.sendOk(ctx, list)
+  }
 }
