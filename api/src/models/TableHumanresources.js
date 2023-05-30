@@ -182,20 +182,58 @@ export default (sequelizeInstance, Model) => {
           situation.category_id = findCategory.id
         }
 
+        String.prototype.startsWith = function (str) {
+          return this.indexOf(str) === 0
+        }
+
         let code = list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie']
         switch (code) {
-        case 'B':
-          code = 'B greffier'
+        case 'MHFJS':
+          code = 'MHFJ'
+          break
+        case 'ATT A':
+          code = 'CHCAB'
         }
-        const findFonction = await Model.models.HRFonctions.findOne({
+
+        if (code.startsWith('AS')) {
+          code = 'AS'
+        }
+
+        const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
+        const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
+        const filterNoEtpt = ['AS', 'JA']
+        const privilegedInGreff = ['CONT A JP', 'CONT B JP', 'CONT C JP']
+
+        if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
+          importSituation.push(list[i].nom_usage + ' no add by S/P because P')
+          continue
+        }
+
+        let findFonction = await Model.models.HRFonctions.findOne({
           where: {
             code,
           },
           logging: false,
         })
+
+        if (privilegedInGreff.includes(code)) {
+          const greffCategory = await Model.models.HRCategories.findOne({
+            where: {
+              label: 'Greffe',
+            },
+          })
+          console.log(greffCategory.dataValues.id)
+          findFonction = await Model.models.HRFonctions.findOne({
+            where: {
+              code,
+              category_id: greffCategory.dataValues.id,
+            },
+          })
+        }
+
         if (findFonction) {
           situation.fonction_id = findFonction.id
-        } else if (list[i].statut === 'Magistrat') {
+        } else if (list[i].statut === 'Magistrat' || notImported.includes(code)) {
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -205,9 +243,15 @@ export default (sequelizeInstance, Model) => {
         if (etp) {
           situation.etp = etp
         } else {
-          // dont save this profil
-          importSituation.push(list[i].nom_usage + ' no add by etp')
-          continue
+          if (code === 'MHFJ' && list[i]['posad'] === 'RET') {
+            situation.etp = 0
+          } else if (filterNoEtpt.includes(code)) {
+            situation.etp = 0
+          } else {
+            // dont save this profil
+            importSituation.push(list[i].nom_usage + ' no add by etp')
+            continue
+          }
         }
 
         let updatedAt = new Date()

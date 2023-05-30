@@ -33,8 +33,8 @@
           class="open-menu">
           <div #rectangleElem *ngFor="let poste of category.poste" class="checkbox-button-cont"
             [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
-            (mouseenter)="print(rectangleElem,category.hoverColor)"
-            (mouseleave)="print(rectangleElem,category.bgColor)">
+            (mouseenter)="switchBgColor(rectangleElem,category.hoverColor)"
+            (mouseleave)="switchBgColor(rectangleElem,category.bgColor)">
             <div class="rectangle">
               <span class="nb-personal">{{poste.nbPersonal}}</span>&nbsp;
               <label class="poste-title">{{poste.nbPersonal > 1 ? poste.name+'s': poste.name }}</label>&nbsp;

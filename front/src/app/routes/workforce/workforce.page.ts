@@ -948,7 +948,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
-  print(category:any,color:string){
+  switchBgColor(category:any,color:string){
     category.style['background-color'] = color
   }
 }
