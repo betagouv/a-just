@@ -115,5 +115,32 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Obtenir la liste de tout les TGI et TPRX avec leurs IELST
+   */
+  Model.getAllIelst = async () => {
+    let res = {}
+    
+    const list = await Model.findAll({
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
+      raw: true,
+    })
+    let tgi = list.filter(elem => elem.type === 'TGI')
+    let tprox = list.filter(elem => elem.type === 'TPRX')
+    tgi.map(tgi => {
+      res['00' + tgi.iElst] = tgi.label.split(' ').join('_')
+      tprox.map(tprox => {
+        if ( tprox.parent_id && tprox.parent_id === tgi.id )  {
+          console.log('TPROX:', tprox.iElst)
+          //tprox.iElst && Object.assign(res, ('00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_') ))
+          res['00' + tprox.iElst] = tgi.label.split(' ').join('_')
+          console.log('tmp:', '00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_') )
+        }
+      })
+    })
+    console.log('Res:', res)
+    return res
+  }
+
   return Model
 }
