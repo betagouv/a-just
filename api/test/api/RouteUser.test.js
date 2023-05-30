@@ -14,27 +14,16 @@ import {
   onSignUpApi,
 } from '../routes/user'
 
-module.exports = function (userToken, adminToken) {
+module.exports = function (datas) {
   describe('Users tests', () => {
     let userId = null
-    /**
-     * Connect Admin
-     */
-    it('Login - Login admin', async () => {
-      const email = USER_ADMIN_EMAIl
-      const password = USER_ADMIN_PASSWORD
-
-      // Connexion de l'admin
-      const response = await onLoginAdminApi({ email: email, password: password })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data.token
-      assert.strictEqual(response.status, 201)
-    })
 
     /**
      *  Vérification qu'on ait bien un erreur si le mail n'est pas indiqué
      */
     it('Sign up - Missing email, should return 400', async () => {
+      console.log('userToken 2', datas.adminToken)
+
       const response = await onSignUpApi({
         password: USER_TEST_PASSWORD,
         firstName: USER_TEST_FIRSTNAME,
