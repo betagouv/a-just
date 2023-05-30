@@ -75,7 +75,7 @@ export default class App extends AppBase {
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          'img-src': ["'self'", 'data:'],
+          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com'],
           'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr', "'unsafe-inline' blob:" + config.frontUrl],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr'],
