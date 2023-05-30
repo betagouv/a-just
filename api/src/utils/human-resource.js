@@ -1,4 +1,4 @@
-import { minBy, sumBy } from 'lodash'
+import { minBy, orderBy, sumBy } from 'lodash'
 import { ABSENTEISME_LABELS } from '../constants/referentiel'
 import { today } from '../utils/date'
 
@@ -205,13 +205,27 @@ export const findAllFuturSituations = (hr, date) => {
  * @param {*} date
  * @returns liste de situation
  */
-export const findAllSituations = (hr, date) => {
-  let situations = hr && hr.situations && hr.situations.length ? hr.situations : []
+export const findAllSituations = (hr, date, order = 'desc', inFuture = false) => {
+  let situations = orderBy(
+    hr?.situations || [],
+    [
+      function (o) {
+        const date = new Date(o.dateStart)
+        return date.getTime()
+      },
+    ],
+    // @ts-ignore
+    [order]
+  )
 
   if (date) {
     situations = situations.filter((hra) => {
       const dateStart = today(hra.dateStart)
-      return dateStart.getTime() <= date.getTime()
+      if (!inFuture) {
+        return dateStart.getTime() <= date.getTime()
+      } else {
+        return dateStart.getTime() > date.getTime()
+      }
     })
   }
 
