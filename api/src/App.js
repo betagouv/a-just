@@ -65,10 +65,10 @@ export default class App extends AppBase {
         enableWarn: true,
         policy: {
           'default-src': ['none'],
-          'connect-src': ["'self'", 'https://api.mapbox.com', 'https://events.mapbox.com'],
+          'connect-src': ["'self'", 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://stats.data.gouv.fr'],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:'],
-          'script-src': ["'self'", "'unsafe-inline' *.hsforms", 'stats.data.gouv.fr', "'unsafe-inline' blob:" + config.frontUrl],
+          'script-src': ["'self'", "'unsafe-inline' *.hsforms.net", 'stats.data.gouv.fr', "'unsafe-inline' blob:" + config.frontUrl],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr'],
         },
