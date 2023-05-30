@@ -222,7 +222,7 @@ export default (sequelizeInstance, Model) => {
               label: 'Greffe',
             },
           })
-          console.log(greffCategory.dataValues.id)
+
           findFonction = await Model.models.HRFonctions.findOne({
             where: {
               code,
