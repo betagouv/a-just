@@ -127,10 +127,10 @@ module.exports = function (datas) {
         email: USER_TEST_EMAIL,
         password: USER_TEST_PASSWORD,
       })
-      userToken = response.status === 201 && response.data.token
+      datas.userToken = response.status === 201 && response.data.token
       userId = response.data.user.id
 
-      assert.isOk(userToken, 'response 201 and user token created')
+      assert.isOk(datas.userToken, 'response 201 and user token created')
     })
 
     /**
@@ -138,7 +138,7 @@ module.exports = function (datas) {
      */
     it('Get my infos as a user. Should return 200', async () => {
       const response = await onGetMyInfosApi({
-        userToken: userToken,
+        userToken: datas.userToken,
       })
       assert.strictEqual(response.status, 200)
     })
@@ -148,7 +148,7 @@ module.exports = function (datas) {
      */
     it('Get my datas as a connected user. Should return 200', async () => {
       const response = await onGetUserDataApi({
-        userToken: userToken,
+        userToken: datas.userToken,
       })
       assert.strictEqual(response.status, 200)
     })
@@ -157,7 +157,7 @@ module.exports = function (datas) {
      */
     it('User list - Normal user do not have access. Should return 403', async () => {
       const response = await onGetUserListApi({
-        userToken: userToken,
+        userToken: datas.userToken,
       })
       assert.strictEqual(response.status, 403)
     })
@@ -167,7 +167,7 @@ module.exports = function (datas) {
      */
     it('User list - Admin should have access. Should return 200', async () => {
       const response = await onGetUserListApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
       })
       assert.strictEqual(response.status, 200)
     })
@@ -177,7 +177,7 @@ module.exports = function (datas) {
      */
     it('Logout - Logout should return 200', async () => {
       const response = await onLogoutApi({
-        userToken: userToken,
+        userToken: datas.userToken,
       })
       assert.strictEqual(response.status, 200)
     })
@@ -188,7 +188,7 @@ module.exports = function (datas) {
     it('Remove user Account by admin', async () => {
       const response = await onRemoveAccountApi({
         userId: userId,
-        userToken: adminToken,
+        userToken: datas.adminToken,
       })
       assert.strictEqual(response.status, 200)
     })

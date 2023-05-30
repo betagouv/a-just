@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
 import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
-import { OnRemoveHrApi, OnRemoveSituationApi, OnUpdateHrApi } from '../routes/hr'
+import { OnRemoveHrApi, OnRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
 import { USER_ADMIN_EMAIl } from '../constants/admin'
 
 module.exports = function () {
@@ -72,7 +72,7 @@ module.exports = function () {
         indisponibilities: [],
       }
 
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: 11,
@@ -87,7 +87,7 @@ module.exports = function () {
         ...current_hr,
         firstName: 'firstname',
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: 11,
@@ -101,7 +101,7 @@ module.exports = function () {
         ...current_hr,
         lastName: 'lastname',
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: 11,
@@ -140,7 +140,7 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -191,7 +191,7 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -228,7 +228,7 @@ module.exports = function () {
         indisponibilities: indisponibilities,
       }
 
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -252,7 +252,7 @@ module.exports = function () {
         ...current_hr,
         situations: correctedSituation,
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -279,7 +279,7 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -307,7 +307,7 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
@@ -329,7 +329,7 @@ module.exports = function () {
         dateEnd,
       }
 
-      const response = await OnUpdateHrApi({
+      const response = await onUpdateHrApi({
         userToken: adminToken,
         hr: hr,
         backupId: hr.backupId,
