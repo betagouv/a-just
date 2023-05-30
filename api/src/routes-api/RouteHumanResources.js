@@ -272,17 +272,19 @@ export default class RouteHumanResources extends Route {
           }
         }
 
+        const hr = group.map((g) => {
+          delete g.situations
+
+          return g
+        })
+
         return {
           textColor: getCategoryColor(label),
           bgColor: getBgCategoryColor(label),
           hoverColor: getHoverCategoryColor(label),
           referentiel,
           label,
-          hr: group.map((g) => {
-            delete g.situations
-
-            return g
-          }),
+          hr,
           categoryId: category.id,
         }
       })

@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div class="content-list" id="container-list" #containerList>
+    <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
@@ -120,8 +120,7 @@
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
           <person-preview *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"
-            [parentDom]="containerList"></person-preview>
+            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"></person-preview>
         </div>
       </ng-template>
     </div>
