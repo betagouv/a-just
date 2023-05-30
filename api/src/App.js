@@ -4,13 +4,7 @@ const tracer = require('dd-trace').init({
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
-import {
-  i18n,
-  compress,
-  cors,
-  helmet,
-  addDefaultBody,
-} from 'koa-smart/middlewares'
+import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import givePassword from './routes-logs/middlewares/givePassword'
@@ -74,20 +68,12 @@ export default class App extends AppBase {
         enableWarn: true,
         policy: {
           'default-src': ['none'],
-          'connect-src': [
-            "'self'",
-            'https://api.mapbox.com',
-            'https://events.mapbox.com',
-          ],
+          'connect-src': ["'self'", 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://stats.data.gouv.fr'],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          'img-src': ["'self'", 'data:'],
-          'script-src': [
-            "'self'",
-            "'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js",
-            "'unsafe-inline' blob:" + config.frontUrl,
-          ],
+          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
+          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['https://docs.a-just.beta.gouv.fr'],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr'],
         },
       }),
     ])

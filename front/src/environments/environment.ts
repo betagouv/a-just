@@ -9,7 +9,7 @@ import packageJSON from '../../../package.json'
  */
 export const environment = {
   production: false,
-  serverUrl: 'http://localhost:8081/api/',
+  serverUrl: 'http://192.168.123.12:8081/api/',
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,

@@ -61,6 +61,18 @@ export class HumanResourceService {
     HRFonctionInterface[]
   >([])
   /**
+   * Liste des id que l'on peut affiche
+   */
+  componentIdsCanBeView: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+  /**
+   * temp ids to can view
+   */
+  tmpComponentIdsCanBeView: number[] = []
+  /**
+   * Interface to catcher  can be view
+   */
+  interfaceWatcherTmp: any = null
+  /**
    * Liste du référentiels des indispos
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
@@ -653,7 +665,8 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
-        console.log(data.data)
+        this.componentIdsCanBeView.next([]) // clean cache
+        this.tmpComponentIdsCanBeView = []
         return data.data
       })
   }
@@ -667,5 +680,34 @@ export class HumanResourceService {
     return this.serverService
       .get(`human-resources/read-hr/${hrId}`)
       .then((response) => this.formatHR(response.data))
+  }
+
+  needIdToLoad(hrId: number) {
+    this.tmpComponentIdsCanBeView.push(hrId)
+
+    if(!this.interfaceWatcherTmp) {
+      this.startWatcherTmp()
+    }
+  }
+
+  startWatcherTmp() {
+    this.interfaceWatcherTmp = setInterval(() => {
+      const nbFiche = 20
+      const newIds = this.tmpComponentIdsCanBeView.slice(0, nbFiche)
+      const oldIds = this.componentIdsCanBeView.getValue()
+      this.componentIdsCanBeView.next([...oldIds, ...newIds])
+      this.tmpComponentIdsCanBeView = this.tmpComponentIdsCanBeView.slice(nbFiche)
+      
+      if(this.tmpComponentIdsCanBeView.length === 0) {
+        this.stopWatcherTmp()
+      }
+    }, 100)
+  }
+
+  stopWatcherTmp() {
+    if(this.interfaceWatcherTmp) {
+      clearInterval(this.interfaceWatcherTmp)
+      this.interfaceWatcherTmp = null
+    }
   }
 }
