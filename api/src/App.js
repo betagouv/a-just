@@ -61,7 +61,6 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      //default-src 'none'; connect-src https://forms-eu1.hsforms.com/embed/v3/form/26493393/0f776962-cddf-4ccb-b2a8-100936289ebb/json https://stats.data.gouv.fr/piwik.php; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://forms-eu1.hsforms.com https://forms.hsforms.com; script-src 'self' 'unsafe-inline' https://js-eu1.hsforms.net/forms/embed/v2.js https://stats.data.gouv.fr/piwik.js; style-src 'self' 'unsafe-inline'
       csp({
         enableWarn: true,
         policy: {
@@ -75,8 +74,8 @@ export default class App extends AppBase {
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com'],
-          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr', "'unsafe-inline' blob:" + config.frontUrl],
+          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
+          'script-src': ["'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr'],
         },
