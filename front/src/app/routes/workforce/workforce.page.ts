@@ -489,42 +489,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.allPersonsFiltered = list.map((person) => {
-        let sitations = this.humanResourceService.findAllSituations(
-          person,
-          this.dateSelected
-        )
-        if (sitations.length === 0) {
-          // if no situation in the past get to the future
-          sitations = this.humanResourceService.findAllSituations(
-            person,
-            this.dateSelected,
-            true,
-            true
-          )
-        }
-
         return {
           ...person,
           isIn: allPersonIds.includes(person.id),
-          categoryName:
-            sitations.length && sitations[0].category
-              ? sitations[0].category.label
-              : '',
-          categoryRank:
-            sitations.length && sitations[0].category
-              ? sitations[0].category.rank
-              : null,
-          fonctionRank:
-            sitations.length && sitations[0].fonction
-              ? sitations[0].fonction.rank
-              : null,
         }
       })
-      this.allPersonsFiltered = orderBy(this.allPersonsFiltered, [
-        'categoryRank',
-        'fonctionRank',
-        'lastName',
-      ])
     }
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(
@@ -602,17 +571,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         selectedReferentielIds,
         this.humanResourceService.categoriesFilterListIds
       )
-      .then((returnServeur) => {
-        const { list, allPersons } = returnServeur
+      .then(({ list, allPersons }) => {
         this.listFormated = list
-        let allPersonIds: number[] = []
-        this.listFormated.map((l) => {
-          allPersonIds = allPersonIds.concat(l.hr.map((h) => h.id))
-        })
-        this.allPersons = allPersons.map((p: HumanResourceInterface) => ({
-          ...p,
-          isIn: false,
-        }))
+        this.allPersons = allPersons
 
         this.orderListWithFiltersParams()
         this.isLoading = false
