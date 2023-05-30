@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { EXECUTE_EXTRACTOR, EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
-import { getBgCategoryColor, getCategoryColor } from '../constants/categories'
+import { getBgCategoryColor, getCategoryColor, getHoverCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
@@ -272,6 +272,7 @@ export default class RouteHumanResources extends Route {
           return {
             textColor: getCategoryColor(label),
             bgColor: getBgCategoryColor(label),
+            hoverColor: getHoverCategoryColor(label),
             referentiel,
             label,
             hr: group,

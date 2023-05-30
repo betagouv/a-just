@@ -2,11 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { orderBy, sumBy } from 'lodash'
+import { orderBy, sumBy, union } from 'lodash'
 import { MainClass } from 'src/app/libs/main-class'
 import {
   HRCategoryInterface,
   HRCategorySelectedInterface,
+  HRCategorypositionInterface,
 } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
@@ -21,6 +22,8 @@ import { UserService } from 'src/app/services/user/user.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
+import { keys } from 'ts-transformer-keys'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -98,6 +101,10 @@ interface listFormatedInterface {
    * Couleur de fond de la categories
    */
   bgColor: string
+    /**
+   * Couleur de fond de la categories
+   */
+  hoverColor: string
   /**
    * Nom de la catégorie (pluriel ou non)
    */
@@ -231,6 +238,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * En cours de chargement
    */
   isLoading: boolean = false
+  /**
+   * Poste string
+   */
+  listPoste = ['titulaire', 'placé', 'contractuel']
 
   /**
    * Constructor
@@ -285,15 +296,35 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.categoriesFilterList = categories.map((c) => ({
           ...c,
           selected: this.categoriesFilterListIds.indexOf(c.id) !== -1,
-          label:
-            c.label && c.label === 'Magistrat' ? 'Magistrat du siège' : c.label,
+          headerLabel: c.label && c.label === 'Magistrat' ? 'Siège' : c.label,
+          label: c.label && c.label === 'Magistrat' ? 'magistrat' : 'agent',
           labelPlural:
-            c.label && c.label === 'Magistrat'
-              ? 'Magistrats du siège'
-              : `${c.label}s`,
+            c.label && c.label === 'Magistrat' ? 'magistrats' : 'agents',
           etpt: 0,
           nbPersonal: 0,
+          openSubMenu: false,
+          poste: [
+            {
+              name: 'titulaire',
+              selected: true,
+              etpt: 0,
+              nbPersonal: 0,
+            },
+            {
+              name: 'placé',
+              selected: true,
+              etpt: 0,
+              nbPersonal: 0,
+            },
+            {
+              name: 'contractuel',
+              selected: true,
+              etpt: 0,
+              nbPersonal: 0,
+            },
+          ],
         }))
+
 
         this.onFilterList()
       })
@@ -325,24 +356,53 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
-      let personal = []
+      let personal: any = []
       let etpt = 0
+      let subTotalEtp: {[key:string]:number} = {
+        titulaire:0,
+        placé:0,
+        contractuel:0
+      }
 
       if (formatedList) {
         personal = formatedList.hrFiltered
-        personal.map((h) => {
+
+        personal.map((h: any) => {
           let realETP = (h.etp || 0) - h.hasIndisponibility
           if (realETP < 0) {
             realETP = 0
           }
           etpt += realETP
+          switch (h.fonction.position) {
+            case 'Titulaire':
+              subTotalEtp['titulaire'] += realETP
+              break
+            case 'Placé':
+              subTotalEtp['placé'] += realETP
+              break
+            case 'Contractuel':
+              subTotalEtp['contractuel'] += realETP
+              break
+          }
         })
       }
-      console.log(etpt)
+
+      const posteLise = c.poste.map((f: HRCategorypositionInterface) => {
+            return {
+              ...f,
+              name: f.name,
+              etpt: fixDecimal(subTotalEtp[f.name]),
+              nbPersonal: personal.filter(
+                (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
+              ).length,
+            }
+      })
+
       return {
         ...c,
         etpt,
         nbPersonal: personal.length,
+        poste: posteLise,
       }
     })
     this.calculateTotalAffected()
@@ -467,8 +527,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       ])
     }
 
-    console.log(this.allPersonsFiltered)
-
     this.allPersonsFilteredIsIn = this.filterFindedPerson(
       this.allPersonsFiltered,
       true
@@ -502,6 +560,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.filterParams.filterValues = filterValues
+    } else {
+      this.categoriesFilterList.map((cat) => {
+        cat.poste.map((position) => {
+          if (cat.id === category.id) {
+            position.selected = true
+            this.switchSubFilter(cat, position)
+          }
+        })
+      })
+      
     }
 
     this.onFilterList()
@@ -787,5 +855,100 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
     return (list || []).filter((h) => h.isIn === isIn)
+  }
+
+  getCurrentFilteredIds(fonctionsList: HRFonctionInterface[]) {
+    if (this.filterParams && this.filterParams.filterValues) {
+      return this.filterParams.filterValues as number[]
+    } else {
+      return fonctionsList.map((f) => f.id)
+    }
+  }
+
+  async getCurrentFilteredLabels(
+    fonctionsIds: number[],
+    focusFct: HRFonctionInterface[]
+  ) {
+    const fonctions = await this.hrFonctionService.getAll()
+    const fctCodes = fonctions
+      .filter((x) => fonctionsIds.includes(x.id))
+      .filter((f) => !focusFct.map((x) => x.id).includes(f.id))
+
+    if (fctCodes.length === 0) return null
+    else
+      return fctCodes
+        .map((x) => x.code)
+        .join(' ')
+        .slice(0, 10)
+  }
+  async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+    const fonctions = await this.hrFonctionService.getAll()
+    let fctFilterIds: number[] = this.getCurrentFilteredIds(fonctions)
+
+    this.listPoste.map(async (position) => {
+      if (poste.name === position) {
+        //selected fct by position clicked
+        const focusFct = fonctions.filter(
+          (f) =>
+            f.position ===
+              position.charAt(0).toUpperCase() + position.slice(1) &&
+            f.categoryId === category.id
+        )
+        let myArray = null
+
+        const isSelected = poste.selected
+
+        if (!isSelected) {
+          myArray = fctFilterIds.filter(
+            (el) => !focusFct.map((x) => x.id).includes(el)
+          )
+        } else {
+          myArray = union(
+            fctFilterIds,
+            focusFct.map((x) => x.id)
+          )
+        }
+
+        const labels = await this.getCurrentFilteredLabels(myArray, focusFct)
+
+        this.filterParams = await {
+          display: 'prénom/nom',
+          filterFunction: (list: HumanResourceSelectedInterface[]) => {
+            return list.filter(
+              (h) =>
+                h.fonction &&
+                this.filterParams &&
+                this.filterParams.filterValues &&
+                this.filterParams.filterValues.indexOf(h.fonction.id) !== -1
+            )
+          },
+          filterNames: null,
+          filterValues: myArray,
+          order: 'asc',
+          orderIcon: 'sort-desc',
+          sort: 'function',
+          sortFunction: null,
+          sortName: null,
+        }
+      }
+    })
+    this.onFilterList()
+    this.orderListWithFiltersParams()
+  }
+
+  getTooglePositionSelected(poste: HRCategorypositionInterface) {
+    return poste.selected
+  }
+  setTooglePositionSelected(
+    category: HRCategorySelectedInterface,
+    poste: HRCategorypositionInterface
+  ) {
+    poste.selected = !poste.selected
+    this.switchSubFilter(category, poste)
+    // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
+  }
+
+  print(category:any,color:string){
+    category.style['background-color'] = color
   }
 }
