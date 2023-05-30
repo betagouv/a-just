@@ -9,7 +9,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async () => {
     return await Model.findAll({
-      attributes: ['id', 'code', 'label', 'rank', 'category_detail', ['category_id', 'categoryId']],
+      attributes: ['id', 'code', 'label', 'rank', 'category_detail', 'position', 'calculatrice_is_active', ['category_id', 'categoryId']],
       order: ['category_id', 'rank'],
       raw: true,
     })
