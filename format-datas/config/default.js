@@ -1,8 +1,9 @@
-require('dotenv').config()
+require("dotenv").config();
 
+console.log("Server url:", process.env.SERVER_URL);
 module.exports = {
-  envName: '',
-  serverUrl: process.env.SERVER_URL || 'http://localhost:8080/api',
+  envName: "",
+  serverUrl: process.env.SERVER_URL || "http://localhost:8081/api",
   port: process.env.PORT || 8080,
   database: {
     url: process.env.DATABASE_URL,
@@ -11,4 +12,4 @@ module.exports = {
     private_key: process.env.JSON_WEB_TOKEN,
   },
   consoleLog: true,
-}
+};

@@ -123,4 +123,6 @@ export const I_ELST_LIST = {
   "00100131": "TJ_VAL_DE_BRIEY", // Val-De-Briey
   "00100133": "TJ_BAR_LE_DUC", //  Bar-Le-Duc
   "00100134": "TJ_VERDUN", // Verdun
+
+  "00100096": "TJ_BEZIERS", // Beziers
 };

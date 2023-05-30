@@ -11,13 +11,15 @@ import {
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
-  I_ELST_LIST,
+  // I_ELST_LIST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from "./constants/SDSE-ref";
 import { groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
+import { instanceAxios } from "../utils/axios";
+import config from "config";
 
 export default class App {
   constructor() {}
@@ -41,24 +43,32 @@ export default class App {
     rmSync(outputAllFolder, { recursive: true, force: true });
     mkdirSync(outputAllFolder, { recursive: true });
 
-    await this.getGroupByJuridiction(tmpFolder, inputFolder);
+    const I_ELST_LIST = await instanceAxios
+      .get("/juridictions/get-all-ielst")
+      .then((res) => {
+        return res.data.data;
+      });
+
+    /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
     await this.formatAndGroupJuridiction(
       tmpFolder,
       outputFolder,
       outputAllFolder,
       categoriesOfRules,
-      referentiel
-    );
+      referentiel,
+      I_ELST_LIST
+    );*/
 
     // WIP datas pénal
-    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder);
+    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
     await this.formatAndGroupJuridictionPenal(
       tmpFolder,
       outputFolder,
       outputAllFolder,
-      categoriesOfRules
-    );*/
-
+      categoriesOfRules,
+      I_ELST_LIST
+    );
+*/
     this.done();
   }
 
@@ -224,7 +234,7 @@ export default class App {
     }
   }
 
-  async getGroupByJuridictionPenal(tmpFolder, inputFolder) {
+  async getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".csv"));
     console.log("FILES:", files);
     // generate header
@@ -298,7 +308,8 @@ export default class App {
     outputFolder,
     outputAllFolder,
     categoriesOfRules,
-    referentiel
+    referentiel,
+    I_ELST_LIST
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
@@ -440,9 +451,9 @@ export default class App {
         };
       }
       if (
-        rule.filtres /* &&
+        rule.filtres &&
         list[rule["Code nomenclature"]].periode !==
-          "202304" && rule['Code nomenclature'] === '7.7.'*/
+          "202304" /* && rule['Code nomenclature'] === '7.7.'*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
@@ -560,7 +571,8 @@ export default class App {
     tmpFolder,
     outputFolder,
     outputAllFolder,
-    categoriesOfRules
+    categoriesOfRules,
+    I_ELST_LIST
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
