@@ -19,13 +19,13 @@
         [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
         (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); ">
         <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
-        <p>Magistrats</p>
+        <p>Siège</p>
       </div>
       <div *ngIf="canViewGreffier" class="fonctionnaires {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE', alone: !canViewMagistrat}" class="fonctionnaires"
         (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRE')">
         <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRE'" />
-        <p>Fonctionnaires</p>
+        <p>Greffe</p>
       </div>
     </div>
     <aj-select class="contentieux fonctions-selection width-auto {{disabled}}" title="Choix des fonctions (option)"
@@ -68,13 +68,13 @@
       <p>Stock</p>
     </div>
     <div *ngIf="canViewMagistrat" class="item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
-      <p>ETPT magistrat</p>
+      <p>ETPT siège</p>
     </div>
     <div *ngIf="canViewGreffier" class="item blue-bg" [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE'}">
       <p>ETPT greffe</p>
     </div>
     <div *ngIf="canViewContractuel" class="item">
-      <p>ETPT contractuels</p>
+      <p>ETPT EAM</p>
     </div>
     <div class="item blue-bg">
       <p>Taux de couverture</p>
@@ -233,7 +233,7 @@
           Appliquer sur la période {{startRealValue? "du":"d'"}}
           {{startRealValue||"aujourd'hui"}} au {{stopRealValue}} {{
           buttonSelected.id==='etpFon' ? "un volume moyen d'ETPT greffe":
-          buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT magistrat":
+          buttonSelected.id==='etpMag' ? "un volume moyen d'ETPT siège":
           buttonSelected.id === 'totalOut'?"un volume moyen de sorties
           mensuelles": buttonSelected.id === 'totalIn'? "un volume moyen
           d'entrées mensuelles":"un temps moyen par dossier"}} de :
@@ -380,13 +380,13 @@
           <p>Stock</p>
         </div>
         <div *ngIf="canViewMagistrat" class="item">
-          <p>ETPT magistrat</p>
+          <p>ETPT siège</p>
         </div>
         <div *ngIf="canViewGreffier" class="item blue-bg">
           <p>ETPT greffe</p>
         </div>
         <div *ngIf="canViewContractuel" class="item">
-          <p>ETPT contractuels</p>
+          <p>ETPT EAM</p>
         </div>
         <div class="item blue-bg">
           <p>Taux de couverture</p>
