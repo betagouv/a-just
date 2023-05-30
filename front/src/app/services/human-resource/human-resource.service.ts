@@ -666,6 +666,7 @@ export class HumanResourceService {
       })
       .then((data) => {
         this.componentIdsCanBeView.next([]) // clean cache
+        this.tmpComponentIdsCanBeView = []
         return data.data
       })
   }
