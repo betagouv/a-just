@@ -14,6 +14,8 @@ export const getCategoryColor = (label: string, opacity = 1) => {
       return `rgba(0, 0, 145, ${opacity})`
     case 'fonctionnaire':
     case 'fonctionnaires':
+    case 'greffe':
+    case 'Greffe':
       return `rgba(165, 88, 160, ${opacity})`
   }
 
@@ -34,9 +36,12 @@ export const getBgCategoryColor = (label: string) => {
       return '#e3e3fd'
     case 'fonctionnaire':
     case 'fonctionnaires':
+    case 'greffe':
+    case 'Greffe':
       return '#fee7fc'
     case 'Contractuel':
     case 'Contractuels':
+    case 'Autour du magistrat':
       return '#fef6e3'
   }
 

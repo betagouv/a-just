@@ -205,6 +205,10 @@ openCalculatricePopup: boolean = false
         ?.valueChanges.subscribe(() => this.loadCategories())
     )
 
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,this.form.get('categoryId')?.value)
+    if (fonct) this.calculatriceIsActive=fonct.calculatrice_is_active||false
+
     this.loadCategories()
   }
 

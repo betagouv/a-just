@@ -4,6 +4,10 @@
   cursor: pointer;
   position: relative;
 
+  &:not(.selected) {
+    background-color: white !important;
+  }
+
   &.selected {
     .indicator {
       border-style: 0;

@@ -80,7 +80,7 @@
           <div *ngIf="canViewMagistrat" class="tooltip medium" (click)="onSortBy('etpMag')"
             [ngClass]="{'selected': sortBy === 'etpMag'}">
             <div class="flex-1"></div>
-            <p>ETPT <br />Mag.</p>
+            <p>ETPT <br />siège</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
             <aj-tooltips class="medium" title="ETPT siège"
               content="Total des ETP travaillés sur la période par les agents du siège affectés à ce contentieux">
@@ -98,10 +98,10 @@
           <div *ngIf="canViewContractuel" class="tooltip medium" (click)="onSortBy('etpCont')"
             [ngClass]="{'selected': sortBy === 'etpCont'}">
             <div class="flex-1"></div>
-            <p>ETPT<br />Cont.</p>
+            <p>ETPT<br />EAM</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
             <aj-tooltips class="medium" title="ETPT EAM"
-              content="Total des ETP travaillés sur la période par les agents autour du juge affectés à ce contentieux">
+              content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés à ce contentieux">
             </aj-tooltips>
           </div>
         </div>
