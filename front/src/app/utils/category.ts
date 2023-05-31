@@ -11,7 +11,7 @@ export const getCategoryTitle = (name: string): string => {
   case 'Greffe':
     return 'Greffe'
   case 'Autour du magistrat':
-    return 'EOM'
+    return 'EAM'
   }
   return ''
 
