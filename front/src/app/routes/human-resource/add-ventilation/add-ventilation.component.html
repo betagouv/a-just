@@ -63,7 +63,7 @@
     </div>
 
     <aj-popup *ngIf="openCalculatricePopup" [actions]="[{ id: 'convert', content: 'Convertir en ETPT', fill: true }]"
-      [closeIcon]="true" (onClose)="openCalculatricePopup = false" class="fix-height" [removeShadow]="'noShadow'"
+      [closeIcon]="true" (onClose)="openCalculatricePopup = false" class="custom-height" [removeShadow]="'noShadow'"
       (selectedAction)="convertirEtpt()">
       <div class="circle">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
