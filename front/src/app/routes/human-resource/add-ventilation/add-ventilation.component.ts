@@ -473,9 +473,21 @@ openCalculatricePopup: boolean = false
   }
 
   convertirEtpt(){
-    this.openCalculatricePopup=false
-    this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))
-  }
+    if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'volume'){
+      if (this.calculatriceService.dataCalculatrice.getValue().volume.value !==null)
+        {
+          this.openCalculatricePopup=false
+          this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+        }
+    }
+    else if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'vacation'){
+      if (this.calculatriceService.dataCalculatrice.getValue().vacation.value !==null && this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==null)
+      {
+        this.openCalculatricePopup=false
+        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+      }
+    } 
+ }
 
   setFonc(event:any){
     const fonctions = this.humanResourceService.fonctions.getValue()
