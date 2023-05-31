@@ -150,6 +150,11 @@ export default (sequelizeInstance, Model) => {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
+    const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
+    const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
+    const filterNoEtpt = ['AS', 'JA']
+    const privilegedInGreff = ['CONT A JP', 'CONT B JP', 'CONT C JP']
+
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
@@ -178,15 +183,21 @@ export default (sequelizeInstance, Model) => {
           },
           logging: false,
         })
-        if (findCategory) {
-          situation.category_id = findCategory.id
-        }
-
-        String.prototype.startsWith = function (str) {
-          return this.indexOf(str) === 0
-        }
 
         let code = list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie']
+
+        if (findCategory) {
+          if (filterNoEtpt.includes(code)) {
+            const findEAM = await Model.models.HRCategories.findOne({
+              where: {
+                label: 'Autour du magistrat',
+              },
+              logging: false,
+            })
+            situation.category_id = findEAM.id
+          } else situation.category_id = findCategory.id
+        }
+
         switch (code) {
         case 'MHFJS':
           code = 'MHFJ'
@@ -198,11 +209,6 @@ export default (sequelizeInstance, Model) => {
         if (code.startsWith('AS')) {
           code = 'AS'
         }
-
-        const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
-        const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
-        const filterNoEtpt = ['AS', 'JA']
-        const privilegedInGreff = ['CONT A JP', 'CONT B JP', 'CONT C JP']
 
         if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
           importSituation.push(list[i].nom_usage + ' no add by S/P because P')
@@ -244,9 +250,9 @@ export default (sequelizeInstance, Model) => {
           situation.etp = etp
         } else {
           if (code === 'MHFJ' && list[i]['posad'] === 'RET') {
-            situation.etp = 0
+            //situation.etp = null
           } else if (filterNoEtpt.includes(code)) {
-            situation.etp = 0
+            //situation.etp = null
           } else {
             // dont save this profil
             importSituation.push(list[i].nom_usage + ' no add by etp')
