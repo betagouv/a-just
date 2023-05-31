@@ -16,12 +16,12 @@
         <div class="label-container">
           <p class="label" [ngStyle]="{'color': category.textColor}">
             <span class="bold">{{category.headerLabel}}</span> : <span
-              *ngIf="category.headerLabel!=='Autour du Juge'">{{ category.nbPersonal }} {{
+              *ngIf="category.headerLabel!=='Autour du magistrat'">{{ category.nbPersonal }} {{
               category.nbPersonal > 1 ?
               category.labelPlural : category.label }}</span>
           </p>
-          <label class="etp"><span class="moovable" *ngIf="category.headerLabel==='Autour du Juge'">{{
-              category.nbPersonal }} {{
+          <label class="etp"><span class="moovable" *ngIf="category.headerLabel==='Autour du magistrat'">
+              {{category.nbPersonal }} {{
               category.nbPersonal > 1 ?
               category.labelPlural : category.label }}</span> {{ category.etpt | number:".2-2" }} ETPT</label>
         </div>
@@ -29,7 +29,7 @@
           <aj-radio-button [bgColor]="category.textColor" [switchColor]="'white'" [value]="category.selected"
             (click)="category.selected=!category.selected;onSelectCategory(category)" #radio></aj-radio-button>
         </div>
-        <div *ngIf="category.openSubMenu && category.headerLabel!=='Autour du Juge' && category.selected"
+        <div *ngIf="category.openSubMenu && category.headerLabel!=='Autour du magistrat' && category.selected"
           class="open-menu">
           <div #rectangleElem *ngFor="let poste of category.poste" class="checkbox-button-cont"
             [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"

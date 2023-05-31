@@ -1,4 +1,4 @@
-export const basicEtptData = {
+export const basicEtptData : { [key: string]: number } = {
   /**
      * Nombre de jour travaillé / an d'un magistrat
      */
@@ -16,18 +16,3 @@ export const basicEtptData = {
    */
   nbHoursPerDayAndFonctionnaire: 7,  
   }
-
-/**
- * Données de calcul d'ETPT
- */
-export const etptData = {
-  nbDaysByMagistrat: basicEtptData.nbDaysByMagistrat,
-  nbDaysPerMonthByMagistrat: basicEtptData.nbDaysByMagistrat / 12,
-  nbHoursPerDayAndByMagistrat: basicEtptData.nbHoursPerDayAndMagistrat,
-  nbDaysByFonctionnaire: 229.57,
-  nbDaysPerMonthByFonctionnaire: 229.57 / 12,
-  nbHoursPerDayAndByFonctionnaire: 7,
-  nbDaysByContractuel: 229.57,
-  nbDaysPerMonthByContractuel: 229.57 / 12,
-  nbHoursPerDayAndByContractuel: 7,
-}

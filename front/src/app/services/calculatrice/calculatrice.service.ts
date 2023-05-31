@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { basicEtptData } from 'src/app/constants/etpt-calculation'
 import { CalculatriceInterface } from 'src/app/interfaces/calculatrice'
 
-const periodicData = {
+const periodicData : { [key: string]: any; } = {
   Magistrat: {
     jour: 208,
     semaine: 41.6,
@@ -15,7 +15,7 @@ const periodicData = {
     semaine: 45.91,
     mois: 12,
     an: 1,
-  },
+  }
 }
 
 interface periodInterface {
@@ -48,7 +48,7 @@ export class CalculatriceService {
    * @param category mag ou fonct
    * @returns 
    */
-  computeEtptCalculatrice(category: string) {
+  computeEtptCalculatrice(categoryId: string) {
     const option =
       this.dataCalculatrice.value.selectedTab === 'vacation'
         ? (this.dataCalculatrice.value.vacation.option as keyof periodInterface)
@@ -63,12 +63,27 @@ export class CalculatriceService {
         ? this.dataCalculatrice.value.vacation.unit
         : 0
     )
-    const cat = category === 'mag' ? 'Magistrat' : 'Fonctionnaire'
-    const nbHoursPerDay = ('nbHoursPerDayAnd' +
-      cat) as keyof typeof basicEtptData
-    const byDayAndCat = ('nbDaysBy' + cat) as keyof typeof basicEtptData
+    let cat = 'Magistrat'
 
-    if (category === 'fonct' && this.dataCalculatrice.value.selectedTab === 'vacation'){
+    switch(categoryId) {
+      case '1':
+        cat= 'Magistrat'
+        break
+      case '2':
+        cat = 'Fonctionnaire'
+        break
+      case '3':
+          cat = 'Fonctionnaire'
+          break
+    }
+
+    const nbHoursPerDay = ('nbHoursPerDayAnd' + cat) 
+    const byDayAndCat = ('nbDaysBy' + cat)
+
+    console.log(nbHoursPerDay,byDayAndCat, option,value,unit,cat, categoryId)
+
+
+    if (cat === 'Fonctionnaire' && this.dataCalculatrice.value.selectedTab === 'vacation'){
     return (
       (value / basicEtptData[nbHoursPerDay]) *
         unit *
@@ -76,7 +91,7 @@ export class CalculatriceService {
       basicEtptData[byDayAndCat]
     )*100
     }
-    if(category === 'mag' && this.dataCalculatrice.value.selectedTab === 'vacation'){
+    if(cat === 'Magistrat' && this.dataCalculatrice.value.selectedTab === 'vacation'){
     return (unit/basicEtptData[nbHoursPerDay]*value * periodicData[cat][option] /
     basicEtptData[byDayAndCat])*100
     }
