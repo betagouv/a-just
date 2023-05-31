@@ -10,8 +10,8 @@ export const getCategoryTitle = (name: string): string => {
     return 'Siège'
   case 'Greffe':
     return 'Greffe'
-  case 'Autour du Juge':
-    return 'EOM'
+  case 'Autour du magistrat':
+    return 'EAM'
   }
   return ''
 

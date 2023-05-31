@@ -34,7 +34,22 @@
     overflow-y: overlay !important;
   }
 
-  &.fix-height .popup>div>.actions>button {
+  &.custom-height .popup>div>.actions>button {
+    height: 40px;
+  }
+
+  &.custom-height .popup>div {
+    height: 595px !important;
+    width: 700px;
+    border-radius: 6px;
+  }
+
+  &.custom-height .popup>div>.content {
+    flex: unset;
+    overflow-y: overlay !important;
+  }
+
+  &.custom-height .popup>div>.actions>button {
     height: 40px;
   }
 

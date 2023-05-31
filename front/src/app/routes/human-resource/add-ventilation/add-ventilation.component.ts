@@ -202,8 +202,17 @@ openCalculatricePopup: boolean = false
     this.watch(
       this.form
         .get('categoryId')
-        ?.valueChanges.subscribe(() => this.loadCategories())
+        ?.valueChanges.subscribe(() => {this.loadCategories().then(()=>{          
+          let fct = this.fonctions[0]
+          this.form.get('fonctionId')?.setValue(fct.id || null)
+          if (fct) this.calculatriceIsActive=fct.calculatrice_is_active||false
+
+        })})
     )
+
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,this.form.get('categoryId')?.value)
+    if (fonct) this.calculatriceIsActive=fonct.calculatrice_is_active||false
 
     this.loadCategories()
   }
@@ -463,17 +472,27 @@ openCalculatricePopup: boolean = false
     this.onOpenHelpPanel.emit(type)
   }
 
-  convertirEtpt(event:Event){
-    this.openCalculatricePopup=false
-    this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice('mag')))
-  }
+  convertirEtpt(){
+    if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'volume'){
+      if (this.calculatriceService.dataCalculatrice.getValue().volume.value !==null)
+        {
+          this.openCalculatricePopup=false
+          this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+        }
+    }
+    else if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'vacation'){
+      if (this.calculatriceService.dataCalculatrice.getValue().vacation.value !==null && this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==null)
+      {
+        this.openCalculatricePopup=false
+        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+      }
+    } 
+ }
 
   setFonc(event:any){
-    console.log("Issy",event.value)
     const fonctions = this.humanResourceService.fonctions.getValue()
     const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,event.value)
-    console.log("Issy",fonct)
-if (fonct)
-    this.calculatriceIsActive=fonct.calculatrice_is_active||false
+    if (fonct)
+        this.calculatriceIsActive=fonct.calculatrice_is_active||false
   }
 }

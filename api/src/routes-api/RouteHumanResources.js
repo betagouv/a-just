@@ -265,10 +265,10 @@ export default class RouteHumanResources extends Route {
         let group = listFiltered.filter((h) => h.category && h.category.id === category.id)
 
         if (group.length > 1) {
-          if (label.indexOf('agistrat') !== -1) {
+          if (label.indexOf('agistrat') === 1) {
             label = label.replace('agistrat', 'agistrats du siège')
           } else {
-            label += 's'
+            //label += 's'
           }
         }
 
@@ -277,7 +277,7 @@ export default class RouteHumanResources extends Route {
 
           return g
         })
-
+        console.log('@@@@@', label)
         return {
           textColor: getCategoryColor(label),
           bgColor: getBgCategoryColor(label),
