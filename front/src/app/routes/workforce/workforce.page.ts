@@ -355,7 +355,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   updateCategoryValues() {
     this.categoriesFilterList = this.categoriesFilterList.map((c) => {
-      console.log(this.listFormated)
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal: any = []
       let etpt = 0
