@@ -71,7 +71,7 @@ export default class App extends AppBase {
           'connect-src': ["'self'", 'https://api.mapbox.com', 'https://events.mapbox.com', 'https://stats.data.gouv.fr'],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': ["'unsafe-eval'", "'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr'],
+          'script-src': ["'unsafe-eval'", "'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr', 'blob:' + config.frontUrl],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr'],
         },
