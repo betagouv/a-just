@@ -69,6 +69,7 @@ export default class App extends AppBase {
         policy: {
           'default-src': ['none'],
           'connect-src': [
+            'https://www.google-analytics.com/j/collect',
             "'self'",
             'https://api.mapbox.com',
             'https://events.mapbox.com',
@@ -76,9 +77,16 @@ export default class App extends AppBase {
             'https://forms-eu1.hsforms.com',
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
           ],
-          'font-src': ["'self'", 'https://fonts.gstatic.com'],
+          'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': ["'unsafe-eval'", "'self'", "'unsafe-inline' https://js-eu1.hsforms.net", 'stats.data.gouv.fr', 'blob:' + config.frontUrl],
+          'script-src': [
+            "'unsafe-eval'",
+            "'self'",
+            "'unsafe-inline' https://js-eu1.hsforms.net",
+            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
+            'stats.data.gouv.fr',
+            'blob:' + config.frontUrl,
+          ],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr'],
         },
