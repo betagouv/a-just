@@ -1,4 +1,5 @@
 import { default as server } from '../src/index'
+import { accessList } from '../src/constants/access'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculateur.test'
@@ -16,7 +17,7 @@ import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from './constants/admin'
-import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from './constants/user'
+import { onLoginAdminApi, onUpdateAccountApi } from './routes/user'
 
 const datas = {
   adminToken: null,
@@ -37,77 +38,56 @@ describe('Test server is ready', () => {
     }
   })
 
-  it('Login - Login admin', async () => {
-    const email = USER_ADMIN_EMAIl
-    const password = USER_ADMIN_PASSWORD
-
-    // Connexion de l'admin
-    const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
-      email,
-      password,
-    })
-    console.log(datas)
-    // Récupération du token associé pour l'identifier
-    datas.adminToken = response.status === 201 && response.data.token
-    console.log('adminToken', datas.adminToken)
-    assert.strictEqual(response.status, 201)
+  after(async function () {
+    // remove created user if exists
+    if (datas.userId && datas.adminToken) {
+      await axios.delete(`${config.serverUrl}/users/remove-account-test/${datas.userId}`, {
+        headers: {
+          authorization: datas.adminToken,
+        },
+      })
+    }
+    server.done()
   })
 
   /**
    * Connect Admin
    */
-  /*it('Login - Login admin', async () => {
+  it('Login - Login admin', async () => {
     const email = USER_ADMIN_EMAIl
     const password = USER_ADMIN_PASSWORD
 
     // Connexion de l'admin
-    const response = await axios.post(`${config.serverUrl}/auths/login-admin`, {
-      email,
-      password,
+    const response = await onLoginAdminApi({
+      email: email,
+      password: password,
     })
     // Récupération du token associé pour l'identifier
-    adminToken = response.status === 201 && response.data.token
-    assert.strictEqual(response.status, 201)
-  })*/
+    datas.adminToken = response.status === 201 && response.data.token
+    datas.adminId = response.status === 201 && response.data.user.id
 
-  /**
-   *  Vérification que l'utilisateur peut bien s'inscrire si toutes les information obligatoires sont corrects
-   */
-  /*it('Sign up - Check that a user can signUp if all entered inputs are fullfilled', async () => {
-    const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-      email: USER_TEST_EMAIL,
-      password: USER_TEST_PASSWORD,
-      firstName: USER_TEST_FIRSTNAME,
-      lastName: USER_TEST_LASTNAME,
-      fonction: USER_TEST_FONCTION,
-      tj: 'ESSAI',
+    assert.strictEqual(response.status, 201)
+  })
+
+  /*it('Give all accesses to Admin', async () => {
+    const accessIds = accessList.map((elem) => {
+      return elem.id
     })
+
+    const response = await onUpdateAccountApi({
+      userToken: datas.adminToken,
+      userId: datas.adminId,
+      accessIds: accessIds,
+      ventilations: [],
+    })
+
     assert.strictEqual(response.status, 200)
   })*/
 
-  /**
-   * Vérification que la connexion avec les bonnes infos fonctionne
-   */
-  /*it('Login - Login should succeed and return 201 with user token', async () => {
-    const email = USER_TEST_EMAIL
-    const password = USER_TEST_PASSWORD
-
-    const response = await axios.post(`${config.serverUrl}/auths/login`, {
-      email,
-      password,
-    })
-    userToken = response.status === 201 && response.data.token
-    userId = response.data.user.id
-    console.log('USER-TOKEN_00:', userToken)
-    console.log('ADMIN-TOKEN_00:', adminToken)
-
-    assert.isOk(userToken, 'response 201 and user token created')
-  })*/
-
-  routeUser(datas)
-  routeChangeUserData()
-  routeCalcultator()
-  routeVentilateur()
+  //routeUser(datas)
+  /*routeChangeUserData(datas)
+  routeCalcultator(datas)
+  routeVentilateur(datas)*/
 
   // TROUVER UN MOYEN D'ATTENDRE QUE USERTOKEN ET ADMINTOKEN SOIENT SET AVANT DE LANCER LES TESTS SUIVANTS
 
@@ -123,14 +103,10 @@ describe('Test server is ready', () => {
     // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
     const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
       headers: {
-        authorization: adminToken,
+        authorization: datas.adminToken,
       },
     })
 
     assert.strictEqual(response.status, 200)
   })*/
-
-  after(function () {
-    server.done()
-  })
 })

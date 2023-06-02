@@ -1,64 +1,29 @@
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
-import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
+import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi, onGetMyInfosApi } from '../routes/user'
 import { OnRemoveHrApi, OnRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
 import { USER_ADMIN_EMAIl } from '../constants/admin'
 
-module.exports = function () {
-  let adminToken = null
-  let userToken = null
-  let userId = null
+module.exports = function (datas) {
   let hrId = null
   let hrSituationId = []
   let current_hr = null
 
   describe('Change User data test', () => {
-    it('Login - Login admin', async () => {
-      // Connexion de l'admin
-      const response = await onLoginAdminApi({
-        email: USER_ADMIN_EMAIl,
-        password: USER_TEST_PASSWORD,
-      })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data && response.data.token
-      assert.strictEqual(response.status, 201)
-    })
-
-    it('Sign up - Create test user', async () => {
-      const response = await onSignUpApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
-        firstName: USER_TEST_FIRSTNAME,
-        lastName: USER_TEST_LASTNAME,
-        fonction: USER_TEST_FONCTION,
-        tj: 'ESSAI',
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Login - Log user', async () => {
-      const response = await onLoginApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
-      })
-
-      userToken = response.status === 201 && response.data.token
-      userId = response.data.user.id
-
-      assert.isOk(userToken, 'response 201 and user token created')
-    })
-
     it('Give user accesses by Admin', async () => {
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
+
       const response = await onUpdateAccountApi({
-        userToken: adminToken,
-        userId: userId,
+        userToken: datas.adminToken,
+        userId: datas.adminId, // userId,
         accessIds: accessIds,
         ventilations: [], //{ id: 11, label: 'ESSAI' },
       })
+      const me = await onGetMyInfosApi({ userToken: datas.adminToken })
+      console.log('Me:', me.data)
       assert.strictEqual(response.status, 200)
     })
 
@@ -72,8 +37,10 @@ module.exports = function () {
         indisponibilities: [],
       }
 
+      const me = await onGetMyInfosApi({ userToken: datas.adminToken })
+      console.log('Me:', me.data)
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -83,12 +50,14 @@ module.exports = function () {
     })
 
     it('Change new hr firstname', async () => {
+      console.log('current hr:', current_hr)
       const hr = {
         ...current_hr,
         firstName: 'firstname',
       }
+
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -102,7 +71,7 @@ module.exports = function () {
         lastName: 'lastname',
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -141,7 +110,7 @@ module.exports = function () {
         situations: situatiuons,
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -192,7 +161,7 @@ module.exports = function () {
         situations: situatiuons,
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -229,7 +198,7 @@ module.exports = function () {
       }
 
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -253,7 +222,7 @@ module.exports = function () {
         situations: correctedSituation,
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -280,7 +249,7 @@ module.exports = function () {
         ],
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -308,7 +277,7 @@ module.exports = function () {
         ],
       }
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -330,7 +299,7 @@ module.exports = function () {
       }
 
       const response = await onUpdateHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -345,7 +314,7 @@ module.exports = function () {
       let response = null
       for (let id of hrSituationId) {
         response = await OnRemoveSituationApi({
-          userToken: adminToken,
+          userToken: datas.adminToken,
           id: id,
         })
       }
@@ -355,18 +324,8 @@ module.exports = function () {
     it('Remove created hr', async () => {
       // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
       const response = await OnRemoveHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hrId: hrId,
-      })
-
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await onRemoveApi({
-        userId: userId,
-        userToken: adminToken,
       })
 
       assert.strictEqual(response.status, 200)
