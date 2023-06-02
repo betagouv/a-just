@@ -8,6 +8,10 @@
     min-height: inherit;
   }
 
+  &.small .popup > div {
+    width: 50%;
+  }
+
   &.large .popup>div {
     width: 80%;
   }
@@ -67,13 +71,48 @@
   }
 
   &.no-blur .popup {
-    -webkit-backdrop-filter: none;
+    -webkit-backdrop-dokter: none;
     backdrop-filter: none;
   }
 
   &.center-title {
     .title {
       text-align: center;
+    }
+  }
+
+  &.blackBackground .popup > div {
+    background-color: #303030;
+    .title {
+      color: #fff;
+    }
+    .content{
+      color: white;
+    }
+
+    .close {
+      color: fColor(darkModeTitle);
+      i {
+        color: fColor(darkModeTitle);
+      }
+    }
+
+    .projected-content {
+      border: 1px solid white;
+    }
+
+    .actions {
+      button {
+        color: #8585f6;
+        border: solid 1px #8585f6;
+        background-color: transparent;
+
+        &.fill {
+          color: #000091;
+          background-color: #8585f6;
+          border: none;
+        }
+      }
     }
   }
 

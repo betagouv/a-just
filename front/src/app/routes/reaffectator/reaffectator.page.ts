@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -15,6 +15,9 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { getCategoryTitle } from 'src/app/utils/category'
+import { IDeactivateComponent } from '../canDeactivate-guard-service'
+import { PopupComponent } from 'src/app/components/popup/popup.component'
+import { Router } from '@angular/router'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -176,7 +179,7 @@ interface ContentieuReferentielCalculateInterface
 /**
  * Page de réaffectation
  */
-export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, IDeactivateComponent {
   /**
    * Dom du wrapper
    * @param wrapper
@@ -258,11 +261,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Affiche les personnes modifiés et leurs pendant non modifié
    */
   showReelValues: boolean = false
-
   /**
    * Reaffectator Service
    */
   reaffectatorService: ReaffectatorService
+  /**
+   * Utilisateur sort du composant
+   */
+  isLeaving: boolean = false
+  /**
+   * Utilisateur peut sortir du composant
+   */
+  canLeave: boolean = false
+
+  forceDeactivate: boolean = false
+
+  nextState: string | null = null
 
   /**
    * Constructeur
@@ -275,11 +289,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     private humanResourceService: HumanResourceService,
     private workforceService: WorkforceService,
     private rs: ReaffectatorService,
-    private userService: UserService
+    private userService: UserService,
+    private router : Router
   ) {
     super()
     this.reaffectatorService = this.rs
   }
+
+  popupAction = [
+    { id: 'leave', content: 'Quitter sans exporter'},
+    { id: 'export', content: 'Exporter en PDF et quitter', fill: true},
+  ];
 
   /**
    * A l'initialisation chercher les variables globals puis charger
@@ -315,7 +335,39 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Destruction des observables
    */
   ngOnDestroy() {
+    console.log('Reaffectator destroy')
     this.watcherDestroy()
+  }
+
+  canDeactivate(nextState: string) {
+    const modified = this.listFormated.filter(elem => { 
+      return elem.hrFiltered.some(hr => hr.isModify)
+     })
+    if (modified.length === 0)
+     return true
+
+    this.isLeaving = true
+    this.nextState = nextState
+    return this.forceDeactivate 
+  }
+
+  onPopupDetailAction(action: any) {
+    switch (action.id) {
+      case 'leave': 
+      {
+        this.isLeaving = false
+        this.forceDeactivate = true
+        this.router.navigate([this.nextState])
+      }
+        break;
+      case 'export':
+      {
+        this.isLeaving = false
+        this.forceDeactivate = true
+        this.onExport()
+      }
+        break;
+    }
   }
 
   /**
@@ -659,6 +711,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       )
       .then(() => {
         this.duringPrint = false
+        if (this.forceDeactivate)
+         this.router.navigate([this.nextState])
       })
   }
 
