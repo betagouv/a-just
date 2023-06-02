@@ -131,7 +131,6 @@ export default (sequelizeInstance, Model) => {
       res['00' + tgi.iElst] = tgi.label.split(' ').join('_')
       tprox.map((tprox) => {
         if (tprox.parent_id && tprox.parent_id === tgi.id) {
-          console.log('TPROX:', tprox.iElst)
           //tprox.iElst && Object.assign(res, ('00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_') ))
           res['00' + tprox.iElst] = tgi.label.split(' ').join('_')
           console.log('tmp:', '00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_'))
