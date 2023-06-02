@@ -1,2 +1,13 @@
-<aj-wrapper title="Panorama">
+<aj-wrapper
+  [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
+  [subtitleTemplate]="subTitle">
 </aj-wrapper>
+
+<ng-template #subTitle>
+  <div class="tags">
+    <div class="tag all" *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel">Tous</div>
+    <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>
+    <div class="tag greffe" *ngIf="canViewGreffier">Greffe</div>
+    <div class="tag arround" *ngIf="canViewContractuel">Autour du magistrat</div>
+  </div>
+</ng-template>
