@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-console.log("Server url:", process.env.SERVER_URL);
 module.exports = {
   envName: "",
   serverUrl: process.env.SERVER_URL || "http://localhost:8081/api",
