@@ -106,6 +106,14 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'panorama',
+    loadChildren: () =>
+      import('./panorama/panorama.module').then(
+        (mod) => mod.PanoramaModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'carte-juridictions',
     loadChildren: () =>
       import('./juridictions-installed/juridictions-installed.module').then(
