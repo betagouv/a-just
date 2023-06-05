@@ -121,50 +121,28 @@ export default (sequelizeInstance, Model) => {
   Model.getAllIelst = async () => {
     let res = {}
 
-    const list = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
-      raw: true,
-    })
-    let tgi = list.filter((elem) => elem.type === 'TGI')
-    let tprox = list.filter((elem) => elem.type === 'TPRX')
-    tgi.map((tgi) => {
-      res['00' + tgi.iElst] = tgi.label.split(' ').join('_')
-      tprox.map((tprox) => {
-        if (tprox.parent_id && tprox.parent_id === tgi.id) {
-          //tprox.iElst && Object.assign(res, ('00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_') ))
-          res['00' + tprox.iElst] = tgi.label.split(' ').join('_')
-          console.log('tmp:', '00' + tprox.iElst + ' : ' + tgi.label.split(' ').join('_'))
-        }
-      })
-    })
-    console.log('Res:', res)
-
-    return res
-
-    /* const getList = async (parentId) => {
+    const getList = async (parent_id) => {
       const list = await Model.findAll({
         attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
         where: {
-          parent_id: parentId,
+          parent_id: parent_id,
           type: ['TGI', 'TPRX'],
         },
         raw: true,
       })
-
       return list
     }
 
-    const returnList = getList(null)
-    const list = {}
-    for (let i = 0; i < returnList.length; i++) {
-      list[returnList[i].iElst] = returnList[i].label
-      const childs = getList(returnList[i].id)
-      for (let y = 0; y < childs.length; y++) {
-        list[childs[i].iElst] = returnList[i].label
+    const list = await getList(null)
+
+    for (let i = 0; i < list.length; i++) {
+      res['00' + list[i].iElst] = list[i].label.split(' ').join('_')
+      const children = getList(list[i].id)
+      for (let j = 0; j < children.length; j++) {
+        res['00' + children[i].iElst] = list[i].label
       }
     }
-
-    return list */
+    return res
   }
 
   return Model
