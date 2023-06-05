@@ -121,11 +121,11 @@ export default (sequelizeInstance, Model) => {
   Model.getAllIelst = async () => {
     let res = {}
 
-    const getList = async (parent_id) => {
+    const getList = async (parentId) => {
       const list = await Model.findAll({
         attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
         where: {
-          parent_id: parent_id,
+          parent_id: parentId,
           type: ['TGI', 'TPRX'],
         },
         raw: true,
@@ -137,9 +137,9 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < list.length; i++) {
       res['00' + list[i].iElst] = list[i].label.split(' ').join('_')
-      const children = getList(list[i].id)
+      const children = await getList(list[i].id)
       for (let j = 0; j < children.length; j++) {
-        res['00' + children[i].iElst] = list[i].label
+        res['00' + children[j].iElst] = list[i].label.split(' ').join('_')
       }
     }
     return res
