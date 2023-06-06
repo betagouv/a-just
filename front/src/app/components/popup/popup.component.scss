@@ -61,6 +61,13 @@
     height: 40px;
   }
 
+  &.no-padding-content-x {
+   .popup .content {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
 
   &.extra-large-bottom .popup {
     align-items: flex-end;

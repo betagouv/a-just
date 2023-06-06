@@ -9,10 +9,6 @@
   aj-popup {
     width: 800px;
 
-    .header-popup {
-      margin-bottom: 32px;
-    }
-
     .circle {
       min-width: 70px;
       min-height: 70px;
@@ -22,7 +18,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 8px;
 
       svg {
         height: 24px;
