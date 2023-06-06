@@ -85,8 +85,8 @@ describe('Test server is ready', () => {
   })*/
 
   //routeUser(datas)
-  /*routeChangeUserData(datas)
-  routeCalcultator(datas)
+  //routeChangeUserData(datas)
+  /*routeCalcultator(datas)
   routeVentilateur(datas)*/
 
   // TROUVER UN MOYEN D'ATTENDRE QUE USERTOKEN ET ADMINTOKEN SOIENT SET AVANT DE LANCER LES TESTS SUIVANTS

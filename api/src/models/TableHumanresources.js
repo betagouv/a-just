@@ -350,6 +350,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.updateHR = async (hr, backupId) => {
+    console.log('[TableHumanressources][line 353] --- HR Situatiuon', hr.situations)
     const options = {
       first_name: hr.firstName || null,
       last_name: hr.lastName || null,
@@ -360,14 +361,12 @@ export default (sequelizeInstance, Model) => {
       backup_id: backupId,
       updated_at: new Date(),
     }
-    console.log('-------- HR:', hr)
 
     if (hr.id && hr.id > 0) {
       // update
       await Model.updateById(hr.id, options)
     } else {
       // create
-      console.log('-------- HR CREATION')
       const newHr = await Model.create(options)
       hr.id = newHr.dataValues.id
     }
@@ -376,7 +375,10 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
-    return await Model.getHr(hr.id)
+    const newHr = await Model.getHr(hr.id)
+    console.log('[TableHumanressources][line 379] --- New HR Situatiuon', newHr.situations)
+
+    return newHr
   }
 
   /**
