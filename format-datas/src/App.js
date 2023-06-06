@@ -11,7 +11,7 @@ import {
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
-  // I_ELST_LIST,
+  //I_ELST_LIST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from "./constants/SDSE-ref";
@@ -48,6 +48,7 @@ export default class App {
       .then((res) => {
         return res.data.data;
       });
+    console.log("IELST_LIST:", I_ELST_LIST);
 
     /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
     await this.formatAndGroupJuridiction(
@@ -67,8 +68,8 @@ export default class App {
       outputAllFolder,
       categoriesOfRules,
       I_ELST_LIST
-    );
-*/
+    );*/
+
     this.done();
   }
 
@@ -451,9 +452,9 @@ export default class App {
         };
       }
       if (
-        rule.filtres &&
+        rule.filtres /*&&
         list[rule["Code nomenclature"]].periode !==
-          "202304" /* && rule['Code nomenclature'] === '7.7.'*/
+          "202304"  && rule['Code nomenclature'] === '7.7.'*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
