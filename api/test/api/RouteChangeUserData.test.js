@@ -22,8 +22,6 @@ module.exports = function (datas) {
         accessIds: accessIds,
         ventilations: [], //{ id: 11, label: 'ESSAI' },
       })
-      const me = await onGetMyInfosApi({ userToken: datas.adminToken })
-      console.log('Me:', me.data)
       assert.strictEqual(response.status, 200)
     })
 
@@ -37,8 +35,6 @@ module.exports = function (datas) {
         indisponibilities: [],
       }
 
-      const me = await onGetMyInfosApi({ userToken: datas.adminToken })
-      console.log('Me:', me.data)
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
@@ -93,7 +89,7 @@ module.exports = function (datas) {
       const category = { id: 1, label: 'Magistrat', rank: 1 }
       const dateStart = new Date()
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         {
@@ -143,7 +139,7 @@ module.exports = function (datas) {
       const now = new Date()
       const dateStart = now.setDate(now.getDate() + 20)
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         current_hr.situations[0],
@@ -206,14 +202,14 @@ module.exports = function (datas) {
       assert.strictEqual(response.status, 200)
     })
 
-    it('Correct a situation - Change agent Fonction only', async () => {
+    it("Correct a situation - Change agent's Fonction only", async () => {
       const oldSituation = current_hr.situations
 
       const correctedSituation = [
         oldSituation[0],
         {
           ...oldSituation[1],
-          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: 'M-TIT' },
+          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: null, position: 'Titulaire', calculatriceIsActive: false },
         },
       ]
 
@@ -227,38 +223,56 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
       const newSituation = response.data.data.situations
-
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[1].fonction, newSituation[1].fonction)
       assert.deepEqual(correctedSituation[1].fonction, newSituation[1].fonction)
     })
 
-    it('Correct a situation - Change agent Category and Fonction', async () => {
+    it("Correct a situation - Change agent's Category and Fonction", async () => {
       const oldSituation = current_hr.situations
-
+      console.log('oldSituation:', oldSituation)
       const hr = {
         ...current_hr,
         situations: [
           {
             ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
-            fonction: { id: 43, rank: 1, code: 'B greffier', label: 'B greffier', category_detail: 'F-TIT' },
+            fonction: {
+              id: 43,
+              rank: 1,
+              code: 'B greffier',
+              label: 'B greffier',
+              category_detail: 'F-TIT',
+              position: 'Titulaire',
+              calculatriceIsActive: false,
+            },
           },
           oldSituation[1],
         ],
       }
+      console.log('hr.situations:', hr.situations)
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
       const newSituation = response.data.data.situations[0]
-
       current_hr = response.data.data
+      console.log('New Situations:', response.data.data.situations)
+      /*console.log('Status:', response.status)
+      console.log('oldSituation.category:', oldSituation[0].category)
+      console.log('newSituation.category:', newSituation.category)*/
+      /*console.log('oldSituation.fonction:', oldSituation[0].fonction)
+      console.log('newSituation.fonction:', newSituation.fonction)*/
+      /*console.log('hr.situations[0].category:', hr.situations[0].category)
+      console.log('newSituation.category:', newSituation.category)
+      console.log('hr.situations[0].fonction:', hr.situations[0].fonction)
+      console.log('newSituation.fonction:', newSituation.fonction)*/
+
       assert.strictEqual(response.status, 200)
-      assert.notDeepEqual(oldSituation.category, newSituation.category)
-      assert.notDeepEqual(oldSituation.fonction, newSituation.fonction)
+      assert.notDeepEqual(oldSituation[0].category, newSituation.category)
+      assert.notDeepEqual(oldSituation[0].fonction, newSituation.fonction)
       assert.deepEqual(hr.situations[0].category, newSituation.category)
       assert.deepEqual(hr.situations[0].fonction, newSituation.fonction)
     })
