@@ -49,6 +49,20 @@ export const I_ELST_LIST = {
   "00100144": "TJ_DUNKERQUE", // Dunkerque
   "00963010": "TJ_DUNKERQUE", // Hazebrouck
   "00100147": "TJ_VALENCIENNES", // Valenciennes
+  "00100153": "TJ_ARRAS", // Arras
+  "00100141": "TJ_AVESNES_SUR_HELPE", // Avesnes sur helpe
+  "00963025": "TJ_AVESNES_SUR_HELPE", // Avesnes sur helpe
+  "00100154": "TJ_BETHUNE", // Bethune
+  "00963016": "TJ_BETHUNE", // Lens
+  "00100155": "TJ_BOULOGNE_SUR_MER", // Boulogne Sur Mer
+  "00962977": "TJ_BOULOGNE_SUR_MER", // Calais
+  "00963034": "TJ_BOULOGNE_SUR_MER", // Mintreuil
+  "00100142": "TJ_CAMBRAI", // Cambrai
+  "00100143": "TJ_DOUAI", // Douai
+  "00100146": "TJ_LILLE", // Lille
+  "00963057": "TJ_LILLE", // Roubaix
+  "00963070": "TJ_LILLE", // Tourcoing
+  "00100156": "TJ_SAINT_OMER", // St Omer
 
   // CA RENNES
   "00100135": "TJ_LORIENT", // Lorient
@@ -109,12 +123,6 @@ export const I_ELST_LIST = {
   "00963021": "TJ_VERSAILLES", // Mantes La Jolie
   "00963048": "TJ_VERSAILLES", // Poissy
   "00963052": "TJ_VERSAILLES", // Rambouillet
-
-  // CA Pointoise
-  "00100212": "TJ_PONTOISE", // Pontoise
-  "00963006": "TJ_PONTOISE", // Gonesse
-  "00963033": "TJ_PONTOISE", // Montmorency
-  "00963059": "TJ_PONTOISE", // Sannois
 
   // CA Chartres
   "00100085": "TJ_CHARTRES", // Chartres
