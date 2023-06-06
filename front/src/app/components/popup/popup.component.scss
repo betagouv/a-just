@@ -1,11 +1,19 @@
 @import '../../styles/utils.scss';
 
+:host ::ng-deep .content {
+  color: fColor(headerColor);
+}
+
 :host {
   &.fit-content .popup>div {
     width: inherit;
     height: inherit;
     min-width: inherit;
     min-height: inherit;
+  }
+
+  &.small .popup > div {
+    width: 45%;
   }
 
   &.large .popup>div {
@@ -53,6 +61,13 @@
     height: 40px;
   }
 
+  &.no-padding-content-x {
+   .popup .content {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
 
   &.extra-large-bottom .popup {
     align-items: flex-end;
@@ -67,13 +82,43 @@
   }
 
   &.no-blur .popup {
-    -webkit-backdrop-filter: none;
+    -webkit-backdrop-dokter: none;
     backdrop-filter: none;
   }
 
   &.center-title {
     .title {
       text-align: center;
+    }
+  }
+
+  &.blackBackground .popup > div {
+    background-color: fColor(popupDarkBgPopup);
+
+    .title {
+      color: fColor(popupWhiteTitle);
+    }
+
+    .close {
+      color: fColor(darkModeTitle);
+      i {
+        color: fColor(darkModeTitle);
+      }
+    }
+
+
+    .actions {
+      button {
+        color: fColor(popupDarkBgButton);
+        border: solid 1px fColor(popupDarkBgButton);
+        background-color: transparent;
+
+        &.fill {
+          color: fColor(popupDarkBgFillTextButton);
+          background-color: fColor(popupDarkBgButton);
+          border: none;
+        }
+      }
     }
   }
 

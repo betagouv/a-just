@@ -88,6 +88,10 @@ export class HumanResourceService {
    * Liste des référentiels sélectionnée dans l'écran du ventilateur en cache
    */
   selectedReferentielIds: number[] = []
+  /**
+   * Last backup Id
+   */
+  lastBackupId: number | null = null
 
   /**
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page
@@ -665,8 +669,11 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
-        this.componentIdsCanBeView.next([]) // clean cache
-        this.tmpComponentIdsCanBeView = []
+        if(this.lastBackupId !== backupId) {
+          this.tmpComponentIdsCanBeView = []
+          this.componentIdsCanBeView.next([])
+          this.lastBackupId = backupId
+        }
         return data.data
       })
   }

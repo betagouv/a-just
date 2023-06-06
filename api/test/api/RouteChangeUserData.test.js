@@ -1,61 +1,24 @@
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
-import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
-import { OnRemoveHrApi, OnRemoveSituationApi, OnUpdateHrApi } from '../routes/hr'
+import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi, onGetMyInfosApi } from '../routes/user'
+import { OnRemoveHrApi, OnRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
 import { USER_ADMIN_EMAIl } from '../constants/admin'
 
-module.exports = function () {
-  let adminToken = null
-  let userToken = null
-  let userId = null
+module.exports = function (datas) {
   let hrId = null
   let hrSituationId = []
   let current_hr = null
 
   describe('Change User data test', () => {
-    it('Login - Login admin', async () => {
-      // Connexion de l'admin
-      const response = await onLoginAdminApi({
-        email: USER_ADMIN_EMAIl,
-        password: USER_TEST_PASSWORD,
-      })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data && response.data.token
-      assert.strictEqual(response.status, 201)
-    })
-
-    it('Sign up - Create test user', async () => {
-      const response = await onSignUpApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
-        firstName: USER_TEST_FIRSTNAME,
-        lastName: USER_TEST_LASTNAME,
-        fonction: USER_TEST_FONCTION,
-        tj: 'ESSAI',
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Login - Log user', async () => {
-      const response = await onLoginApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
-      })
-
-      userToken = response.status === 201 && response.data.token
-      userId = response.data.user.id
-
-      assert.isOk(userToken, 'response 201 and user token created')
-    })
-
     it('Give user accesses by Admin', async () => {
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
+
       const response = await onUpdateAccountApi({
-        userToken: adminToken,
-        userId: userId,
+        userToken: datas.adminToken,
+        userId: datas.adminId, // userId,
         accessIds: accessIds,
         ventilations: [], //{ id: 11, label: 'ESSAI' },
       })
@@ -72,8 +35,8 @@ module.exports = function () {
         indisponibilities: [],
       }
 
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -83,12 +46,14 @@ module.exports = function () {
     })
 
     it('Change new hr firstname', async () => {
+      console.log('current hr:', current_hr)
       const hr = {
         ...current_hr,
         firstName: 'firstname',
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -101,8 +66,8 @@ module.exports = function () {
         ...current_hr,
         lastName: 'lastname',
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: 11,
       })
@@ -124,7 +89,7 @@ module.exports = function () {
       const category = { id: 1, label: 'Magistrat', rank: 1 }
       const dateStart = new Date()
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         {
@@ -140,8 +105,8 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -174,7 +139,7 @@ module.exports = function () {
       const now = new Date()
       const dateStart = now.setDate(now.getDate() + 20)
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         current_hr.situations[0],
@@ -191,8 +156,8 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -228,8 +193,8 @@ module.exports = function () {
         indisponibilities: indisponibilities,
       }
 
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -237,14 +202,14 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
     })
 
-    it('Correct a situation - Change agent Fonction only', async () => {
+    it("Correct a situation - Change agent's Fonction only", async () => {
       const oldSituation = current_hr.situations
 
       const correctedSituation = [
         oldSituation[0],
         {
           ...oldSituation[1],
-          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: 'M-TIT' },
+          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: null, position: 'Titulaire', calculatriceIsActive: false },
         },
       ]
 
@@ -252,44 +217,62 @@ module.exports = function () {
         ...current_hr,
         situations: correctedSituation,
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
       const newSituation = response.data.data.situations
-
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[1].fonction, newSituation[1].fonction)
       assert.deepEqual(correctedSituation[1].fonction, newSituation[1].fonction)
     })
 
-    it('Correct a situation - Change agent Category and Fonction', async () => {
+    it("Correct a situation - Change agent's Category and Fonction", async () => {
       const oldSituation = current_hr.situations
-
+      console.log('oldSituation:', oldSituation)
       const hr = {
         ...current_hr,
         situations: [
           {
             ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
-            fonction: { id: 43, rank: 1, code: 'B greffier', label: 'B greffier', category_detail: 'F-TIT' },
+            fonction: {
+              id: 43,
+              rank: 1,
+              code: 'B greffier',
+              label: 'B greffier',
+              category_detail: 'F-TIT',
+              position: 'Titulaire',
+              calculatriceIsActive: false,
+            },
           },
           oldSituation[1],
         ],
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      console.log('hr.situations:', hr.situations)
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
       const newSituation = response.data.data.situations[0]
-
       current_hr = response.data.data
+      console.log('New Situations:', response.data.data.situations)
+      /*console.log('Status:', response.status)
+      console.log('oldSituation.category:', oldSituation[0].category)
+      console.log('newSituation.category:', newSituation.category)*/
+      /*console.log('oldSituation.fonction:', oldSituation[0].fonction)
+      console.log('newSituation.fonction:', newSituation.fonction)*/
+      /*console.log('hr.situations[0].category:', hr.situations[0].category)
+      console.log('newSituation.category:', newSituation.category)
+      console.log('hr.situations[0].fonction:', hr.situations[0].fonction)
+      console.log('newSituation.fonction:', newSituation.fonction)*/
+
       assert.strictEqual(response.status, 200)
-      assert.notDeepEqual(oldSituation.category, newSituation.category)
-      assert.notDeepEqual(oldSituation.fonction, newSituation.fonction)
+      assert.notDeepEqual(oldSituation[0].category, newSituation.category)
+      assert.notDeepEqual(oldSituation[0].fonction, newSituation.fonction)
       assert.deepEqual(hr.situations[0].category, newSituation.category)
       assert.deepEqual(hr.situations[0].fonction, newSituation.fonction)
     })
@@ -307,8 +290,8 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -329,8 +312,8 @@ module.exports = function () {
         dateEnd,
       }
 
-      const response = await OnUpdateHrApi({
-        userToken: adminToken,
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
@@ -345,7 +328,7 @@ module.exports = function () {
       let response = null
       for (let id of hrSituationId) {
         response = await OnRemoveSituationApi({
-          userToken: adminToken,
+          userToken: datas.adminToken,
           id: id,
         })
       }
@@ -355,18 +338,8 @@ module.exports = function () {
     it('Remove created hr', async () => {
       // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
       const response = await OnRemoveHrApi({
-        userToken: adminToken,
+        userToken: datas.adminToken,
         hrId: hrId,
-      })
-
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await onRemoveApi({
-        userId: userId,
-        userToken: adminToken,
       })
 
       assert.strictEqual(response.status, 200)
