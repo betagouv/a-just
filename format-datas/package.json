@@ -18,7 +18,7 @@
     "config": "^3.3.2",
     "csv-parse": "^4.16.3",
     "dotenv": "^8.2.0",
-    "fast-xml-parser": "^4.0.7",
+    "fast-xml-parser": "^4.2.4",
     "lodash": "^4.17.20",
     "n-readlines": "^1.0.1",
     "path": "^0.12.7",
