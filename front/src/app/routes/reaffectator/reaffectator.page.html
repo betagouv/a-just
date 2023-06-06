@@ -168,11 +168,10 @@
   <aj-popup *ngIf="isLeaving" class="small blackBackground" [closeIcon]="true" (onClose)="isLeaving = false"
     title="Quitter la simulation" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
     [removeShadow]="'noShadow'">
-    <div class="content">
-      <div class="item">
-        <p>Vous souhaitez sortir du réaffectateur alors que vous avez effectué une simulation d'affectation. Ces
-          données modifiées seront perdues, pensez à effectuer un export afin d'en garder une trace.</p>
-      </div>
+    <div>
+      <p class="content">Vous souhaitez sortir du réaffectateur alors que vous avez effectué une simulation
+        d'affectation. Ces
+        données modifiées seront perdues, pensez à effectuer un export afin d'en garder une trace.</p>
     </div>
   </aj-popup>
 </aj-wrapper>

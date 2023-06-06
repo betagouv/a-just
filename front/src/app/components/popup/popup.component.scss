@@ -1,5 +1,9 @@
 @import '../../styles/utils.scss';
 
+:host ::ng-deep .content {
+  color: fColor(headerColor);
+}
+
 :host {
   &.fit-content .popup>div {
     width: inherit;
@@ -9,7 +13,7 @@
   }
 
   &.small .popup > div {
-    width: 50%;
+    width: 45%;
   }
 
   &.large .popup>div {
@@ -82,12 +86,10 @@
   }
 
   &.blackBackground .popup > div {
-    background-color: #303030;
+    background-color: fColor(popupDarkBgPopup);
+
     .title {
-      color: #fff;
-    }
-    .content{
-      color: white;
+      color: fColor(popupWhiteTitle);
     }
 
     .close {
@@ -97,19 +99,16 @@
       }
     }
 
-    .projected-content {
-      border: 1px solid white;
-    }
 
     .actions {
       button {
-        color: #8585f6;
-        border: solid 1px #8585f6;
+        color: fColor(popupDarkBgButton);
+        border: solid 1px fColor(popupDarkBgButton);
         background-color: transparent;
 
         &.fill {
-          color: #000091;
-          background-color: #8585f6;
+          color: fColor(popupDarkBgFillTextButton);
+          background-color: fColor(popupDarkBgButton);
           border: none;
         }
       }
