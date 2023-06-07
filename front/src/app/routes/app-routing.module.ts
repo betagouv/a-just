@@ -173,7 +173,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
-    ReaffectatorModule,
+    //ReaffectatorModule,
   ],
   providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],
