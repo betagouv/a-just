@@ -4,6 +4,7 @@ import {
     Output,
     EventEmitter,
     HostBinding,
+    TemplateRef,
 } from '@angular/core'
 
 /**
@@ -63,6 +64,10 @@ export class PopupComponent {
      * Titre de la fenetre
      */
     @Input() title: string = ''
+    /**
+     * Titre de la fenetre
+     */
+    @Input() titleTemplate: TemplateRef<any> | undefined
     /**
      * Liste des actions possibles données par le parent
      */
