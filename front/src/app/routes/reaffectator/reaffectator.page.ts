@@ -15,7 +15,6 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { getCategoryTitle } from 'src/app/utils/category'
-import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { PopupComponent } from 'src/app/components/popup/popup.component'
 import { Router } from '@angular/router'
 
@@ -179,7 +178,7 @@ interface ContentieuReferentielCalculateInterface
 /**
  * Page de réaffectation
  */
-export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, IDeactivateComponent {
+export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Dom du wrapper
    * @param wrapper
@@ -278,6 +277,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
   nextState: string | null = null
 
+  popupAction = [
+    { id: 'leave', content: 'Quitter sans exporter'},
+    { id: 'export', content: 'Exporter en PDF et quitter', fill: true},
+  ];
+
   /**
    * Constructeur
    * @param humanResourceService
@@ -295,11 +299,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     super()
     this.reaffectatorService = this.rs
   }
-
-  popupAction = [
-    { id: 'leave', content: 'Quitter sans exporter'},
-    { id: 'export', content: 'Exporter en PDF et quitter', fill: true},
-  ];
 
   /**
    * A l'initialisation chercher les variables globals puis charger
@@ -335,11 +334,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
    * Destruction des observables
    */
   ngOnDestroy() {
-    console.log('Reaffectator destroy')
     this.watcherDestroy()
   }
 
   canDeactivate(nextState: string) {
+    // TODO ICI
     const modified = this.listFormated.filter(elem => { 
       return elem.hrFiltered.some(hr => hr.isModify)
      })
