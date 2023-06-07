@@ -86,7 +86,7 @@ export default class App extends AppBase {
             "'unsafe-inline' https://www.google-analytics.com/analytics.js",
             'stats.data.gouv.fr',
           ],
-          'object-src': ['blob:'],
+          'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr'],
         },
