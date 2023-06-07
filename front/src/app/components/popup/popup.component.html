@@ -1,7 +1,7 @@
 <div *ngIf="visible" class="animate__animated animate__fadeIn popup">
     <div>
         <div class="title">
-            {{ title }}
+            <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
             <div class="flex-1"></div>
             <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">
                 Fermer <i class="material-icons pointer">close</i>
@@ -33,3 +33,7 @@
         </div>
     </div>
 </div>
+
+<ng-template #defaultTitleTemplate>
+    {{ title }}
+</ng-template>
