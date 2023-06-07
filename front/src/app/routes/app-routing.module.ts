@@ -102,11 +102,6 @@ const routes: Routes = [
   },
   {
     path: 'reaffectateur',
-    // LoadChildren est désactivé sur ce composant pour permettre au canDeactivate de fonctionner 
-       /*loadChildren: () =>
-        import('./reaffectator/reaffectator.module').then(
-         (mod) => mod.ReaffectatorModule
-       ),*/
     component: ReaffectatorPage,
     canActivate: [AuthGuard],
     canDeactivate: [CanDeactivateGuardService],
@@ -173,7 +168,6 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
-    ReaffectatorModule,
   ],
   providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],

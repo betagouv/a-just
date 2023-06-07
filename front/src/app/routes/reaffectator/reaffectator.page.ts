@@ -16,7 +16,6 @@ import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.
 import { UserService } from 'src/app/services/user/user.service'
 import { getCategoryTitle } from 'src/app/utils/category'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
-import { PopupComponent } from 'src/app/components/popup/popup.component'
 import { Router } from '@angular/router'
 
 /**
