@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
+import { CanDeactivateGuardService } from './canDeactivate-guard-service'
+import { ReaffectatorModule } from './reaffectator/reaffectator.module'
+import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 
 const routes: Routes = [
   {
@@ -99,11 +102,9 @@ const routes: Routes = [
   },
   {
     path: 'reaffectateur',
-   loadChildren: () =>
-        import('./reaffectator/reaffectator.module').then(
-         (mod) => mod.ReaffectatorModule
-       ),
+    component: ReaffectatorPage,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuardService],
   },
   {
     path: 'panorama',
@@ -168,7 +169,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
 
