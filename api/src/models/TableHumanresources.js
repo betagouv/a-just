@@ -177,17 +177,22 @@ export default (sequelizeInstance, Model) => {
           date_start: today,
         }
 
+        let statut = list[i].statut
+        switch (statut) {
+        case 'Fonctionnaire':
+          statut = 'Greffe'
+        }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
-            label: list[i].statut,
+            label: statut,
           },
           logging: false,
         })
 
-        let code = list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie']
+        let code = list[i][statut === 'Magistrat' ? 'fonction' : 'categorie']
 
         if (findCategory) {
-          if (filterNoEtpt.includes(code)) {
+          if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             const findEAM = await Model.models.HRCategories.findOne({
               where: {
                 label: 'Autour du magistrat',
@@ -222,24 +227,9 @@ export default (sequelizeInstance, Model) => {
           logging: false,
         })
 
-        if (privilegedInGreff.includes(code)) {
-          const greffCategory = await Model.models.HRCategories.findOne({
-            where: {
-              label: 'Greffe',
-            },
-          })
-
-          findFonction = await Model.models.HRFonctions.findOne({
-            where: {
-              code,
-              category_id: greffCategory.dataValues.id,
-            },
-          })
-        }
-
         if (findFonction) {
           situation.fonction_id = findFonction.id
-        } else if (list[i].statut === 'Magistrat' || notImported.includes(code)) {
+        } else if (statut === 'Magistrat' || notImported.includes(code)) {
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue

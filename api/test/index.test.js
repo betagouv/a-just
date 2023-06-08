@@ -69,7 +69,7 @@ describe('Test server is ready', () => {
     assert.strictEqual(response.status, 201)
   })
 
-  /*it('Give all accesses to Admin', async () => {
+  it('Give all accesses to Admin', async () => {
     const accessIds = accessList.map((elem) => {
       return elem.id
     })
@@ -82,31 +82,15 @@ describe('Test server is ready', () => {
     })
 
     assert.strictEqual(response.status, 200)
-  })*/
+  })
 
-  //routeUser(datas)
-  //routeChangeUserData(datas)
+  routeUser(datas)
+  routeChangeUserData(datas)
   /*routeCalcultator(datas)
   routeVentilateur(datas)*/
-
-  // TROUVER UN MOYEN D'ATTENDRE QUE USERTOKEN ET ADMINTOKEN SOIENT SET AVANT DE LANCER LES TESTS SUIVANTS
 
   /*routeImport()
   routeHR()
   routeActivities()
   RouteContentieuxOptions()*/
-
-  /**
-   * Vérification qu'un admin puisse bien surrpimer le compte d'un utilisateur
-   */
-  /*it('Remove user Account by admin', async () => {
-    // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
-    const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
-      headers: {
-        authorization: datas.adminToken,
-      },
-    })
-
-    assert.strictEqual(response.status, 200)
-  })*/
 })
