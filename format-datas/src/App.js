@@ -49,7 +49,7 @@ export default class App {
         return res.data.data;
       });*/
 
-    /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
+    await this.getGroupByJuridiction(tmpFolder, inputFolder);
     await this.formatAndGroupJuridiction(
       tmpFolder,
       outputFolder,
@@ -57,17 +57,17 @@ export default class App {
       categoriesOfRules,
       referentiel,
       I_ELST_LIST
-    );*/
+    );
 
     // WIP datas pénal
-    await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
+    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
     await this.formatAndGroupJuridictionPenal(
       tmpFolder,
       outputFolder,
       outputAllFolder,
       categoriesOfRules,
       I_ELST_LIST
-    );
+    );*/
 
     this.done();
   }
@@ -211,7 +211,6 @@ export default class App {
           }
 
           dataLines[dataLines.length - 1] = getTypeOfJuridiction; // add type of juridiction
-
           appendFileSync(
             this.getCsvOutputPath(tmpFolder, codeJuridiction),
             `${dataLines.join(",")},\n`
@@ -229,7 +228,6 @@ export default class App {
           console.log(nbLine);
         }
       }
-
       console.log(`add ${totalLine} lines add`);
     }
   }
@@ -753,7 +751,10 @@ export default class App {
       );
     }
 
-    //writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+    writeFileSync(
+      `${outputAllFolder}/AllJuridictionsPenal.csv`,
+      "juridiction,code_import,periode,entrees,sorties,stock,\n"
+    );
 
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       appendFileSync(
