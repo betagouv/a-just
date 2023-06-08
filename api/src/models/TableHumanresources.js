@@ -297,7 +297,7 @@ export default (sequelizeInstance, Model) => {
 
     // remove cache
     cacheJuridictionPeoples = {}
-    await Model.onPreload()
+    Model.onPreload()
   }
 
   /**
