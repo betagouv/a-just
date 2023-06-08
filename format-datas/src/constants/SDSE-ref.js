@@ -71,11 +71,11 @@ export const I_ELST_LIST = {
   "00100098": "TJ_RENNES", // Rennes
   "00963002": "TJ_RENNES", // Fougeres
   "00963053": "TJ_RENNES", // Redon
-  "00100076": "TJ_ST_BRIEUC", // Saint Brieuc
-  "00963008": "TJ_ST_BRIEUC", // Guingamp
-  "00100099": "TJ_ST_MALO", // St Malo
-  "00962992": "TJ_ST_MALO", // Dinan
-  "00100115": "TJ_ST_NAZAIRE", // St Nazaire
+  "00100076": "TJ_SAINT_BRIEUC", // Saint Brieuc
+  "00963008": "TJ_SAINT_BRIEUC", // Guingamp
+  "00100099": "TJ_SAINT_MALO", // St Malo
+  "00962992": "TJ_SAINT_MALO", // Dinan
+  "00100115": "TJ_SAINT_NAZAIRE", // St Nazaire
   "00100136": "TJ_VANNES", // Vannes
 
   // CA BORDEAUX
