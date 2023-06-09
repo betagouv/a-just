@@ -340,7 +340,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.updateHR = async (hr, backupId) => {
-    console.log('[TableHumanressources][line 353] --- HR Situatiuon', hr.situations)
     const options = {
       first_name: hr.firstName || null,
       last_name: hr.lastName || null,
@@ -366,7 +365,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     const newHr = await Model.getHr(hr.id)
-    console.log('[TableHumanressources][line 379] --- New HR Situatiuon', newHr.situations)
 
     return newHr
   }
