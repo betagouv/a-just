@@ -3,7 +3,7 @@ import { accessList } from '../../src/constants/access'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
 import { onGetUserDataApi, onLoginAdminApi, onLoginApi, onRemoveAccountApi, onSignUpApi, onUpdateAccountApi } from '../routes/user'
-import { OnGetBackupListHrApi } from '../routes/hr'
+import { onGetBackupListHrApi } from '../routes/hr'
 import { OnGetLastMonth } from '../routes/activities'
 import { OnFilterList } from '../routes/calculator'
 
@@ -14,13 +14,15 @@ module.exports = function (datas) {
 
   describe('Check calcul ', () => {
     it('Give user accesses and add user to a tj by Admin', async () => {
-      let response = await OnGetBackupListHrApi({
+      let response = await onGetBackupListHrApi({
         userToken: datas.adminToken,
       })
       backups = response.data.data
+      console.log('backups:', backups)
       const accessIds = accessList.map((elem) => {
         return elem.id
       })
+
       response = await onUpdateAccountApi({
         userToken: datas.adminToken,
         userId: datas.userId,
