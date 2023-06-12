@@ -5,6 +5,7 @@
   flex-direction: column;
   height: 100%;
 
+
   .content-list {
     flex: 1;
     overflow: auto;
@@ -52,6 +53,38 @@
           border-color: fColor(darkModeTitle);
         }
       }
+    }
+  }
+}
+
+.rightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: fColor(activityGuideBg);
+  border-left: 4px solid fColor(activityGuideBorder);
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .left {
+    margin-right: 5%;
+    
+    .description {
+      text-align: left;
+      color: fColor(activityGuideSubTitle);
+    }
+  }
+
+  .right{
+    align-self: flex-end;
+    .docButton{
+      color: fColor(activityGuideButtonText);
+      background-color: fColor(activityGuideButtonBg);
+      border-radius: 0;
+      font-size: 14px;
     }
   }
 }

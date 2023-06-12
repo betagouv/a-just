@@ -1,5 +1,6 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
+import { DATA_GITBOOK } from 'src/app/constants/documentation'
 import {
   ActivityInterface,
   NodeActivityUpdatedInterface,
@@ -74,6 +75,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
   }
+
+  /**
+   * Lien du guide de la donnée
+   */
+  gitBook = DATA_GITBOOK 
 
   /**
    * Constructeur
