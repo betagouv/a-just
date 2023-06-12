@@ -16,7 +16,7 @@ export const TAG_JURIDICTION_ID_COLUMN_NAME = "I_ELST";
 export const TAG_JURIDICTION_VALUE_COLUMN_NAME = "NOM_COMPTEUR";
 
 export const I_ELST_LIST = {
-  "00100167": "TJ_LYON", // Lyon
+  /*"00100167": "TJ_LYON", // Lyon
   "00963077": "TJ_LYON", // Villeurbanne
   "00100209": "TJ_NANTERRE", // Nanterre
   "00962960": "TJ_NANTERRE", // Antony
@@ -132,5 +132,28 @@ export const I_ELST_LIST = {
   "00100133": "TJ_BAR_LE_DUC", //  Bar-Le-Duc
   "00100134": "TJ_VERDUN", // Verdun
 
-  "00100096": "TJ_BEZIERS", // Beziers
+  "00100096": "TJ_BEZIERS", // Beziers*/
+
+  "00100122": "TJ_ANGERS", // Anger
+  "00962982": "TJ_ANGERS", //Cholet
+
+  "00100173": "TJ_LE_MANS", // Le Mans
+  "00962998": "TJ_LE_MANS", // La Fleche
+
+  "00100130": "TJ_LAVAL", // Laval
+
+  "00948312": "TJ_SAUMUR", // Saumur
+
+  "00100119": "TJ_AGEN", // Agen
+  "00963022": "TJ_AGEN", // Marmande
+  "00963076": "TJ_AGEN", // Villeneuve Sur Lot
+
+  "00100093": "TJ_AUCH", // Auch
+  "00962987": "TJ_AUCH", // Condom
+
+  "00100118": "TJ_CAHORS", // Cahors
+  "00962997": "TJ_CAHORS", // Figeac
+
+  "00100184": "TJ_MEAUX", // Meaux
+  "00963015": "TJ_MEAUX", // Lagny Sur Marne
 };
