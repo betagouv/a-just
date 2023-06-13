@@ -41,8 +41,6 @@ export default (sequelizeInstance, Model) => {
     const backupId = human.backupId
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
 
-    console.log('UPDATE CACHE BY USER', index)
-
     if (cacheJuridictionPeoples[backupId] && index !== -1) {
       cacheJuridictionPeoples[backupId][index] = human
     } else {
