@@ -101,9 +101,9 @@ interface listFormatedInterface {
    * Couleur de fond de la categories
    */
   bgColor: string
-    /**
-   * Couleur de fond de la categories
-   */
+  /**
+ * Couleur de fond de la categories
+ */
   hoverColor: string
   /**
    * Nom de la catégorie (pluriel ou non)
@@ -358,10 +358,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal: any = []
       let etpt = 0
-      let subTotalEtp: {[key:string]:number} = {
-        titulaire:0,
-        placé:0,
-        contractuel:0
+      let subTotalEtp: { [key: string]: number } = {
+        titulaire: 0,
+        placé: 0,
+        contractuel: 0
       }
 
       if (formatedList) {
@@ -388,14 +388,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
 
       const posteList = c.poste.map((f: HRCategorypositionInterface) => {
-            return {
-              ...f,
-              name: f.name,
-              etpt: fixDecimal(subTotalEtp[f.name]),
-              nbPersonal: personal.filter(
-                (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
-              ).length,
-            }
+        return {
+          ...f,
+          name: f.name,
+          etpt: fixDecimal(subTotalEtp[f.name]),
+          nbPersonal: personal.filter(
+            (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
+          ).length,
+        }
       })
 
       return {
@@ -529,17 +529,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.filterParams.filterValues = filterValues
-    } else {
-      this.categoriesFilterList.map((cat) => {
-        cat.poste.map((position) => {
-          if (cat.id === category.id) {
-            position.selected = true
-            this.switchSubFilter(cat, position)
-          }
-        })
-      })
-      
     }
+    
+    this.categoriesFilterList.map((cat) => {
+      cat.poste.map((position) => {
+        if (cat.id === category.id) {
+          position.selected = category.selected
+          this.switchSubFilter(cat, position)
+        }
+      })
+    })
 
     this.onFilterList()
   }
@@ -852,7 +851,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const focusFct = fonctions.filter(
           (f) =>
             f.position ===
-              position.charAt(0).toUpperCase() + position.slice(1) &&
+            position.charAt(0).toUpperCase() + position.slice(1) &&
             f.categoryId === category.id
         )
         let myArray = null
@@ -893,6 +892,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       }
     })
+
+    if (category.poste && category.poste.length) {
+      category.selected = category.poste.some(p => p.selected)
+    }
+
     this.onFilterList()
     this.orderListWithFiltersParams()
   }
@@ -909,7 +913,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
-  switchBgColor(category:any,color:string){
+  switchBgColor(category: any, color: string) {
     category.style['background-color'] = color
   }
 }
