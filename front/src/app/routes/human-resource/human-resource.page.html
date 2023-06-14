@@ -67,8 +67,8 @@
     <div *ngIf="historiesOfThePast.length" class="panel-hsitory-group">
       <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
-        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} du {{
-        categoryName }}
+        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} {{
+        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }}
       </p>
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
         [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
