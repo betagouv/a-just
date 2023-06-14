@@ -237,21 +237,21 @@ module.exports = {
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL A JUSTICE DE PROXIMITE',
-        code: 'CONT AJP',
+        code: 'CONT A JP',
         rank: 19,
         category_id: findGreff.dataValues.id,
       })
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL B JUSTICE DE PROXIMITE',
-        code: 'CONT BJP',
+        code: 'CONT B JP',
         rank: 20,
         category_id: findGreff.dataValues.id,
       })
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL C JUSTICE DE PROXIMITE',
-        code: 'CONT CJP',
+        code: 'CONT C JP',
         rank: 21,
         category_id: findGreff.dataValues.id,
       })
@@ -292,21 +292,21 @@ module.exports = {
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL A JUSTICE DE PROXIMITE',
-        code: 'CONT AJP',
+        code: 'CONT A JP',
         rank: 5,
         category_id: findContractuel.dataValues.id,
       })
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL B JUSTICE DE PROXIMITE',
-        code: 'CONT BJP',
+        code: 'CONT B JP',
         rank: 6,
         category_id: findContractuel.dataValues.id,
       })
 
       await models.HRFonctions.create({
         label: 'CONTRACTUEL C JUSTICE DE PROXIMITE',
-        code: 'CONT CJP',
+        code: 'CONT C JP',
         rank: 7,
         category_id: findContractuel.dataValues.id,
       })

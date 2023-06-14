@@ -153,7 +153,7 @@ export default (sequelizeInstance, Model) => {
     const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
     const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
     const filterNoEtpt = ['AS', 'JA']
-    const privilegedInGreff = ['CONT A JP', 'CONT B JP', 'CONT C JP']
+    const privilegedInGreff = ['CONT A JP', 'CONT A VIF JP', 'CONT B JP', 'CONT B VIF JP', 'CONT C JP', 'CONT C VIF JP']
 
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
@@ -191,7 +191,9 @@ export default (sequelizeInstance, Model) => {
 
         let code = list[i][statut === 'Magistrat' ? 'fonction' : 'categorie']
 
+        console.log('findCategory', findCategory)
         if (findCategory) {
+          console.log('oui ?', filterNoEtpt.includes(list[i].fonction), privilegedInGreff.includes(list[i].grade))
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             const findEAM = await Model.models.HRCategories.findOne({
               where: {
@@ -204,13 +206,7 @@ export default (sequelizeInstance, Model) => {
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
               case 'CONT A VIF JP':
-                code = 'CONT AJP'
-              case 'CONT A JP':
-                code = 'CONT AJP'
-              case 'CONT B JP':
-                code = 'CONT BJP'
-              case 'CONT C JP':
-                code = 'CONT CJP'
+                code = 'CONT A JP'
             }
           } else situation.category_id = findCategory.id
         }
