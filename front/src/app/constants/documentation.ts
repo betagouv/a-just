@@ -18,3 +18,7 @@ export const DOCUMENTATION_UPDATE_PERSON = 'https://docs.a-just.beta.gouv.fr/doc
  * Lien pour la ventilation
  */
 export const DOCUMENTATION_VENTILATEUR_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
+/**
+ * Lien pour le guide de la donnée
+ */
+export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"

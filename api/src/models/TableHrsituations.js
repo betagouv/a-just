@@ -88,7 +88,7 @@ export default (sequelizeInstance, Model) => {
         },
       })
     }
-    console.log('[TableHrsituations][line 91] list:', list)
+
     for (let i = 0; i < list.length; i++) {
       const situation = list[i]
 
@@ -98,7 +98,6 @@ export default (sequelizeInstance, Model) => {
         fonction_id: situation.fonction ? situation.fonction.id : 0,
         date_start: situation.dateStart,
       }
-      console.log('[TableHrsituations][line 101] options[' + i + ']: ', options)
 
       let findToBdd = null
       if (list[i].id && list[i].id > 0) {
@@ -110,7 +109,7 @@ export default (sequelizeInstance, Model) => {
           },
         })
       }
-      console.log('[TableHrsituations][line 113] findToBdd:', findToBdd)
+
       if (findToBdd) {
         await findToBdd.update(options)
       } else {

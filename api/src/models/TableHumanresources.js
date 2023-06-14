@@ -179,8 +179,8 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-        case 'Fonctionnaire':
-          statut = 'Greffe'
+          case 'Fonctionnaire':
+            statut = 'Greffe'
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -200,15 +200,27 @@ export default (sequelizeInstance, Model) => {
               logging: false,
             })
             situation.category_id = findEAM.id
+
+            // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
+            switch (list[i].grade) {
+              case 'CONT A VIF JP':
+                code = 'CONT AJP'
+              case 'CONT A JP':
+                code = 'CONT AJP'
+              case 'CONT B JP':
+                code = 'CONT BJP'
+              case 'CONT C JP':
+                code = 'CONT CJP'
+            }
           } else situation.category_id = findCategory.id
         }
 
         switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
         }
 
         if (code.startsWith('AS')) {
@@ -226,6 +238,8 @@ export default (sequelizeInstance, Model) => {
           },
           logging: false,
         })
+
+        console.log('findFonction', code, findFonction)
 
         if (findFonction) {
           situation.fonction_id = findFonction.id
@@ -340,7 +354,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.updateHR = async (hr, backupId) => {
-    console.log('[TableHumanressources][line 353] --- HR Situatiuon', hr.situations)
     const options = {
       first_name: hr.firstName || null,
       last_name: hr.lastName || null,
@@ -366,7 +379,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     const newHr = await Model.getHr(hr.id)
-    console.log('[TableHumanressources][line 379] --- New HR Situatiuon', newHr.situations)
 
     return newHr
   }

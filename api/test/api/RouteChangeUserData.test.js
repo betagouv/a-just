@@ -1,9 +1,7 @@
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
-import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
-import { onLoginAdminApi, onLoginApi, onRemoveApi, onSignUpApi, onUpdateAccountApi, onGetMyInfosApi } from '../routes/user'
-import { OnRemoveHrApi, OnRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
-import { USER_ADMIN_EMAIl } from '../constants/admin'
+import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
+import { onUpdateAccountApi } from '../routes/user'
 
 module.exports = function (datas) {
   let hrId = null
@@ -46,7 +44,6 @@ module.exports = function (datas) {
     })
 
     it('Change new hr firstname', async () => {
-      console.log('current hr:', current_hr)
       const hr = {
         ...current_hr,
         firstName: 'firstname',
@@ -231,7 +228,6 @@ module.exports = function (datas) {
 
     it("Correct a situation - Change agent's Category and Fonction", async () => {
       const oldSituation = current_hr.situations
-      console.log('oldSituation:', oldSituation)
       const hr = {
         ...current_hr,
         situations: [
@@ -239,11 +235,11 @@ module.exports = function (datas) {
             ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
             fonction: {
-              id: 43,
-              rank: 1,
-              code: 'B greffier',
-              label: 'B greffier',
-              category_detail: 'F-TIT',
+              id: 41,
+              rank: 9,
+              code: 'B greffier placé',
+              label: 'B greffier placé',
+              category_detail: null,
               position: 'Titulaire',
               calculatriceIsActive: false,
             },
@@ -251,7 +247,6 @@ module.exports = function (datas) {
           oldSituation[1],
         ],
       }
-      console.log('hr.situations:', hr.situations)
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
@@ -259,16 +254,6 @@ module.exports = function (datas) {
       })
       const newSituation = response.data.data.situations[0]
       current_hr = response.data.data
-      console.log('New Situations:', response.data.data.situations)
-      /*console.log('Status:', response.status)
-      console.log('oldSituation.category:', oldSituation[0].category)
-      console.log('newSituation.category:', newSituation.category)*/
-      /*console.log('oldSituation.fonction:', oldSituation[0].fonction)
-      console.log('newSituation.fonction:', newSituation.fonction)*/
-      /*console.log('hr.situations[0].category:', hr.situations[0].category)
-      console.log('newSituation.category:', newSituation.category)
-      console.log('hr.situations[0].fonction:', hr.situations[0].fonction)
-      console.log('newSituation.fonction:', newSituation.fonction)*/
 
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[0].category, newSituation.category)
@@ -327,7 +312,7 @@ module.exports = function (datas) {
 
       let response = null
       for (let id of hrSituationId) {
-        response = await OnRemoveSituationApi({
+        response = await onRemoveSituationApi({
           userToken: datas.adminToken,
           id: id,
         })
@@ -337,7 +322,7 @@ module.exports = function (datas) {
 
     it('Remove created hr', async () => {
       // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
-      const response = await OnRemoveHrApi({
+      const response = await onRemoveHrApi({
         userToken: datas.adminToken,
         hrId: hrId,
       })
