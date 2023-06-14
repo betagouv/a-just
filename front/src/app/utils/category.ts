@@ -4,15 +4,24 @@
  * @returns string
  */
 export const getCategoryTitle = (name: string): string => {
-  console.log(name)
   switch(name){
-  case 'Magistrat':
-    return 'Siège'
   case 'Greffe':
-    return 'Greffe'
-  case 'Autour du magistrat':
-    return 'EAM'
+    return 'Agent'
   }
-  return ''
 
+  return name;
+}
+
+/**
+ * Récupère le titre d'une categorie maj et on met en majuscule
+ * @param name string 
+ * @returns string
+ */
+export const getCategoryTitlePlurial = (name: string): string => {
+  switch(name){
+  case 'Autour du magistrat':
+    return 'Autour du magistrat'
+  }
+
+  return name + 's';
 }
