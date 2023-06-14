@@ -207,6 +207,10 @@ export default (sequelizeInstance, Model) => {
             switch (list[i].grade) {
               case 'CONT A VIF JP':
                 code = 'CONT A JP'
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
             }
           } else situation.category_id = findCategory.id
         }
