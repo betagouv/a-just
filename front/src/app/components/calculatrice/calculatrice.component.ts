@@ -52,7 +52,7 @@ export class CalculatriceComponent implements OnInit {
    */
   validateNumber(e: any) {
     const charCode = e.which ? e.which : e.keyCode
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    if (e.code !== "KeyM" && charCode > 31 && (charCode < 48 || charCode > 57)) {
       if (charCode=== 46) return true
       return false
     }
