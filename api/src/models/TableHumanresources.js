@@ -154,6 +154,12 @@ export default (sequelizeInstance, Model) => {
     const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
     const filterNoEtpt = ['AS', 'JA']
     const privilegedInGreff = ['CONT A JP', 'CONT A VIF JP', 'CONT B JP', 'CONT B VIF JP', 'CONT C JP', 'CONT C VIF JP']
+    const findEAM = await Model.models.HRCategories.findOne({
+      where: {
+        label: 'Autour du magistrat',
+      },
+      logging: false,
+    })
 
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
@@ -181,6 +187,7 @@ export default (sequelizeInstance, Model) => {
         switch (statut) {
           case 'Fonctionnaire':
             statut = 'Greffe'
+            break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -195,22 +202,22 @@ export default (sequelizeInstance, Model) => {
         if (findCategory) {
           console.log('oui ?', filterNoEtpt.includes(list[i].fonction), privilegedInGreff.includes(list[i].grade))
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
-            const findEAM = await Model.models.HRCategories.findOne({
-              where: {
-                label: 'Autour du magistrat',
-              },
-              logging: false,
-            })
             situation.category_id = findEAM.id
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
               case 'CONT A VIF JP':
+              case 'CONT A JP':
                 code = 'CONT A JP'
+                break
               case 'CONT B VIF JP':
+              case 'CONT B JP':
                 code = 'CONT B JP'
+                break
               case 'CONT C VIF JP':
+              case 'CONT C JP':
                 code = 'CONT C JP'
+                break
             }
           } else situation.category_id = findCategory.id
         }
@@ -221,6 +228,7 @@ export default (sequelizeInstance, Model) => {
             break
           case 'ATT A':
             code = 'CHCAB'
+            break
         }
 
         if (code.startsWith('AS')) {
