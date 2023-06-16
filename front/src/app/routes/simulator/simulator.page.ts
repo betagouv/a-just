@@ -4,7 +4,7 @@ import {
   findRealValue,
   monthDiffList,
 } from 'src/app/utils/dates'
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -1296,6 +1296,9 @@ export class SimulatorPage extends MainClass implements OnInit {
             (c: HRCategoryInterface) =>
               c.label.toUpperCase() === this.categorySelected?.toUpperCase()
           ) || null
+
+        console.log(findCategory, this.humanResourceService.categories
+          .getValue())
       this.simulatorService.selectedCategory.next(findCategory)
       this.loadFunctions()
     }

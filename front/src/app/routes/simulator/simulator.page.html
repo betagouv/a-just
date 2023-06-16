@@ -22,9 +22,9 @@
         <p>Siège</p>
       </div>
       <div *ngIf="canViewGreffier" class="fonctionnaires {{disabled}}"
-        [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRE', alone: !canViewMagistrat}" class="fonctionnaires"
-        (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRE')">
-        <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRE'" />
+        [ngClass]="{'selected': categorySelected === 'GREFFE', alone: !canViewMagistrat}" class="fonctionnaires"
+        (click)="$event.stopPropagation(); changeCategorySelected('GREFFE')">
+        <input type="radio" [checked]="categorySelected === 'GREFFE'" />
         <p>Greffe</p>
       </div>
     </div>
