@@ -88,7 +88,7 @@ export default class App extends AppBase {
           ],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr'],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
         },
       }),
     ])

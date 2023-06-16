@@ -14,7 +14,7 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { getCategoryTitle } from 'src/app/utils/category'
+import { getCategoryTitle, getCategoryTitlePlurial } from 'src/app/utils/category'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { Router } from '@angular/router'
 
@@ -289,15 +289,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     private workforceService: WorkforceService,
     private rs: ReaffectatorService,
     private userService: UserService,
-    private router : Router
+    private router: Router
   ) {
     super()
     this.reaffectatorService = this.rs
   }
 
   popupAction = [
-    { id: 'leave', content: 'Quitter sans exporter'},
-    { id: 'export', content: 'Exporter en PDF et quitter', fill: true},
+    { id: 'leave', content: 'Quitter sans exporter' },
+    { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
   ];
 
   /**
@@ -316,14 +316,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
             id: f.id,
             value: f.label,
             orignalValue: getCategoryTitle(f.label),
+            orignalValuePlurial: getCategoryTitlePlurial(f.label),
           }))
 
           this.onSelectedCategoriesIdChanged(
             this.reaffectatorService.selectedCategoriesId !== null
               ? [this.reaffectatorService.selectedCategoriesId]
               : this.formFilterSelect.length
-              ? [this.formFilterSelect[0].id]
-              : []
+                ? [this.formFilterSelect[0].id]
+                : []
           )
         }
       )
@@ -334,37 +335,36 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
    * Destruction des observables
    */
   ngOnDestroy() {
-    console.log('Reaffectator destroy')
     this.watcherDestroy()
   }
 
   canDeactivate(nextState: string) {
-    const modified = this.listFormated.filter(elem => { 
+    const modified = this.listFormated.filter(elem => {
       return elem.hrFiltered.some(hr => hr.isModify)
-     })
+    })
     if (modified.length === 0)
-     return true
+      return true
 
     this.isLeaving = true
     this.nextState = nextState
-    return this.forceDeactivate 
+    return this.forceDeactivate
   }
 
   onPopupDetailAction(action: any) {
     switch (action.id) {
-      case 'leave': 
-      {
-        this.isLeaving = false
-        this.forceDeactivate = true
-        this.router.navigate([this.nextState])
-      }
+      case 'leave':
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          this.router.navigate([this.nextState])
+        }
         break;
       case 'export':
-      {
-        this.isLeaving = false
-        this.forceDeactivate = true
-        this.onExport()
-      }
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          this.onExport()
+        }
         break;
     }
   }
@@ -379,15 +379,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
       if (itemBlock && itemBlock.hrFiltered) {
         console.log(itemBlock.hrFiltered)
-        c.value = `${itemBlock.hrFiltered.length} ${c.value}${
-          itemBlock.hrFiltered.length > 1 ? 's' : ''
-        } (${fixDecimal(
-          sumBy(itemBlock.hrFiltered || [], function (h) {
-            const etp = h.etp - h.hasIndisponibility
-            return etp > 0 ? etp : 0
-          }),
-          100
-        )} ETPT)`
+        c.value = `${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length > 1 ? (c.orignalValuePlurial || c.orignalValue) : c.orignalValue
+          } (${fixDecimal(
+            sumBy(itemBlock.hrFiltered || [], function (h) {
+              const etp = h.etp - h.hasIndisponibility
+              return etp > 0 ? etp : 0
+            }),
+            100
+          )} ETPT)`
       }
 
       if (c.id === this.reaffectatorService.selectedCategoriesId) {
@@ -446,7 +445,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
-        this.reaffectatorService.selectedReferentielIds.length &&
+      this.reaffectatorService.selectedReferentielIds.length &&
       this.formReferentiel.length !== 0
     ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
@@ -459,7 +458,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     ) {
       selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
     }
-    
+
     console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
@@ -693,15 +692,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
     this.wrapper
       ?.exportAsPdf(
-        `Simulation-D-Affectation_par ${
-          this.userService.user.getValue()!.firstName
+        `Simulation-D-Affectation_par ${this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
           .slice(0, 10)}.pdf`,
         true,
         true,
-        `Simulation d'affectation par ${
-          this.userService.user.getValue()!.firstName
+        `Simulation d'affectation par ${this.userService.user.getValue()!.firstName
         } ${this.userService.user.getValue()!.lastName} - le ${(
           date.getDate() + ''
         ).padStart(2, '0')} ${this.getShortMonthString(
@@ -711,7 +708,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
       .then(() => {
         this.duringPrint = false
         if (this.forceDeactivate)
-         this.router.navigate([this.nextState])
+          this.router.navigate([this.nextState])
       })
   }
 
@@ -864,20 +861,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
             averageProcessingTimeFonc: null,
           },
         })
-        ;(r.childrens || [])
-          .filter((rc: ContentieuReferentielInterface) => rc.percent)
-          .map((rc: ContentieuReferentielInterface) => {
-            list.push({
-              id: -1,
-              percent: rc.percent || 0,
-              contentieux: {
-                id: rc.id,
-                label: rc.label,
-                averageProcessingTime: null,
-                averageProcessingTimeFonc: null,
-              },
+          ; (r.childrens || [])
+            .filter((rc: ContentieuReferentielInterface) => rc.percent)
+            .map((rc: ContentieuReferentielInterface) => {
+              list.push({
+                id: -1,
+                percent: rc.percent || 0,
+                contentieux: {
+                  id: rc.id,
+                  label: rc.label,
+                  averageProcessingTime: null,
+                  averageProcessingTimeFonc: null,
+                },
+              })
             })
-          })
       })
 
     const humanId = hr.id
