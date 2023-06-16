@@ -50,6 +50,11 @@ export class CalculatriceService {
         reloadDatas = true
       }
 
+      if(typeof calcul.vacation.unit === 'string' && calcul.vacation.unit.includes(',')) {
+        calcul.vacation.unit = calcul.vacation.unit.replace(/,/g, '.')
+        reloadDatas = true
+      }
+
       if(typeof calcul.volume.value === 'string' && calcul.volume.value.includes(',')) {
         calcul.volume.value = calcul.volume.value.replace(/,/g, '.')
         reloadDatas = true
