@@ -66,15 +66,16 @@ export default class RouteReaffectator extends Route {
     this.sendOk(ctx, {
       list: categories.map((category) => {
         const filterFonctionsIds = category.id === categoryId ? fonctionsIds : null
+        let allHr = preformatHumanResources(
+          filterByCategoryAndFonction(copyArray(hr), category.id, filterFonctionsIds, date),
+          date,
+          referentielList,
+          filterFonctionsIds
+        )
 
         return {
           originalLabel: category.label,
-          allHr: preformatHumanResources(
-            filterByCategoryAndFonction(copyArray(hr), category.id, filterFonctionsIds, date),
-            date,
-            referentielList,
-            filterFonctionsIds
-          ),
+          allHr: allHr.filter(h => h.category.id === category.id), // force to filter by actual category
           categoryId: category.id,
           referentiel,
         }
