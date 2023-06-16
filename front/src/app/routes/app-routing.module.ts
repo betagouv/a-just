@@ -163,6 +163,13 @@ const routes: Routes = [
         (mod) => mod.StatsModule
       ),
   },
+  {
+    path: 'logout',
+    loadChildren: () =>
+      import('./logout/logout.module').then(
+        (mod) => mod.LogoutModule
+      ),
+  },
 ]
 
 @NgModule({

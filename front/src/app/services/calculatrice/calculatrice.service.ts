@@ -41,7 +41,30 @@ export class CalculatriceService {
     /**
      * Constructeur
      */
-  constructor() {}
+  constructor() {
+    this.dataCalculatrice.subscribe(calcul => {
+      let reloadDatas = false
+
+      if(typeof calcul.vacation.value === 'string' && calcul.vacation.value.includes(',')) {
+        calcul.vacation.value = calcul.vacation.value.replace(/,/g, '.')
+        reloadDatas = true
+      }
+
+      if(typeof calcul.vacation.unit === 'string' && calcul.vacation.unit.includes(',')) {
+        calcul.vacation.unit = calcul.vacation.unit.replace(/,/g, '.')
+        reloadDatas = true
+      }
+
+      if(typeof calcul.volume.value === 'string' && calcul.volume.value.includes(',')) {
+        calcul.volume.value = calcul.volume.value.replace(/,/g, '.')
+        reloadDatas = true
+      }
+
+      if(reloadDatas) {
+        this.dataCalculatrice.next(calcul)
+      }
+    })
+  }
 
   /**
    * Méthode de calcul selon les paramètres choisis
