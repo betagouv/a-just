@@ -335,7 +335,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
    * Destruction des observables
    */
   ngOnDestroy() {
-    console.log('Reaffectator destroy')
     this.watcherDestroy()
   }
 

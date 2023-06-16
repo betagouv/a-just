@@ -21,7 +21,7 @@ export class CanDeactivateGuardService implements CanDeactivate<IDeactivateCompo
    * Constructeur
    * @param _router 
    */
-  constructor(private _router: Router) {}
+  constructor(private _router: Router) { }
 
   /**
    * Check route change
@@ -37,7 +37,7 @@ export class CanDeactivateGuardService implements CanDeactivate<IDeactivateCompo
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot,
   ): Observable<boolean> | Promise<boolean> | boolean {
-   if (currentRoute.url[0].path === "reaffectateur")
+    if (currentRoute.url[0].path === "reaffectateur")
       return component.canDeactivate(nextState.url)
     return true
   }
