@@ -488,7 +488,7 @@
           </div>
         </div>
         <div *ngIf="canViewGreffier" class="line-item">
-          <input [value]="getFieldValue('etpFon',projectedSituationData)" disabled /> <!-- Pour Jimmy repasse la [value]="getFieldValue('etpFon',simulatedSationData)"-->
+          <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
