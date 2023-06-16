@@ -232,9 +232,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Bouton déconnecter
    */
   onDisconnect() {
-    this.authService.onLogout().then(() => {
-      this.router.navigate(['/'])
-    })
+    this.router.navigate(['/logout'])
   }
 
   onSelectAction(event: any) {
