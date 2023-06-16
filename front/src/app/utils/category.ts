@@ -4,9 +4,9 @@
  * @returns string
  */
 export const getCategoryTitle = (name: string): string => {
-  switch(name){
-  case 'Greffe':
-    return 'Agent'
+  switch (name) {
+    case 'Greffe':
+      return 'Agent'
   }
 
   return name;
@@ -18,9 +18,11 @@ export const getCategoryTitle = (name: string): string => {
  * @returns string
  */
 export const getCategoryTitlePlurial = (name: string): string => {
-  switch(name){
-  case 'Autour du magistrat':
-    return 'Autour du magistrat'
+  switch (name) {
+    case 'Greffe':
+      return 'Agents'
+    case 'Autour du magistrat':
+      return 'Autour du magistrat'
   }
 
   return name + 's';
