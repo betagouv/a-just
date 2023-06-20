@@ -122,17 +122,17 @@ export const I_ELST_LIST = {
   "00963004": "TJ_VERSAILLES", // St_Germain_en_laye
   "00963021": "TJ_VERSAILLES", // Mantes La Jolie
   "00963048": "TJ_VERSAILLES", // Poissy
-  "00963052": "TJ_VERSAILLES", // Rambouillet
+  "00963052": "TJ_VERSAILLES", // Rambouillet*/
 
   // CA Chartres
   "00100085": "TJ_CHARTRES", // Chartres
   "00962995": "TJ_CHARTRES", // Dreux
 
-  "00100131": "TJ_VAL_DE_BRIEY", // Val-De-Briey
+  /*"00100131": "TJ_VAL_DE_BRIEY", // Val-De-Briey
   "00100133": "TJ_BAR_LE_DUC", //  Bar-Le-Duc
   "00100134": "TJ_VERDUN", // Verdun
 
-  "00100096": "TJ_BEZIERS", // Beziers*/
+  "00100096": "TJ_BEZIERS", // Beziers
 
   "00100122": "TJ_ANGERS", // Anger
   "00962982": "TJ_ANGERS", //Cholet
@@ -155,5 +155,5 @@ export const I_ELST_LIST = {
   "00962997": "TJ_CAHORS", // Figeac
 
   "00100184": "TJ_MEAUX", // Meaux
-  "00963015": "TJ_MEAUX", // Lagny Sur Marne
+  "00963015": "TJ_MEAUX", // Lagny Sur Marne*/
 };

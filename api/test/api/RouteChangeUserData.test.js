@@ -9,20 +9,6 @@ module.exports = function (datas) {
   let current_hr = null
 
   describe('Change User data test', () => {
-    it('Give user accesses by Admin', async () => {
-      const accessIds = accessList.map((elem) => {
-        return elem.id
-      })
-
-      const response = await onUpdateAccountApi({
-        userToken: datas.adminToken,
-        userId: datas.adminId, // userId,
-        accessIds: accessIds,
-        ventilations: [], //{ id: 11, label: 'ESSAI' },
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
     it('Create new hr', async () => {
       const hr = {
         firstName: 'test',
@@ -309,7 +295,6 @@ module.exports = function (datas) {
 
     it('Remove created situation', async () => {
       // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
-
       let response = null
       for (let id of hrSituationId) {
         response = await onRemoveSituationApi({

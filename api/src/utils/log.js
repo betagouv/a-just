@@ -1,6 +1,5 @@
 import winston from 'winston'
 import config from 'config'
-import Sentry from 'winston-sentry-log'
 import packageJson from '../../package.json'
 
 const logger = winston.createLogger({

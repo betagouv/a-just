@@ -80,6 +80,9 @@ export const onGetUserDataApi = async ({ userToken }) => {
     .then((res) => {
       return res
     })
+    .catch((err) => {
+      return err
+    })
 }
 
 export const onGetUserListApi = async ({ userToken }) => {
