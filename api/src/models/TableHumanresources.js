@@ -207,16 +207,16 @@ export default (sequelizeInstance, Model) => {
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
               case 'CONT A VIF JP':
-              case 'CONT A JP':
                 code = 'CONT A JP'
                 break
               case 'CONT B VIF JP':
-              case 'CONT B JP':
                 code = 'CONT B JP'
                 break
               case 'CONT C VIF JP':
-              case 'CONT C JP':
                 code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
                 break
             }
           } else situation.category_id = findCategory.id
