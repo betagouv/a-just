@@ -43,6 +43,10 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
    */
   currentActivities: RHActivityInterface[]
   /**
+   * Situation orignal de l'activité
+   */
+  orignalCurrentActivities: RHActivityInterface[]
+  /**
    * ETP a la date sélectionnée
    */
   etp: number
@@ -493,12 +497,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
             const allHr = i.allHr.map((h) => ({
               ...h,
+              orignalCurrentActivities: h.currentActivities,
               isModify: false,
             }))
             return {
               ...i,
               allHr,
-              hrFiltered: [...i.allHr],
+              hrFiltered: [...allHr],
               personSelected: [],
               referentiel: i.referentiel.map((r) => ({
                 ...r,
@@ -525,7 +530,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
         list.hrFiltered = orderBy(
           list.hrFiltered,
           (h) => {
-            const acti = (h.currentActivities || []).find(
+            const acti = (h.orignalCurrentActivities || []).find(
               (a) => a.contentieux?.id === this.filterSelected?.id
             )
             return acti ? acti.percent || 0 : 0
