@@ -310,15 +310,14 @@ module.exports = {
         rank: 7,
         category_id: findContractuel.dataValues.id,
       })
+
+      await models.HRFonctions.destroy({
+        where: {
+          label: 'Autre',
+          category_id: findContractuel.dataValues.id,
+        },
+      })
     }
-
-    await models.HRFonctions.destroy({
-      where: {
-        label: 'Autre',
-        category_id: findContractuel.dataValues.id,
-      },
-    })
-
     const listPlaces = ['VICE-PRÉSIDENT PLACÉ', 'JUGE PLACÉ', 'A PLACÉ', 'B GREFFIER PLACÉ', 'B PLACÉ', 'CB PLACÉ', 'CT PLACÉ']
     for (let i = 0; i < listPlaces.length; i++) {
       const findFct = await models.HRFonctions.findOne({
