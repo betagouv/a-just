@@ -14,7 +14,18 @@ apiKey.apiKey = config.sendinblue
  * @param {*} params
  * @returns instance de transaction mail
  */
-export function sentEmail (to, templateId, params, options = {}) {
+export function sentEmail(to, templateId, params, options = {}) {
+  if (!config.sentEmail) {
+    console.log('TEST Mail sent', {
+      to: [to],
+      templateId,
+      params: { ...params, envName: config.displayEnvName },
+    })
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
+
   var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
   var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
   sendSmtpEmail = {
@@ -22,13 +33,6 @@ export function sentEmail (to, templateId, params, options = {}) {
     templateId,
     params: { ...params, envName: config.displayEnvName },
     ...options,
-  }
-
-  if (!config.sentEmail) {
-    console.log('TEST Mail sent', sendSmtpEmail)
-    return new Promise((resolve) => {
-      resolve()
-    })
   }
 
   return apiInstance.sendTransacEmail(sendSmtpEmail).then(
@@ -51,7 +55,7 @@ export function sentEmail (to, templateId, params, options = {}) {
  * @param {*} addToList
  * @returns
  */
-export function sentEmailSendinblueUserList (user, addToList = true) {
+export function sentEmailSendinblueUserList(user, addToList = true) {
   let apiInstance = new SibApiV3Sdk.ContactsApi()
 
   if (addToList) {

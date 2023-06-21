@@ -110,7 +110,9 @@ export default (sequelizeInstance, Model) => {
 
       if (values.enabled) {
         // check and create juridiction
-        await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+
+        await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
       }
     }
   }
