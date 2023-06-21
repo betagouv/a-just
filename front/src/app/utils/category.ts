@@ -6,7 +6,7 @@
 export const getCategoryTitle = (name: string): string => {
   switch (name) {
     case 'Greffe':
-      return 'Agent'
+      return 'Agent de greffe'
   }
 
   return name;
@@ -20,7 +20,7 @@ export const getCategoryTitle = (name: string): string => {
 export const getCategoryTitlePlurial = (name: string): string => {
   switch (name) {
     case 'Greffe':
-      return 'Agents'
+      return 'Agents de greffe'
     case 'Autour du magistrat':
       return 'Autour du magistrat'
   }
