@@ -185,6 +185,14 @@
             font-size: 14px;
             color: fColor(headerColor);
           }
+
+          i {
+            color: fColor(headerColor);
+
+            &.selected {
+              color: fColor(sortHeaderSelected);
+            }
+          }
         }
       }
     }
