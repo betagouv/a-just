@@ -231,6 +231,18 @@ export default (sequelizeInstance, Model) => {
             break
         }
 
+        if (list[i].categorie == 'CB') {
+          switch (list[i].grade) {
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
+          }
+        }
+
         if (code.startsWith('AS')) {
           code = 'AS'
         }
