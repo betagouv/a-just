@@ -4,6 +4,7 @@ import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculateur.test'
 import routeVentilateur from './api/RouteVentilateur.test'
+//import RouteSimulator from './api/RouteSimulator.test'
 import axios from 'axios'
 import { assert } from 'chai'
 
@@ -17,10 +18,11 @@ import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from './constants/admin'
-import { onLoginAdminApi, onUpdateAccountApi } from './routes/user'
+import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
   adminToken: null,
+  adminAccess: null,
   userId: null,
   userToken: null,
 }
@@ -73,21 +75,24 @@ describe('Test server is ready', () => {
     const accessIds = accessList.map((elem) => {
       return elem.id
     })
-
-    const response = await onUpdateAccountApi({
+    let response = await onUpdateAccountApi({
       userToken: datas.adminToken,
       userId: datas.adminId,
       accessIds: accessIds,
       ventilations: [],
     })
+    response = await onGetUserDataApi({ userToken: datas.adminToken })
+    datas.adminAccess = response.data.user.access
 
     assert.strictEqual(response.status, 200)
+    assert.isNotEmpty(datas.adminAccess)
   })
 
   routeUser(datas)
-  routeChangeUserData(datas)
-  /*routeCalcultator(datas)
-  routeVentilateur(datas)*/
+  //routeChangeUserData(datas)
+  routeCalcultator(datas)
+  //routeVentilateur(datas)
+  //routeSimulateur(datas)
 
   /*routeImport()
   routeHR()

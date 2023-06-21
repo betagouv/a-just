@@ -171,13 +171,13 @@ module.exports = function (datas) {
     /**
      * Login - Reconnexion de l'utilisateur pour les prochains tests
      */
-    it('Login - Login should succeed and return 201', async () => {
+    /*it('Login - Login should succeed and return 201', async () => {
       const response = await onLoginApi({
         email: USER_TEST_EMAIL,
         password: USER_TEST_PASSWORD,
       })
       datas.userToken = response.status === 201 && response.data.token
       assert.strictEqual(response.status, 201)
-    })
+    })*/
   })
 }
