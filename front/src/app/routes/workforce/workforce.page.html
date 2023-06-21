@@ -109,9 +109,7 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <img *ngIf="filterSelected && filterSelected.id === ref.id; else descIcon"
-                    src="/assets/icons/sort-asc.svg" />
-                  <ng-template #descIcon><img src="/assets/icons/sort-desc.svg" /></ng-template>
+                  <i class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
                 </div>
               </div>
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
