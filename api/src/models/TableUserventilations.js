@@ -109,5 +109,38 @@ export default (sequelizeInstance, Model) => {
     return list
   }
 
+  /**
+   * Ajout d'un accès à un utilisateur
+   * @param {*} userId
+   * @param {*} ventilationId
+   * @returns
+   */
+  Model.pushVentilation = async (userId, ventilationId) => {
+    const backup = await Model.models.HRBackups.findOne({
+      attributes: ['id', 'label'],
+      where: {
+        id: ventilationId,
+      },
+      raw: true,
+    })
+
+    if (backup) {
+      if (!await Model.findOne({
+        where: {
+          user_id: userId,
+          hr_backup_id: ventilationId,
+        },
+      })) {
+        await Model.create({
+          user_id: userId,
+          hr_backup_id: ventilationId,
+        })
+        return backup
+      }
+    }
+
+    return false
+  }
+
   return Model
 }
