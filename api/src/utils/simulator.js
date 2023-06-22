@@ -165,7 +165,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
 
-  console.log('list ICI', lastActivities, startDateCs, endDateCs)
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
@@ -201,14 +200,13 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const categoryLabel = categories.find((element) => element.id === selectedCategoryId).label
   let sufix = 'By' + categoryLabel
 
-  if (lastActivities.length === 0) return emptySituation
+  // Compute etpAffected & etpMag today (on specific date) to display & output
+  etpAffectedToday = await getHRPositions(hr, referentielId, categories)
+
+  let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
+
+  if (lastActivities.length === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
   else {
-    // Compute etpAffected & etpMag today (on specific date) to display & output
-    etpAffectedToday = await getHRPositions(hr, referentielId, categories)
-
-    let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
-
-    console.log(totalIn, totalOut, etpMag, etpFon, etpCon)
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
@@ -216,17 +214,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
-
-    /**
-    console.log(
-      'To compare realTimePerCase : ',
-      realTimePerCase,
-      'Etp used : ',
-      selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute,
-      'Total out used :',
-      totalOut
-    )
-    */
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
