@@ -165,6 +165,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
 
+  console.log('list ICI', lastActivities, startDateCs, endDateCs)
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
@@ -207,6 +208,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
+    console.log(totalIn, totalOut, etpMag, etpFon, etpCon)
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
