@@ -4,7 +4,7 @@
   .logo {
     height: 135px;
 
-    > img {
+    >img {
       height: 90px;
       margin-right: 27px;
     }
@@ -33,5 +33,26 @@
 
   p {
     margin-bottom: 24px;
+  }
+}
+
+table {
+  width: 100%;
+  border: 1px solid black;
+  border-spacing: 0;
+
+  td,
+  th {
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 4px;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 }
