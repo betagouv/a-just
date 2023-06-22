@@ -71,13 +71,13 @@ export class ExtractorVentilationComponent extends MainClass  {
           this.canViewGreffier &&
           this.canViewContractuel
         )
-          this.categories.push({ id: 1, value: 'Tous' })
+          this.categories.push({ id: 1, label: 'tous', value:'Tous' })
         if (this.canViewMagistrat)
           this.categories.push({ id: 2, label: 'Magistrat', value:'Siège' })
         if (this.canViewContractuel)
-          this.categories.push({ id: 3, label: 'Contractuel', value:'Greffe' })
+          this.categories.push({ id: 3, label: 'Greffe', value:'Greffe' })
         if (this.canViewGreffier)
-          this.categories.push({ id: 4, label: 'Fonctionnaire', value:'Equipe autour du magistrat' })
+          this.categories.push({ id: 4, label: 'Autour du magistrat', value:'Equipe autour du magistrat' })
       })
     )
   }
@@ -115,6 +115,7 @@ export class ExtractorVentilationComponent extends MainClass  {
     const category = this.categories.find(
       (category) => category.id === event[0]
     )
+    console.log(event)
     this.selectedCategorieId = category?.label
     if (this.selectedCategorieId) {
       this.excelService.selectedCategory.next(
