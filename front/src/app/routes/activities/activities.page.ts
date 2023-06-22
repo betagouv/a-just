@@ -75,11 +75,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
   }
-
   /**
    * Lien du guide de la donnée
    */
   gitBook = DATA_GITBOOK 
+  /**
+   * Support GitBook
+   */
+  supportGitBook = `mailto:${this.environment.supportEmail}?subject=[RETOUR DATA] Données d'activité&body=J’ai des interrogations/réactions sur les données d’activité de ma juridiction et n’ai pas trouvé de réponse dans le data-book.%0D %0D Ma question/réaction porte sur :%0D %0D %0D %0D %0D Je souhaite être recontactée : par téléphone/par mail %0D %0D Voici mes coordonnées :`
 
   /**
    * Constructeur
