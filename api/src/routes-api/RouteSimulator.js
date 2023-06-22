@@ -58,6 +58,7 @@ export default class RouteSimulator extends Route {
 
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
 
+    console.log(situation)
     console.time('simulator-1.1')
     const hrfiltered = filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
     console.timeEnd('simulator-1.1')
@@ -65,8 +66,10 @@ export default class RouteSimulator extends Route {
     console.time('simulator-4')
     let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
     console.timeEnd('simulator-4')
-
+    console.log('Sim1', situation, situationFiltered)
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
+
+    console.log('Sim2', situationFiltered)
 
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }

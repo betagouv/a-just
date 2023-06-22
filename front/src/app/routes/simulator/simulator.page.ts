@@ -322,7 +322,7 @@ export class SimulatorPage extends MainClass implements OnInit {
             this.selectedFonctionsIds
           )
         } else if (this.canViewGreffier) {
-          this.changeCategorySelected('FONCTIONNAIRE')
+          this.changeCategorySelected('GREFFE')
           this.simulatorService.selectedFonctionsIds.next(
             this.selectedFonctionsIds
           )
@@ -380,7 +380,8 @@ export class SimulatorPage extends MainClass implements OnInit {
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-        console.log('Situation simu : ',d)
+      
+      console.log('Situation simu : ',d)
 
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
