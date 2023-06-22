@@ -109,9 +109,6 @@ export class ExcelService extends MainClass {
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"']
 
-        console.log(uniqueJur)
-        console.log(uniqueJurIndex)
-
         const viewModel = {
           agregat: this.tabs.onglet2.excelRef,
           referentiel: data.data.referentiels.map((x: any) => {
