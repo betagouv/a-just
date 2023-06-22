@@ -174,19 +174,23 @@
 </aj-wrapper>
 
 <ng-template #dataGuide>
-  <div class='rightHeader'>
-    <div class="left">
-      <h2>Le guide de la donnée</h2>
-      <div class="description">
+  <div class="rightHeader">
+    <h2>Le guide de la donnée</h2>
+    <div class="flex-center flex-between">
+      <p>
         Pour tout savoir sur les données pré-alimentées
-      </div>
-    </div>
-    <div class="right">
+      </p>
       <a [href]="gitBook" target="_blank">
-        <button class="docButton">Consultez le
+        <button class="small primary">Consultez le
           data-book</button>
       </a>
-      <!--<aj-help-button class="documentation"></aj-help-button>-->
+    </div>
+    <div class="flex-center">
+      <p>
+        Un avis, une question ?
+      </p>
+      <a [href]="supportGitBook" class="support-email"> Contactez-nous
+      </a>
     </div>
   </div>
 </ng-template>
