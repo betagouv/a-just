@@ -506,9 +506,27 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
+
         <div *ngIf="canViewContractuel" class="line-item">
-          <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled /> <!-- TODO ICI CHANGER POUR QU'IL Y AI UN VRAIS CALCUL -->
+          <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled />
+          <!-- TODO ICI CHANGER POUR QU'IL Y AI UN VRAIS CALCUL -->
+          <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
+            [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
+            *ngIf="paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont'" [@fadeInOut]>
+            {{percentageModifiedInputText('etpCont',getFieldValue('etpCont',firstSituationData))}}%
+
+            <div class="triangle simulated"></div>
+          </div>
+          <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
+            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            *ngIf="!(paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont') && getFieldValue('etpCont',projectedSituationData)!==getFieldValue('etpCont',firstSituationData)"
+            [@fadeInOut]>
+            {{ratio(getFieldValue('etpCont',projectedSituationData),getFieldValue('etpCont',firstSituationData))}}%
+            <div class="triangle simulated blue"></div>
+          </div>
         </div>
+
         <div class="line-item">
           <input [value]="getFieldValue('realCoverage',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"

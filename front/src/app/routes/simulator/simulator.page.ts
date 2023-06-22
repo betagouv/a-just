@@ -365,6 +365,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
+        console.log('Situation actuelle : ',d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -372,12 +373,15 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
+        console.log('Situation proj : ',d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
+        console.log('Situation simu : ',d)
+
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
         const findElement = document.getElementById('content')
