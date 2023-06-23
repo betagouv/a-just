@@ -1399,4 +1399,9 @@ displayWhiteElements:boolean = false
       setComment(event:any){
       this.commentaire = event.target.value      
       }
+
+      toSimulateWhite(){
+        console.log(this.whiteNbOfDays)
+        console.log(this.simulatorService.situationActuelle.getValue())
+      }
 }
