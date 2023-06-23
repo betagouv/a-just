@@ -19,6 +19,14 @@ export interface HRFonctionInterface {
 	 */
 	rank?: number;
 	/**
+	 * Position Titulaire Placé Cont
+	 */
+	position: string;
+	/**
+	 * Position Titulaire Placé Cont
+	 */
+		calculatrice_is_active?:boolean;
+	/**
 	 * Catégorie ratachée
 	 */
 	categoryId: number;

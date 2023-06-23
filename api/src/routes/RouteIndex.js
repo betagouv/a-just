@@ -15,7 +15,9 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
-    const file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
+    let file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
+    const fileSplited = file.split('?')
+    file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
 
     if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
       console.log('load page', file)

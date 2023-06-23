@@ -1,7 +1,5 @@
 import winston from 'winston'
 import config from 'config'
-//import Sentry from 'winston-sentry-log'
-import Sentry from 'winston-transport-sentry-node'
 import packageJson from '../../package.json'
 const Sent = require('@sentry/node')
 
@@ -10,7 +8,7 @@ const logger = winston.createLogger({
   exitOnError: false,
   format: winston.format.json(),
   // defaultMeta: { service: 'user-service' },
-  transports: config.sentryApi
+  transports: /*config.sentryApi
     ? [
       new Sentry({
         sentry: {
@@ -45,7 +43,7 @@ const logger = winston.createLogger({
       //new winston.transports.File({ filename: 'combined.log' }),
       new winston.transports.File({ filename: 'error.log' }),
     ]
-    : [],
+    :*/ [],
 })
 
 logger.add(

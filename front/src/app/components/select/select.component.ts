@@ -28,6 +28,10 @@ export interface dataInterface {
    */
   orignalValue?: string
   /**
+   * Valeur au pluriel
+   */
+  orignalValuePlurial?: string
+  /**
    * Sous contentieux
    */
   childrens?: childrenInterface[]

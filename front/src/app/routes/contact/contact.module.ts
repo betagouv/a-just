@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ComponentsModule } from 'src/app/components/components.module';
 import { ContactPage } from './contact.page';
 import { ContactPageModule } from './contact.routing';
+import { WrapperNoConnectedModule } from 'src/app/components/wrapper-no-connected/wrapper-no-connected.module';
 
 @NgModule({
 	declarations: [ ContactPage ],
-	imports: [ ContactPageModule, FormsModule, ReactiveFormsModule, RouterModule, ComponentsModule ]
+	imports: [ ContactPageModule, RouterModule, WrapperNoConnectedModule ]
 })
 export class ContactModule {}

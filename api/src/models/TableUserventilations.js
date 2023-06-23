@@ -40,10 +40,10 @@ export default (sequelizeInstance, Model) => {
 
   /**
    * Retourne la liste des utilisateurs par label de juridiction
-   * @param {*} juridicitonLabel
+   * @param {*} juridictionLabel
    * @returns
    */
-  Model.getUserVentilationsWithLabel = async (juridicitonLabel) => {
+  Model.getUserVentilationsWithLabel = async (juridictionLabel) => {
     const listAll = groupBy(
       await Model.findAll({
         attributes: ['id', 'user_id', 'hr_backup_id'],
@@ -52,7 +52,7 @@ export default (sequelizeInstance, Model) => {
             attributes: ['id', 'label'],
             model: Model.models.HRBackups,
             where: {
-              label: juridicitonLabel,
+              label: juridictionLabel,
             },
           },
         ],
@@ -107,6 +107,39 @@ export default (sequelizeInstance, Model) => {
     }
 
     return list
+  }
+
+  /**
+   * Ajout d'un accès à un utilisateur
+   * @param {*} userId
+   * @param {*} ventilationId
+   * @returns
+   */
+  Model.pushVentilation = async (userId, ventilationId) => {
+    const backup = await Model.models.HRBackups.findOne({
+      attributes: ['id', 'label'],
+      where: {
+        id: ventilationId,
+      },
+      raw: true,
+    })
+
+    if (backup) {
+      if (!await Model.findOne({
+        where: {
+          user_id: userId,
+          hr_backup_id: ventilationId,
+        },
+      })) {
+        await Model.create({
+          user_id: userId,
+          hr_backup_id: ventilationId,
+        })
+        return backup
+      }
+    }
+
+    return false
   }
 
   return Model

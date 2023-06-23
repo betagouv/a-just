@@ -1,6 +1,12 @@
+import { Op } from 'sequelize'
+
 /**
  * Liste des juridctions auquels ont accès les utilisateur
  */
+
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
+import { sentEmail } from '../utils/email'
+import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -39,7 +45,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Suppression d'une juridiciton
+   * Suppression d'une juridiction
    * @param {*} backupId
    */
   Model.removeBackup = async (backupId) => {
@@ -72,7 +78,10 @@ export default (sequelizeInstance, Model) => {
 
     if (backup) {
       delete backup.id
-      const backupCreated = await Model.create({ ...backup, label: backupName })
+      const backupCreated = await Model.create({
+        ...backup,
+        label: backupName,
+      })
       const newBackupId = backupCreated.dataValues.id
 
       const hrList = await Model.models.HumanResources.findAll({
@@ -225,6 +234,48 @@ export default (sequelizeInstance, Model) => {
     }
 
     return find.label
+  }
+
+  /**
+   * Ajouter les accès aux membres de l'équipe à la juridiction lors de la création d'une juridiction
+   * @param {*} juridicitionId
+   */
+  Model.addUserAccessToTeam = async (juridicitionId) => {
+    console.log('judiriciton id', juridicitionId)
+    const usersAffected = (await Model.models.UserVentilations.findAll({
+      where: {
+        hr_backup_id: juridicitionId,
+      },
+      raw: true,
+    })).map(s => s.user_id)
+
+    const users = await Model.models.Users.findAll({
+      where: {
+        role: [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM],
+        id: {
+          [Op.notIn]: usersAffected,
+        },
+      },
+      raw: true,
+    })
+
+    for (let i = 0; i < users.length; i++) {
+      const backup = await Model.models.UserVentilations.pushVentilation(users[i].id, juridicitionId)
+
+      if (backup) {
+        console.log('sent email to', users[i].email)
+        await sentEmail(
+          {
+            email: users[i].email,
+          },
+          TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+          {
+            user: `${users[i].first_name} ${users[i].last_name}`,
+            juridictionsList: backup.label,
+          }
+        )
+      }
+    }
   }
 
   return Model

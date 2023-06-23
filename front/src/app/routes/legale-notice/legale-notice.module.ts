@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ComponentsModule } from 'src/app/components/components.module';
 import { LegaleNoticePage } from './legale-notice.page';
 import { LegaleNoticePageModule } from './legale-notice.routing';
+import { WrapperNoConnectedModule } from 'src/app/components/wrapper-no-connected/wrapper-no-connected.module';
 
 @NgModule({
 	declarations: [ LegaleNoticePage ],
-	imports: [ LegaleNoticePageModule, FormsModule, ReactiveFormsModule, RouterModule, ComponentsModule ]
+	imports: [ LegaleNoticePageModule, RouterModule, WrapperNoConnectedModule ]
 })
 export class LegaleNoticeModule {}

@@ -84,7 +84,7 @@ export const onGetUserDataApi = async ({ userToken }) => {
       return res
     })
     .catch((err) => {
-      return err.response
+      return err
     })
 }
 

@@ -166,7 +166,7 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface) {
     this.isLoading.next(true)
-
+console.log(params)
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -225,27 +225,34 @@ export class SimulatorService extends MainClass {
   ): any {
     switch (param) {
       case 'etpMag':
+        if (data?.etpMag===null){return 'N/R'}
         return data?.etpMag || '0'
       case 'totalOut': {
+        if (data?.totalOut===null){return 'N/R'}
         if (data?.totalOut && data?.totalOut >= 0) {
           return data?.totalOut
         } else return '0'
       }
       case 'totalIn': {
+        if (data?.totalIn===null){return 'N/R'}
         if (data?.totalIn && data?.totalIn >= 0) {
           return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
         } else return '0'
       }
       case 'lastStock': {
+        if (data?.lastStock===null){return 'N/R'}
         if (data?.lastStock && data?.lastStock >= 0) {
           return data?.lastStock
         } else return '0'
       }
       case 'etpCont':
+        if (data?.etpCont===null){return 'N/R'}
         return data?.etpCont || '0'
       case 'etpFon':
+                if (data?.etpFon===null){return 'N/R'}
         return data?.etpFon || '0'
       case 'realCoverage': {
+        if (data?.realCoverage===null){return 'N/R'}
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
         } else if (data?.realCoverage && initialValue === true)
@@ -255,6 +262,7 @@ export class SimulatorService extends MainClass {
         else return '0'
       }
       case 'realDTESInMonths':
+        if (data?.realDTESInMonths===null){return 'N/R'}
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
             return '0'
@@ -262,6 +270,7 @@ export class SimulatorService extends MainClass {
         }
         return '0'
       case 'magRealTimePerCase':
+        if (data?.magRealTimePerCase===null){return 'N/R'}
         if (initialValue) return data?.magRealTimePerCase || '0'
         else {
           return decimalToStringDate(data?.magRealTimePerCase) || '0'

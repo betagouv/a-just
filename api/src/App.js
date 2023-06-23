@@ -12,11 +12,12 @@ import db from './models'
 import { start as startCrons } from './crons'
 import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
+import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor () {
+  constructor() {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -25,7 +26,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start () {
+  async start() {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -63,6 +64,33 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+      csp({
+        enableWarn: true,
+        policy: {
+          'default-src': ['none'],
+          'connect-src': [
+            'https://www.google-analytics.com/j/collect',
+            "'self'",
+            'https://api.mapbox.com',
+            'https://events.mapbox.com',
+            'https://stats.data.gouv.fr',
+            'https://forms-eu1.hsforms.com',
+            'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+          ],
+          'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
+          'script-src': [
+            "'unsafe-eval'",
+            "'self'",
+            "'unsafe-inline' https://js-eu1.hsforms.net",
+            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
+            'stats.data.gouv.fr',
+          ],
+          'worker-src': ['blob:'],
+          'style-src': ["'self'", "'unsafe-inline'"],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
+        },
+      }),
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
@@ -73,9 +101,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady () {}
+  isReady() { }
 
-  done () {
+  done() {
     console.log('--- DONE ---')
     process.exit()
   }
