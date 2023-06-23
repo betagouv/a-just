@@ -170,6 +170,13 @@ const routes: Routes = [
         (mod) => mod.LogoutModule
       ),
   },
+  {
+    path: 'conditions-generales-d-utilisation',
+    loadChildren: () =>
+      import('./cgu/cgu.module').then(
+        (mod) => mod.CGUModule
+      ),
+  },
 ]
 
 @NgModule({
