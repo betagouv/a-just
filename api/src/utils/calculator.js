@@ -332,7 +332,7 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
   let fonCalculateDTESInMonths = null
 
   const findIndexOption = optionsBackups.findIndex((o) => o.contentieux.id === referentielId)
-
+  console.log('\n\n\n\n\n\n\n\n[calculator.js][line 335] findIndexOption:', findIndexOption)
   if (findIndexOption !== -1) {
     magCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
     fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTimeFonc // TODO pour JImmy a changer ici

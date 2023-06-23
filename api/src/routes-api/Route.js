@@ -89,7 +89,6 @@ export default class Route extends RouteBase {
     this.assertUnauthorized(user)
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
-
     return user
   }
 

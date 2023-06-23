@@ -1,13 +1,8 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-} from '@angular/core'
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 import { FilterPanelInterface } from '../filter-panel/filter-panel.component'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 
 /**
  * Paneau d'une fiche magistrat / fonctionnaire / contractuel
@@ -17,7 +12,10 @@ import { FilterPanelInterface } from '../filter-panel/filter-panel.component'
   templateUrl: './person-preview.component.html',
   styleUrls: ['./person-preview.component.scss'],
 })
-export class PersonPreviewComponent extends MainClass implements AfterViewInit {
+export class PersonPreviewComponent
+  extends MainClass
+  implements OnInit, OnDestroy
+{
   /**
    * Fiche
    */
@@ -44,81 +42,38 @@ export class PersonPreviewComponent extends MainClass implements AfterViewInit {
    */
   @Input() textColor: string = ''
   /**
-   * Dom parent
-   */
-  @Input() parentDom: HTMLDivElement | null = null
-  /**
    * Show component is visible
    */
-  showComponent: boolean = false
-  /**
-   * Timeout to folow update of component
-   */
-  intervalCatcher: any = null
+  @Input() showComponent: boolean = false
 
   /**
    * Constructeur
    */
-  constructor(private nativeElement: ElementRef) {
+  constructor(private humanResourceService: HumanResourceService) {
     super()
   }
 
   /**
    * After DOM is create fetch event
    */
-  ngAfterViewInit() {
-    if (this.parentDom) {
-      this.parentDom.addEventListener(
-        'scroll',
-        this.checkScrollEvent.bind(this)
-      )
+  ngOnInit() {
+    this.watch(
+      this.humanResourceService.componentIdsCanBeView.subscribe((s) => {
+        this.showComponent = s.includes(this.hr.id)
 
-      this.intervalCatcher = setInterval(() => {
-        this.checkScrollEvent()
-      }, 300)
+        if (this.showComponent) {
+          this.watcherDestroy()
+        }
+      })
+    )
 
-      this.checkScrollEvent()
-    }
+    this.humanResourceService.needIdToLoad(this.hr.id)
   }
 
   /**
-   * Listen when object is removed
+   * Remove listenner
    */
   ngOnDestroy() {
-    this.removeScrollEvent()
-  }
-
-  /**
-   * Remove scroll event
-   */
-  removeScrollEvent() {
-    if (this.parentDom) {
-      this.parentDom.removeEventListener(
-        'scroll',
-        this.checkScrollEvent.bind(this),
-        true
-      )
-    }
-
-    if(this.intervalCatcher) {
-      clearInterval(this.intervalCatcher)
-      this.intervalCatcher = null
-    }
-  }
-
-  /**
-   * Control position of element
-   */
-  checkScrollEvent() {
-    if (!this.showComponent && this.nativeElement && this.nativeElement.nativeElement && this.parentDom) {
-      const { top: topElement } = this.nativeElement.nativeElement.getBoundingClientRect()
-      const { bottom: bottomParent } = this.parentDom.getBoundingClientRect()
-      const marginTopLoad = 500
-
-      if(topElement - marginTopLoad < bottomParent) {
-        this.showComponent = true
-        this.removeScrollEvent()
-      }
-    }
+    this.watcherDestroy()
   }
 }

@@ -1,17 +1,17 @@
 import { instanceAxios } from '../utils/axios'
 
-export const onFilterList = async ({ userToken, backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }) => {
+export const onFilterListApi = async ({ userToken, backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }) => {
   return await instanceAxios
     .post(
       '/calculator/filter-list',
       {
-        backupId: backupId,
+        backupId,
+        categorySelected,
+        contentieuxIds,
         dateStart,
         dateStop,
-        contentieuxIds,
-        optionBackupId: optionBackupId,
-        categorySelected,
-        selectedFonctionsIds: selectedFonctionsIds,
+        optionBackupId,
+        selectedFonctionsIds,
       },
       {
         headers: {

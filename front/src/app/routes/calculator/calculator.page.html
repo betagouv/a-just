@@ -80,10 +80,10 @@
           <div *ngIf="canViewMagistrat" class="tooltip medium" (click)="onSortBy('etpMag')"
             [ngClass]="{'selected': sortBy === 'etpMag'}">
             <div class="flex-1"></div>
-            <p>ETPT <br />Mag.</p>
+            <p>ETPT <br />Siège</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
-            <aj-tooltips class="medium" title="ETPT mag."
-              content="Total des ETP travaillés sur la période par les magistrats affectés à ce contentieux">
+            <aj-tooltips class="medium" title="ETPT siège"
+              content="Total des ETP travaillés sur la période par les agents du siège affectés à ce contentieux">
             </aj-tooltips>
           </div>
           <div *ngIf="canViewGreffier" class="tooltip medium" (click)="onSortBy('etpFon')"
@@ -98,10 +98,10 @@
           <div *ngIf="canViewContractuel" class="tooltip medium" (click)="onSortBy('etpCont')"
             [ngClass]="{'selected': sortBy === 'etpCont'}">
             <div class="flex-1"></div>
-            <p>ETPT<br />Cont.</p>
+            <p>ETPT<br />EAM</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
-            <aj-tooltips class="medium" title="ETPT cont."
-              content="Total des ETP travaillés sur la période par les agents contractuels affectés à ce contentieux">
+            <aj-tooltips class="medium" title="ETPT EAM"
+              content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés à ce contentieux">
             </aj-tooltips>
           </div>
         </div>
@@ -125,7 +125,7 @@
           <div class="tooltip large" (click)="onSortBy('magRealTimePerCase')"
             [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
             <div class="flex-1"></div>
-            <p>Tps moyen {{ categorySelected }}<br />/ dossier observé</p>
+            <p>Tps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
             <aj-tooltips title="Temps moyen par dossier observé" class="large"
               content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
@@ -156,7 +156,7 @@
           <div class="tooltip large last" (click)="onSortBy('magCalculateTimePerCase')"
             [ngClass]="{'selected': sortBy === 'magCalculateTimePerCase'}">
             <div class="flex-1"></div>
-            <p>Temps moyen {{ categorySelected }}<br />/ dossier saisi</p>
+            <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier saisi</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateTimePerCase'}"></i>
             <aj-tooltips title="Temps moyen par dossier saisi" class="medium left"
               content="Donnée saisie dans le jeu de données choisi dans «Mes temps moyens de comparaison»">
@@ -165,7 +165,7 @@
           <div class="tooltip large last" (click)="onSortBy('magCalculateOut')"
             [ngClass]="{'selected': sortBy === 'magCalculateOut'}">
             <div class="flex-1"></div>
-            <p>Sorties {{ categorySelected }}<br />possibles</p>
+            <p>Sorties {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />possibles</p>
             <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateOut'}"></i>
             <aj-tooltips title="Sorties possibles" class="large left"
               content="Nombre moyen de dossiers pouvant être traités mensuellement par les ETPT affectés en fonction du temps moyen de traitement par dossier choisi."
@@ -189,13 +189,13 @@
       [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
       (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
       <input type="radio" [checked]="categorySelected === MAGISTRATS" />
-      <p>Magistrats</p>
+      <p>Siège</p>
     </div>
     <div class="fonctionnaires" *ngIf="canViewGreffier"
       [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
       (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
       <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
-      <p>Fonctionnaires</p>
+      <p>Greffe</p>
     </div>
   </div>
 

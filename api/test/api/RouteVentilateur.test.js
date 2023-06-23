@@ -6,100 +6,60 @@ import { onGetContentiousApi, onGetAllActivatedTjApi } from '../routes/ventilate
 import { onLoginAdminApi, onSignUpApi, onLoginApi, onUpdateAccountApi, onRemoveAccountApi, onGetUserDataApi, onGetMyInfosApi } from '../routes/user'
 import { onGetBackupListHrApi } from '../routes/hr'
 import { onFilterListApi } from '../routes/humanRessources'
+import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID } from '../constants/juridiction'
 
-module.exports = function () {
-  let backups = null
-  let adminToken = null
-  let userToken = null
-  let userId = null
-
+module.exports = function (datas) {
   describe('Check calcul -- Ventilateur ', () => {
-    it('Login - Login admin', async () => {
-      // Connexion de l'admin
-      const response = await onLoginAdminApi({
-        email: USER_ADMIN_EMAIl,
-        password: USER_ADMIN_PASSWORD,
-      })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data && response.data.token
-      assert.strictEqual(response.status, 201)
-    })
-
-    it('Sign up - Create test user', async () => {
-      const response = await onSignUpApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
-        firstName: USER_TEST_FIRSTNAME,
-        lastName: USER_TEST_LASTNAME,
-        fonction: USER_TEST_FONCTION,
+    it('Add admin to a tj', async () => {
+      const response = await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.adminId,
+        accessIds: datas.adminAccess,
+        ventilations: [JURIDICTION_BACKUP_ID],
       })
       assert.strictEqual(response.status, 200)
     })
 
-    it('Login - Log user', async () => {
-      const response = await onLoginApi({
-        email: USER_TEST_EMAIL,
-        password: USER_TEST_PASSWORD,
+    it('Catch data', async () => {
+      /*const dateStop = new Date(lastMonth)
+      const dateStart = new Date(new Date(dateStop).setDate(1))
+      const categorySelected = 'magistrats'*/
+      const contentieuxIds = [447]
+      let sumEtpSocial = null
+
+      const response = await onFilterListApi({
+        userToken: datas.adminToken,
+        backupId: JURIDICTION_BACKUP_ID,
+        /*dateStart,
+        dateStop,*/
+        contentieuxIds,
+        /*optionBackupId: JURIDICTION_OPTION_BACKUP_ID,
+        categorySelected,
+        selectedFonctionsIds: [22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39],*/
       })
-      userToken = response.status === 201 && response.data.token
-      userId = response.data.user.id
 
-      assert.isOk(userToken, 'response 201 and user token created')
-    })
+      console.log('[RouteVentilateur.test.js][line 66]  Reponse catch data:', response.data.data.list)
+      response.data.data.list.map((elem) => {
+        // console.log('\n\nListe des ', elem.label, ':')
+        elem.hr.map((hr) => {
+          if (hr.hasIndisponibility > 0) {
+            console.log(
+              '\nName:',
+              hr.firstName + ' ' + hr.lastName + '\nEtp:',
+              hr.etp + '\nCurrent Activities:',
+              hr.currentActivities,
+              //hr.currentActivities.filter((activite) => activite.contentieux.id === 447),
+              '\nIndispo: ' + hr.hasIndisponibility,
+              '\nPercent:',
+              (hr.currentActivities.filter((activite) => activite.contentieux.id === 447)[0].percent * hr.etp) / 100
+            )
+            console.log('Indisponibilité:', hr.indisponibilities)
+          }
 
-    it('Give user accesses and add user to a tj by Admin', async () => {
-      let response = await onGetBackupListHrApi({
-        userToken: adminToken,
+          sumEtpSocial += (hr.currentActivities.filter((activite) => activite.contentieux.id === 447)[0].percent * hr.etp) / 100
+        })
       })
-      backups = response.data.data
-
-      const accessIds = accessList.map((elem) => {
-        return elem.id
-      })
-      const ventilations = backups.map((elem) => {
-        return elem.id
-      })
-      console.log('Ventilations:\n', ventilations)
-
-      response = await onUpdateAccountApi({
-        userToken: adminToken,
-        userId: userId,
-        accessIds: accessIds,
-        ventilations: ventilations,
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Check calcul ETP affected to each contentious', async () => {
-      const userInfos = await onGetUserDataApi({ userToken: userToken })
-      console.log('UserInfos:', userInfos.data)
-      //Catch contentious
-      let response = null
-      for (let backup of backups) {
-        response = await onGetContentiousApi({ userToken: userToken, backupId: backup.id })
-
-        if (response.data.data.backups.length > 0) break
-      }
-      //console.log('----- [RouteVentilateur][line 83] response:', response.data.data.backups)
-      let tmp = null
-      for (let backup of backups) {
-        tmp = await onFilterListApi({ userToken: userToken, backupId: backup.id })
-        console.log('TMP:', tmp)
-        //if (tmp.status !== 401) break
-      }
-      //console.log('----- Response Global:', tmp.data.data.list[0].hr[0].referentiel[0])
-      //console.log('----- Response list:', tmp.data.data.list[0].hr[0].currentActivities)
-      //console.log('----- Response allPersons:', tmp.data.data.list[0].hr[0].currentSituation.etp)
-      //assert.strictEqual(response.status, 200)
-    })
-
-    it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await onRemoveAccountApi({
-        userId: userId,
-        userToken: adminToken,
-      })
-      assert.strictEqual(response.status, 200)
+      console.log('[RouteVentilateur.test.js][line 66] SumEtpSocial:', sumEtpSocial)
     })
   })
 }

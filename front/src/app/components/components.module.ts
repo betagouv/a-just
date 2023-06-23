@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { WrapperComponent } from './wrapper/wrapper.component'
 import { SpeedometerComponent } from './speedometer/speedometer.component'
-import { PopupComponent } from './popup/popup.component'
 import { ListSelectionComponent } from './list-selection/list-selection.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MaterialModule } from '../libs/material.module'
@@ -30,13 +29,13 @@ import { RadioButtonComponent } from './radio-button/radio-button.component'
 import { LegendLabelComponent } from './legend-label/legend-label.component'
 import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
 import { EtpChartComponent } from './etp-chart/etp-chart.component'
-import { WrapperNoConnectedComponent } from './wrapper-no-connected/wrapper-no-connected.component'
-import { FooterNoConnectedComponent } from './footer-no-connected/footer-no-connected.component'
 import { NewsComponent } from './news/news.component'
 import { HelpButtonComponent } from './help-button/help-button.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
 import { TextEditorComponent } from './text-editor/text-editor.component'
+import { CalculatriceComponent } from './calculatrice/calculatrice.component';
+import { PopupModule } from './popup/popup.module'
 
 /**
  * Liste des composants à importer
@@ -44,7 +43,6 @@ import { TextEditorComponent } from './text-editor/text-editor.component'
 const list = [
   WrapperComponent,
   SpeedometerComponent,
-  PopupComponent,
   ListSelectionComponent,
   OptionsBackupPanelComponent,
   SelectCheckAllComponent,
@@ -67,13 +65,12 @@ const list = [
   LegendLabelComponent,
   InOutChartComponent,
   EtpChartComponent,
-  WrapperNoConnectedComponent,
-  FooterNoConnectedComponent,
   NewsComponent,
   HelpButtonComponent,
   ExtractorActivityComponent,
   ExtractorVentilationComponent,
   TextEditorComponent,
+  CalculatriceComponent
 ]
 
 /**
@@ -89,6 +86,7 @@ const list = [
     MaterialModule,
     PipesModule,
     NgSelectModule,
+    PopupModule,
   ],
   exports: list,
 })

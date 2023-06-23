@@ -16,6 +16,7 @@ import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interf
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { AppService } from 'src/app/services/app/app.service'
+import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.service'
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -119,6 +120,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
+/**
+ * Activation de la calculatrice
+ */
+calculatriceIsActive: boolean = false
+/**
+ * Ouverture de la calculatrice
+ */
+openCalculatricePopup: boolean = false
 
   /**
    * Constructeur
@@ -131,7 +140,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
+    private calculatriceService: CalculatriceService
   ) {
     super()
   }
@@ -192,8 +202,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form
         .get('categoryId')
-        ?.valueChanges.subscribe(() => this.loadCategories())
+        ?.valueChanges.subscribe(() => {this.loadCategories().then(()=>{          
+          let fct = this.fonctions[0]
+          this.form.get('fonctionId')?.setValue(fct.id || null)
+          if (fct) this.calculatriceIsActive=fct.calculatrice_is_active||false
+
+        })})
     )
+
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,this.form.get('categoryId')?.value)
+    if (fonct) this.calculatriceIsActive=fonct.calculatrice_is_active||false
 
     this.loadCategories()
   }
@@ -250,7 +269,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value
 
-    console.log(this.basicData)
     if (
       this.basicData!.controls['lastName'].value === '' ||
       this.basicData!.controls['lastName'].value === 'Nom'
@@ -452,5 +470,29 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   openHelpPanel(type: string) {
     this.onOpenHelpPanel.emit(type)
+  }
+
+  convertirEtpt(){
+    if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'volume'){
+      if (this.calculatriceService.dataCalculatrice.getValue().volume.value !==null)
+        {
+          this.openCalculatricePopup=false
+          this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+        }
+    }
+    else if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'vacation'){
+      if (this.calculatriceService.dataCalculatrice.getValue().vacation.value !==null && this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==null)
+      {
+        this.openCalculatricePopup=false
+        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+      }
+    } 
+ }
+
+  setFonc(event:any){
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,event.value)
+    if (fonct)
+        this.calculatriceIsActive=fonct.calculatrice_is_active||false
   }
 }

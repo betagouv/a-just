@@ -150,6 +150,17 @@ export default (sequelizeInstance, Model) => {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
+    const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
+    const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
+    const filterNoEtpt = ['AS', 'JA']
+    const privilegedInGreff = ['CONT A JP', 'CONT A VIF JP', 'CONT B JP', 'CONT B VIF JP', 'CONT C JP', 'CONT C VIF JP']
+    const findEAM = await Model.models.HRCategories.findOne({
+      where: {
+        label: 'Autour du magistrat',
+      },
+      logging: false,
+    })
+
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
@@ -172,30 +183,93 @@ export default (sequelizeInstance, Model) => {
           date_start: today,
         }
 
+        let statut = list[i].statut
+        switch (statut) {
+          case 'Fonctionnaire':
+            statut = 'Greffe'
+            break
+        }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
-            label: list[i].statut,
+            label: statut,
           },
           logging: false,
         })
+
+        let code = list[i][statut === 'Magistrat' ? 'fonction' : 'categorie']
+
+        console.log('findCategory', findCategory)
         if (findCategory) {
-          situation.category_id = findCategory.id
+          console.log('oui ?', filterNoEtpt.includes(list[i].fonction), privilegedInGreff.includes(list[i].grade))
+          if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
+            situation.category_id = findEAM.id
+
+            // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
+            switch (list[i].grade) {
+              case 'CONT A VIF JP':
+                code = 'CONT A JP'
+                break
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+                break
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
+                break
+            }
+          } else situation.category_id = findCategory.id
         }
 
-        let code = list[i][list[i].statut === 'Magistrat' ? 'fonction' : 'categorie']
         switch (code) {
-        case 'B':
-          code = 'B greffier'
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
-        const findFonction = await Model.models.HRFonctions.findOne({
+
+        if (list[i].categorie == 'CB') {
+          switch (list[i].grade) {
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
+          }
+        }
+
+        if (code.startsWith('AS')) {
+          code = 'AS'
+        }
+
+        if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
+          importSituation.push(list[i].nom_usage + ' no add by S/P because P')
+          continue
+        }
+
+        let findFonction = await Model.models.HRFonctions.findOne({
           where: {
             code,
           },
           logging: false,
         })
+
+        console.log('findFonction', code, findFonction)
+
         if (findFonction) {
           situation.fonction_id = findFonction.id
-        } else if (list[i].statut === 'Magistrat') {
+        } else if (statut === 'Magistrat' || notImported.includes(code)) {
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -205,9 +279,15 @@ export default (sequelizeInstance, Model) => {
         if (etp) {
           situation.etp = etp
         } else {
-          // dont save this profil
-          importSituation.push(list[i].nom_usage + ' no add by etp')
-          continue
+          if (code === 'MHFJ' && list[i]['posad'] === 'RET') {
+            //situation.etp = null
+          } else if (filterNoEtpt.includes(code)) {
+            //situation.etp = null
+          } else {
+            // dont save this profil
+            importSituation.push(list[i].nom_usage + ' no add by etp')
+            continue
+          }
         }
 
         let updatedAt = new Date()
@@ -257,7 +337,7 @@ export default (sequelizeInstance, Model) => {
 
     // remove cache
     cacheJuridictionPeoples = {}
-    await Model.onPreload()
+    Model.onPreload()
   }
 
   /**
@@ -310,14 +390,12 @@ export default (sequelizeInstance, Model) => {
       backup_id: backupId,
       updated_at: new Date(),
     }
-    console.log('-------- HR:', hr)
 
     if (hr.id && hr.id > 0) {
       // update
       await Model.updateById(hr.id, options)
     } else {
       // create
-      console.log('-------- HR CREATION')
       const newHr = await Model.create(options)
       hr.id = newHr.dataValues.id
     }
@@ -326,7 +404,9 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
-    return await Model.getHr(hr.id)
+    const newHr = await Model.getHr(hr.id)
+
+    return newHr
   }
 
   /**

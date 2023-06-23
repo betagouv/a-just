@@ -18,6 +18,8 @@ import {
 import { groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
+import { instanceAxios } from "../utils/axios";
+import config from "config";
 
 export default class App {
   constructor() {}
@@ -41,17 +43,31 @@ export default class App {
     rmSync(outputAllFolder, { recursive: true, force: true });
     mkdirSync(outputAllFolder, { recursive: true });
 
-    //await this.getGroupByJuridiction(tmpFolder, inputFolder)
-    //await this.formatAndGroupJuridiction(tmpFolder,outputFolder,outputAllFolder,categoriesOfRules,referentiel)
+    /*const I_ELST_LIST = await instanceAxios
+      .get("/juridictions/get-all-ielst")
+      .then((res) => {
+        return res.data.data;
+      });*/
+
+    await this.getGroupByJuridiction(tmpFolder, inputFolder);
+    await this.formatAndGroupJuridiction(
+      tmpFolder,
+      outputFolder,
+      outputAllFolder,
+      categoriesOfRules,
+      referentiel,
+      I_ELST_LIST
+    );
 
     // WIP datas pénal
-    await this.getGroupByJuridictionPenal(tmpFolder, inputFolder);
+    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
     await this.formatAndGroupJuridictionPenal(
       tmpFolder,
       outputFolder,
       outputAllFolder,
-      categoriesOfRules
-    );
+      categoriesOfRules,
+      I_ELST_LIST
+    );*/
 
     this.done();
   }
@@ -195,7 +211,6 @@ export default class App {
           }
 
           dataLines[dataLines.length - 1] = getTypeOfJuridiction; // add type of juridiction
-
           appendFileSync(
             this.getCsvOutputPath(tmpFolder, codeJuridiction),
             `${dataLines.join(",")},\n`
@@ -213,12 +228,11 @@ export default class App {
           console.log(nbLine);
         }
       }
-
       console.log(`add ${totalLine} lines add`);
     }
   }
 
-  async getGroupByJuridictionPenal(tmpFolder, inputFolder) {
+  async getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".csv"));
     console.log("FILES:", files);
     // generate header
@@ -292,7 +306,8 @@ export default class App {
     outputFolder,
     outputAllFolder,
     categoriesOfRules,
-    referentiel
+    referentiel,
+    I_ELST_LIST
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
@@ -434,16 +449,16 @@ export default class App {
         };
       }
       if (
-        rule.filtres /* &&
+        rule.filtres &&
         list[rule["Code nomenclature"]].periode !==
-          "202304" && rule['Code nomenclature'] === '7.7.'*/
+          "202305" /* && rule['Code nomenclature'] === '7.7.'*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i];
           const newRules = rule.filtres[node];
           // control il node exist
-          if (newRules) {
+          if (newRules && newRules !== "-") {
             let lines = monthValues;
 
             // EXCLUDES INCLUDES QUERIES
@@ -471,6 +486,10 @@ export default class App {
 
             list[rule["Code nomenclature"]][node] =
               (list[rule["Code nomenclature"]][node] || 0) + (sumByValues || 0);
+          } else if (newRules === 0) list[rule["Code nomenclature"]][node] = 0;
+          else if (newRules === "-") {
+            // A SUPPRIMER APRES IMPORT DATA AVRIL 2023
+            list[rule["Code nomenclature"]][node] = null;
           }
         }
       }
@@ -550,7 +569,8 @@ export default class App {
     tmpFolder,
     outputFolder,
     outputAllFolder,
-    categoriesOfRules
+    categoriesOfRules,
+    I_ELST_LIST
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
@@ -673,7 +693,7 @@ export default class App {
           tmp_date = monthValues[0][dateInFile[1]];
         }
 
-        if (tmp_date < now) {
+        if (tmp_date < "202305") {
           let formatMonthDataFromRules = null;
           formatMonthDataFromRules = this.formatMonthFromRules(
             monthValues,
@@ -731,7 +751,10 @@ export default class App {
       );
     }
 
-    //writeFileSync(`${outputAllFolder}/AllJuridictions.csv`, 'juridiction,code_import,periode,entrees,sorties,stock,\n')
+    writeFileSync(
+      `${outputAllFolder}/AllJuridictionsPenal.csv`,
+      "juridiction,code_import,periode,entrees,sorties,stock,\n"
+    );
 
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       appendFileSync(

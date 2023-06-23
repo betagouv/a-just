@@ -390,8 +390,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
       let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.code ? currentSituation.fonction.code : 'pas de fonction'
-      let fonctionCategory =
-        currentSituation && currentSituation.fonction && currentSituation.fonction.category_detail ? currentSituation.fonction.category_detail : ''
 
       let etpAffected = new Array()
       let refObj = { ...emptyRefObj(flatReferentielsList) }
@@ -486,6 +484,7 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
         //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
+      console.log(categoryName.toUpperCase(), categoryFilter.toUpperCase())
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({

@@ -110,9 +110,41 @@ export default (sequelizeInstance, Model) => {
 
       if (values.enabled) {
         // check and create juridiction
-        await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+
+        await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
       }
     }
+  }
+
+  /**
+   * Obtenir la liste de tout les TGI et TPRX avec leurs IELST
+   */
+  Model.getAllIelst = async () => {
+    let res = {}
+
+    const getList = async (parentId) => {
+      const list = await Model.findAll({
+        attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
+        where: {
+          parent_id: parentId,
+          type: ['TGI', 'TPRX'],
+        },
+        raw: true,
+      })
+      return list
+    }
+
+    const list = await getList(null)
+
+    for (let i = 0; i < list.length; i++) {
+      res['00' + list[i].iElst] = list[i].label.split(' ').join('_')
+      const children = await getList(list[i].id)
+      for (let j = 0; j < children.length; j++) {
+        res['00' + children[j].iElst] = list[i].label.split(' ').join('_')
+      }
+    }
+    return res
   }
 
   return Model
