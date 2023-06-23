@@ -1,7 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import { decimalToStringDate } from 'src/app/utils/dates'
+import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
 
 @Component({
   selector: 'aj-editable-situation',
@@ -90,7 +91,40 @@ export class EditableSituationComponent implements OnChanges{
     this.isValidatedWhiteSimu = true
     this.displayEndSituation = true
     this.simulatorService.isValidatedWhiteSimu.next(this.isValidatedWhiteSimu)
-    //this.simulatorService.situationActuelle.next()
+    
+    console.log(this.formWhiteSim.getRawValue())
+    let {     totalIn,
+      totalOut,
+      lastStock,
+      etpMag,
+      etpFon,
+      etpCont,
+      realCoverage,
+      realDTESInMonths,
+      magRealTimePerCase } = this.formWhiteSim.value;
+
+    const actualSituation: SimulatorInterface = {
+        totalIn: Number(totalIn)||null,
+        totalOut: Number(totalOut)||null,
+        lastStock: Number(lastStock)||null,
+        etpMag: Number(etpMag)||null,
+        etpFon: Number(etpFon)||null,
+        etpCont: Number(etpCont)||null,
+        realCoverage: Number(realCoverage?.replace('%',''))||null,
+        realDTESInMonths: Number(realDTESInMonths?.replace(' mois',''))||null,
+        magRealTimePerCase: stringToDecimalDate(magRealTimePerCase||'')||null,
+        magCalculateCoverage: null,
+        fonCalculateCoverage: null,
+        magCalculateDTESInMonths: null,
+        fonCalculateDTESInMonths: null,
+        magCalculateTimePerCase: null,
+        nbMonth: 1,
+        etpAffected: null,
+    }
+
+    console.log(actualSituation)
+
+    this.simulatorService.situationActuelle.next(actualSituation)
   }
   editWhiteSimulator(){
     this.isValidatedWhiteSimu = false
