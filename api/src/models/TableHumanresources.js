@@ -229,6 +229,12 @@ export default (sequelizeInstance, Model) => {
           case 'ATT A':
             code = 'CHCAB'
             break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
 
         if (list[i].categorie == 'CB') {
