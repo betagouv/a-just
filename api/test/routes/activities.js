@@ -1,6 +1,6 @@
 import { instanceAxios } from '../utils/axios'
 
-export const onGetLastMonth = async ({ userToken, hrBackupId }) => {
+export const onGetLastMonthApi = async ({ userToken, hrBackupId }) => {
   return await instanceAxios
     .post(
       '/activities/get-last-month',
