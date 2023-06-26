@@ -23,6 +23,7 @@ export class SignupPage {
     firstName: new FormControl(),
     lastName: new FormControl(),
     passwordConf: new FormControl(),
+    checkbox: new FormControl(),
   })
 
   /**
@@ -40,10 +41,15 @@ export class SignupPage {
    * @returns 
    */
   onSubmit() {
-    const { email, password, firstName, lastName, passwordConf, fonction, tj } =
+    const { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox } =
       this.form.value
 
-    if (password.length < 6) {
+    if(!checkbox) {
+      alert("Vous devez valider les conditions générales d'utilisation")
+      return
+    }
+
+    if (!password || password.length < 6) {
       alert("Vous devez saisir un mot de passe d'au moins 6 caractères")
       return
     }
