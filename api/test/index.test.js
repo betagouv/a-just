@@ -3,8 +3,10 @@ import { accessList } from '../src/constants/access'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculateur.test'
-import routeVentilateur from './api/RouteVentilateur.test'
-//import RouteSimulator from './api/RouteSimulator.test'
+import routeSimulator from './api/RouteSimulator.test'
+
+//import routeVentilateur from './api/RouteVentilateur.test'
+
 import axios from 'axios'
 import { assert } from 'chai'
 
@@ -89,10 +91,10 @@ describe('Test server is ready', () => {
   })
 
   routeUser(datas)
-  //routeChangeUserData(datas)
+  routeChangeUserData(datas)
   routeCalcultator(datas)
+  routeSimulator(datas)
   //routeVentilateur(datas)
-  //routeSimulateur(datas)
 
   /*routeImport()
   routeHR()

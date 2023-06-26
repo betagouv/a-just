@@ -192,7 +192,15 @@ module.exports = function (datas) {
         oldSituation[0],
         {
           ...oldSituation[1],
-          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: null, position: 'Titulaire', calculatriceIsActive: false },
+          fonction: {
+            id: 1,
+            rank: 2,
+            code: '1VP',
+            label: 'PREMIER VICE-PRÉSIDENT',
+            category_detail: 'M-TIT',
+            position: 'Titulaire',
+            calculatriceIsActive: false,
+          },
         },
       ]
 
@@ -205,7 +213,9 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
+
       const newSituation = response.data.data.situations
+
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[1].fonction, newSituation[1].fonction)
@@ -221,11 +231,11 @@ module.exports = function (datas) {
             ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
             fonction: {
-              id: 41,
-              rank: 9,
-              code: 'B greffier placé',
-              label: 'B greffier placé',
-              category_detail: null,
+              id: 44,
+              rank: 1,
+              code: 'B greffier',
+              label: 'B greffier',
+              category_detail: 'F-TIT',
               position: 'Titulaire',
               calculatriceIsActive: false,
             },
