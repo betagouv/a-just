@@ -811,17 +811,20 @@
     </div>
     <div class="line-item">
     </div>
+
+    <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
+      <div class="init-button" (click)="resetParams()">
+        <p class="title">Réinitialiser</p>
+      </div>
+      <div class="simulate-button">
+        <p class="title"
+          (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+          Simuler</p>
+      </div>
+    </div>
   </div>
 
 
-  <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
-    <div class="init-button" (click)="resetParams()">
-      <p class="title">Réinitialiser</p>
-    </div>
-    <div class="simulate-button">
-      <p class="title" (click)="toSimulateWhite()">Simuler</p>
-    </div>
-  </div>
 
 </aj-wrapper>
 <ng-template #actions>
