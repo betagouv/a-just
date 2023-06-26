@@ -182,6 +182,7 @@ console.log(params)
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
+        console.log('simu',data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })

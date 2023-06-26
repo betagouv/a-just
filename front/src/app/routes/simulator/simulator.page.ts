@@ -1219,6 +1219,7 @@ displayWhiteElements:boolean = false
    * Calcul de la simulation
    */
   computeSimulation(allButton: any) {
+
     const params = {
       beginSituation: this.firstSituationData,
       endSituation: this.projectedSituationData,
@@ -1251,6 +1252,7 @@ displayWhiteElements:boolean = false
         'Les données en base ne permettent pas de calculer une simulation pour ce contentieux'
       )
     }
+    console.log(params)
   }
 
   /**
@@ -1403,5 +1405,11 @@ displayWhiteElements:boolean = false
       toSimulateWhite(){
         console.log(this.whiteNbOfDays)
         console.log(this.simulatorService.situationActuelle.getValue())
+        console.log(this.simulatorService.situationProjected.getValue())
+        console.log(this.paramsToAjust)
+          console.log(this.pickersParamsToLock)
+
+
+          //this.simulate()
       }
 }
