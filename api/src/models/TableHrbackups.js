@@ -242,12 +242,14 @@ export default (sequelizeInstance, Model) => {
    */
   Model.addUserAccessToTeam = async (juridicitionId) => {
     console.log('judiriciton id', juridicitionId)
-    const usersAffected = (await Model.models.UserVentilations.findAll({
-      where: {
-        hr_backup_id: juridicitionId,
-      },
-      raw: true,
-    })).map(s => s.user_id)
+    const usersAffected = (
+      await Model.models.UserVentilations.findAll({
+        where: {
+          hr_backup_id: juridicitionId,
+        },
+        raw: true,
+      })
+    ).map((s) => s.user_id)
 
     const users = await Model.models.Users.findAll({
       where: {
@@ -260,21 +262,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < users.length; i++) {
-      const backup = await Model.models.UserVentilations.pushVentilation(users[i].id, juridicitionId)
-
-      if (backup) {
-        console.log('sent email to', users[i].email)
-        await sentEmail(
-          {
-            email: users[i].email,
-          },
-          TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
-          {
-            user: `${users[i].first_name} ${users[i].last_name}`,
-            juridictionsList: backup.label,
-          }
-        )
-      }
+      await Model.models.UserVentilations.pushVentilation(users[i].id, juridicitionId)
     }
   }
 
