@@ -5,9 +5,10 @@ import { PanoramaPageModule } from './panorama.routing'
 import { ComponentsModule } from 'src/app/components/components.module'
 import { CommonModule } from '@angular/common'
 import { MaterialModule } from 'src/app/libs/material.module'
+import { PanoramaAlertComponent } from './panorama-alert/panorama-alert.component'
 
 @NgModule({
-  declarations: [PanoramaPage],
+  declarations: [PanoramaPage,PanoramaAlertComponent],
   imports: [
     PanoramaPageModule,
     RouterModule,
