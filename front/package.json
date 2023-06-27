@@ -41,7 +41,9 @@
     "ng2-charts": "^3.0.0-rc.5",
     "quill": "^1.3.7",
     "read-excel-file": "^5.6.1",
+    "remixicon": "^3.2.0",
     "rxjs": "~7.8.0",
+    "ts-transformer-keys": "^0.4.4",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
     "xlsx-renderer": "^2.4.4",
@@ -52,6 +54,7 @@
     "@angular/cli": "~15.1.5",
     "@angular/compiler-cli": "^15.1.0",
     "@types/file-saver": "^2.0.5",
+    "@types/iframe-resizer": "^3.5.9",
     "@types/jasmine": "~4.3.0",
     "@types/lodash": "^4.14.191",
     "jasmine-core": "~4.5.0",
@@ -60,6 +63,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "ttypescript": "^1.5.15",
     "typescript": "~4.9.4"
   }
 }

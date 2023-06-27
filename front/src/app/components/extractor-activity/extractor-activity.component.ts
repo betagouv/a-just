@@ -38,6 +38,19 @@ const headers = [
   'Stock A-JUSTé',
 ]
 
+/**
+ * Excel file headers sum
+ */
+const headersSum = [
+  ' ',
+  'Période',
+  'Total entrées logiciel',
+  'Total entrées après A-JUSTements',
+  'Total sorties logiciel',
+  'Total sorties après A-JUSTements',
+  'Stock logiciel',
+  'Stock après A-JUSTements',
+]
 @Component({
   selector: 'aj-extractor-activity',
   templateUrl: './extractor-activity.component.html',
@@ -181,12 +194,12 @@ export class ExtractorActivityComponent extends MainClass {
       ['codeCent']: sortCodeArray[1]*10 || -1,
       ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
-      ['Entrées logiciel']: act.originalEntrees,
-      ['Entrées A-JUSTées']: act.entrees,
-      ['Sorties logiciel']: act.originalSorties,
-      ['Sorties A-JUSTées']: act.sorties,
+      [total===true?'Total entrées logiciel':'Entrées logiciel']: act.originalEntrees,
+      [total===true?'Total entrées après A-JUSTements':'Entrées A-JUSTées']: act.entrees,
+      [total===true?'Total sorties logiciel':'Sorties logiciel']: act.originalSorties,
+      [total===true?'Total sorties après A-JUSTements':'Sorties A-JUSTées']: act.sorties,
       ['Stock logiciel']: act.originalStock,
-      ['Stock A-JUSTé']: act.stock,
+      ['Stock après A-JUSTements']: act.stock,
     }
   }
 
@@ -287,7 +300,7 @@ export class ExtractorActivityComponent extends MainClass {
         this.sumTab = this.sortByCodeImport(this.sumTab)
         xlsx.utils.book_append_sheet(
           workbook,
-          this.generateWorkSheet(headers, this.sumTab),
+          this.generateWorkSheet(headersSum, this.sumTab),
           'Total sur la période'
         )
 

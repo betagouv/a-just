@@ -10,24 +10,49 @@
         (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
       <div class="flex-1"></div>
-      <div *ngFor="let category of categoriesFilterList;" class="checkbox-button"
+      <div *ngFor="let category of categoriesFilterList" class="checkbox-button"
         [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
-        (click)="checkboxCategory.click()">
-        <div>
-          <input type="checkbox" #checkboxCategory (click)="$event.stopPropagation()" [(ngModel)]="category.selected"
-            (ngModelChange)="onSelectCategory(category)"
-            [ngStyle]="{'border-color': category.textColor, 'background-color': category.selected ? category.textColor : null}" />
-        </div>
-        <div>
+        (mouseenter)="category.openSubMenu=true" (mouseleave)="category.openSubMenu=false">
+        <div class="label-container">
           <p class="label" [ngStyle]="{'color': category.textColor}">
-            {{ category.nbPersonal }} {{ category.nbPersonal > 1 ?
-            category.labelPlural : category.label }}
+            <span class="bold">{{category.headerLabel}}</span> : <span
+              *ngIf="category.headerLabel!=='Autour du magistrat'">{{ category.nbPersonal }} {{
+              category.nbPersonal > 1 ?
+              category.labelPlural : category.label }}</span>
           </p>
-          <p class="etp">{{ category.etpt | number:".2-2" }} ETPT</p>
+          <label class="etp"><span class="moovable" *ngIf="category.headerLabel==='Autour du magistrat'">
+              {{category.nbPersonal }} {{
+              category.nbPersonal > 1 ?
+              category.labelPlural : category.label }}</span> {{ category.etpt | number:".2-2" }} ETPT</label>
+        </div>
+        <div class="radio-border-left">
+          <aj-radio-button [bgColor]="category.textColor" switchColor="white" [value]="category.selected"
+            (click)="category.selected=!category.selected;onSelectCategory(category)" #radio></aj-radio-button>
+        </div>
+        <div *ngIf="category.openSubMenu && category.headerLabel!=='Autour du magistrat' && category.selected"
+          class="open-menu">
+          <div>
+            <div #rectangleElem *ngFor="let poste of category.poste" class="checkbox-button-cont"
+              [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
+              (mouseenter)="switchBgColor(rectangleElem,category.hoverColor)"
+              (mouseleave)="switchBgColor(rectangleElem,category.bgColor)">
+              <div class="rectangle">
+                <span class="nb-personal">{{poste.nbPersonal}}</span>&nbsp;
+                <label class="poste-title">{{poste.nbPersonal > 1 ? poste.name+'s': poste.name }}</label>&nbsp;
+                <label class="poste-etp">{{poste.etpt | number:".2-2"}}</label>
+                <div class="radio-border-left">
+                  <aj-radio-button [bgColor]="category.textColor" [switchColor]="'white'"
+                    [value]="getTooglePositionSelected(poste)"
+                    (click)="setTooglePositionSelected(category,poste);category.openSubMenu=false"
+                    #radio></aj-radio-button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="content-list" id="container-list" #containerList>
+    <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
           <div class="profil">
@@ -84,9 +109,7 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <img *ngIf="filterSelected && filterSelected.id === ref.id; else descIcon"
-                    src="/assets/icons/sort-asc.svg" />
-                  <ng-template #descIcon><img src="/assets/icons/sort-desc.svg" /></ng-template>
+                  <i class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
                 </div>
               </div>
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
@@ -97,8 +120,7 @@
 
         <div class="sub-content-list" [style.background-color]="list.bgColor">
           <person-preview *ngFor="let hr of list.hrFiltered; trackBy: trackById" [style.opacity]="hr.opacity"
-            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"
-            [parentDom]="containerList"></person-preview>
+            [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams" [textColor]="list.textColor"></person-preview>
         </div>
       </ng-template>
     </div>

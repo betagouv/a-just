@@ -1,16 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import {
-  checkIfDateIsNotToday,
-  decimalToStringDate,
-  getRangeOfMonthsAsObject,
-  getShortMonthString,
-  month,
-  nbOfDays,
-  stringToDecimalDate,
-  today,
-  workingDay,
-} from './date'
+import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
@@ -24,9 +14,9 @@ export const environment = {
   nbDaysByMagistrat: config.nbDaysByMagistrat,
   nbDaysPerMonthByMagistrat: config.nbDaysByMagistrat / 12,
   nbHoursPerDayAndByMagistrat: config.nbHoursPerDayAndMagistrat,
-  nbDaysByFonctionnaire: 229.57,
-  nbDaysPerMonthByFonctionnaire: 229.57 / 12,
-  nbHoursPerDayAndByFonctionnaire: 7,
+  nbDaysByGreffe: 229.57,
+  nbDaysPerMonthByGreffe: 229.57 / 12,
+  nbHoursPerDayAndByGreffe: 7,
   nbDaysByContractuel: 229.57,
   nbDaysPerMonthByContractuel: 229.57 / 12,
   nbHoursPerDayAndByContractuel: 7,
@@ -210,13 +200,13 @@ export async function getSituation (referentielId, hr, allActivities, categories
   const categoryLabel = categories.find((element) => element.id === selectedCategoryId).label
   let sufix = 'By' + categoryLabel
 
-  if (lastActivities.length === 0) return emptySituation
+  // Compute etpAffected & etpMag today (on specific date) to display & output
+  etpAffectedToday = await getHRPositions(hr, referentielId, categories)
+
+  let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
+
+  if (lastActivities.length === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
   else {
-    // Compute etpAffected & etpMag today (on specific date) to display & output
-    etpAffectedToday = await getHRPositions(hr, referentielId, categories)
-
-    let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
-
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
@@ -224,17 +214,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
-
-    /**
-    console.log(
-      'To compare realTimePerCase : ',
-      realTimePerCase,
-      'Etp used : ',
-      selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute,
-      'Total out used :',
-      totalOut
-    )
-    */
 
     // Compute totalOut with etp today (specific date) to display
     totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)

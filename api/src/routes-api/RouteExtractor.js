@@ -13,7 +13,7 @@ import {
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { month } from '../utils/date'
-import { ABSENTEISME_LABELS, CET_LABEL } from '../constants/referentiel'
+import { ABSENTEISME_LABELS } from '../constants/referentiel'
 
 /**
  * Route de la page extrateur
@@ -153,11 +153,20 @@ export default class RouteExtractor extends Route {
     let activities = await this.models.Activities.getAllDetails(backupId)
     activities = orderBy(activities, 'periode', ['asc'])
       .filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
-      .map((x) => (x.periode = { periode: x.periode.setHours(0, 0, 0, 0), ...x }))
-
-    console.log(activities)
+      .map((x) => {
+        return { ...x, periode: new Date(x.periode.setHours(12, 0, 0, 0)).setDate(1) }
+      })
 
     let sum = cloneDeep(activities)
+    console.log(sum)
+    sum = sum.map((x) => {
+      const ajustedIn = x.entrees || x.originalEntrees
+      const ajustedOut = x.sorties || x.originalSorties
+      const ajustedStock = x.stock || x.originalStock
+
+      return { ajustedIn, ajustedOut, ajustedStock, ...x }
+    })
+
     sum = groupBy(sum, 'contentieux.id')
 
     let sumTab = []
@@ -165,9 +174,9 @@ export default class RouteExtractor extends Route {
     Object.keys(sum).map((key) => {
       sumTab.push({
         periode: replaceIfZero(last(sum[key]).periode),
-        entrees: replaceIfZero(sumBy(sum[key], 'entrees')),
-        sorties: replaceIfZero(sumBy(sum[key], 'sorties')),
-        stock: replaceIfZero(last(sum[key]).stock),
+        entrees: replaceIfZero(sumBy(sum[key], 'ajustedIn')),
+        sorties: replaceIfZero(sumBy(sum[key], 'ajustedOut')),
+        stock: replaceIfZero(last(sum[key]).ajustedStock),
         originalEntrees: replaceIfZero(sumBy(sum[key], 'originalEntrees')),
         originalSorties: replaceIfZero(sumBy(sum[key], 'originalSorties')),
         originalStock: replaceIfZero(last(sum[key]).originalStock),

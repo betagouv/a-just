@@ -114,7 +114,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Sauvegarde des temps moyens à une juridicitons
+   * Sauvegarde des temps moyens à une juridictions
    * @param {*} list
    * @param {*} backupId
    * @param {*} backupName

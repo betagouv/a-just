@@ -80,6 +80,9 @@ export default (sequelizeInstance) => {
   )
 
   Model.associate = function (models) {
+    Model.hasMany(models.UserVentilations, { foreignKey: 'user_id', sourceKey: 'id' })
+
+
     return models
   }
 

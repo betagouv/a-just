@@ -165,6 +165,15 @@
       </ng-template>
     </div>
   </div>
+  <aj-popup *ngIf="isLeaving" class="small blackBackground" [closeIcon]="true" (onClose)="isLeaving = false"
+    title="Quitter la simulation" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
+    [removeShadow]="'noShadow'">
+    <div>
+      <p class="content">Vous souhaitez sortir du réaffectateur alors que vous avez effectué une simulation
+        d'affectation. Ces
+        données modifiées seront perdues, pensez à effectuer un export afin d'en garder une trace.</p>
+    </div>
+  </aj-popup>
 </aj-wrapper>
 
 <ng-template #actions>
@@ -194,7 +203,7 @@
             <p>{{ hr.firstName}} {{ hr.lastName}}</p>
             <div *ngIf="hr.comment" class="tooltip">
               <mat-icon>message</mat-icon>
-              <span class="tooltiptext">{{ hr.comment }}</span>
+              <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
             </div>
           </div>
           <div class="tags">

@@ -166,7 +166,7 @@ export class CoverProfilDetailsComponent
    * @param nodeName
    * @param value
    */
-  async updateHuman(nodeName: string, value: any) {
+  updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
       if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
@@ -177,17 +177,13 @@ export class CoverProfilDetailsComponent
         [nodeName]: value,
       }
 
-      await this.humanResourceService.updatePersonById(this.currentHR, {
-        [nodeName]: value,
-      })
-
-      const cacheHR = await this.humanResourceService.updatePersonById(
+      this.humanResourceService.updatePersonById(
         this.currentHR,
         {
           [nodeName]: value,
         }
       )
-      this.ficheIsUpdated.emit(cacheHR)
+      this.ficheIsUpdated.emit(this.currentHR) // fix quick update front whitout waiting loading
     }
   }
 }

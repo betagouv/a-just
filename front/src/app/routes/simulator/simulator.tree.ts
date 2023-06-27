@@ -5,7 +5,7 @@ const etpMag = 'etpMag'
 /**
  * Etp magistrat text 1
  */
-const etpMagTitle = 'des ETPT magistrat'
+const etpMagTitle = 'des ETPT siège'
 /**
  * Etp magistrat unit
  */

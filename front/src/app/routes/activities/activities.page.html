@@ -1,5 +1,8 @@
 <aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
-  [documentation]="documentation" class="content-margin-null">
+  [documentation]="documentation"
+  class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null"
+  [actionTemplate]="dataGuide" [alignLeft]=true>
+
   <div class="container">
     <div class="header-list">
       <div class="margin-left"></div>
@@ -169,6 +172,29 @@
     </div>
   </div>
 </aj-wrapper>
+
+<ng-template #dataGuide>
+  <div class="rightHeader">
+    <h2>Le guide de la donnée</h2>
+    <div class="flex-center flex-between">
+      <p>
+        Pour tout savoir sur les données pré-alimentées
+      </p>
+      <a [href]="gitBook" target="_blank">
+        <button class="small primary">Consultez le
+          data-book</button>
+      </a>
+    </div>
+    <div class="flex-center">
+      <p>
+        Un avis, une question ?
+      </p>
+      <a [href]="supportGitBook" class="support-email"> Contactez-nous
+      </a>
+    </div>
+  </div>
+</ng-template>
+
 
 <ng-template #subTitleTemplate>
   <p *ngIf="updatedBy" class="sub-title">

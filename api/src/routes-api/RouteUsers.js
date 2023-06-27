@@ -64,7 +64,7 @@ export default class RouteUsers extends Route {
       await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(
         {
-          email: config.contactEmail,
+          email: config.supportEmail,
         },
         TEMPLATE_NEW_USER_SIGNIN,
         {
@@ -111,8 +111,12 @@ export default class RouteUsers extends Route {
     })
 
     if (user) {
-      if (ctx.state.user.id === user.id || user.role === USER_ROLE_SUPER_ADMIN || ctx.state.user.role !== USER_ROLE_ADMIN)
-        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))
+      if (
+        ctx.state.user.id === user.id ||
+        user.role === USER_ROLE_SUPER_ADMIN ||
+        (ctx.state.user.role !== USER_ROLE_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN)
+      )
+        ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas supprimer un super administrateur ou vous même"))
 
       if (await this.model.removeAccount(id, { force: true })) {
         this.sendOk(ctx, 'Ok')
@@ -136,7 +140,11 @@ export default class RouteUsers extends Route {
     })
 
     if (user) {
-      if (ctx.state.user.id === user.id || user.role === USER_ROLE_SUPER_ADMIN || ctx.state.user.role !== USER_ROLE_ADMIN)
+      if (
+        ctx.state.user.id === user.id ||
+        user.role === USER_ROLE_SUPER_ADMIN ||
+        (ctx.state.user.role !== USER_ROLE_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN)
+      )
         ctx.throw(401, ctx.state.__("Vous n'avez pas les droits ou vous ne pouvez pas suppimer un super administrateur ou vous même"))
 
       if (await this.model.removeAccount(id, {})) {

@@ -565,7 +565,7 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < csv.length; i++) {
       const code = csv[i].code_import
-      const HRBackupId = await Model.models.HRBackups.findByLabel(csv[i].juridiction)
+      const HRBackupId = await Model.models.HRBackups.findOrCreateLabel(csv[i].juridiction)
 
       if (HRBackupId === null) {
         continue
