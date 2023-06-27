@@ -322,10 +322,12 @@ displayWhiteElements:boolean = false
       })
     )
 
-
     this.watch(
       this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
         this.displayWhiteElements = b
+        if (b===false){
+          this.toDisplaySimulation=false
+        }
       })
     )
 

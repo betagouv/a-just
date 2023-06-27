@@ -217,8 +217,8 @@
   .reset-button {
     pointer-events: none;
     opacity: 0.5;
-    position: absolute;
-    right: 16px;
+    position: relative;
+    //right: 16px;
     width: 56px;
     cursor: auto;
     display: flex;
@@ -1102,11 +1102,12 @@
   }
 
   .white-simulator {
-    right: 255px;
+    //right: 255px;
     pointer-events: none;
+    margin: 0px 8px;
     cursor: auto;
     opacity: 0.5;
-    position: absolute;
+    position: relative;
     display: flex;
     align-items: center;
     border-radius: 8px;
@@ -1137,8 +1138,9 @@
     pointer-events: none;
     cursor: auto;
     opacity: 0.5;
-    position: absolute;
-    right: 80px;
+    position: relative;
+    margin-right: 8px;
+    //right: 80px;
     display: flex;
     align-items: center;
     border-radius: 8px;
