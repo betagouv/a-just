@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { basicEtptData } from 'src/app/constants/etpt-calculation'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
@@ -15,6 +16,10 @@ export class EditableSituationComponent implements OnChanges {
    * Number of day to simulate
    */
   @Input() nbOfDays: number = 0
+  /**
+   * Catégorie selectionnée
+   */
+  @Input() category: string|null= null
   /**
    * RegEx
    */
@@ -51,7 +56,7 @@ export class EditableSituationComponent implements OnChanges {
     totalOut: 0,
     lastStock: 0,
     etpMag: 0,
-    etpFon: null,
+    etpFon: 0,
     etpCont: null,
     realCoverage: 0,
     realDTESInMonths: 0,
@@ -104,7 +109,7 @@ export class EditableSituationComponent implements OnChanges {
       magRealTimePerCase,
     } = this.formWhiteSim.value
 
-    if (![totalIn, totalOut, lastStock, etpMag].includes('')) {
+    if (![totalIn, totalOut, lastStock].includes('') && (etpMag!=='' || etpFon!=='')) {
       this.generateEndSituation()
       this.isValidatedWhiteSimu = true
       this.displayEndSituation = true
@@ -154,7 +159,10 @@ export class EditableSituationComponent implements OnChanges {
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
       String(Math.round(dtes)) + ' mois'
     )
-    const tmd = (17.333 * 8 * startetpMag) / startTotalOut
+    const prefix1 = this.category==='MAGISTRAT'?'nbDaysByMagistrat':'nbDaysByFonctionnaire'
+    const prefix2 = this.category==='MAGISTRAT'?'nbHoursPerDayAndMagistrat':'nbHoursPerDayAndFonctionnaire'
+    const etpToUse = this.category==='MAGISTRAT'?startetpMag:startetpFon
+    const tmd = ((basicEtptData[prefix1]/12) * basicEtptData[prefix2] * etpToUse) / startTotalOut
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(
       decimalToStringDate(tmd)
     )
@@ -189,7 +197,7 @@ export class EditableSituationComponent implements OnChanges {
       totalOut: startTotalOut,
       lastStock: endStock,
       etpMag: startetpMag,
-      etpFon: null,
+      etpFon: startetpFon,
       etpCont: null,
       realCoverage: coverage,
       realDTESInMonths: endStock / startTotalOut,

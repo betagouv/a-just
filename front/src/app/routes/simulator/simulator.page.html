@@ -376,7 +376,7 @@
   </div>
 
   <aj-editable-situation *ngIf="dateStop!==null" [@fadeInOut] [ngClass]="{'hide': whiteSimulator === false}"
-    [nbOfDays]="whiteNbOfDays"></aj-editable-situation>
+    [nbOfDays]="whiteNbOfDays" [category]="categorySelected"></aj-editable-situation>
 
 
   <div class="actual-situation actual-situation-white color-white"
@@ -505,7 +505,7 @@
       <div [ngClass]="{'hide-by-category': !canViewGreffier}" class="line-item blue-bg">
         <input class="ajusted-button" id="etpFon" [class.filled]="etpFon.value!=='Ajuster'"
           (click)="openPopupWithParams(etpFon)" value="Ajuster" readonly="readonly"
-          [ngClass]="{disable: categorySelected !== 'FONCTIONNAIRE'}" #etpFon />
+          [ngClass]="{disable: categorySelected !== 'GREFFE'}" #etpFon />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
@@ -680,7 +680,8 @@
           </div>
         </div>
         <div *ngIf="canViewMagistrat" class="line-item">
-          <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
+          <input [value]="whiteSimulator && categorySelected==='GREFFE'?'':getFieldValue('etpMag',simulatedSationData)"
+            disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
@@ -699,7 +700,9 @@
           </div>
         </div>
         <div *ngIf="canViewGreffier" class="line-item">
-          <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
+          <input
+            [value]="whiteSimulator && categorySelected==='MAGISTRAT'?'':getFieldValue('etpFon',simulatedSationData)"
+            disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
@@ -710,7 +713,7 @@
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
-            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData) && whiteSimulator===false"
             [@fadeInOut]>
             {{ratio(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}%
 
@@ -719,7 +722,7 @@
         </div>
 
         <div *ngIf="canViewContractuel" class="line-item">
-          <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled />
+          <input [value]="whiteSimulator?'':getFieldValue('etpCont',projectedSituationData)" disabled />
           <!-- TODO ICI CHANGER POUR QU'IL Y AI UN VRAIS CALCUL -->
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -731,10 +734,10 @@
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
-            *ngIf="!(paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont') && getFieldValue('etpCont',projectedSituationData)!==getFieldValue('etpCont',firstSituationData)"
+            *ngIf="!(paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont') && getFieldValue('etpCont',projectedSituationData)!==getFieldValue('etpCont',firstSituationData) && whiteSimulator===false"
             [@fadeInOut]>
             {{ratio(getFieldValue('etpCont',projectedSituationData),getFieldValue('etpCont',firstSituationData))}}%
-            <div class="triangle simulated blue"></div>
+            <div class=" triangle simulated blue"></div>
           </div>
         </div>
 
@@ -847,6 +850,21 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
 
     <p class="title">{{printTitle}}</p>
+  </div>
+
+  <div class="categories-switch" [ngClass]="{'hide': whiteSimulator === false}" style="position: relative;">
+    <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
+      [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
+      (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); ">
+      <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
+      <p>Siège</p>
+    </div>
+    <div *ngIf="canViewGreffier" class="fonctionnaires {{disabled}}"
+      [ngClass]="{'selected': categorySelected === 'GREFFE', alone: !canViewMagistrat}" class="fonctionnaires"
+      (click)="$event.stopPropagation(); changeCategorySelected('GREFFE')">
+      <input type="radio" [checked]="categorySelected === 'GREFFE'" />
+      <p>Greffe</p>
+    </div>
   </div>
 
   <div class="white-simulator enable" (click)="resetParams();whiteSimulator=!whiteSimulator;">
