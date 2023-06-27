@@ -5,7 +5,7 @@ export const DOCUMENTATION_URL = 'https://docs.a-just.beta.gouv.fr/documentation
 /**
  * Lien de la calculate
  */
-export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF_20221219.xlsx'
+export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'
 /**
  * Lien pour créer une nouvelle fiche
  */
@@ -18,3 +18,7 @@ export const DOCUMENTATION_UPDATE_PERSON = 'https://docs.a-just.beta.gouv.fr/doc
  * Lien pour la ventilation
  */
 export const DOCUMENTATION_VENTILATEUR_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
+/**
+ * Lien pour le guide de la donnée
+ */
+export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"

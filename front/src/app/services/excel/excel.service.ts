@@ -109,9 +109,6 @@ export class ExcelService extends MainClass {
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"']
 
-        console.log(uniqueJur)
-        console.log(uniqueJurIndex)
-
         const viewModel = {
           agregat: this.tabs.onglet2.excelRef,
           referentiel: data.data.referentiels.map((x: any) => {
@@ -159,17 +156,12 @@ export class ExcelService extends MainClass {
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
-            console.log( ['"' + uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"'])
-
-            console.log(['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'])
-
-
             report.worksheets[2].getCell('A' + +2).dataValidation = {
               type: 'list',
               allowBlank: false,
               formulae: tProximite,
               error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner une juridiction pour de mettre à jour le tableau de synthèse ci-après',
+              prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
               showErrorMessage: true,
               showInputMessage: true,
             }

@@ -16,7 +16,7 @@ export const TAG_JURIDICTION_ID_COLUMN_NAME = "I_ELST";
 export const TAG_JURIDICTION_VALUE_COLUMN_NAME = "NOM_COMPTEUR";
 
 export const I_ELST_LIST = {
-  "00100167": "TJ_LYON", // Lyon
+  /*"00100167": "TJ_LYON", // Lyon
   "00963077": "TJ_LYON", // Villeurbanne
   "00100209": "TJ_NANTERRE", // Nanterre
   "00962960": "TJ_NANTERRE", // Antony
@@ -49,6 +49,20 @@ export const I_ELST_LIST = {
   "00100144": "TJ_DUNKERQUE", // Dunkerque
   "00963010": "TJ_DUNKERQUE", // Hazebrouck
   "00100147": "TJ_VALENCIENNES", // Valenciennes
+  "00100153": "TJ_ARRAS", // Arras
+  "00100141": "TJ_AVESNES_SUR_HELPE", // Avesnes sur helpe
+  "00963025": "TJ_AVESNES_SUR_HELPE", // Avesnes sur helpe
+  "00100154": "TJ_BETHUNE", // Bethune
+  "00963016": "TJ_BETHUNE", // Lens
+  "00100155": "TJ_BOULOGNE_SUR_MER", // Boulogne Sur Mer
+  "00962977": "TJ_BOULOGNE_SUR_MER", // Calais
+  "00963034": "TJ_BOULOGNE_SUR_MER", // Mintreuil
+  "00100142": "TJ_CAMBRAI", // Cambrai
+  "00100143": "TJ_DOUAI", // Douai
+  "00100146": "TJ_LILLE", // Lille
+  "00963057": "TJ_LILLE", // Roubaix
+  "00963070": "TJ_LILLE", // Tourcoing
+  "00100156": "TJ_SAINT_OMER", // St Omer
 
   // CA RENNES
   "00100135": "TJ_LORIENT", // Lorient
@@ -57,11 +71,11 @@ export const I_ELST_LIST = {
   "00100098": "TJ_RENNES", // Rennes
   "00963002": "TJ_RENNES", // Fougeres
   "00963053": "TJ_RENNES", // Redon
-  "00100076": "TJ_ST_BRIEUC", // Saint Brieuc
-  "00963008": "TJ_ST_BRIEUC", // Guingamp
-  "00100099": "TJ_ST_MALO", // St Malo
-  "00962992": "TJ_ST_MALO", // Dinan
-  "00100115": "TJ_ST_NAZAIRE", // St Nazaire
+  "00100076": "TJ_SAINT_BRIEUC", // Saint Brieuc
+  "00963008": "TJ_SAINT_BRIEUC", // Guingamp
+  "00100099": "TJ_SAINT_MALO", // St Malo
+  "00962992": "TJ_SAINT_MALO", // Dinan
+  "00100115": "TJ_SAINT_NAZAIRE", // St Nazaire
   "00100136": "TJ_VANNES", // Vannes
 
   // CA BORDEAUX
@@ -108,15 +122,38 @@ export const I_ELST_LIST = {
   "00963004": "TJ_VERSAILLES", // St_Germain_en_laye
   "00963021": "TJ_VERSAILLES", // Mantes La Jolie
   "00963048": "TJ_VERSAILLES", // Poissy
-  "00963052": "TJ_VERSAILLES", // Rambouillet
-
-  // CA Pointoise
-  "00100212": "TJ_PONTOISE", // Pontoise
-  "00963006": "TJ_PONTOISE", // Gonesse
-  "00963033": "TJ_PONTOISE", // Montmorency
-  "00963059": "TJ_PONTOISE", // Sannois
+  "00963052": "TJ_VERSAILLES", // Rambouillet*/
 
   // CA Chartres
   "00100085": "TJ_CHARTRES", // Chartres
   "00962995": "TJ_CHARTRES", // Dreux
+
+  /*"00100131": "TJ_VAL_DE_BRIEY", // Val-De-Briey
+  "00100133": "TJ_BAR_LE_DUC", //  Bar-Le-Duc
+  "00100134": "TJ_VERDUN", // Verdun
+
+  "00100096": "TJ_BEZIERS", // Beziers
+
+  "00100122": "TJ_ANGERS", // Anger
+  "00962982": "TJ_ANGERS", //Cholet
+
+  "00100173": "TJ_LE_MANS", // Le Mans
+  "00962998": "TJ_LE_MANS", // La Fleche
+
+  "00100130": "TJ_LAVAL", // Laval
+
+  "00948312": "TJ_SAUMUR", // Saumur
+
+  "00100119": "TJ_AGEN", // Agen
+  "00963022": "TJ_AGEN", // Marmande
+  "00963076": "TJ_AGEN", // Villeneuve Sur Lot
+
+  "00100093": "TJ_AUCH", // Auch
+  "00962987": "TJ_AUCH", // Condom
+
+  "00100118": "TJ_CAHORS", // Cahors
+  "00962997": "TJ_CAHORS", // Figeac
+
+  "00100184": "TJ_MEAUX", // Meaux
+  "00963015": "TJ_MEAUX", // Lagny Sur Marne*/
 };

@@ -5,6 +5,8 @@ services:
     restart: always
     cpus: 2.0
     mem_limit: 4G
+    ports:
+      - "5450:5432"
     expose:
       - "5432"
     networks:
@@ -15,6 +17,8 @@ services:
       - POSTGRES_USER=ajust-user
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
+    volumes:
+      - ./api/test/db:/docker-entrypoint-initdb.d
     command:
       - "postgres"
       - "-c"

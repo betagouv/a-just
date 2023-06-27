@@ -13,16 +13,17 @@
   },
   "dependencies": {
     "@babel/cli": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.20.2",
     "@babel/runtime": "^7.21.0",
     "@babel/runtime-corejs2": "^7.21.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/preset-env": "^7.20.2",
-    "axios": "^0.21.4",
+    "@sentry/node": "^7.52.1",
+    "@sentry/utils": "^7.52.1",
     "base64-stream": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.2",
@@ -37,8 +38,10 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "9.0.0",
     "koa-body": "^4.0.6",
+    "koa-csp": "^1.2.1",
     "koa-logger-winston": "^0.0.2",
     "koa-smart": "^2.2.0",
+    "koa-sslify": "^5.0.1",
     "lodash": "^4.17.20",
     "mime": "^2.5.2",
     "nyc": "^15.1.0",
@@ -51,13 +54,15 @@
     "stream": "^0.0.2",
     "winston": "^3.8.2",
     "winston-logzio": "^5.1.2",
-    "winston-sentry-log": "^1.0.26"
+    "winston-sentry-log": "^1.0.26",
+    "winston-transport-sentry-node": "^2.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.0.0",
     "@babel/preset-stage-3": "^7.8.3",
     "@babel/register": "^7.0.0",
+    "axios": "^1.4.0",
     "babel-eslint": "^10.1.0",
     "chai": "^4.3.4",
     "eslint": "^7.13.0",
@@ -66,6 +71,7 @@
     "mocha": "^8.4.0",
     "nock": "^13.2.1",
     "nodemon": "^2.0.20",
-    "prettier-eslint": "^11.0.0"
+    "prettier-eslint": "^11.0.0",
+    "sinon": "^15.0.4"
   }
 }

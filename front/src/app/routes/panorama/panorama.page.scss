@@ -1,0 +1,34 @@
+@import '../../styles/utils.scss';
+
+.tags {
+  display: flex;
+  margin-top: 4px;
+
+  > div {
+    padding: 0 8px;
+    border-radius: 12px;
+    margin-right: 8px;
+    height: 24px;
+    line-height: 24px;
+
+    &.all {
+      background-color: fColor(bgCategoryAll);
+      color: fColor(textCategoryAll);
+    }
+
+    &.seat {
+      background-color: fColor(bgCategorySiege);
+      color: fColor(textCategorySiege);
+    }
+
+    &.greffe {
+      background-color: fColor(bgCategoryGreffe);
+      color: fColor(textCategoryGreffe);
+    }
+
+    &.arround {
+      background-color: fColor(bgCategoryAutour);
+      color: fColor(textCategoryAutour);
+    }
+  }
+}

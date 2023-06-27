@@ -21,7 +21,7 @@ export class JuridictionsInstalledPage {
   /**
    * Center of mapbox
    */
-  center: [number, number] = [2.312315, 48.8678015]
+  center: [number, number] = [2.213749, 46.227638]
   /**
    * Zoom of mapbox
    */
@@ -89,7 +89,7 @@ export class JuridictionsInstalledPage {
         const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
           .addTo(map)
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' personnes' : ''}`)
+        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' habitants' : ''}`)
         m.setPopup(popup)
       })
     })

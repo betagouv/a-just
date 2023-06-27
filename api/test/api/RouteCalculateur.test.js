@@ -1,144 +1,142 @@
-import config from 'config'
-import axios from 'axios'
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
+import { onGetUserDataApi, onUpdateAccountApi } from '../routes/user'
+import { onGetBackupListHrApi } from '../routes/hr'
+import { onGetLastMonth } from '../routes/activities'
+import { onFilterListApi } from '../routes/calculator'
+import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID } from '../constants/juridiction'
+import { roundFloat } from '../../test/utils/math'
+import config from 'config'
 
-module.exports = function () {
-  let data = null
-  let backups = null
-  let adminToken = null
-  let userToken = null
-  let userId = null
+module.exports = function (datas) {
   let lastMonth = null
+  let calculatorData = null
 
+  // Le backupId est ici prédéfini pour baser les tests sur une juridictions pour laquel on est sûr d'avoir des données
   describe('Check calcul ', () => {
-    it('Login - Login admin', async () => {
-      const email = 'redwane.zafari@a-just.fr'
-      const password = '123456'
-
-      // Connexion de l'admin
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
+    it('Add admin to a tj', async () => {
+      const response = await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.adminId,
+        accessIds: datas.adminAccess,
+        ventilations: [JURIDICTION_BACKUP_ID],
       })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data.token
-      assert.strictEqual(response.status, 201)
-    })
 
-    it('Sign up - Create test user', async () => {
-      const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: 'test@mail.com',
-        password: '123456',
-        firstName: 'userTest',
-        lastName: 'userTest',
-        fonction: 'Vacataire',
-        tj: 'ESSAI',
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Login - Log user', async () => {
-      const email = 'test@mail.com'
-      const password = '123456'
-
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
-      })
-      userToken = response.status === 201 && response.data.token
-      userId = response.data.user.id
-
-      assert.isOk(userToken, 'response 201 and user token created')
-    })
-
-    it('Give user accesses and add user to a tj by Admin', async () => {
-      let response = await axios.get(`${config.serverUrl}/human-resources/get-backup-list`, {
-        headers: {
-          authorization: adminToken,
-        },
-      })
-      backups = response.data.data
-      const accessIds = accessList.map((elem) => {
-        return elem.id
-      })
-      response = await axios.post(
-        `${config.serverUrl}/users/update-account`,
-        {
-          userId: userId,
-          access: accessIds,
-          ventilations: [backups[0].id],
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Get my datas as a connected user. Should return 200', async () => {
-      const response = await axios.get(`${config.serverUrl}/users/get-user-datas`, {
-        headers: {
-          authorization: userToken,
-        },
-      })
       assert.strictEqual(response.status, 200)
     })
 
     it('Get last month', async () => {
-      //get last month data for specific jurisdiction
-      let response = await axios.post(
-        `${config.serverUrl}/activities/get-last-month`,
-        {
-          hrBackupId: backups[0].id,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
-      lastMonth = response.data.date
+      //Récupération du dernier mois pour lequel on a des données d'activités
+      let response = await onGetLastMonth({
+        userToken: datas.adminToken,
+        hrBackupId: JURIDICTION_BACKUP_ID,
+      })
+      lastMonth = response.data.data.date
       assert.strictEqual(response.status, 200)
     })
 
     it('Catch data', async () => {
       const dateStop = new Date(lastMonth)
-      const dateStart = new Date(new Date(dateStop).setDate(dateStop.getDate() - 30))
+      const dateStart = new Date(new Date(dateStop).setDate(1))
       const categorySelected = 'magistrats'
-      const contentieuxIds = [447, 440, 460, 451, 467, 471, 486, 475, 480, 485, 497]
+      const contentieuxIds = [447]
 
-      const response = await axios.post(
-        `${config.serverUrl}/calculator/filter-list`,
-        {
-          backupId: backups[0].id,
-          dateStart,
-          dateStop,
-          contentieuxIds,
-          optionBackupId: null,
-          categorySelected,
-          selectedFonctionsIds: null,
-        },
-        {
-          headers: {
-            authorization: userToken,
-          },
-        }
-      )
-      console.log('Reponse catch data:', response.data.data.list[0].childrens[0])
-    })
-
-    it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
-        headers: {
-          authorization: adminToken,
-        },
+      const response = await onFilterListApi({
+        userToken: datas.adminToken,
+        backupId: JURIDICTION_BACKUP_ID,
+        dateStart,
+        dateStop,
+        contentieuxIds,
+        optionBackupId: JURIDICTION_OPTION_BACKUP_ID,
+        categorySelected,
+        selectedFonctionsIds: null,
       })
 
+      calculatorData = response.data.data.list[0]
       assert.strictEqual(response.status, 200)
+      assert.isNotEmpty(calculatorData)
+    })
+
+    it('Check Obeserved Coverage Rate', () => {
+      console.log('[RouteCalculateur.test.js][line 79] Check Obeserved Coverage Rate \nCalculatorData:', calculatorData)
+      if (calculatorData.totalOut && calculatorData.totalIn && calculatorData.realCoverage) {
+        const totalOut = calculatorData.totalOut
+        const totalIn = calculatorData.totalIn
+
+        const tmp = totalOut / totalIn
+        const res = roundFloat(tmp, 2)
+        assert.strictEqual(res, calculatorData.realCoverage)
+      } else {
+        assert.fail()
+      }
+    })
+
+    it('Theoretical instantaneous stock flow time', () => {
+      if (calculatorData.totalOut && calculatorData.lastStock && calculatorData.realDTESInMonths) {
+        const totalOut = calculatorData.totalOut
+        const totalStock = calculatorData.lastStock
+
+        const tmp = totalStock / totalOut
+        const res = roundFloat(tmp, 2)
+        assert.strictEqual(res, calculatorData.realDTESInMonths)
+      } else {
+        assert.fail()
+      }
+    })
+
+    it('Observed average time per file', () => {
+      if (calculatorData.totalOut && calculatorData.etpMag && calculatorData.magRealTimePerCase) {
+        const totalOut = calculatorData.totalOut
+        const etpMag = calculatorData.etpMag
+        const nbDaysByMagistrat = config.nbDaysByMagistrat
+        const nbHoursPerDayAndMagistrat = config.nbHoursPerDayAndMagistrat
+
+        const tmp = (nbDaysByMagistrat * nbHoursPerDayAndMagistrat * etpMag) / (12 * totalOut)
+        const res = roundFloat(tmp, 3)
+        assert.strictEqual(res, calculatorData.magRealTimePerCase)
+      } else {
+        assert.fail()
+      }
+    })
+
+    it('Possible folders out Mag', () => {
+      if (calculatorData.etpMag && calculatorData.magCalculateTimePerCase && calculatorData.magCalculateOut) {
+        const magEtpAffected = calculatorData.etpMag
+        const magCalculateTimePerCase = calculatorData.magCalculateTimePerCase
+        const nbDaysByMagistrat = config.nbDaysByMagistrat
+        const nbHoursPerDayAndMagistrat = config.nbHoursPerDayAndMagistrat
+
+        const res = Math.floor((magEtpAffected * nbHoursPerDayAndMagistrat * nbDaysByMagistrat) / (12 * magCalculateTimePerCase))
+        assert.strictEqual(res, calculatorData.magCalculateOut)
+      } else {
+        assert.fail()
+      }
+    })
+
+    it('Theoretical calculated stock flow time', () => {
+      if (calculatorData.magCalculateOut && calculatorData.lastStock && calculatorData.magCalculateDTESInMonths) {
+        const totalOut = calculatorData.magCalculateOut
+        const totalStock = calculatorData.lastStock
+
+        const tmp = totalStock / totalOut
+        const res = roundFloat(tmp, 2)
+        assert.strictEqual(res, calculatorData.magCalculateDTESInMonths)
+      } else {
+        assert.fail()
+      }
+    })
+
+    it('Theoretical calculated coverage rate', () => {
+      if (calculatorData.magCalculateOut && calculatorData.totalIn && calculatorData.magCalculateCoverage) {
+        const totalOut = calculatorData.magCalculateOut
+        const totalIn = calculatorData.totalIn
+
+        const tmp = totalOut / totalIn
+        const res = roundFloat(tmp, 3)
+        assert.strictEqual(res, calculatorData.magCalculateCoverage)
+      } else {
+        assert.fail()
+      }
     })
   })
 }

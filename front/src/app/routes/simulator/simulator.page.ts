@@ -5,7 +5,7 @@ import {
   monthDiffList,
   nbOfDays,
 } from 'src/app/utils/dates'
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -345,7 +345,7 @@ displayWhiteElements:boolean = false
             this.selectedFonctionsIds
           )
         } else if (this.canViewGreffier) {
-          this.changeCategorySelected('FONCTIONNAIRE')
+          this.changeCategorySelected('GREFFE')
           this.simulatorService.selectedFonctionsIds.next(
             this.selectedFonctionsIds
           )
@@ -388,6 +388,7 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
+        console.log('Situation actuelle : ',d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -395,12 +396,16 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
+        console.log('Situation proj : ',d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
+      
+      console.log('Situation simu : ',d)
+
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
         const findElement = document.getElementById('content')
@@ -1341,6 +1346,9 @@ displayWhiteElements:boolean = false
             (c: HRCategoryInterface) =>
               c.label.toUpperCase() === this.categorySelected?.toUpperCase()
           ) || null
+
+        console.log(findCategory, this.humanResourceService.categories
+          .getValue())
       this.simulatorService.selectedCategory.next(findCategory)
       this.loadFunctions()
     }

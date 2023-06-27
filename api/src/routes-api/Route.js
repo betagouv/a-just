@@ -3,6 +3,7 @@ import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATO
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
+import * as Sentry from '@sentry/node'
 
 /**
  * Class autour de la l'authentification et des droits
@@ -32,6 +33,12 @@ export default class Route extends RouteBase {
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
       logError(e)
+      Sentry.withScope((scope) => {
+        scope.addEventProcessor((event) => {
+          return Sentry.addRequestDataToEvent(event, ctx.request)
+        })
+        Sentry.captureException(e)
+      })
       throw e
     }
   }
@@ -82,7 +89,6 @@ export default class Route extends RouteBase {
     this.assertUnauthorized(user)
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
-
     return user
   }
 

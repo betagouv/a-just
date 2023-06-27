@@ -49,18 +49,19 @@ export default class RouteJuridictions extends Route {
   async updateJuridiction (ctx) {
     const { node, value, juridictionId } = this.body(ctx)
 
-    const element = await this.model.findOne({
-      where: {
-        id: juridictionId,
-      },
+    await this.model.updateJuridiction(juridictionId, {
+      [node]: value || null,
     })
 
-    if (element) {
-      await element.update({
-        [node]: value || null,
-      })
-    }
-
     this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+   * Obtenir la liste de tout les TGI et TPRX avec leurs IELST
+   */
+  @Route.Get()
+  async getAllIelst (ctx) {
+    const list = await this.model.getAllIelst()
+    this.sendOk(ctx, list)
   }
 }

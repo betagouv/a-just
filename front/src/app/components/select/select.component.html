@@ -10,12 +10,12 @@
   </app-select-check-all>
   <div *ngIf="!subList; else subListTemplate">
     <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions">
-      {{ ref.value }}
+      <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
     </mat-option>
   </div>
   <ng-template #subListTemplate>
     <mat-option *ngFor="let ref of subReferentielData" [value]="ref.id">
-      {{ ref.value }}
+      <span [innerHTML]="ref.value | sanitizeHtml"></span>
     </mat-option>
   </ng-template>
 </mat-select>

@@ -1,7 +1,7 @@
 <div *ngIf="visible" class="animate__animated animate__fadeIn popup">
     <div>
         <div class="title">
-            {{ title }}
+            <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
             <div class="flex-1"></div>
             <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">
                 Fermer <i class="material-icons pointer">close</i>
@@ -10,39 +10,30 @@
         <div class="content">
             <ng-content></ng-content>
         </div>
-        <div
-            class="actions {{ removeShadow }}"
-            *ngIf="actions.length + actionsLeft.length > 0"
-        >
-            <button
-                *ngFor="let action of actionsLeft"
-                (click)="onSelectAction(action)"
-                class="small"
-                [ngClass]="{
+        <div class="actions {{ removeShadow }}" *ngIf="actions.length + actionsLeft.length > 0">
+            <button *ngFor="let action of actionsLeft" (click)="onSelectAction(action)" class="small" [ngClass]="{
                     'material-icons': action.type && action.type === 'icon',
                     red: action.red && action.red === true,
                     primary: !action.red,
                     fill: action.fill && action.fill === true,
                     outline: !action.fill
-                }"
-            >
+                }">
                 {{ action.content }}
             </button>
             <div class="flex-1"></div>
-            <button
-                *ngFor="let action of actions"
-                (click)="onSelectAction(action)"
-                class="small"
-                [ngClass]="{
+            <button *ngFor="let action of actions" (click)="onSelectAction(action)" class="small" [ngClass]="{
                     'material-icons': action.type && action.type === 'icon',
                     red: action.red && action.red === true,
                     primary: !action.red,
                     fill: action.fill && action.fill === true,
                     outline: !action.fill
-                }"
-            >
+                }">
                 {{ action.content }}
             </button>
         </div>
     </div>
 </div>
+
+<ng-template #defaultTitleTemplate>
+    {{ title }}
+</ng-template>

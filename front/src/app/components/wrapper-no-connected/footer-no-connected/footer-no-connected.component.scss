@@ -1,0 +1,64 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  border-top: 2px solid fColor(primary);
+  padding: 40px 115px 15px 115px;
+}
+
+.link-footer {
+  display: flex;
+
+  img {
+    height: 140px;
+  }
+
+  p {
+    margin-bottom: 16px;
+  }
+
+  a {
+    margin-right: 26px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    color: fColor(cblack);
+    white-space: nowrap;
+  }
+}
+
+.panel-footer {
+  border-top: 1px solid fColor(bgTag);
+
+  .pages {
+    margin-top: 15px;
+
+    a {
+      color: fColor(titleSelect);
+      padding: 0 16px;
+      border-right: 1px solid fColor(lightBorder);
+      text-decoration: none;
+      font-size: 12px;
+      height: 16px;
+      line-height: 16px;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+  }
+
+  .mentions {
+    margin-top: 24px;
+    color: fColor(titleInput);
+    font-size: 12px;
+
+    a {
+      color: fColor(titleInput);
+    }
+  }
+}

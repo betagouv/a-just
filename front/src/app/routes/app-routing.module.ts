@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
+import { CanDeactivateGuardService } from './canDeactivate-guard-service'
+import { ReaffectatorModule } from './reaffectator/reaffectator.module'
+import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 
 const routes: Routes = [
   {
@@ -99,9 +102,15 @@ const routes: Routes = [
   },
   {
     path: 'reaffectateur',
+    component: ReaffectatorPage,
+    canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuardService],
+  },
+  {
+    path: 'panorama',
     loadChildren: () =>
-      import('./reaffectator/reaffectator.module').then(
-        (mod) => mod.ReaffectatorModule
+      import('./panorama/panorama.module').then(
+        (mod) => mod.PanoramaModule
       ),
     canActivate: [AuthGuard],
   },
@@ -147,11 +156,35 @@ const routes: Routes = [
         (mod) => mod.ContactModule
       ),
   },
+  {
+    path: 'stats',
+    loadChildren: () =>
+      import('./stats/stats.module').then(
+        (mod) => mod.StatsModule
+      ),
+  },
+  {
+    path: 'logout',
+    loadChildren: () =>
+      import('./logout/logout.module').then(
+        (mod) => mod.LogoutModule
+      ),
+  },
+  {
+    path: 'conditions-generales-d-utilisation',
+    loadChildren: () =>
+      import('./cgu/cgu.module').then(
+        (mod) => mod.CGUModule
+      ),
+  },
 ]
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
-  providers: [AuthGuard],
+  imports: [
+    RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
+  ],
+  providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
+
 export class AppRoutingModule {}

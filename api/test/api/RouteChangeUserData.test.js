@@ -1,77 +1,14 @@
-import axios from 'axios'
-import config from 'config'
 import { assert } from 'chai'
 import { accessList } from '../../src/constants/access'
+import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
+import { onUpdateAccountApi } from '../routes/user'
 
-module.exports = function () {
-  let adminToken = null
-  let userToken = null
-  let userId = null
+module.exports = function (datas) {
   let hrId = null
   let hrSituationId = []
   let current_hr = null
 
   describe('Change User data test', () => {
-    /*it('Login - Login admin', async () => {
-      const email = 'redwane.zafari@a-just.fr'
-      const password = '123456'
-
-      // Connexion de l'admin
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
-      })
-      // Récupération du token associé pour l'identifier
-      adminToken = response.data.token
-      assert.strictEqual(response.status, 201)
-    })
-
-    it('Sign up - Create test user', async () => {
-      const response = await axios.post(`${config.serverUrl}/users/create-account`, {
-        email: userEmail,
-        password: userPassword,
-        firstName: userFirstname,
-        lastName: userlastname,
-        fonction: 'Vacataire',
-        tj: 'ESSAI',
-      })
-      assert.strictEqual(response.status, 200)
-    })*/
-
-    it('Login - Log user', async () => {
-      const email = 'test@mail.com'
-      const password = '123456'
-
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email,
-        password,
-      })
-      userToken = response.status === 201 && response.data.token
-      userId = response.data.user.id
-
-      assert.isOk(userToken, 'response 201 and user token created')
-    })
-
-    it('Give user accesses by Admin', async () => {
-      const accessIds = accessList.map((elem) => {
-        return elem.id
-      })
-      const response = await axios.post(
-        `${config.serverUrl}/users/update-account`,
-        {
-          userId: userId,
-          access: accessIds,
-          ventilations: [], //{ id: 11, label: 'ESSAI' },
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
-      assert.strictEqual(response.status, 200)
-    })
-
     it('Create new hr', async () => {
       const hr = {
         firstName: 'test',
@@ -81,18 +18,12 @@ module.exports = function () {
         dateStart: new Date(),
         indisponibilities: [],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       hrId = response.data.data.id
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
@@ -103,18 +34,12 @@ module.exports = function () {
         ...current_hr,
         firstName: 'firstname',
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -124,18 +49,11 @@ module.exports = function () {
         ...current_hr,
         lastName: 'lastname',
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: 11,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: 11,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
@@ -154,7 +72,7 @@ module.exports = function () {
       const category = { id: 1, label: 'Magistrat', rank: 1 }
       const dateStart = new Date()
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         {
@@ -170,18 +88,11 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
@@ -211,7 +122,7 @@ module.exports = function () {
       const now = new Date()
       const dateStart = now.setDate(now.getDate() + 20)
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT' }
+      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         current_hr.situations[0],
@@ -228,18 +139,11 @@ module.exports = function () {
         ...current_hr,
         situations: situatiuons,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
@@ -272,30 +176,31 @@ module.exports = function () {
         indisponibilities: indisponibilities,
       }
 
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
     })
 
-    it('Correct a situation - Change agent Fonction only', async () => {
+    it("Correct a situation - Change agent's Fonction only", async () => {
       const oldSituation = current_hr.situations
 
       const correctedSituation = [
         oldSituation[0],
         {
           ...oldSituation[1],
-          fonction: { id: 1, rank: 2, code: '1VP', label: 'PREMIER VICE-PRÉSIDENT', category_detail: 'M-TIT' },
+          fonction: {
+            id: 1,
+            rank: 2,
+            code: '1VP',
+            label: 'PREMIER VICE-PRÉSIDENT',
+            category_detail: 'M-TIT',
+            position: 'Titulaire',
+            calculatriceIsActive: false,
+          },
         },
       ]
 
@@ -303,18 +208,12 @@ module.exports = function () {
         ...current_hr,
         situations: correctedSituation,
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
+
       const newSituation = response.data.data.situations
 
       current_hr = response.data.data
@@ -323,38 +222,38 @@ module.exports = function () {
       assert.deepEqual(correctedSituation[1].fonction, newSituation[1].fonction)
     })
 
-    it('Correct a situation - Change agent Category and Fonction', async () => {
+    it("Correct a situation - Change agent's Category and Fonction", async () => {
       const oldSituation = current_hr.situations
-
       const hr = {
         ...current_hr,
         situations: [
           {
             ...oldSituation[0],
             category: { id: 2, rank: 2, label: 'Fonctionnaire' },
-            fonction: { id: 43, rank: 1, code: 'B greffier', label: 'B greffier', category_detail: 'F-TIT' },
+            fonction: {
+              id: 44,
+              rank: 1,
+              code: 'B greffier',
+              label: 'B greffier',
+              category_detail: 'F-TIT',
+              position: 'Titulaire',
+              calculatriceIsActive: false,
+            },
           },
           oldSituation[1],
         ],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       const newSituation = response.data.data.situations[0]
-
       current_hr = response.data.data
+
       assert.strictEqual(response.status, 200)
-      assert.notDeepEqual(oldSituation.category, newSituation.category)
-      assert.notDeepEqual(oldSituation.fonction, newSituation.fonction)
+      assert.notDeepEqual(oldSituation[0].category, newSituation.category)
+      assert.notDeepEqual(oldSituation[0].fonction, newSituation.fonction)
       assert.deepEqual(hr.situations[0].category, newSituation.category)
       assert.deepEqual(hr.situations[0].fonction, newSituation.fonction)
     })
@@ -372,18 +271,11 @@ module.exports = function () {
           oldSituation[1],
         ],
       }
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       const newSituation = response.data.data.situations[0]
 
       current_hr = response.data.data
@@ -401,54 +293,33 @@ module.exports = function () {
         dateEnd,
       }
 
-      const response = await axios.post(
-        `${config.serverUrl}/human-resources/update-hr`,
-        {
-          hr,
-          backupId: hr.backupId,
-        },
-        {
-          headers: {
-            authorization: adminToken,
-          },
-        }
-      )
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: hr,
+        backupId: hr.backupId,
+      })
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.strictEqual(new Date(response.data.data.dateEnd).getTime(), dateEnd.getTime())
     })
 
     it('Remove created situation', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
-
+      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
       let response = null
       for (let id of hrSituationId) {
-        response = await axios.delete(`${config.serverUrl}/human-resources/remove-situation-test/${id}`, {
-          headers: {
-            authorization: adminToken,
-          },
+        response = await onRemoveSituationApi({
+          userToken: datas.adminToken,
+          id: id,
         })
       }
       assert.isEmpty(response.data.data.situations)
     })
 
     it('Remove created hr', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
-      const response = await axios.delete(`${config.serverUrl}/human-resources/remove-hr-test/${hrId}`, {
-        headers: {
-          authorization: adminToken,
-        },
-      })
-
-      assert.strictEqual(response.status, 200)
-    })
-
-    it('Remove user Account by admin', async () => {
-      // ⚠️ This route must not be use in code production ! The equivalent route for production is '/users/remove-account/:id'
-      const response = await axios.delete(`${config.serverUrl}/users/remove-account-test/${userId}`, {
-        headers: {
-          authorization: adminToken,
-        },
+      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
+      const response = await onRemoveHrApi({
+        userToken: datas.adminToken,
+        hrId: hrId,
       })
 
       assert.strictEqual(response.status, 200)

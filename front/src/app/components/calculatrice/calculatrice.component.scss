@@ -1,0 +1,111 @@
+:host {
+
+  .headers {
+    display: flex;
+    border-bottom: 1px solid #dddddd;
+    margin-bottom: 24px;
+
+    .header {
+      display: inline-flex;
+      height: 40px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0px 16px;
+      margin-right: 8px;
+      border-top: solid 2px white;
+      border-right: 1px solid white;
+      border-left: 1px solid white;
+      cursor: pointer;
+      color: black;
+
+      &.selected {
+        position: relative;
+        border-top: solid 2px #000091;
+        border-right: 1px solid #dddddd;
+        border-left: 1px solid #dddddd;
+        border-bottom: none;
+        color: #000091;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -1px;
+          height: 1px;
+          background-color: white;
+          left: 0px;
+          right: 0px;
+        }
+      }
+
+      label {
+        margin: auto;
+      }
+    }
+  }
+
+  .rectangle {
+    width: 600px;
+    height: 84px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: 6px;
+    background-color: #f6f6f6;
+    margin-top: 8px;
+    border: 1px solid #f6f6f6;
+
+    &:focus-within {
+      border: solid 1px #8585f6;
+      background-color: #f5f5fe;
+
+    }
+
+    span {
+      font-size: 16px;
+      color: #3a3a3a;
+    }
+
+    input {
+      margin: 0px 12px;
+      width: 60px;
+    }
+
+    .radio-container {
+      margin-left: 12px;
+      display: flex;
+
+      .radio-button {
+
+        &:first-child label {
+          border-bottom-left-radius: 6px;
+          border-top-left-radius: 6px;
+        }
+
+        &:last-child label {
+          border-bottom-right-radius: 6px;
+          border-top-right-radius: 6px;
+        }
+
+        input[type="radio"] {
+          display: none;
+        }
+
+        label {
+          display: inline-block;
+          padding: 0px 11px;
+          font-size: 16px;
+          border: #000091 solid 1px;
+          color: #000091;
+          cursor: pointer;
+          line-height: 32px;
+        }
+
+        input[type="radio"]:checked+label {
+          background-color: #000091;
+          color: white;
+        }
+      }
+    }
+  }
+}

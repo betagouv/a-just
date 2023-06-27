@@ -5,6 +5,7 @@
   flex-direction: column;
   height: 100%;
 
+
   .content-list {
     flex: 1;
     overflow: auto;
@@ -53,6 +54,34 @@
         }
       }
     }
+  }
+}
+
+.rightHeader {
+  padding: 8px 12px;
+  background-color: fColor(activityGuideBg);
+  border-left: 4px solid fColor(activityGuideBorder);
+
+  h2 {
+    font-size: 18px;
+  }
+
+  p {
+    color: fColor(activityGuideSubTitle);
+    font-size: 12px;
+  }
+
+  a {
+    margin-left: 8px;
+  }
+
+  .support-email {
+    color: fColor(primary);
+    font-size: 14px;
+  }
+
+  .flex-beteween {
+    margin: 2px 0 4px 0;
   }
 }
 

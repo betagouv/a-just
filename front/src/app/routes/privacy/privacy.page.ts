@@ -15,6 +15,6 @@ export class PrivacyPage {
    * @param title 
    */
   constructor(private title: Title) {
-    this.title.setTitle('Données personnelles | A-Just')
+    this.title.setTitle('Protection des données personnelles | A-Just')
   }
 }
