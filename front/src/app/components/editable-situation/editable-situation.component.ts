@@ -167,7 +167,7 @@ export class EditableSituationComponent implements OnChanges {
         etpMag: startetpMag,
         etpFon: startetpFon,
         etpCont: startetpCont,
-        realCoverage: coverage,
+        realCoverage: coverage/100,
         realDTESInMonths: dtes,
         magRealTimePerCase: tmd,
         magCalculateCoverage: 0,
@@ -175,7 +175,7 @@ export class EditableSituationComponent implements OnChanges {
         magCalculateDTESInMonths: 0,
         fonCalculateDTESInMonths: 0,
         magCalculateTimePerCase: 0,
-        nbMonth: 0, // A CORIGER
+        nbMonth: 0,
         etpAffected: [{name: 'Magistrat', totalEtp: 0, rank: 1},{name: 'Greffe', totalEtp: 0, rank: 2},{name: 'Autour du magistrat', totalEtp: 0, rank: 3}]
       })
 
@@ -201,7 +201,8 @@ export class EditableSituationComponent implements OnChanges {
     this.endSituationDisplay.magRealTimePerCase = decimalToStringDate(tmd)
 
     this.simulatorService.situationProjected.next({
-      ...this.endSituation,      
+      ...this.endSituation,  
+      realCoverage: coverage/100,    
       magCalculateCoverage: null,
       fonCalculateCoverage: null,
       magCalculateDTESInMonths: null,

@@ -520,13 +520,14 @@ displayWhiteElements:boolean = false
     if (type === 'dateStart') {
       this.disabled = 'disabled-date'
       this.dateStart = new Date(event)
+      this.startRealValue = findRealValue(this.dateStart)
       this.simulatorService.dateStart.next(this.dateStart)
     }
     else if (type === 'dateStop') {
       this.disabled = 'disabled-date'
       this.dateStop = new Date(event)
+      this.stopRealValue = findRealValue(this.dateStop)
       this.simulatorService.dateStop.next(this.dateStop)
-      console.log(nbOfDays(this.dateStart,this.dateStop))
       this.whiteNbOfDays= nbOfDays(this.dateStart,this.dateStop)
     }
   }
@@ -1400,16 +1401,5 @@ displayWhiteElements:boolean = false
 
       setComment(event:any){
       this.commentaire = event.target.value      
-      }
-
-      toSimulateWhite(){
-        console.log(this.whiteNbOfDays)
-        console.log(this.simulatorService.situationActuelle.getValue())
-        console.log(this.simulatorService.situationProjected.getValue())
-        console.log(this.paramsToAjust)
-          console.log(this.pickersParamsToLock)
-
-
-          //this.simulate()
       }
 }
