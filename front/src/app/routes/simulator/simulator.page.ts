@@ -3,6 +3,7 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
+  nbOfDays,
 } from 'src/app/utils/dates'
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -267,8 +268,22 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-
+/**
+   * Commentaires pour PDF
+   */
   commentaire: String = ''
+  /**
+   * Activation du simulator à blanc
+   */
+  whiteSimulator:boolean =false
+/**
+ * Nombre de jour de simulation à blanc
+ */
+ whiteNbOfDays:number = 0
+/**
+ * Affichage des boutons ajuster et simuler
+ */
+displayWhiteElements:boolean = false
 
   /**
    * Constructeur
@@ -306,6 +321,16 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.resetParams()
       })
     )
+
+    this.watch(
+      this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
+        this.displayWhiteElements = b
+        if (b===false){
+          this.toDisplaySimulation=false
+        }
+      })
+    )
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -496,6 +521,24 @@ export class SimulatorPage extends MainClass implements OnInit {
   }
 
   /**
+   * Action lors de la selection d'une date simulateur à blanc
+   */
+  whiteDateSelector(type: string = '', event: any = null){
+    if (type === 'dateStart') {
+      this.disabled = 'disabled-date'
+      this.dateStart = new Date(event)
+      this.startRealValue = findRealValue(this.dateStart)
+      this.simulatorService.dateStart.next(this.dateStart)
+    }
+    else if (type === 'dateStop') {
+      this.disabled = 'disabled-date'
+      this.dateStop = new Date(event)
+      this.stopRealValue = findRealValue(this.dateStop)
+      this.simulatorService.dateStop.next(this.dateStop)
+      this.whiteNbOfDays= nbOfDays(this.dateStart,this.dateStop)
+    }
+  }
+  /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
    * @returns noeud du contentieux trouvé
@@ -552,6 +595,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.toDisplay = []
     this.toCalculate = []
     this.simulateButton = 'disabled'
+    this.displayWhiteElements = false
   }
 
   /**
@@ -942,6 +986,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },
     }
+    this.simulatorService.isValidatedWhiteSimu.next(false)
   }
 
   /**
@@ -1182,6 +1227,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Calcul de la simulation
    */
   computeSimulation(allButton: any) {
+
     const params = {
       beginSituation: this.firstSituationData,
       endSituation: this.projectedSituationData,
@@ -1201,6 +1247,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       realDTESInMonths: null,
       realCoverage: null,
     }
+    console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
       this.simulateButton = 'disabled'
@@ -1214,6 +1261,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         'Les données en base ne permettent pas de calculer une simulation pour ce contentieux'
       )
     }
+    console.log(params)
   }
 
   /**
