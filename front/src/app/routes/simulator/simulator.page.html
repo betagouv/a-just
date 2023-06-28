@@ -33,6 +33,7 @@
       (valueChange)="onChangeFonctionsSelected($event)">
     </aj-select>
   </div>
+
   <div class="top-bar-container" [ngClass]="{'hide': whiteSimulator === true}">
     <p>Période choisie :</p>
 
@@ -44,6 +45,30 @@
         <div class="space"></div>
         <aj-date-select-blue class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"
           (valueChange)="updateReferentielSelected('dateStop', $event)" [min]="getMin()" [side]="'right'">
+        </aj-date-select-blue>
+      </div>
+      <div class="Rectangle">
+        <div class="dot {{mooveClass}}"></div>
+        <div class="blue-line {{mooveClass}}">
+          <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
+            <div class="dot-generated"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-bar-container" [ngClass]="{'hide': whiteSimulator === false}">
+    <p>Période choisie :</p>
+
+    <div class="container-timeline">
+      <div class="container-timeline-button">
+        <aj-date-select-blue class="select-disabled {{mooveClass}}" [value]="dateStart"
+          (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
+        </aj-date-select-blue>
+        <div class="space"></div>
+        <aj-date-select-blue [title]="'Fin de période'" [value]="dateStop"
+          (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
         </aj-date-select-blue>
       </div>
       <div class="Rectangle">
@@ -362,7 +387,7 @@
       </div>
     </div>
   </div>
-  <!-- -->
+  <!-- 
 
   <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
     <p>Selectionner une date de début :</p>
@@ -374,6 +399,8 @@
       (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
     </aj-date-select-blue>
   </div>
+-->
+
 
   <aj-editable-situation *ngIf="dateStop!==null" [@fadeInOut] [ngClass]="{'hide': whiteSimulator === false}"
     [nbOfDays]="whiteNbOfDays" [category]="categorySelected"></aj-editable-situation>

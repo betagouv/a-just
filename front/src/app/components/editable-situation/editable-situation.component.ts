@@ -135,14 +135,13 @@ export class EditableSituationComponent implements OnChanges {
     this.displayEndSituation = false
     this.simulatorService.isValidatedWhiteSimu.next(false)
   }
-  generateEndSituation() {
+  generateEndSituation() { 
+    console.log(this.nbOfDays)
     let newStock =
-      Math.floor(Number(this.formWhiteSim.controls['lastStock'].value)) +
-      Math.floor(
+      Math.floor(Number(this.formWhiteSim.controls['lastStock'].value) +
         (this.nbOfDays / (365 / 12)) *
           Number(this.formWhiteSim.controls['totalIn'].value)
-      ) -
-      Math.floor(
+       -
         (this.nbOfDays / (365 / 12)) *
           Number(this.formWhiteSim.controls['totalOut'].value)
       )
@@ -165,18 +164,22 @@ export class EditableSituationComponent implements OnChanges {
     )
 
 
-    const coverage = (startTotalOut / startTotalIn) * 100
+    const coverage = Math.round((startTotalOut / startTotalIn) * 100)
     this.formWhiteSim.controls['realCoverage'].setValue(
-      String(fixDecimal(coverage)) + '%'
+      String(coverage) + '%'
     )
-    const dtes = startLastStock / startTotalOut
+    const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
-      String(fixDecimal(dtes)) + ' mois'
+      String(dtes) + ' mois'
     )
     const prefix1 = this.category==='MAGISTRAT'?'nbDaysByMagistrat':'nbDaysByFonctionnaire'
     const prefix2 = this.category==='MAGISTRAT'?'nbHoursPerDayAndMagistrat':'nbHoursPerDayAndFonctionnaire'
     const etpToUse = this.category==='MAGISTRAT'?startetpMag:startetpFon
-    const tmd = ((basicEtptData[prefix1]/12) * basicEtptData[prefix2] * etpToUse) / startTotalOut
+    //tmd = ((basicEtptData[prefix1]/12) * basicEtptData[prefix2] * etpToUse) / startTotalOut
+    
+    let realTime = fixDecimal((basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) / (startTotalOut * 12), 100)
+    const tmd = Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
+
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(
       decimalToStringDate(tmd)
     )
@@ -189,8 +192,8 @@ export class EditableSituationComponent implements OnChanges {
         etpMag: startetpMag,
         etpFon: startetpFon,
         etpCont: startetpCont,
-        realCoverage: fixDecimal(coverage/100),
-        realDTESInMonths: fixDecimal(dtes),
+        realCoverage: coverage/100,
+        realDTESInMonths: dtes,
         magRealTimePerCase: tmd,
         magCalculateCoverage: 0,
         fonCalculateCoverage: 0,
@@ -202,9 +205,14 @@ export class EditableSituationComponent implements OnChanges {
       })
 
     const endStock =
-      Math.floor(startLastStock) +
-      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
-      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut)
+      Math.floor(startLastStock +
+        (this.nbOfDays / (365 / 12)) *
+        startTotalIn
+       -
+        (this.nbOfDays / (365 / 12)) *
+        startTotalOut
+      )
+
 
     this.endSituation = {
       totalIn: startTotalIn,
