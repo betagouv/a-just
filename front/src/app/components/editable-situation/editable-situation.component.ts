@@ -222,7 +222,7 @@ export class EditableSituationComponent implements OnChanges {
       etpFon: startetpFon,
       etpCont: null,
       realCoverage: coverage,
-      realDTESInMonths: endStock / startTotalOut,
+      realDTESInMonths: fixDecimal(endStock / startTotalOut),
       magRealTimePerCase: tmd,
     }
     this.endSituationDisplay.realCoverage =  fixDecimal(coverage) + '%'
