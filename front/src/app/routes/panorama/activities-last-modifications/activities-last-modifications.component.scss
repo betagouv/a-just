@@ -1,0 +1,50 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  padding: 24px;
+  width: 354px;
+
+  h3 {
+    color: fColor(primary);
+    font-size: 20px;
+    margin-bottom: 22px;
+  }
+
+  .item {
+    border: 1px solid fColor(lightBorder);
+    border-radius: 4px;
+    padding: 8px 8px 8px 16px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: 4px;
+
+    .preview {
+      flex: 1;
+
+      .tag {
+        height: 20px;
+        border-radius: 4px;
+        background-color: fColor(bgSelect);
+        color: fColor(grayRow);
+        font-size: 12px;
+        font-weight: bold;
+        padding: 0 6px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+    }
+
+    p {
+      font-size: 14px;
+      margin-top: 4px;
+      color: fColor(cblack);
+    }
+
+    i {
+      color: fColor(primary);
+    }
+  }
+}
