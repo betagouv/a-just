@@ -16,10 +16,26 @@ export class EditableSituationComponent implements OnChanges {
    * Number of day to simulate
    */
   @Input() nbOfDays: number = 0
-  /**
-   * Catégorie selectionnée
-   */
-  @Input() category: string|null= null
+  
+  @Input()
+  set category(value: string|null) {
+    this._category = value;
+    if (this._category==='MAGISTRAT') {
+      this.formWhiteSim.controls['etpMag'].enable()
+      this.formWhiteSim.controls['etpFon'].disable()
+    }
+    else {
+      this.formWhiteSim.controls['etpMag'].disable()
+      this.formWhiteSim.controls['etpFon'].enable()
+    }
+
+  }
+  get category(): string|null {
+    return this._category;
+  }
+  private _category: string|null= null
+
+
   /**
    * RegEx
    */
@@ -95,17 +111,6 @@ export class EditableSituationComponent implements OnChanges {
 
   ngOnChanges(changes: any) {
     if (this.isValidatedWhiteSimu) this.generateEndSituation()
-    console.log(changes.category.currentValue)
-    if (changes && changes.category &&  Object.keys(changes.category).includes('currentValue')){
-    if (changes.category.currentValue==='MAGISTRAT') {
-      this.formWhiteSim.controls['etpMag'].enable()
-      this.formWhiteSim.controls['etpFon'].disable()
-    }
-    else {
-      this.formWhiteSim.controls['etpMag'].disable()
-      this.formWhiteSim.controls['etpFon'].enable()
-    }
-  }
   }
   /**
    * Validate beginning situation for white simulator
@@ -136,7 +141,6 @@ export class EditableSituationComponent implements OnChanges {
     this.simulatorService.isValidatedWhiteSimu.next(false)
   }
   generateEndSituation() { 
-    console.log(this.nbOfDays)
     let newStock =
       Math.floor(Number(this.formWhiteSim.controls['lastStock'].value) +
         (this.nbOfDays / (365 / 12)) *
@@ -153,38 +157,27 @@ export class EditableSituationComponent implements OnChanges {
     const startetpMag = Number(this.formWhiteSim.controls['etpMag'].value)
     const startetpFon = Number(this.formWhiteSim.controls['etpFon'].value)
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
-    const startrealCoverage = String(
-      this.formWhiteSim.controls['realCoverage'].value
-    )
-    const startrealDTESInMonths = String(
-      this.formWhiteSim.controls['realDTESInMonths'].value
-    )
-    const startmagRealTimePerCase = String(
-      this.formWhiteSim.controls['magRealTimePerCase'].value
-    )
-
 
     const coverage = Math.round((startTotalOut / startTotalIn) * 100)
     this.formWhiteSim.controls['realCoverage'].setValue(
       String(coverage) + '%'
     )
+
     const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
       String(dtes) + ' mois'
     )
+
     const prefix1 = this.category==='MAGISTRAT'?'nbDaysByMagistrat':'nbDaysByFonctionnaire'
     const prefix2 = this.category==='MAGISTRAT'?'nbHoursPerDayAndMagistrat':'nbHoursPerDayAndFonctionnaire'
     const etpToUse = this.category==='MAGISTRAT'?startetpMag:startetpFon
-    //tmd = ((basicEtptData[prefix1]/12) * basicEtptData[prefix2] * etpToUse) / startTotalOut
     
     let realTime = fixDecimal((basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) / (startTotalOut * 12), 100)
     const tmd = Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
-
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(
       decimalToStringDate(tmd)
     )
 
-      // AJUSTER LES PROCHAINS PARAMETRE SET UP LA SITUATION PROJETEE
       this.simulatorService.situationActuelle.next({
         totalIn: startTotalIn,
         totalOut: startTotalOut,
