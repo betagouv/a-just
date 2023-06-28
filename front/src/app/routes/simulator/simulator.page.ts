@@ -1261,7 +1261,6 @@ displayWhiteElements:boolean = false
         'Les données en base ne permettent pas de calculer une simulation pour ce contentieux'
       )
     }
-    console.log(params)
   }
 
   /**
@@ -1350,8 +1349,7 @@ displayWhiteElements:boolean = false
               c.label.toUpperCase() === this.categorySelected?.toUpperCase()
           ) || null
 
-        console.log(findCategory, this.humanResourceService.categories
-          .getValue())
+
       this.simulatorService.selectedCategory.next(findCategory)
       this.loadFunctions()
     }

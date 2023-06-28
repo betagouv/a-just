@@ -175,10 +175,6 @@ export async function getSituation(referentielId, hr, allActivities, categories,
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
 
-  //console.log('To compare totalIn : ', totalIn)
-  //console.log('To compare totalOut : ', totalOut)
-  //console.log('To compare lastStock : ', lastStock)
-
   let realTimePerCase = undefined
   let DTES = undefined
   let Coverage = undefined
@@ -205,7 +201,7 @@ export async function getSituation(referentielId, hr, allActivities, categories,
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
-  if (lastActivities.length === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
+  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
   else {
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
@@ -286,16 +282,6 @@ export async function getSituation(referentielId, hr, allActivities, categories,
       )
 
       // Compute projectedStock with etp at datestop
-      console.log(
-        '$$$$$$$ ->',
-        nbDayCalendarProjected,
-        lastStock,
-        nbDayCalendarProjected,
-        selectedCategoryId === 1 ? etpMagStartToEndToCompute : etpFonStartToEndToCompute,
-        realTimePerCase,
-        totalIn,
-        sufix
-      )
       const projectedLastStock = computeLastStock(
         lastStock,
         nbDayCalendarProjected,
@@ -380,7 +366,7 @@ function computeDTES(lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
-  console.log('Calcul des stocks', {
+  /**console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
     futurEtp,
@@ -394,7 +380,7 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimeP
           ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
-  })
+  })*/
 
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
@@ -403,8 +389,6 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimeP
       (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
       (countOfCalandarDays / (365 / 12)) * totalIn
   )
-
-  console.log(stock)
 
   return stock < 0 ? 0 : stock
 }
