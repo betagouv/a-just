@@ -1,0 +1,18 @@
+@import '../../styles/utils.scss';
+
+:host {
+  display: block;
+
+  &.dark-mode {
+    p {
+      color: fColor(grayRow);
+    }
+
+    .progress-bar {
+      p {
+        color: fColor(grayRow);
+      }
+    }
+  }
+}
+

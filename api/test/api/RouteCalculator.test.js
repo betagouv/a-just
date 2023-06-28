@@ -1,16 +1,17 @@
 import { assert } from 'chai'
-import { accessList } from '../../src/constants/access'
-import { onGetUserDataApi, onUpdateAccountApi } from '../routes/user'
-import { onGetBackupListHrApi } from '../routes/hr'
+import { onUpdateAccountApi } from '../routes/user'
 import { onGetLastMonthApi } from '../routes/activities'
-import { onFilterListApi } from '../routes/calculator'
-import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID } from '../constants/juridiction'
+import { onFilterListCalculatorApi } from '../routes/calculator'
+import { onFilterListHRApi } from '../routes/hr'
+import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
 import { roundFloat } from '../utils/math'
 import config from 'config'
 
 module.exports = function (datas) {
   let lastMonth = null
   let calculatorData = null
+  let dateStop = null
+  let dateStart = null
 
   // Le backupId est ici prédéfini pour baser les tests sur une juridictions pour laquel on est sûr d'avoir des données
   describe('Calculator Page - Check calcul ', () => {
@@ -36,14 +37,13 @@ module.exports = function (datas) {
     })
 
     it('Catch data', async () => {
-      const dateStop = new Date(lastMonth)
-      const dateStart = new Date(new Date(dateStop).setDate(1))
+      dateStop = new Date(lastMonth)
+      dateStart = new Date(new Date(dateStop).setDate(1))
       const categorySelected = 'magistrats'
-      const contentieuxIds = [447]
+      const contentieuxIds = [SOCIAL_LITIGATION_ID]
       const backupId = JURIDICTION_BACKUP_ID
       const optionBackupId = JURIDICTION_OPTION_BACKUP_ID
-
-      const response = await onFilterListApi({
+      const response = await onFilterListCalculatorApi({
         userToken: datas.adminToken,
         backupId,
         dateStart,
@@ -59,8 +59,27 @@ module.exports = function (datas) {
       assert.isNotEmpty(calculatorData)
     })
 
+    it('Check ETPT Siege', async () => {
+      // Retrieving all the HR 'Siege' from a specific jurisdiction who are assigned exclusively to the Social litigation department
+      let userToken = datas.adminToken
+      let backupId = JURIDICTION_BACKUP_ID
+      let contentieuxIds = [SOCIAL_LITIGATION_ID]
+      let totalEtpMag = null
+
+      const HR = await onFilterListHRApi({ userToken, backupId, contentieuxIds, date: dateStart })
+      const filteredHr = HR.data.data.list[0].hr.filter((elem) => {
+        return new Date(elem.currentSituation.dateStart).getTime() <= new Date(dateStart).getTime()
+      })
+      filteredHr.map((elem) => {
+        let socialActivity = elem.currentActivities.filter((elem) => elem.contentieux.id === SOCIAL_LITIGATION_ID)
+        if (!elem.hasIndisponibility) totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
+      })
+
+      assert.strictEqual(HR.status, 200)
+      assert.strictEqual(totalEtpMag, calculatorData.etpMag)
+    })
+
     it('Check Obeserved Coverage Rate', () => {
-      console.log('[RouteCalculateur.test.js][line 79] Check Obeserved Coverage Rate \nCalculatorData:', calculatorData)
       if (calculatorData.totalOut && calculatorData.totalIn && calculatorData.realCoverage) {
         const totalOut = calculatorData.totalOut
         const totalIn = calculatorData.totalIn

@@ -149,6 +149,7 @@ export function month(
   return date
 }
 
+
 /**
  * Calcul du nombre de jours travaillés entre 2 dates
  * @param startDate 
@@ -200,6 +201,7 @@ export function nbOfDays(startDate: Date, endDate: Date) {
 
   return convertMsToDays(differenceInMs)
 }
+
 
 /**
  * Ajout ou soustraction d'un nombre de jour à une date

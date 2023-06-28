@@ -24,21 +24,21 @@ export function referentielMappingName (name: string): string {
  * @param name 
  * @returns 
  */
-export function referentielMappingColor (name: string): string {
+export function referentielMappingColor (name: string, opacity: number = 1): string {
   switch(name) {
-    case 'Autres activités': return '#424242';
-    case 'Indisponibilité': return '#37474f';
-    case 'Siège Pénal': return '#c62828';
-    case 'Contentieux JAF': return '#0277bd';
-    case 'Contentieux Social': return '#00838f';
-    case 'Contentieux de la Protection': return '#1565c0';
-    case 'Juges des Enfants': return '#6a1b9a';
-    case 'Civil Non Spécialisé': return '#283593';
-    case 'Juges d\'Instruction': return '#d84315';
-    case 'JLD Civil': return '#4527a0';
-    case 'JAP': return '#ef6c00';
-    case 'JLD pénal': return '#ff8f00';
-    case 'JLD civil': return '#4527a0';
+    case 'Autres activités': return `rgba(66, 66, 66, ${opacity})`;
+    case 'Indisponibilité': return `rgba(55, 71, 79, ${opacity})`;
+    case 'Siège Pénal': return `rgba(198, 40, 40, ${opacity})`;
+    case 'Contentieux JAF': return `rgba(2, 119, 189, ${opacity})`;
+    case 'Contentieux Social': return `rgba(0, 131, 143, ${opacity}`;
+    case 'Contentieux de la Protection': return `rgba(21, 101, 192, ${opacity})`;
+    case 'Juges des Enfants': return `rgba(106, 27, 154, ${opacity})`;
+    case 'Civil Non Spécialisé': return `rgba(40, 53, 147, ${opacity})`;
+    case 'Juges d\'Instruction': return `rgba(216, 67, 21, ${opacity})`;
+    case 'JLD Civil': return `rgba(69, 39, 160, ${opacity})`;
+    case 'JAP': return `rgba(239, 108, 0, ${opacity})`;
+    case 'JLD pénal': return `rgba(255, 143, 0, ${opacity})`;
+    case 'JLD civil': return `rgba(69, 39, 160, ${opacity})`;
   }
 
   return '';

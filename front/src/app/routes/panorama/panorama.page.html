@@ -1,6 +1,18 @@
 <aj-wrapper
   [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
-  [subtitleTemplate]="subTitle">
+  [subtitleTemplate]="subTitle" class="content-margin-null">
+  <panorama-alert></panorama-alert>
+
+  <div class="pano-title">
+    Les données d’activité
+  </div>
+  <div class="activities-panel">
+    <div class="left-panel">
+      <activities-last-disponibilities></activities-last-disponibilities>
+      <activities-to-complete></activities-to-complete>
+    </div>
+    <activities-last-modifications></activities-last-modifications>
+  </div>
 </aj-wrapper>
 
 <ng-template #subTitle>
