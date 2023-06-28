@@ -208,6 +208,7 @@ export async function getSituation(referentielId, hr, allActivities, categories,
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
+    console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
 
@@ -366,7 +367,7 @@ function computeDTES(lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
-  /**console.log('Calcul des stocks', {
+  console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
     futurEtp,
@@ -380,7 +381,7 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimeP
           ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
-  })*/
+  })
 
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
