@@ -1,2 +1,3 @@
 export const JURIDICTION_BACKUP_ID = 5
 export const JURIDICTION_OPTION_BACKUP_ID = 58
+export const SOCIAL_LITIGATION_ID = 447
