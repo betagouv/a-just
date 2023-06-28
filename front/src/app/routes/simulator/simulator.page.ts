@@ -1247,6 +1247,7 @@ displayWhiteElements:boolean = false
       realDTESInMonths: null,
       realCoverage: null,
     }
+    console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
       this.simulateButton = 'disabled'

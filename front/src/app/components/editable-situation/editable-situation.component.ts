@@ -96,7 +96,7 @@ export class EditableSituationComponent implements OnChanges {
   ngOnChanges(changes: any) {
     if (this.isValidatedWhiteSimu) this.generateEndSituation()
     console.log(changes.category.currentValue)
-    if (changes.category && changes.category.currentValue){
+    if (changes && changes.category &&  Object.keys(changes.category).includes('currentValue')){
     if (changes.category.currentValue==='MAGISTRAT') {
       this.formWhiteSim.controls['etpMag'].enable()
       this.formWhiteSim.controls['etpFon'].disable()
@@ -167,11 +167,11 @@ export class EditableSituationComponent implements OnChanges {
 
     const coverage = (startTotalOut / startTotalIn) * 100
     this.formWhiteSim.controls['realCoverage'].setValue(
-      String(Math.round(coverage)) + '%'
+      String(fixDecimal(coverage)) + '%'
     )
     const dtes = startLastStock / startTotalOut
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
-      String(Math.round(dtes)) + ' mois'
+      String(fixDecimal(dtes)) + ' mois'
     )
     const prefix1 = this.category==='MAGISTRAT'?'nbDaysByMagistrat':'nbDaysByFonctionnaire'
     const prefix2 = this.category==='MAGISTRAT'?'nbHoursPerDayAndMagistrat':'nbHoursPerDayAndFonctionnaire'
@@ -189,8 +189,8 @@ export class EditableSituationComponent implements OnChanges {
         etpMag: startetpMag,
         etpFon: startetpFon,
         etpCont: startetpCont,
-        realCoverage: coverage/100,
-        realDTESInMonths: dtes,
+        realCoverage: fixDecimal(coverage/100),
+        realDTESInMonths: fixDecimal(dtes),
         magRealTimePerCase: tmd,
         magCalculateCoverage: 0,
         fonCalculateCoverage: 0,
