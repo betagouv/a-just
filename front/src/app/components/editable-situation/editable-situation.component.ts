@@ -44,11 +44,14 @@ export class EditableSituationComponent implements OnChanges {
       Validators.required,
       Validators.pattern(this.numberRegex),
     ]),
-    etpFon: new FormControl(''),
-    etpCont: new FormControl(''),
-    realCoverage: new FormControl(''),
-    realDTESInMonths: new FormControl(''),
-    magRealTimePerCase: new FormControl(''),
+    etpFon: new FormControl('', [
+      Validators.required,
+      Validators.pattern(this.numberRegex),
+    ]),
+    etpCont: new FormControl({value:'',disabled: true}),
+    realCoverage: new FormControl({value:'',disabled: true}),
+    realDTESInMonths: new FormControl({value:'',disabled: true}),
+    magRealTimePerCase: new FormControl({value:'',disabled: true}),
   })
 
   endSituation = {
@@ -92,6 +95,17 @@ export class EditableSituationComponent implements OnChanges {
 
   ngOnChanges(changes: any) {
     if (this.isValidatedWhiteSimu) this.generateEndSituation()
+    console.log(changes.category.currentValue)
+    if (changes.category && changes.category.currentValue){
+    if (changes.category.currentValue==='MAGISTRAT') {
+      this.formWhiteSim.controls['etpMag'].enable()
+      this.formWhiteSim.controls['etpFon'].disable()
+    }
+    else {
+      this.formWhiteSim.controls['etpMag'].disable()
+      this.formWhiteSim.controls['etpFon'].enable()
+    }
+  }
   }
   /**
    * Validate beginning situation for white simulator
