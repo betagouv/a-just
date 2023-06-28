@@ -1,4 +1,5 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { DATA_GITBOOK } from 'src/app/constants/documentation'
 import {
@@ -78,7 +79,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * Lien du guide de la donnée
    */
-  gitBook = DATA_GITBOOK 
+  gitBook = DATA_GITBOOK
   /**
    * Support GitBook
    */
@@ -95,7 +96,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {
     super()
 
@@ -104,6 +106,16 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         if (backupId) {
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
             lastMonth = new Date(lastMonth)
+
+            const { month } = this.route.snapshot.queryParams
+            if (
+              month &&
+              this.getMonth(month).getTime() <
+                this.getMonth(lastMonth).getTime()
+            ) {
+              lastMonth = this.getMonth(month)
+            }
+
             this.activitiesService.activityMonth.next(lastMonth)
           })
         }
@@ -293,12 +305,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             const oldReferentielFinded = oldReferentielSetted.find(
               (i) => i.id === ref.id
             )
+            let showActivityGroup = oldReferentielFinded
+              ? oldReferentielFinded.showActivityGroup
+              : false
+
+            const { cont } = this.route.snapshot.queryParams
+            if (oldReferentielSetted.length === 0 && cont && +cont === ref.id) {
+              showActivityGroup = true
+            }
+
             return {
               ...ref,
               activityUpdated: (getActivity && getActivity.updatedBy) || null,
-              showActivityGroup: oldReferentielFinded
-                ? oldReferentielFinded.showActivityGroup
-                : false,
+              showActivityGroup,
             }
           })
       })

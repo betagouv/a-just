@@ -1,5 +1,9 @@
 @import '../../styles/utils.scss';
 
+aj-wrapper {
+  background-color: white;
+}
+
 .tags {
   display: flex;
   margin-top: 4px;
@@ -30,5 +34,30 @@
       background-color: fColor(bgCategoryAutour);
       color: fColor(textCategoryAutour);
     }
+  }
+}
+
+.pano-title {
+  background-color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 16px 24px;
+  border-bottom: solid 1px fColor(lightBorder);
+  border-left: solid 1px fColor(lightBorder);
+}
+
+.activities-panel {
+  border-bottom: solid 1px fColor(lightBorder);
+  border-left: solid 1px fColor(lightBorder);
+  background-color: white;
+  display: flex;
+  align-items: stretch;
+
+  .left-panel {
+    flex: 1;
+  }
+
+  activities-last-modifications {
+    border-left: solid 1px fColor(lightBorder);    
   }
 }

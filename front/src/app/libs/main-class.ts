@@ -9,6 +9,7 @@ import {
   decimalToStringDate,
   getMonthString,
   getShortMonthString,
+  month,
   today,
 } from '../utils/dates'
 import {
@@ -99,8 +100,8 @@ export class MainClass {
    * @param name
    * @returns
    */
-  public referentielMappingColor(name: string): string {
-    return referentielMappingColor(name)
+  public referentielMappingColor(name: string, opacity: number = 1): string {
+    return referentielMappingColor(name, opacity)
   }
 
   /**
@@ -229,6 +230,15 @@ export class MainClass {
   public getToday(date: Date | null | undefined = new Date()): Date {
     return today(date)
   }
+
+    /**
+   * Retourne la date d'aujourd'hui sinon du jour de la date choisie
+   * @param date
+   * @returns
+   */
+    public getMonth(date: Date | null | undefined = new Date()): Date {
+      return month(date)
+    }
 
   /**
    * Retourne l'année d'une date en string ou objet
