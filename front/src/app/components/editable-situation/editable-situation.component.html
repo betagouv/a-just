@@ -54,11 +54,11 @@
         </div>
         <div class="line-item" [ngClass]="{'grey-bg-disabled':category!=='MAGISTRAT'}">
           <input formControlName="etpMag" (keypress)="validateNo($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true, 'disabled':category!=='MAGISTRAT'}" />
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category==='MAGISTRAT', 'disabled':category!=='MAGISTRAT'}" />
         </div>
         <div class="line-item " [ngClass]="{'grey-bg-disabled':category==='MAGISTRAT'}">
           <input formControlName="etpFon" (keypress)="validateNo($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true, 'disabled':category==='MAGISTRAT'}" />
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category!=='MAGISTRAT', 'disabled':category==='MAGISTRAT'}" />
         </div>
         <div class="line-item grey-bg-disabled">
           <input formControlName="etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
@@ -101,15 +101,15 @@
         <div class="line-item grey-bg">
           <input [value]="endSituation.lastStock" (keypress)="validateNo($event)" type="text" class="disabled" />
         </div>
-        <div class="line-item">
+        <div class="line-item" [ngClass]="{'grey-bg-disabled':category!=='MAGISTRAT'}">
           <input [value]="category==='MAGISTRAT'?endSituation.etpMag:''" (keypress)="validateNo($event)" type="text"
             class="disabled" />
         </div>
-        <div class="line-item grey-bg">
+        <div class="line-item" [ngClass]="{'grey-bg-disabled':category==='MAGISTRAT'}">
           <input [value]="category!=='MAGISTRAT'?endSituation.etpFon:''" (keypress)="validateNo($event)" type="text"
             class="disabled" />
         </div>
-        <div class="line-item">
+        <div class="line-item grey-bg-disabled">
           <input [value]="endSituation.etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
         </div>
         <div class="line-item grey-bg">
