@@ -33,7 +33,8 @@ import { NewsComponent } from './news/news.component'
 import { HelpButtonComponent } from './help-button/help-button.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
-import { TextEditorComponent } from './text-editor/text-editor.component'
+import { TextEditorComponent } from './text-editor/text-editor.component';
+import { EditableSituationComponent } from './editable-situation/editable-situation.component'
 import { CalculatriceComponent } from './calculatrice/calculatrice.component';
 import { PopupModule } from './popup/popup.module'
 
@@ -70,14 +71,15 @@ const list = [
   ExtractorActivityComponent,
   ExtractorVentilationComponent,
   TextEditorComponent,
-  CalculatriceComponent
+  EditableSituationComponent,
+  CalculatriceComponent,
 ]
 
 /**
  * Module d'import de composant
  */
 @NgModule({
-  declarations: [...list],
+  declarations: [...list, EditableSituationComponent],
   imports: [
     CommonModule,
     RouterModule,
