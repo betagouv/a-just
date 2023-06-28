@@ -1,7 +1,5 @@
 import { assert } from 'chai'
-import { accessList } from '../../src/constants/access'
 import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
-import { onUpdateAccountApi } from '../routes/user'
 
 module.exports = function (datas) {
   let hrId = null
