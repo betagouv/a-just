@@ -93,4 +93,16 @@ export class ActivitiesService {
       })
       .then((data) => data.data.date || null)
   }
+
+  /**
+   * API retourne le dernier mois qui possède une activité pour une juridiction
+   * @returns 
+   */
+  getLastUpdatedActivities() {
+    return this.serverService
+      .post(`activities/get-last-human-activities`, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) => data.data.list || [])
+  }
 }

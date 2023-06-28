@@ -1,12 +1,9 @@
 import { Op } from 'sequelize'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
 
 /**
  * Liste des juridctions auquels ont accès les utilisateur
  */
-
-import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
-import { sentEmail } from '../utils/email'
-import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 
 export default (sequelizeInstance, Model) => {
   /**

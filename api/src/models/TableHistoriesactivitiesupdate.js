@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 /**
  * Intermédiaire avec la table d'historisation des modifications d'activités
  */
@@ -89,6 +91,102 @@ export default (sequelizeInstance, Model) => {
     }
 
     return null
+  }
+
+  /**
+   * Retourne la date du dernière stock pour une juridiction
+   * @param {*} HRBackupId
+   * @returns
+   */
+  Model.getLasHumanActivites = async (HRBackupId) => {
+    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels()) || []
+
+    const getHistory = async (historyId = null, activityDate = null, contentieuxId = null) => {
+      const whereActivity = {
+        hr_backup_id: HRBackupId,
+      }
+      const whereHistory = {}
+
+      if (historyId) {
+        whereHistory.id = {
+          [Op.lt]: historyId,
+        }
+      }
+
+      if (activityDate) {
+        whereActivity.periode = {
+          [Op.ne]: activityDate,
+        }
+      }
+
+      if (contentieuxId) {
+        whereActivity.contentieux_id = {
+          [Op.ne]: contentieuxId,
+        }
+      }
+
+      const element = await Model.findOne({
+        include: [
+          {
+            model: Model.models.Activities,
+            required: true,
+            where: whereActivity,
+          },
+          {
+            model: Model.models.Users,
+            required: true,
+          },
+        ],
+        where: whereHistory,
+        order: [['created_at', 'desc']],
+        raw: true,
+      })
+
+      if (element) {
+        let contentieux = referentiel.find((r) => r.id === element['Activity.contentieux_id'])
+        if (!contentieux) {
+          // is child referentiel
+          contentieux = referentiel.find((r) => (r.childrens || []).some((c) => c.id === element['Activity.contentieux_id'])) || {}
+        }
+
+        return {
+          history: {
+            id: element.id,
+            updatedAt: element.updated_at,
+          },
+          activity: {
+            id: element['Activity.id'],
+            contentieuxId: element['Activity.contentieux_id'],
+            periode: element['Activity.periode'],
+          },
+          user: {
+            firstName: element['User.first_name'],
+            lastName: element['User.last_name'],
+          },
+          contentieux: {
+            id: contentieux?.id,
+            label: contentieux?.label,
+          },
+        }
+      }
+
+      return element
+    }
+
+    let list = []
+    let elementHistoryElement = null
+    do {
+      elementHistoryElement = await getHistory(
+        list.length ? list[list.length - 1].history.id : null,
+        list.length ? list[list.length - 1].activity.periode : null,
+        list.length ? list[list.length - 1].activity.contentieuxId : null
+      )
+      if (elementHistoryElement) {
+        list.push(elementHistoryElement)
+      }
+    } while (elementHistoryElement && list.length < 12)
+
+    return list
   }
 
   return Model
