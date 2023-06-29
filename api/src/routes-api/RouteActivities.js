@@ -120,4 +120,28 @@ export default class RouteActivities extends Route {
       this.sendOk(ctx, null)
     }
   }
+
+  /**
+   * API dernier mois où il y a des données d'une juridiction
+   * @param {*} hrBackupId
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+      dateStart: Types.date(),
+      dateEnd: Types.date(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async getNotCompleteActivities (ctx) {
+    const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd)
+      this.sendOk(ctx, {
+        list,
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 }
