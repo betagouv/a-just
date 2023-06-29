@@ -1,6 +1,8 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
 import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
+import { month } from '../utils/date'
+import { maxBy } from 'lodash'
 
 /**
  * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
@@ -501,8 +503,13 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HrBackupId
    * @returns
    */
-  Model.getByMonth = async (date, HrBackupId) => {
+  Model.getByMonth = async (date, HrBackupId, contentieuxId = null) => {
+    const whereList = {}
     date = new Date(date)
+
+    if (contentieuxId) {
+      whereList.contentieux_id = contentieuxId
+    }
 
     const list = await Model.findAll({
       attributes: [
@@ -520,6 +527,7 @@ export default (sequelizeInstance, Model) => {
         periode: {
           [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
+        ...whereList,
       },
       include: [
         {
@@ -643,6 +651,98 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < listBackupId.length; i++) {
       await Model.cleanActivities(listBackupId[i], minDate)
     }
+  }
+
+  /**
+   * List des activités non complétés d'une tranche
+   * @param {*} HrBackupId
+   * @param {*} dateStart
+   * @param {*} dateEnd
+   * @returns
+   */
+  Model.getNotCompleteActivities = async (HrBackupId, dateStart, dateEnd) => {
+    dateStart = new Date(dateStart)
+    dateEnd = new Date(dateEnd)
+
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels()) || [])
+      .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
+      .map((c) => {
+        const childrens = (c.childrens || [])
+          .filter(
+            (r) =>
+              r.label !== 'Collégiales hors JIRS' &&
+              r.label !== 'Collégiales JIRS' &&
+              r.label !== 'Collégiales JIRS crim-org' &&
+              r.label !== 'Collégiales JIRS eco-fi' &&
+              r.label !== "Cour d'assises hors JIRS" &&
+              r.label !== "Cour d'assises JIRS" &&
+              r.label !== 'Eco-fi hors JIRS' &&
+              r.label !== 'JIRS éco-fi' &&
+              r.label !== 'JIRS crim-org' &&
+              r.label !== 'JIRS'
+          )
+          .map((ch) => ({ ...ch, lastDateWhithoutData: null }))
+        return { ...c, childrens }
+      })
+
+    let contentieuxToFind = []
+    do {
+      const date = month(dateEnd)
+      contentieuxToFind = []
+      list.map((c) => {
+        const childrensToSearch = (c.childrens || []).filter((ch) => ch.lastDateWhithoutData === null)
+        if (childrensToSearch.length) {
+          contentieuxToFind.push(c.id)
+          contentieuxToFind = contentieuxToFind.concat(childrensToSearch.map((ch) => ch.id))
+        }
+      })
+
+      const monthActivitiesContentieuxIds = ((await Model.getByMonth(date, HrBackupId, contentieuxToFind)) || [])
+        .filter(
+          (a) =>
+            (a.entrees !== null || a.originalEntrees !== null) &&
+            (a.sorties !== null || a.originalSorties !== null) &&
+            (a.stock !== null || a.originalStock !== null)
+        )
+        .map((f) => f.contentieux.id)
+
+      list = list.map((c) => {
+        let childrens = c.childrens || []
+        childrens = childrens.map((ch) => {
+          if (ch.lastDateWhithoutData === null && !monthActivitiesContentieuxIds.includes(ch.id)) {
+            ch.lastDateWhithoutData = new Date(date)
+          }
+
+          return {
+            ...ch,
+          }
+        })
+
+        return {
+          ...c,
+          childrens,
+        }
+      })
+
+      dateEnd.setMonth(dateEnd.getMonth() - 1)
+    } while (dateStart.getTime() < dateEnd.getTime() && contentieuxToFind.length)
+
+    return list
+      .map((c) => {
+        const childrens = (c.childrens || []).filter((ch) => ch.lastDateWhithoutData)
+        const max = maxBy(childrens, 'lastDateWhithoutData')
+
+        return {
+          ...c,
+          lastDateWhithoutData: max?.lastDateWhithoutData,
+          childrens,
+        }
+      })
+      .filter((c) => {
+        const childrens = c.childrens || []
+
+        return !childrens.every((c) => c.lastDateWhithoutData === null)
+      })
   }
 
   return Model
