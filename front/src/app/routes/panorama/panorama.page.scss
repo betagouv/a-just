@@ -37,7 +37,7 @@ aj-wrapper {
   }
 }
 
-.pano-title {
+.effectif-title ,.pano-title {
   background-color: white;
   font-size: 20px;
   font-weight: bold;
@@ -46,7 +46,7 @@ aj-wrapper {
   border-left: solid 1px fColor(lightBorder);
 }
 
-.activities-panel {
+.workforce-panel, .activities-panel {
   border-bottom: solid 1px fColor(lightBorder);
   border-left: solid 1px fColor(lightBorder);
   background-color: white;
@@ -57,7 +57,7 @@ aj-wrapper {
     flex: 1;
   }
 
-  activities-last-modifications {
+  records-update, activities-last-modifications {
     border-left: solid 1px fColor(lightBorder);    
   }
 }

@@ -1,0 +1,29 @@
+<h3>Composition des effectifs</h3>
+<div class="cards">
+  <div *ngFor='let category of categoriesList' class="category"
+    [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
+    <div class="header">
+      <div class="header-wrapper">
+        <span class='categoryType bold'>
+          <span>{{ category.headerLabel }}</span> :
+          <span>{{ category.nbPersonal }}</span>
+        </span>
+        <span class="etp">{{ category.etpt }} ETPT</span>
+      </div>
+    </div>
+    <div class="middle">
+      Personnels CLE
+      <input type="text" value='-'>
+    </div>
+    <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class='separation'>
+    </span>
+    <div *ngFor='let subCategory of category.poste' class="footer">
+      <div class="subCategory">
+        <div class="categoryType">
+          <span>{{ subCategory.nbPersonal }} {{ subCategory.name }}</span>
+        </div>
+        <span class="etp">{{ subCategory.etpt }} ETPT</span>
+      </div>
+    </div>
+  </div>
+</div>
