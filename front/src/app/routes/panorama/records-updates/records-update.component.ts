@@ -7,11 +7,11 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
  * Page de la liste des fiches (magistrats, greffier ...)
  */
 @Component({
-  selector: 'panorama-effectif',
-  templateUrl: './panorama-effectif.component.html',
-  styleUrls: ['./panorama-effectif.component.scss'],
+  selector: 'records-update',
+  templateUrl: './records-update.component.html',
+  styleUrls: ['./records-update.component.scss'],
 })
-export class PanoramaEffectifComponent extends MainClass implements OnInit, OnDestroy {
+export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestroy {
 
 
   /**

@@ -9,11 +9,14 @@ import { PanoramaAlertComponent } from './panorama-alert/panorama-alert.componen
 import { ActivitiesLastModificationsComponent } from './activities-last-modifications/activities-last-modifications.component'
 import { ActivitiesLastDisponibilitiesComponent } from './activities-last-disponibilities/activities-last-disponibilities.component'
 import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component'
-
+import { WorkforceCompositionComponent } from './workforce-composition/workforce-composition.component'
+import { RecordsUpdateComponent } from './records-updates/records-update.component'
 @NgModule({
   declarations: [
     PanoramaPage,
     PanoramaAlertComponent,
+    WorkforceCompositionComponent,
+    RecordsUpdateComponent,
     ActivitiesLastModificationsComponent,
     ActivitiesLastDisponibilitiesComponent,
     ActivitiesToCompleteComponent,
