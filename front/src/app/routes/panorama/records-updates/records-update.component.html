@@ -1,5 +1,16 @@
 <h3>Actualisation des fiches</h3>
-<div class="cards">
-
-
-</div>
+<table>
+  <tr class="header-titles">
+    <th class="label">Effectifs</th>
+    <th class="percent">% ventilé</th>
+    <th class="update-title">Dernière MAJ</th>
+  </tr>
+  <div *ngFor='let category of categoriesList' class="category"
+    [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
+    <tr class="content-wrapper">
+      <td class="label">{{ category.headerLabel }}</td>
+      <td class="percent">{{ category.percentAllocated }}%</td>
+      <td class="update">{{ category.lastUpdate }}</td>
+    </tr>
+  </div>
+</table>

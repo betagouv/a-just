@@ -10,4 +10,51 @@
     font-size: 20px;
     margin-bottom: 22px;
   }
+
+  .header-titles {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    color: #929292;
+    font-size: 14px;
+    line-height: 1.71;
+    padding: 4px 14px;
+
+    th {
+      font-weight: lighter;
+      text-align: left;
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 4px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 41px;
+    width: 304px;
+  }
+
+  .label {
+    width: 28%;
+    line-height: 16px;
+  }
+
+  .percent {
+  }
+
+  .update {
+    font-weight: bold;
+    width: 35%;
+
+  }
+
+  .update-title {
+    width: 35%;
+  }
 }
