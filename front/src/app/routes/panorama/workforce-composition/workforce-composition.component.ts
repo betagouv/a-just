@@ -28,6 +28,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnInit, 
     nbPersonal: 122,
     labelPlural: "",
     headerLabel: 'Siège',
+    percentAllocated: 71.28,
     poste: [ {
       name: 'titulaires',
       selected: true,
@@ -56,6 +57,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnInit, 
     nbPersonal: 9,
     labelPlural: "",
     headerLabel: 'Greffe',
+    percentAllocated: 20,
     poste: [ {
       name: 'titulaires',
       selected: true,
@@ -84,6 +86,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnInit, 
     nbPersonal: 5,
     labelPlural: "",
     headerLabel: 'Autour du magistrat',
+    percentAllocated: 0,
     poste: [ ],
   }
 
