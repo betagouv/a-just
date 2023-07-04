@@ -68,6 +68,9 @@ export const onGetMyInfosApi = async ({ userToken }) => {
     .then((res) => {
       return res
     })
+    .catch((err) => {
+      return err.response
+    })
 }
 
 export const onGetUserDataApi = async ({ userToken }) => {
@@ -141,7 +144,7 @@ export const onUpdateAccountApi = async ({ userToken, userId, accessIds, ventila
       },
       {
         headers: {
-          authorization: userToken,
+          Authorization: userToken,
         },
       }
     )

@@ -1,6 +1,7 @@
 import winston from 'winston'
 import config from 'config'
 import packageJson from '../../package.json'
+const Sent = require('@sentry/node')
 
 const logger = winston.createLogger({
   level: 'info',
@@ -10,13 +11,29 @@ const logger = winston.createLogger({
   transports: /*config.sentryApi
     ? [
       new Sentry({
-        config: {
+        sentry: {
+          dsn: config.sentryApi,
+          environment: process.env.NODE_ENV || 'developpement',
+          release: `${packageJson.name}@${packageJson.version}`,
+          integrations: [
+            // enable HTTP calls tracing
+            new Sent.Integrations.Http({ tracing: true }),
+            // Automatically instrument Node.js libraries and frameworks
+            ...Sent.autoDiscoverNodePerformanceMonitoringIntegrations(),
+          ],
+        },
+        level: 'error',
+      }),
+      new Sentry({
+        sentry: {
           dsn: config.sentryApi,
           environment: process.env.NODE_ENV || 'developpement',
           release: `${packageJson.name}@${packageJson.version}`,
           tracesSampleRate: 1.0,
+          sampleRate: 1.0,
+          //integrations: [new Sentry.Integrations.Http({ tracing: true })],
         },
-        level: 'error',
+        level: 'info',
       }),
       //
       // - Write all logs with level `error` and below to `error.log`

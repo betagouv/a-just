@@ -18,7 +18,6 @@ export const onUpdateHrApi = async ({ userToken, hr, backupId }) => {
       return res
     })
     .catch((err) => {
-      console.log('ERROR HR:', err.response.data)
       return err.response
     })
 }
