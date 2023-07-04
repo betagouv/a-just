@@ -13,7 +13,7 @@ export default class RouteAuths extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -28,7 +28,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async login (ctx) {
+  async login(ctx) {
     const { password } = this.body(ctx)
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
@@ -43,6 +43,18 @@ export default class RouteAuths extends Route {
       await this.models.Logs.addLog(USER_USER_LOGIN, user.dataValues.id, { userId: user.dataValues.id })
       await super.addUserInfoInBody(ctx)
       this.sendCreated(ctx)
+
+      /*const transaction = Sentry.startTransaction({ name: 'login' })
+      // Set transaction on scope to associate with errors and get included span instrumentation
+      // If there's currently an unfinished transaction, it may be dropped
+      Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
+      const span = transaction.startChild({
+        op: 'task',
+        description: 'User Logging',
+      })
+      span.setStatus(200)
+      span.finish()
+      transaction.finish()*/
     } else {
       ctx.throw(401, ctx.state.__('Email ou mot de passe incorrect'))
     }
@@ -59,7 +71,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin (ctx) {
+  async loginAdmin(ctx) {
     const { password } = this.body(ctx)
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
@@ -82,7 +94,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin (ctx) {
+  async autoLogin(ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, { userId: ctx.state.user.id })
@@ -109,7 +121,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin (ctx) {
+  async autoLoginAdmin(ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -122,7 +134,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout (ctx) {
+  async logout(ctx) {
     await ctx.logoutUser()
   }
 }

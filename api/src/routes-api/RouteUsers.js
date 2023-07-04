@@ -188,7 +188,6 @@ export default class RouteUsers extends Route {
   async updateAccount (ctx) {
     const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
-
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
     }
