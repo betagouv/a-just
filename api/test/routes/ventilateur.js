@@ -1,14 +1,22 @@
 import { instanceAxios } from '../utils/axios'
 
-export const onGetContentiousApi = async ({ userToken, backupId }) => {
-  console.log('userToken:', userToken)
-  console.log('backupId:', backupId)
+export const onGetAllActivatedTjApi = async () => {
+  return await instanceAxios
+    .get('/juridictions/get-all-visibles')
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      return err
+    })
+}
 
+export const onGetContentiousApi = async ({ userToken, backupId }) => {
   return await instanceAxios
     .post(
-      'contentieux-options/get-all',
+      '/contentieux-options/get-all',
       {
-        backupId: backupId,
+        backupId: null,
         juridictionId: backupId,
       },
       {

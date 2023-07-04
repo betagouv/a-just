@@ -12,7 +12,6 @@ module.exports = function (datas) {
         accessIds: datas.adminAccess,
         ventilations: [JURIDICTION_BACKUP_ID],
       })
-
       assert.strictEqual(response.status, 200)
     })
 
