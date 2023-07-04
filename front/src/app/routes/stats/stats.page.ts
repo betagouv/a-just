@@ -27,7 +27,7 @@ export class StatsPage {
   /**
    * Zoom of mapbox
    */
-  zoom: [number] = [5]
+  zoom: [number] = [4.5]
   /**
    * Liste juridictions
   */
@@ -74,7 +74,7 @@ export class StatsPage {
           },
         })
   
-        let size = (j.population || 1) / 50000
+        let size = (j.population || 1) / 20000
         if(size < 10) {
           size = 10
         }
