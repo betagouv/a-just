@@ -27,6 +27,14 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Peux voir la partie ventilation
+   */
+  canViewVentilation: boolean = false
+  /**
+   * Peux voir la partie activities
+   */
+  canViewActivities: boolean = false
 
   /**
    * Constructor
@@ -44,6 +52,8 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
+        this.canViewVentilation = this.userService.canViewVentilation()
+        this.canViewActivities = this.userService.canViewActivities()
       })
     )
   }

@@ -2,27 +2,31 @@
   [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
   [subtitleTemplate]="subTitle" class="content-margin-null">
   <panorama-alert></panorama-alert>
-  <div class="effectif-title">
-    Effectifs
-  </div>
-  <div class="workforce-panel">
-    <div class="left-panel">
-      <workforce-composition></workforce-composition>
+  <ng-template [ngIf]="canViewVentilation">
+    <div class="effectif-title">
+      Effectifs
     </div>
-    <div class="right-panel">
-      <records-update></records-update>
+    <div class="workforce-panel">
+      <div class="left-panel">
+        <workforce-composition></workforce-composition>
+      </div>
+      <div class="right-panel">
+        <records-update></records-update>
+      </div>
     </div>
-  </div>
-  <div class="pano-title">
-    Les données d’activité
-  </div>
-  <div class="activities-panel">
-    <div class="left-panel">
-      <activities-last-disponibilities></activities-last-disponibilities>
-      <activities-to-complete></activities-to-complete>
+  </ng-template>
+  <ng-template [ngIf]="canViewActivities">
+    <div class="pano-title">
+      Les données d’activité
     </div>
-    <activities-last-modifications></activities-last-modifications>
-  </div>
+    <div class="activities-panel">
+      <div class="left-panel">
+        <activities-last-disponibilities></activities-last-disponibilities>
+        <activities-to-complete></activities-to-complete>
+      </div>
+      <activities-last-modifications></activities-last-modifications>
+    </div>
+  </ng-template>
 </aj-wrapper>
 
 <ng-template #subTitle>

@@ -19,7 +19,6 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { AppService } from 'src/app/services/app/app.service'
-import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { addHTML } from 'src/app/utils/js-pdf'
@@ -192,7 +191,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param appService
    */
   constructor(
-    private authService: AuthService,
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
