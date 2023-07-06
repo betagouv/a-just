@@ -1,6 +1,6 @@
 <aj-wrapper
   [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
-  [subtitleTemplate]="subTitle" class="content-margin-null">
+  [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
   <panorama-alert></panorama-alert>
   <ng-template [ngIf]="canViewVentilation">
     <div class="effectif-title">

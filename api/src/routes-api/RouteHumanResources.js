@@ -272,11 +272,6 @@ export default class RouteHumanResources extends Route {
           }
         }
 
-        const hr = group.map((g) => {
-          delete g.situations
-
-          return g
-        })
         console.log('@@@@@', label)
         return {
           textColor: getCategoryColor(label),
@@ -284,7 +279,7 @@ export default class RouteHumanResources extends Route {
           hoverColor: getHoverCategoryColor(label),
           referentiel,
           label,
-          hr,
+          hr: group,
           categoryId: category.id,
         }
       })
