@@ -134,3 +134,8 @@ export function etpLabel (value) {
 
   return `${fixDecimal(value * 100)}%`
 }
+
+/**
+ * ETP need to be updated
+ */
+export const ETP_NEED_TO_BE_UPDATED = 0.000001
