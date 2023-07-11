@@ -5,12 +5,13 @@
     <th class="percent">% ventilé</th>
     <th class="update-title">Dernière MAJ</th>
   </tr>
-  <div *ngFor='let category of categoriesList' class="category"
+  <div *ngFor='let category of workforce' class="category"
     [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
     <tr class="content-wrapper">
       <td class="label">{{ category.headerLabel }}</td>
       <td class="percent">{{ category.percentAllocated }}%</td>
-      <td class="update">{{ category.lastUpdate }}</td>
+      <td class="update">{{ category.lastUpdate?.getDate() }} {{ getShortMonthString(category.lastUpdate) }} {{
+        category.lastUpdate?.getFullYear() }}</td>
     </tr>
   </div>
 </table>

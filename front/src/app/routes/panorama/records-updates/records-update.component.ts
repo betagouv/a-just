@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 import { UserService } from 'src/app/services/user/user.service'
 import { HRCategorySelectedInterface } from 'src/app/interfaces/hr-category'
+import { HumanResourceSelectedInterface } from '../../workforce/workforce.page'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 
 /**
@@ -13,9 +14,9 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
   styleUrls: ['./records-update.component.scss'],
 })
 export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestroy {
-  /**
-   * liste des catégories d'effectif
-   */
+
+  @Input() workforce: HRCategorySelectedInterface[] = []
+
   categoriesList: HRCategorySelectedInterface[] = [ {
     id: 1,
     label: "Siège",
@@ -28,7 +29,7 @@ export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestr
     labelPlural: "",
     headerLabel: 'Siège',
     percentAllocated: 71.28,
-    lastUpdate: '12 Avril 2023',
+    //lastUpdate: '12 Avril 2023',
     poste: [ {
       name: 'titulaires',
       selected: true,
@@ -58,7 +59,7 @@ export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestr
     labelPlural: "",
     headerLabel: 'Greffe',
     percentAllocated: 20,
-    lastUpdate: '24 Mars 2023',
+    //lastUpdate: '24 Mars 2023',
     poste: [ {
       name: 'titulaires',
       selected: true,
@@ -88,7 +89,7 @@ export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestr
     labelPlural: "",
     headerLabel: 'Autour du magistrat',
     percentAllocated: 0,
-    lastUpdate: '16 Mars 2023',
+    //lastUpdate: '16 Mars 2023',
     poste: [ ],
   }
 ]

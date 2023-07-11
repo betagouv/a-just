@@ -3,6 +3,11 @@ import {
   referentielMappingColor,
   referentielMappingName,
 } from '../utils/referentiel'
+import {
+  categoryMappingName,
+  categoryMappingColor
+} from '../utils/category'
+
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
 import {
@@ -102,6 +107,22 @@ export class MainClass {
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
     return referentielMappingColor(name, opacity)
+  }
+
+    /**
+   * Methode de reprise des couleur de catégorie
+   * @param name
+   * @returns
+   */
+    public categoryMappingColor(name: string | undefined, opacity: number = 1): string  {
+      return categoryMappingColor(name, opacity)
+    }
+
+  /**
+   * Methode de reprise des noms de categori
+   */
+  public categoryMappingName(name: string): string {
+    return categoryMappingName(name)
   }
 
   /**
