@@ -35,7 +35,7 @@
     </a>
     <div class="read-etp">
       <p class="label">ETP Travaillé :</p>
-      <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
+      <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
         [indisponibility]="hr.hasIndisponibility">
       </etp-preview>
       <p class="unavailable" *ngIf="hr.hasIndisponibility">

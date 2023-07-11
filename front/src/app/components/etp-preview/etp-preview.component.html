@@ -1,3 +1,12 @@
-<div class="preview" [style.width.px]="width" [style.height.px]="height" [style.line-height.px]="height"
-  [style.font-size.px]="height * 12 / 40">{{ etp }}</div>
+<div
+  class="preview"
+  [style.width.px]="width"
+  [style.height.px]="height"
+  [style.line-height.px]="height"
+  [style.font-size.px]="(height * 12) / 40"
+  [ngClass]="{ alert: needToBeUpdated }"
+>
+  <ng-template [ngIf]="needToBeUpdated">?</ng-template>
+  <ng-template [ngIf]="!needToBeUpdated">{{ etp }}</ng-template>
+</div>
 <canvas #canvas [width]="width" [height]="height"></canvas>
