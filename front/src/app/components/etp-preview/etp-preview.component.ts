@@ -5,6 +5,7 @@ import {
   ViewChild,
   OnChanges,
 } from '@angular/core'
+import { ETP_NEED_TO_BE_UPDATED } from 'src/app/constants/referentiel'
 import { degreesToRadians } from 'src/app/utils/geometry'
 import { fixDecimal } from 'src/app/utils/numbers'
 
@@ -17,6 +18,10 @@ import { fixDecimal } from 'src/app/utils/numbers'
   styleUrls: ['./etp-preview.component.scss'],
 })
 export class EtpPreviewComponent implements OnChanges {
+  /**
+   * Valeure réel de l'ETP
+   */
+  @Input() realETP: number | undefined
   /**
    * Valeure d'ETP
    */
@@ -38,13 +43,17 @@ export class EtpPreviewComponent implements OnChanges {
    */
   @ViewChild('canvas') domCanvas: ElementRef | null = null
   /**
-   * Marge d'espacement exterieur pour dessiner 
+   * Marge d'espacement exterieur pour dessiner
    */
   margin: number = 8
   /**
    * Largeur de la bordure du dessin
    */
   borderWidth: number = 6
+  /**
+   * This ETP need to be updated
+   */
+  needToBeUpdated: boolean = false
 
   /**
    * Constructeur
@@ -55,6 +64,8 @@ export class EtpPreviewComponent implements OnChanges {
    * Détection du changement de variable pour rédessiner
    */
   ngOnChanges() {
+    this.needToBeUpdated = ETP_NEED_TO_BE_UPDATED === this.realETP
+
     const fixDec = fixDecimal(this.etp)
     this.etp = fixDec < 0 ? 0 : fixDec
     this.onDraw()
@@ -72,10 +83,15 @@ export class EtpPreviewComponent implements OnChanges {
         this.width + this.margin * 2,
         this.height + this.margin * 2
       )
-      this.generateBackground()
+
+      if (!this.needToBeUpdated) {
+        this.generateBackground()
+      }
     } else {
       setTimeout(() => {
-        this.onDraw()
+        if (!this.needToBeUpdated) {
+          this.onDraw()
+        }
       }, 200)
     }
   }
@@ -151,8 +167,8 @@ export class EtpPreviewComponent implements OnChanges {
 
   /**
    * Conversion des degrées en Radius
-   * @param degree 
-   * @returns 
+   * @param degree
+   * @returns
    */
   getRadiusPosition(degree: number) {
     return degreesToRadians(180 + degree * (180 / 100))

@@ -21,6 +21,11 @@
     color: fColor(cgreen);
     margin: 8px;
     font-weight: bold;
+
+    &.alert {
+      color: fColor(cred);
+      background-color: rgba(fColor(cred), 0.2);
+    }
   }
 
   canvas {
