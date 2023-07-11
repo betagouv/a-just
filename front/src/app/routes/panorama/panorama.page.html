@@ -8,11 +8,15 @@
     </div>
     <div class="workforce-panel">
       <div class="left-panel">
-        <workforce-composition></workforce-composition>
+        <workforce-composition [workforce]="workforce"></workforce-composition>
       </div>
       <div class="right-panel">
-        <records-update></records-update>
+        <records-update [workforce]="workforce"></records-update>
       </div>
+    </div>
+    <div class="workforce-change">
+      <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
+        [listUnavailabilities]="listUnavailabilities"></workforce-change>
     </div>
   </ng-template>
   <ng-template [ngIf]="canViewActivities">
@@ -24,7 +28,13 @@
         <activities-last-disponibilities></activities-last-disponibilities>
         <activities-to-complete></activities-to-complete>
       </div>
-      <activities-last-modifications></activities-last-modifications>
+      <div class="activities-panel">
+        <div class="left-panel">
+          <activities-last-disponibilities></activities-last-disponibilities>
+          <activities-to-complete></activities-to-complete>
+        </div>
+        <activities-last-modifications></activities-last-modifications>
+      </div>
     </div>
   </ng-template>
 </aj-wrapper>

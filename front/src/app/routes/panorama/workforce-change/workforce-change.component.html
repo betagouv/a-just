@@ -1,0 +1,108 @@
+<div class="header">
+  <h3>XXXX changements dans les effectifs</h3>
+  <p>au cours des 15 derniers et prochains jours</p>
+</div>
+<div class="buttons">
+  <div *ngFor='let button of buttons'>
+    <button [ngClass]=" {'selected': button.isSelected}" (click)="changeButtonsState(button.label)">
+      {{ button.label}}
+      <span class="nb-sheets">
+        {{ button.label === "Départs" ? listDepartures.length : null}}
+        {{ button.label === "Arrivées" ? listArrivals.length : null}}
+        {{ button.label === "Indisponibilités" ? listUnavailabilities.length : null}}
+      </span>
+    </button>
+  </div>
+</div>
+<div class="cards">
+  <!--<div class="filters">
+    <button class="name-btn">
+      Nom
+    </button>
+    <button class="assignements-btn">
+      Affectation
+    </button>
+    <button class="category-btn">
+      {{ buttonFilter }}
+    </button>
+  </div>-->
+  <ul>
+    <li *ngFor='let workforce of listToPrint | paginate: { itemsPerPage: 10, currentPage: currentPage }'
+      class=" category">
+      <div class="agent">
+        <div class="identity-section">
+          <i class="material-icons">personadd</i>
+          <div class="main-infos">
+            <span class="name">{{ workforce.firstName + ' ' + workforce.lastName }}</span>
+            <div class="infos">
+              <div class="category"
+                [ngStyle]="{'color': categoryMappingColor(workforce.category?.label), 'background-color': categoryMappingColor(workforce.category?.label, 0.2) }">
+                {{ workforce.category ? categoryMappingName(workforce.category.label) : null }}
+              </div>
+              <div class="etp-label">
+                {{ workforce.etpLabel }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='assignements-section'>
+          <span class="total">{{ workforce.totalAffected }}%</span>
+          <mat-icon class="light-arrow">chevron_right</mat-icon>
+          <div *ngFor="let activity of workforce.currentActivities" class="activity">
+            {{ referentielMappingName(activity.contentieux.label).toUpperCase() }}
+            <div class="percent-card"
+              [ngStyle]="{'color': referentielMappingColor(activity.contentieux.label), 'background-color': referentielMappingColor(activity.contentieux.label, 0.2) }">
+              {{ activity.percent }}%
+            </div>
+          </div>
+        </div>
+        <div class="date-section">
+          <ng-template [ngIf]="listToPrint === listDepartures">
+            <div
+              [ngClass]="{ 'coming': isSituationComing(workforce.dateEnd ? workforce.dateEnd : null), 'date': true }">
+              {{ workforce.dateEnd?.getDate() }} {{ getShortMonthString(workforce.dateEnd) }} {{
+              workforce.dateEnd?.getFullYear() }}
+            </div>
+          </ng-template>
+          <ng-template [ngIf]="listToPrint === listArrivals">
+            <div
+              [ngClass]="{ 'coming': isSituationComing(workforce.situations[0].dateStart ? workforce.situations[0].dateStart : null), 'date': true }">
+              {{ workforce.situations[0].dateStart.getDate() }} {{
+              getShortMonthString(workforce.situations[0].dateStart)
+              }} {{
+              workforce.situations[0].dateStart.getFullYear() }}
+            </div>
+          </ng-template>
+          <ng-template [ngIf]="listToPrint === listUnavailabilities">
+            <div *ngIf="workforce.indisponibilities[0].dateStart !== null ; else emptyDateStart"
+              [ngClass]="{ 'coming': isSituationComing(workforce.indisponibilities[0].dateStart ? workforce.indisponibilities[0].dateStart : null), 'date': true }">
+              {{ workforce.indisponibilities[0].dateStart?.getDate() }} {{
+              getShortMonthString(workforce.indisponibilities[0].dateStart) }} {{
+              workforce.indisponibilities[0].dateStart?.getFullYear() }}
+            </div>
+            <ng-template #emptyDateStart>
+              -
+            </ng-template>
+            <div *ngIf=" workforce.indisponibilities[0].dateStop !== null ; else emptyDateStop"
+              [ngClass]="{ 'coming': isSituationComing(workforce.indisponibilities[0].dateStop ? workforce.indisponibilities[0].dateStop : null), 'date': true }">
+              {{ workforce.indisponibilities[0].dateStop?.getDate() }} {{
+              getShortMonthString(workforce.indisponibilities[0].dateStop) }} {{
+              workforce.indisponibilities[0].dateStop?.getFullYear() }}
+            </div>
+            <ng-template #emptyDateStop>
+              -
+            </ng-template>
+          </ng-template>
+        </div>
+        <div class="actions">
+          <a [routerLink]="['/resource-humaine', workforce.id]">
+            <mat-icon class="dark-arrow">chevron_right</mat-icon>
+          </a>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <pagination-controls (pageChange)="currentPage = $event" previousLabel="Précédent" nextLabel="Suivant"
+    class="page-controler">
+  </pagination-controls>
+</div>

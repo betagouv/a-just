@@ -1,6 +1,6 @@
 <h3>Composition des effectifs</h3>
 <div class="cards">
-  <div *ngFor='let category of categoriesList' class="category"
+  <div *ngFor='let category of workforce' class="category"
     [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
     <div class="header">
       <div class="header-wrapper">
@@ -22,7 +22,7 @@
         <div class="categoryType">
           <span>{{ subCategory.nbPersonal }} {{ subCategory.name }}</span>
         </div>
-        <span class="etp">{{ subCategory.etpt }} ETPT</span>
+        <span class="etp">{{ subCategory.etpt | number:".2-2" }} ETPT</span>
       </div>
     </div>
   </div>

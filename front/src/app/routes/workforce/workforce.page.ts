@@ -92,7 +92,7 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
 /**
  * Liste des fiches d'une catégories
  */
-interface listFormatedInterface {
+export interface listFormatedInterface {
   /**
    * Couleur de la categories
    */

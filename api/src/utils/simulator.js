@@ -48,7 +48,7 @@ const emptySituation = {
  * @param {*} categoryId catégory selectionnée
  * @returns situation
  */
-export function mergeSituations(situationFiltered, situation, categories, categoryId, ctx) {
+export function mergeSituations (situationFiltered, situation, categories, categoryId, ctx) {
   const etpMagAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT)
   const etpFonAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER)
   const etpContAccess = canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL)
@@ -85,7 +85,7 @@ export function mergeSituations(situationFiltered, situation, categories, catego
  * @param {*} date date selectionées en option
  * @returns liste de hr avec situations filtrées
  */
-export function filterByCategoryAndFonction(hr, categoryId, functionIds, date) {
+export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) {
   hr = hr
     .map((human) => {
       const situations = (human.situations || []).map((situation) => {
@@ -160,7 +160,7 @@ export function filterByCategoryAndFonction(hr, categoryId, functionIds, date) {
  * @param {*} selectedCategoryId catégorie selectionnée
  * @returns une situation à une date donnée ou sur une période
  */
-export async function getSituation(referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
+export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
@@ -342,7 +342,7 @@ export async function getSituation(referentielId, hr, allActivities, categories,
  * @param {*} totalIn entrées
  * @returns taux de couverture en %
  */
-function computeCoverage(totalOut, totalIn) {
+function computeCoverage (totalOut, totalIn) {
   return fixDecimal(totalOut / totalIn, 100)
 }
 
@@ -352,7 +352,7 @@ function computeCoverage(totalOut, totalIn) {
  * @param {*} totalOut sorties
  * @returns le délai nécessaire pour écolouer la totalité des stocks en mois
  */
-function computeDTES(lastStock, totalOut) {
+function computeDTES (lastStock, totalOut) {
   return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null
 }
 
@@ -366,7 +366,7 @@ function computeDTES(lastStock, totalOut) {
  * @param {*} sufix catégorie
  * @returns stock calculé
  */
-function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
@@ -401,7 +401,7 @@ function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimeP
  * @param {*} sufix catégorie
  * @returns nombre de dossier sorties
  */
-function computeTotalOut(magRealTimePerCase, etp, sufix) {
+function computeTotalOut (magRealTimePerCase, etp, sufix) {
   return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
@@ -412,8 +412,14 @@ function computeTotalOut(magRealTimePerCase, etp, sufix) {
  * @param {*} sufix catégorie
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
-function computeRealTimePerCase(totalOut, etp, sufix) {
+function computeRealTimePerCase (totalOut, etp, sufix) {
+  console.log('[simulator.js][line 420] totalOut:', totalOut)
+  console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
+  console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
+  console.log('[simulator.js][line 423] etp:', etp)
+  console.log('[simulator.js][line 424] suffix:', sufix)
   let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 100)
+  console.log('[simulator.js][line 425] realTime:', realTime)
   return Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 }
 
@@ -423,7 +429,7 @@ function computeRealTimePerCase(totalOut, etp, sufix) {
  * @param {*} sufix catégorie selectionnée
  * @returns objet formaté contenant les etp pour chaque catégorie
  */
-export function getEtpByCategory(etpAffected, sufix = '') {
+export function getEtpByCategory (etpAffected, sufix = '') {
   let etpMag = etpAffected.length >= 0 ? etpAffected[0].totalEtp : 0
   let etpFon = etpAffected.length >= 0 ? etpAffected[1].totalEtp : 0
   let etpCon = etpAffected.length >= 0 ? etpAffected[2].totalEtp : 0
@@ -443,7 +449,7 @@ export function getEtpByCategory(etpAffected, sufix = '') {
  * @param {*} dateStop date de fin
  * @returns situation
  */
-export async function getCSActivities(referentielId, allActivities) {
+export async function getCSActivities (referentielId, allActivities) {
   if (allActivities.length !== 0) {
     const filteredByContentieux = allActivities.filter((a) => referentielId.includes(a.contentieux.id))
 
@@ -481,7 +487,7 @@ export async function getCSActivities(referentielId, allActivities) {
  * @param {*} activities
  * @returns
  */
-export function hasInOutOrStock(activities) {
+export function hasInOutOrStock (activities) {
   let hasIn = false
   let hasOut = false
   let hasStock = false
@@ -502,7 +508,7 @@ export function hasInOutOrStock(activities) {
  * @param {*} referentielId contentieux id
  * @returns boolean indiquant si le contentieux se trouve dans une liste de situation
  */
-export function appearOneTimeAtLeast(situations, referentielId) {
+export function appearOneTimeAtLeast (situations, referentielId) {
   return situations.some((s) => {
     const activities = s.activities || []
     return activities.some((a) => referentielId.includes(a.contentieux.id))
@@ -520,7 +526,7 @@ export function appearOneTimeAtLeast(situations, referentielId) {
  * @param {*} monthlyReport données mensuels
  * @returns objet contenant l'ETP calculé
  */
-export async function getHRPositions(hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
+export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
   const hrCategories = {}
   let hrCategoriesMonthly = new Object({})
   let emptyList = new Object({})
@@ -551,7 +557,7 @@ export async function getHRPositions(hr, referentielId, categories, date = undef
     const situations = hr[i].situations || []
 
     if (onPeriod === true && appearOneTimeAtLeast(situations, referentielId)) {
-      ;({ etptAll, monthlyList } = {
+      ({ etptAll, monthlyList } = {
         ...(await getHRVentilationOnPeriod(
           hr[i],
           referentielId,
@@ -620,7 +626,7 @@ export async function getHRPositions(hr, referentielId, categories, date = undef
   } else return sortBy(list, 'rank')
 }
 
-export async function getHRVentilationOnPeriod(hr, referentielId, categories, dateStart = undefined, dateStop = undefined) {
+export async function getHRVentilationOnPeriod (hr, referentielId, categories, dateStart = undefined, dateStop = undefined) {
   const list = {}
   let monthlyList = {}
 
@@ -694,7 +700,7 @@ export async function getHRVentilationOnPeriod(hr, referentielId, categories, da
  * @param {*} date date selectionné
  * @returns objet contenant l'etp
  */
-export async function getHRVentilation(hr, referentielId, categories, date) {
+export async function getHRVentilation (hr, referentielId, categories, date) {
   const list = {}
   categories.map((c) => {
     list[c.id] = {
@@ -735,7 +741,7 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
  * @param {*} sufix catégorie
  * @returns simulation calculée
  */
-export function execSimulation(params, simulation, dateStart, dateStop, sufix) {
+export function execSimulation (params, simulation, dateStart, dateStop, sufix) {
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
