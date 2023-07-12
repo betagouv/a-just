@@ -1,9 +1,27 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, Input, OnChanges } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
-import { UserService } from 'src/app/services/user/user.service'
-import { HRCategorySelectedInterface } from 'src/app/interfaces/hr-category'
-import { HumanResourceSelectedInterface } from '../../workforce/workforce.page'
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import { listFormatedInterface } from '../../workforce/workforce.page'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { sumBy } from 'lodash'
+import { today } from 'src/app/utils/dates'
+
+/**
+ * Interface pour agencer la page
+ */
+interface listFormatedWithDatasInterface extends listFormatedInterface {
+  /**
+   * Pourcentage des fiches 100% ventilés
+   */
+  fullComplete?: number
+  /**
+   * Date de dernière mise à jours de la categorie
+   */
+  lastUpdated?: Date
+  /**
+   * Titre de la categorie
+   */
+  headerLabel?: string
+}
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -13,103 +31,49 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
   templateUrl: './records-update.component.html',
   styleUrls: ['./records-update.component.scss'],
 })
-export class RecordsUpdateComponent extends MainClass implements OnInit, OnDestroy {
-
-  @Input() workforce: HRCategorySelectedInterface[] = []
-
-  categoriesList: HRCategorySelectedInterface[] = [ {
-    id: 1,
-    label: "Siège",
-    textColor: '#000091',
-    bgColor: '#e3e3fd',
-    hoverColor: 'blue',
-    selected: true,
-    etpt: 119.48,
-    nbPersonal: 122,
-    labelPlural: "",
-    headerLabel: 'Siège',
-    percentAllocated: 71.28,
-    //lastUpdate: '12 Avril 2023',
-    poste: [ {
-      name: 'titulaires',
-      selected: true,
-      etpt: 105.48,
-      nbPersonal: 105,
-    }, {
-      name: 'placés',
-      selected: true,
-      etpt: 10.52,
-      nbPersonal: 12,
-    },  {
-      name: 'contractuels',
-      selected: true,
-      etpt: 3.48,
-      nbPersonal: 5,
-    }],
-  },
-  {
-    id: 2,
-    label: "Greffe",
-    textColor: '#a558a0',
-    bgColor: '#fee7fc',
-    hoverColor: 'purple',
-    selected: true,
-    etpt: 6.20,
-    nbPersonal: 9,
-    labelPlural: "",
-    headerLabel: 'Greffe',
-    percentAllocated: 20,
-    //lastUpdate: '24 Mars 2023',
-    poste: [ {
-      name: 'titulaires',
-      selected: true,
-      etpt: 105.48,
-      nbPersonal: 105,
-    }, {
-      name: 'placés',
-      selected: true,
-      etpt: 10.52,
-      nbPersonal: 12,
-    },  {
-      name: 'contractuels',
-      selected: true,
-      etpt: 3.48,
-      nbPersonal: 5,
-    }],
-  },
-  {
-    id: 3,
-    label: "Autour du magistrat",
-    textColor: '#796830',
-    bgColor: '#fef6e3',
-    hoverColor: 'yellow',
-    selected: true,
-    etpt: 4.20,
-    nbPersonal: 5,
-    labelPlural: "",
-    headerLabel: 'Autour du magistrat',
-    percentAllocated: 0,
-    //lastUpdate: '16 Mars 2023',
-    poste: [ ],
-  }
-]
+export class RecordsUpdateComponent extends MainClass implements OnChanges {
+  /**
+   * List des categories
+   */
+  @Input() listFormated: listFormatedWithDatasInterface[] = []
 
   /**
    * Constructor
    */
-  constructor(private userService: UserService) {
+  constructor(private humanResourceService: HumanResourceService) {
     super()
   }
 
    /**
    * Initialisation des datas au chargement de la page
    */
-   ngOnInit() {
-  }
+   ngOnChanges() {
+    const contentieux = this.humanResourceService.contentieuxReferentielOnly
+      .getValue()
+      .map((c) => c.id)
 
-  /**
-   * Destruction du composant
-   */
-  ngOnDestroy() {
+    this.listFormated = this.listFormated.map((category) => {
+      const listAgent = category.hr || []
+      let agentFullComplete = 0
+      listAgent.map((a) => {
+        const percent = sumBy(
+          (a.currentActivities || []).filter((c) =>
+            contentieux.includes(c.contentieux.id)
+          ),
+          'percent'
+        )
+
+        if(percent === 100) {
+          agentFullComplete ++
+        }
+      })
+
+      return {
+        ...category,
+        headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
+        fullComplete: listAgent.length ? (agentFullComplete / listAgent.length) * 100 : 0,
+        lastUpdated: listAgent.length ? new Date(Math.max(...listAgent.map(hr => today(hr.updatedAt).getTime()))) : undefined,
+      }
+    })
   }
 }

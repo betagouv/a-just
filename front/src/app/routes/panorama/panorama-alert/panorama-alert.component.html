@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main" *ngIf="showPanel">
   <span class="info-bubble">
     <i class="material-icons">info</i>
   </span>
@@ -7,7 +7,7 @@
     la juridiction. Pensez à mettre à jour la situation de vos agents et à vérifier régulièrement vos données d'activité
     !
   </p>
-  <div class="close-icon">
+  <div class="close-icon cursor-pointer" (click)="showPanel = false">
     <i class="material-icons ">closes</i>
   </div>
 </div>

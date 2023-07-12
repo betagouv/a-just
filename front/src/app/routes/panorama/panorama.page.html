@@ -1,33 +1,30 @@
 <aj-wrapper
   [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
-  [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
-  <panorama-alert></panorama-alert>
-  <ng-template [ngIf]="canViewVentilation">
-    <div class="effectif-title">
-      Effectifs
-    </div>
-    <div class="workforce-panel">
-      <div class="left-panel">
-        <workforce-composition [workforce]="workforce"></workforce-composition>
+  [subtitleTemplate]="subTitle"
+  class="content-margin-null"
+  [isLoading]="isLoading"
+>
+  <div class="panorama-container">
+    <div class="header-panorama"></div>
+    <panorama-alert></panorama-alert>
+    <ng-template [ngIf]="canViewVentilation">
+      <div class="effectif-title">Effectifs</div>
+      <div class="workforce-panel">
+        <workforce-composition
+          [listFormated]="listFormated"
+        ></workforce-composition>
+        <records-update [listFormated]="listFormated"></records-update>
       </div>
-      <div class="right-panel">
-        <records-update [workforce]="workforce"></records-update>
+      <div class="workforce-change">
+        <workforce-change
+          [listArrivals]="listArrivals"
+          [listDepartures]="listDepartures"
+          [listUnavailabilities]="listUnavailabilities"
+        ></workforce-change>
       </div>
-    </div>
-    <div class="workforce-change">
-      <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
-        [listUnavailabilities]="listUnavailabilities"></workforce-change>
-    </div>
-  </ng-template>
-  <ng-template [ngIf]="canViewActivities">
-    <div class="pano-title">
-      Les données d’activité
-    </div>
-    <div class="activities-panel">
-      <div class="left-panel">
-        <activities-last-disponibilities></activities-last-disponibilities>
-        <activities-to-complete></activities-to-complete>
-      </div>
+    </ng-template>
+    <ng-template [ngIf]="canViewActivities">
+      <div class="pano-title">Les données d’activité</div>
       <div class="activities-panel">
         <div class="left-panel">
           <activities-last-disponibilities></activities-last-disponibilities>
@@ -35,15 +32,22 @@
         </div>
         <activities-last-modifications></activities-last-modifications>
       </div>
-    </div>
-  </ng-template>
+    </ng-template>
+  </div>
 </aj-wrapper>
 
 <ng-template #subTitle>
   <div class="tags">
-    <div class="tag all" *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel">Tous</div>
+    <div
+      class="tag all"
+      *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel"
+    >
+      Tous
+    </div>
     <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>
     <div class="tag greffe" *ngIf="canViewGreffier">Greffe</div>
-    <div class="tag arround" *ngIf="canViewContractuel">Autour du magistrat</div>
+    <div class="tag arround" *ngIf="canViewContractuel">
+      Autour du magistrat
+    </div>
   </div>
 </ng-template>
