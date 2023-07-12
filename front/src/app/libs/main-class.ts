@@ -3,10 +3,7 @@ import {
   referentielMappingColor,
   referentielMappingName,
 } from '../utils/referentiel'
-import {
-  categoryMappingName,
-  categoryMappingColor
-} from '../utils/category'
+import { categoryMappingName, categoryMappingColor } from '../utils/category'
 
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
@@ -109,14 +106,17 @@ export class MainClass {
     return referentielMappingColor(name, opacity)
   }
 
-    /**
+  /**
    * Methode de reprise des couleur de catégorie
    * @param name
    * @returns
    */
-    public categoryMappingColor(name: string | undefined, opacity: number = 1): string  {
-      return categoryMappingColor(name, opacity)
-    }
+  public categoryMappingColor(
+    name: string | undefined,
+    opacity: number = 1
+  ): string {
+    return categoryMappingColor(name, opacity)
+  }
 
   /**
    * Methode de reprise des noms de categori
@@ -252,22 +252,24 @@ export class MainClass {
     return today(date)
   }
 
-    /**
+  /**
    * Retourne la date d'aujourd'hui sinon du jour de la date choisie
    * @param date
    * @returns
    */
-    public getMonth(date: Date | null | undefined = new Date()): Date {
-      return month(date)
-    }
+  public getMonth(date: Date | null | undefined = new Date()): Date {
+    return month(date)
+  }
 
   /**
    * Retourne l'année d'une date en string ou objet
    * @param date
    * @returns
    */
-  public getFullYear(date: Date | string) {
-    if (typeof date === 'string') {
+  public getFullYear(date: Date | string | undefined) {
+    if (date === undefined) {
+      date = new Date()
+    } else if (typeof date === 'string') {
       date = new Date(date)
     }
 
@@ -279,8 +281,10 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getDate(date: Date | string) {
-    if (typeof date === 'string') {
+  public getDate(date: Date | string | undefined) {
+    if (date === undefined) {
+      date = new Date()
+    } else if (typeof date === 'string') {
       date = new Date(date)
     }
 
