@@ -5,10 +5,13 @@
   [isLoading]="isLoading"
 >
   <div class="panorama-container">
-    <div class="header-panorama"></div>
+    <div class="header-panorama">
+      <div *ngIf="canViewVentilation" class="effectifs selected" (click)="scrollTo('effectif')">Effectifs</div>
+      <div *ngIf="canViewActivities" class="activities" [ngClass]="{selected: !canViewVentilation}" (click)="scrollTo('activites')">Données d'activité</div>
+    </div>
     <panorama-alert></panorama-alert>
     <ng-template [ngIf]="canViewVentilation">
-      <div class="effectif-title">Effectifs</div>
+      <div class="effectif-title" id="effectif">Effectifs</div>
       <div class="workforce-panel">
         <workforce-composition
           [listFormated]="listFormated"
@@ -24,7 +27,7 @@
       </div>
     </ng-template>
     <ng-template [ngIf]="canViewActivities">
-      <div class="pano-title">Les données d’activité</div>
+      <div class="pano-title" id="activites">Les données d’activité</div>
       <div class="activities-panel">
         <div class="left-panel">
           <activities-last-disponibilities></activities-last-disponibilities>
