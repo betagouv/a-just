@@ -10,9 +10,8 @@ import {
 } from 'src/app/utils/user'
 import { today } from 'src/app/utils/dates'
 import { HRCategorySelectedInterface, } from 'src/app/interfaces/hr-category'
-import { listFormatedInterface, HumanResourceIsInInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
+import { listFormatedInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
-import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)

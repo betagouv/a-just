@@ -6,6 +6,34 @@
 
   .header-panorama {
     box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1), 0 10px 10px 10px rgba(0, 0, 0, 0.04);
+    padding: 0 17px;
+    display: flex;
+    align-items: stretch;
+    position: relative;
+
+    &::before {
+      content: " ";
+      background-color: white;
+      left: -1px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      position: absolute;
+    }
+
+    > div {
+      cursor: pointer;
+      padding: 9px 16px;
+      font-size: 16px;
+      font-weight: bold;
+
+      &.selected {
+        border-left: solid 1px fColor(lightBorder);
+        border-right: solid 1px fColor(lightBorder);
+        border-top: solid 2px fColor(primary);
+        padding: 7px 16px 9px 16px;
+      }
+    }
   }
 }
 

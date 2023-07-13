@@ -335,4 +335,26 @@ export class MainClass {
 
     dom.focus()
   }
+
+  /**
+   * Fonction qui permet de scroller à un ID
+   */
+  public scrollTo(id: string) {
+    const findElement = document.getElementById("content")
+    const findIdElement = document.getElementById(id)
+
+    if (findElement && findIdElement) {
+      const findTopElement = document.getElementById("top")
+      let deltaToRemove = 0
+
+      if(findTopElement) {
+        deltaToRemove = findTopElement.getBoundingClientRect().height
+      }
+
+      findElement.scrollTo({
+        behavior: "smooth",
+        top: findIdElement.getBoundingClientRect().top - deltaToRemove,
+      })
+    }
+  }
 }
