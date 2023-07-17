@@ -1,26 +1,26 @@
 <h3>Composition des effectifs</h3>
 <div class="cards">
-  <div *ngFor='let category of workforce' class="category"
+  <div *ngFor="let category of listFormated" class="category"
     [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
     <div class="header">
       <div class="header-wrapper">
         <span class='categoryType bold'>
           <span>{{ category.headerLabel }}</span> :
-          <span>{{ category.nbPersonal }}</span>
+          <span>{{ category.nbPerson }}</span>
         </span>
-        <span class="etp">{{ category.etpt }} ETPT</span>
+        <span class="etp">{{ category.etpt }} ETPT</span>
       </div>
     </div>
     <div class="middle">
       Personnels CLE
-      <input type="text" value='-'>
+      <input type="text" placeholder="-" />
     </div>
-    <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class='separation'>
+    <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class="separation">
     </span>
-    <div *ngFor='let subCategory of category.poste' class="footer">
+    <div *ngFor="let subCategory of category.poste" class="footer">
       <div class="subCategory">
         <div class="categoryType">
-          <span>{{ subCategory.nbPersonal }} {{ subCategory.name }}</span>
+          <span>{{ subCategory.total}} {{ subCategory.label }}</span>
         </div>
         <span class="etp">{{ subCategory.etpt | number:".2-2" }} ETPT</span>
       </div>
