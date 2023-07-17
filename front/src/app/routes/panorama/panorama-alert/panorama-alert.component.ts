@@ -1,7 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { MainClass } from 'src/app/libs/main-class'
-import { UserService } from 'src/app/services/user/user.service'
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import { Component } from '@angular/core'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -11,26 +8,9 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
   templateUrl: './panorama-alert.component.html',
   styleUrls: ['./panorama-alert.component.scss'],
 })
-export class PanoramaAlertComponent extends MainClass implements OnInit, OnDestroy {
-
-
+export class PanoramaAlertComponent {
   /**
-   * Constructor
+   * Show hide this view
    */
-  constructor(private userService: UserService) {
-    super()
-  }
-
-   /**
-   * Initialisation des datas au chargement de la page
-   */
-   ngOnInit() {
-    
-  }
-
-  /**
-   * Destruction du composant
-   */
-  ngOnDestroy() {
-  }
+  showPanel: boolean = true
 }

@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: row;
   border: 1px solid #0063cb;
+  margin: 17px 24px;
   padding-right: 4px;
   position: relative;
 
@@ -29,9 +30,11 @@
     color: #000091;
 
     .material-icons{
-      width: 8.5px;
-      height: 8.5px;
-      font-size: 8.5px !important;
+      width: 14px;
+      height: 14px;
+      font-size: 14px !important;
+      margin-right: 12px;
+      margin-top: 12px;
     }
   }
 }

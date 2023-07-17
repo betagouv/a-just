@@ -11,6 +11,10 @@
     margin-bottom: 22px;
   }
 
+  .category {
+    border-radius: 4px;
+  }
+
   .header-titles {
     display: flex;
     width: 100%;
@@ -37,15 +41,11 @@
     border-radius: 4px;
     font-size: 14px;
     height: 41px;
-    width: 304px;
   }
 
   .label {
     width: 28%;
     line-height: 16px;
-  }
-
-  .percent {
   }
 
   .update {

@@ -358,11 +358,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal: any = []
       let etpt = 0
-      let subTotalEtp: { [key: string]: number } = {
-        titulaire: 0,
-        placé: 0,
-        contractuel: 0
-      }
+      let subTotalEtp: { [key: string]: {etpt: number, total: number} } = this.humanResourceService.calculateSubCategories(formatedList?.hrFiltered || [])
 
       if (formatedList) {
         personal = formatedList.hrFiltered
@@ -373,17 +369,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             realETP = 0
           }
           etpt += realETP
-          switch (h.fonction.position) {
-            case 'Titulaire':
-              subTotalEtp['titulaire'] += realETP
-              break
-            case 'Placé':
-              subTotalEtp['placé'] += realETP
-              break
-            case 'Contractuel':
-              subTotalEtp['contractuel'] += realETP
-              break
-          }
         })
       }
 
@@ -391,7 +376,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         return {
           ...f,
           name: f.name,
-          etpt: fixDecimal(subTotalEtp[f.name]),
+          etpt: fixDecimal(subTotalEtp[f.name].etpt),
           nbPersonal: personal.filter(
             (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
           ).length,
