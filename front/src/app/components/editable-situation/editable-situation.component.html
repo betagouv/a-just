@@ -27,7 +27,7 @@
     <div class="item blue-bg">
       <p>Temps moyen / dossier</p>
     </div>
-    <div class="item">
+    <div class="item end-item">
       <p></p>
     </div>
   </div>
@@ -74,12 +74,11 @@
         </div>
       </form>
 
-      <div class="line-item" style="display:block; margin: auto;">
-        <div class="validate-button" (click)="validateWhiteSimulator()" *ngIf="!isValidatedWhiteSimu; else locked">
-          Valider
-        </div>
+      <div class="line-item validate-button">
+        <label (click)="validateWhiteSimulator()" *ngIf="!isValidatedWhiteSimu; else locked"
+          class="validate-label">Valider</label>
         <ng-template #locked>
-          <div class="edit-button" (click)="editWhiteSimulator()">
+          <div class="validate-label" (click)="editWhiteSimulator()">
             Editer</div>
         </ng-template>
 
