@@ -24,7 +24,7 @@
         <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="textColor">
           {{ hr.fonction && hr.fonction.code }}
         </p>
-        <p class="etp">{{ hr.etpLabel }}</p>
+        <p class="etp" *ngIf="hr.etpLabel">{{ hr.etpLabel }}</p>
       </div>
       <div class="flex-1"></div>
       <div class="updated-at">
