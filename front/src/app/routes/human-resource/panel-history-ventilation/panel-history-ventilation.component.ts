@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
+import { ETP_NEED_TO_BE_UPDATED } from 'src/app/constants/referentiel'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -88,7 +89,11 @@ export class PanelHistoryVentilationComponent
   /**
    * Temps de travail en text
    */
-  timeWorked: string = ''
+  timeWorked: string | null = ''
+  /**
+   * ETP need to be updated
+   */
+  warningETP: boolean = false
 
   /**
    * Constructeur
@@ -101,6 +106,8 @@ export class PanelHistoryVentilationComponent
    * Lors d'un changement on recalcul l'interface
    */
   ngOnChanges() {
+    this.warningETP = this.etp === ETP_NEED_TO_BE_UPDATED
+
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
     )

@@ -11,9 +11,9 @@
     <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
     <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
   </div>
-  <div class="etpt">
+  <div [ngClass]="{alert: warningETP}" class="etpt">
     <p>ETPTravaillé :</p>
-    <etp-preview [etp]="etp - indisponibility" [indisponibility]="indisponibility"></etp-preview>
+    <etp-preview [etp]="etp - indisponibility" [realETP]="etp" [indisponibility]="indisponibility"></etp-preview>
   </div>
 </div>
 

@@ -85,7 +85,7 @@ export class CoverProfilDetailsComponent
   /**
    * Temps de travail en text
    */
-  timeWorked: string = ''
+  timeWorked: string | null = ''
   /**
    * ETP des indispo
    */
