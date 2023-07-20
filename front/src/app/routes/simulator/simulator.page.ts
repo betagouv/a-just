@@ -35,7 +35,7 @@ const etpMag = 'etpMag'
 /**
  * Variable ETP magistrat popup title
  */
-const etpMagTitle = 'des ETPT magistrat'
+const etpMagTitle = 'des ETPT siège'
 /**
  * Variable ETP magistrat unité
  */
@@ -327,6 +327,7 @@ displayWhiteElements:boolean = false
         this.displayWhiteElements = b
         if (b===false){
           this.toDisplaySimulation=false
+          this.initParamsToAjust()
         }
       })
     )
@@ -620,6 +621,7 @@ displayWhiteElements:boolean = false
         ? this.decisionTreeMag
         : this.decisionTreeFon
 
+    
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
     if (this.paramsToAjust.param1.input === 0) {
@@ -956,11 +958,18 @@ displayWhiteElements:boolean = false
    */
   initParams(buttons: any) {
     this.disabled = 'disabled-date'
-    this.toDisplaySimulation = false
+    this.initParamsToAjust()
+
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
+    this.simulatorService.isValidatedWhiteSimu.next(false)
+  }
+
+  initParamsToAjust() {
+    this.toDisplaySimulation = false
+
     this.paramsToAjust = {
       param1: {
         label: '',
@@ -978,7 +987,6 @@ displayWhiteElements:boolean = false
       },
     }
     this.simulateButton = 'disabled'
-
     this.toDisplay = []
     this.toCalculate = []
     this.pickersParamsToLock = []
@@ -986,9 +994,7 @@ displayWhiteElements:boolean = false
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },
     }
-    this.simulatorService.isValidatedWhiteSimu.next(false)
   }
-
   /**
    * Retourne le titre complet d'un champs à éditer
    * @param label label correspondant à un input field (ex: etpMag)

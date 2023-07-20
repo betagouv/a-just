@@ -130,6 +130,8 @@ export function etpLabel (value) {
     return 'Mi-temps'
   case 0:
     return 'Ne travaille pas'
+  case ETP_NEED_TO_BE_UPDATED:
+    return null
   }
 
   return `${fixDecimal(value * 100)}%`
