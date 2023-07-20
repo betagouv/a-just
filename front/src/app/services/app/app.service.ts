@@ -16,4 +16,12 @@ export class AppService {
   alert: BehaviorSubject<AlertInterface | null> = new BehaviorSubject<AlertInterface | null>(
     null
   )
+  /**
+   * Cache previous URL
+   */
+  previousUrl: string | null = null
+  /**
+   * Cache current URL 
+   */
+  currentUrl: string | null = null
 }

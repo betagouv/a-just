@@ -4,19 +4,29 @@
       top: auto !important;
       height: 60px !important;
     }
+
     .actual-situation {
       top: auto !important;
     }
 
-    .validate-button {
-      width: 60px;
-      margin-left: 10px;
+    .validate-label {
       background-color: #000091;
-      height: 22px;
+      border-radius: 6px;
+      padding: 3px;
+      margin: auto;
+      right: 0px;
+      position: relative;
+      color: white;
+    }
+
+    .validate-button {
       border-radius: 6px;
       color: white;
       text-align: center;
       cursor: pointer;
+      flex: 0.855 !important;
+      height: 104px !important;
+      font-size: 14px;
     }
 
     .edit-button {
@@ -59,6 +69,7 @@
       }
     }
 
+
     .item:first-child {
       margin-left: 200px;
     }
@@ -72,6 +83,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      &.end-item {
+        flex: 0.855;
+      }
 
       &.blue-bg {
         background-color: #f5f5fe;
@@ -97,6 +112,9 @@
       }
     }
   }
+
+
+
   .actual-situation {
     background-color: #fef6e3;
     position: relative;
@@ -306,13 +324,16 @@
         }
       }
     }
+
     .disabled {
       pointer-events: none;
     }
+
     .disabled-field {
       pointer-events: none;
-      background-color: rgba(185, 184, 182, 0.2901960784)!important;
+      background-color: rgba(185, 184, 182, 0.2901960784) !important;
     }
+
     .line-item {
       flex: 1;
       display: flex;
@@ -321,6 +342,7 @@
       color: #161616;
       position: relative;
       height: 100%;
+
       &.orange-bg {
         background-color: #feecc2;
 

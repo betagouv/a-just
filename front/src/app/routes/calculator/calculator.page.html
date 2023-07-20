@@ -3,11 +3,11 @@
   <div class="container" *ngIf="categorySelected">
     <div class="sub-main-header">
       <aj-date-select title="Pour la période du" [value]="dateStart"
-        (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white"
-        [max]="maxDateSelectionDate" [dateClass]="dateClass">
+        (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white" [max]="dateStop"
+        [dateClass]="dateClass">
       </aj-date-select>
       <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-        class="date-stop bg-white" [max]="maxDateSelectionDate" [dateClass]="dateClass">
+        class="date-stop bg-white" [dateClass]="dateClass">
       </aj-date-select>
       <div class="flex-1"></div>
       <button class="ref-button" (click)="calculatorSaver();$event.stopPropagation();">

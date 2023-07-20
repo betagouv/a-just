@@ -165,7 +165,7 @@ export class EditableSituationComponent implements OnChanges {
 
     const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
-      String(dtes) + ' mois'
+      String(dtes) //+ ' mois'
     )
 
     const prefix1 = this.category==='MAGISTRAT'?'nbDaysByMagistrat':'nbDaysByFonctionnaire'
@@ -220,7 +220,7 @@ export class EditableSituationComponent implements OnChanges {
     }
     this.endSituationDisplay.realCoverage =  fixDecimal(coverage) + '%'
     this.endSituationDisplay.realDTESInMonths =
-      fixDecimal(endStock / startTotalOut) + ' mois'
+      fixDecimal(endStock / startTotalOut) +''//+ ' mois'
     this.endSituationDisplay.magRealTimePerCase = decimalToStringDate(tmd)
 
     this.simulatorService.situationProjected.next({

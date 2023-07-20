@@ -62,7 +62,7 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   /**
    * Temps de travail en string
    */
-  etpLabel: string
+  etpLabel: string | null
   /**
    * Total des indispo
    */
