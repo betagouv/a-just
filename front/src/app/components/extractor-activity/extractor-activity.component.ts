@@ -185,19 +185,19 @@ export class ExtractorActivityComponent extends MainClass {
    */
   generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
     const sortCodeArray = act.contentieux.code_import
-      .split('.').filter((y : String) => y !== '').map((x: string) => x==='0'? 0.1 : Number(x))
+      .split('.').filter((y: String) => y !== '').map((x: string) => x === '0' ? 0.1 : Number(x))
 
-      const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x=>x.id).includes(act.idReferentiel)===true ? true: false
+    const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x => x.id).includes(act.idReferentiel) === true ? true : false
     return {
-      [' ']: ref===true ? 'Total '+act.contentieux.label :act.contentieux.label, //act.contentieux.code_import + ' ' +
+      [' ']: ref === true ? 'Total ' + act.contentieux.label : act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
-      ['codeCent']: sortCodeArray[1]*10 || -1,
+      ['codeCent']: sortCodeArray[1] * 10 || -1,
       ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
-      [total===true?'Total entrées logiciel':'Entrées logiciel']: act.originalEntrees,
-      [total===true?'Total entrées après A-JUSTements':'Entrées A-JUSTées']: act.entrees,
-      [total===true?'Total sorties logiciel':'Sorties logiciel']: act.originalSorties,
-      [total===true?'Total sorties après A-JUSTements':'Sorties A-JUSTées']: act.sorties,
+      [total === true ? 'Total entrées logiciel' : 'Entrées logiciel']: act.originalEntrees,
+      [total === true ? 'Total entrées après A-JUSTements' : 'Entrées A-JUSTées']: act.entrees,
+      [total === true ? 'Total sorties logiciel' : 'Sorties logiciel']: act.originalSorties,
+      [total === true ? 'Total sorties après A-JUSTements' : 'Sorties A-JUSTées']: act.sorties,
       ['Stock logiciel']: act.originalStock,
       ['Stock après A-JUSTements']: act.stock,
     }
@@ -241,15 +241,14 @@ export class ExtractorActivityComponent extends MainClass {
    * Génère le nom du ficher téléchargé
    * @returns 
    */
-  getExportFileName(){
+  getExportFileName() {
     return `Extraction_Données_D_Activité_${this.getTotalPeriodeLabel(
       this.dateStart || new Date(),
       this.dateStop || new Date()
-    )}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}`
+    )}_par ${this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}`
   }
 
   /**
@@ -263,12 +262,15 @@ export class ExtractorActivityComponent extends MainClass {
     worksheet['!cols'] = this.getColumnWidth(headers, data)
     return worksheet
   }
-  
+
   /**
    * Get data from back-end
    * @returns
    */
   exportActDate() {
+    this.appService.alert.next({
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    })
     return this.serverService
       .post(`extractor/filter-list-act`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -292,7 +294,7 @@ export class ExtractorActivityComponent extends MainClass {
             true
           )
         }).filter(
-          (r:any) =>
+          (r: any) =>
             this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
             this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
         )
@@ -310,7 +312,7 @@ export class ExtractorActivityComponent extends MainClass {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)
           }).filter(
-            (r:any) =>
+            (r: any) =>
               this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           )
@@ -330,9 +332,6 @@ export class ExtractorActivityComponent extends MainClass {
         })
 
         const dataSaved: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE })
-        this.appService.alert.next({
-          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-        })
         FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION)
       })
   }
