@@ -4,6 +4,7 @@ import { listFormatedInterface } from '../../workforce/workforce.page'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { sumBy } from 'lodash'
 import { today } from 'src/app/utils/dates'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
  * Interface pour agencer la page
@@ -71,7 +72,7 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
       return {
         ...category,
         headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
-        fullComplete: listAgent.length ? (agentFullComplete / listAgent.length) * 100 : 0,
+        fullComplete: fixDecimal(listAgent.length ? (agentFullComplete / listAgent.length) * 100 : 0),
         lastUpdated: listAgent.length ? new Date(Math.max(...listAgent.map(hr => today(hr.updatedAt).getTime()))) : undefined,
       }
     })

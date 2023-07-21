@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core'
 import { FormGroup } from '@angular/forms'
+import { Location } from '@angular/common'
 import { sumBy } from 'lodash'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -37,7 +38,7 @@ export class CoverProfilDetailsComponent
   /**
    * Ajout d'un bouton "back" avec un url
    */
-  @Input() backUrl: string = ''
+  @Input() backUrl: string | undefined
   /**
    * Ajouter d'une ancre sur le lien de retour
    */

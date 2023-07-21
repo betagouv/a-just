@@ -8,10 +8,10 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
-import { today } from 'src/app/utils/dates'
+import { today, dateAddDays } from 'src/app/utils/dates'
 import { HRCategorySelectedInterface, } from 'src/app/interfaces/hr-category'
 import { listFormatedInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
-import { sumBy } from 'lodash'
+import { sumBy, isEqual } from 'lodash'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -21,14 +21,30 @@ import { sumBy } from 'lodash'
   styleUrls: ['./panorama.page.scss'],
 })
 export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
- /**
+    /**
    * Date selected
    */
   dateSelected: Date = new Date()
   /**
-   * Date de fin de situation
+   * Date de fin de requête
    */
-  dateEnd: Date = new Date()
+  dateStart: Date = dateAddDays(new Date(), -15)
+   /**
+   * Date de début de requête
+   */
+  dateEnd: Date = dateAddDays(new Date(), +15)
+  /**
+   * Date de début de requête
+   */
+  now: Date = new Date()
+  /**
+   * liste première requête
+   */
+  firstList: listFormatedInterface[] = []
+  /**
+  * Liste seconde requête
+  */
+  secondList: listFormatedInterface[] = []
   /**
    * Peux voir l'interface magistrat
    */
@@ -81,6 +97,10 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
    * Liste des personnes non disponibles dans les 15 prochains jours ou les 15 derniers jours
    */
   listUnavailabilities :  HumanResourceSelectedInterface[] = []
+  /**
+   * Total des effectifs à afficher
+   */
+  totalWorkforce : number = 0
 
   /**
    * Constructor
@@ -194,9 +214,125 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
           }
         })
         console.log('listUnavailabilities:', this.listUnavailabilities)
-      this.isLoading = false
+        console.log('Departures:', this.listDepartures)
+        console.log('Arrivés:', this.listArrivals)
+        console.log('Indispos:', this.listUnavailabilities)
+        this.totalWorkforce = this.listDepartures.length + this.listArrivals.length + this.listUnavailabilities.length
+        this.isLoading = false
     })
   }
+        
+        
+        
+        
+        /*this.firstList = list
+        this.humanResourceService
+        .onFilterList(
+          this.humanResourceService.backupId.getValue() || 0,
+          this.dateEnd,
+          null,
+          this.humanResourceService.categoriesFilterListIds,
+        )
+        .then(({ list }) => {
+          this.secondList = list
+          console.log('first:', this.firstList)
+          console.log('secont:', this.secondList)
+  
+          this.firstList[0].hr = this.firstList[0].hr.concat(this.secondList[0].hr)
+          this.firstList[1].hr = this.firstList[1].hr.concat(this.secondList[1].hr)
+          this.firstList[2].hr = this.firstList[2].hr.concat(this.secondList[2].hr)
+          
+          this.listFormated = this.firstList 
+
+          let siegeHr: HumanResourceSelectedInterface[] = []
+          let greffeHr: HumanResourceSelectedInterface[] = []
+          let eamHr: HumanResourceSelectedInterface[] = []
+
+
+          this.firstList[0].hr.map((hr: HumanResourceSelectedInterface) => {
+            if (siegeHr.findIndex(elem => elem.id == hr.id) === -1) {              
+              siegeHr.push(hr)
+            }
+          })
+
+          this.firstList[1].hr.map((hr: HumanResourceSelectedInterface) => {
+            if (greffeHr.findIndex(elem => elem.id == hr.id) === -1) {              
+              greffeHr.push(hr)
+            }
+          })
+
+          this.firstList[2].hr.map((hr: HumanResourceSelectedInterface) => {
+            if (eamHr.findIndex(elem => elem.id == hr.id) === -1) {              
+              eamHr.push(hr)
+            }
+          })
+
+          this.listFormated[0].hr = siegeHr
+          this.listFormated[1].hr = greffeHr
+          this.listFormated[2].hr = eamHr
+
+          let hrList: HumanResourceSelectedInterface[] = []
+          console.log('listFormated:', this.listFormated)
+          this.listFormated.map((group: any) => {
+            hrList = hrList.concat(group.hr || [])
+
+            const contentieux = this.humanResourceService.contentieuxReferentielOnly.getValue().map(contentieux => contentieux.id)
+
+            hrList.map(hr => {
+              const activityPercent = sumBy((hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id)), 'percent') 
+
+              hr.totalAffected = activityPercent
+              hr.currentActivities = (hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id))
+            })
+
+            let fifteenDaysLater = today()
+            fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
+            let fifteenDaysBefore = today()
+            fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
+            for (let i = 0; i < hrList.length ; i++) {
+              const hr = hrList[i]
+
+              // Indisponibilité
+              if (hr.indisponibilities.length > 0) {
+                const list = hr.indisponibilities.filter(elem => 
+                  today(elem.dateStart).getTime() >=  fifteenDaysBefore.getTime() && today(elem.dateStart).getTime() <=  fifteenDaysLater.getTime()
+                )
+                if (list.length > 0 && !this.listUnavailabilities.includes(hr)){
+                  hr.indisponibilities.map(indispo => indispo.dateStart = today(indispo.dateStart))
+                  hr.indisponibilities.map(indispo => indispo.dateStop = today(indispo.dateStop))
+                  this.listUnavailabilities.push(hr)
+                }
+              }
+
+              // Arrivé
+              if (today(hr.dateStart).getTime() >=  fifteenDaysBefore.getTime() && today(hr.dateStart).getTime() <=  fifteenDaysLater.getTime()) {
+                if (!this.listArrivals.includes(hr)) {
+                  if (!hr.currentSituation && hr.situations.length > 0) {
+                    hr.currentSituation = hr.situations[0]
+                  }          
+                  this.listArrivals.push(hr)
+                }
+              }
+        
+              //Départ
+              if (hr.dateEnd) {
+                if (today(hr.dateEnd).getTime() >=  fifteenDaysBefore.getTime() && today(hr.dateEnd).getTime() <=  fifteenDaysLater.getTime()) {
+                  if (!this.listDepartures.includes(hr)){
+                    this.listDepartures.push(hr)
+                  }
+                }
+                hr.dateEnd = today(hr.dateEnd)
+              }
+              hr.dateStart = today(hr.dateStart)
+            }
+          })
+          console.log('Departures:', this.listDepartures)
+          console.log('Arrivés:', this.listArrivals)
+          console.log('Indispos:', this.listUnavailabilities)
+          this.isLoading = false
+      })
+  })}*/
+
   /**
    * Destruction du composant
    */

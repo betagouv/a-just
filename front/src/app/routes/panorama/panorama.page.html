@@ -1,29 +1,22 @@
 <aj-wrapper
-  [title]="'Panorama de votre tribunal judiciaire le ' + dateSelected.getDate() + ' ' + getMonthString(dateSelected) + ' ' + dateSelected.getFullYear()"
-  [subtitleTemplate]="subTitle"
-  class="content-margin-null"
-  [isLoading]="isLoading"
->
+  [title]="'Panorama de votre tribunal judiciaire le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
+  [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
   <div class="panorama-container">
     <div class="header-panorama">
       <div *ngIf="canViewVentilation" class="effectifs selected" (click)="scrollTo('effectif')">Effectifs</div>
-      <div *ngIf="canViewActivities" class="activities" [ngClass]="{selected: !canViewVentilation}" (click)="scrollTo('activites')">Données d'activité</div>
+      <div *ngIf="canViewActivities" class="activities" [ngClass]="{selected: !canViewVentilation}"
+        (click)="scrollTo('activites')">Données d'activité</div>
     </div>
     <panorama-alert></panorama-alert>
     <ng-template [ngIf]="canViewVentilation">
       <div class="effectif-title" id="effectif">Effectifs</div>
       <div class="workforce-panel">
-        <workforce-composition
-          [listFormated]="listFormated"
-        ></workforce-composition>
+        <workforce-composition [listFormated]="listFormated"></workforce-composition>
         <records-update [listFormated]="listFormated"></records-update>
       </div>
       <div class="workforce-change">
-        <workforce-change
-          [listArrivals]="listArrivals"
-          [listDepartures]="listDepartures"
-          [listUnavailabilities]="listUnavailabilities"
-        ></workforce-change>
+        <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
+          [listUnavailabilities]="listUnavailabilities" [totalWorkforce]="totalWorkforce"></workforce-change>
       </div>
     </ng-template>
     <ng-template [ngIf]="canViewActivities">
@@ -41,10 +34,7 @@
 
 <ng-template #subTitle>
   <div class="tags">
-    <div
-      class="tag all"
-      *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel"
-    >
+    <div class="tag all" *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel">
       Tous
     </div>
     <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>

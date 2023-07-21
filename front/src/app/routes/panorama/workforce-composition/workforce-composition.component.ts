@@ -4,6 +4,7 @@ import { listFormatedInterface } from '../../workforce/workforce.page'
 import { sumBy } from 'lodash'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ucFirst } from 'src/app/utils/string'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
  * Interface pour agencer la page
@@ -96,7 +97,7 @@ export class WorkforceCompositionComponent
         ...category,
         headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
         nbPerson: listAgent.length,
-        etpt,
+        etpt: fixDecimal(etpt),
         poste,
       }
     })
