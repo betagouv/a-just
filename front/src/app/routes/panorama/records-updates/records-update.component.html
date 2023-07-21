@@ -4,15 +4,12 @@
     <th class="label">Effectifs</th>
     <th class="percent">% ventilé</th>
     <th class="update-title">Dernière MAJ</th>
+    <th class="arrow"></th>
   </tr>
-  <div
-    *ngFor="let category of listFormated"
-    class="category"
-    [ngStyle]="{
+  <div *ngFor="let category of listFormated" class="category" [ngStyle]="{
       color: category.textColor,
       'background-color': category.bgColor
-    }"
-  >
+    }">
     <tr class="content-wrapper">
       <td class="label">{{ category.headerLabel }}</td>
       <td class="percent">{{ category.fullComplete }}%</td>
@@ -20,6 +17,9 @@
         {{ getDate(category?.lastUpdated) }}
         {{ getShortMonthString(category?.lastUpdated) }}
         {{ getFullYear(category?.lastUpdated) }}
+      </td>
+      <td class="arrow">
+        <mat-icon class="dark-arrow">chevron_right</mat-icon>
       </td>
     </tr>
   </div>
