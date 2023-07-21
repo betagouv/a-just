@@ -512,6 +512,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
     }) */
+
+    this.preOpenSituation()
   }
 
   /**
@@ -970,6 +972,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           title: 'Fiche individuelle :',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
         })
+    }
+  }
+
+  /**
+   * Open panel 
+   */
+  preOpenSituation() {
+    const findIndex = this.histories.findIndex(h => h.etp === this.ETP_NEED_TO_BE_UPDATED)
+
+    if(findIndex !== -1) {
+      this.onSelectSituationToEdit(this.histories[findIndex])
     }
   }
 }
