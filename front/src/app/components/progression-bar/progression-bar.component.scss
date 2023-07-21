@@ -10,6 +10,12 @@
     visibility: visible;
   }
 
+  &.no-opacity-to-background {
+    > div.background-bar {
+      opacity: 1;
+    }
+  }
+
   >div.white-background {
     background-color: white;
     position: absolute;

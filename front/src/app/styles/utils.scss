@@ -91,6 +91,7 @@ $colors: (
 	tagBgColor: #f6f6f6,
 	tagTextSelectedColor: white,
 	tagBgSelectedColor: #518fff,
+	cplaceholder: rgb(246, 246, 246),
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);

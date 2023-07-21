@@ -20,6 +20,8 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
+import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
  * Class principal pour simplifier les doublons de méthodes générales
@@ -41,6 +43,8 @@ export class MainClass {
    * Variable global de string fonctionnaires
    */
   FONCTIONNAIRES = FONCTIONNAIRES
+  ETP_NEED_TO_BE_UPDATED = ETP_NEED_TO_BE_UPDATED
+  PLACEHOLDER_COLOR = PLACEHOLDER_COLOR
 
   /**
    * Methode d'arrondi
