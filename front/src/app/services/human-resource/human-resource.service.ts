@@ -671,6 +671,7 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
+        console.log('Data: ', data)
         if (this.lastBackupId !== backupId) {
           this.tmpComponentIdsCanBeView = []
           this.componentIdsCanBeView.next([])
@@ -739,7 +740,7 @@ export class HumanResourceService {
         total: 0,
       },
     }
-
+    console.log('List:', list)
     list.map((h: any) => {
       let realETP = (h.etp || 0) - h.hasIndisponibility
       if (realETP < 0) {
