@@ -82,8 +82,8 @@ export default class App extends AppBase {
           'script-src': [
             "'unsafe-eval'",
             "'self'",
-            "'self' https://js-eu1.hsforms.net",
-            "'self' https://www.google-analytics.com/analytics.js",
+            "'unsafe-inline' https://js-eu1.hsforms.net",
+            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
             'stats.data.gouv.fr',
           ],
           'worker-src': ['blob:'],
