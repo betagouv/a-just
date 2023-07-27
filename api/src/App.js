@@ -17,7 +17,7 @@ import { tracingMiddleWare, requestHandler } from './utils/sentry'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -26,7 +26,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -79,13 +79,7 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': [
-            "'unsafe-eval'",
-            "'self'",
-            "'unsafe-inline' https://js-eu1.hsforms.net",
-            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
-            'stats.data.gouv.fr',
-          ],
+          'script-src': ["'unsafe-eval'", "'self'", 'https://js-eu1.hsforms.net', 'https://www.google-analytics.com/analytics.js', 'stats.data.gouv.fr'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
@@ -101,9 +95,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
