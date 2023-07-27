@@ -293,9 +293,23 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.categoriesFilterListIds =
           this.humanResourceService.categoriesFilterListIds
 
-        this.categoriesFilterList = categories.map((c) => ({
+        this.categoriesFilterList = categories.map((c) => {
+          console.log('this.categoriesFilterListIds', this.categoriesFilterListIds)
+          let selected = true
+
+          if(this.categoriesFilterListIds.length === categories.length) {
+            const { c: categoryId } = this.route.snapshot.queryParams
+            console.log(categoryId, c.id)
+            if(categoryId && c.id !== +categoryId) {
+              selected = false
+            }            
+          } else {
+            selected = this.categoriesFilterListIds.indexOf(c.id) !== -1
+          }
+          
+          return {
           ...c,
-          selected: this.categoriesFilterListIds.indexOf(c.id) !== -1,
+          selected,
           headerLabel: c.label && c.label === 'Magistrat' ? 'Siège' : c.label,
           label: c.label && c.label === 'Magistrat' ? 'magistrat' : 'agent',
           labelPlural:
@@ -323,7 +337,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               nbPersonal: 0,
             },
           ],
-        }))
+        }})
 
 
         this.onFilterList()
