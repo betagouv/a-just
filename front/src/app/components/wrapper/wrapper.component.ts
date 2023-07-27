@@ -162,7 +162,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   menu = [
     {
       label: 'Panorama',
-      path: 'dashboard',
+      path: 'panorama',
     },
   ]
   /**

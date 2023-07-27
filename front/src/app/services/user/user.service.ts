@@ -135,7 +135,6 @@ export class UserService {
   getUserPageUrl(user: UserInterface) {
     if (user) {
       const allPages = this.getAllUserPageUrl(user)
-      console.log(allPages)
       if (allPages) {
         return `/${allPages[0].path}`
       }
@@ -165,6 +164,11 @@ export class UserService {
    */
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
+
+    menu.push({
+      label: 'Panorama',
+      path: 'panorama',
+    })
 
     if (this.canViewVentilation(user)) {
       menu.push({
