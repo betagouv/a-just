@@ -52,7 +52,7 @@ export class UserService {
    * @returns
    */
   me() {
-    return this.serverService.get('users/me').then((data) => data.data || null)
+    return this.serverService.getWithoutError('users/me').then((data) => data.data || null)
   }
 
   /**
