@@ -16,8 +16,8 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
-    console.log('config', ctx.request?.header?.referer)
-    if (!config.forceURL && ctx.request?.header?.referer && ctx.request.header.referer.startsWith('http:')) {
+    if (config.forceURL && ctx.request?.header?.referer && ctx.request.header.referer.startsWith('http:')) {
+      console.log('config redirect', config, ctx.request?.header?.referer)
       ctx.res
         .writeHead(301, {
           Location: ctx.request.header.referer.replace('http', 'https'),
@@ -25,7 +25,6 @@ export default class RouteIndex extends Route {
         .end()
     }
 
-    console.log(ctx)
     let file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
     const fileSplited = file.split('?')
     file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
