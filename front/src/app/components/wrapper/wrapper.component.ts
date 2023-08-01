@@ -24,6 +24,7 @@ import { UserService } from 'src/app/services/user/user.service'
 import { addHTML } from 'src/app/utils/js-pdf'
 import { environment } from 'src/environments/environment'
 import { ActionsInterface } from '../popup/popup.component'
+import { Title } from '@angular/platform-browser'
 
 declare const Quill: any
 
@@ -194,7 +195,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
+    private titlePlatform: Title,
   ) {
     super()
 
@@ -217,6 +219,13 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
       })
     )
+  }
+
+  /**
+   * On Changes titles
+   */
+  ngOnChanges() {
+    this.titlePlatform.setTitle(this.title + ' | A-Just')
   }
 
   /**

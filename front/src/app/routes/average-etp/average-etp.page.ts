@@ -1,11 +1,11 @@
 import { Component, OnDestroy } from '@angular/core'
+import { Title } from '@angular/platform-browser'
 import * as FileSaver from 'file-saver'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { ServerService } from 'src/app/services/http-server/server.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -14,9 +14,6 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import * as xlsx from 'xlsx'
 import { Renderer } from 'xlsx-renderer'
-import readXlsxFile from 'read-excel-file'
-import { groupBy } from 'lodash'
-import { ContentieuxOptionsInterface } from 'src/app/interfaces/contentieux-options'
 
 /**
  * Excel file extension
@@ -92,7 +89,6 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private userService: UserService,
-    private serverService: ServerService
   ) {
     super()
 
