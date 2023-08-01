@@ -2,6 +2,7 @@ import { AfterViewInit, Component } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute } from '@angular/router'
 import { AppService } from 'src/app/services/app/app.service'
+import { loadFile } from 'src/app/utils/js-loader'
 
 declare const hbspt: any
 
@@ -32,11 +33,13 @@ export class ContactPage implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    hbspt.forms.create({
-      region: 'eu1',
-      portalId: '26493393',
-      formId: '0f776962-cddf-4ccb-b2a8-100936289ebb',
-      target: '#hubspotForm',
+    loadFile('https://js-eu1.hsforms.net/forms/embed/v2.js').then(() => {
+      hbspt.forms.create({
+        region: 'eu1',
+        portalId: '26493393',
+        formId: '0f776962-cddf-4ccb-b2a8-100936289ebb',
+        target: '#hubspotForm',
+      })
     })
 
     const { backUrl } = this.route.snapshot.queryParams
