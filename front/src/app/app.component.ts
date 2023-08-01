@@ -103,7 +103,11 @@ export class AppComponent implements AfterViewInit {
    * Control si on est en SSL ou non
    */
   onControlSSL() {
-    if (location.protocol !== 'https:' && environment.forceSSL) {
+    if (
+      location.protocol !== 'https:' &&
+      location.hostname !== 'localhost' &&
+      environment.forceSSL
+    ) {
       location.replace(
         `https:${location.href.substring(location.protocol.length)}`
       )
