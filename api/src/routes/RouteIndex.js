@@ -16,7 +16,7 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
-    console.log('config', config, ctx.request)
+    console.log('config', ctx.request?.header?.referer)
     if (!config.forceURL && ctx.request?.header?.referer && ctx.request.header.referer.startsWith('http:')) {
       ctx.res
         .writeHead(301, {
