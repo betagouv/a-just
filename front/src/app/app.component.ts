@@ -50,6 +50,8 @@ export class AppComponent implements AfterViewInit {
       document.body.classList.add('iIOS')
     }
 
+    this.onControlSSL()
+
     router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       // @ts-ignore
@@ -96,6 +98,16 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.listenSelectElement()
+  }
+  /**
+   * Control si on est en SSL ou non
+   */
+  onControlSSL() {
+    if (location.protocol !== 'https:' && environment.forceSSL) {
+      location.replace(
+        `https:${location.href.substring(location.protocol.length)}`
+      )
+    }
   }
 
   /**
