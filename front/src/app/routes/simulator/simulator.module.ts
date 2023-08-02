@@ -7,6 +7,8 @@ import { MaterialModule } from 'src/app/libs/material.module'
 import { CommonModule } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { PopupModule } from 'src/app/components/popup/popup.module'
+import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { SelectModule } from 'src/app/components/select/select.module'
 
 @NgModule({
   declarations: [SimulatorPage],
@@ -18,6 +20,8 @@ import { PopupModule } from 'src/app/components/popup/popup.module'
     CommonModule,
     MatTooltipModule,
     PopupModule,
+    WrapperModule,
+    SelectModule,
   ],
 })
 export class SimulatorModule {}

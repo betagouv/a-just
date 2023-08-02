@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuardService } from './canDeactivate-guard-service'
-import { ReaffectatorModule } from './reaffectator/reaffectator.module'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 
 const routes: Routes = [
