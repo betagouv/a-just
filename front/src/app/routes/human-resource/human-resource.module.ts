@@ -14,6 +14,12 @@ import { BigEtpPreviewComponent } from './big-etp-preview/big-etp-preview.compon
 import { IndispoProfilComponent } from './indispo-profil/indispo-profil.component'
 import { CommentProfilComponent } from './comment-profil/comment-profil.component'
 import { PopupModule } from 'src/app/components/popup/popup.module'
+import { EtpPreviewModule } from 'src/app/components/etp-preview/etp-preview.module'
+import { PanelActivitiesModule } from 'src/app/components/panel-activities/panel-activities.module'
+import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { TextEditorModule } from 'src/app/components/text-editor/text-editor.module'
+import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
+import { HelpButtonModule } from 'src/app/components/help-button/help-button.module'
 
 @NgModule({
   declarations: [
@@ -35,6 +41,12 @@ import { PopupModule } from 'src/app/components/popup/popup.module'
     CommonModule,
     MaterialModule,
     PopupModule,
+    EtpPreviewModule,
+    PanelActivitiesModule,
+    WrapperModule,
+    TextEditorModule,
+    DateSelectModule,
+    HelpButtonModule
   ],
 })
 export class HumanResourceModule {}
