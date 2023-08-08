@@ -99,7 +99,7 @@ module.exports = {
   /**
    * Token expiration delay
    */
-  nbMaxDayTokenLife: 30,
+  nbMaxDayTokenLife: 7,
   /**
    * Force HTTP to HTTPS
    */
