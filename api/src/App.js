@@ -11,6 +11,7 @@ import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
+const RateLimit = require('koa2-ratelimit').RateLimit
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -51,7 +52,13 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
 
+    const limiter = RateLimit.middleware({
+      interval: { min: 5 }, // 5 minutes = 5*60*1000
+      max: 100, // limit each IP to 100 requests per interval
+    })
+
     super.addMiddlewares([
+      limiter,
       // we add the relevant middlewares to our API
       cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
