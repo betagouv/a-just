@@ -1,6 +1,3 @@
-const tracer = require('dd-trace').init({
-  logInjection: true,
-})
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
@@ -32,6 +29,19 @@ export default class App extends AppBase {
         startCrons(this) // start crons
         console.log('--- IS READY ---')
         this.isReady()
+
+        /** PASSWORD TESTER to move to unit tests ?
+        setTimeout(() => {
+          const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
+          for (let i = 0; i < password_to_test.length; i++) {
+            try {
+              console.log('----------\n')
+              console.log(cryptPassword(password_to_test[i], 'fxaviermontigny@gmail.com'))
+            } catch (err) {
+              console.error(err)
+            }
+          }
+        }, 100) */
       })
     })
 

@@ -1,12 +1,12 @@
 import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
-import { controlPassword, snakeToCamelObject } from '../utils/utils'
+import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
-import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate } from '../utils/date'
+import { cryptPassword } from '../utils/password/password'
 
 /**
  * Table des utilisateurs
@@ -19,8 +19,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} password
    * @returns
    */
-  Model.updatePassword = async (userId, password) => {
-    password = crypt.encryptPassword(password)
+  Model.updatePassword = async (userId, password, email) => {
+    password = cryptPassword(password, email)
 
     return await Model.updateById(userId, {
       new_password_token: null,
@@ -56,10 +56,7 @@ export default (sequelizeInstance, Model) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
-      if (controlPassword(password) === false) {
-        throw 'Mot de passe trop faible!'
-      }
-      password = crypt.encryptPassword(password)
+      password = cryptPassword(password, email)
       await Model.create({
         email,
         password,
