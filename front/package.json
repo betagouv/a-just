@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.1.5",
-    "@angular/cli": "~15.1.5",
+    "@angular/cli": "^16.1.8",
     "@angular/compiler-cli": "^15.1.0",
     "@types/file-saver": "^2.0.5",
     "@types/iframe-resizer": "^3.5.9",
