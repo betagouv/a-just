@@ -76,8 +76,8 @@ export class AuthService {
    * @param params 
    * @returns 
    */
-  login(params = {}): Promise<any> {
-    return this.serverService.post('auths/login', params).then((data) => {
+  login(params = {}, options = {}): Promise<any> {
+    return this.serverService.post('auths/login', params, options).then((data) => {
       this.serverService.setToken(data.token);
       return data;
     });

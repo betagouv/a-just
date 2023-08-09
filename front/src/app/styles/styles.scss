@@ -101,6 +101,11 @@ body {
 	font-size: 12px;
 }
 
+.error-message {
+	font-size: 16px;
+	color: fColor(cred);
+}
+
 // FOR WINDOWS ONLY
 
 body:not(.iIOS) .window-scrool-width-margin {
