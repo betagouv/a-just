@@ -1,9 +1,8 @@
 import Route from './Route'
 import { Types } from '../utils/types'
-import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
 import { USER_AUTO_LOGIN, USER_USER_LOGIN } from '../constants/log-codes'
 import * as Sentry from '@sentry/node'
-import { comparePasswords } from '../utils/password/password'
 
 /**
  * Route des authentification
@@ -29,34 +28,18 @@ export default class RouteAuths extends Route {
     }),
   })
   async login (ctx) {
-    const { password } = this.body(ctx)
-    let { email } = this.body(ctx)
-    email = (email || '').toLowerCase()
+    const { password, email } = this.body(ctx)
 
-    const user = await this.model.findOne({ where: { email } })
-    if (user && user.dataValues.status === 0) {
-      ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
-    } else if (user && comparePasswords(password, user.dataValues.password)) {
-      delete user.dataValues.password
-
-      await ctx.loginUser(user.dataValues)
-      await this.models.Logs.addLog(USER_USER_LOGIN, user.dataValues.id, { userId: user.dataValues.id })
+    const tryUserCon = await this.model.tryConnection(email, password, [0, null, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
+    if (typeof tryUserCon === 'string') {
+      ctx.throw(401, tryUserCon)
+    } else {
+      await ctx.loginUser(tryUserCon)
+      await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
+        userId: tryUserCon.id,
+      })
       await super.addUserInfoInBody(ctx)
       this.sendCreated(ctx)
-
-      /*const transaction = Sentry.startTransaction({ name: 'login' })
-      // Set transaction on scope to associate with errors and get included span instrumentation
-      // If there's currently an unfinished transaction, it may be dropped
-      Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
-      const span = transaction.startChild({
-        op: 'task',
-        description: 'User Logging',
-      })
-      span.setStatus(200)
-      span.finish()
-      transaction.finish()*/
-    } else {
-      ctx.throw(401, ctx.state.__('Email ou mot de passe incorrect'))
     }
   }
 
@@ -72,21 +55,18 @@ export default class RouteAuths extends Route {
     }),
   })
   async loginAdmin (ctx) {
-    const { password } = this.body(ctx)
-    let { email } = this.body(ctx)
-    email = (email || '').toLowerCase()
+    const { password, email } = this.body(ctx)
 
-    const user = await this.model.findOne({ where: { email, role: [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN] } })
-    if (user && user.dataValues.status === 0) {
-      ctx.throw(401, ctx.state.__("Votre compte n'est plus accessible."))
-    } else if (user && comparePasswords(password, user.dataValues.password)) {
-      delete user.dataValues.password
-
-      await ctx.loginUser(user.dataValues)
+    const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
+    if (typeof tryUserCon === 'string') {
+      ctx.throw(401, tryUserCon)
+    } else {
+      await ctx.loginUser(tryUserCon)
+      await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
+        userId: tryUserCon.id,
+      })
       await super.addUserInfoInBody(ctx)
       this.sendCreated(ctx)
-    } else {
-      ctx.throw(401, ctx.state.__('Email ou mot de passe incorrect'))
     }
   }
 
@@ -97,7 +77,9 @@ export default class RouteAuths extends Route {
   async autoLogin (ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
-      await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, { userId: ctx.state.user.id })
+      await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
+        userId: ctx.state.user.id,
+      })
 
       const transaction = Sentry.startTransaction({ name: 'Logingg' })
       Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
