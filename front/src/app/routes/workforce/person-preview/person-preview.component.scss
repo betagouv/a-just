@@ -163,6 +163,10 @@
         margin: 16px 0px 8px 0px;
         font-size: 14px;
         color: fColor(cgreen);
+
+        &.red {
+          color: fColor(cred);
+        }
       }
     }
   }
@@ -170,6 +174,7 @@
 
 .activities {
   flex: 1;
+  position: relative;
 }
 
 .empty-element {
@@ -192,4 +197,15 @@
     position: relative;
     top: 5px;
   }
+}
+
+.activities-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

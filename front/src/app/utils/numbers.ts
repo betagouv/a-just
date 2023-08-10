@@ -16,3 +16,26 @@ export function getRandomInt(max: number) {
 export function fixDecimal(value: number, base: number = 100) {
   return Math.round(value * base) / base;
 }
+
+/**
+ * Trie entre deux nombres
+ * 
+ * @param firstNumber
+ * @param secondNumber
+ * @param reverse
+ * @returns
+ */
+export function sortNumbers(firstNumber: number, secondNumber: number, reverse: boolean) {
+  if (reverse) {
+    if (firstNumber > secondNumber)
+      return -1
+    else if (firstNumber < secondNumber)
+      return 1
+  } else {
+    if (firstNumber < secondNumber)
+      return -1
+    else if (firstNumber > secondNumber)
+      return 1
+  }
+  return 0
+}

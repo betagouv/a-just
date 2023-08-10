@@ -109,7 +109,8 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <i class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
+                  <i
+                    class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
                 </div>
               </div>
               <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>

@@ -19,12 +19,12 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { AppService } from 'src/app/services/app/app.service'
-import { AuthService } from 'src/app/services/auth/auth.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { addHTML } from 'src/app/utils/js-pdf'
 import { environment } from 'src/environments/environment'
 import { ActionsInterface } from '../popup/popup.component'
+import { Title } from '@angular/platform-browser'
 
 declare const Quill: any
 
@@ -163,7 +163,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   menu = [
     {
       label: 'Panorama',
-      path: 'dashboard',
+      path: 'panorama',
     },
   ]
   /**
@@ -192,11 +192,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param appService
    */
   constructor(
-    private authService: AuthService,
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private appService: AppService
+    private appService: AppService,
+    private titlePlatform: Title,
   ) {
     super()
 
@@ -219,6 +219,13 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
       })
     )
+  }
+
+  /**
+   * On Changes titles
+   */
+  ngOnChanges() {
+    this.titlePlatform.setTitle(this.title + ' | A-Just')
   }
 
   /**

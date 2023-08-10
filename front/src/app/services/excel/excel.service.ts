@@ -138,10 +138,6 @@ export class ExcelService extends MainClass {
           },
         }
 
-        this.appService.alert.next({
-          text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-        })
-
         fetch('/assets/template4.xlsx')
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())

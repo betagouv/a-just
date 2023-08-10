@@ -1,6 +1,3 @@
-const tracer = require('dd-trace').init({
-  logInjection: true,
-})
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
@@ -14,10 +11,11 @@ import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
+const RateLimit = require('koa2-ratelimit').RateLimit
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -26,12 +24,25 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
         console.log('--- IS READY ---')
         this.isReady()
+
+        /** PASSWORD TESTER to move to unit tests ?
+        setTimeout(() => {
+          const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
+          for (let i = 0; i < password_to_test.length; i++) {
+            try {
+              console.log('----------\n')
+              console.log(cryptPassword(password_to_test[i], 'fxaviermontigny@gmail.com'))
+            } catch (err) {
+              console.error(err)
+            }
+          }
+        }, 100) */
       })
     })
 
@@ -41,7 +52,13 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
 
+    const limiter = RateLimit.middleware({
+      interval: { min: 5 }, // 5 minutes = 5*60*1000
+      max: 100, // limit each IP to 100 requests per interval
+    })
+
     super.addMiddlewares([
+      limiter,
       // we add the relevant middlewares to our API
       cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
@@ -67,7 +84,6 @@ export default class App extends AppBase {
       csp({
         enableWarn: true,
         policy: {
-          'default-src': ['none'],
           'connect-src': [
             'https://www.google-analytics.com/j/collect',
             "'self'",
@@ -79,16 +95,12 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': [
-            "'unsafe-eval'",
-            "'self'",
-            "'unsafe-inline' https://js-eu1.hsforms.net",
-            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
-            'stats.data.gouv.fr',
-          ],
+          'script-src': ["'nonce-2726c7f26c'", "'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.data.gouv.fr'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
+          'base-uri': ["'self'"],
+          'form-action': ["'self'"],
         },
       }),
     ])
@@ -101,9 +113,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }

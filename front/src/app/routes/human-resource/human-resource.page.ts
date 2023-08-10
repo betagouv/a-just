@@ -18,6 +18,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { copy } from 'src/app/utils'
 import { dateAddDays, today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
+import { AppService } from 'src/app/services/app/app.service'
 
 /**
  * Interface d'une situation
@@ -124,6 +125,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   duringPrint: boolean = false
   /**
+   * Get Link to back
+   */
+  routerLinkToGoBack: string[] = ['/']
+  /**
    * Formulaire de saisie
    */
   basicHrInfo = new FormGroup({
@@ -145,7 +150,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService
+    private hrCategoryService: HRCategoryService,
+    public appService: AppService
   ) {
     super()
 
@@ -212,6 +218,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.categories = list
       this.onLoad()
     })
+  }
+
+  ngAfterViewInit() {
+      console.log('this.appService.previousUrl:', this.appService.previousUrl)
+      this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
   }
 
   /**
@@ -512,6 +523,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
     }) */
+
+    this.preOpenSituation()
   }
 
   /**
@@ -970,6 +983,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           title: 'Fiche individuelle :',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation',
         })
+    }
+  }
+
+  /**
+   * Open panel 
+   */
+  preOpenSituation() {
+    const findIndex = this.histories.findIndex(h => h.etp === this.ETP_NEED_TO_BE_UPDATED)
+
+    if(findIndex !== -1) {
+      this.onSelectSituationToEdit(this.histories[findIndex])
     }
   }
 }

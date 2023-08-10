@@ -1,4 +1,5 @@
 import { posad } from '../constants/hr'
+import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
@@ -200,7 +201,6 @@ export default (sequelizeInstance, Model) => {
 
         console.log('findCategory', findCategory)
         if (findCategory) {
-          console.log('oui ?', filterNoEtpt.includes(list[i].fonction), privilegedInGreff.includes(list[i].grade))
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             situation.category_id = findEAM.id
 
@@ -261,6 +261,7 @@ export default (sequelizeInstance, Model) => {
         let findFonction = await Model.models.HRFonctions.findOne({
           where: {
             code,
+            category_id: situation.category_id,
           },
           logging: false,
         })
@@ -290,6 +291,12 @@ export default (sequelizeInstance, Model) => {
           }
         }
 
+        // control ETP to complete
+        const gradeToETPComplete = ['MTT', 'MHFJ', 'MHFNJ']
+        if (gradeToETPComplete.indexOf(list[i].grade) !== -1) {
+          situation.etp = ETP_NEED_TO_BE_UPDATED
+        }
+
         let updatedAt = new Date()
         const dateUpdatedSplited = (list[i].date_modif || '').split('/')
         if (dateUpdatedSplited.length === 3) {
@@ -313,6 +320,8 @@ export default (sequelizeInstance, Model) => {
           options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
           situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
         }
+
+        //console.log(options, situation)
 
         // create person
         findHRToDB = await Model.create(options)

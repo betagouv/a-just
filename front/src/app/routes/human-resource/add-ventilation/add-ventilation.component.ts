@@ -183,11 +183,17 @@ openCalculatricePopup: boolean = false
       this.human,
       this.lastDateStart ? this.lastDateStart : undefined
     )
-    this.etp = (situation && situation.etp) || 0
+    
+    let etp = (situation && situation.etp) || 0
+    if(etp === this.ETP_NEED_TO_BE_UPDATED) {
+      etp = 0
+    } 
+    this.etp = etp
+
     this.form
       .get('activitiesStartDate')
       ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null)
-    this.form.get('etp')?.setValue(((situation && situation.etp) || 0) * 100)
+    this.form.get('etp')?.setValue(etp * 100)
     this.form
       .get('categoryId')
       ?.setValue(

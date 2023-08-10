@@ -68,7 +68,7 @@
         </ul>
       </div>
       <div class="menu-item">
-        <a href="mailto:support-utilisateurs@a-just.fr">
+        <a [routerLink]="['/contact']" [queryParams]="{backUrl: true}">
           <p>Nous contacter</p>
         </a>
       </div>

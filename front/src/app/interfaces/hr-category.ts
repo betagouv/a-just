@@ -64,10 +64,6 @@ export interface HRCategorySelectedInterface extends HRCategoryInterface {
    * Pourcent ventilé de la catégorie
    */
   percentAllocated?: number;
-  /**
-   * Pourcent ventilé de la catégorie
-   */
-  lastUpdate?: string;
 }
 
 export interface HRCategorypositionInterface {

@@ -130,7 +130,14 @@ export function etpLabel (value) {
     return 'Mi-temps'
   case 0:
     return 'Ne travaille pas'
+  case ETP_NEED_TO_BE_UPDATED:
+    return null
   }
 
   return `${fixDecimal(value * 100)}%`
 }
+
+/**
+ * ETP need to be updated
+ */
+export const ETP_NEED_TO_BE_UPDATED = 0.000001
