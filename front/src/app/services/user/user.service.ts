@@ -22,6 +22,11 @@ export class UserService {
     new BehaviorSubject<UserInterface | null>(null)
 
   /**
+   * Interface front TJ ou CA
+   */
+  interfaceType: number | null = null
+
+  /**
    * Constructeur
    * @param serverService
    * @param humanResourceService
@@ -31,7 +36,7 @@ export class UserService {
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService
-  ) {}
+  ) { }
 
   /**
    * Sauvegarde d'une utilisateur
@@ -45,6 +50,17 @@ export class UserService {
 
       this.initDatas()
     }
+  }
+
+  /**
+   * Get process variables
+   * @returns 
+   */
+  getInterfaceType() {
+    return this.serverService.get('users/interface-type').then((data) => {
+      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null;
+      console.log(this.interfaceType)
+    })
   }
 
   /**
