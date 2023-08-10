@@ -21,17 +21,17 @@ import { sumBy } from 'lodash'
   styleUrls: ['./panorama.page.scss'],
 })
 export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
-    /**
-   * Date selected
-   */
+  /**
+ * Date selected
+ */
   dateSelected: Date = new Date()
   /**
    * Date de fin de requête
    */
   dateStart: Date = dateAddDays(new Date(), -15)
-   /**
-   * Date de début de requête
-   */
+  /**
+  * Date de début de requête
+  */
   dateEnd: Date = dateAddDays(new Date(), +15)
   /**
    * Date de début de requête
@@ -69,9 +69,9 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
   * En cours de chargement
   */
   isLoading: boolean = false
-     /**
-   * liste des catégories filtrées
-   */
+  /**
+* liste des catégories filtrées
+*/
   categoriesFilterList: HRCategorySelectedInterface[] = []
   /**
    * Liste des ids catégories
@@ -96,11 +96,11 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste des personnes non disponibles dans les 15 prochains jours ou les 15 derniers jours
    */
-  listUnavailabilities :  HumanResourceSelectedInterface[] = []
+  listUnavailabilities: HumanResourceSelectedInterface[] = []
   /**
    * Total des effectifs à afficher
    */
-  totalWorkforce : number = 0
+  totalWorkforce: number = 0
 
   /**
    * Constructor
@@ -122,10 +122,10 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
         this.canViewActivities = this.userService.canViewActivities()
       })
     )
-    
+
     this.watch(
       this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
-          this.onFilterList(hrBackup)
+        this.onFilterList(hrBackup)
       })
     )
   }
@@ -134,7 +134,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
    * Filtre liste RH
    */
   onFilterList(backup: BackupInterface | null = null) {
-    if(!backup) {
+    if (!backup) {
       return
     }
 
@@ -155,42 +155,42 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
         let hrList: HumanResourceSelectedInterface[] = []
 
         list.map((group: any) => {
-          hrList = hrList.concat(group.hr || [])
+          hrList = hrList.concat(group.hr || [])
 
           const contentieux = this.humanResourceService.contentieuxReferentielOnly.getValue().map(contentieux => contentieux.id)
 
           hrList.map(hr => {
-            const activityPercent = sumBy((hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id)), 'percent') 
+            const activityPercent = sumBy((hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id)), 'percent')
 
             hr.totalAffected = activityPercent
-            hr.currentActivities = (hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id))
+            hr.currentActivities = (hr.currentActivities || []).filter(c => contentieux.includes(c.contentieux.id))
           })
 
           let fifteenDaysLater = today(this.dateSelected)
           fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
           let fifteenDaysBefore = today(this.dateSelected)
           fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
-          for (let i = 0; i < hrList.length ; i++) {
+          for (let i = 0; i < hrList.length; i++) {
             const hr = hrList[i]
 
             // Indisponibilité
             if (hr.indisponibilities.length > 0) {
-              const list = hr.indisponibilities.filter(elem => 
-                today(elem.dateStart).getTime() >=  fifteenDaysBefore.getTime() && today(elem.dateStart).getTime() <=  fifteenDaysLater.getTime()
+              const list = hr.indisponibilities.filter(elem =>
+                today(elem.dateStart).getTime() >= fifteenDaysBefore.getTime() && today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()
               )
-              if (list.length && !this.listUnavailabilities.includes(hr)){
+              if (list.length && !this.listUnavailabilities.includes(hr)) {
                 this.listUnavailabilities.push(hr)
               }
 
             }
 
             // Arrivé
-             if (hr.dateStart) {
+            if (hr.dateStart) {
               if (hr.id === 10171) {
                 console.log("hr 10171:", hr.dateStart)
               }
-              if (today(hr.dateStart).getTime() >=  fifteenDaysBefore.getTime() && today(hr.dateStart).getTime() <=  fifteenDaysLater.getTime()) {
-                if (!this.listArrivals.includes(hr)){
+              if (today(hr.dateStart).getTime() >= fifteenDaysBefore.getTime() && today(hr.dateStart).getTime() <= fifteenDaysLater.getTime()) {
+                if (!this.listArrivals.includes(hr)) {
                   this.listArrivals.push(hr)
                 }
               }
@@ -199,8 +199,8 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
 
             //Départ
             if (hr.dateEnd) {
-              if (today(hr.dateEnd).getTime() >=  fifteenDaysBefore.getTime() && today(hr.dateEnd).getTime() <=  fifteenDaysLater.getTime()) {
-                if (!this.listDepartures.includes(hr)){
+              if (today(hr.dateEnd).getTime() >= fifteenDaysBefore.getTime() && today(hr.dateEnd).getTime() <= fifteenDaysLater.getTime()) {
+                if (!this.listDepartures.includes(hr)) {
                   this.listDepartures.push(hr)
                 }
               }
@@ -213,9 +213,15 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy {
         console.log('Indispos:', this.listUnavailabilities)
         this.totalWorkforce = this.listDepartures.length + this.listArrivals.length + this.listUnavailabilities.length
         this.isLoading = false
-    })
+      })
   }
 
+  /**
+   * Récuperer le type de l'app
+   */
+  getInterfaceType() {
+    return this.userService.interfaceType === 0 ? 'tribunal judiciaire' : 'cours d\'appel'
+  }
   /**
    * Destruction du composant
    */
