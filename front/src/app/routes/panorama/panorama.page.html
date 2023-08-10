@@ -1,5 +1,5 @@
 <aj-wrapper
-  [title]="'Panorama de votre tribunal judiciaire le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
+  [title]="'Panorama de votre '+ getInterfaceType() + ' le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
   [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
   <div class="panorama-container">
     <div class="header-panorama">
