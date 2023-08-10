@@ -10,12 +10,17 @@ import { ActivitiesLastModificationsComponent } from './activities-last-modifica
 import { ActivitiesLastDisponibilitiesComponent } from './activities-last-disponibilities/activities-last-disponibilities.component'
 import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component'
 import { WorkforceCompositionComponent } from './workforce-composition/workforce-composition.component'
+import { WorkforceChangeComponent } from './workforce-change/workforce-change.component'
 import { RecordsUpdateComponent } from './records-updates/records-update.component'
+import {NgxPaginationModule} from 'ngx-pagination';
+import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+
 @NgModule({
   declarations: [
     PanoramaPage,
     PanoramaAlertComponent,
     WorkforceCompositionComponent,
+    WorkforceChangeComponent,
     RecordsUpdateComponent,
     ActivitiesLastModificationsComponent,
     ActivitiesLastDisponibilitiesComponent,
@@ -27,6 +32,8 @@ import { RecordsUpdateComponent } from './records-updates/records-update.compone
     ComponentsModule,
     CommonModule,
     MaterialModule,
+    NgxPaginationModule,
+    WrapperModule,
   ],
 })
 export class PanoramaModule {}

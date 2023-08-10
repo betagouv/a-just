@@ -62,7 +62,7 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
   /**
    * Temps de travail en string
    */
-  etpLabel: string
+  etpLabel: string | null
   /**
    * Total des indispo
    */
@@ -92,7 +92,7 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
 /**
  * Liste des fiches d'une catégories
  */
-interface listFormatedInterface {
+export interface listFormatedInterface {
   /**
    * Couleur de la categories
    */
@@ -293,9 +293,23 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.categoriesFilterListIds =
           this.humanResourceService.categoriesFilterListIds
 
-        this.categoriesFilterList = categories.map((c) => ({
+        this.categoriesFilterList = categories.map((c) => {
+          console.log('this.categoriesFilterListIds', this.categoriesFilterListIds)
+          let selected = true
+
+          if(this.categoriesFilterListIds.length === categories.length) {
+            const { c: categoryId } = this.route.snapshot.queryParams
+            console.log(categoryId, c.id)
+            if(categoryId && c.id !== +categoryId) {
+              selected = false
+            }            
+          } else {
+            selected = this.categoriesFilterListIds.indexOf(c.id) !== -1
+          }
+          
+          return {
           ...c,
-          selected: this.categoriesFilterListIds.indexOf(c.id) !== -1,
+          selected,
           headerLabel: c.label && c.label === 'Magistrat' ? 'Siège' : c.label,
           label: c.label && c.label === 'Magistrat' ? 'magistrat' : 'agent',
           labelPlural:
@@ -323,7 +337,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               nbPersonal: 0,
             },
           ],
-        }))
+        }})
 
 
         this.onFilterList()
@@ -358,11 +372,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal: any = []
       let etpt = 0
-      let subTotalEtp: { [key: string]: number } = {
-        titulaire: 0,
-        placé: 0,
-        contractuel: 0
-      }
+      let subTotalEtp: { [key: string]: {etpt: number, total: number} } = this.humanResourceService.calculateSubCategories(formatedList?.hrFiltered || [])
 
       if (formatedList) {
         personal = formatedList.hrFiltered
@@ -373,17 +383,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             realETP = 0
           }
           etpt += realETP
-          switch (h.fonction.position) {
-            case 'Titulaire':
-              subTotalEtp['titulaire'] += realETP
-              break
-            case 'Placé':
-              subTotalEtp['placé'] += realETP
-              break
-            case 'Contractuel':
-              subTotalEtp['contractuel'] += realETP
-              break
-          }
         })
       }
 
@@ -391,7 +390,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         return {
           ...f,
           name: f.name,
-          etpt: fixDecimal(subTotalEtp[f.name]),
+          etpt: fixDecimal(subTotalEtp[f.name].etpt),
           nbPersonal: personal.filter(
             (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
           ).length,

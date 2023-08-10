@@ -1,5 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core'
-import { Router } from '@angular/router'
+import { NavigationEnd, Router } from '@angular/router'
 import { environment } from 'src/environments/environment'
 import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
 import { AlertInterface } from './interfaces/alert'
@@ -8,6 +8,7 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
 import { copy } from './utils'
+import { filter } from 'rxjs'
 
 
 /**
@@ -51,6 +52,15 @@ export class AppComponent implements AfterViewInit {
     }
 
     this.onControlSSL()
+
+    router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      // @ts-ignore
+      .subscribe((event: NavigationEnd) => {
+        this.appService.previousUrl = this.appService.currentUrl
+        this.appService.currentUrl = event.url
+      })
+
     router.events.subscribe(() => {
       const user = this.userService.user.getValue()
       if (user && this.dbReady === false) {
@@ -97,7 +107,11 @@ export class AppComponent implements AfterViewInit {
    * Control si on est en SSL ou non
    */
   onControlSSL() {
-    if (location.protocol !== 'https:' && environment.forceSSL) {
+    if (
+      location.protocol !== 'https:' &&
+      location.hostname !== 'localhost' &&
+      environment.forceSSL
+    ) {
       location.replace(
         `https:${location.href.substring(location.protocol.length)}`
       )
@@ -139,7 +153,6 @@ export class AppComponent implements AfterViewInit {
 
     observer.observe(elementToObserve, { subtree: true, childList: true });
     */
-
     /* document.addEventListener(
       'DOMNodeInserted',
       () => {

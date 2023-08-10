@@ -23,10 +23,11 @@ export default (sequelizeInstance, Model) => {
 
     if (ref) {
       const date = new Date()
-      const tokenCreateAt = new Date(ref.dataValues.created_at)
+      const tokenCreateAt = new Date(ref.dataValues.updated_at)
       const nbDays = getNbDay(tokenCreateAt, date)
 
       if (nbDays <= config.nbMaxDayTokenLife) {
+        ref.update({ updated_at: new Date() })
         return ref
       } else {
         await Model.deleteToken(token)

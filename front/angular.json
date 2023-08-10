@@ -70,6 +70,14 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -91,6 +99,14 @@
               "outputHashing": "all"
             },
             "staging": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -112,6 +128,15 @@
               "outputHashing": "all"
             },
             "sandbox": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+
               "budgets": [
                 {
                   "type": "initial",

@@ -57,6 +57,10 @@ export class PanelActivitiesComponent
    */
   @Input() forceToShowContentieuxDetail: boolean = false
   /**
+   * Show to place holder whihout information
+   */
+  @Input() showPlaceHolder: boolean = false
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
@@ -80,11 +84,9 @@ export class PanelActivitiesComponent
 
   /**
    * Constructeur
-   * @param humanResourceService 
+   * @param humanResourceService
    */
-  constructor(
-    private humanResourceService: HumanResourceService
-  ) {
+  constructor(private humanResourceService: HumanResourceService) {
     super()
   }
 
@@ -113,8 +115,8 @@ export class PanelActivitiesComponent
 
   /**
    * Total de la ventilation affectée
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
   getPercentAffected(ref: ContentieuReferentielInterface) {
     const activity = this.activities.find((a) =>
@@ -134,25 +136,27 @@ export class PanelActivitiesComponent
    * Chargement du référentiel et calcul des pourcents
    */
   onLoadReferentiel() {
-      this.referentiel = copyArray(this.humanResourceService.contentieuxReferentielOnly.getValue())
-      this.referentiel = this.referentiel.map((ref) => {
-        const { percent, totalAffected } = this.getPercentAffected(ref)
-        ref.percent = percent
-        ref.totalAffected = totalAffected
-  
-        ref.childrens = (ref.childrens || []).map((c) => {
-          const { percent, totalAffected } = this.getPercentAffected(c)
-          c.percent = percent
-          c.totalAffected = totalAffected
-          return c
-        })
-        return ref
+    this.referentiel = copyArray(
+      this.humanResourceService.contentieuxReferentielOnly.getValue()
+    )
+    this.referentiel = this.referentiel.map((ref) => {
+      const { percent, totalAffected } = this.getPercentAffected(ref)
+      ref.percent = percent
+      ref.totalAffected = totalAffected
+
+      ref.childrens = (ref.childrens || []).map((c) => {
+        const { percent, totalAffected } = this.getPercentAffected(c)
+        c.percent = percent
+        c.totalAffected = totalAffected
+        return c
       })
-  
-      if (this.updateRefentielOnLoad) {
-        this.referentielChange.emit(this.referentiel)
-      }
-      this.onTotalAffected()
+      return ref
+    })
+
+    if (this.updateRefentielOnLoad) {
+      this.referentielChange.emit(this.referentiel)
+    }
+    this.onTotalAffected()
   }
 
   /**
@@ -164,7 +168,7 @@ export class PanelActivitiesComponent
 
   /**
    * Ouverture et fermeture du paneau des sous contentieux
-   * @param index 
+   * @param index
    */
   onTogglePanel(index: number) {
     if (index !== this.refIndexSelected) {
@@ -176,9 +180,9 @@ export class PanelActivitiesComponent
 
   /**
    * Changement du pourcentage d'une activitié
-   * @param referentiel 
-   * @param percent 
-   * @param parentReferentiel 
+   * @param referentiel
+   * @param percent
+   * @param parentReferentiel
    */
   onChangePercent(
     referentiel: ContentieuReferentielInterface,
@@ -247,9 +251,9 @@ export class PanelActivitiesComponent
 
   /**
    * Accélaration du rendu de la liste
-   * @param index 
-   * @param item 
-   * @returns 
+   * @param index
+   * @param item
+   * @returns
    */
   trackById(index: number, item: any) {
     return item.id
@@ -257,10 +261,10 @@ export class PanelActivitiesComponent
 
   /**
    * Compte le nombre de sous contentieux avec une valeure
-   * @param referentiel 
-   * @returns 
+   * @param referentiel
+   * @returns
    */
   countNbSubItem(referentiel: ContentieuReferentielInterface) {
-    return (referentiel.childrens || []).filter(r => r.percent).length
+    return (referentiel.childrens || []).filter((r) => r.percent).length
   }
 }

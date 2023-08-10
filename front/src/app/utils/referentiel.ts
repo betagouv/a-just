@@ -1,3 +1,5 @@
+import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
+
 /**
  * Conversion d'un nom de référentiel en version simplifiée
  * @param name
@@ -74,7 +76,7 @@ export function referentielMappingColor(
  * @param value
  * @returns
  */
-export function etpLabel(value: number): string {
+export function etpLabel(value: number): string | null {
   switch (value) {
     case 1:
       return 'Temps plein'
@@ -84,6 +86,8 @@ export function etpLabel(value: number): string {
       return 'Mi-temps'
     case 0:
       return 'Ne travaille pas'
+    case ETP_NEED_TO_BE_UPDATED:
+      return null
   }
 
   return `${Math.floor(value * 100)}%`

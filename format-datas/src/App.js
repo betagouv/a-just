@@ -11,7 +11,6 @@ import {
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
-  I_ELST_LIST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from "./constants/SDSE-ref";
@@ -19,7 +18,6 @@ import { groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
 import { instanceAxios } from "../utils/axios";
-import config from "config";
 
 export default class App {
   constructor() {}
@@ -49,6 +47,7 @@ export default class App {
         return res.data.data;
       });
 
+    // CIVIL
     await this.getGroupByJuridiction(tmpFolder, inputFolder);
     await this.formatAndGroupJuridiction(
       tmpFolder,
@@ -60,14 +59,14 @@ export default class App {
     );
 
     // WIP datas pénal
-    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
+    await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
     await this.formatAndGroupJuridictionPenal(
       tmpFolder,
       outputFolder,
       outputAllFolder,
       categoriesOfRules,
       I_ELST_LIST
-    );*/
+    );
 
     this.done();
   }
@@ -598,21 +597,12 @@ export default class App {
       const tmpCategoriesOfRules = categoriesOfRules.filter((rule) => {
         return fileName.includes(rule.fichier);
       });
-      console.log("tmpCategoriesOfRules:", tmpCategoriesOfRules);
 
-      //let nodeIelst = ''
       let dateInFile = null;
       if (arrayOfCsv.length) {
         const line1 = arrayOfCsv[0];
-        //const ielstNames = ['tj', 'tgi_code', 'id_jur']
         const datesNames = ["cod_moi", "annee", "mois"];
 
-        /*for (let ielst of ielstNames) {
-                    if (ielst in line1) {
-                      nodeIelst = ielst
-                      break
-                    }
-                  }*/
         for (let date of datesNames) {
           if (date in line1) {
             if (date === datesNames[0]) {
@@ -629,12 +619,6 @@ export default class App {
           }
         }
       }
-
-      //for (let i = 0; i < Object.keys(juridictionsGrouped).length; i++) {}
-      // Object.keys(juridictionsGrouped).map((tj) => {
-      //let ielst = tj
-      //if (ielst.length === 6) ielst = `00${ielst}` // format tj to ielst
-      //if (I_ELST_LIST[ielst]) {
 
       // group by month
       let groupByMonthObject = null;

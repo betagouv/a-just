@@ -97,11 +97,15 @@ module.exports = {
    */
   sentEmail: true,
   /**
-   * Token expiration delay
-   */
-  nbMaxDayTokenLife: 30,
-  /**
    * Juridiction type
    */
-  juridictionType: process.env.TYPE_ID || 0
+  juridictionType: process.env.TYPE_ID || 0,
+  /**
+   * Token expiration delay
+   */
+  nbMaxDayTokenLife: 7,
+  /**
+   * Force HTTP to HTTPS
+   */
+  forceSSL: false,
 }

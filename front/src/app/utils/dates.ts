@@ -428,3 +428,20 @@ export function setTimeToMidDay(date: Date | undefined|null) {
   date.setUTCMilliseconds(0)
   return date
 }
+
+
+/**
+ * Trie entre deux dates
+ * @param firstDate
+ * @param secondDate
+ * @param reverse
+ * @returns
+ */
+export function sortDates(firstDate: string | Date, secondDate: string | Date, reverse: boolean) {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
+  return (reverse ? secondDate.getTime() - firstDate.getTime() : firstDate.getTime() - secondDate.getTime())
+}
+
+
