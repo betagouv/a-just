@@ -6,7 +6,7 @@ import packageJSON from '../../../package.json';
  */
 export const environment = {
   production: true,
-  serverUrl: '/api/', 
+  serverUrl: '/api/',
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,
@@ -15,5 +15,6 @@ export const environment = {
   matomo: 262,
   forceSSL: true,
   supportEmail: 'support-utilisateurs@a-just.fr',
-  mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldWR4dDA0aDEzZHBjazUxeWR5ZXYifQ.EHCQXWZ-t7RHL8EpCRXIng'
+  mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldWR4dDA0aDEzZHBjazUxeWR5ZXYifQ.EHCQXWZ-t7RHL8EpCRXIng',
+  //typeId: process.env['TYPE_ID'] || 0,
 };
