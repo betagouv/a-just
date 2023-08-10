@@ -9,6 +9,7 @@ import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
 import { copy } from './utils'
 
+
 /**
  * Variable d'environement en global
  */
@@ -70,20 +71,23 @@ export class AppComponent implements AfterViewInit {
       var _paq = (window._paq = window._paq || [])
       _paq.push(['trackPageView'])
       _paq.push(['enableLinkTracking'])
-      ;(function () {
-        var u = 'https://stats.data.gouv.fr/'
-        _paq.push(['setTrackerUrl', u + 'piwik.php'])
-        _paq.push(['setSiteId', environment.matomo])
-        var d = document,
-          g = d.createElement('script'),
-          s = d.getElementsByTagName('script')[0]
-        g.async = true
-        g.src = u + 'piwik.js'
-        if (s && s.parentNode) {
-          s.parentNode.insertBefore(g, s)
-        }
-      })()
+        ; (function () {
+          var u = 'https://stats.data.gouv.fr/'
+          _paq.push(['setTrackerUrl', u + 'piwik.php'])
+          _paq.push(['setSiteId', environment.matomo])
+          var d = document,
+            g = d.createElement('script'),
+            s = d.getElementsByTagName('script')[0]
+          g.async = true
+          g.src = u + 'piwik.js'
+          if (s && s.parentNode) {
+            s.parentNode.insertBefore(g, s)
+          }
+        })()
     }
+
+    this.userService.getInterfaceType()
+    console.log(this.userService.interfaceType)
   }
 
   ngAfterViewInit(): void {
@@ -106,7 +110,7 @@ export class AppComponent implements AfterViewInit {
   onCloseAlert(clickToOk = false) {
     const alertObject = this.appService.alert.getValue()
     this.appService.alert.next(null)
-    if(clickToOk && alertObject && alertObject.callback) {
+    if (clickToOk && alertObject && alertObject.callback) {
       alertObject.callback()
     }
   }

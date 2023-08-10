@@ -18,7 +18,8 @@ export const environment = {
   matomo: null,
   forceSSL: false,
   supportEmail: 'support-utilisateurs@a-just.fr',
-  mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w'
+  mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w',
+  //typeId: process.env['TYPE_ID'] || 0,
 }
 
 /*

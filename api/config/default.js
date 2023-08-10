@@ -100,4 +100,8 @@ module.exports = {
    * Token expiration delay
    */
   nbMaxDayTokenLife: 30,
+  /**
+   * Juridiction type
+   */
+  juridictionType: process.env.TYPE_ID || 0
 }
