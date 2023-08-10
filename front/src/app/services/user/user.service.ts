@@ -59,6 +59,7 @@ export class UserService {
   getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
       this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null;
+      console.log(this.interfaceType)
     })
   }
 
