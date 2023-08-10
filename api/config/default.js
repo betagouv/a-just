@@ -126,4 +126,8 @@ module.exports = {
       delaiAboutLockConnection: 5, // 5 minutes,
     },
   },
+  /**
+   * Juridiction type
+   */
+  juridictionType: process.env.TYPE_ID || 0,
 }

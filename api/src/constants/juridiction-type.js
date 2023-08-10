@@ -1,0 +1,1 @@
+export const juridictionType = [{ id: 0, label: "TJ" }, { id: 1, label: "CA" }]
