@@ -37,7 +37,6 @@ export default (sequelizeInstance, Model) => {
         })
       }
     }
-
     return list
   }
 
@@ -238,7 +237,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridicitionId
    */
   Model.addUserAccessToTeam = async (juridicitionId) => {
-    console.log('judiriciton id', juridicitionId)
     const usersAffected = (
       await Model.models.UserVentilations.findAll({
         where: {

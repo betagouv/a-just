@@ -142,8 +142,10 @@ export default class RouteExtractor extends Route {
   async filterListAct (ctx) {
     let { backupId, dateStart, dateStop } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    if (!Access.isAdmin(ctx)) {
+      if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+        ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      }
     }
 
     const list = await this.models.Activities.getByMonth(dateStart, backupId)
