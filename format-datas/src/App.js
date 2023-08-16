@@ -17,7 +17,7 @@ import {
 import { groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
-import { instanceAxios } from "../utils/axios";
+import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
 
 export default class App {
   constructor() {}
@@ -41,32 +41,31 @@ export default class App {
     rmSync(outputAllFolder, { recursive: true, force: true });
     mkdirSync(outputAllFolder, { recursive: true });
 
-    const I_ELST_LIST = await instanceAxios
-      .get("/juridictions/get-all-ielst")
-      .then((res) => {
-        return res.data.data;
-      });
+    await onGetIelstListApi().then(async (response) => {
+      if (response) {
+        // CIVIL
+        /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
+        await this.formatAndGroupJuridiction(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          referentiel,
+          response
+        );
+        */
 
-    // CIVIL
-    await this.getGroupByJuridiction(tmpFolder, inputFolder);
-    await this.formatAndGroupJuridiction(
-      tmpFolder,
-      outputFolder,
-      outputAllFolder,
-      categoriesOfRules,
-      referentiel,
-      I_ELST_LIST
-    );
-
-    // WIP datas pénal
-    await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
-    await this.formatAndGroupJuridictionPenal(
-      tmpFolder,
-      outputFolder,
-      outputAllFolder,
-      categoriesOfRules,
-      I_ELST_LIST
-    );
+        // WIP datas pénal
+        await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        await this.formatAndGroupJuridictionPenal(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          response
+        );
+      }
+    });
 
     this.done();
   }
@@ -233,55 +232,62 @@ export default class App {
 
   async getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".csv"));
-    console.log("FILES:", files);
+
     // generate header
     let header = null;
     let codeJuridiction = null;
     const ielstNames = ["tj", "tgi_code", "id_jur"];
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      console.log("File:", file);
+
       let liner = new lineByLine(`${inputFolder}/${file}`);
       let line = null;
       // get header
       line = liner.next();
       header = line.toString("ascii");
       //let getTypeOfJuridiction
-      while ((line = liner.next()) !== false) {
-        let lineFormated = "";
-        const data = line.toString("ascii");
-        lineFormated = header.concat("\n", data);
-        const lineobject = await csvToArrayJson(lineFormated, "utf8").then(
-          (res) => {
-            return res[0];
+      while ((line = liner.next().toString()) !== "false") {
+        //file === "export_pharos_ajust.csv" && console.log("line:", line);
+        line = line.split(" ").join("");
+        if (line.length > 0) {
+          let lineFormated = "";
+          const data = line.toString("ascii");
+          lineFormated = header.concat("\n", data);
+          const lineobject = await csvToArrayJson(lineFormated, "utf8").then(
+            (res) => {
+              return res[0];
+            }
+          );
+          for (let ielst of ielstNames) {
+            if (ielst in lineobject) {
+              codeJuridiction = lineobject[ielst];
+              break;
+            }
           }
-        );
-        for (let ielst of ielstNames) {
-          if (ielst in lineobject) {
-            codeJuridiction = lineobject[ielst];
-            break;
-          }
-        }
-        if (codeJuridiction.length === 6)
-          codeJuridiction = `00${codeJuridiction}`;
-        if (I_ELST_LIST[codeJuridiction]) {
-          const fileName = file.replace(".csv", "");
-          if (
-            !existsSync(
-              this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction)
-            )
-          ) {
-            // create file
-            writeFileSync(
+          if (codeJuridiction.length === 6)
+            codeJuridiction = `00${codeJuridiction}`;
+          if (I_ELST_LIST[codeJuridiction]) {
+            const fileName = file.replace(".csv", "");
+            if (
+              !existsSync(
+                this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction)
+              )
+            ) {
+              // create file
+              writeFileSync(
+                this.getCsvOutputPathPenal(
+                  fileName,
+                  tmpFolder,
+                  codeJuridiction
+                ),
+                header + "\n"
+              );
+            }
+            appendFileSync(
               this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction),
-              header + "\n"
+              `${data}\n`
             );
           }
-          appendFileSync(
-            this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction),
-            `${data}\n`
-          );
         }
       }
     }
@@ -448,9 +454,9 @@ export default class App {
         };
       }
       if (
-        rule.filtres /* &&
+        rule.filtres /*&&
         list[rule["Code nomenclature"]].periode !==
-          "202305" && rule['Code nomenclature'] === '7.7.'*/
+          "202307"  && rule['Code nomenclature'] === '7.7.'*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
@@ -475,13 +481,13 @@ export default class App {
             // save values
             const totalKeyNode = (newRules.TOTAL || "").toLowerCase();
             const sumByValues = sumBy(lines, totalKeyNode);
-            console.log(
+            /*console.log(
               node,
               sumByValues,
               lines.map((l) => l[totalKeyNode]),
               rule["Code nomenclature"],
               list[rule["Code nomenclature"]].periode
-            );
+            );*/
 
             list[rule["Code nomenclature"]][node] =
               (list[rule["Code nomenclature"]][node] || 0) + (sumByValues || 0);
@@ -576,7 +582,6 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i].replace(/-export-activities-.*/, "");
-
       let ielst = files[i]
         .replace(/.+?(?=export-activities-)/, "")
         .replace("export-activities-", "")
@@ -677,7 +682,7 @@ export default class App {
           tmp_date = monthValues[0][dateInFile[1]];
         }
 
-        if (tmp_date < "202306") {
+        if (tmp_date < now) {
           let formatMonthDataFromRules = null;
           formatMonthDataFromRules = this.formatMonthFromRules(
             monthValues,

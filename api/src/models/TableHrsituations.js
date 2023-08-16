@@ -88,10 +88,8 @@ export default (sequelizeInstance, Model) => {
         },
       })
     }
-
     for (let i = 0; i < list.length; i++) {
       const situation = list[i]
-
       const options = {
         etp: situation.etp || 0,
         category_id: situation.category ? situation.category.id : 0,

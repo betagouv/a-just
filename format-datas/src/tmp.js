@@ -122,6 +122,8 @@ export default class App {
       (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1
     );
 
+    console.log("FILES:", files);
+
     let headerMap = [];
     // generate header
     for (let i = 0; i < files.length; i++) {
@@ -552,10 +554,14 @@ export default class App {
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
+    console.log("Here");
 
+    console.log("files:", files);
+    console.log("files.length:", files.length);
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i].replace(/-export-activities-.*/, "");
-
+      console.log("i:", i);
+      console.log("files.length:", files.length);
       let ielst = files[i]
         .replace(/.+?(?=export-activities-)/, "")
         .replace("export-activities-", "")
@@ -576,21 +582,12 @@ export default class App {
       const tmpCategoriesOfRules = categoriesOfRules.filter((rule) => {
         return fileName.includes(rule.fichier);
       });
-      console.log("tmpCategoriesOfRules:", tmpCategoriesOfRules);
 
-      //let nodeIelst = ''
       let dateInFile = null;
       if (arrayOfCsv.length) {
         const line1 = arrayOfCsv[0];
-        //const ielstNames = ['tj', 'tgi_code', 'id_jur']
         const datesNames = ["cod_moi", "annee", "mois"];
 
-        /*for (let ielst of ielstNames) {
-                    if (ielst in line1) {
-                      nodeIelst = ielst
-                      break
-                    }
-                  }*/
         for (let date of datesNames) {
           if (date in line1) {
             if (date === datesNames[0]) {
@@ -607,12 +604,6 @@ export default class App {
           }
         }
       }
-
-      //for (let i = 0; i < Object.keys(juridictionsGrouped).length; i++) {}
-      // Object.keys(juridictionsGrouped).map((tj) => {
-      //let ielst = tj
-      //if (ielst.length === 6) ielst = `00${ielst}` // format tj to ielst
-      //if (I_ELST_LIST[ielst]) {
 
       // group by month
       let groupByMonthObject = null;
@@ -715,6 +706,9 @@ export default class App {
         return acc;
       }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]);
     }
+
+    console.log("Juridiction:", JURIDICTIONS_EXPORTS);
+
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       writeFileSync(
         `${outputFolder}/${key}.csv`,

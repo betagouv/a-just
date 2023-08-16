@@ -92,7 +92,6 @@ export default class RouteAuths extends Route {
       })
       span.finish() // Remember that only finished spans will be sent with the transaction
       transaction.finish()
-
       this.sendOk(ctx)
     } else {
       ctx.throw(401)
