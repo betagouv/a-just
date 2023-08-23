@@ -131,6 +131,7 @@ export class DataAnalysePage {
     this.humanResourceService.getBackupList().then((datas : any) => {
       datas.map((elem : JuridictionInterface) => this.juridictionList.push(elem))
     });
+    this.extractDataService.getJuridictionAjusted({dateStart: new Date(2023, 5), dateStop: new Date()})
     this.referentielService.getReferentiels()
   }
 
@@ -273,19 +274,19 @@ export class DataAnalysePage {
         [total === true ? 'Total Pharos - Entrées' : 'Pharos - Entrées']: '',
         [total === true ? 'Total TJ - Entrées' : 'TJ - Entrées']: '',
         ['Ecart A-JUST / Pharos - Entrées']: '',
-        ['Ecart A-JUST / TJ - Entrées']: '',
+        //['Ecart A-JUST / TJ - Entrées']: '',
         
         [total === true ? 'Total A-JUST - Sorties' : 'A-JUST - Sorties']:  act.sorties ? act.sorties : act.originalSorties,
         [total === true ? 'Total Pharos - Sorties' : 'Pharos - Sorties']: '',
         [total === true ? 'Total TJ - Sorties' : 'TJ - Sorties']: '',
         ['Ecart A-JUST / Pharos - Sorties']: '',
-        ['Ecart A-JUST / TJ - Sorties']: '',
+        //['Ecart A-JUST / TJ - Sorties']: '',
 
         [total === true ? 'Total A-JUST - Stocks' : 'A-JUST - Stocks']: act.stock ? act.stock : act.originalStock,
         [total === true ? 'Total Pharos - Stocks' : 'Pharos - Stocks']: '',
         [total === true ? 'Total TJ - Stocks' : 'TJ - Stocks']: '',
         ['Ecart A-JUST / Pharos - Stocks']: '',
-        ['Ecart A-JUST / TJ - Stocks']: '',
+        //['Ecart A-JUST / TJ - Stocks']: '',
         ['Observations']: ''
       }
       return obj
@@ -293,8 +294,6 @@ export class DataAnalysePage {
 
 
   onExtractData(form: any) {
-
-
     if (!form.juridiction.value) {
       return alert('Veuillez selectionner une juridiction')
     }
@@ -387,11 +386,13 @@ export class DataAnalysePage {
       return alert('Veuiller indiquer une date de fin')
     }
 
+    const tmpDateStop = new Date(form.dateStop.value)
+
+
     this.comapreBackupId = Number(form.juridiction.value)
     this.compareDateStart = new Date(form.dateStart.value)
-    this.compareDateStop = new Date(form.dateStop.value)
-
-    this.compareDateStop.setMonth(this.compareDateStop.getMonth() + 1)
+    this.compareDateStop = new Date(tmpDateStop.getFullYear(), tmpDateStop.getMonth() + 1, 0);
+    console.log('compareDateStop:', this.compareDateStop)
 
     const juridiction = this.juridictionList.filter(elem => elem.id === this.comapreBackupId)
     this.juridictionName = juridiction[0].label
@@ -405,7 +406,6 @@ export class DataAnalysePage {
         const workbook = xlsx.utils.book_new()
 
         this.sumTab = this.sumTab.map((act: any) => {
-          console.log('act:', act)
           return this.generateFormatedDataMonthForCompare(
             act,
             this.getTotalPeriodeLabel(
