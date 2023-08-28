@@ -95,7 +95,7 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': ["'nonce-2726c7f26c'", "'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.data.gouv.fr'],
+          //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.data.gouv.fr'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
