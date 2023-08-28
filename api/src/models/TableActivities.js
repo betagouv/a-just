@@ -539,6 +539,7 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < list.length; i++) {
       list[i] = {
+        backupId: HrBackupId,
         id: list[i].id,
         periode: list[i].periode,
         entrees: list[i].entrees,

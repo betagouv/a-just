@@ -19,7 +19,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.tryConnection = async (email, password, roles) => {
     email = (email || '').toLowerCase()
-
+    console.log('[tableUsers.js][line 22] email:', email)
     const cleanUser = async (user) => {
       await user.update({
         nb_try_connection: null,
@@ -29,12 +29,15 @@ export default (sequelizeInstance, Model) => {
       user.dataValues.first_try_connection = null
       return user
     }
+    console.log('[tableUsers.js][line 32] roles:', roles)
 
     let user = await Model.findOne({ where: { email, role: roles } })
+    console.log('[tableUsers.js][line 35] user:', user)
     if (user) {
       if (user.dataValues.status === 0) {
         return "Votre compte n'est plus accessible."
       }
+      console.log('user:', user.dataValues)
 
       if (user.dataValues.first_try_connection) {
         const now = new Date()
