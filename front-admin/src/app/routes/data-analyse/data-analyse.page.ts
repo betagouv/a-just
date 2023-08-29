@@ -39,19 +39,22 @@ const compareHeaders = [
   ' ',
   'Période',
 
-  'A-JUST - Entrées',
+  'Entrées',
+  'A-JUSTÈ - Entrées',
   'Pharos - Entrées',
   'TJ - Entrées',
   'Ecart A-JUST / Pharos - Entrées',
   'Ecart A-JUST / TJ - Entrées',
 
   'A-JUST - Sorties',
+  'A-JUSTÉ - Sorties',
   'Pharos - Sorties',
   'TJ - Sorties',
   'Ecart A-JUST / Pharos - Sorties',
   'Ecart A-JUST / TJ - Sorties',
 
   'A-JUST - Stocks',
+  'A-JUSTÉ - Stocks',
   'Pharos - Stocks',
   'TJ - Stocks',
   'Ecart A-JUST / Pharos - Stocks',
@@ -155,6 +158,7 @@ export class DataAnalysePage {
    * @returns
    */
   getColumnWidth(headers: any, element: any) {
+    //console.log('Headers:', headers)
     return headers.map((header: any) => {
       return {
         wch: Math.max(
@@ -189,6 +193,9 @@ export class DataAnalysePage {
   generateWorkSheet(headers: any, data: any) {
     const worksheet = xlsx.utils.json_to_sheet(data, {})
     worksheet['!cols'] = this.getColumnWidth(headers, data)
+    //console.log("WorkSheet['!cols]:", worksheet['!cols'])
+    //console.log("WorkSheet:", worksheet)
+
     return worksheet
   }
 
@@ -270,23 +277,27 @@ export class DataAnalysePage {
         ['codeUnit']: sortCodeArray[0] || 0,
         ['codeCent']: sortCodeArray[1] * 10 || -1,
         Période: monthTabName,
-        [total === true ? 'Total A-JUST - Entrées' : 'A-JUST - Entrées']: act.entrees ? act.entrees : act.originalEntrees,
+        [total === true ? 'Total A-JUST - Entrées' : 'A-JUST - Entrées']: act.originalEntrees,
+        [total === true ? 'Total A-JUSTÉ - Entrées' : 'A-JUSTÉ - Entrées']: act.entrees,
         [total === true ? 'Total Pharos - Entrées' : 'Pharos - Entrées']: '',
         [total === true ? 'Total TJ - Entrées' : 'TJ - Entrées']: '',
         ['Ecart A-JUST / Pharos - Entrées']: '',
-        //['Ecart A-JUST / TJ - Entrées']: '',
+        ['Ecart A-JUST / TJ - Entrées']: '',
+
         
-        [total === true ? 'Total A-JUST - Sorties' : 'A-JUST - Sorties']:  act.sorties ? act.sorties : act.originalSorties,
+        [total === true ? 'Total A-JUST - Sorties' : 'A-JUST - Sorties']: act.originalSorties,
+        [total === true ? 'Total A-JUSTÉ - Sorties' : 'A-JUSTÉ - Sorties']: act.sorties,
         [total === true ? 'Total Pharos - Sorties' : 'Pharos - Sorties']: '',
         [total === true ? 'Total TJ - Sorties' : 'TJ - Sorties']: '',
         ['Ecart A-JUST / Pharos - Sorties']: '',
-        //['Ecart A-JUST / TJ - Sorties']: '',
+        ['Ecart A-JUST / TJ - Sorties']: '',
 
-        [total === true ? 'Total A-JUST - Stocks' : 'A-JUST - Stocks']: act.stock ? act.stock : act.originalStock,
+        [total === true ? 'Total A-JUST - Stocks' : 'A-JUST - Stocks']: act.originalStock,
+        [total === true ? 'Total A-JUSTÉ - Stocks' : 'A-JUSTÉ - Stocks']: act.stock,
         [total === true ? 'Total Pharos - Stocks' : 'Pharos - Stocks']: '',
         [total === true ? 'Total TJ - Stocks' : 'TJ - Stocks']: '',
         ['Ecart A-JUST / Pharos - Stocks']: '',
-        //['Ecart A-JUST / TJ - Stocks']: '',
+        ['Ecart A-JUST / TJ - Stocks']: '',
         ['Observations']: ''
       }
       return obj
@@ -392,7 +403,7 @@ export class DataAnalysePage {
     this.comapreBackupId = Number(form.juridiction.value)
     this.compareDateStart = new Date(form.dateStart.value)
     this.compareDateStop = new Date(tmpDateStop.getFullYear(), tmpDateStop.getMonth() + 1, 0);
-    console.log('compareDateStop:', this.compareDateStop)
+    //console.log('compareDateStop:', this.compareDateStop)
 
     const juridiction = this.juridictionList.filter(elem => elem.id === this.comapreBackupId)
     this.juridictionName = juridiction[0].label
@@ -444,7 +455,7 @@ export class DataAnalysePage {
             monthTabName
           )
         })
-
+        //console.log('Workbook:', workbook)
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
           type: 'array',
