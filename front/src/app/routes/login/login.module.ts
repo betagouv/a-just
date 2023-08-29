@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router'
 import { LoginPage } from './login.page'
 import { LoginPageModule } from './login.routing'
 import { WrapperNoConnectedModule } from 'src/app/components/wrapper-no-connected/wrapper-no-connected.module'
+import { CommonModule } from '@angular/common'
 
 @NgModule({
   declarations: [LoginPage],
   imports: [
     LoginPageModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,

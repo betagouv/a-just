@@ -37,7 +37,6 @@ export default (sequelizeInstance, Model) => {
         })
       }
     }
-
     return list
   }
 
@@ -137,7 +136,9 @@ export default (sequelizeInstance, Model) => {
         })
       }
     }
-
+    //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
+    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
+    //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
     return list
   }
 
@@ -238,7 +239,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridicitionId
    */
   Model.addUserAccessToTeam = async (juridicitionId) => {
-    console.log('judiriciton id', juridicitionId)
     const usersAffected = (
       await Model.models.UserVentilations.findAll({
         where: {

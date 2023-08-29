@@ -36,10 +36,8 @@ export const comparePasswords = (password, cryptedPassword) => {
 const checkPassword = (newPassword, email = '') => {
   const emailFormated = formatPassword(email).split(/[\s,.@]+/)
 
-  console.log('checkPassword', newPassword, emailFormated)
-
   if (newPassword.length < MIN_PASSWORD_LENGTH) {
-    throw 'Mot de passe trop faible!'
+    throw `Pour assurer la sécurité de votre compte, veuillez choisir un mot de passe comportant au moins ${MIN_PASSWORD_LENGTH} caractères, incluant des lettres majuscules, des lettres minuscules et éventuellement des caractères spéciaux.`
   }
 
   if (ALL_RESTRICTED_PASSWORDS.includes(newPassword) || emailFormated.includes(newPassword)) {

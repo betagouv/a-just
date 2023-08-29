@@ -35,7 +35,7 @@ export default class RouteUsers extends Route {
     }
   }
 
-  /**
+ /**
  * Interface qui retourne le process.env
  */
   @Route.Get()
@@ -203,7 +203,6 @@ export default class RouteUsers extends Route {
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
     }
-
     try {
       await this.model.updateAccount(this.body(ctx))
       await this.models.Logs.addLog(ADMIN_CHANGE_USER_ACCESS, ctx.state.user.id, { userId })

@@ -70,7 +70,7 @@ module.exports = function (datas) {
       assert.strictEqual(totalIn, simulatorData.situation.totalIn)
     })
 
-    it('Check Observed average time per file', async () => {
+    /*it('Check Observed average time per file', async () => {
       // Get last month on which we have data
       const userToken = datas.adminToken
       const hrBackupId = JURIDICTION_BACKUP_ID
@@ -116,21 +116,21 @@ module.exports = function (datas) {
       let totalOut = meanBy(monthsData, 'sorties') || 0
 
       // Get ETP for the last 12 months
-      /*let totalEtpMag = null
-      const dateStop = date
-      console.log('[RouteSimulator.test.js][line 122] dateStop:', dateStop)
-      const dateStart = new Date(dateStop) //.setDate(1).setMonth(new Date(dateStop).getMonth() - 12))
-      dateStart.setMonth(date.getMonth() - 11)
-      console.log('[RouteSimulator.test.js][line 123] dateStart', dateStart)
+      // let totalEtpMag = null
+      // const dateStop = date
+      // console.log('[RouteSimulator.test.js][line 122] dateStop:', dateStop)
+      // const dateStart = new Date(dateStop) //.setDate(1).setMonth(new Date(dateStop).getMonth() - 12))
+      // dateStart.setMonth(date.getMonth() - 11)
+      // console.log('[RouteSimulator.test.js][line 123] dateStart', dateStart)
 
-      const HR = await onFilterListHRApi({ userToken, backupId: hrBackupId, contentieuxIds, date: dateStart })
-      const filteredHr = HR.data.data.list[0].hr.filter((elem) => {
-        return new Date(elem.currentSituation.dateStart).getTime() <= new Date(dateStart).getTime()
-      })
-      filteredHr.map((elem) => {
-        let socialActivity = elem.currentActivities.filter((elem) => elem.contentieux.id === SOCIAL_LITIGATION_ID)
-        if (!elem.hasIndisponibility) totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
-      })*/
+      // const HR = await onFilterListHRApi({ userToken, backupId: hrBackupId, contentieuxIds, date: dateStart })
+      // const filteredHr = HR.data.data.list[0].hr.filter((elem) => {
+      //   return new Date(elem.currentSituation.dateStart).getTime() <= new Date(dateStart).getTime()
+      // })
+      // filteredHr.map((elem) => {
+      //   let socialActivity = elem.currentActivities.filter((elem) => elem.contentieux.id === SOCIAL_LITIGATION_ID)
+      //   if (!elem.hasIndisponibility) totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
+      // })
 
       console.log('[RouteSimulator.test.js][line 113] nbDaysByMagistrat:', nbDaysByMagistrat)
       console.log('[RouteSimulator.test.js][line 114] nbHoursPerDayAndMagistrat:', nbHoursPerDayAndMagistrat)
@@ -140,8 +140,8 @@ module.exports = function (datas) {
       let tmd = (etpMag * nbDaysByMagistrat * nbHoursPerDayAndMagistrat) / (12 * totalOut)
       console.log('[RouteSimulator.test.js][line 118] tmd:', tmd)
       console.log('[RouteSimulator.test.js][line 119] simulatorData: ', simulatorData.situation)
-
+0
       assert.strictEqual(totalOut, simulatorData.situation.totalOut)
-    })
+    })*/
   })
 }

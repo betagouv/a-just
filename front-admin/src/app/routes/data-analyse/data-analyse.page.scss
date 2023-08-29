@@ -1,0 +1,42 @@
+@import "../../styles/utils.scss";
+
+.section { 
+  margin-bottom: 30px;
+
+  h2 {
+    margin-bottom: 15px;  
+  }
+
+  form {
+    margin-bottom: 20px;
+
+    .select-juridictions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 300px;
+      margin-bottom: 15px;
+    }
+
+    .select-period {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      
+      .date-selectors {
+        display: flex; 
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 300px;
+        margin-left: 5px;
+
+        input {
+          margin-left: 8px;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+

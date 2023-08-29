@@ -57,6 +57,14 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      nb_try_connection: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      first_try_connection: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -81,7 +89,6 @@ export default (sequelizeInstance) => {
 
   Model.associate = function (models) {
     Model.hasMany(models.UserVentilations, { foreignKey: 'user_id', sourceKey: 'id' })
-
 
     return models
   }
