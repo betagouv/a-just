@@ -53,8 +53,8 @@ module.exports = function (datas) {
         categorySelected,
         selectedFonctionsIds: null,
       })
-
       calculatorData = response.data.data.list[0]
+      console.log('[RouteCalculator][line 57] calculatorData:', calculatorData)
       assert.strictEqual(response.status, 200)
       assert.isNotEmpty(calculatorData)
     })
@@ -75,6 +75,8 @@ module.exports = function (datas) {
         if (!elem.hasIndisponibility) totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
       })
 
+      console.log('[RouteCalculator][line 79] totalEtpMag:', totalEtpMag)
+      console.log('[RouteCalculator][line 80] calculatorData.etpMag:', calculatorData.etpMag)
       assert.strictEqual(HR.status, 200)
       assert.strictEqual(totalEtpMag, calculatorData.etpMag)
     })

@@ -89,7 +89,7 @@ export default class RouteActivities extends Route {
   })
   async getLastMonth (ctx) {
     const { hrBackupId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
       const date = await this.model.getLastMonth(hrBackupId)
       this.sendOk(ctx, {
         date,

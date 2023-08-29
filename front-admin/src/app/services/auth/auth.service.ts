@@ -25,7 +25,6 @@ export class AuthService {
           this.userService.setUser(null);
           return null;
         }
-
         this.userService.setUser(http.user);
         return http.user;
       } catch (err) {
@@ -46,7 +45,6 @@ export class AuthService {
           this.userService.setUser(null);
           return null;
         }
-
         this.userService.setUser(http.user);
         return http.user;
       } catch (err) {
@@ -73,6 +71,7 @@ export class AuthService {
     return this.serverService
       .getWithoutError('auths/auto-login-admin')
       .then((data) => {
+        console.log('[auth.service][line 76] data autologin:', data)
         return data;
       });
   }
@@ -86,6 +85,7 @@ export class AuthService {
 
   loginAdmin(params = {}): Promise<any> {
     return this.serverService.post('auths/login-admin', params).then((data) => {
+      console.log('[auth.service][line 89] data login:', data)
       this.serverService.setToken(data.token);
       return true;
     });

@@ -108,4 +108,30 @@ module.exports = {
    * Force HTTP to HTTPS
    */
   forceSSL: false,
+  /**
+   * Securities rules
+   */
+  securities: {
+    /**
+     * Securities about the user connected
+     */
+    users: {
+      /**
+       * Max essai de connection après blockage
+       */
+      nbMaxTryConnection: 5,
+      /**
+       * Tranche min d'essais de connection
+       */
+      nbMaxDelayAboutTryConnection: 10, // 10 minutes,
+      /**
+       * Delai de blockage d'un compte
+       */
+      delaiAboutLockConnection: 5, // 5 minutes,
+    },
+  },
+  /**
+   * Juridiction type
+   */
+  juridictionType: process.env.TYPE_ID || 0,
 }

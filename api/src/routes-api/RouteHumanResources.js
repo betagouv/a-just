@@ -234,10 +234,12 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('step1')
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
+
     console.timeEnd('step2')
     console.time('step3')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
     console.timeEnd('step3')
+
     const allCategories = await this.models.HRCategories.getAll()
 
     if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
@@ -247,6 +249,7 @@ export default class RouteHumanResources extends Route {
 
     console.time('step4')
     let listFiltered = [...list]
+
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
     const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
 
@@ -254,7 +257,6 @@ export default class RouteHumanResources extends Route {
       .filter((c) => categoriesIds.indexOf(c.id) !== -1)
       .map((category) => {
         let label = category.label
-
         let referentiel = copyArray(originalReferentiel)
           .filter((r) => r.label !== 'Indisponibilité')
           .map((ref) => {
