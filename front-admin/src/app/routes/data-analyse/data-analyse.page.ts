@@ -248,13 +248,13 @@ export class DataAnalysePage {
       Période: monthTabName,
       [total === true ? 'Total entrées logiciel' : 'Entrées logiciel']: act.originalEntrees,
       [total === true ? 'Total entrées après A-JUSTements' : 'Entrées A-JUSTées']: act.entrees,
-      ['% A-JUSTement Entrées']: act.entrees && act.originalEntrees && act.originalEntrees ? Math.abs(((act.entrees - act.originalEntrees) / act.originalEntrees) * 100).toFixed(2) + '%' : null,
+      ['% A-JUSTement Entrées']: act.entrees && act.originalEntrees && act.originalEntrees ? Math.abs(((act.entrees - act.originalEntrees) / act.originalEntrees)).toFixed(2)  : null,
       [total === true ? 'Total sorties logiciel' : 'Sorties logiciel']: act.originalSorties,
       [total === true ? 'Total sorties après A-JUSTements' : 'Sorties A-JUSTées']: act.sorties,
-      ['% A-JUSTement Sorties']: act.sorties && act.originalSorties && act.originalSorties ? Math.abs(((act.sorties - act.originalSorties) / act.originalSorties) * 100).toFixed(2) + '%' : null,
+      ['% A-JUSTement Sorties']: act.sorties && act.originalSorties && act.originalSorties ? Math.abs(((act.sorties - act.originalSorties) / act.originalSorties)).toFixed(2) : null,
       ['Stock logiciel']: act.originalStock,
       ['Stock après A-JUSTements']: act.stock,
-      ['% A-JUSTement Stocks']: act.stock && act.originalStock && act.originalStock ? Math.abs(((act.stock - act.originalStock) / act.originalStock) * 100).toFixed(2) + '%' : null,
+      ['% A-JUSTement Stocks']: act.stock && act.originalStock && act.originalStock ? Math.abs(((act.stock - act.originalStock) / act.originalStock)).toFixed(2) : null,
       ['Observations']: ''
     }
     return obj
