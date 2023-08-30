@@ -18,7 +18,7 @@ export default class RouteUsers extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -26,7 +26,7 @@ export default class RouteUsers extends Route {
    * Interface qui retourne l'utilisateur connecté
    */
   @Route.Get()
-  async me (ctx) {
+  async me(ctx) {
     if (ctx.state && ctx.state.user) {
       const user = await this.model.userPreview(ctx.state.user.id)
       this.sendOk(ctx, user)
@@ -35,11 +35,11 @@ export default class RouteUsers extends Route {
     }
   }
 
-  /**
-   * Interface qui retourne le process.env
-   */
+ /**
+ * Interface qui retourne le process.env
+ */
   @Route.Get()
-  async interfaceType (ctx) {
+  async interfaceType(ctx) {
     if (ctx.state && ctx.state.user) {
       this.sendOk(ctx, process.env.TYPE_ID)
     } else {
@@ -66,7 +66,7 @@ export default class RouteUsers extends Route {
       fonction: Types.string(),
     }),
   })
-  async createAccount (ctx) {
+  async createAccount(ctx) {
     const { firstName, lastName, tj, fonction } = this.body(ctx)
     let { email } = this.body(ctx)
 
@@ -115,7 +115,7 @@ export default class RouteUsers extends Route {
     path: 'remove-account-test/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccountTest (ctx) {
+  async removeAccountTest(ctx) {
     const { id } = ctx.params
 
     const user = this.model.findOne({
@@ -145,7 +145,7 @@ export default class RouteUsers extends Route {
     path: 'remove-account/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccount (ctx) {
+  async removeAccount(ctx) {
     const { id } = ctx.params
     const user = this.model.findOne({
       where: { id: id },
@@ -173,7 +173,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     const list = await this.model.getAll()
 
     this.sendOk(ctx, {
@@ -197,7 +197,7 @@ export default class RouteUsers extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async updateAccount (ctx) {
+  async updateAccount(ctx) {
     const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
@@ -222,7 +222,7 @@ export default class RouteUsers extends Route {
       email: Types.string().required(),
     }),
   })
-  async forgotPassword (ctx) {
+  async forgotPassword(ctx) {
     let { email } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -271,7 +271,7 @@ export default class RouteUsers extends Route {
       password: Types.string().required(),
     }),
   })
-  async changePassword (ctx) {
+  async changePassword(ctx) {
     let { email, code, password } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -300,7 +300,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isLogin],
   })
-  async getUserDatas (ctx) {
+  async getUserDatas(ctx) {
     this.sendOk(ctx, {
       backups: await this.models.HRBackups.list(ctx.state.user.id),
       categories: getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user),
