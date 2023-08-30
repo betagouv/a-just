@@ -24,7 +24,7 @@ export default class RouteExtractor extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'HumanResources' })
   }
 
@@ -44,7 +44,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterList (ctx) {
+  async filterList(ctx) {
     let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
@@ -114,8 +114,6 @@ export default class RouteExtractor extends Route {
     const columnSize1 = await autofitColumns(onglet1, true)
     const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
-
-    console.log(flatReferentielsList)
 
     const label = (juridictionName.label || '').toUpperCase()
     let tproxs = (await this.models.TJ.getByTj(label, {}, { type: 'TPRX' })).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox }))
@@ -264,7 +262,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterListAct (ctx) {
+  async filterListAct(ctx) {
     let { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!Access.isAdmin(ctx)) {
@@ -285,7 +283,7 @@ export default class RouteExtractor extends Route {
       })
 
     let sum = cloneDeep(activities)
-    console.log(sum)
+
     sum = sum.map((x) => {
       const ajustedIn = x.entrees || x.originalEntrees
       const ajustedOut = x.sorties || x.originalSorties

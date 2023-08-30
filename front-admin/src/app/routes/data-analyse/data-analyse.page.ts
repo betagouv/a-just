@@ -158,7 +158,7 @@ export class DataAnalysePage {
    * @returns
    */
   getColumnWidth(headers: any, element: any) {
-    console.log('Headers:', headers)
+    //console.log('Headers:', headers)
     return headers.map((header: any) => {
       return {
         wch: Math.max(
@@ -193,8 +193,8 @@ export class DataAnalysePage {
   generateWorkSheet(headers: any, data: any) {
     const worksheet = xlsx.utils.json_to_sheet(data, {})
     worksheet['!cols'] = this.getColumnWidth(headers, data)
-    console.log("WorkSheet['!cols]:", worksheet['!cols'])
-    console.log("WorkSheet:", worksheet)
+    //console.log("WorkSheet['!cols]:", worksheet['!cols'])
+    //console.log("WorkSheet:", worksheet)
 
     return worksheet
   }
@@ -403,7 +403,7 @@ export class DataAnalysePage {
     this.comapreBackupId = Number(form.juridiction.value)
     this.compareDateStart = new Date(form.dateStart.value)
     this.compareDateStop = new Date(tmpDateStop.getFullYear(), tmpDateStop.getMonth() + 1, 0);
-    console.log('compareDateStop:', this.compareDateStop)
+    //console.log('compareDateStop:', this.compareDateStop)
 
     const juridiction = this.juridictionList.filter(elem => elem.id === this.comapreBackupId)
     this.juridictionName = juridiction[0].label
@@ -455,7 +455,7 @@ export class DataAnalysePage {
             monthTabName
           )
         })
-        console.log('Workbook:', workbook)
+        //console.log('Workbook:', workbook)
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
           type: 'array',
