@@ -24,7 +24,7 @@
       color: white;
       text-align: center;
       cursor: pointer;
-      flex: 0.855 !important;
+      flex: 1.1 !important;
       height: 104px !important;
       font-size: 14px;
     }
@@ -433,6 +433,10 @@
         &:focus {
           outline: none;
           border-bottom: solid 2px #3a3a3a !important;
+        }
+
+        &.grey-bg-disabled {
+          background-color: #b9b8b64a;
         }
       }
 

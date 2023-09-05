@@ -13,12 +13,6 @@
       <p>ETPT siège</p>
     </div>
     <div class="item blue-bg">
-      <p>ETPT greffe</p>
-    </div>
-    <div class="item">
-      <p>ETPT EAM</p>
-    </div>
-    <div class="item blue-bg">
       <p>Taux de couverture</p>
     </div>
     <div class="item">
@@ -41,42 +35,43 @@
       </div>
       <form class="editable-line" [formGroup]="formWhiteSim">
         <div class="line-item orange-bg">
-          <input formControlName="totalIn" (keypress)="validateNo($event)" type="text"
+          <input formControlName="totalIn" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item">
-          <input formControlName="totalOut" (keypress)="validateNo($event)" type="text"
+          <input formControlName="totalOut" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item orange-bg">
-          <input formControlName="lastStock" (keypress)="validateNo($event)" type="text"
+          <input formControlName="lastStock" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item" [ngClass]="{'grey-bg-disabled':category!=='MAGISTRAT'}">
-          <input formControlName="etpMag" (keypress)="validateNo($event)" type="text"
+          <input formControlName="etpMag" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category==='MAGISTRAT', 'disabled':category!=='MAGISTRAT'}" />
         </div>
-        <div class="line-item " [ngClass]="{'grey-bg-disabled':category==='MAGISTRAT'}">
-          <input formControlName="etpFon" (keypress)="validateNo($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category!=='MAGISTRAT', 'disabled':category==='MAGISTRAT'}" />
+        <div class="line-item">
+          <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text" />
         </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
+        <div class="line-item">
+          <input formControlName="realDTESInMonths" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text" />
         </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="realCoverage" type="text" class="disabled" />
-        </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="realDTESInMonths" type="text" class="disabled" />
-        </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="magRealTimePerCase" type="text" class="disabled" />
+        <div class="line-item">
+          <input formControlName="magRealTimePerCase" (keypress)="validateNo($event)"
+            (keydown)="onDeletePressed($event)" (keyup)="onDeletePressed($event)" type="text" />
         </div>
       </form>
 
       <div class="line-item validate-button">
         <label (click)="validateWhiteSimulator()" *ngIf="!isValidatedWhiteSimu; else locked"
           class="validate-label">Valider</label>
+        <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked" class="validate-label">reset</label>
         <ng-template #locked>
           <div class="validate-label" (click)="editWhiteSimulator()">
             Editer</div>
