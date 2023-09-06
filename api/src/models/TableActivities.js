@@ -44,6 +44,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          attributes: ['id', 'label', 'code_import'],
           model: Model.models.ContentieuxReferentiels,
         },
       ],
@@ -82,6 +83,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          attributes: ['id', 'label', 'code_import'],
           model: Model.models.ContentieuxReferentiels,
         },
       ],
