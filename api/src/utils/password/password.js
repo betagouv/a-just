@@ -24,9 +24,10 @@ export const cryptPassword = (newPassword, email = '') => {
 }
 
 export const comparePasswords = (password, cryptedPassword) => {
-  password = formatPassword(password)
+  const formatedPassword = formatPassword(password)
 
-  return crypt.compartPassword(password, cryptedPassword)
+  // accept l'ancien format des mots de passe
+  return crypt.compartPassword(password, cryptedPassword) || crypt.compartPassword(formatedPassword, cryptedPassword)
 }
 
 /**

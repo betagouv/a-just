@@ -19,7 +19,7 @@ export class StatsPage {
   /**
    * Mapbox styling
    */
-  style = 'mapbox://styles/fxbeta/clg6ed492002m01lafhmrc98n'
+  style = environment.mapboxStyle
     /**
    * Center of mapbox
    */
