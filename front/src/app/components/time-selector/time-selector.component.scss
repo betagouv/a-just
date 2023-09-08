@@ -1,13 +1,38 @@
 :host {
+
+    &.white-bg {
+        form {
+            input {
+                background-color: white;
+                border: solid 1px #e5e5e5;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+
+                &.disabled {
+                    pointer-events: none;
+                    cursor: none;
+                    background-color: #b9b8b638;
+                    color: #4e4e4e;
+                }
+            }
+        }
+    }
+
     form {
         position: relative;
 
         input {
+            border-bottom: 2px solid #e5e5e5;
+
             &.changed {
                 color: #000091
             }
 
             max-width: 140px;
+
+            &:focus {
+                border-bottom: 2px solid black;
+            }
         }
 
         img {
@@ -16,6 +41,10 @@
             margin: auto;
             top: 0px;
             bottom: 0px;
+
+            &.disabled {
+                //display: none;
+            }
         }
 
         input:invalid {
@@ -30,5 +59,6 @@
     .disabled {
         pointer-events: none;
         cursor: none;
+        background-color: #b9b8b64a;
     }
 }

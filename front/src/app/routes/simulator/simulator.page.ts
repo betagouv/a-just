@@ -179,7 +179,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Constante en cours d'impression
    */
-  onPrint:boolean=false
+  onPrint: boolean = false
   /**
    * Documentation widget
    */
@@ -268,22 +268,22 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-/**
-   * Commentaires pour PDF
-   */
+  /**
+     * Commentaires pour PDF
+     */
   commentaire: String = ''
   /**
    * Activation du simulator à blanc
    */
-  whiteSimulator:boolean =false
-/**
- * Nombre de jour de simulation à blanc
- */
- whiteNbOfDays:number = 0
-/**
- * Affichage des boutons ajuster et simuler
- */
-displayWhiteElements:boolean = false
+  whiteSimulator: boolean = false
+  /**
+   * Nombre de jour de simulation à blanc
+   */
+  whiteNbOfDays: number = 0
+  /**
+   * Affichage des boutons ajuster et simuler
+   */
+  displayWhiteElements: boolean = false
 
   /**
    * Constructeur
@@ -304,7 +304,7 @@ displayWhiteElements:boolean = false
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
           .slice(0, 10)}`
-        }))
+      }))
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -312,7 +312,7 @@ displayWhiteElements:boolean = false
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
-          .slice(0, 10)}`          
+          .slice(0, 10)}`
       })
     )
 
@@ -325,8 +325,8 @@ displayWhiteElements:boolean = false
     this.watch(
       this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
         this.displayWhiteElements = b
-        if (b===false){
-          this.toDisplaySimulation=false
+        if (b === false) {
+          this.toDisplaySimulation = false
           this.initParamsToAjust()
         }
       })
@@ -391,7 +391,7 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        console.log('Situation actuelle : ',d)
+        console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -399,15 +399,15 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        console.log('Situation proj : ',d)
+        console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-      
-      console.log('Situation simu : ',d)
+
+        console.log('Situation simu : ', d)
 
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
@@ -524,7 +524,7 @@ displayWhiteElements:boolean = false
   /**
    * Action lors de la selection d'une date simulateur à blanc
    */
-  whiteDateSelector(type: string = '', event: any = null){
+  whiteDateSelector(type: string = '', event: any = null) {
     if (type === 'dateStart') {
       this.disabled = 'disabled-date'
       this.dateStart = new Date(event)
@@ -536,7 +536,7 @@ displayWhiteElements:boolean = false
       this.dateStop = new Date(event)
       this.stopRealValue = findRealValue(this.dateStop)
       this.simulatorService.dateStop.next(this.dateStop)
-      this.whiteNbOfDays= nbOfDays(this.dateStart,this.dateStop)
+      this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
     }
   }
   /**
@@ -621,7 +621,7 @@ displayWhiteElements:boolean = false
         ? this.decisionTreeMag
         : this.decisionTreeFon
 
-    
+
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
     if (this.paramsToAjust.param1.input === 0) {
@@ -778,11 +778,11 @@ displayWhiteElements:boolean = false
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-            ? 0
-            : -1
+              ? 0
+              : -1
           : parseFloat(volumeInput) >= 0
-          ? parseFloat(volumeInput)
-          : -1
+            ? parseFloat(volumeInput)
+            : -1
     else if (
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
@@ -888,7 +888,7 @@ displayWhiteElements:boolean = false
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
-          parseFloat(projectedValue as string)
+        parseFloat(projectedValue as string)
       )
     if (
       id === 'realCoverage' &&
@@ -896,7 +896,7 @@ displayWhiteElements:boolean = false
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
-          parseFloat(projectedValue as string)
+        parseFloat(projectedValue as string)
       )
 
     return this.paramsToAjust.param1.label === id
@@ -904,8 +904,8 @@ displayWhiteElements:boolean = false
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -928,7 +928,7 @@ displayWhiteElements:boolean = false
       Math.round(
         (((parseFloat(result) - parseFloat(initialValue)) * 100) /
           parseFloat(initialValue as string)) *
-          100
+        100
       ) / 100
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
@@ -957,14 +957,15 @@ displayWhiteElements:boolean = false
    * @param buttons bouton selecitonné
    */
   initParams(buttons: any) {
-    this.disabled = 'disabled-date'
+    //this.disabled = 'disabled-date'
     this.initParamsToAjust()
 
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
-    this.simulatorService.isValidatedWhiteSimu.next(false)
+    //this.simulatorService.isValidatedWhiteSimu.next(false)
+
   }
 
   initParamsToAjust() {
@@ -1191,9 +1192,9 @@ displayWhiteElements:boolean = false
         const objSecond =
           find && find.secondLocked
             ? find.secondLocked.find(
-                (obj: any) =>
-                  obj.locked === this.pickersParamsToLock[paramNumber]
-              )
+              (obj: any) =>
+                obj.locked === this.pickersParamsToLock[paramNumber]
+            )
             : null
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
@@ -1295,11 +1296,10 @@ displayWhiteElements:boolean = false
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
 
-    const filename = `Simulation-${contentieuLabel}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}.pdf`
+    const filename = `Simulation-${contentieuLabel}_par ${this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}.pdf`
 
 
 
@@ -1323,7 +1323,7 @@ displayWhiteElements:boolean = false
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
+    this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
       exportButton.style.display = 'flex'
@@ -1331,7 +1331,7 @@ displayWhiteElements:boolean = false
       commentArea.style.display = 'block'
       commentAreaCopy.style.display = 'none'
       title.style.display = 'none'
-    })  
+    })
   }
 
   /**
@@ -1404,17 +1404,17 @@ displayWhiteElements:boolean = false
     )
   }
 
-      /**
-   * Troncage valeur numérique
-   */
-      trunc(param: string,
-        data: SimulatorInterface | SimulationInterface | null,
-        initialValue = false,
-        toCompute = false){
-        return Math.trunc(Number(this.getFieldValue(param,data,initialValue,toCompute))*100000)/100000
-      }
+  /**
+* Troncage valeur numérique
+*/
+  trunc(param: string,
+    data: SimulatorInterface | SimulationInterface | null,
+    initialValue = false,
+    toCompute = false) {
+    return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
+  }
 
-      setComment(event:any){
-      this.commentaire = event.target.value      
-      }
+  setComment(event: any) {
+    this.commentaire = event.target.value
+  }
 }

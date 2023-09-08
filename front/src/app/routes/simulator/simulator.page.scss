@@ -25,14 +25,75 @@
 }
 
 :host {
+  .editable-sim-name {
+    margin: 0 4px 0 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #161616;
+    position: absolute;
+    left: 170px;
+    top: 32px;
+  }
+
+  .space {
+    flex: 1;
+  }
+
+  .white-actual-situation-height {
+
+    div.line-title {
+      padding: 0 0;
+      font-weight: bold;
+      width: 160px;
+
+      p {
+        font-size: 12px;
+
+      }
+    }
+
+    height: 70px !important;
+  }
+
   .white-date-selector {
     display: flex;
     align-items: center;
     margin-bottom: 28px;
     justify-content: center;
 
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
     &.white-action-container {
       margin-top: 16px;
+      margin-top: 1px;
+      height: 56px;
+      background: white;
+      position: relative;
+
+      &::before {
+        content: '';
+        height: 100%;
+        width: 24px;
+        position: absolute;
+        top: 0px;
+        left: -24px;
+        background-color: white;
+        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+          0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      &::after {
+        content: '';
+        height: 100%;
+        width: 24px;
+        position: absolute;
+        top: 0px;
+        right: -24px;
+        background-color: white;
+        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+          0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
     }
 
     p {
@@ -46,13 +107,17 @@
     .init-button {
       pointer-events: all;
       cursor: pointer;
-      width: 122px;
       height: 40px;
       margin: 0 8px 0 0;
       padding: 8px 16px;
-      color: #e5e5e5;
-      border: solid 1px #e5e5e5;
+
+      border: solid 1px #000091;
       background-color: white;
+
+      p {
+        color: #000091;
+
+      }
     }
 
     .simulate-button {
@@ -127,48 +192,85 @@
     display: none !important;
   }
 
-  .categories-switch {
+
+  .date-bar-container {
     display: flex;
-    align-items: stretch;
-    height: 55px;
-    z-index: 0;
 
-    >div {
+
+    &.white-border {
+      z-index: 1;
+
+      &::before {
+        content: '';
+        border-bottom: solid 1px #f9f6f2;
+        left: 0px;
+        background-color: white;
+        position: absolute;
+        height: 128px;
+        top: -25px;
+        right: 0px;
+        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+          0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &::before {
+      content: '';
+      border-bottom: solid 1px #f9f6f2;
+      left: 0px;
+      background-color: white;
+      position: absolute;
+      bottom: 450px;
+      top: -25px;
+      right: 0px;
+    }
+
+
+    .categories-switch {
       display: flex;
-      align-items: center;
-      padding: 0 16px;
-      cursor: pointer;
-      border: solid 1px fColor(cgraylightv3);
+      align-items: stretch;
+      height: 55px;
+      z-index: 0;
+      margin-right: 76px;
+      position: relative;
 
-      &.alone {
-        border-radius: 4px;
+      >div {
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        cursor: pointer;
+        border: solid 1px fColor(cgraylightv3);
+
+        &.alone {
+          border-radius: 4px;
+        }
+
+        p {
+          font-size: 16px;
+          line-height: 1.5;
+          margin-left: 8px;
+          color: fColor(colorTag);
+        }
       }
 
-      p {
-        font-size: 16px;
-        line-height: 1.5;
-        margin-left: 8px;
-        color: fColor(colorTag);
+      >.magistrats {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+
+        &.selected {
+          border: solid 1px fColor(cbluedark);
+          background-color: fColor(cbluemiddle);
+        }
       }
-    }
 
-    >.magistrats {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
+      >.fonctionnaires {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
 
-      &.selected {
-        border: solid 1px fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
-      }
-    }
-
-    >.fonctionnaires {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-
-      &.selected {
-        border: solid 1px fColor(cpink);
-        background-color: fColor(cpinkmiddle);
+        &.selected {
+          border: solid 1px fColor(cpink);
+          background-color: fColor(cpinkmiddle);
+        }
       }
     }
   }
@@ -184,17 +286,16 @@
     background-color: #f6f6f6;
     position: relative;
     top: -24px;
-    left: -12px;
     z-index: 1;
 
     &::before {
       content: '';
       border-bottom: solid 1px #f9f6f2;
-      left: -24px;
+      left: -48px;
       position: absolute;
       bottom: -1px;
       top: 0px;
-      right: -36px;
+      right: -24px;
       //border: solid 1px #eee4d9;
       background-color: #f6f6f6;
       //box-shadow: 0 10px 10px -5px rgb(0 0 0 / 4%),
@@ -219,15 +320,13 @@
     opacity: 0.5;
     position: relative;
     //right: 16px;
-    width: 56px;
     cursor: auto;
     display: flex;
-    align-items: center;
-    border-radius: 8px;
-    background-color: #6a6af4;
-    border: 1px solid fColor(borderSelect);
-    padding: 4px 8px;
-    height: 55px;
+    justify-content: center;
+    text-align: center;
+    height: 40px;
+    padding: 8px 24px;
+    border: solid 1px #000091; // #ddd;
     //transform: rotate(+90deg);
 
     &.disabled-date {
@@ -243,7 +342,7 @@
     }
 
     p {
-      color: white !important;
+      color: #000091;
       font-size: 14px;
     }
   }
@@ -353,7 +452,7 @@
     }
 
     .simulation-title {
-      padding-bottom: 30px;
+      padding-bottom: 74px;
       font-size: 22px;
       font-weight: bold;
       line-height: 1.27;
@@ -392,7 +491,7 @@
         //margin-right: 22px;
 
         &:first-child {
-          font-size: 16px;
+          font-size: 14px;
           font-weight: bold;
           padding-left: 24px;
         }
@@ -737,7 +836,7 @@
 
     &.actual-situation-white {
       display: block !important;
-      top: 0px;
+      top: -22px;
     }
 
     &.color-white {
@@ -789,10 +888,14 @@
 
     .line-title {
       padding: 30px 0px;
+      font-weight: bold;
+
       width: 200px;
 
       &:first-child {
-        font-size: 16px;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
         font-weight: bold;
       }
     }
@@ -845,7 +948,7 @@
         cursor: pointer;
         z-index: 1;
         position: absolute;
-        bottom: -15px;
+        bottom: -33px;
         display: block;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -915,6 +1018,10 @@
         border-top-right-radius: 0px;
         background-color: transparent;
         padding-bottom: 5px;
+
+        &.white-button {
+          width: 80% !important;
+        }
 
         &.disable {
           pointer-events: none;
@@ -1022,34 +1129,25 @@
 
   .top-bar-container {
     //z-index: 1;
+    flex: 1;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     position: relative;
-    border-bottom: 1px solid #f9f6f2;
+    //border-bottom: 1px solid #f9f6f2;
     background-color: white;
-    left: -24px;
-    padding: 0px 0px 0px 32px;
+    padding: 0px 0px 0px 0px;
     top: -24px;
     //box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
     //0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
     p {
       white-space: nowrap;
-      padding-top: 24px;
+      padding-bottom: 16px;
       z-index: 1;
+      margin-right: 24px;
+
     }
 
-    &::before {
-      content: '';
-      border-bottom: solid 1px #f9f6f2;
-      /* width: 24px; */
-      left: 0px;
-      background-color: white;
-      position: absolute;
-      bottom: -1px;
-      top: -25px;
-      right: -48px;
-    }
 
     .container-timeline {
       display: block;
@@ -1148,6 +1246,7 @@
     border: 1px solid fColor(borderSelect);
     padding: 4px 8px;
     height: 55px;
+    top: -14px;
 
     &.enable {
       pointer-events: all;
@@ -1176,7 +1275,6 @@
   }
 
   aj-date-select-blue {
-    margin: 0 50px;
     transition-timing-function: linear;
     transition-property: margin-left;
     transition-duration: 0.1s;
@@ -1188,7 +1286,7 @@
     }
 
     &.future {
-      margin-left: 208px;
+      margin-left: 158px;
     }
 
     &.disabled {
@@ -1211,8 +1309,8 @@
     background-color: #ececfe;
     position: relative;
     display: block;
-    margin-left: 74px;
-    margin-right: 74px;
+    margin-left: 24px;
+    margin-right: 24px;
     margin-top: 18px;
 
     .blue-line {
