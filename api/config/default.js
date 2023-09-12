@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL,
+  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -130,8 +130,4 @@ module.exports = {
       delaiAboutLockConnection: 5, // 5 minutes,
     },
   },
-  /**
-   * Juridiction type
-   */
-  juridictionType: process.env.TYPE_ID || 0,
 }

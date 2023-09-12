@@ -25,7 +25,7 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   /**
    * Poste
    */
-  poste?: {label: string, etpt: number, total: number}[]
+  poste?: { label: string; etpt: number; total: number }[]
 }
 
 /**
@@ -65,12 +65,13 @@ export class WorkforceCompositionComponent
       let etpt = 0
       listAgent.map((a) => {
         const etp = a.etp
-        const percent = sumBy(
-          (a.currentActivities || []).filter((c) =>
-            contentieux.includes(c.contentieux.id)
-          ),
-          'percent'
-        ) / 100
+        const percent =
+          sumBy(
+            (a.currentActivities || []).filter((c) =>
+              contentieux.includes(c.contentieux.id)
+            ),
+            'percent'
+          ) / 100
         const indispo = a.hasIndisponibility
 
         let etptAgent = etp * percent - indispo
@@ -81,25 +82,53 @@ export class WorkforceCompositionComponent
         etpt += etptAgent
       })
 
-      const poste: {label: string, etpt: number, total: number}[] = []
-      if(category.categoryId <= 2) {
-        let subTotalEtp: { [key: string]: {etpt: number, total: number} } = this.humanResourceService.calculateSubCategories(category?.hr || [])
+      const poste: { label: string; etpt: number; total: number }[] = []
+      if (category.categoryId <= 2) {
+        let subTotalEtp: { [key: string]: { etpt: number; total: number } } =
+          this.humanResourceService.calculateSubCategories(category?.hr || [])
         Object.entries(subTotalEtp).map((key) => {
           poste.push({
             label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
             etpt: key[1].etpt,
             total: key[1].total,
           })
-        })  
+        })
       }
 
       return {
         ...category,
-        headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
+        headerLabel:
+          category.label && category.label.includes('Magistrat')
+            ? 'Siège'
+            : category.label,
         nbPerson: listAgent.length,
         etpt: fixDecimal(etpt),
         poste,
       }
     })
+  }
+
+  saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
+    if (value) {
+      localStorage.setItem(
+        `CLE-${this.humanResourceService.backupId.getValue()}-${
+          category.categoryId
+        }`,
+        // @ts-ignore
+        value.value
+      )
+    }
+  }
+
+  getCLE(category: listFormatedWithDatasInterface) {
+    if (this.humanResourceService.backupId.getValue()) {
+      return localStorage.getItem(
+        `CLE-${this.humanResourceService.backupId.getValue()}-${
+          category.categoryId
+        }`
+      )
+    }
+
+    return ''
   }
 }
