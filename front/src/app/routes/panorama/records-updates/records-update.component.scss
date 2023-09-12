@@ -3,7 +3,15 @@
 :host {
   display: block;
   padding: 24px;
-  width: 354px;
+  width: 388px;
+
+  table {
+    width: 100%;
+  }
+
+  th, td {
+    white-space: nowrap;
+  }
   
   h3 {
     color: fColor(primary);
@@ -44,14 +52,16 @@
   }
 
   .label {
-    width: 28%;
+    width: 100%;
     line-height: 16px;
+  }
+
+  .percent {
+    padding: 0 8px;
   }
 
   .update {
     font-weight: bold;
-    width: 35%;
-
   }
 
   .update-title {
@@ -61,5 +71,10 @@
   .arrow {
     width: 1%;
     margin-right: 12px;
+
+    mat-icon {
+      position: relative;
+      top: 2px;
+    }
   }
 }
