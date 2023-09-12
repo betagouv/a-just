@@ -3,7 +3,6 @@
 :host {
   display: block;
   padding: 24px;
-  width: 388px;
 
   table {
     width: 100%;
@@ -52,20 +51,18 @@
   }
 
   .label {
-    width: 100%;
     line-height: 16px;
+    width: 142px;
   }
 
   .percent {
     padding: 0 8px;
+    text-align: right;
   }
 
   .update {
     font-weight: bold;
-  }
-
-  .update-title {
-    width: 35%;
+    width: 93px;
   }
 
   .arrow {
