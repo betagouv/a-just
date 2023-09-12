@@ -7,7 +7,8 @@ import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 
-//(229.57 / 12) * 7 * 
+const etpMagFactor = (208 / 12) * 8
+const etpGreffeFactor = (229.57 / 12) * 7
 
 @Component({
   selector: 'aj-editable-situation',
@@ -25,6 +26,7 @@ export class EditableSituationComponent implements OnChanges {
   @Input()
   set category(value: string | null) {
     this._category = value;
+    /**
     if (this._category === 'MAGISTRAT') {
       this.formWhiteSim.controls['etpMag'].enable()
       //this.formWhiteSim.controls['etpFon'].disable()
@@ -33,7 +35,7 @@ export class EditableSituationComponent implements OnChanges {
       this.formWhiteSim.controls['etpMag'].disable()
       //this.formWhiteSim.controls['etpFon'].enable()
     }
-
+    */
   }
   get category(): string | null {
     return this._category;
@@ -148,6 +150,7 @@ export class EditableSituationComponent implements OnChanges {
         this.initFields()
         return
       }
+      const etpFactor = this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor
       let eq = { field: '', value: -1 }
       if (input.field !== undefined) {
         switch (input.field) {
@@ -161,7 +164,7 @@ export class EditableSituationComponent implements OnChanges {
           case 'totalOut': {
             if (actualSituation['totalIn'] !== "" && !this.lockedParams.includes('totalIn') && (this.lockedParams.includes('realCoverage') || actualSituation['realCoverage'] === "")) { eq = { field: "realCoverage", value: actualSituation['totalOut'] / actualSituation['totalIn'] * 100 }; actualSituation['realCoverage'] === "" ? this.lockedParams.push("realCoverage") : null; this.disableElement(eq) }
             if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "")) { eq = { field: "realDTESInMonths", value: actualSituation['totalOut'] / actualSituation['lastStock'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
-            if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "")) { eq = { field: "magRealTimePerCase", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
+            if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "")) { eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
             if (actualSituation['realCoverage'] !== "" && !this.lockedParams.includes('realCoverage') && (this.lockedParams.includes('totalIn') || actualSituation['totalIn'] === "")) { eq = { field: "totalIn", value: actualSituation['totalOut'] / actualSituation['realCoverage'] / 100 }; actualSituation['totalIn'] === "" ? this.lockedParams.push("totalIn") : null; this.disableElement(eq) }
             if (actualSituation['realDTESInMonths'] !== "" && !this.lockedParams.includes('realDTESInMonths') && (this.lockedParams.includes('lastStock') || actualSituation['lastStock'] === "")) { eq = { field: "lastStock", value: actualSituation['realDTESInMonths'] * actualSituation['totalOut'] }; actualSituation['lastStock'] === "" ? this.lockedParams.push("lastStock") : null; this.disableElement(eq) }
             if (actualSituation['magRealTimePerCase'] !== "" && !this.lockedParams.includes('magRealTimePerCase') && (this.lockedParams.includes('etpMag') || actualSituation['etpMag'] === "")) { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }; actualSituation['etpMag'] === "" ? this.lockedParams.push("etpMag") : null; this.disableElement(eq) }
@@ -175,10 +178,10 @@ export class EditableSituationComponent implements OnChanges {
             break
           }
           case 'etpMag': {
-            if (this.lockedParams.includes('magRealTimePerCase') && actualSituation['totalOut'] !== "") eq = { field: "magRealTimePerCase", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['totalOut'] }
-            if (this.lockedParams.includes('totalOut') && actualSituation['magRealTimePerCase'] !== "") eq = { field: "totalOut", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
-            else if (actualSituation['totalOut'] !== "") { eq = { field: "magRealTimePerCase", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['totalOut'] }; this.lockedParams.push("magRealTimePerCase") }
-            else if (actualSituation['magRealTimePerCase'] !== "") { eq = { field: "totalOut", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }; this.lockedParams.push("totalOut") }
+            if (this.lockedParams.includes('magRealTimePerCase') && actualSituation['totalOut'] !== "") eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }
+            if (this.lockedParams.includes('totalOut') && actualSituation['magRealTimePerCase'] !== "") eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
+            else if (actualSituation['totalOut'] !== "") { eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }; this.lockedParams.push("magRealTimePerCase") }
+            else if (actualSituation['magRealTimePerCase'] !== "") { eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }; this.lockedParams.push("totalOut") }
             break
           }
           case 'realCoverage': {
@@ -197,9 +200,9 @@ export class EditableSituationComponent implements OnChanges {
           }
           case 'magRealTimePerCase': {
             if (this.lockedParams.includes('etpMag') && actualSituation['totalOut'] !== "") eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }
-            else if (this.lockedParams.includes('totalOut') && actualSituation['etpMag'] !== "") eq = { field: "totalOut", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
+            else if (this.lockedParams.includes('totalOut') && actualSituation['etpMag'] !== "") eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
             else if (actualSituation['totalOut'] !== "") { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }; this.lockedParams.push("etpMag") }
-            else if (actualSituation['etpMag'] !== "") { eq = { field: "totalOut", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }; this.lockedParams.push("totalOut") }
+            else if (actualSituation['etpMag'] !== "") { eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }; this.lockedParams.push("totalOut") }
             break
           }
         }
@@ -223,7 +226,7 @@ export class EditableSituationComponent implements OnChanges {
 
                   if (actualSituation['totalIn'] !== "" && !this.lockedParams.includes('totalIn') && (this.lockedParams.includes('realCoverage') || actualSituation['realCoverage'] === "") && input.field !== "realCoverage") { eq = { field: "realCoverage", value: actualSituation['totalOut'] / actualSituation['totalIn'] * 100 }; actualSituation['realCoverage'] === "" ? this.lockedParams.push("realCoverage") : null; this.disableElement(eq) }
                   if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "") && input.field !== "realDTESInMonths") { eq = { field: "realDTESInMonths", value: actualSituation['totalOut'] / actualSituation['lastStock'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
-                  if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "") && input.field !== "magRealTimePerCase") { eq = { field: "magRealTimePerCase", value: (17.333 * 8 * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
+                  if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "") && input.field !== "magRealTimePerCase") { eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
                   if (actualSituation['realCoverage'] !== "" && !this.lockedParams.includes('realCoverage') && (this.lockedParams.includes('totalIn') || actualSituation['totalIn'] === "") && input.field !== "totalIn") { eq = { field: "totalIn", value: actualSituation['totalOut'] / actualSituation['realCoverage'] / 100 }; actualSituation['totalIn'] === "" ? this.lockedParams.push("totalIn") : null; this.disableElement(eq) }
                   if (actualSituation['realDTESInMonths'] !== "" && !this.lockedParams.includes('realDTESInMonths') && (this.lockedParams.includes('lastStock') || actualSituation['lastStock'] === "") && input.field !== "lastStock") { eq = { field: "lastStock", value: actualSituation['realDTESInMonths'] * actualSituation['totalOut'] }; actualSituation['lastStock'] === "" ? this.lockedParams.push("lastStock") : null; this.disableElement(eq) }
                   if (actualSituation['magRealTimePerCase'] !== "" && !this.lockedParams.includes('magRealTimePerCase') && (this.lockedParams.includes('etpMag') || actualSituation['etpMag'] === "") && input.field !== "etpMag") { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }; actualSituation['etpMag'] === "" ? this.lockedParams.push("etpMag") : null; this.disableElement(eq) }
@@ -335,7 +338,7 @@ export class EditableSituationComponent implements OnChanges {
     const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
     const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
     const startetpMag = Number(this.formWhiteSim.controls['etpMag'].value)
-    const startetpFon = Number(this.formWhiteSim.controls['etpFon'].value)
+    const startetpFon = Number(this.formWhiteSim.controls['etpMag'].value)
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
 
     const coverage = Math.round((startTotalOut / startTotalIn) * 100)
@@ -363,8 +366,8 @@ export class EditableSituationComponent implements OnChanges {
       totalIn: startTotalIn,
       totalOut: startTotalOut,
       lastStock: startLastStock,
-      etpMag: startetpMag,
-      etpFon: startetpFon,
+      etpMag: this.category === 'MAGISTRAT' ? startetpMag : 0,
+      etpFon: this.category !== 'MAGISTRAT' ? startetpFon : 0,
       etpCont: startetpCont,
       realCoverage: coverage / 100,
       realDTESInMonths: dtes,
@@ -392,8 +395,8 @@ export class EditableSituationComponent implements OnChanges {
       totalIn: startTotalIn,
       totalOut: startTotalOut,
       lastStock: endStock,
-      etpMag: startetpMag,
-      etpFon: startetpFon,
+      etpMag: this.category === 'MAGISTRAT' ? startetpMag : 0,
+      etpFon: this.category !== 'MAGISTRAT' ? startetpFon : 0,
       etpCont: null,
       realCoverage: coverage,
       realDTESInMonths: fixDecimal(endStock / startTotalOut),
