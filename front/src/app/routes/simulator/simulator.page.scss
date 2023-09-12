@@ -1,5 +1,10 @@
 @import '../../styles/utils.scss';
 
+
+.display-none {
+  display: none !important;
+}
+
 ::ng-deep .mat-mdc-tooltip-panel-left {
   width: 100px !important;
   min-width: 100px !important;
@@ -25,6 +30,113 @@
 }
 
 :host {
+
+  .intro-simulateur {
+    .first-pan {
+      padding: 36px 32px;
+      width: 620px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border: solid 1px #ddd;
+      margin: auto;
+      background-color: white;
+      position: relative;
+
+      .intro-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 16px;
+        display: flex;
+
+        img {
+          color: black;
+          margin-right: 8px;
+        }
+      }
+
+      .intro-desc {
+        font-size: 14px;
+        line-height: 1.71;
+        color: #3a3a3a;
+      }
+    }
+
+
+    .second-pan {
+      padding: 24px 32px;
+      width: 620px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border: solid 1px #ddd;
+      border-top: none;
+      margin: auto;
+      background-color: white;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      .blue-pan {
+        padding: 16px 24px;
+        border-radius: 4px;
+        border: solid 1px #0063cb;
+        background-color: #f5f5fe;
+
+        .intro-blue-title {
+          font-size: 16px;
+          font-weight: bold;
+          color: #3a3a3a;
+          margin-bottom: 8px;
+
+          span {
+            width: 103px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 4px;
+            background-color: #e8edff;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            color: #0063cb;
+          }
+        }
+
+        .intro-blue-desc {
+          font-size: 14px;
+          color: #3a3a3a;
+          display: flex;
+          flex-direction: column;
+
+          .button-sim {
+            align-self: flex-end;
+            width: 111px;
+            height: 40px;
+            color: white;
+            text-align: center;
+            margin-top: 16px;
+            padding: 8px 0;
+            background-color: #000091;
+            cursor: pointer;
+          }
+        }
+      }
+
+      .intro-second-title {
+        padding: 24px 24px 0 24px;
+        font-size: 16px;
+        color: #000091;
+        cursor: pointer;
+      }
+
+      .intro-second-desc {
+        padding: 0 24px 24px 24px;
+        font-size: 14px;
+        color: #3a3a3a;
+      }
+
+    }
+
+  }
+
   .editable-sim-name {
     margin: 0 4px 0 8px;
     font-size: 20px;
@@ -32,7 +144,7 @@
     color: #161616;
     position: absolute;
     left: 170px;
-    top: 32px;
+    top: 24px;
   }
 
   .space {
@@ -312,6 +424,26 @@
 
     mat-progress-bar {
       height: 3px;
+    }
+  }
+
+  .back-button {
+    pointer-events: none;
+    opacity: 0.5;
+    position: relative;
+    cursor: auto;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    height: 40px;
+    padding: 8px 24px;
+    border: solid 1px #000091;
+    margin-right: 8px;
+
+    p {
+      color: #000091;
+      bottom: 2px;
+      position: relative;
     }
   }
 
@@ -1279,6 +1411,12 @@
     transition-property: margin-left;
     transition-duration: 0.1s;
     pointer-events: all;
+
+
+    &.start-white-sim {
+      pointer-events: none;
+      cursor: auto;
+    }
 
     &.aj-date-white {
       margin: 0 30px;

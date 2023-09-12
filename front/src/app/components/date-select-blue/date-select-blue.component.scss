@@ -7,6 +7,30 @@ mat-datepicker-popup {
 
 :host {
 
+    &.start-white-sim {
+        .icon {
+            display: none;
+        }
+
+        pointer-events: none;
+        cursor: auto;
+        width: 110px;
+        text-align: center;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            height: 0;
+            width: 0;
+            border-top: 4px solid #ececfe;
+            border-right: 4px solid transparent;
+            border-left: 4px solid transparent;
+            position: absolute;
+            bottom: -4px;
+            left: 20px;
+        }
+    }
+
 
     display: flex;
     position: relative;

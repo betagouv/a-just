@@ -284,7 +284,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Affichage des boutons ajuster et simuler
    */
   displayWhiteElements: boolean = false
-
+  /**
+   * Affichage de l'écran de choix de simulateur
+   */
+  chooseScreen = true
   /**
    * Constructeur
    */
@@ -1308,6 +1311,10 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     const initButton = document.getElementById('main-init')!
     initButton.style.display = 'none'
+
+    const editButton = document.getElementById('editable-sim-name')!
+    if (editButton.innerHTML === "") editButton.style.display = 'none'
+
 
     const exportButton = document.getElementById('export-button')!
     exportButton.style.display = 'none'
