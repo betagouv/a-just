@@ -1,8 +1,6 @@
-require('dotenv').config()
-
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
-    if (process.env.TYPE_ID === 1)
+    if (config.juridictionType === 1)
       await models.Users.create(
         {
           email: 'jimmy2fois@a-just.fr',
