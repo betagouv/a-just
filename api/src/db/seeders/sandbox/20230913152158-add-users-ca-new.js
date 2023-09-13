@@ -1,3 +1,5 @@
+import config from 'config'
+
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     if (config.juridictionType === 1)
