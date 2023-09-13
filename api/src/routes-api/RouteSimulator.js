@@ -13,7 +13,7 @@ export default class RouteSimulator extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'HumanResources' })
   }
 
@@ -37,7 +37,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async getSituation (ctx) {
+  async getSituation(ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -92,7 +92,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async toSimulate (ctx) {
+  async toSimulate(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -108,6 +108,7 @@ export default class RouteSimulator extends Route {
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
 
+    console.log(config.juridictionType)
     this.sendOk(ctx, simulatedSituation)
   }
 }
