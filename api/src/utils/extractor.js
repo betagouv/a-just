@@ -10,7 +10,7 @@ import { getHRVentilation } from '../utils/calculator'
  * @param {*} b
  * @returns boolean
  */
-export function sortByCatAndFct (a, b) {
+export function sortByCatAndFct(a, b) {
   if (a['Catégorie'] === b['Catégorie']) {
     return a.Fonction < b.Fonction ? -1 : 1
   } else {
@@ -23,7 +23,7 @@ export function sortByCatAndFct (a, b) {
  * @param {*} flatReferentielsList
  * @returns
  */
-export function emptyRefObj (flatReferentielsList) {
+export function emptyRefObj(flatReferentielsList) {
   let obj = { ...JSON.parse(JSON.stringify({})) }
   flatReferentielsList.map((referentiel) => {
     if (referentiel.childrens !== undefined) {
@@ -105,10 +105,10 @@ export const getIndispoDetails = (referentiels) => {
     idsMainIndispo = refIndispo.id
     allIndispRef.push(refIndispo)
     idsIndispo.push(refIndispo.id)
-    ;(refIndispo.childrens || []).map((c) => {
-      idsIndispo.push(c.id)
-      allIndispRef.push(c)
-    })
+      ; (refIndispo.childrens || []).map((c) => {
+        idsIndispo.push(c.id)
+        allIndispRef.push(c)
+      })
   }
 
   const allIndispRefIds = allIndispRef.map(function (obj) {
@@ -484,7 +484,7 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
         //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
-      console.log(categoryName.toUpperCase(), categoryFilter.toUpperCase())
+
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({

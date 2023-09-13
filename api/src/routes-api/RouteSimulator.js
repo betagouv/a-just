@@ -68,6 +68,7 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
+    console.log()
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
