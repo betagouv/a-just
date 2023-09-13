@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 import { EXECUTE_SIMULATION } from '../constants/log-codes'
+import config from 'config'
 
 /**
  * Route pour la page du simulateur
