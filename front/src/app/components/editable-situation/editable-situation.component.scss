@@ -6,6 +6,7 @@
     width: 80%;
   }
 
+
   .white-begin-situation {
     .items {
       top: auto !important;
@@ -22,14 +23,22 @@
       align-items: center;
       justify-content: center;
       display: flex;
-      background-color: #000091;
       width: 72px;
       height: 40px;
       margin: 1px 0 1px 8px;
       padding: 4px 12px;
       right: 0px;
       position: relative;
+      background-color: #000091;
+      border: 1px solid #000091;
       color: white;
+
+      &.disable-button-validate {
+        background-color: gray !important;
+        color: white;
+        border: 1px solid gray;
+
+      }
 
       &.effacer {
         background-color: white;
@@ -46,7 +55,10 @@
       flex: 1.93 !important;
       height: 70px !important;
       font-size: 14px;
+      background-color: white;
     }
+
+
 
     .edit-button {
       background-color: #e5e5e580;

@@ -4,7 +4,7 @@
       <p>Entrées moyennes mensuelles</p>
     </div>
     <div class="item">
-      <p>Sorties mensuelles possibles</p>
+      <p>Sorties mensuelles</p>
     </div>
     <div class="item blue-bg">
       <p>Stock</p>
@@ -13,7 +13,7 @@
       <p>ETPT</p>
     </div>
     <div class="item blue-bg">
-      <p>Taux de couverture</p>
+      <p>Taux de couverture en %</p>
     </div>
     <div class="item">
       <p>DTES en mois</p>
@@ -72,7 +72,8 @@
       <div class="line-item validate-button" *ngIf="!isValidatedWhiteSimu; else locked">
         <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked"
           class="validate-label effacer">Effacer</label>
-        <label (click)="validateWhiteSimulator()" class="validate-label">Valider</label>
+        <label (click)="validateWhiteSimulator()" class="validate-label"
+          [ngClass]="{'disable-button-validate': checkIfEmptyValue()}">Valider</label>
       </div>
       <ng-template #locked>
         <div class="line-item validate-button validate-button" (click)="editWhiteSimulator()">
