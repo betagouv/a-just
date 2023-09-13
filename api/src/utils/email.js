@@ -14,7 +14,7 @@ apiKey.apiKey = config.sendinblue
  * @param {*} params
  * @returns instance de transaction mail
  */
-export function sentEmail (to, templateId, params, options = {}) {
+export function sentEmail(to, templateId, params, options = {}) {
   if (!config.sentEmail) {
     console.log('TEST Mail sent', {
       to: [to],
@@ -55,7 +55,7 @@ export function sentEmail (to, templateId, params, options = {}) {
  * @param {*} addToList
  * @returns
  */
-export function sentEmailSendinblueUserList (user, addToList = true) {
+export function sentEmailSendinblueUserList(user, addToList = true) {
   let apiInstance = new SibApiV3Sdk.ContactsApi()
 
   if (addToList) {

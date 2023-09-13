@@ -8,12 +8,28 @@
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
 
+                text-align: center;
+
                 &.disabled {
                     pointer-events: none;
                     cursor: none;
                     background-color: #b9b8b638;
                     color: #4e4e4e;
                 }
+
+                &:focus {
+                    outline: none;
+                    border-bottom: 2px solid black;
+
+                }
+
+                &.changed {
+                    color: black;
+                }
+            }
+
+            img {
+                display: none;
             }
         }
     }

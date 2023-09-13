@@ -143,13 +143,18 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   async changeInRealTime(val: any) {
+    console.log('CHANGE', this.pressedKey)
     if (this.pressedKey === true) {
+
       this.pressedKey = false
       let { actualSituation, input } = this.getUpdatedFormValue(val)
       if (input.value === -1) {
         this.initFields()
         return
       }
+
+      console.log('CHANGE2', actualSituation, input)
+
       const etpFactor = this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor
       let eq = { field: '', value: -1 }
       if (input.field !== undefined) {
@@ -199,9 +204,10 @@ export class EditableSituationComponent implements OnChanges {
             break
           }
           case 'magRealTimePerCase': {
-            if (this.lockedParams.includes('etpMag') && actualSituation['totalOut'] !== "") eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }
+            console.log("ON EST OU", actualSituation['totalOut'])
+            if (this.lockedParams.includes('etpMag') && actualSituation['totalOut'] !== "") eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / etpFactor }
             else if (this.lockedParams.includes('totalOut') && actualSituation['etpMag'] !== "") eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
-            else if (actualSituation['totalOut'] !== "") { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / (17.333 * 8) }; this.lockedParams.push("etpMag") }
+            else if (actualSituation['totalOut'] !== "") { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / etpFactor }; this.lockedParams.push("etpMag") }
             else if (actualSituation['etpMag'] !== "") { eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }; this.lockedParams.push("totalOut") }
             break
           }
@@ -319,6 +325,7 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   editWhiteSimulator() {
+    console.log(this.formWhiteSim)
     this.isValidatedWhiteSimu = false
     this.displayEndSituation = false
     this.simulatorService.isValidatedWhiteSimu.next(false)
@@ -445,7 +452,13 @@ export class EditableSituationComponent implements OnChanges {
   updateTimeValue(value: Number) {
     //this.pressedKey = true
     console.log('LABA', value)
-    if (value !== 0) this.formWhiteSim.patchValue({ magRealTimePerCase: String(value) })
+    if (value !== 0) {
+      //this.formWhiteSim.patchValue({ magRealTimePerCase: String(value) })
+      this.pressedKey = true
+      this.formWhiteSim.get('magRealTimePerCase')?.setValue(String(value))
+      console.log('LABA2', value)
+
+    }
     if (this.lockedParams.includes("magRealTimePerCase")) {
       const element = document.querySelector("#magRealTimePerCase");
       element?.classList.add('grey-bg-disabled')
@@ -453,5 +466,14 @@ export class EditableSituationComponent implements OnChanges {
       this.disabledTmd = true
       this.defaultTmd = -1
     }
+  }
+
+  checkIfEmptyValue() {
+    let counter = 0
+    for (const field in this.formWhiteSim.controls) { // 'field' is a string
+      const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl  
+      if (control === '') counter++
+    }
+    return counter <= 2 ? false : true
   }
 }
