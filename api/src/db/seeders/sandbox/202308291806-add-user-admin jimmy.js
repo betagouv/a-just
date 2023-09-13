@@ -1,6 +1,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
-    if (process.env.TYPE_ID === 1) {
+    console.log('TYPE ID', process.env.TYPE_ID)
+    if (process.env.TYPE_ID === 0) {
+      console.log('TYPE ID TEST', process.env.TYPE_ID)
       await models.Users.create(
         {
           email: 'jimmy.chevallier2@a-just.fr',
