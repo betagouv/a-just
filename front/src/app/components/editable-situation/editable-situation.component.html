@@ -1,22 +1,16 @@
 <div class="white-begin-situation">
   <div class="items before-after">
     <div class="item blue-bg">
-      <p>Entrées</p>
+      <p>Entrées moyennes mensuelles</p>
     </div>
     <div class="item">
-      <p>Sorties</p>
+      <p>Sorties mensuelles possibles</p>
     </div>
     <div class="item blue-bg">
       <p>Stock</p>
     </div>
     <div class="item">
-      <p>ETPT siège</p>
-    </div>
-    <div class="item blue-bg">
-      <p>ETPT greffe</p>
-    </div>
-    <div class="item">
-      <p>ETPT EAM</p>
+      <p>ETPT</p>
     </div>
     <div class="item blue-bg">
       <p>Taux de couverture</p>
@@ -25,7 +19,7 @@
       <p>DTES en mois</p>
     </div>
     <div class="item blue-bg">
-      <p>Temps moyen / dossier</p>
+      <p>Temps moyen / dossier en hh:mm</p>
     </div>
     <div class="item end-item">
       <p></p>
@@ -36,58 +30,60 @@
     <div class="actual-situation">
       <div class="line-title">
         <p>
-          Situation de début (à compléter)
+          Situation <br />à aujourd'hui
         </p>
       </div>
       <form class="editable-line" [formGroup]="formWhiteSim">
         <div class="line-item orange-bg">
-          <input formControlName="totalIn" (keypress)="validateNo($event)" type="text"
+          <input formControlName="totalIn" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item">
-          <input formControlName="totalOut" (keypress)="validateNo($event)" type="text"
+          <input formControlName="totalOut" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item orange-bg">
-          <input formControlName="lastStock" (keypress)="validateNo($event)" type="text"
+          <input formControlName="lastStock" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item" [ngClass]="{'grey-bg-disabled':category!=='MAGISTRAT'}">
-          <input formControlName="etpMag" (keypress)="validateNo($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category==='MAGISTRAT', 'disabled':category!=='MAGISTRAT'}" />
+        <div class="line-item">
+          <input formControlName="etpMag" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item " [ngClass]="{'grey-bg-disabled':category==='MAGISTRAT'}">
-          <input formControlName="etpFon" (keypress)="validateNo($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true && category!=='MAGISTRAT', 'disabled':category==='MAGISTRAT'}" />
+        <div class="line-item">
+          <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text" />
         </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
+        <div class="line-item">
+          <input formControlName="realDTESInMonths" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text" />
         </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="realCoverage" type="text" class="disabled" />
-        </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="realDTESInMonths" type="text" class="disabled" />
-        </div>
-        <div class="line-item grey-bg-disabled">
-          <input formControlName="magRealTimePerCase" type="text" class="disabled" />
+        <div class="line-item">
+          <app-time-selector class="white-bg" id="magRealTimePerCase" [value]="getStartTmd()"
+            [defaultValue]="defaultTmd" (valueChange)="updateTimeValue($event)" [disabled]="disabledTmd"
+            [category]="'MAGISTRATS'"></app-time-selector>
         </div>
       </form>
 
-      <div class="line-item validate-button">
-        <label (click)="validateWhiteSimulator()" *ngIf="!isValidatedWhiteSimu; else locked"
-          class="validate-label">Valider</label>
-        <ng-template #locked>
-          <div class="validate-label" (click)="editWhiteSimulator()">
-            Editer</div>
-        </ng-template>
-
+      <div class="line-item validate-button" *ngIf="!isValidatedWhiteSimu; else locked">
+        <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked"
+          class="validate-label effacer">Effacer</label>
+        <label (click)="validateWhiteSimulator()" class="validate-label">Valider</label>
       </div>
+      <ng-template #locked>
+        <div class="line-item validate-button validate-button" (click)="editWhiteSimulator()">
+          <label class="validate-label effacer">Modifier</label>
+        </div>
+      </ng-template>
     </div>
-    <div class="actual-situation color-blue" *ngIf="displayEndSituation">
+    <div class="actual-situation color-blue end-situation" *ngIf="displayEndSituation">
       <div class="line-title">
         <p>
-          Situation de fin
+          Situation <br /> au {{endDateToDisplay}}
         </p>
       </div>
       <form class="editable-line" [formGroup]="formWhiteSim">
@@ -100,16 +96,11 @@
         <div class="line-item grey-bg">
           <input [value]="endSituation.lastStock" (keypress)="validateNo($event)" type="text" class="disabled" />
         </div>
-        <div class="line-item" [ngClass]="{'grey-bg-disabled':category!=='MAGISTRAT'}">
-          <input [value]="category==='MAGISTRAT'?endSituation.etpMag:''" (keypress)="validateNo($event)" type="text"
-            class="disabled" />
+        <div class="line-item" *ngIf="category === 'MAGISTRAT'">
+          <input [value]="endSituation.etpMag" (keypress)="validateNo($event)" type="text" class="disabled" />
         </div>
-        <div class="line-item" [ngClass]="{'grey-bg-disabled':category==='MAGISTRAT'}">
-          <input [value]="category!=='MAGISTRAT'?endSituation.etpFon:''" (keypress)="validateNo($event)" type="text"
-            class="disabled" />
-        </div>
-        <div class="line-item grey-bg-disabled">
-          <input [value]="endSituation.etpCont" (keypress)="validateNo($event)" type="text" class="disabled" />
+        <div class="line-item" *ngIf="category !== 'MAGISTRAT'">
+          <input [value]="endSituation.etpFon" (keypress)="validateNo($event)" type="text" class="disabled" />
         </div>
         <div class="line-item grey-bg">
           <input [value]="endSituationDisplay.realCoverage" type="text" class="disabled" />
