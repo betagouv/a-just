@@ -7,7 +7,7 @@ module.exports = {
       console.log('TYPE ID TEST', process.env.TYPE_ID)
       await models.Users.create(
         {
-          email: 'jimmy.chevallier2@a-just.fr',
+          email: 'jimmy.chevallier@a-just.fr',
           first_name: 'Jimmy',
           last_name: 'CR',
           password: '123456',
