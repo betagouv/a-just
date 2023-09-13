@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     console.log('TYPE ID', process.env.TYPE_ID)
