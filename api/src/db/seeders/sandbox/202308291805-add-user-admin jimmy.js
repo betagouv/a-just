@@ -3,7 +3,7 @@ module.exports = {
     if (process.env.TYPE_ID === 1) {
       await models.Users.create(
         {
-          email: 'jimmy.chevallier@a-just.fr',
+          email: 'jimmy.chevallier2@a-just.fr',
           first_name: 'Jimmy',
           last_name: 'CR',
           password: '123456',
