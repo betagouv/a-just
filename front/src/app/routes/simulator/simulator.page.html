@@ -642,7 +642,7 @@
         (click)="initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser les ajustements</p>
       </div>
-      <div class="simulate-button">
+      <div class="simulate-button {{simulateButton}}">
         <p class="title"
           (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
           Simuler</p>

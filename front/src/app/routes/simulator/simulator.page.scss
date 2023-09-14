@@ -179,7 +179,7 @@
     &.white-action-container {
       margin-top: 16px;
       margin-top: 1px;
-      height: 56px;
+      height: 110px;
       background: white;
       position: relative;
 
@@ -191,8 +191,6 @@
         top: 0px;
         left: -24px;
         background-color: white;
-        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-          0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
 
       &::after {
@@ -203,8 +201,6 @@
         top: 0px;
         right: -24px;
         background-color: white;
-        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-          0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
     }
 
@@ -585,6 +581,7 @@
 
     .simulation-title {
       padding-bottom: 74px;
+      padding-top: 30px;
       font-size: 22px;
       font-weight: bold;
       line-height: 1.27;
@@ -1386,6 +1383,7 @@
       background-color: #000091;
       color: white;
       opacity: 1;
+      margin-top: 30px;
 
       p.title {
         color: white;
