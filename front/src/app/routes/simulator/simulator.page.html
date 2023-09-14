@@ -939,6 +939,10 @@
     <p class="title">{{printTitle}}</p>
   </div>
 
+  <div id="main-back-menu" class="back-button-menu" (click)="resetParams();chooseScreen=true" *ngIf="!chooseScreen">
+    <p class="title">Retour</p>
+  </div>
+
   <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()" *ngIf="!chooseScreen">
     <p class="title">Tout réinitialiser</p>
   </div>

@@ -216,7 +216,7 @@ export class EditableSituationComponent implements OnChanges {
               switch (key) {
                 case 'totalOut': {
                   if (actualSituation['totalIn'] !== "" && !this.lockedParams.includes('totalIn') && (this.lockedParams.includes('realCoverage') || actualSituation['realCoverage'] === "") && input.field !== "realCoverage") { eq = { field: "realCoverage", value: actualSituation['totalOut'] / actualSituation['totalIn'] * 100 }; actualSituation['realCoverage'] === "" ? this.lockedParams.push("realCoverage") : null; this.disableElement(eq) }
-                  if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "") && input.field !== "realDTESInMonths") { eq = { field: "realDTESInMonths", value: actualSituation['totalOut'] / actualSituation['lastStock'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
+                  if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "") && input.field !== "realDTESInMonths") { eq = { field: "realDTESInMonths", value: actualSituation['lastStock'] / actualSituation['totalOut'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
                   if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "") && input.field !== "magRealTimePerCase") { eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
                   if (actualSituation['realCoverage'] !== "" && !this.lockedParams.includes('realCoverage') && (this.lockedParams.includes('totalIn') || actualSituation['totalIn'] === "") && input.field !== "totalIn") { eq = { field: "totalIn", value: actualSituation['totalOut'] / actualSituation['realCoverage'] / 100 }; actualSituation['totalIn'] === "" ? this.lockedParams.push("totalIn") : null; this.disableElement(eq) }
                   if (actualSituation['realDTESInMonths'] !== "" && !this.lockedParams.includes('realDTESInMonths') && (this.lockedParams.includes('lastStock') || actualSituation['lastStock'] === "") && input.field !== "lastStock") { eq = { field: "lastStock", value: actualSituation['realDTESInMonths'] * actualSituation['totalOut'] }; actualSituation['lastStock'] === "" ? this.lockedParams.push("lastStock") : null; this.disableElement(eq) }
@@ -286,7 +286,7 @@ export class EditableSituationComponent implements OnChanges {
       magRealTimePerCase,
     } = this.formWhiteSim.value
 
-    if (![totalIn, totalOut, lastStock].includes('') && (etpMag !== '' || etpFon !== '')) {
+    if (![totalIn, totalOut, lastStock].includes('') && ![totalIn, totalOut].includes('0') && (etpMag !== '' || etpFon !== '')) {
       this.generateEndSituation()
       this.isValidatedWhiteSimu = true
       this.displayEndSituation = true
@@ -443,10 +443,14 @@ export class EditableSituationComponent implements OnChanges {
 
   checkIfEmptyValue() {
     let counter = 0
+    let infiniteValue = false
+
     for (const field in this.formWhiteSim.controls) { // 'field' is a string
       const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl  
+      if (['totalIn', 'totalOut'].includes(field) && control === '0') infiniteValue = true
       if (control === '') counter++
     }
+    if (infiniteValue) return true
     return counter <= 2 ? false : true
   }
 
@@ -460,6 +464,6 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   getTooltipText() {
-    return 'L\'ensemble des champs de la situation initiale doivent être remplis afin de pouvoir passer à l\'étape suivante. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées et les sorties.'
+    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
   }
 }
