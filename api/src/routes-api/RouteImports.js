@@ -72,6 +72,7 @@ export default class RouteImports extends Route {
     accesses: [Access.isAdmin],
   })
   async importActivities (ctx) {
+    console.log('oui? import activities')
     const { backupId, file } = this.body(ctx)
 
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
