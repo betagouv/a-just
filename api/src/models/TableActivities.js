@@ -238,21 +238,10 @@ export default (sequelizeInstance, Model) => {
    * @param {*} minPeriode
    * @returns
    */
-  Model.cleanActivities = async (HRBackupId, minPeriode = null) => {
+  Model.cleanActivities = async (HRBackupId, minPeriode) => {
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
 
-    if (!minPeriode) {
-      const minPeriodeFromDB = await Model.min('periode', {
-        where: {
-          hr_backup_id: HRBackupId,
-        },
-      })
-
-      if (minPeriodeFromDB) {
-        minPeriode = new Date(minPeriodeFromDB)
-      }
-    }
-
+    console.log('MIN PERIODE', HRBackupId, minPeriode)
     if (!minPeriode) {
       return // stop we don't have values to analyse
     }
@@ -571,11 +560,17 @@ export default (sequelizeInstance, Model) => {
   Model.importMultipleJuridictions = async (csv) => {
     const contentieuxIds = {}
     const listBackupId = []
-    let minDate = null
+    let minDate = {}
+    const tmpJuridictions = {}
 
     for (let i = 0; i < csv.length; i++) {
       const code = csv[i].code_import
-      const HRBackupId = await Model.models.HRBackups.findOrCreateLabel(csv[i].juridiction)
+      let HRBackupId = tmpJuridictions[csv[i].juridiction]
+
+      if (!HRBackupId) {
+        HRBackupId = await Model.models.HRBackups.findOrCreateLabel(csv[i].juridiction)
+        tmpJuridictions[csv[i].juridiction] = HRBackupId
+      }
 
       if (HRBackupId === null) {
         continue
@@ -593,6 +588,7 @@ export default (sequelizeInstance, Model) => {
             code_import: code,
           },
           raw: true,
+          logging: false,
         })
 
         if (contentieux) {
@@ -605,11 +601,8 @@ export default (sequelizeInstance, Model) => {
         const month = +csv[i].periode.slice(-2) - 1
         const periode = new Date(year, month)
 
-        if (minDate === null || periode.getTime() < minDate.getTime()) {
-          minDate = new Date(periode)
-        }
-
         const findExist = await Model.findOne({
+          attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
           where: {
             hr_backup_id: HRBackupId,
             contentieux_id: contentieuxIds[code],
@@ -617,26 +610,36 @@ export default (sequelizeInstance, Model) => {
               [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
           },
+          raw: true,
+          logging: false,
         })
 
         // clean null values
-        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
-        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
-        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : csv[i].stock
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : +csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : +csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : +csv[i].stock
 
         // if existe update content
         if (
           findExist &&
-          (csv[i].entrees !== findExist.dataValues.original_entrees ||
-            csv[i].sorties !== findExist.dataValues.original_sorties ||
-            csv[i].stock !== findExist.dataValues.original_stock)
+          (csv[i].entrees !== findExist.original_entrees || csv[i].sorties !== findExist.original_sorties || csv[i].stock !== findExist.original_stock)
         ) {
-          await findExist.update({
+          // save min date
+          if (!minDate[HRBackupId] || startOfMonth(periode).getTime() < minDate[HRBackupId].getTime()) {
+            minDate[HRBackupId] = new Date(startOfMonth(periode))
+          }
+
+          await Model.updateById(findExist.id, {
             original_entrees: csv[i].entrees,
             original_sorties: csv[i].sorties,
             original_stock: csv[i].stock,
           })
         } else if (!findExist) {
+          // save min date
+          if (!minDate[HRBackupId] || startOfMonth(periode).getTime() < minDate[HRBackupId].getTime()) {
+            minDate[HRBackupId] = new Date(startOfMonth(periode))
+          }
+
           // else create
           await Model.create({
             hr_backup_id: HRBackupId,
@@ -651,7 +654,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     for (let i = 0; i < listBackupId.length; i++) {
-      await Model.cleanActivities(listBackupId[i], minDate)
+      await Model.cleanActivities(listBackupId[i], minDate[listBackupId[i]])
     }
   }
 
