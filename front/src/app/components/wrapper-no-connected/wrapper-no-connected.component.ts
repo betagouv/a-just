@@ -17,4 +17,8 @@ export class WrapperNoConnectedComponent {
    * Titre de la page du paneau gauche
    */
   @Input() title: string = ''
+  /**
+   * Affiche ou non le paneau de gauche
+   */
+  @Input() showLeftPanel: boolean = true
 }

@@ -1,5 +1,5 @@
 <div class="main-container">
-  <div class="title-panel">
+  <div class="title-panel" *ngIf="showLeftPanel">
     <h2 *ngIf="title" [innerHTML]="title"></h2>
   </div>
   <div class="content-panel">
