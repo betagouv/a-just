@@ -128,6 +128,7 @@ export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
     const listAll = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
+      order: [['label', 'asc']],
       raw: true,
     })
     const list = []
