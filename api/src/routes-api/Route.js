@@ -158,6 +158,7 @@ function isLogin (ctx) {
  * @returns
  */
 function isAdmin (ctx) {
+  console.log('IS ADMIN', ctx.body.user.role, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1)
   return !!ctx.body.user && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
 }
 
