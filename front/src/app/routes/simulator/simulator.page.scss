@@ -6,12 +6,17 @@
 }
 
 ::ng-deep .mat-mdc-tooltip-panel-left {
-  width: 100px !important;
+  //width: 100px !important;
   min-width: 100px !important;
+  text-align: center;
 
-  .mdc-tooltip__surface {
-    background-color: #000091;
-    border: solid 1px #000091;
+  .tooltip-gray {
+    .mdc-tooltip__surface {
+      background-color: #000091;
+      border: solid 1px #000091;
+      font-size: 12px;
+      text-align: center;
+    }
   }
 
   .tooltip-orange {
@@ -144,7 +149,9 @@
     color: #161616;
     position: absolute;
     left: 170px;
-    top: 24px;
+    top: 26px;
+    max-width: 400px;
+    line-height: 20px;
   }
 
   .space {
@@ -441,6 +448,26 @@
       bottom: 2px;
       position: relative;
     }
+  }
+
+  .back-button-menu {
+
+    cursor: pointer;
+    margin-right: 8px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    height: 40px;
+    padding: 8px 24px;
+    background-color: #000091;
+
+    .title {
+      color: white !important;
+      font-size: 14px;
+    }
+
+    border: solid 1px #000091; // #ddd;
   }
 
   .reset-button {

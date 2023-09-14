@@ -1,5 +1,13 @@
 :host {
 
+    &.disabled-tmd {
+        div>form>input {
+            background-color: rgba(185, 184, 182, 0.2901960784);
+            cursor: initial;
+            pointer-events: none;
+        }
+    }
+
     &.white-bg {
         form {
             input {

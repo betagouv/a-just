@@ -1313,6 +1313,9 @@ export class SimulatorPage extends MainClass implements OnInit {
     const initButton = document.getElementById('main-init')!
     initButton.style.display = 'none'
 
+    const backButton = document.getElementById('main-back-menu')!
+    backButton.style.display = 'none'
+
     const editButton = document.getElementById('editable-sim-name')!
     if (editButton.innerHTML === "") editButton.style.display = 'none'
 
@@ -1338,6 +1341,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       initButton.style.display = 'flex'
       commentArea.style.display = 'block'
       editButton.style.display = 'block'
+      backButton.style.display = 'block'
       commentAreaCopy.style.display = 'none'
       title.style.display = 'none'
     })
