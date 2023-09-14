@@ -1299,7 +1299,8 @@ export class SimulatorPage extends MainClass implements OnInit {
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
 
-    const filename = `Simulation-${contentieuLabel}_par ${this.userService.user.getValue()!.firstName
+
+    const filename = `Simulation-${contentieuLabel || document.getElementById('editable-sim-name')?.innerText || 'A-JUST'}_par ${this.userService.user.getValue()!.firstName
       }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
         .toJSON()
         .slice(0, 10)}.pdf`
@@ -1336,6 +1337,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       exportButton.style.display = 'flex'
       initButton.style.display = 'flex'
       commentArea.style.display = 'block'
+      editButton.style.display = 'block'
       commentAreaCopy.style.display = 'none'
       title.style.display = 'none'
     })

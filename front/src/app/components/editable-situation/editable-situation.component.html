@@ -73,7 +73,10 @@
         <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked"
           class="validate-label effacer">Effacer</label>
         <label (click)="validateWhiteSimulator()" class="validate-label"
-          [ngClass]="{'disable-button-validate': checkIfEmptyValue()}">Valider</label>
+          [ngClass]="{'disable-button-validate': checkIfEmptyValue()}" #tooltip="matTooltip"
+          [matTooltipDisabled]="!checkIfEmptyValue()" [matTooltip]="getTooltipText()"
+          [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="after" matTooltipShowDelay="0"
+          matTooltipHideDelay="0">Valider</label>
       </div>
       <ng-template #locked>
         <div class="line-item validate-button validate-button" (click)="editWhiteSimulator()">
