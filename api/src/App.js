@@ -17,7 +17,7 @@ import { tracingMiddleWare, requestHandler } from './utils/sentry'
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -26,7 +26,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -43,7 +43,8 @@ export default class App extends AppBase {
 
     super.addMiddlewares([
       // we add the relevant middlewares to our API
-      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      cors({ credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
       koaBody({
         multipart: true,
@@ -64,7 +65,7 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-      csp({
+      /*csp({
         enableWarn: true,
         policy: {
           'default-src': ['none'],
@@ -90,7 +91,7 @@ export default class App extends AppBase {
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
         },
-      }),
+      }),*/
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
@@ -101,9 +102,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
