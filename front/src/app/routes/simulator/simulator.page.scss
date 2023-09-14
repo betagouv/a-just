@@ -6,12 +6,17 @@
 }
 
 ::ng-deep .mat-mdc-tooltip-panel-left {
-  width: 100px !important;
+  //width: 100px !important;
   min-width: 100px !important;
+  text-align: center;
 
-  .mdc-tooltip__surface {
-    background-color: #000091;
-    border: solid 1px #000091;
+  .tooltip-gray {
+    .mdc-tooltip__surface {
+      background-color: #000091;
+      border: solid 1px #000091;
+      font-size: 12px;
+      text-align: center;
+    }
   }
 
   .tooltip-orange {
@@ -144,7 +149,9 @@
     color: #161616;
     position: absolute;
     left: 170px;
-    top: 24px;
+    top: 26px;
+    max-width: 400px;
+    line-height: 20px;
   }
 
   .space {
@@ -179,7 +186,7 @@
     &.white-action-container {
       margin-top: 16px;
       margin-top: 1px;
-      height: 56px;
+      height: 110px;
       background: white;
       position: relative;
 
@@ -191,8 +198,6 @@
         top: 0px;
         left: -24px;
         background-color: white;
-        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-          0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
 
       &::after {
@@ -203,8 +208,6 @@
         top: 0px;
         right: -24px;
         background-color: white;
-        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-          0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
     }
 
@@ -447,6 +450,26 @@
     }
   }
 
+  .back-button-menu {
+
+    cursor: pointer;
+    margin-right: 8px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    height: 40px;
+    padding: 8px 24px;
+    background-color: #000091;
+
+    .title {
+      color: white !important;
+      font-size: 14px;
+    }
+
+    border: solid 1px #000091; // #ddd;
+  }
+
   .reset-button {
     pointer-events: none;
     opacity: 0.5;
@@ -585,6 +608,7 @@
 
     .simulation-title {
       padding-bottom: 74px;
+      padding-top: 30px;
       font-size: 22px;
       font-weight: bold;
       line-height: 1.27;
@@ -1386,6 +1410,7 @@
       background-color: #000091;
       color: white;
       opacity: 1;
+      margin-top: 30px;
 
       p.title {
         color: white;

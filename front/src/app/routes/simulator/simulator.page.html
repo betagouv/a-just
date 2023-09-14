@@ -642,7 +642,7 @@
         (click)="initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser les ajustements</p>
       </div>
-      <div class="simulate-button">
+      <div class="simulate-button {{simulateButton}}">
         <p class="title"
           (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
           Simuler</p>
@@ -937,6 +937,10 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
 
     <p class="title">{{printTitle}}</p>
+  </div>
+
+  <div id="main-back-menu" class="back-button-menu" (click)="resetParams();chooseScreen=true" *ngIf="!chooseScreen">
+    <p class="title">Retour</p>
   </div>
 
   <div id="main-init" class="reset-button {{disabled}}" (click)="resetParams()" *ngIf="!chooseScreen">

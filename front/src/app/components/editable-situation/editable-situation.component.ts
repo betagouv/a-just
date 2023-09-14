@@ -143,18 +143,14 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   async changeInRealTime(val: any) {
-    console.log('CHANGE', this.pressedKey)
     if (this.pressedKey === true) {
 
       this.pressedKey = false
       let { actualSituation, input } = this.getUpdatedFormValue(val)
-      if (input.value === -1) {
+      if (input.value === -1 && this.checkIfEmptyCounter() !== 1) {
         this.initFields()
         return
       }
-
-      console.log('CHANGE2', actualSituation, input)
-
       const etpFactor = this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor
       let eq = { field: '', value: -1 }
       if (input.field !== undefined) {
@@ -204,7 +200,6 @@ export class EditableSituationComponent implements OnChanges {
             break
           }
           case 'magRealTimePerCase': {
-            console.log("ON EST OU", actualSituation['totalOut'])
             if (this.lockedParams.includes('etpMag') && actualSituation['totalOut'] !== "") eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / etpFactor }
             else if (this.lockedParams.includes('totalOut') && actualSituation['etpMag'] !== "") eq = { field: "totalOut", value: (etpFactor * actualSituation['etpMag']) / actualSituation['magRealTimePerCase'] }
             else if (actualSituation['totalOut'] !== "") { eq = { field: "etpMag", value: actualSituation['magRealTimePerCase'] * actualSituation['totalOut'] / etpFactor }; this.lockedParams.push("etpMag") }
@@ -215,23 +210,13 @@ export class EditableSituationComponent implements OnChanges {
 
         if (eq.field && !isNaN(eq.value)) {
           actualSituation = { ...actualSituation, [eq.field]: String(eq.value) }
-          //console.log(actualSituation)
           this.disableElement(eq)
           if (eq.field === 'totalOut') {
-            console.log('TOTAL OUT CALCULATED')
             Object.keys(this.formWhiteSim.controls).forEach((key) => {
-              /**
-              if (this.formWhiteSim.get(key)!.value === "")
-                //console.log('this key: ' + key);
-                //console.log(this.lockedParams, eq.field)
-                console.log('TOTAL OUT CASE0')
- */
               switch (key) {
                 case 'totalOut': {
-                  console.log('TOTAL OUT CASE')
-
                   if (actualSituation['totalIn'] !== "" && !this.lockedParams.includes('totalIn') && (this.lockedParams.includes('realCoverage') || actualSituation['realCoverage'] === "") && input.field !== "realCoverage") { eq = { field: "realCoverage", value: actualSituation['totalOut'] / actualSituation['totalIn'] * 100 }; actualSituation['realCoverage'] === "" ? this.lockedParams.push("realCoverage") : null; this.disableElement(eq) }
-                  if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "") && input.field !== "realDTESInMonths") { eq = { field: "realDTESInMonths", value: actualSituation['totalOut'] / actualSituation['lastStock'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
+                  if (actualSituation['lastStock'] !== "" && !this.lockedParams.includes('lastStock') && (this.lockedParams.includes('realDTESInMonths') || actualSituation['realDTESInMonths'] === "") && input.field !== "realDTESInMonths") { eq = { field: "realDTESInMonths", value: actualSituation['lastStock'] / actualSituation['totalOut'] }; actualSituation['realDTESInMonths'] === "" ? this.lockedParams.push("realDTESInMonths") : null; this.disableElement(eq) }
                   if (actualSituation['etpMag'] !== "" && !this.lockedParams.includes('etpMag') && (this.lockedParams.includes('magRealTimePerCase') || actualSituation['magRealTimePerCase'] === "") && input.field !== "magRealTimePerCase") { eq = { field: "magRealTimePerCase", value: (etpFactor * actualSituation['etpMag']) / actualSituation['totalOut'] }; actualSituation['magRealTimePerCase'] === "" ? this.lockedParams.push("magRealTimePerCase") : null; this.disableElement(eq) }
                   if (actualSituation['realCoverage'] !== "" && !this.lockedParams.includes('realCoverage') && (this.lockedParams.includes('totalIn') || actualSituation['totalIn'] === "") && input.field !== "totalIn") { eq = { field: "totalIn", value: actualSituation['totalOut'] / actualSituation['realCoverage'] / 100 }; actualSituation['totalIn'] === "" ? this.lockedParams.push("totalIn") : null; this.disableElement(eq) }
                   if (actualSituation['realDTESInMonths'] !== "" && !this.lockedParams.includes('realDTESInMonths') && (this.lockedParams.includes('lastStock') || actualSituation['lastStock'] === "") && input.field !== "lastStock") { eq = { field: "lastStock", value: actualSituation['realDTESInMonths'] * actualSituation['totalOut'] }; actualSituation['lastStock'] === "" ? this.lockedParams.push("lastStock") : null; this.disableElement(eq) }
@@ -247,13 +232,10 @@ export class EditableSituationComponent implements OnChanges {
       }
 
     }
-
-    //console.log('END', this.pressedKey)
   }
 
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
-      //console.log('KEY REMOVERD', key, this.lockedParams)
       this.formWhiteSim.patchValue({ [key]: "" })
       if (this.lockedParams.includes(key)) {
         const element = document.querySelector("input[formControlName='" + key + "']");
@@ -272,7 +254,6 @@ export class EditableSituationComponent implements OnChanges {
       element?.classList.add('grey-bg-disabled')
       element?.setAttribute("disabled", "disabled");
       if (this.lockedParams.includes("magRealTimePerCase")) {
-        console.log('DISABLED TMD')
         this.disabledTmd = true
       }
     }
@@ -305,7 +286,7 @@ export class EditableSituationComponent implements OnChanges {
       magRealTimePerCase,
     } = this.formWhiteSim.value
 
-    if (![totalIn, totalOut, lastStock].includes('') && (etpMag !== '' || etpFon !== '')) {
+    if (![totalIn, totalOut, lastStock].includes('') && ![totalIn, totalOut].includes('0') && (etpMag !== '' || etpFon !== '')) {
       this.generateEndSituation()
       this.isValidatedWhiteSimu = true
       this.displayEndSituation = true
@@ -325,7 +306,6 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   editWhiteSimulator() {
-    console.log(this.formWhiteSim)
     this.isValidatedWhiteSimu = false
     this.displayEndSituation = false
     this.simulatorService.isValidatedWhiteSimu.next(false)
@@ -429,7 +409,6 @@ export class EditableSituationComponent implements OnChanges {
   validateNo(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     this.pressedKey = true
-    //console.log('KEY PRESSED')
     if (charCode === 46) return true
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
       return false
@@ -445,19 +424,13 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   getStartTmd() {
-    console.log('validated', this.formWhiteSim.controls['magRealTimePerCase'].value)
     return Number(this.formWhiteSim.controls['magRealTimePerCase'].value)
   }
 
   updateTimeValue(value: Number) {
-    //this.pressedKey = true
-    console.log('LABA', value)
     if (value !== 0) {
-      //this.formWhiteSim.patchValue({ magRealTimePerCase: String(value) })
       this.pressedKey = true
       this.formWhiteSim.get('magRealTimePerCase')?.setValue(String(value))
-      console.log('LABA2', value)
-
     }
     if (this.lockedParams.includes("magRealTimePerCase")) {
       const element = document.querySelector("#magRealTimePerCase");
@@ -470,10 +443,27 @@ export class EditableSituationComponent implements OnChanges {
 
   checkIfEmptyValue() {
     let counter = 0
+    let infiniteValue = false
+
     for (const field in this.formWhiteSim.controls) { // 'field' is a string
       const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl  
+      if (['totalIn', 'totalOut'].includes(field) && control === '0') infiniteValue = true
       if (control === '') counter++
     }
+    if (infiniteValue) return true
     return counter <= 2 ? false : true
+  }
+
+  checkIfEmptyCounter() {
+    let counter = 0
+    for (const field in this.formWhiteSim.controls) { // 'field' is a string
+      const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl  
+      if (control !== '') counter++
+    }
+    return counter
+  }
+
+  getTooltipText() {
+    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
   }
 }
