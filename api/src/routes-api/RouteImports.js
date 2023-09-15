@@ -73,12 +73,12 @@ export default class RouteImports extends Route {
   })
   async importActivities (ctx) {
     console.log('oui? import activities')
-    const { backupId, file } = this.body(ctx)
+    //const { backupId, file } = this.body(ctx)
 
-    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
+    /*const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    await this.model.models.Activities.importList(arrayOfHR, backupId)
+    await this.model.models.Activities.importList(arrayOfHR, backupId)*/
     this.sendOk(ctx, 'OK')
   }
 
