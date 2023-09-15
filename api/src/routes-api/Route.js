@@ -32,14 +32,15 @@ export default class Route extends RouteBase {
 
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
-      logError(e)
+      console.error(e)
+      /*logError(e)
       Sentry.withScope((scope) => {
         scope.addEventProcessor((event) => {
           return Sentry.addRequestDataToEvent(event, ctx.request)
         })
         Sentry.captureException(e)
       })
-      throw e
+      throw e*/
     }
   }
 
