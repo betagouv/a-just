@@ -23,7 +23,6 @@ class RouteIndex extends Route {
    */
   @Route.Get({ path: '/' })
   index (ctx) {
-    console.log('OUIII')
     this.sendOk(ctx, {
       name: packageJson.name,
       version: packageJson.version,
