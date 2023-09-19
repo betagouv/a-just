@@ -1,49 +1,11 @@
 import winston from 'winston'
-import config from 'config'
-import packageJson from '../../package.json'
-const Sent = require('@sentry/node')
 
 const logger = winston.createLogger({
   level: 'info',
   exitOnError: false,
   format: winston.format.json(),
   // defaultMeta: { service: 'user-service' },
-  transports: /*config.sentryApi
-    ? [
-      new Sentry({
-        sentry: {
-          dsn: config.sentryApi,
-          environment: process.env.NODE_ENV || 'developpement',
-          release: `${packageJson.name}@${packageJson.version}`,
-          integrations: [
-            // enable HTTP calls tracing
-            new Sent.Integrations.Http({ tracing: true }),
-            // Automatically instrument Node.js libraries and frameworks
-            ...Sent.autoDiscoverNodePerformanceMonitoringIntegrations(),
-          ],
-        },
-        level: 'error',
-      }),
-      new Sentry({
-        sentry: {
-          dsn: config.sentryApi,
-          environment: process.env.NODE_ENV || 'developpement',
-          release: `${packageJson.name}@${packageJson.version}`,
-          tracesSampleRate: 1.0,
-          sampleRate: 1.0,
-          //integrations: [new Sentry.Integrations.Http({ tracing: true })],
-        },
-        level: 'info',
-      }),
-      //
-      // - Write all logs with level `error` and below to `error.log`
-      // - Write all logs with level `info` and below to `combined.log`
-      //
-      //new winston.transports.File({ filename: 'error.log', level: 'error' }),
-      //new winston.transports.File({ filename: 'combined.log' }),
-      new winston.transports.File({ filename: 'error.log' }),
-    ]
-    :*/ [],
+  transports: [],
 })
 
 logger.add(
@@ -54,8 +16,6 @@ logger.add(
     ),
   })
 )
-
-logger.log('info', 'Voici un log simple')
 
 export default logger
 export const log = (...args) => console.log(...args)
