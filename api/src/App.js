@@ -82,7 +82,7 @@ export default class App extends AppBase {
       requestHandler,
       tracingMiddleWare,
       csp({
-        enableWarn: true,
+        enableWarn: false,
         policy: {
           'connect-src': [
             'https://www.google-analytics.com/j/collect',
