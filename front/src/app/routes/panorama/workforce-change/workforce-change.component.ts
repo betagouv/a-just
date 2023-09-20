@@ -1,22 +1,21 @@
 import { Component, Input, OnChanges, OnDestroy } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
-import { UserService } from 'src/app/services/user/user.service'
 import { HumanResourceSelectedInterface } from '../../workforce/workforce.page'
 import { today } from 'src/app/utils/dates'
 import { sortBy } from 'lodash'
 
 interface categoryButtonsInterface {
-  label: string,
-  isSelected: boolean,
+  label: string
+  isSelected: boolean
 }
 
 interface sortButtonsInterface {
-  label: string, 
-  isReverse: boolean 
+  label: string
+  isReverse: boolean
 }
 
 interface listToPrintInterface {
-  category: string,
+  category: string
   hr: HumanResourceSelectedInterface[]
 }
 
@@ -28,116 +27,109 @@ interface listToPrintInterface {
   templateUrl: './workforce-change.component.html',
   styleUrls: ['./workforce-change.component.scss'],
 })
-export class WorkforceChangeComponent extends MainClass implements OnChanges, OnDestroy {
-
+export class WorkforceChangeComponent
+  extends MainClass
+  implements OnChanges, OnDestroy
+{
   @Input() listArrivals: HumanResourceSelectedInterface[] = []
   @Input() listDepartures: HumanResourceSelectedInterface[] = []
   @Input() listUnavailabilities: HumanResourceSelectedInterface[] = []
-  @Input() totalWorkforce : number = 0
-
-    /**
-     * Page actuelle (pagination)
-     */
-    currentPage = 0
-
-    /**
+  @Input() totalWorkforce: number = 0
+  /**
+   * Page actuelle (pagination)
+   */
+  currentPage = 0
+  /**
    * Bouttons de sélection des catégories (Arrivées, Départs, Indisponibiltiés) à afficher et leur statut (actif/non-actif)
    */
-    categoryButtons : categoryButtonsInterface[] = [
+  categoryButtons: categoryButtonsInterface[] = [
     {
-      label: "Départs",
+      label: 'Départs',
       isSelected: true,
     },
     {
-      label: "Arrivées",
+      label: 'Arrivées',
       isSelected: false,
     },
     {
-      label: "Indisponibilités",
+      label: 'Indisponibilités',
       isSelected: false,
-    }
+    },
   ]
-
   /**
    * Bouttons de trie (Nom, Affectation, Départ, Début indispo, Fin indispo ) à afficher et leur statut (actif/non-actif)
    */
-  sortButtonsStates : sortButtonsInterface[] = [
+  sortButtonsStates: sortButtonsInterface[] = [
     {
       label: 'name',
-      isReverse: false
+      isReverse: false,
     },
     {
       label: 'assignement',
-      isReverse: false
+      isReverse: false,
     },
     {
       label: 'departures',
-      isReverse: false
+      isReverse: false,
     },
     {
       label: 'arrivals',
-      isReverse: false
+      isReverse: false,
     },
     {
       label: 'indispoStart',
-      isReverse: false
+      isReverse: false,
     },
     {
       label: 'indispoEnd',
-      isReverse: false
-    }
+      isReverse: false,
+    },
   ]
-  
   /**
    * Liste des effectifs à afficher sur le panorama
    */
-  listToPrint : listToPrintInterface  = {
-    category: "",
-    hr: []
+  listToPrint: listToPrintInterface = {
+    category: 'Départs',
+    hr: [],
   }
-
 
   /**
    * Constructor
    */
-  constructor(private userService: UserService) {
+  constructor() {
     super()
   }
 
-   /**
+  /**
    * Initialisation des datas au chargement de la page
    */
-   ngOnChanges() {
-    this.listToPrint = {
-      category: "Départ",
-      hr : this.listDepartures,
-    }
+  ngOnChanges() {
+    this.changeButtonsState(this.listToPrint.category)
   }
 
   /**
    * Changement de la liste à afficher selon la categorie (Arrivées, Départs, Indisponibiltiés) sélectionnée
    */
-  changeButtonsState(label : string) {
-    this.categoryButtons.map(button => {
+  changeButtonsState(label: string) {
+    this.categoryButtons.map((button) => {
       if (button.label === label) {
         button.isSelected = true
-        this.listToPrint.category = button.label.slice(0, button.label.length - 1)
-      }
-      else
-        button.isSelected = false
+      } else button.isSelected = false
     })
 
     switch (label) {
-      case 'Départs':
-        this.listToPrint.hr = this.listDepartures
-        break;
       case 'Arrivées':
         this.listToPrint.hr = this.listArrivals
-        break;
-      case 'Indisponibilités': 
+        break
+      case 'Indisponibilités':
         this.listToPrint.hr = this.listUnavailabilities
-        break;
+        break
+      default:
+        this.listToPrint.hr = this.listDepartures
+        break
     }
+
+    console.log(this.listToPrint)
 
     this.currentPage = 0
   }
@@ -145,7 +137,7 @@ export class WorkforceChangeComponent extends MainClass implements OnChanges, On
   /**
    * Evaluation d'une situation pour déterminer si elle est dans le future ou actuel
    */
-  isSituationComing(date : Date | null) {
+  isSituationComing(date: Date | null) {
     const now = today()
 
     if (date && date > now) {
@@ -157,67 +149,78 @@ export class WorkforceChangeComponent extends MainClass implements OnChanges, On
   /**
    * Trie de la liste à afficher selon le boutton de trie sélectionné
    */
-  orderList(category : string) {
+  orderList(category: string) {
+    let button: sortButtonsInterface | undefined = this.sortButtonsStates.find(
+      (button) => button.label === category
+    )
 
-    let button : sortButtonsInterface | undefined = this.sortButtonsStates.find(button => button.label === category)
-
-    switch(category) {
-      case 'name': 
-        if  (button) {
-          this.listToPrint.hr =  sortBy(this.listToPrint.hr, [
+    switch (category) {
+      case 'name':
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) => {
-              return `${h.firstName} ${h.lastName}`.toLowerCase() 
-            }
+              return `${h.firstName} ${h.lastName}`.toLowerCase()
+            },
           ])
         }
-        break;
+        break
       case 'assignement':
-        if  (button) {
-          this.listToPrint.hr = sortBy(this.listToPrint.hr, [(h: HumanResourceSelectedInterface) => {
-            return `${h.totalAffected}`
-          }])
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
+            (h: HumanResourceSelectedInterface) => {
+              return `${h.totalAffected}`
+            },
+          ])
         }
-        break;
+        break
       case 'departures':
-        if  (button) { 
-          this.listToPrint.hr = sortBy(this.listToPrint.hr, [(h: HumanResourceSelectedInterface) => {
-            return new Date(`${h.dateEnd}`)
-          }])
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
+            (h: HumanResourceSelectedInterface) => {
+              return new Date(`${h.dateEnd}`)
+            },
+          ])
         }
-        break;
+        break
       case 'arrivals':
-        if  (button) {
-          this.listToPrint.hr = sortBy(this.listToPrint.hr, [(h: HumanResourceSelectedInterface) => {
-            return new Date(`${h.situations[0].dateStart}`)
-          }])
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
+            (h: HumanResourceSelectedInterface) => {
+              return new Date(`${h.situations[0].dateStart}`)
+            },
+          ])
         }
-        break;
+        break
       case 'indispoStart':
-        if  (button) {
-          this.listToPrint.hr = sortBy(this.listToPrint.hr, [(h: HumanResourceSelectedInterface) => {
-            return new Date(`${h.indisponibilities[0].dateStart}`)
-          }])
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
+            (h: HumanResourceSelectedInterface) => {
+              return new Date(`${h.indisponibilities[0].dateStart}`)
+            },
+          ])
         }
-        break;
+        break
       case 'indispoEnd':
-        if  (button) {
-          this.listToPrint.hr = sortBy(this.listToPrint.hr, [(h: HumanResourceSelectedInterface) => {
-            return new Date(`${h.indisponibilities[0].dateStop}`)
-          }])
+        if (button) {
+          this.listToPrint.hr = sortBy(this.listToPrint.hr, [
+            (h: HumanResourceSelectedInterface) => {
+              return new Date(`${h.indisponibilities[0].dateStop}`)
+            },
+          ])
         }
-        break;
+        break
     }
     if (button) {
-      if  (button.isReverse)
-        this.listToPrint.hr.reverse()
+      if (button.isReverse) this.listToPrint.hr.reverse()
       button.isReverse = !button.isReverse
     }
-    this.sortButtonsStates.map(button => button.label !== category ? button.isReverse = false : null )
+    this.sortButtonsStates.map((button) =>
+      button.label !== category ? (button.isReverse = false) : null
+    )
   }
 
   /**
    * Destruction du composant
    */
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 }

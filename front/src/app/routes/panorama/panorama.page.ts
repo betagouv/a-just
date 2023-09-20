@@ -22,6 +22,7 @@ import {
   HumanResourceSelectedInterface,
 } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
+import { copyArray } from 'src/app/utils/array'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -130,6 +131,10 @@ export class PanoramaPage
    * Selection du title des activités
    */
   titleSelectActivities: boolean = false
+  /**
+   * Filter categories to view
+   */
+  categoriesFiltered: number[] | null = null
 
   /**
    * Constructor
@@ -176,9 +181,12 @@ export class PanoramaPage
    */
   listenScrollEvent() {
     if (this.domContainer && this.domContainer.nativeElement) {
-      this.domContainer.nativeElement.addEventListener("scroll", (event: any) => {
-        this.controlScrollPosition()
-      })
+      this.domContainer.nativeElement.addEventListener(
+        'scroll',
+        (event: any) => {
+          this.controlScrollPosition()
+        }
+      )
 
       this.controlScrollPosition()
     } else {
@@ -192,12 +200,15 @@ export class PanoramaPage
    * Control la position du scroll pour l'action des onglets
    */
   controlScrollPosition() {
-    if(this.domContainer?.nativeElement && this.domTitleActivities?.nativeElement && this.domHeader?.nativeElement) {
-      const headerBottom = this.domHeader.nativeElement.getBoundingClientRect().bottom
-      const titleTop = this.domTitleActivities.nativeElement.getBoundingClientRect().top
-      // domTitleActivities
-      // domHeader
-      // domContainer
+    if (
+      this.domContainer?.nativeElement &&
+      this.domTitleActivities?.nativeElement &&
+      this.domHeader?.nativeElement
+    ) {
+      const headerBottom =
+        this.domHeader.nativeElement.getBoundingClientRect().bottom
+      const titleTop =
+        this.domTitleActivities.nativeElement.getBoundingClientRect().top
       this.titleSelectActivities = headerBottom >= titleTop
     }
   }
@@ -211,6 +222,7 @@ export class PanoramaPage
     }
 
     this.isLoading = true
+    this.categoriesFiltered = null
 
     this.humanResourceService
       .onFilterList(
@@ -222,91 +234,101 @@ export class PanoramaPage
       )
       .then(({ list }) => {
         this.listFormated = list
-        console.log('ListFormated:', list)
-
-        let hrList: HumanResourceSelectedInterface[] = []
-
-        list.map((group: any) => {
-          hrList = hrList.concat(group.hr || [])
-
-          const contentieux =
-            this.humanResourceService.contentieuxReferentielOnly
-              .getValue()
-              .map((contentieux) => contentieux.id)
-
-          hrList.map((hr) => {
-            const activityPercent = sumBy(
-              (hr.currentActivities || []).filter((c) =>
-                contentieux.includes(c.contentieux.id)
-              ),
-              'percent'
-            )
-
-            hr.totalAffected = activityPercent
-            hr.currentActivities = (hr.currentActivities || []).filter((c) =>
-              contentieux.includes(c.contentieux.id)
-            )
-          })
-
-          let fifteenDaysLater = today(this.dateSelected)
-          fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
-          let fifteenDaysBefore = today(this.dateSelected)
-          fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
-          for (let i = 0; i < hrList.length; i++) {
-            const hr = hrList[i]
-
-            // Indisponibilité
-            if (hr.indisponibilities.length > 0) {
-              const list = hr.indisponibilities.filter(
-                (elem) =>
-                  today(elem.dateStart).getTime() >=
-                    fifteenDaysBefore.getTime() &&
-                  today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()
-              )
-              if (list.length && !this.listUnavailabilities.includes(hr)) {
-                this.listUnavailabilities.push(hr)
-              }
-            }
-
-            // Arrivé
-            if (hr.dateStart) {
-              if (hr.id === 10171) {
-                console.log('hr 10171:', hr.dateStart)
-              }
-              if (
-                today(hr.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
-                today(hr.dateStart).getTime() <= fifteenDaysLater.getTime()
-              ) {
-                if (!this.listArrivals.includes(hr)) {
-                  this.listArrivals.push(hr)
-                }
-              }
-              hr.dateStart = today(hr.dateStart)
-            }
-
-            //Départ
-            if (hr.dateEnd) {
-              if (
-                today(hr.dateEnd).getTime() >= fifteenDaysBefore.getTime() &&
-                today(hr.dateEnd).getTime() <= fifteenDaysLater.getTime()
-              ) {
-                if (!this.listDepartures.includes(hr)) {
-                  this.listDepartures.push(hr)
-                }
-              }
-              hr.dateEnd = today(hr.dateEnd)
-            }
-          }
-        })
-        console.log('Departures:', this.listDepartures)
-        console.log('Arrivés:', this.listArrivals)
-        console.log('Indispos:', this.listUnavailabilities)
-        this.totalWorkforce =
-          this.listDepartures.length +
-          this.listArrivals.length +
-          this.listUnavailabilities.length
-        this.isLoading = false
+        this.formatDatasToVisualise()
       })
+  }
+
+  /**
+   * Format datas to visualise
+   */
+  formatDatasToVisualise() {
+    let hrList: HumanResourceSelectedInterface[] = []
+
+    this.listFormated.map((group: any) => {
+      hrList = hrList.concat(group.hr || [])
+    })
+
+    hrList = copyArray(hrList).filter(
+      (hr) =>
+        this.categoriesFiltered === null ||
+        (this.categoriesFiltered &&
+          this.categoriesFiltered.length &&
+          hr?.category &&
+          this.categoriesFiltered[0] === hr?.category.id)
+    )
+
+    const contentieux = this.humanResourceService.contentieuxReferentielOnly
+      .getValue()
+      .map((contentieux) => contentieux.id)
+
+    hrList.map((hr) => {
+      const activityPercent = sumBy(
+        (hr.currentActivities || []).filter((c) =>
+          contentieux.includes(c.contentieux.id)
+        ),
+        'percent'
+      )
+
+      hr.totalAffected = this.fixDecimal(activityPercent)
+      hr.currentActivities = (hr.currentActivities || []).filter((c) =>
+        contentieux.includes(c.contentieux.id)
+      )
+    })
+
+    let fifteenDaysLater = today(this.dateSelected)
+    fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
+    let fifteenDaysBefore = today(this.dateSelected)
+    fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
+    this.listDepartures = []
+    this.listArrivals = []
+    this.listUnavailabilities = []
+    for (let i = 0; i < hrList.length; i++) {
+      const hr = hrList[i]
+
+      // Indisponibilité
+      if (hr.indisponibilities.length > 0) {
+        const list = hr.indisponibilities.filter(
+          (elem) =>
+            today(elem.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
+            today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()
+        )
+        if (list.length && !this.listUnavailabilities.includes(hr)) {
+          this.listUnavailabilities.push(hr)
+        }
+      }
+
+      // Arrivé
+      if (hr.dateStart) {
+        if (
+          today(hr.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
+          today(hr.dateStart).getTime() <= fifteenDaysLater.getTime()
+        ) {
+          if (!this.listArrivals.includes(hr)) {
+            this.listArrivals.push(hr)
+          }
+        }
+        hr.dateStart = today(hr.dateStart)
+      }
+
+      //Départ
+      if (hr.dateEnd) {
+        if (
+          today(hr.dateEnd).getTime() >= fifteenDaysBefore.getTime() &&
+          today(hr.dateEnd).getTime() <= fifteenDaysLater.getTime()
+        ) {
+          if (!this.listDepartures.includes(hr)) {
+            this.listDepartures.push(hr)
+          }
+        }
+        hr.dateEnd = today(hr.dateEnd)
+      }
+    }
+
+    this.totalWorkforce =
+      this.listDepartures.length +
+      this.listArrivals.length +
+      this.listUnavailabilities.length
+    this.isLoading = false
   }
 
   /**
@@ -322,5 +344,21 @@ export class PanoramaPage
    */
   ngOnDestroy() {
     this.watcherDestroy()
+  }
+
+  /**
+   * Selection des categories pour filtrer les visualisations
+   */
+  onSelectCategories(category: number | null = null) {
+    if (
+      category === null ||
+      (this.categoriesFiltered && this.categoriesFiltered[0] === category)
+    ) {
+      this.categoriesFiltered = null
+    } else {
+      this.categoriesFiltered = [category]
+    }
+
+    this.formatDatasToVisualise()
   }
 }
