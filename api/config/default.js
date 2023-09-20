@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
+  corsUrl: process.env.FRONT_URL || '*',
   /**
    * Port utilisé pour démarrer le serveur
    */

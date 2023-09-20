@@ -1,40 +1,67 @@
 <aj-wrapper
   [title]="'Panorama de votre '+ getInterfaceType() + ' le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
-  [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
+  [subtitleTemplate]="subTitle"
+  class="content-margin-null print"
+  [isLoading]="isLoading"
+>
   <div class="panorama-container">
-    <div class="header-panorama">
-      <div *ngIf="canViewVentilation" class="effectifs selected" (click)="scrollTo('effectif')">Effectifs</div>
-      <div *ngIf="canViewActivities" class="activities" [ngClass]="{selected: !canViewVentilation}"
-        (click)="scrollTo('activites')">Données d'activité</div>
+    <div class="header-panorama" #header>
+      <div
+        *ngIf="canViewVentilation"
+        class="effectifs"
+        [ngClass]="{selected: !titleSelectActivities}"
+        (click)="scrollTo('effectif')"
+      >
+        Effectifs
+      </div>
+      <div
+        *ngIf="canViewActivities"
+        class="activities"
+        [ngClass]="{selected: !canViewVentilation || titleSelectActivities}"
+        (click)="scrollTo('activites')"
+      >
+        Données d'activité
+      </div>
     </div>
-    <panorama-alert></panorama-alert>
-    <ng-template [ngIf]="canViewVentilation">
-      <div class="effectif-title" id="effectif">Effectifs</div>
-      <div class="workforce-panel">
-        <workforce-composition [listFormated]="listFormated"></workforce-composition>
-        <records-update [listFormated]="listFormated"></records-update>
-      </div>
-      <div class="workforce-change">
-        <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
-          [listUnavailabilities]="listUnavailabilities" [totalWorkforce]="totalWorkforce"></workforce-change>
-      </div>
-    </ng-template>
-    <ng-template [ngIf]="canViewActivities">
-      <div class="pano-title" id="activites">Les données d’activité</div>
-      <div class="activities-panel">
-        <div class="left-panel">
-          <activities-last-disponibilities></activities-last-disponibilities>
-          <activities-to-complete></activities-to-complete>
+    <div class="container-panorama" #container>
+      <panorama-alert></panorama-alert>
+      <ng-template [ngIf]="canViewVentilation">
+        <div class="effectif-title" id="effectif">Effectifs</div>
+        <div class="workforce-panel">
+          <workforce-composition
+            [listFormated]="listFormated"
+          ></workforce-composition>
+          <records-update [listFormated]="listFormated"></records-update>
         </div>
-        <activities-last-modifications></activities-last-modifications>
-      </div>
-    </ng-template>
+        <div class="workforce-change">
+          <workforce-change
+            [listArrivals]="listArrivals"
+            [listDepartures]="listDepartures"
+            [listUnavailabilities]="listUnavailabilities"
+            [totalWorkforce]="totalWorkforce"
+          ></workforce-change>
+        </div>
+      </ng-template>
+      <ng-template [ngIf]="canViewActivities">
+        <div class="pano-title" id="activites" #titleActivities>Les données d’activité</div>
+        <div class="activities-panel">
+          <div class="left-panel">
+            <activities-last-disponibilities></activities-last-disponibilities>
+            <activities-to-complete></activities-to-complete>
+          </div>
+          <activities-last-modifications></activities-last-modifications>
+        </div>
+      </ng-template>
+    </div>
   </div>
 </aj-wrapper>
 
 <ng-template #subTitle>
   <div class="tags">
-    <div class="tag all" *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel">
+    <div
+      class="tag all"
+      *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel"
+    >
       Tous
     </div>
     <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>
