@@ -343,8 +343,8 @@ export class MainClass {
   /**
    * Fonction qui permet de scroller à un ID
    */
-  public scrollTo(id: string) {
-    const findElement = document.getElementById("content")
+  public scrollTo(id: string, dom?: any, detalScrollY?: number) {
+    const findElement = dom ? dom : document.getElementById("content")
     const findIdElement = document.getElementById(id)
 
     if (findElement && findIdElement) {
@@ -357,7 +357,7 @@ export class MainClass {
 
       findElement.scrollTo({
         behavior: "smooth",
-        top: findIdElement.getBoundingClientRect().top - deltaToRemove,
+        top: findIdElement.getBoundingClientRect().top - deltaToRemove - (detalScrollY || 0),
       })
     }
   }
