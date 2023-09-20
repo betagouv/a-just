@@ -1,7 +1,6 @@
 import { Route as RouteBase } from 'koa-smart'
 import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATOR, USER_ACCESS_SIMULATOR, USER_ACCESS_VENTILATIONS } from '../constants/access'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
-import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
 import * as Sentry from '@sentry/node'
 
@@ -32,7 +31,7 @@ export default class Route extends RouteBase {
 
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
-      logError(e)
+      console.error(e)
       Sentry.withScope((scope) => {
         scope.addEventProcessor((event) => {
           return Sentry.addRequestDataToEvent(event, ctx.request)
