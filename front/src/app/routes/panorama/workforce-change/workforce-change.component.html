@@ -45,7 +45,7 @@
     <div class="date">
       <button
         (click)="orderList('departures')"
-        *ngIf="listToPrint.category === 'Départ'"
+        *ngIf="listToPrint.category === 'Départs'"
       >
         Départ
         <mat-icon>{{
@@ -54,7 +54,7 @@
       </button>
       <button
         (click)="orderList('arrivals')"
-        *ngIf="listToPrint.category === 'Arrivée'"
+        *ngIf="listToPrint.category === 'Arrivées'"
       >
         Arrivée
         <mat-icon>{{
@@ -63,7 +63,7 @@
       </button>
       <button
         (click)="orderList('indispoStart')"
-        *ngIf="listToPrint.category === 'Indisponibilité'"
+        *ngIf="listToPrint.category === 'Indisponibilités'"
       >
         Début d’indispo.
         <mat-icon>{{
@@ -72,7 +72,7 @@
       </button>
       <button
         (click)="orderList('indispoEnd')"
-        *ngIf="listToPrint.category === 'Indisponibilité'"
+        *ngIf="listToPrint.category === 'Indisponibilités'"
       >
         Fin d’indispo.
         <mat-icon>{{
@@ -91,7 +91,7 @@
     >
       <div class="agent">
         <div class="identity-section">
-          <ng-template [ngIf]="listToPrint.category === 'Départ'">
+          <ng-template [ngIf]="listToPrint.category === 'Départs'">
             <i
               class="ri-user-shared-line"
               [ngStyle]="{
@@ -103,7 +103,7 @@
               }"
             ></i>
           </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Arrivée'">
+          <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
             <i
               class="ri-user-received-line"
               [ngStyle]="{
@@ -115,7 +115,7 @@
               }"
             ></i>
           </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Indisponibilité'">
+          <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
             <i
               class="ri-ghost-2-line"
               [ngStyle]="{
@@ -181,7 +181,7 @@
           </div>
         </div>
         <div class="date-section">
-          <ng-template [ngIf]="listToPrint.category === 'Départ'">
+          <ng-template [ngIf]="listToPrint.category === 'Départs'">
             <div
               [ngClass]="{
                 coming: isSituationComing(
@@ -195,7 +195,7 @@
               {{ workforce.dateEnd?.getFullYear() }}
             </div>
           </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Arrivée'">
+          <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
             <div
               [ngClass]="{
                 coming: isSituationComing(
@@ -209,7 +209,7 @@
               {{ workforce.dateStart?.getFullYear() }}
             </div>
           </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Indisponibilité'">
+          <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
             <div
               *ngIf="
                 workforce.indisponibilities[0].dateStart !== null;

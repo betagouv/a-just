@@ -30,8 +30,12 @@
         <div class="workforce-panel">
           <workforce-composition
             [listFormated]="listFormated"
+            [categoriesFiltered]="categoriesFiltered"
           ></workforce-composition>
-          <records-update [listFormated]="listFormated"></records-update>
+          <records-update
+            [listFormated]="listFormated"
+            [categoriesFiltered]="categoriesFiltered"
+          ></records-update>
         </div>
         <div class="workforce-change">
           <workforce-change
@@ -43,7 +47,9 @@
         </div>
       </ng-template>
       <ng-template [ngIf]="canViewActivities">
-        <div class="pano-title" id="activites" #titleActivities>Les données d’activité</div>
+        <div class="pano-title" id="activites" #titleActivities>
+          Les données d’activité
+        </div>
         <div class="activities-panel">
           <div class="left-panel">
             <activities-last-disponibilities></activities-last-disponibilities>
@@ -61,12 +67,33 @@
     <div
       class="tag all"
       *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel"
+      [ngClass]="{active: categoriesFiltered === null}"
+      (click)="onSelectCategories()"
     >
       Tous
     </div>
-    <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>
-    <div class="tag greffe" *ngIf="canViewGreffier">Greffe</div>
-    <div class="tag arround" *ngIf="canViewContractuel">
+    <div
+      class="tag seat"
+      *ngIf="canViewMagistrat"
+      (click)="onSelectCategories(1)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(1) !== -1}"
+    >
+      Siège
+    </div>
+    <div
+      class="tag greffe"
+      *ngIf="canViewGreffier"
+      (click)="onSelectCategories(2)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(2) !== -1}"
+    >
+      Greffe
+    </div>
+    <div
+      class="tag arround"
+      *ngIf="canViewContractuel"
+      (click)="onSelectCategories(3)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(3) !== -1}"
+    >
       Autour du magistrat
     </div>
   </div>

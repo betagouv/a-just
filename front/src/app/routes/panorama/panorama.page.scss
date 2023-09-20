@@ -53,6 +53,12 @@
     margin-right: 8px;
     height: 24px;
     line-height: 24px;
+    cursor: pointer;
+    opacity: 0.5;
+
+    &.active {
+      opacity: 1;
+    }
 
     &.all {
       background-color: fColor(bgCategoryAll);
