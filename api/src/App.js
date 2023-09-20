@@ -7,6 +7,7 @@ import auth from './routes-api/middlewares/authentification'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
+import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
@@ -74,7 +75,7 @@ export default class App extends AppBase {
         modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
-      koaLogger(console.log),
+      koaLogger(logger),
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,

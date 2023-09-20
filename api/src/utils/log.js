@@ -16,6 +16,8 @@ logger.add(
   })
 )
 
+export default logger
+
 console.log = (...args) => logger.info.call(logger, args.join(''))
 console.info = (...args) => logger.info.apply(logger, args.join(''))
 console.warn = (...args) => logger.warn.call(logger, args.join(''))
