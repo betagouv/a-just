@@ -5,14 +5,15 @@
   border-left: solid 1px fColor(lightBorder);
 
   .header-panorama {
-    box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1), 0 10px 10px 10px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1),
+      0 10px 10px 10px rgba(0, 0, 0, 0.04);
     padding: 0 17px;
     display: flex;
     align-items: stretch;
     position: relative;
 
     &::before {
-      content: " ";
+      content: ' ';
       background-color: white;
       left: -1px;
       top: 0;
@@ -34,6 +35,11 @@
         padding: 7px 16px 9px 16px;
       }
     }
+  }
+
+  .container-panorama {
+    overflow: auto;
+    height: calc(100vh - 133px);
   }
 }
 
@@ -70,15 +76,17 @@
   }
 }
 
-.effectif-title ,.pano-title {
+.effectif-title,
+.pano-title {
   background-color: white;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
   padding: 16px 24px;
   border-bottom: solid 1px fColor(lightBorder);
 }
 
-.workforce-panel, .activities-panel {
+.workforce-panel,
+.activities-panel {
   border-bottom: solid 1px fColor(lightBorder);
   background-color: white;
   display: flex;
@@ -92,8 +100,9 @@
     flex: 1;
   }
 
-  records-update, activities-last-modifications {
-    border-left: solid 1px fColor(lightBorder);    
+  records-update,
+  activities-last-modifications {
+    border-left: solid 1px fColor(lightBorder);
   }
 }
 
