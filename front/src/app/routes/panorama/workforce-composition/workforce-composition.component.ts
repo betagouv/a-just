@@ -80,16 +80,9 @@ export class WorkforceCompositionComponent
         let etpt = 0
         listAgent.map((a) => {
           const etp = a.etp
-          const percent =
-            sumBy(
-              (a.currentActivities || []).filter((c) =>
-                contentieux.includes(c.contentieux.id)
-              ),
-              'percent'
-            ) / 100
           const indispo = a.hasIndisponibility
 
-          let etptAgent = etp * percent - indispo
+          let etptAgent = etp - indispo
           if (etptAgent < 0) {
             etptAgent = 0
           }
