@@ -10,7 +10,7 @@
         *ngIf="canViewVentilation"
         class="effectifs"
         [ngClass]="{selected: !titleSelectActivities}"
-        (click)="scrollTo('effectif')"
+        (click)="scrollTo('effectif', container, 40)"
       >
         Effectifs
       </div>
@@ -18,7 +18,7 @@
         *ngIf="canViewActivities"
         class="activities"
         [ngClass]="{selected: !canViewVentilation || titleSelectActivities}"
-        (click)="scrollTo('activites')"
+        (click)="scrollTo('activites', container, 40)"
       >
         Données d'activité
       </div>

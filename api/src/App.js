@@ -54,7 +54,7 @@ export default class App extends AppBase {
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
-      max: 100, // limit each IP to 100 requests per interval
+      max: config.maxQueryLimit, // limit each IP to 100 requests per interval
     })
 
     super.addMiddlewares([

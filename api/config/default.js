@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL || '*',
+  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -131,4 +131,8 @@ module.exports = {
       delaiAboutLockConnection: 5, // 5 minutes,
     },
   },
+  /**
+   * Limite le nombre de requete en 5 min
+   */
+  maxQueryLimit: 1000,
 }
