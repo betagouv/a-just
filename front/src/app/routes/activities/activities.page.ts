@@ -14,6 +14,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { autoFocus } from 'src/app/utils/dom-js'
 
 /**
  * Interface d'un référentiel spécifique à la page
@@ -21,9 +22,19 @@ import { UserService } from 'src/app/services/user/user.service'
 interface ContentieuReferentielActivitiesInterface
   extends ContentieuReferentielInterface {
   /**
+   * Contentieux niveau 4
+   */
+  childrens?:
+    | ContentieuReferentielActivitiesInterface[]
+    | ContentieuReferentielInterface[]
+  /**
    * Log de mise à jour de donnée d'activité
    */
   activityUpdated: NodeActivityUpdatedInterface | null
+  /**
+   * Auto focus value
+   */
+  autoFocusInput?: string
 }
 
 /**
@@ -259,6 +270,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         ]
 
         const oldReferentielSetted = [...this.referentiel]
+        let autoFocusId = null
         // todo set in, out, stock for each
         this.referentiel = referentiels
           .filter(
@@ -267,17 +279,25 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               this.referentielService.idsSoutien.indexOf(r.id) === -1
           )
           .map((ref) => {
+            const newRef: ContentieuReferentielActivitiesInterface = {
+              ...ref,
+              activityUpdated: null,
+            }
             const getActivity = activities.find(
-              (a) => a.contentieux.id === ref.id
+              (a) => a.contentieux.id === newRef.id
             )
-            ref.in = getActivity ? getActivity.entrees : null
-            ref.originalIn = getActivity ? getActivity.originalEntrees : null
-            ref.out = getActivity ? getActivity.sorties : null
-            ref.originalOut = getActivity ? getActivity.originalSorties : null
-            ref.stock = getActivity ? getActivity.stock : null
-            ref.originalStock = getActivity ? getActivity.originalStock : null
+            newRef.in = getActivity ? getActivity.entrees : null
+            newRef.originalIn = getActivity ? getActivity.originalEntrees : null
+            newRef.out = getActivity ? getActivity.sorties : null
+            newRef.originalOut = getActivity
+              ? getActivity.originalSorties
+              : null
+            newRef.stock = getActivity ? getActivity.stock : null
+            newRef.originalStock = getActivity
+              ? getActivity.originalStock
+              : null
 
-            ref.childrens = (ref.childrens || []).map((c) => {
+            newRef.childrens = (newRef.childrens || []).map((c) => {
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
@@ -303,15 +323,53 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             })
 
             const oldReferentielFinded = oldReferentielSetted.find(
-              (i) => i.id === ref.id
+              (i) => i.id === newRef.id
             )
             let showActivityGroup = oldReferentielFinded
               ? oldReferentielFinded.showActivityGroup
               : false
 
-            const { cont } = this.route.snapshot.queryParams
-            if (oldReferentielSetted.length === 0 && cont && +cont === ref.id) {
+            const { cont, selectedEmptyValue } = this.route.snapshot.queryParams
+            if (
+              oldReferentielSetted.length === 0 &&
+              cont &&
+              (+cont === ref.id ||
+                (newRef.childrens || []).find((c) => c.id === +cont))
+            ) {
               showActivityGroup = true
+
+              if (selectedEmptyValue === 'true') {
+                const getFocusInput = (
+                  r:
+                    | ContentieuReferentielActivitiesInterface
+                    | ContentieuReferentielInterface
+                ) => {
+                  if (r.originalIn === null && r.in === null) {
+                    return 'in'
+                  } else if (r.originalOut === null && r.out === null) {
+                    return 'out'
+                  } else if (r.originalStock === null && r.stock === null) {
+                    return 'stock'
+                  }
+
+                  return ''
+                }
+
+                if (+cont === ref.id) {
+                  //newRef.autoFocusInput = getFocusInput(newRef)
+                  autoFocusId = `m-${ref.id}-${getFocusInput(newRef)}`
+                } else {
+                  newRef.childrens = (newRef.childrens || []).map((c) => {
+                    if (c.id === +cont) {
+                      const focusInputValue = getFocusInput(c)
+                      autoFocusId = `c-${c.id}-${focusInputValue}`
+                      return { ...c, autoFocusInput: focusInputValue }
+                    }
+
+                    return c
+                  })
+                }
+              }
             }
 
             return {
@@ -320,6 +378,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               showActivityGroup,
             }
           })
+
+        if (autoFocusId) {
+          autoFocus(`#${autoFocusId}`)
+        }
       })
   }
 
