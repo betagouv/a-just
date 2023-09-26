@@ -1,14 +1,22 @@
-<aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
+<aj-wrapper
+  #wrapper
+  title="Données d'activité"
+  [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation"
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null"
-  [actionTemplate]="dataGuide" [alignLeft]=true>
-
+  [actionTemplate]="dataGuide"
+  [alignLeft]="true"
+>
   <div class="container">
     <div class="header-list">
       <div class="margin-left"></div>
       <div class="label month">
-        <aj-date-select title="Voir les données de" dateType="month" [value]="activityMonth"
-          (valueChange)="changeMonth($event)">
+        <aj-date-select
+          title="Voir les données de"
+          dateType="month"
+          [value]="activityMonth"
+          (valueChange)="changeMonth($event)"
+        >
         </aj-date-select>
       </div>
       <ng-template [ngIf]="canEditActivities">
@@ -56,111 +64,197 @@
       </ng-template>
 
       <ng-template [ngIf]="canEditActivities">
-        <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
-          <div class="item"
+        <div
+          *ngFor="let ref of referentiel"
+          class="item-grouped"
+          [class.maximize]="ref.showActivityGroup"
+        >
+          <div
+            class="item"
             (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
-            [class.selectable]="(ref.childrens || []).length">
+            [class.selectable]="(ref.childrens || []).length"
+          >
             <div class="label">
-              <div class="color-border"
-                [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"></div>
-              <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}
+              <div
+                class="color-border"
+                [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"
+              ></div>
+              <mat-icon *ngIf="(ref.childrens || []).length"
+                >{{ ref.showActivityGroup ? 'expand_less' : 'expand_more' }}
               </mat-icon>
               <p>{{ref.label}}</p>
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalIn" disabled placeholder="-" />
+                <input
+                  type="number"
+                  [ngModel]="ref.originalIn"
+                  disabled
+                  placeholder="-"
+                />
               </div>
               <div>
                 <span>
                   <ng-container
-                    *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref, value: ref.in, level: 3 }">
+                    *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: ref, value: ref.in, level: 3 }"
+                  >
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.in" disabled placeholder="-"
-                    [ngClass]="{blue: ref.in !== null}" />
+                  <input
+                    type="number"
+                    [(ngModel)]="ref.in"
+                    disabled
+                    placeholder="-"
+                    [ngClass]="{blue: ref.in !== null}"
+                    [id]="'m-'+ref.id+'-in'"
+                  />
                 </span>
               </div>
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalOut" disabled placeholder="-" />
+                <input
+                  type="number"
+                  [ngModel]="ref.originalOut"
+                  disabled
+                  placeholder="-"
+                />
               </div>
               <div>
                 <span>
                   <ng-container
-                    *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref, value: ref.out, level: 3 }">
+                    *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: ref, value: ref.out, level: 3 }"
+                  >
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.out" disabled placeholder="-"
-                    [ngClass]="{blue: ref.out !== null}" />
+                  <input
+                    type="number"
+                    [(ngModel)]="ref.out"
+                    disabled
+                    placeholder="-"
+                    [ngClass]="{blue: ref.out !== null}"
+                    [id]="'m-'+ref.id+'-out'"
+                  />
                 </span>
               </div>
             </div>
             <div class="column-item">
               <div>
-                <input type="number" [ngModel]="ref.originalStock" disabled placeholder="-" />
+                <input
+                  type="number"
+                  [ngModel]="ref.originalStock"
+                  disabled
+                  placeholder="-"
+                  [ngClass]="{blue: ref.stock !== null}"
+                />
               </div>
               <div>
                 <span>
                   <ng-container
-                    *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref, value: ref.stock, level: 3 }">
+                    *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: ref, value: ref.stock, level: 3 }"
+                  >
                   </ng-container>
-                  <input type="number" [(ngModel)]="ref.stock" disabled placeholder="-"
-                    [ngClass]="{blue: ref.stock !== null}" />
+                  <input
+                    type="number"
+                    [(ngModel)]="ref.stock"
+                    disabled
+                    placeholder="-"
+                    [id]="'m-'+ref.id+'-stock'"
+                  />
                 </span>
               </div>
             </div>
           </div>
           <div class="group">
             <div class="color-border">
-              <div [style.backgroundColor]="referentielMappingColor(ref.label)"></div>
+              <div
+                [style.backgroundColor]="referentielMappingColor(ref.label)"
+              ></div>
             </div>
             <div>
-              <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
+              <div
+                class="group-item"
+                *ngFor="let itemGroup of (ref.childrens || [])"
+              >
                 <div class="label">
                   <p>{{itemGroup.label}}</p>
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalIn" disabled placeholder="-" />
+                    <input
+                      type="number"
+                      [ngModel]="itemGroup.originalIn"
+                      disabled
+                      placeholder="-"
+                    />
                   </div>
                   <div>
                     <span>
                       <ng-container
-                        *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: itemGroup, value: itemGroup.in, level: 4 }">
+                        *ngTemplateOutlet="tooltip; context: { type: 'entrees', contentieux: itemGroup, value: itemGroup.in, level: 4 }"
+                      >
                       </ng-container>
-                      <input type="number" [(ngModel)]="itemGroup.in"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.in !== null}" />
+                      <input
+                        type="number"
+                        [(ngModel)]="itemGroup.in"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'entrees')"
+                        min="0"
+                        placeholder="-"
+                        [ngClass]="{blue: itemGroup.in !== null}"
+                        [id]="'c-'+itemGroup.id+'-in'"
+                      />
                     </span>
                   </div>
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalOut" disabled placeholder="-" />
+                    <input
+                      type="number"
+                      [ngModel]="itemGroup.originalOut"
+                      disabled
+                      placeholder="-"
+                    />
                   </div>
                   <div>
                     <span>
                       <ng-container
-                        *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: itemGroup, value: itemGroup.out, level: 4 }">
+                        *ngTemplateOutlet="tooltip; context: { type: 'sorties', contentieux: itemGroup, value: itemGroup.out, level: 4 }"
+                      >
                       </ng-container>
-                      <input type="number" [(ngModel)]="itemGroup.out"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.out !== null}" />
+                      <input
+                        type="number"
+                        [(ngModel)]="itemGroup.out"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'sorties')"
+                        min="0"
+                        placeholder="-"
+                        [ngClass]="{blue: itemGroup.out !== null}"
+                        [id]="'c-'+itemGroup.id+'-out'"
+                      />
                     </span>
                   </div>
                 </div>
                 <div class="column-item">
                   <div>
-                    <input type="number" [ngModel]="itemGroup.originalStock" disabled placeholder="-" />
+                    <input
+                      type="number"
+                      [ngModel]="itemGroup.originalStock"
+                      disabled
+                      placeholder="-"
+                    />
                   </div>
                   <div>
                     <span>
                       <ng-container
-                        *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: itemGroup, value: itemGroup.stock, level: 4 }">
+                        *ngTemplateOutlet="tooltip; context: { type: 'stock', contentieux: itemGroup, value: itemGroup.stock, level: 4 }"
+                      >
                       </ng-container>
-                      <input type="number" [(ngModel)]="itemGroup.stock"
-                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')" min="0" placeholder="-"
-                        [ngClass]="{blue: itemGroup.stock !== null}" />
+                      <input
+                        type="number"
+                        [(ngModel)]="itemGroup.stock"
+                        (ngModelChange)="onUpdateActivity(ref, itemGroup, 'stock')"
+                        min="0"
+                        placeholder="-"
+                        [ngClass]="{blue: itemGroup.stock !== null}"
+                        [id]="'c-'+itemGroup.id+'-stock'"
+                      />
                     </span>
                   </div>
                 </div>
@@ -177,41 +271,51 @@
   <div class="rightHeader">
     <h2>Le guide de la donnée</h2>
     <div class="flex-center flex-between">
-      <p>
-        Pour tout savoir sur les données pré-alimentées
-      </p>
+      <p>Pour tout savoir sur les données pré-alimentées</p>
       <a [href]="gitBook" target="_blank">
-        <button class="small primary">Consultez le
-          data-book</button>
+        <button class="small primary">Consultez le data-book</button>
       </a>
     </div>
     <div class="flex-center">
-      <p>
-        Un avis, une question ?
-      </p>
-      <a [href]="supportGitBook" class="support-email"> Contactez-nous
-      </a>
+      <p>Un avis, une question ?</p>
+      <a [href]="supportGitBook" class="support-email"> Contactez-nous </a>
     </div>
   </div>
 </ng-template>
-
 
 <ng-template #subTitleTemplate>
   <p *ngIf="updatedBy" class="sub-title">
     Dernière mise à jour, le {{ updatedBy.date | date:'dd' }} {{
     getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}
-    <ng-template [ngIf]="updatedBy.user">, par
-      <span class="tag">{{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }}</span>
+    <ng-template [ngIf]="updatedBy.user"
+      >, par
+      <span class="tag"
+        >{{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }}</span
+      >
     </ng-template>
   </p>
 </ng-template>
 
-<ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level">
-  <i class="{{value !== null && contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
-    #light (click)="$event.stopPropagation()"></i>
-  <aj-tooltips [onOver]="false" [onClick]="light" [title]="getTooltipTitle(type, contentieux, value)"
+<ng-template
+  #tooltip
+  let-type="type"
+  let-contentieux="contentieux"
+  let-value="value"
+  let-level="level"
+>
+  <i
+    class="{{value !== null && contentieux && contentieux.activityUpdated && contentieux.activityUpdated[type] ? 'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'}} cursor-pointer {{value !== null ? 'blue': ''}}"
+    #light
+    (click)="$event.stopPropagation()"
+  ></i>
+  <aj-tooltips
+    [onOver]="false"
+    [onClick]="light"
+    [title]="getTooltipTitle(type, contentieux, value)"
     [content]="getTooltipBody(type, contentieux, value, level)"
-    [footer]="getTooltipFooter(type, contentieux, value, level)" class="medium"
-    [ngClass]="{black: value === null, left: type === 'stock'}">
+    [footer]="getTooltipFooter(type, contentieux, value, level)"
+    class="medium"
+    [ngClass]="{black: value === null, left: type === 'stock'}"
+  >
   </aj-tooltips>
 </ng-template>
