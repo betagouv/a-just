@@ -77,11 +77,13 @@
       <div class="container-timeline">
         <div class="container-timeline-button">
           <aj-date-select-blue class="select-disabled {{mooveClass}} start-white-sim" [value]="dateStart"
+            [ngClass]="{'disabled': toDisplaySimulation === true}"
             (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
           </aj-date-select-blue>
           <div class="space"></div>
           <aj-date-select-blue [title]="'Fin de période'" [value]="dateStop"
-            (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
+            [ngClass]="{'disabled': toDisplaySimulation === true}" (valueChange)="whiteDateSelector('dateStop', $event)"
+            [min]="getMin()" [side]="'right'">
           </aj-date-select-blue>
         </div>
         <div class="Rectangle">

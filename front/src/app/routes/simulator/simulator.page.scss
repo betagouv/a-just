@@ -1455,9 +1455,9 @@
     }
 
     &.disabled {
-      pointer-events: none;
-      cursor: auto;
-      opacity: 0.5;
+      pointer-events: none !important;
+      cursor: auto !important;
+      opacity: 0.5 !important;
     }
 
     &.disabled-only-date {

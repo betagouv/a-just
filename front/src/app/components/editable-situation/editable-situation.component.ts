@@ -464,6 +464,6 @@ export class EditableSituationComponent implements OnChanges {
   }
 
   getTooltipText() {
-    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
+    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
   }
 }
