@@ -149,7 +149,7 @@
     color: #161616;
     position: absolute;
     left: 170px;
-    top: 26px;
+    top: 28px;
     max-width: 400px;
     line-height: 20px;
   }
@@ -503,12 +503,14 @@
   }
 
   #print-title {
-    margin: 8px;
+    margin: auto;
     align-items: center;
+    display: flex;
+    left: 160px;
+    position: absolute;
     display: none;
 
     p {
-      margin-left: 8px;
       font-size: 24px;
       font-weight: bold;
       color: #3a3a3a;

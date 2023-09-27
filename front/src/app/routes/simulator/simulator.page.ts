@@ -379,7 +379,19 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Initialisation du composant
    */
   ngOnInit(): void {
+    this.resetParams()
     this.dateStop = null
+
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find(
+          (c: HRCategoryInterface) =>
+            c.label.toUpperCase() === this.categorySelected?.toUpperCase()
+        ) || null
+
+    this.simulatorService.selectedCategory.next(findCategory)
+
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -600,6 +612,11 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.toCalculate = []
     this.simulateButton = 'disabled'
     this.displayWhiteElements = false
+
+
+    const initButton = document.getElementById('editable-sim-name')!
+    if (initButton) initButton.innerHTML = ''
+
   }
 
   /**
