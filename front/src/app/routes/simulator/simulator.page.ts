@@ -1106,6 +1106,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.toCalculate = find[0].toCalculate
         //compute ! no popup
         this.computeSimulation(allButton)
+
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
