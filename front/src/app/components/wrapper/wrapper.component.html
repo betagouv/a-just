@@ -32,9 +32,9 @@
       </div>
     </div>
 
-    <div class="menu-scrollable">
+    <div class="menu-scrollable" (click)="onSelect('ICI')">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]">
+        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
           {{ item.label }}
         </a>
       </div>

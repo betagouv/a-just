@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation">
+  [documentation]="documentation" (pageSelected)="chooseScreen=true">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -30,8 +30,8 @@
         </div>
       </div>
 
-      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false"><u>Effectuer une simulation sur des
-          champs non couverts par A-JUST</u></p>
+      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false"><u>Effectuer une simulation sans
+          données pré-alimentées par A-JUST</u></p>
       <p class="intro-second-desc">Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de temps moyen par
         dossier) pour effectuer
         des projections sur l&apos;activité (y compris non juridictionnelle) de votre choix.</p>
