@@ -125,8 +125,8 @@ export class MainClass {
   /**
    * Methode de reprise des noms de categori
    */
-  public categoryMappingName(name: string): string {
-    return categoryMappingName(name)
+  public categoryMappingName(name: string | undefined): string {
+    return categoryMappingName(name || '')
   }
 
   /**
@@ -344,20 +344,23 @@ export class MainClass {
    * Fonction qui permet de scroller à un ID
    */
   public scrollTo(id: string, dom?: any, detalScrollY?: number) {
-    const findElement = dom ? dom : document.getElementById("content")
+    const findElement = dom ? dom : document.getElementById('content')
     const findIdElement = document.getElementById(id)
 
     if (findElement && findIdElement) {
-      const findTopElement = document.getElementById("top")
+      const findTopElement = document.getElementById('top')
       let deltaToRemove = 0
 
-      if(findTopElement) {
+      if (findTopElement) {
         deltaToRemove = findTopElement.getBoundingClientRect().height
       }
 
       findElement.scrollTo({
-        behavior: "smooth",
-        top: findIdElement.getBoundingClientRect().top - deltaToRemove - (detalScrollY || 0),
+        behavior: 'smooth',
+        top:
+          findIdElement.getBoundingClientRect().top -
+          deltaToRemove -
+          (detalScrollY || 0),
       })
     }
   }
