@@ -324,7 +324,7 @@ export class EditableSituationComponent implements OnChanges {
     const startTotalIn = Number(this.formWhiteSim.controls['totalIn'].value)
     const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
     const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
-    const startetpMag = Number(this.formWhiteSim.controls['etpMag'].value)
+    const startetpMag = fixDecimal(Number(this.formWhiteSim.controls['etpMag'].value))
     const startetpFon = Number(this.formWhiteSim.controls['etpMag'].value)
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
 
@@ -335,9 +335,12 @@ export class EditableSituationComponent implements OnChanges {
 
     const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(
-      String(dtes) //+ ' mois'
+      String(dtes)
     )
 
+    this.formWhiteSim.controls['etpMag'].setValue(
+      String(startetpMag)
+    )
     const prefix1 = this.category === 'MAGISTRAT' ? 'nbDaysByMagistrat' : 'nbDaysByFonctionnaire'
     const prefix2 = this.category === 'MAGISTRAT' ? 'nbHoursPerDayAndMagistrat' : 'nbHoursPerDayAndFonctionnaire'
     const etpToUse = this.category === 'MAGISTRAT' ? startetpMag : startetpFon
@@ -392,7 +395,7 @@ export class EditableSituationComponent implements OnChanges {
     this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%'
     this.endSituationDisplay.realDTESInMonths =
       fixDecimal(endStock / startTotalOut) + ''//+ ' mois'
-    this.endSituationDisplay.magRealTimePerCase = decimalToStringDate(tmd)
+    this.endSituationDisplay.magRealTimePerCase = decimalToStringDate(tmd, ':')
 
     this.simulatorService.situationProjected.next({
       ...this.endSituation,

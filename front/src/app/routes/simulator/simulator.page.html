@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" (pageSelected)="chooseScreen=true">
+  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -655,8 +655,19 @@
   <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)"
     [ngClass]="{'display-none': chooseScreen}">
     <div style="justify-content: space-between; display: flex;">
-      <p class="simulation-title">Résultat de la simulation</p>
-      <div id="export-button" class="export-button" [class.enable]="toDisplaySimulation" (click)="print()">
+      <p class="simulation-title">Résultat de la simulation
+
+        <span *ngIf="paramsToLock.param1.label!==''">à
+          {{getLockedResultedParams(0)}}
+          constant{{getLockedResultedParams(0)!=='entrées
+          mensuelles'&& getLockedResultedParams(0)!=='sorties mensuelles'?'':'es'}}</span>
+
+        <span *ngIf=" paramsToLock.param2.label!==''"> et à
+          {{getLockedResultedParams(1)}}
+          constant{{getLockedResultedParams(1)!=='entrées
+          mensuelles'&& getLockedResultedParams(1)!=='sorties mensuelles'?'':'es'}}</span> :
+      </p>
+      <div id=" export-button" class="export-button" [class.enable]="toDisplaySimulation" (click)="print()">
         <mat-icon class="shape">save</mat-icon>
         <p class="title">Exporter en PDF</p>
       </div>
@@ -935,9 +946,8 @@
   <p contenteditable id="editable-sim-name" class="editable-sim-name" *ngIf="!chooseScreen"
     data-placeholder="Indiquez le titre de votre simulation "></p>
 
-  <div id="print-title">
+  <div id="print-title" class="display-none">
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
-
     <p class="title">{{printTitle}}</p>
   </div>
 

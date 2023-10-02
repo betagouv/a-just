@@ -109,7 +109,6 @@ export default class RouteSimulator extends Route {
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
 
-    console.log('CONFIG =@@@@@@@@@@@@', config.juridictionType)
     this.sendOk(ctx, simulatedSituation)
   }
 }
