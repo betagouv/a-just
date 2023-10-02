@@ -813,7 +813,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     if (result > -1) {
       // affect the value to the editable input
       if (inputField.id === 'magRealTimePerCase' && result)
-        inputField.value = decimalToStringDate(result)
+        inputField.value = decimalToStringDate(result, ':')
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')

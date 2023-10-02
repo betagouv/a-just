@@ -8,6 +8,13 @@
         }
     }
 
+    &.disabled {
+        div>form>input {
+            cursor: initial;
+            pointer-events: none;
+        }
+    }
+
     &.white-bg {
         form {
             input {

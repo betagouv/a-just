@@ -280,7 +280,7 @@ export class SimulatorService extends MainClass {
         if (data?.magRealTimePerCase === null) { return 'N/R' }
         if (initialValue) return data?.magRealTimePerCase || '0'
         else {
-          return decimalToStringDate(data?.magRealTimePerCase) || '0'
+          return decimalToStringDate(data?.magRealTimePerCase, ':') || '0'
         }
     }
     return ''

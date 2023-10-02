@@ -84,8 +84,8 @@ export class EditableSituationComponent implements OnChanges {
       Validators.pattern(this.numberRegex),
     ]),
     magRealTimePerCase: new FormControl('', [
-      Validators.required,
-      Validators.pattern(this.numberRegex),
+      //Validators.required,
+      //Validators.pattern(this.numberRegex),
     ]),
   })
 
@@ -347,10 +347,14 @@ export class EditableSituationComponent implements OnChanges {
 
     let realTime = fixDecimal((basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) / (startTotalOut * 12), 100)
     const tmd = Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
-    /**
-    this.formWhiteSim.controls['magRealTimePerCase'].setValue(
-      decimalToStringDate(tmd)
-    ) */
+
+    //this.formWhiteSim.get('magRealTimePerCase')?.setValue(decimalToStringDate(tmd))
+
+    /**this.formWhiteSim.controls['magRealTimePerCase'].setValue(
+      String(decimalToStringDate(tmd))
+    )
+    */
+    console.log(tmd, realTime, decimalToStringDate(tmd, ':'))
 
     this.simulatorService.situationActuelle.next({
       totalIn: startTotalIn,
@@ -395,7 +399,8 @@ export class EditableSituationComponent implements OnChanges {
     this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%'
     this.endSituationDisplay.realDTESInMonths =
       fixDecimal(endStock / startTotalOut) + ''//+ ' mois'
-    this.endSituationDisplay.magRealTimePerCase = decimalToStringDate(tmd, ':')
+    console.log('TMDDD', tmd, String(decimalToStringDate(tmd)))
+    //this.endSituationDisplay.magRealTimePerCase = String(tmd) //decimalToStringDate(tmd, ':')
 
     this.simulatorService.situationProjected.next({
       ...this.endSituation,
@@ -434,6 +439,7 @@ export class EditableSituationComponent implements OnChanges {
     if (value !== 0) {
       this.pressedKey = true
       this.formWhiteSim.get('magRealTimePerCase')?.setValue(String(value))
+      this.endSituationDisplay.magRealTimePerCase = String(value)
     }
     if (this.lockedParams.includes("magRealTimePerCase")) {
       const element = document.querySelector("#magRealTimePerCase");
@@ -468,5 +474,9 @@ export class EditableSituationComponent implements OnChanges {
 
   getTooltipText() {
     return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
+  }
+
+  getTmd() {
+    return decimalToStringDate(this.getStartTmd(), ':')
   }
 }
