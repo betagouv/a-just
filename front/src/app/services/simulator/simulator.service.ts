@@ -197,7 +197,7 @@ export class SimulatorService extends MainClass {
   getLabelTranslation(value: string): string {
     switch (value) {
       case 'etpMag':
-        return 'ETPT magistrat'
+        return 'ETPT'
       case 'etpFon':
         return 'ETPT greffe'
       case 'totalIn':

@@ -1088,6 +1088,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @param allButton liste de tous les boutons clickables
    */
   simulate(allButton: any): void {
+    this.paramsToLock = {
+      param1: { label: '', value: '' },
+      param2: { label: '', value: '' },
+    }
     if (
       this.paramsToAjust.param1.input !== 0 &&
       this.paramsToAjust.param2.input !== 0
@@ -1126,6 +1130,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.computeSimulation(allButton)
       }
     }
+
   }
 
   /**
@@ -1278,7 +1283,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
-      this.simulateButton = 'disabled'
+      //this.simulateButton = 'disabled'
       allButton.map((x: any) => {
         x.classList.add('disable')
       })
@@ -1316,52 +1321,86 @@ export class SimulatorPage extends MainClass implements OnInit {
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
+    const editableName = document.getElementById('editable-sim-name')
 
-
-    const filename = `Simulation-${contentieuLabel || document.getElementById('editable-sim-name')?.innerText || 'A-JUST'}_par ${this.userService.user.getValue()!.firstName
+    const filename = `${editableName?.innerText === "" ? 'Simulation' : editableName?.innerText}${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
       }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
         .toJSON()
         .slice(0, 10)}.pdf`
 
+    const title = document.getElementById('print-title')
+    if (title) {
+      title.classList.remove('display-none')
+      title.style.display = 'flex'
+    }
+
+    const initButton = document.getElementById('main-init')
+    if (initButton)
+      //initButton.style.display = 'none'
+      initButton.classList.add('display-none')
 
 
-    const title: any = document.getElementById('print-title')!
-    title.style.display = 'flex'
-
-    const initButton = document.getElementById('main-init')!
-    initButton.style.display = 'none'
-
-    const backButton = document.getElementById('main-back-menu')!
-    backButton.style.display = 'none'
-
-    const editButton = document.getElementById('editable-sim-name')!
-    if (editButton.innerHTML === "") editButton.style.display = 'none'
+    const backButton = document.getElementById('main-back-menu')
+    if (backButton)
+      backButton.classList.add('display-none')
 
 
-    const exportButton = document.getElementById('export-button')!
-    exportButton.style.display = 'none'
+    const editButton = document.getElementById('editable-sim-name')
+    if (editButton && editButton.innerHTML === "")
+      editButton.style.display = 'none'
+    //editButton.classList.add('display-none')
+    else if (title) title.classList.add('display-none')
+
+
+
+
+    const exportButton = document.getElementById('export-button')
+    if (exportButton)
+    //exportButton.style.display = 'none'
+    {
+      exportButton.classList.add('display-none')
+      console.log('Ex 1', exportButton)
+    }
 
     const ajWrapper = document.getElementById('simu-wrapper')
-    ajWrapper?.classList.add('full-screen')
+    if (ajWrapper)
+      ajWrapper?.classList.add('full-screen')
 
-    const commentAreaCopy = document.getElementById('comment-area-copy')!
-    commentAreaCopy.style.display = 'block'
+    const commentAreaCopy = document.getElementById('comment-area-copy')
+    if (commentAreaCopy)
+      commentAreaCopy.style.display = 'block'
 
     const commentArea = document.getElementById('comment-area')!
-    commentArea.style.display = 'none'
+    if (commentArea)
+      commentArea.classList.add('display-none')
+    //commentArea.style.display = 'none'
 
     this.onPrint = true
 
     this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
+      //title.style.display = 'none'
+      title?.classList.add('display-none')
+
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
-      exportButton.style.display = 'flex'
-      initButton.style.display = 'flex'
+
+      console.log('Ex 2', exportButton)
+      if (exportButton)
+        exportButton.classList.remove('display-none')
+      if (initButton)
+        initButton.classList.remove('display-none')
+      if (backButton)
+        backButton.classList.remove('display-none')
+
       commentArea.style.display = 'block'
-      editButton.style.display = 'block'
-      backButton.style.display = 'block'
-      commentAreaCopy.style.display = 'none'
-      title.style.display = 'none'
+      commentArea.classList.remove('display-none')
+
+      editButton!.style.display = 'block'
+      editButton!.classList.remove('display-none')
+
+
+
+      commentAreaCopy!.style.display = 'none'
     })
   }
 
@@ -1447,5 +1486,9 @@ export class SimulatorPage extends MainClass implements OnInit {
 
   setComment(event: any) {
     this.commentaire = event.target.value
+  }
+
+  getLockedResultedParams(index: number) {
+    return index === 0 ? this.simulatorService.getLabelTranslation(this.paramsToLock.param1.label) : this.simulatorService.getLabelTranslation(this.paramsToLock.param2.label)
   }
 }
