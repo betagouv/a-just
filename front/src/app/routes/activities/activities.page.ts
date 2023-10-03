@@ -283,6 +283,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               ...ref,
               activityUpdated: null,
             }
+
             const getActivity = activities.find(
               (a) => a.contentieux.id === newRef.id
             )
@@ -373,7 +374,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
 
             return {
-              ...ref,
+              ...newRef,
               activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
