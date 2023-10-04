@@ -239,7 +239,7 @@ export default (sequelizeInstance, Model) => {
     await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
 
     console.log('MIN PERIODE', HRBackupId, minPeriode)
-    const minPeriodeFromDB = await Model.min('periode', {
+    /*const minPeriodeFromDB = await Model.min('periode', {
       where: {
         hr_backup_id: HRBackupId,
       },
@@ -247,7 +247,7 @@ export default (sequelizeInstance, Model) => {
 
     if (minPeriodeFromDB) {
       minPeriode = new Date(minPeriodeFromDB)
-    }
+    }*/
 
     if (!minPeriode) {
       return // stop we don't have values to analyse
