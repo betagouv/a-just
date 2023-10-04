@@ -358,6 +358,7 @@ export class MainClass {
       findElement.scrollTo({
         behavior: 'smooth',
         top:
+          findElement.scrollTop +
           findIdElement.getBoundingClientRect().top -
           deltaToRemove -
           (detalScrollY || 0),
