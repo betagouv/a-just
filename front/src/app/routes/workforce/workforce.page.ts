@@ -294,7 +294,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           this.humanResourceService.categoriesFilterListIds
 
         this.categoriesFilterList = categories.map((c) => {
-          console.log('this.categoriesFilterListIds', this.categoriesFilterListIds)
           let selected = true
 
           if(this.categoriesFilterListIds.length === categories.length) {
@@ -574,6 +573,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.allPersons = allPersons
 
         this.orderListWithFiltersParams()
+        console.log('this.listFormated', this.listFormated)
         this.isLoading = false
       })
 

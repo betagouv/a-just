@@ -227,10 +227,9 @@ export class PanoramaPage
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
-        this.dateStart,
+        this.now,
         null,
-        [1, 2, 3],
-        this.dateEnd
+        [1, 2, 3]
       )
       .then(({ list }) => {
         this.listFormated = list
@@ -243,7 +242,7 @@ export class PanoramaPage
    */
   formatDatasToVisualise() {
     let hrList: HumanResourceSelectedInterface[] = []
-    console.log(this.listFormated)
+    console.log(this.listFormated, this.listFormated.map(l => ({ ...l, hr : l.hr.map(h => ({id: h.id, prenom: h.firstName, categoryId: h.category?.id, fonctionId: h.fonction?.id}))})))
 
     this.listFormated.map((group: any) => {
       hrList = hrList.concat(group.hr || [])
