@@ -112,6 +112,10 @@ export class PanoramaPage
    */
   listFormated: listFormatedInterface[] = []
   /**
+   * Liste total des agents
+   */
+  allPersons: HumanResourceSelectedInterface[] = []
+  /**
    *  Liste des personnes ayant une date de départ dans les 15 prochains jours ou les 15 derniers jours
    */
   listDepartures: HumanResourceSelectedInterface[] = []
@@ -135,6 +139,10 @@ export class PanoramaPage
    * Filter categories to view
    */
   categoriesFiltered: number[] | null = null
+  /**
+   * Juridiction id
+   */
+  backupId: number | null = null
 
   /**
    * Constructor
@@ -163,6 +171,7 @@ export class PanoramaPage
     this.watch(
       this.humanResourceService.hrBackup.subscribe(
         (hrBackup: BackupInterface | null) => {
+          this.backupId = hrBackup?.id || null
           this.onFilterList(hrBackup)
         }
       )
@@ -227,12 +236,24 @@ export class PanoramaPage
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
-        this.now,
+        this.dateSelected,
         null,
         [1, 2, 3]
       )
-      .then(({ list }) => {
-        this.listFormated = list
+      .then(({ allPersons, list }) => {
+        this.listFormated = list.map((l: any) => ({
+          ...l,
+          hr: l.hr.map((h: any) => ({
+            ...h,
+            dateSart: h.dateStart ? new Date(h.dateSart) : null,
+            dateEnd: h.dateEnd ? new Date(h.dateEnd) : null,
+          })),
+        }))
+        this.allPersons = allPersons.map((p: any) => ({
+          ...p,
+          dateSart: p.dateStart ? new Date(p.dateSart) : null,
+          dateEnd: p.dateEnd ? new Date(p.dateEnd) : null,
+        }))
         this.formatDatasToVisualise()
       })
   }
@@ -242,13 +263,8 @@ export class PanoramaPage
    */
   formatDatasToVisualise() {
     let hrList: HumanResourceSelectedInterface[] = []
-    console.log(this.listFormated, this.listFormated.map(l => ({ ...l, hr : l.hr.map(h => ({id: h.id, prenom: h.firstName, categoryId: h.category?.id, fonctionId: h.fonction?.id}))})))
 
-    this.listFormated.map((group: any) => {
-      hrList = hrList.concat(group.hr || [])
-    })
-
-    hrList = copyArray(hrList).filter(
+    hrList = this.allPersons.filter(
       (hr) =>
         this.categoriesFiltered === null ||
         (this.categoriesFiltered &&
@@ -307,7 +323,6 @@ export class PanoramaPage
             this.listArrivals.push(hr)
           }
         }
-        hr.dateStart = today(hr.dateStart)
       }
 
       //Départ
@@ -320,7 +335,6 @@ export class PanoramaPage
             this.listDepartures.push(hr)
           }
         }
-        hr.dateEnd = today(hr.dateEnd)
       }
     }
 

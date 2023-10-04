@@ -102,8 +102,8 @@ export interface listFormatedInterface {
    */
   bgColor: string
   /**
- * Couleur de fond de la categories
- */
+   * Couleur de fond de la categories
+   */
   hoverColor: string
   /**
    * Nom de la catégorie (pluriel ou non)
@@ -296,48 +296,48 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.categoriesFilterList = categories.map((c) => {
           let selected = true
 
-          if(this.categoriesFilterListIds.length === categories.length) {
+          if (this.categoriesFilterListIds.length === categories.length) {
             const { c: categoryId } = this.route.snapshot.queryParams
             console.log(categoryId, c.id)
-            if(categoryId && c.id !== +categoryId) {
+            if (categoryId && c.id !== +categoryId) {
               selected = false
-            }            
+            }
           } else {
             selected = this.categoriesFilterListIds.indexOf(c.id) !== -1
           }
-          
-          return {
-          ...c,
-          selected,
-          headerLabel: c.label && c.label === 'Magistrat' ? 'Siège' : c.label,
-          label: c.label && c.label === 'Magistrat' ? 'magistrat' : 'agent',
-          labelPlural:
-            c.label && c.label === 'Magistrat' ? 'magistrats' : 'agents',
-          etpt: 0,
-          nbPersonal: 0,
-          openSubMenu: false,
-          poste: [
-            {
-              name: 'titulaire',
-              selected: true,
-              etpt: 0,
-              nbPersonal: 0,
-            },
-            {
-              name: 'placé',
-              selected: true,
-              etpt: 0,
-              nbPersonal: 0,
-            },
-            {
-              name: 'contractuel',
-              selected: true,
-              etpt: 0,
-              nbPersonal: 0,
-            },
-          ],
-        }})
 
+          return {
+            ...c,
+            selected,
+            headerLabel: c.label && c.label === 'Magistrat' ? 'Siège' : c.label,
+            label: c.label && c.label === 'Magistrat' ? 'magistrat' : 'agent',
+            labelPlural:
+              c.label && c.label === 'Magistrat' ? 'magistrats' : 'agents',
+            etpt: 0,
+            nbPersonal: 0,
+            openSubMenu: false,
+            poste: [
+              {
+                name: 'titulaire',
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+              {
+                name: 'placé',
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+              {
+                name: 'contractuel',
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+            ],
+          }
+        })
 
         this.onFilterList()
       })
@@ -350,6 +350,26 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       )
     )
+    this.route.queryParams.subscribe((params) => {
+      const { c: categoryId } = params
+      console.log('params', params)
+
+      if (categoryId) {
+        this.categoriesFilterList = this.categoriesFilterList.map((c) => {
+          let selected = true
+          if (categoryId && c.id !== +categoryId) {
+            selected = false
+          }
+
+          return {
+            ...c,
+            selected,
+          }
+        })
+
+        this.onFilterList()
+      }
+    })
 
     const user = this.userService.user.getValue()
     this.canViewReaffectator =
@@ -371,7 +391,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       const formatedList = this.listFormated.find((l) => l.categoryId === c.id)
       let personal: any = []
       let etpt = 0
-      let subTotalEtp: { [key: string]: {etpt: number, total: number} } = this.humanResourceService.calculateSubCategories(formatedList?.hrFiltered || [])
+      let subTotalEtp: { [key: string]: { etpt: number; total: number } } =
+        this.humanResourceService.calculateSubCategories(
+          formatedList?.hrFiltered || []
+        )
 
       if (formatedList) {
         personal = formatedList.hrFiltered
@@ -391,7 +414,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           name: f.name,
           etpt: fixDecimal(subTotalEtp[f.name].etpt),
           nbPersonal: personal.filter(
-            (x: any) => x.fonction?.position === f.name.charAt(0).toUpperCase() + f.name.slice(1)
+            (x: any) =>
+              x.fonction?.position ===
+              f.name.charAt(0).toUpperCase() + f.name.slice(1)
           ).length,
         }
       })
@@ -528,7 +553,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
       this.filterParams.filterValues = filterValues
     }
-    
+
     this.categoriesFilterList.map((cat) => {
       cat.poste.map((position) => {
         if (cat.id === category.id) {
@@ -840,7 +865,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         .join(' ')
         .slice(0, 10)
   }
-  async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+  async switchSubFilter(
+    category: HRCategorySelectedInterface,
+    poste: HRCategorypositionInterface
+  ) {
     const fonctions = await this.hrFonctionService.getAll()
     let fctFilterIds: number[] = this.getCurrentFilteredIds(fonctions)
 
@@ -850,7 +878,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const focusFct = fonctions.filter(
           (f) =>
             f.position ===
-            position.charAt(0).toUpperCase() + position.slice(1) &&
+              position.charAt(0).toUpperCase() + position.slice(1) &&
             f.categoryId === category.id
         )
         let myArray = null
@@ -893,7 +921,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     })
 
     if (category.poste && category.poste.length) {
-      category.selected = category.poste.some(p => p.selected)
+      category.selected = category.poste.some((p) => p.selected)
     }
 
     this.onFilterList()
