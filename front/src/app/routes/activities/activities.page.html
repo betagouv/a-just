@@ -285,7 +285,7 @@
 
 <ng-template #subTitleTemplate>
   <p *ngIf="updatedBy" class="sub-title">
-    Dernière mise à jour, le {{ updatedBy.date | date:'dd' }} {{
+    Dernière mise à jour des données de ce mois :<br/>le {{ updatedBy.date | date:'dd' }} {{
     getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}
     <ng-template [ngIf]="updatedBy.user"
       >, par
