@@ -236,7 +236,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.cleanActivities = async (HRBackupId, minPeriode) => {
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
-    await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
+    //await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
 
     console.log('MIN PERIODE', HRBackupId, minPeriode)
     /*const minPeriodeFromDB = await Model.min('periode', {

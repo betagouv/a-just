@@ -135,4 +135,8 @@ module.exports = {
    * Limite le nombre de requete en 5 min
    */
   maxQueryLimit: 1000,
+  /**
+   * Force to format logs
+   */
+  formatLogs: false,
 }
