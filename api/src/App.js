@@ -4,6 +4,7 @@ const koaBody = require('koa-body')
 import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
+import sslMiddleware from './routes-api/middlewares/ssl'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
@@ -75,6 +76,7 @@ export default class App extends AppBase {
         modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
+      sslMiddleware,
       koaLogger(logger),
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API

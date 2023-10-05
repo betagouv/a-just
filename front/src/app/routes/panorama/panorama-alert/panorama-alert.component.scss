@@ -8,9 +8,12 @@
   padding-right: 4px;
   position: relative;
 
-  p {
+  div.description {
     margin: 8px 44px 8px 8px;
-    font-weight: bold;
+
+    p {
+      margin-bottom: 8px;
+    }
   }
 
   .info-bubble {
