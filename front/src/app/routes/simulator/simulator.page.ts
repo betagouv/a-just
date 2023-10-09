@@ -1461,11 +1461,20 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
+  /**
+   * Verifie s'il n'y a pas de valeur null dans la simulation
+   * @param obj 
+   * @returns 
+   */
   hasNoNullValue(obj: SimulatorInterface | null): boolean {
     if (obj && Object.values(obj).every((o) => o !== null)) return true
     else return false
   }
 
+  /**
+   * Indique le texte à renseigner dans le tooltip
+   * @returns 
+   */
   getTooltipText() {
     return (
       'Evolution par rapport ' +
@@ -1484,11 +1493,31 @@ export class SimulatorPage extends MainClass implements OnInit {
     return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
   }
 
+  /**
+   * Set un commentaire
+   * @param event 
+   */
   setComment(event: any) {
     this.commentaire = event.target.value
   }
 
+  /**
+   * Getter des parametres bloqués lors d'une simulation
+   * @param index 
+   * @returns 
+   */
   getLockedResultedParams(index: number) {
     return index === 0 ? this.simulatorService.getLabelTranslation(this.paramsToLock.param1.label) : this.simulatorService.getLabelTranslation(this.paramsToLock.param2.label)
+  }
+
+  /**
+   * Bloque le champ de texte à 100 characters maximum
+   * @param event 
+   * @returns 
+   */
+  keyPress(event: any) {
+    console.log(event.srcElement.innerHTML)
+    if (event.srcElement.innerHTML.length > 100) return false
+    return true
   }
 }

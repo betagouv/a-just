@@ -278,7 +278,7 @@
 
     <aj-popup *ngIf="openPopup===true" [actions]="[
     { id: 'modify', content: 'Ajuster', fill: true }
-  ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
+    ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
       (keypress)="onKeypressEvent($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])"
       (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])">
       <div id="circle">
@@ -559,7 +559,7 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div [ngClass]="{'hide-by-category': !canViewMagistrat}" class="line-item">
+      <div [ngClass]="{'hide-by-category': !canViewMagistrat || categorySelected !== 'MAGISTRAT'}" class="line-item">
         <input class="ajusted-button white-button" id="etpMag" [class.filled]="etpMag.value!=='Ajuster'"
           (click)="openPopupWithParams(etpMag)" value="Ajuster" readonly="readonly"
           [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}" #etpMag />
@@ -572,8 +572,7 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div [ngClass]="{'blue-bg': !whiteSimulator,'hide-by-category': !canViewGreffier||whiteSimulator}"
-        class="line-item">
+      <div [ngClass]="{'hide-by-category': !canViewGreffier ||categorySelected !== 'GREFFE'}" class="line-item">
         <input class="ajusted-button white-button" id="etpFon" [class.filled]="etpFon.value!=='Ajuster'"
           (click)="openPopupWithParams(etpFon)" value="Ajuster" readonly="readonly"
           [ngClass]="{disable: categorySelected !== 'GREFFE'}" #etpFon />
@@ -944,7 +943,7 @@
 <ng-template #actions>
 
   <p contenteditable id="editable-sim-name" class="editable-sim-name" *ngIf="!chooseScreen"
-    data-placeholder="Indiquez le titre de votre simulation "></p>
+    data-placeholder="Indiquez le titre de votre simulation " (keypress)="keyPress($event)"></p>
 
   <div id="print-title" class="display-none">
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />

@@ -325,7 +325,7 @@ export class EditableSituationComponent implements OnChanges {
     const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
     const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
     const startetpMag = fixDecimal(Number(this.formWhiteSim.controls['etpMag'].value))
-    const startetpFon = Number(this.formWhiteSim.controls['etpMag'].value)
+    const startetpFon = fixDecimal(Number(this.formWhiteSim.controls['etpMag'].value))
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
 
     const coverage = Math.round((startTotalOut / startTotalIn) * 100)
