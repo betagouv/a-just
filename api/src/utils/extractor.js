@@ -5,6 +5,10 @@ import { findSituation } from './human-resource'
 import { getHRVentilation } from '../utils/calculator'
 
 /**
+ * Exception relevés par madame De Jong - statistitienne de Lyon
+ */
+export const exceptionMadameDeJong = ["CONT A JP", "CONT B JP", "CONT C JP"]
+/**
  * Tri par catégorie et par fonction
  * @param {*} a
  * @param {*} b
@@ -353,6 +357,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
+      console.log(fonctionName)
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           onglet2.push({
@@ -363,7 +368,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
-            Fonction: fonctionName,
+            Fonction: exceptionMadameDeJong.includes(fonctionName) ? fonctionName + ' ' + categoryName : fonctionName,
             ['Code fonction']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
