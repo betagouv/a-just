@@ -22,7 +22,6 @@ import {
   HumanResourceSelectedInterface,
 } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
-import { copyArray } from 'src/app/utils/array'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -192,7 +191,7 @@ export class PanoramaPage
     if (this.domContainer && this.domContainer.nativeElement) {
       this.domContainer.nativeElement.addEventListener(
         'scroll',
-        (event: any) => {
+        () => {
           this.controlScrollPosition()
         }
       )
