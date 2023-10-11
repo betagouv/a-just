@@ -32,16 +32,13 @@
         min-height: 40px;
 
         .header-wrapper {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
           height: 50%;
-          flex-wrap: wrap;
           width: 100%;
         }
         .categoryType {
           text-align: left;
           font-size: 16px;
+          display: block;
         }
         .etp {
           font-size: 12px;

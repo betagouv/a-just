@@ -144,7 +144,7 @@
               >
                 {{
                   workforce.fonction
-                    ? categoryMappingName(workforce.fonction.label)
+                    ? categoryMappingName(workforce.fonction.code)
                     : null
                 }}
               </div>
@@ -190,9 +190,9 @@
                 date: true
               }"
             >
-              {{ workforce.dateEnd?.getDate() }}
+              {{ getDate(workforce.dateEnd) }}
               {{ getShortMonthString(workforce.dateEnd) }}
-              {{ workforce.dateEnd?.getFullYear() }}
+              {{ getFullYear(workforce.dateEnd) }}
             </div>
           </ng-template>
           <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
@@ -204,9 +204,9 @@
                 date: true
               }"
             >
-              {{ workforce.dateStart?.getDate() }}
+              {{ getDate(workforce.dateStart) }}
               {{ getShortMonthString(workforce.dateStart) }}
-              {{ workforce.dateStart?.getFullYear() }}
+              {{ getFullYear(workforce.dateStart) }}
             </div>
           </ng-template>
           <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
@@ -224,11 +224,11 @@
                 date: true
               }"
             >
-              {{ workforce.indisponibilities[0].dateStart?.getDate() }}
+              {{ getDate(workforce.indisponibilities[0].dateStart) }}
               {{
                 getShortMonthString(workforce.indisponibilities[0].dateStart)
               }}
-              {{ workforce.indisponibilities[0].dateStart?.getFullYear() }}
+              {{ getFullYear(workforce.indisponibilities[0].dateStart) }}
             </div>
             <ng-template #emptyDateStart> - </ng-template>
             <div
@@ -245,11 +245,11 @@
                 date: true
               }"
             >
-              {{ workforce.indisponibilities[0].dateStop?.getDate() }}
+              {{ getDate(workforce.indisponibilities[0].dateStop) }}
               {{
                 getShortMonthString(workforce.indisponibilities[0].dateStop)
               }}
-              {{ workforce.indisponibilities[0].dateStop?.getFullYear() }}
+              {{ getFullYear(workforce.indisponibilities[0].dateStop) }}
             </div>
             <ng-template #emptyDateStop> - </ng-template>
           </ng-template>

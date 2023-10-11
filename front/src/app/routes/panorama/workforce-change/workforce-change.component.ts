@@ -129,7 +129,7 @@ export class WorkforceChangeComponent
         break
     }
 
-    console.log(this.listToPrint)
+    this.listToPrint.category = label
 
     this.currentPage = 0
   }

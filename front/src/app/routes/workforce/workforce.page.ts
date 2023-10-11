@@ -22,7 +22,6 @@ import { UserService } from 'src/app/services/user/user.service'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
-import { keys } from 'ts-transformer-keys'
 import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
@@ -298,7 +297,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
           if (this.categoriesFilterListIds.length === categories.length) {
             const { c: categoryId } = this.route.snapshot.queryParams
-            console.log(categoryId, c.id)
+            console.log('TEST 1', categoryId, c.id)
             if (categoryId && c.id !== +categoryId) {
               selected = false
             }
@@ -584,6 +583,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds
     }
+
+    console.log('OUI', this.humanResourceService.categoriesFilterListIds)
 
     this.isLoading = true
     this.humanResourceService
