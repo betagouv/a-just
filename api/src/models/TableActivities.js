@@ -684,13 +684,10 @@ export default (sequelizeInstance, Model) => {
         const childrens = (c.childrens || [])
           .filter(
             (r) =>
-              r.label !== 'Collégiales hors JIRS' &&
               r.label !== 'Collégiales JIRS' &&
               r.label !== 'Collégiales JIRS crim-org' &&
               r.label !== 'Collégiales JIRS eco-fi' &&
-              r.label !== "Cour d'assises hors JIRS" &&
               r.label !== "Cour d'assises JIRS" &&
-              r.label !== 'Eco-fi hors JIRS' &&
               r.label !== 'JIRS éco-fi' &&
               r.label !== 'JIRS crim-org' &&
               r.label !== 'JIRS'
