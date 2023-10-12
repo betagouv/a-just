@@ -6,7 +6,7 @@
   h2 {
     margin-bottom: 8px;
   }
-  
+
   .form {
     margin: 16px 0;
 
@@ -18,5 +18,13 @@
         margin-bottom: 4px;
       }
     }
+  }
+}
+
+:host {
+  #json {
+    height: 500px;
+    width: 100%;
+    position: relative;
   }
 }
