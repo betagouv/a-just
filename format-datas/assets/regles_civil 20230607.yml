@@ -903,14 +903,6 @@ categories:
           - "Stock Tribunal des pensions militaires"
           - "Stock  Gracieux"
         TOTAL: NBAFFDUR
-  
-  2.7.:
-    label: 2.7. Tutelles mineurs
-    Code nomenclature: 2.7.
-    filtres:
-      entrees: '-'
-      sorties: '-'
-      stock: '-'
 
   2.8.:
     label: "2.8. Référés et mesures urgentes"
@@ -1134,7 +1126,152 @@ categories:
           - "Stock Tribunal des pensions militaires"
           - "Stock  Gracieux"
         TOTAL: NBAFFDUR
-
+  3.2.:
+    label: "3.2. Protection des majeurs"
+    Code nomenclature: 3.2.
+    filtres:
+      entrees:
+        NATAFF:
+          - "18B"
+          - "PP"
+          - "17K"
+          - "17L"
+          - "17N"
+          - "17O"
+          - "17D"
+          - "16F"
+          - "16C"
+          - "16Q"
+          - "16P"
+          - "11G"
+          - "23E"
+          - "17J"
+          - "17E"
+          - "16B"
+          - "16E"
+          - "18A"
+          - "17P"
+          - "18E"
+          - "23D"
+          - "17T"
+          - "16R"
+          - "17Q"
+          - "16S"
+          - "16D"
+          - "17M"
+          - "16M"
+          - "16O"
+          - "18Z"
+          - "00A"
+          - "16N"
+          - "13C"
+          - "16J"
+          - "16H"
+          - "16G"
+          - "18H"
+          - "17I"
+          - "18F"
+          - "28Z"
+          - "17H"
+        C_TUS:
+          - "AN tutelles majeurs - dossier ponctuel"
+          - "AN tutelles majeurs - dossier permanent"
+        TOTAL: NBAFF
+      sorties:
+        NATAFF:
+          - "18B"
+          - "PP"
+          - "17K"
+          - "17L"
+          - "17N"
+          - "17O"
+          - "17D"
+          - "16F"
+          - "16C"
+          - "16Q"
+          - "16P"
+          - "11G"
+          - "23E"
+          - "17J"
+          - "17E"
+          - "16B"
+          - "16E"
+          - "18A"
+          - "17P"
+          - "18E"
+          - "23D"
+          - "17T"
+          - "16R"
+          - "17Q"
+          - "16S"
+          - "16D"
+          - "17M"
+          - "16M"
+          - "16O"
+          - "18Z"
+          - "00A"
+          - "16N"
+          - "13C"
+          - "16J"
+          - "16H"
+          - "16G"
+          - "18H"
+          - "17I"
+          - "18F"
+          - "28Z"
+          - "17H"
+        C_TUS:
+          - "AT tutelles majeurs - dossier ponctuel"
+          - "AT tutelles majeurs - dossier permanent"
+        TOTAL: NBAFF
+      stock:
+        NATAFF:
+          - "18B"
+          - "PP"
+          - "17K"
+          - "17L"
+          - "17N"
+          - "17O"
+          - "17D"
+          - "16F"
+          - "16C"
+          - "16Q"
+          - "16P"
+          - "11G"
+          - "23E"
+          - "17J"
+          - "17E"
+          - "16B"
+          - "16E"
+          - "18A"
+          - "17P"
+          - "18E"
+          - "23D"
+          - "17T"
+          - "16R"
+          - "17Q"
+          - "16S"
+          - "16D"
+          - "17M"
+          - "16M"
+          - "16O"
+          - "18Z"
+          - "00A"
+          - "16N"
+          - "13C"
+          - "16J"
+          - "16H"
+          - "16G"
+          - "18H"
+          - "17I"
+          - "18F"
+          - "28Z"
+          - "17H"
+        C_TUS:
+          - "Stock Tutelles Majeurs Ponctuelles"
+          - "Stock Tutelles Majeurs Dossiers"
+        TOTAL: NBAFFDUR
+  
   3.3.:
     label: "3.3. Surendettement des particuliers"
     Code nomenclature: 3.3.
@@ -1490,7 +1627,7 @@ categories:
           - "Contentieux général-affaires terminées"
           - "A. T. TGI : Contentieux général hors divorce"
         TOTAL: NBAFF
-      stocks:
+      stock:
         NATAFF:
           - "53B"
           - "53D"
@@ -1833,6 +1970,7 @@ categories:
           - "Stock Contentieux général"
           - "Stock Tribunal des pensions militaires"
         TOTAL: NBAFFDUR
+
   4.12.:
     label: "4.12. Suivi des expertises"
     Code nomenclature: 4.12.
