@@ -114,6 +114,8 @@ categories:
           - "PV-CI"
           - "PV-CP"
         TOTAL: "NB_AFF_END"
+      stock: 0
+      
   7.15.:
     label: "7.15. CPPV"
     Code nomenclature: 7.15.
@@ -144,14 +146,18 @@ categories:
           - "7"
           - "8"
         FILIERE: "CRPC"
-        ETAPE: "RHCPC"
+        ETAPE: 
+          - "RHCPC"
+          - "RHCPC_DEFER"
         TOTAL: "NB_AFF_NOUV"
       sorties:
         CLE_REGLE_PHAROS:
           - "7"
           - "8"
         FILIERE: "CRPC"
-        ETAPE: "RHCPC"
+        ETAPE: 
+          - "RHCPC"
+          - "RHCPC_DEFER"
         TOTAL: "NB_AFF_END"
   7.3:
     label: "7.3. OP correctionnelles"
@@ -243,7 +249,7 @@ categories:
         ETAPE: "REQCOMP"
         TOTAL: "NB_AFF_OLD"
   8.1:
-    label: "8.1 Juges d'instruction"
+    label: "8.1 Service général"
     Code nomenclature: 8.1.
     fichier: "instr_ajust"
     filtres:
