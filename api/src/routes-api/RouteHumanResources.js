@@ -7,8 +7,9 @@ import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { today } from '../utils/date'
-import { findAllSituations } from '../utils/human-resource'
+import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
+import { etpLabel } from '../constants/referentiel'
 
 /**
  * Route des fiches
@@ -304,15 +305,29 @@ export default class RouteHumanResources extends Route {
             // if no situation in the past get to the future
             sitations = findAllSituations(person, this.dateSelected, true, true)
           }
+          const { currentSituation } = findSituation(person, this.dateSelected)
+          let etp = (currentSituation && currentSituation.etp) || null
+          if (etp < 0) {
+            etp = 0
+          }
 
           return {
             id: person.id,
+            currentActivities: (currentSituation && currentSituation.activities) || [],
             lastName: person.lastName,
             firstName: person.firstName,
             isIn: false,
+            dateStart: person.dateStart,
+            dateEnd: person.dateEnd,
+            sitations: sitations,
+            etp,
+            etpLabel: etp ? etpLabel(etp) : null,
             categoryName: sitations.length && sitations[0].category ? sitations[0].category.label : '',
+            category: sitations.length && sitations[0].category ? sitations[0].category : null,
             categoryRank: sitations.length && sitations[0].category ? sitations[0].category.rank : null,
             fonctionRank: sitations.length && sitations[0].fonction ? sitations[0].fonction.rank : null,
+            fonction: sitations.length && sitations[0].fonction ? sitations[0].fonction : null,
+            indisponibilities: person.indisponibilities,
           }
         }),
         ['categoryRank', 'fonctionRank', 'lastName']

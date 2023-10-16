@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL,
+  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -30,6 +30,7 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
+    logging: (msg) => console.log(msg),
     //logging: false,
   },
   /**
@@ -131,7 +132,11 @@ module.exports = {
     },
   },
   /**
-   * Juridiction type
+   * Limite le nombre de requete en 5 min
    */
-  juridictionType: process.env.TYPE_ID || 0,
+  maxQueryLimit: 1000,
+  /**
+   * Force to format logs
+   */
+  formatLogs: false,
 }

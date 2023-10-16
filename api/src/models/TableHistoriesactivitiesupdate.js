@@ -30,6 +30,9 @@ export default (sequelizeInstance, Model) => {
       attributes: ['user_id', 'updated_at'],
       where: {
         activity_id: listId,
+        value: {
+          [Op.ne]: null,
+        },
       },
       include: [
         {

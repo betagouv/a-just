@@ -8,4 +8,5 @@ module.exports = {
     usersListId: 8,
   },
   forceSSL: true,
+  formatLogs: true,
 }

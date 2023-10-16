@@ -414,7 +414,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     const newHr = await Model.getHr(hr.id)
-
     return newHr
   }
 
@@ -451,7 +450,7 @@ export default (sequelizeInstance, Model) => {
         updatedAt: hr.updated_at,
         comment: hr['HRComment.comment'],
         backupId: hr.backup_id,
-        situations: await Model.models.HRSituations.getListByHumanId(hr.id),
+        situations: await Model.models.HRSituations.getListByHumanId(hr.id, hr.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
       }
     }

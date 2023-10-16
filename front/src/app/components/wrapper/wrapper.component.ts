@@ -1,9 +1,11 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
+  Output,
   TemplateRef,
   ViewChild,
 } from '@angular/core'
@@ -116,6 +118,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Affiche une bulle d'aide avec une doc derriere
    */
   @Input() documentation: DocumentationInterface | undefined | null
+  /**
+   * Output pour recharger la page
+   */
+  @Output() pageSelected = new EventEmitter<string>()
   /**
    * Doc d'aide à afficher
    */
@@ -327,7 +333,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
     document.body.classList.add('remove-height')
     document.body.classList.add('on-print')
-    if(!noPopup)
+    if (!noPopup)
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
@@ -474,5 +480,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     })
+  }
+
+  onSelect(path: string) {
+    this.pageSelected.emit(path)
   }
 }

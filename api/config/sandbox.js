@@ -9,4 +9,5 @@ module.exports = {
     usersListId: 9,
   },
   forceSSL: true,
+  formatLogs: true,
 }

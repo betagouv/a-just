@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
 } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
@@ -16,7 +17,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
   templateUrl: './time-selector.component.html',
   styleUrls: ['./time-selector.component.scss'],
 })
-export class TimeSelectorComponent implements OnChanges {
+export class TimeSelectorComponent implements OnChanges, OnInit {
   /**
    * Valeur décimal saisie
    */
@@ -84,13 +85,30 @@ export class TimeSelectorComponent implements OnChanges {
   /**
    * Ecoute de la valeur hh:mm puis modification
    */
-  ngOnChanges() {
+  ngOnChanges(change: any) {
     this.timeForm.controls['time'].setValue(
       this.decimalToStringDate(this.value) || ''
     )
     if (this.outsideChange === true) this.changed = true
     else this.changed = false
     this.firstChange = false
+    if (change.defaultValue && change.defaultValue.currentValue === -1) {
+      this.timeForm.controls['time'].setValue('');
+      this.onChangeHour('')
+      console.log('EMIT')
+    }
+    if (change.value && change.value.currentValue === 0 && this.defaultValue === -1) {
+      this.timeForm.controls['time'].setValue('');
+      this.onChangeHour('')
+      console.log('EMIT')
+    }
+
+  }
+
+  ngOnInit() {
+    if (this.defaultValue === -1) {
+      this.timeForm.controls['time'].setValue('')
+    }
   }
 
   /**
@@ -99,7 +117,6 @@ export class TimeSelectorComponent implements OnChanges {
    */
   updateVal(event: any) {
     const value = event.target.value
-
     if (value !== null && this.regexObj.test(value)) {
       if (this.firstChange === true) {
         if (this.category === 'MAGISTRATS') this.value = this.defaultValue
@@ -131,6 +148,8 @@ export class TimeSelectorComponent implements OnChanges {
     if (decimal != null) {
       const n = new Date(0, 0)
       n.setMinutes(Math.round(+decimal * 60))
+      const subValue = Math.round(+decimal * 60)
+      if (subValue === 60 && decimal - Math.trunc(decimal) > 0.9) return Math.trunc(decimal) + 1 + n.toTimeString().slice(2, 5)
       return Math.trunc(decimal) + n.toTimeString().slice(2, 5)
     }
     return ''

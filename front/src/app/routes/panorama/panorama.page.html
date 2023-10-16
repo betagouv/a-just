@@ -1,45 +1,99 @@
 <aj-wrapper
   [title]="'Panorama de votre '+ getInterfaceType() + ' le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
-  [subtitleTemplate]="subTitle" class="content-margin-null" [isLoading]="isLoading">
+  [subtitleTemplate]="subTitle"
+  class="content-margin-null print"
+  [isLoading]="isLoading"
+>
   <div class="panorama-container">
-    <div class="header-panorama">
-      <div *ngIf="canViewVentilation" class="effectifs selected" (click)="scrollTo('effectif')">Effectifs</div>
-      <div *ngIf="canViewActivities" class="activities" [ngClass]="{selected: !canViewVentilation}"
-        (click)="scrollTo('activites')">Données d'activité</div>
+    <div class="header-panorama" #header>
+      <div
+        *ngIf="canViewVentilation"
+        class="effectifs"
+        [ngClass]="{selected: !titleSelectActivities}"
+        (click)="scrollTo('effectif', container, 40)"
+      >
+        Effectifs
+      </div>
+      <div
+        *ngIf="canViewActivities"
+        class="activities"
+        [ngClass]="{selected: !canViewVentilation || titleSelectActivities}"
+        (click)="scrollTo('activites', container, 40)"
+      >
+        Données d'activité
+      </div>
     </div>
-    <panorama-alert></panorama-alert>
-    <ng-template [ngIf]="canViewVentilation">
-      <div class="effectif-title" id="effectif">Effectifs</div>
-      <div class="workforce-panel">
-        <workforce-composition [listFormated]="listFormated"></workforce-composition>
-        <records-update [listFormated]="listFormated"></records-update>
-      </div>
-      <div class="workforce-change">
-        <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
-          [listUnavailabilities]="listUnavailabilities" [totalWorkforce]="totalWorkforce"></workforce-change>
-      </div>
-    </ng-template>
-    <ng-template [ngIf]="canViewActivities">
-      <div class="pano-title" id="activites">Les données d’activité</div>
-      <div class="activities-panel">
-        <div class="left-panel">
-          <activities-last-disponibilities></activities-last-disponibilities>
-          <activities-to-complete></activities-to-complete>
+    <div class="container-panorama" #container>
+      <panorama-alert></panorama-alert>
+      <ng-template [ngIf]="canViewVentilation">
+        <div class="effectif-title" id="effectif">Effectifs</div>
+        <div class="workforce-panel">
+          <workforce-composition
+            [backupId]="backupId"
+            [categoriesFiltered]="categoriesFiltered"
+          ></workforce-composition>
+          <records-update
+            [listFormated]="listFormated"
+            [categoriesFiltered]="categoriesFiltered"
+          ></records-update>
         </div>
-        <activities-last-modifications></activities-last-modifications>
-      </div>
-    </ng-template>
+        <div class="workforce-change">
+          <workforce-change
+            [listArrivals]="listArrivals"
+            [listDepartures]="listDepartures"
+            [listUnavailabilities]="listUnavailabilities"
+            [totalWorkforce]="totalWorkforce"
+          ></workforce-change>
+        </div>
+      </ng-template>
+      <ng-template [ngIf]="canViewActivities">
+        <div class="pano-title" id="activites" #titleActivities>
+          Les données d’activité
+        </div>
+        <div class="activities-panel">
+          <div class="left-panel">
+            <activities-last-disponibilities></activities-last-disponibilities>
+            <activities-to-complete></activities-to-complete>
+          </div>
+          <activities-last-modifications></activities-last-modifications>
+        </div>
+      </ng-template>
+    </div>
   </div>
 </aj-wrapper>
 
 <ng-template #subTitle>
   <div class="tags">
-    <div class="tag all" *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel">
+    <div
+      class="tag all"
+      *ngIf="canViewMagistrat && canViewGreffier && canViewContractuel"
+      [ngClass]="{active: categoriesFiltered === null}"
+      (click)="onSelectCategories()"
+    >
       Tous
     </div>
-    <div class="tag seat" *ngIf="canViewMagistrat">Siège</div>
-    <div class="tag greffe" *ngIf="canViewGreffier">Greffe</div>
-    <div class="tag arround" *ngIf="canViewContractuel">
+    <div
+      class="tag seat"
+      *ngIf="canViewMagistrat"
+      (click)="onSelectCategories(1)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(1) !== -1}"
+    >
+      Siège
+    </div>
+    <div
+      class="tag greffe"
+      *ngIf="canViewGreffier"
+      (click)="onSelectCategories(2)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(2) !== -1}"
+    >
+      Greffe
+    </div>
+    <div
+      class="tag arround"
+      *ngIf="canViewContractuel"
+      (click)="onSelectCategories(3)"
+      [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(3) !== -1}"
+    >
       Autour du magistrat
     </div>
   </div>

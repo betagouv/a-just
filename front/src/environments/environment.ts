@@ -19,6 +19,7 @@ export const environment = {
   forceSSL: false,
   supportEmail: 'support-utilisateurs@a-just.fr',
   mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w',
+  mapboxStyle: 'mapbox://styles/fxbeta/clm7xuvg4012d01pb1jc6887h',
   //typeId: process.env['TYPE_ID'] || 0,
 }
 
