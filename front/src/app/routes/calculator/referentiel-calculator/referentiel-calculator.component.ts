@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import {
@@ -58,7 +59,8 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   constructor(
     private userService: UserService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private calculatorService: CalculatorService
   ) {
     super()
 
@@ -107,5 +109,11 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   trunc(value: number) {
     return Math.trunc(value * 100000) / 100000
+  }
+  /**
+   * Indique si la date de fin selectionnée est dans le passé
+   */
+  checkPastDate() {
+    return this.calculatorService.dateStop.value! < new Date()
   }
 }

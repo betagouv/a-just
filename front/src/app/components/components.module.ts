@@ -58,7 +58,7 @@ const list = [
  * Module d'import de composant
  */
 @NgModule({
-  declarations: [...list, EditableSituationComponent],
+  declarations: [...list],
   imports: [
     CommonModule,
     RouterModule,

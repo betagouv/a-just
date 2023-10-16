@@ -7,7 +7,6 @@ import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
-import { copy } from './utils'
 import { filter } from 'rxjs'
 
 
@@ -50,8 +49,6 @@ export class AppComponent implements AfterViewInit {
     if (iIOS()) {
       document.body.classList.add('iIOS')
     }
-
-    this.onControlSSL()
 
     router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -102,20 +99,6 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.listenSelectElement()
-  }
-  /**
-   * Control si on est en SSL ou non
-   */
-  onControlSSL() {
-    if (
-      location.protocol !== 'https:' &&
-      location.hostname !== 'localhost' &&
-      environment.forceSSL
-    ) {
-      location.replace(
-        `https:${location.href.substring(location.protocol.length)}`
-      )
-    }
   }
 
   /**

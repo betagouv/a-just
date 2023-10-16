@@ -179,7 +179,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Constante en cours d'impression
    */
-  onPrint:boolean=false
+  onPrint: boolean = false
   /**
    * Documentation widget
    */
@@ -268,23 +268,26 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-/**
-   * Commentaires pour PDF
-   */
+  /**
+     * Commentaires pour PDF
+     */
   commentaire: String = ''
   /**
    * Activation du simulator à blanc
    */
-  whiteSimulator:boolean =false
-/**
- * Nombre de jour de simulation à blanc
- */
- whiteNbOfDays:number = 0
-/**
- * Affichage des boutons ajuster et simuler
- */
-displayWhiteElements:boolean = false
-
+  whiteSimulator: boolean = false
+  /**
+   * Nombre de jour de simulation à blanc
+   */
+  whiteNbOfDays: number = 0
+  /**
+   * Affichage des boutons ajuster et simuler
+   */
+  displayWhiteElements: boolean = false
+  /**
+   * Affichage de l'écran de choix de simulateur
+   */
+  chooseScreen = true
   /**
    * Constructeur
    */
@@ -304,7 +307,7 @@ displayWhiteElements:boolean = false
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
           .slice(0, 10)}`
-        }))
+      }))
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -312,7 +315,7 @@ displayWhiteElements:boolean = false
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
-          .slice(0, 10)}`          
+          .slice(0, 10)}`
       })
     )
 
@@ -325,8 +328,8 @@ displayWhiteElements:boolean = false
     this.watch(
       this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
         this.displayWhiteElements = b
-        if (b===false){
-          this.toDisplaySimulation=false
+        if (b === false) {
+          this.toDisplaySimulation = false
           this.initParamsToAjust()
         }
       })
@@ -376,7 +379,19 @@ displayWhiteElements:boolean = false
    * Initialisation du composant
    */
   ngOnInit(): void {
+    this.resetParams()
     this.dateStop = null
+
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find(
+          (c: HRCategoryInterface) =>
+            c.label.toUpperCase() === this.categorySelected?.toUpperCase()
+        ) || null
+
+    this.simulatorService.selectedCategory.next(findCategory)
+
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -391,7 +406,7 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        console.log('Situation actuelle : ',d)
+        console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -399,15 +414,15 @@ displayWhiteElements:boolean = false
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        console.log('Situation proj : ',d)
+        console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-      
-      console.log('Situation simu : ',d)
+
+        console.log('Situation simu : ', d)
 
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
@@ -524,7 +539,7 @@ displayWhiteElements:boolean = false
   /**
    * Action lors de la selection d'une date simulateur à blanc
    */
-  whiteDateSelector(type: string = '', event: any = null){
+  whiteDateSelector(type: string = '', event: any = null) {
     if (type === 'dateStart') {
       this.disabled = 'disabled-date'
       this.dateStart = new Date(event)
@@ -536,7 +551,7 @@ displayWhiteElements:boolean = false
       this.dateStop = new Date(event)
       this.stopRealValue = findRealValue(this.dateStop)
       this.simulatorService.dateStop.next(this.dateStop)
-      this.whiteNbOfDays= nbOfDays(this.dateStart,this.dateStop)
+      this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
     }
   }
   /**
@@ -597,6 +612,11 @@ displayWhiteElements:boolean = false
     this.toCalculate = []
     this.simulateButton = 'disabled'
     this.displayWhiteElements = false
+
+
+    const initButton = document.getElementById('editable-sim-name')!
+    if (initButton) initButton.innerHTML = ''
+
   }
 
   /**
@@ -621,7 +641,7 @@ displayWhiteElements:boolean = false
         ? this.decisionTreeMag
         : this.decisionTreeFon
 
-    
+
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
     if (this.paramsToAjust.param1.input === 0) {
@@ -778,11 +798,11 @@ displayWhiteElements:boolean = false
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-            ? 0
-            : -1
+              ? 0
+              : -1
           : parseFloat(volumeInput) >= 0
-          ? parseFloat(volumeInput)
-          : -1
+            ? parseFloat(volumeInput)
+            : -1
     else if (
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
@@ -793,7 +813,7 @@ displayWhiteElements:boolean = false
     if (result > -1) {
       // affect the value to the editable input
       if (inputField.id === 'magRealTimePerCase' && result)
-        inputField.value = decimalToStringDate(result)
+        inputField.value = decimalToStringDate(result, ':')
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
@@ -888,7 +908,7 @@ displayWhiteElements:boolean = false
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
-          parseFloat(projectedValue as string)
+        parseFloat(projectedValue as string)
       )
     if (
       id === 'realCoverage' &&
@@ -896,7 +916,7 @@ displayWhiteElements:boolean = false
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
-          parseFloat(projectedValue as string)
+        parseFloat(projectedValue as string)
       )
 
     return this.paramsToAjust.param1.label === id
@@ -904,8 +924,8 @@ displayWhiteElements:boolean = false
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -928,7 +948,7 @@ displayWhiteElements:boolean = false
       Math.round(
         (((parseFloat(result) - parseFloat(initialValue)) * 100) /
           parseFloat(initialValue as string)) *
-          100
+        100
       ) / 100
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
@@ -957,14 +977,15 @@ displayWhiteElements:boolean = false
    * @param buttons bouton selecitonné
    */
   initParams(buttons: any) {
-    this.disabled = 'disabled-date'
+    //this.disabled = 'disabled-date'
     this.initParamsToAjust()
 
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
-    this.simulatorService.isValidatedWhiteSimu.next(false)
+    //this.simulatorService.isValidatedWhiteSimu.next(false)
+
   }
 
   initParamsToAjust() {
@@ -1067,6 +1088,10 @@ displayWhiteElements:boolean = false
    * @param allButton liste de tous les boutons clickables
    */
   simulate(allButton: any): void {
+    this.paramsToLock = {
+      param1: { label: '', value: '' },
+      param2: { label: '', value: '' },
+    }
     if (
       this.paramsToAjust.param1.input !== 0 &&
       this.paramsToAjust.param2.input !== 0
@@ -1085,6 +1110,7 @@ displayWhiteElements:boolean = false
         this.toCalculate = find[0].toCalculate
         //compute ! no popup
         this.computeSimulation(allButton)
+
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -1104,6 +1130,7 @@ displayWhiteElements:boolean = false
         this.computeSimulation(allButton)
       }
     }
+
   }
 
   /**
@@ -1191,9 +1218,9 @@ displayWhiteElements:boolean = false
         const objSecond =
           find && find.secondLocked
             ? find.secondLocked.find(
-                (obj: any) =>
-                  obj.locked === this.pickersParamsToLock[paramNumber]
-              )
+              (obj: any) =>
+                obj.locked === this.pickersParamsToLock[paramNumber]
+            )
             : null
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
@@ -1256,7 +1283,7 @@ displayWhiteElements:boolean = false
     console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
-      this.simulateButton = 'disabled'
+      //this.simulateButton = 'disabled'
       allButton.map((x: any) => {
         x.classList.add('disable')
       })
@@ -1294,44 +1321,87 @@ displayWhiteElements:boolean = false
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
+    const editableName = document.getElementById('editable-sim-name')
 
-    const filename = `Simulation-${contentieuLabel}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}.pdf`
+    const filename = `${editableName?.innerText === "" ? 'Simulation' : editableName?.innerText}${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}.pdf`
+
+    const title = document.getElementById('print-title')
+    if (title) {
+      title.classList.remove('display-none')
+      title.style.display = 'flex'
+    }
+
+    const initButton = document.getElementById('main-init')
+    if (initButton)
+      //initButton.style.display = 'none'
+      initButton.classList.add('display-none')
+
+
+    const backButton = document.getElementById('main-back-menu')
+    if (backButton)
+      backButton.classList.add('display-none')
+
+
+    const editButton = document.getElementById('editable-sim-name')
+    if (editButton && editButton.innerHTML === "")
+      editButton.style.display = 'none'
+    //editButton.classList.add('display-none')
+    else if (title) title.classList.add('display-none')
 
 
 
-    const title: any = document.getElementById('print-title')!
-    title.style.display = 'flex'
 
-    const initButton = document.getElementById('main-init')!
-    initButton.style.display = 'none'
-
-    const exportButton = document.getElementById('export-button')!
-    exportButton.style.display = 'none'
+    const exportButton = document.getElementById('export-button')
+    if (exportButton)
+    //exportButton.style.display = 'none'
+    {
+      exportButton.classList.add('display-none')
+      console.log('Ex 1', exportButton)
+    }
 
     const ajWrapper = document.getElementById('simu-wrapper')
-    ajWrapper?.classList.add('full-screen')
+    if (ajWrapper)
+      ajWrapper?.classList.add('full-screen')
 
-    const commentAreaCopy = document.getElementById('comment-area-copy')!
-    commentAreaCopy.style.display = 'block'
+    const commentAreaCopy = document.getElementById('comment-area-copy')
+    if (commentAreaCopy)
+      commentAreaCopy.style.display = 'block'
 
     const commentArea = document.getElementById('comment-area')!
-    commentArea.style.display = 'none'
+    if (commentArea)
+      commentArea.classList.add('display-none')
+    //commentArea.style.display = 'none'
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
+    this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
+      //title.style.display = 'none'
+      title?.classList.add('display-none')
+
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
-      exportButton.style.display = 'flex'
-      initButton.style.display = 'flex'
+
+      console.log('Ex 2', exportButton)
+      if (exportButton)
+        exportButton.classList.remove('display-none')
+      if (initButton)
+        initButton.classList.remove('display-none')
+      if (backButton)
+        backButton.classList.remove('display-none')
+
       commentArea.style.display = 'block'
-      commentAreaCopy.style.display = 'none'
-      title.style.display = 'none'
-    })  
+      commentArea.classList.remove('display-none')
+
+      editButton!.style.display = 'block'
+      editButton!.classList.remove('display-none')
+
+
+
+      commentAreaCopy!.style.display = 'none'
+    })
   }
 
   /**
@@ -1391,11 +1461,20 @@ displayWhiteElements:boolean = false
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
+  /**
+   * Verifie s'il n'y a pas de valeur null dans la simulation
+   * @param obj 
+   * @returns 
+   */
   hasNoNullValue(obj: SimulatorInterface | null): boolean {
     if (obj && Object.values(obj).every((o) => o !== null)) return true
     else return false
   }
 
+  /**
+   * Indique le texte à renseigner dans le tooltip
+   * @returns 
+   */
   getTooltipText() {
     return (
       'Evolution par rapport ' +
@@ -1404,17 +1483,41 @@ displayWhiteElements:boolean = false
     )
   }
 
-      /**
-   * Troncage valeur numérique
-   */
-      trunc(param: string,
-        data: SimulatorInterface | SimulationInterface | null,
-        initialValue = false,
-        toCompute = false){
-        return Math.trunc(Number(this.getFieldValue(param,data,initialValue,toCompute))*100000)/100000
-      }
+  /**
+* Troncage valeur numérique
+*/
+  trunc(param: string,
+    data: SimulatorInterface | SimulationInterface | null,
+    initialValue = false,
+    toCompute = false) {
+    return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
+  }
 
-      setComment(event:any){
-      this.commentaire = event.target.value      
-      }
+  /**
+   * Set un commentaire
+   * @param event 
+   */
+  setComment(event: any) {
+    this.commentaire = event.target.value
+  }
+
+  /**
+   * Getter des parametres bloqués lors d'une simulation
+   * @param index 
+   * @returns 
+   */
+  getLockedResultedParams(index: number) {
+    return index === 0 ? this.simulatorService.getLabelTranslation(this.paramsToLock.param1.label) : this.simulatorService.getLabelTranslation(this.paramsToLock.param2.label)
+  }
+
+  /**
+   * Bloque le champ de texte à 100 characters maximum
+   * @param event 
+   * @returns 
+   */
+  keyPress(event: any) {
+    console.log(event.srcElement.innerHTML)
+    if (event.srcElement.innerHTML.length > 100) return false
+    return true
+  }
 }

@@ -4,6 +4,7 @@ const koaBody = require('koa-body')
 import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
+import sslMiddleware from './routes-api/middlewares/ssl'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
@@ -54,7 +55,7 @@ export default class App extends AppBase {
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
-      max: 100, // limit each IP to 100 requests per interval
+      max: config.maxQueryLimit, // limit each IP to 100 requests per interval
     })
 
     super.addMiddlewares([
@@ -75,6 +76,7 @@ export default class App extends AppBase {
         modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
+      sslMiddleware,
       koaLogger(logger),
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
@@ -82,7 +84,7 @@ export default class App extends AppBase {
       requestHandler,
       tracingMiddleWare,
       csp({
-        enableWarn: true,
+        enableWarn: false,
         policy: {
           'connect-src': [
             'https://www.google-analytics.com/j/collect',

@@ -1,6 +1,5 @@
 import { Route as RouteBase } from 'koa-smart'
 import { USER_ROLE_ADMIN } from '../constants/roles'
-import { logError } from '../utils/log'
 import { snakeToCamelObject } from '../utils/utils'
 
 export default class Route extends RouteBase {
@@ -14,7 +13,7 @@ export default class Route extends RouteBase {
     try {
       await super.beforeRoute(ctx, infos, next)
     } catch (e) {
-      logError(e)
+      console.error(e)
       throw e
     }
   }
@@ -32,10 +31,14 @@ export default class Route extends RouteBase {
     }
     this.assertUnauthorized(id)
 
-    let user = await this.models.users.findOne({ attributes: ['id', 'email', 'role', 'first_name', 'last_name'], where: {
-      id,
-      status: 1,
-    }, raw: true })
+    let user = await this.models.users.findOne({
+      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      where: {
+        id,
+        status: 1,
+      },
+      raw: true,
+    })
     user = { ...user, ...snakeToCamelObject(user), access: await this.models.UsersAccess.getUserAccess(id) }
     this.assertUnauthorized(user)
     ctx.body.user = user

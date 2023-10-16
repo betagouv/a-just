@@ -23,7 +23,7 @@
     ></a>
   </div>
   <div>
-    <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite" [queryParams]="{month: tag.lastDateWhithoutData, cont: row.id}"><span
+    <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite" [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span
       class="tag"
       [ngStyle]="{
         color: referentielMappingColor(row.label),

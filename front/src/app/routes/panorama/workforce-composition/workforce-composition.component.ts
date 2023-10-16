@@ -1,10 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 import { listFormatedInterface } from '../../workforce/workforce.page'
-import { sumBy } from 'lodash'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ucFirst } from 'src/app/utils/string'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { today } from 'src/app/utils/dates'
 
 /**
  * Interface pour agencer la page
@@ -25,7 +25,7 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   /**
    * Poste
    */
-  poste?: {label: string, etpt: number, total: number}[]
+  poste?: { label: string; etpt: number; total: number }[]
 }
 
 /**
@@ -41,9 +41,17 @@ export class WorkforceCompositionComponent
   implements OnChanges
 {
   /**
+   * Filter categories to view
+   */
+  @Input() categoriesFiltered: number[] | null = null
+  /**
    * List des categories
    */
-  @Input() listFormated: listFormatedWithDatasInterface[] = []
+  @Input() backupId: number | null = null
+  /**
+   * Liste filtré pour l'affichage
+   */
+  listFormatedFiltered: listFormatedWithDatasInterface[] = []
 
   /**
    * Constructor
@@ -56,50 +64,90 @@ export class WorkforceCompositionComponent
    * Initialisation des datas au chargement de la page
    */
   ngOnChanges() {
-    const contentieux = this.humanResourceService.contentieuxReferentielOnly
-      .getValue()
-      .map((c) => c.id)
+    if (this.backupId) {
+      this.humanResourceService
+        .onFilterList(
+          this.humanResourceService.backupId.getValue() || 0,
+          today(),
+          null,
+          [1, 2, 3]
+        )
+        .then(({ list }) => {
+          const listReturn: listFormatedInterface[] = list
+          this.listFormatedFiltered = listReturn
+            .filter(
+              (category: any) =>
+                this.categoriesFiltered === null ||
+                (this.categoriesFiltered &&
+                  this.categoriesFiltered.indexOf(category.categoryId) !== -1)
+            )
+            .map((category: any) => {
+              const listAgent = category.hr || []
+              let etpt = 0
+              listAgent.map((a: any) => {
+                const etp = a.etp
+                const indispo = a.hasIndisponibility
 
-    this.listFormated = this.listFormated.map((category) => {
-      const listAgent = category.hr || []
-      let etpt = 0
-      listAgent.map((a) => {
-        const etp = a.etp
-        const percent = sumBy(
-          (a.currentActivities || []).filter((c) =>
-            contentieux.includes(c.contentieux.id)
-          ),
-          'percent'
-        ) / 100
-        const indispo = a.hasIndisponibility
+                let etptAgent = etp - indispo
+                if (etptAgent < 0) {
+                  etptAgent = 0
+                }
 
-        let etptAgent = etp * percent - indispo
-        if (etptAgent < 0) {
-          etptAgent = 0
-        }
+                etpt += etptAgent
+              })
 
-        etpt += etptAgent
-      })
+              const poste: { label: string; etpt: number; total: number }[] = []
+              if (category.categoryId <= 2) {
+                let subTotalEtp: {
+                  [key: string]: { etpt: number; total: number }
+                } = this.humanResourceService.calculateSubCategories(
+                  category?.hr || []
+                )
+                Object.entries(subTotalEtp).map((key) => {
+                  poste.push({
+                    label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
+                    etpt: key[1].etpt,
+                    total: key[1].total,
+                  })
+                })
+              }
 
-      const poste: {label: string, etpt: number, total: number}[] = []
-      if(category.categoryId <= 2) {
-        let subTotalEtp: { [key: string]: {etpt: number, total: number} } = this.humanResourceService.calculateSubCategories(category?.hr || [])
-        Object.entries(subTotalEtp).map((key) => {
-          poste.push({
-            label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
-            etpt: key[1].etpt,
-            total: key[1].total,
-          })
-        })  
-      }
+              return {
+                ...category,
+                headerLabel:
+                  category.label && category.label.includes('Magistrat')
+                    ? 'Siège'
+                    : category.label,
+                nbPerson: listAgent.length,
+                etpt: fixDecimal(etpt),
+                poste,
+              }
+            })
+        })
+    }
+  }
 
-      return {
-        ...category,
-        headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
-        nbPerson: listAgent.length,
-        etpt: fixDecimal(etpt),
-        poste,
-      }
-    })
+  saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
+    if (value) {
+      localStorage.setItem(
+        `CLE-${this.humanResourceService.backupId.getValue()}-${
+          category.categoryId
+        }`,
+        // @ts-ignore
+        value.value
+      )
+    }
+  }
+
+  getCLE(category: listFormatedWithDatasInterface) {
+    if (this.humanResourceService.backupId.getValue()) {
+      return localStorage.getItem(
+        `CLE-${this.humanResourceService.backupId.getValue()}-${
+          category.categoryId
+        }`
+      )
+    }
+
+    return ''
   }
 }
