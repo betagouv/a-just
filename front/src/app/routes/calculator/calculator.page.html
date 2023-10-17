@@ -177,7 +177,7 @@
     </div>
     <div class="content-list">
       <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackByCont" [calculator]="r" [sortBy]="sortBy"
-        [categorySelected]="categorySelected">
+        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate">
       </aj-referentiel-calculator>
     </div>
   </div>
