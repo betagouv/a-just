@@ -26,10 +26,28 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getLastUpdate = async (listId) => {
+    const listFiltered = []
+    // retourne tous ceux dont la dernière valeure est null
+    for (let i = 0; i < listId.length; i++) {
+      const getLastValue = await Model.findAll({
+        attributes: ['activity_id', 'value'],
+        where: {
+          activity_id: listId[i],
+        },
+        order: [['updated_at', 'desc']],
+        limit: 1,
+        raw: true,
+      })
+
+      if (getLastValue.length && getLastValue[0].value) {
+        listFiltered.push(listId[i])
+      }
+    }
+
     const listUpdated = await Model.findAll({
       attributes: ['user_id', 'updated_at'],
       where: {
-        activity_id: listId,
+        activity_id: listFiltered,
         value: {
           [Op.ne]: null,
         },
