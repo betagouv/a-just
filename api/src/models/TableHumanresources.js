@@ -293,7 +293,7 @@ export default (sequelizeInstance, Model) => {
 
         // control ETP to complete
         const gradeToETPComplete = ['MTT', 'MHFJ', 'MHFNJ']
-        if (gradeToETPComplete.indexOf(list[i].grade) !== -1) {
+        if (gradeToETPComplete.indexOf(list[i].fonction) !== -1) {
           situation.etp = ETP_NEED_TO_BE_UPDATED
         }
 
