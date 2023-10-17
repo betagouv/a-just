@@ -690,7 +690,14 @@ export default (sequelizeInstance, Model) => {
               r.label !== "Cour d'assises JIRS" &&
               r.label !== 'JIRS éco-fi' &&
               r.label !== 'JIRS crim-org' &&
-              r.label !== 'JIRS'
+              r.label !== 'Autres contentieux sociaux' &&
+              r.label !== 'Autres JAF' &&
+              r.label !== 'Autres contentieux de la protection' &&
+              r.label !== 'Autres civil NS' &&
+              r.label !== 'Autres JLD civil' &&
+              r.label !== 'Autres siège pénal' &&
+              r.label !== 'Autres sections spécialisées' &&
+              r.label !== 'Autres JAP'
           )
           .map((ch) => ({ ...ch, lastDateWhithoutData: null }))
         return { ...c, childrens }
