@@ -65,7 +65,9 @@
         <div *ngIf="!isSoutien(calculator.contentieux.id)">
             <div [ngClass]="{ selected: sortBy === 'realCoverage' }">
                 <div class="block">
-                    <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+                    <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                        <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+                    </ng-template>
                 </div>
             </div>
             <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }">
@@ -111,10 +113,14 @@
             <div [ngClass]="{ selected: sortBy === 'magCalculateCoverage' }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                        <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>
+                        <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                            <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>
+                        </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                        <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>
+                        <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                            <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>
@@ -147,8 +153,7 @@
         }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                        <ng-template [ngIf]="calculator.magCalculateTimePerCase !== null && checkPastDate()"
-                            [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.magCalculateTimePerCase !== null" [ngIfElse]="nr">
                             <p>
                                 {{
                                 this.decimalToStringDate(calculator.magCalculateTimePerCase)
@@ -158,8 +163,7 @@
                         </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                        <ng-template [ngIf]="calculator.fonCalculateTimePerCase !== null && checkPastDate()"
-                            [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.fonCalculateTimePerCase !== null" [ngIfElse]="nr">
                             <p>
                                 {{
                                 this.decimalToStringDate(calculator.fonCalculateTimePerCase)

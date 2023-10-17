@@ -595,7 +595,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Réinitalisation de simulation
    */
-  resetParams() {
+  resetParams(changeCategory = false) {
     this.contentieuId = null
     this.subList = []
     this.firstSituationData = null
@@ -615,7 +615,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
 
     const initButton = document.getElementById('editable-sim-name')!
-    if (initButton) initButton.innerHTML = ''
+    if (initButton && !changeCategory) initButton.innerHTML = ''
 
   }
 
@@ -909,7 +909,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
         parseFloat(projectedValue as string)
-      )
+      ) + 'pts'
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param2.label === 'realCoverage'
@@ -917,7 +917,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
         parseFloat(projectedValue as string)
-      )
+      ) + 'pts'
 
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -934,6 +934,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @returns String contenant le chiffre ainsi que le signe + ou -
    */
   percantageWithSign(value: number | null) {
+    if (value !== null && !isFinite(value)) return 'NA'
     return value && value >= 0 ? '+' + value : value
   }
 
@@ -950,6 +951,7 @@ export class SimulatorPage extends MainClass implements OnInit {
           parseFloat(initialValue as string)) *
         100
       ) / 100
+    if (!isFinite(roundedValue)) return 'NA'
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
@@ -1414,7 +1416,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       this.categorySelected !== category
     ) {
       this.categorySelected = category
-      this.resetParams()
+      this.resetParams(true)
       this.contentieuId = null
       this.subList = []
       const findCategory =

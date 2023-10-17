@@ -37,6 +37,10 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   @Input() forceToShowChildren: boolean = false
   /**
+   * Derniere date de donnée d'activité disponible
+   */
+  @Input() maxDateSelectionDate: Date | null = null
+  /**
    * Connexion au css pour forcer l'affichage des enfants
    */
   @HostBinding('class.show-children') showChildren: boolean =
@@ -114,6 +118,6 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Indique si la date de fin selectionnée est dans le passé
    */
   checkPastDate() {
-    return this.calculatorService.dateStop.value! < new Date()
+    return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
   }
 }

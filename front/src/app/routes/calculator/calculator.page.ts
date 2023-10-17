@@ -404,8 +404,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Calculateur_par ${
-          this.userService.user.getValue()!.firstName
+        `Calculateur_par ${this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
           .slice(0, 10)}.pdf`,
@@ -431,36 +430,38 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   };
 
 
-  calculatorSaver(){
+  calculatorSaver() {
     console.log(this.datas)
     let refToSave = new Array()
 
-    this.datas.map(x=>{
-    if (x.childrens.length>0)
-      x.childrens.map(y=>{
-        refToSave.push({
-          contentieux:{
-          id:y.contentieux.id,
-          label:y.contentieux.label},
-          averageProcessingTime: y.magRealTimePerCase,
-          averageProcessingTimeFonc: y.fonRealTimePerCase,
+    this.datas.map(x => {
+      if (x.childrens.length > 0)
+        x.childrens.map(y => {
+          refToSave.push({
+            contentieux: {
+              id: y.contentieux.id,
+              label: y.contentieux.label
+            },
+            averageProcessingTime: y.magRealTimePerCase,
+            averageProcessingTimeFonc: y.fonRealTimePerCase,
+          })
         })
-      })
-    
+
       refToSave.push({
-        contentieux:{
-        id:x.contentieux.id,
-        label:x.contentieux.label},
+        contentieux: {
+          id: x.contentieux.id,
+          label: x.contentieux.label
+        },
         averageProcessingTime: x.magRealTimePerCase,
         averageProcessingTimeFonc: x.fonRealTimePerCase,
       })
-    
+
     })
 
     console.log(refToSave)
     this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
     this.contentieuxOptionsService.optionsIsModify.next(true)
-    
+
     this.contentieuxOptionsService.onSaveDatas(true)
 
   }
