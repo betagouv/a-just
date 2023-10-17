@@ -5,6 +5,22 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ImportService } from 'src/app/services/import/import.service';
 import { exportFileToString } from 'src/app/utils/file';
 
+interface contentieux {
+  "label": string,
+  "Code nomenclature": string,
+  "filtres": filtre
+}
+
+interface filtre {
+  "entrees": filtreDetails,
+  "sorties": filtreDetails,
+  "stock": filtreDetails,
+}
+
+interface filtreDetails {
+  "NATAFF"?: [], "C_TUS"?: [], "TOTAL"?: string
+}
+
 @Component({
   templateUrl: './imports.page.html',
   styleUrls: ['./imports.page.scss'],
@@ -12,6 +28,9 @@ import { exportFileToString } from 'src/app/utils/file';
 export class ImportsPage {
   HRBackupList: BackupInterface[] = [];
   existingNAC: string[] = []
+  distinctNAC: Array<string> = []
+  selectedNACs: Array<string> = []
+
   constructor(
     private importService: ImportService,
     private humanResourceService: HumanResourceService
@@ -23,30 +42,46 @@ export class ImportsPage {
 
   onLoad() {
     document.getElementById("json")!.textContent = JSON.stringify(data, undefined, 2);
+    const ymlData = data.categories
 
+    for (let [key, value] of Object.entries(ymlData)) {
+      let ctx = value as contentieux
 
-    const objData = data.categories
-    //console.log(objData)
+      if (ctx.filtres.entrees && ctx.filtres.entrees.NATAFF) {
+        this.distinctNAC = this.distinctNAC.concat(ctx.filtres.entrees.NATAFF);
+        this.distinctNAC = _.uniq(this.distinctNAC)
+      }
+      if (ctx.filtres.sorties && ctx.filtres.sorties.NATAFF) {
+        this.distinctNAC = this.distinctNAC.concat(ctx.filtres.sorties.NATAFF);
+        this.distinctNAC = _.uniq(this.distinctNAC)
+      }
+      if (ctx.filtres.stock && ctx.filtres.stock.NATAFF) {
+        this.distinctNAC = this.distinctNAC.concat(ctx.filtres.stock.NATAFF);
+        this.distinctNAC = _.uniq(this.distinctNAC)
+      }
 
-    for (let [key, value] of Object.entries(objData)) {
-      console.log(`key=${key} value=${JSON.stringify(value, undefined, 2)}`)
-      console.log(`key=${key} value=${value.filtres}`)
-      /**
-      if (value.filtres.entrees) value.filtres.entrees.NATAFF
-      if (value.filtres.sorties) null
-      // @ts-ignore
-      if (value.filtres.stock) null
-      */
     }
+    /**
+     * console.log(`key=${key} value=${JSON.stringify(value, undefined, 2)}`)
+    console.log(`key=${key} value=${value.filtres}`)
 
-
-    document.getElementById("res-json")!.textContent = JSON.stringify(_.countBy(data, function (data) { return data; }), undefined, 2);
+    
+    if (value.filtres.entrees) value.filtres.entrees.NATAFF
+    if (value.filtres.sorties) null
+    // @ts-ignore
+    if (value.filtres.stock) null
+    */
+    //document.getElementById("res-json")!.textContent = JSON.stringify(_.countBy(data, function (data) { return data; }), undefined, 2);
 
 
 
     this.humanResourceService
       .getBackupList()
       .then((r) => (this.HRBackupList = r));
+  }
+
+  onChangeBackup(event: any) {
+
   }
 
   async onSendReferentiel(refDom: any) {
