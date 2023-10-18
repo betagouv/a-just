@@ -46,12 +46,12 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
     dateStart: lastTwelve,
     dateEnd: now,
     selected: true,
-    label: 'Les 12 derniers mois'
+    label: 'Les 12 derniers mois disponible'
   },{
     dateStart: lastTrimestre,
     dateEnd: now,
     selected: false,
-    label: 'Dernier trimestre'
+    label: 'Dernier trimestre disponible'
   },{
     dateStart: lastMonth,
     dateEnd: now,
@@ -91,7 +91,9 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
               this.tags[this.tags.length - 1].dateStart = month(date, 0)
               this.tags[this.tags.length - 1].dateEnd = month(date, 0, 'lastday')
               this.tags[0].dateEnd = month(date, 0, 'lastday')
+              this.tags[0].dateStart = month(this.tags[0].dateEnd, -12)
               this.tags[1].dateEnd = month(date, 0, 'lastday')
+              this.tags[1].dateStart = month(this.tags[1].dateEnd, -3)
 
               this.onLoad()
             })
