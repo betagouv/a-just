@@ -120,14 +120,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
-/**
- * Activation de la calculatrice
- */
-calculatriceIsActive: boolean = false
-/**
- * Ouverture de la calculatrice
- */
-openCalculatricePopup: boolean = false
+  /**
+   * Activation de la calculatrice
+   */
+  calculatriceIsActive: boolean = false
+  /**
+   * Ouverture de la calculatrice
+   */
+  openCalculatricePopup: boolean = false
 
   /**
    * Constructeur
@@ -163,6 +163,16 @@ openCalculatricePopup: boolean = false
             this.humanResourceService.allIndisponibilityReferentiel.slice(1))
       )
     )
+    this.watch(
+      this.form.get('categoryId')?.valueChanges.subscribe(() => {
+        this.loadCategories().then(() => {
+          let fct = this.fonctions[0]
+          this.form.get('fonctionId')?.setValue(fct.id || null)
+          if (fct)
+            this.calculatriceIsActive = fct.calculatrice_is_active || false
+        })
+      })
+    )
   }
 
   /**
@@ -170,7 +180,7 @@ openCalculatricePopup: boolean = false
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['lastDateStart']) {
+    if (changes['lastDateStart'] && changes['lastDateStart'].firstChange) {
       this.onStart()
     }
   }
@@ -183,11 +193,11 @@ openCalculatricePopup: boolean = false
       this.human,
       this.lastDateStart ? this.lastDateStart : undefined
     )
-    
+
     let etp = (situation && situation.etp) || 0
-    if(etp === this.ETP_NEED_TO_BE_UPDATED) {
+    if (etp === this.ETP_NEED_TO_BE_UPDATED) {
       etp = 0
-    } 
+    }
     this.etp = etp
 
     this.form
@@ -199,26 +209,19 @@ openCalculatricePopup: boolean = false
       ?.setValue(
         (situation && situation.category && situation.category.id) || null
       )
+
     this.form
       .get('fonctionId')
       ?.setValue(
         (situation && situation.fonction && situation.fonction.id) || null
       )
 
-    this.watch(
-      this.form
-        .get('categoryId')
-        ?.valueChanges.subscribe(() => {this.loadCategories().then(()=>{          
-          let fct = this.fonctions[0]
-          this.form.get('fonctionId')?.setValue(fct.id || null)
-          if (fct) this.calculatriceIsActive=fct.calculatrice_is_active||false
-
-        })})
-    )
-
     const fonctions = this.humanResourceService.fonctions.getValue()
-    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,this.form.get('categoryId')?.value)
-    if (fonct) this.calculatriceIsActive=fonct.calculatrice_is_active||false
+    const fonct = fonctions.find(
+      (c) => c.id == this.form.get('fonctionId')?.value,
+      this.form.get('categoryId')?.value
+    )
+    if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
 
     this.loadCategories()
   }
@@ -235,9 +238,13 @@ openCalculatricePopup: boolean = false
    */
   async loadCategories() {
     if (this.form.value) {
-      this.fonctions = (await this.hrFonctionService.getAll()).filter(
+      const foncts = (await this.hrFonctionService.getAll()).filter(
         (c) => this.form.value?.categoryId == c.categoryId
       )
+
+      if (JSON.stringify(foncts) !== JSON.stringify(this.fonctions)) {
+        this.fonctions = foncts
+      }
     }
   }
 
@@ -305,7 +312,7 @@ openCalculatricePopup: boolean = false
       alert("Vous devez saisir une date d'arrivée !")
       return
     }
-    activitiesStartDate = new Date(activitiesStartDate)
+    activitiesStartDate = today(activitiesStartDate)
     if (this.human && this.human.dateEnd && activitiesStartDate) {
       const dateEnd = new Date(this.human.dateEnd)
 
@@ -319,7 +326,7 @@ openCalculatricePopup: boolean = false
     }
 
     if (this.human && this.human.dateStart && activitiesStartDate) {
-      const dateStart = new Date(this.human.dateStart)
+      const dateStart = today(this.human.dateStart)
 
       // check activity date
       if (activitiesStartDate.getTime() < dateStart.getTime()) {
@@ -478,27 +485,56 @@ openCalculatricePopup: boolean = false
     this.onOpenHelpPanel.emit(type)
   }
 
-  convertirEtpt(){
-    if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'volume'){
-      if (this.calculatriceService.dataCalculatrice.getValue().volume.value !==null)
-        {
-          this.openCalculatricePopup=false
-          this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
-        }
-    }
-    else if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'vacation'){
-      if (this.calculatriceService.dataCalculatrice.getValue().vacation.value !==null && this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==null)
-      {
-        this.openCalculatricePopup=false
-        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value||1))))      
+  convertirEtpt() {
+    if (
+      this.calculatriceService.dataCalculatrice.getValue().selectedTab ===
+      'volume'
+    ) {
+      if (
+        this.calculatriceService.dataCalculatrice.getValue().volume.value !==
+        null
+      ) {
+        this.openCalculatricePopup = false
+        this.form
+          .get('etp')
+          ?.setValue(
+            fixDecimal(
+              this.calculatriceService.computeEtptCalculatrice(
+                String(this.form.get('categoryId')?.value || 1)
+              )
+            )
+          )
       }
-    } 
- }
+    } else if (
+      this.calculatriceService.dataCalculatrice.getValue().selectedTab ===
+      'vacation'
+    ) {
+      if (
+        this.calculatriceService.dataCalculatrice.getValue().vacation.value !==
+          null &&
+        this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==
+          null
+      ) {
+        this.openCalculatricePopup = false
+        this.form
+          .get('etp')
+          ?.setValue(
+            fixDecimal(
+              this.calculatriceService.computeEtptCalculatrice(
+                String(this.form.get('categoryId')?.value || 1)
+              )
+            )
+          )
+      }
+    }
+  }
 
-  setFonc(event:any){
+  setFonc(event: any) {
     const fonctions = this.humanResourceService.fonctions.getValue()
-    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value,event.value)
-    if (fonct)
-        this.calculatriceIsActive=fonct.calculatrice_is_active||false
+    const fonct = fonctions.find(
+      (c) => c.id == this.form.get('fonctionId')?.value,
+      event.value
+    )
+    if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
   }
 }
