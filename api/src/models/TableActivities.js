@@ -682,22 +682,9 @@ export default (sequelizeInstance, Model) => {
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])
+          // liste ici https://resana.numerique.gouv.fr/public/document/consulter/9822459
           .filter(
-            (r) =>
-              r.label !== 'Collégiales JIRS' &&
-              r.label !== 'Collégiales JIRS crim-org' &&
-              r.label !== 'Collégiales JIRS eco-fi' &&
-              r.label !== "Cour d'assises JIRS" &&
-              r.label !== 'JIRS éco-fi' &&
-              r.label !== 'JIRS crim-org' &&
-              r.label !== 'Autres contentieux sociaux' &&
-              r.label !== 'Autres JAF' &&
-              r.label !== 'Autres contentieux de la protection' &&
-              r.label !== 'Autres civil NS' &&
-              r.label !== 'Autres JLD civil' &&
-              r.label !== 'Autres siège pénal' &&
-              r.label !== 'Autres sections spécialisées' &&
-              r.label !== 'Autres JAP'
+            (r) => !['3.6.', '4.0.', '7.51.', '7.12.', '7.121.', '7.122.', '7.8.', '8.11.', '8.2.', '8.3.', '8.4.', '9.4.', '10.2.'].includes(r.code_import)
           )
           .map((ch) => ({ ...ch, lastDateWhithoutData: null }))
         return { ...c, childrens }
