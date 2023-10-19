@@ -1,42 +1,66 @@
 <aj-wrapper title="Yaml tools">
-  <h3>Editeur de NAC <button (click)="init()">Réinitialiser</button></h3>
-  <br />
-  <p>Etape 1 : Coller le contenu de votre YML :</p>
-  <br />
   <div class="textarea">
-    <textarea [ngClass]="{'disable':initialYmlData!==null}" id="json"></textarea>
-    <button [ngClass]="{'disable':initialYmlData!==null}" (click)="validateYML()">Valider</button>
-  </div>
-  <br />
-  <br />
-
-  <div class="textarea">
-
-    <div class="step-2">
-      <p>Etape 2 : Choisir une NAC parmi celles existantes :</p>
-      <aj-select [rightsUser]="distinctNAC" (valueChange)="onSelectedChanged($event)"></aj-select>
-      <code>NAC selectionnée(s): {{ selectedNACs | json }}</code>
-    </div>
-
-    <div class="step-3">
-      <p>Etape 3 : Selectionner les valeurs que vous souhaitez supprimer :</p>
-      <div class="textarea path">
-        <aj-select class="path" [rightsUser]="distinctPath" (valueChange)="onSelectedPathChanged($event)"
-          [path]="true"></aj-select>
-        <button [ngClass]="{'disable':this.selectedPath.length===0}" (click)="validateRemoval()">Valider</button>
-      </div>
-      <code>Comptage avant modification: {{ countResult | json }}</code>
+    <div class="step-1">
+      <h3>Editeur de NAC <button (click)="init()">Réinitialiser</button></h3>
       <br />
-      <code *ngIf="countResultAfterChange!=={}">Comptage après modification: {{ countResultAfterChange | json }}</code>
+      <p>Etape 1 : Coller le contenu de votre YML :</p>
+      <br />
+      <div class="textarea">
+        <textarea [ngClass]="{'disable':initialYmlData!==null}" id="json"></textarea>
+        <button [ngClass]="{'disable':initialYmlData!==null}" (click)="validateYML()">Valider</button>
+      </div>
+    </div>
+    <div class="step-2" *ngIf="initialYmlData!==null">
+      <h3>Que souhaitez-vous faire ?</h3>
+      <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=1">Ajouter une nouvelle NAC</button>
+      <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=2">Supprimer des NAC
+        existantes</button>
     </div>
   </div>
-
   <br />
   <br />
 
-  <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
-  </p>
-  <br />
-  <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
-  <br />
+  <div *ngIf="actionSelection===0; else supprimerNac"></div>
+
+  <ng-template #supprimerNac>
+    <ng-container *ngIf="actionSelection===2;else ajouterNac">
+      <div class="textarea">
+
+        <div class="step-3">
+          <p>Etape 2 : Choisir une NAC parmi celles existantes :</p>
+          <aj-select [rightsUser]="distinctNAC" (valueChange)="onSelectedChanged($event)"></aj-select>
+          <code>NAC selectionnée(s): {{ selectedNACs | json }}</code>
+        </div>
+
+        <div class="step-4">
+          <p>Etape 3 : Selectionner les valeurs que vous souhaitez supprimer :</p>
+          <div class="textarea path">
+            <aj-select class="path" [rightsUser]="distinctPath" (valueChange)="onSelectedPathChanged($event)"
+              [path]="true"></aj-select>
+            <button [ngClass]="{'disable':this.selectedPath.length===0}" (click)="validateRemoval()">Valider</button>
+          </div>
+          <code>Comptage avant modification: {{ countResult | json }}</code>
+          <br />
+          <code
+            *ngIf="countResultAfterChange!=={}">Comptage après modification: {{ countResultAfterChange | json }}</code>
+        </div>
+      </div>
+
+      <br />
+      <br />
+
+      <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
+      </p>
+      <br />
+      <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+      <br />
+    </ng-container>
+    <ng-template #ajouterNac>
+      Créer la fonction ajouter une NAC
+    </ng-template>
+  </ng-template>
+
+
+
+
 </aj-wrapper>
