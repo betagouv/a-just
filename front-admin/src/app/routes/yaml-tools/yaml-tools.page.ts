@@ -26,6 +26,7 @@ interface filtreDetails {
   styleUrls: ['./yaml-tools.page.scss'],
 })
 export class YamlToolsPage {
+  actionSelection = 0
   existingNAC: string[] = []
   distinctNAC: Array<string> = []
   selectedNACs: Array<string> = []
@@ -45,11 +46,11 @@ export class YamlToolsPage {
  */
   init() {
     const ymlArea = (document.getElementById('yml') as HTMLInputElement)
-    ymlArea.value = ''
+    if (ymlArea) ymlArea.value = ''
     const jsonArea = (document.getElementById('json') as HTMLInputElement)
-    jsonArea.value = ''
+    if (jsonArea) jsonArea.value = ''
     const copyButton = (document.getElementById('copy') as HTMLInputElement)
-    copyButton.innerText = 'Copier'
+    if (copyButton) copyButton.innerText = 'Copier'
 
     this.existingNAC = []
     this.distinctNAC = []
@@ -62,6 +63,8 @@ export class YamlToolsPage {
     this.initialYmlData = null
     this.finalYmlData = null
     this.textResultValue = ''
+    this.actionSelection = 0
+
   }
 
   /**
