@@ -38,6 +38,10 @@ export class YamlToolsPage {
   initialYmlData: any = null
   finalYmlData: any = null
   textResultValue = ''
+  contentieuxLabelList : Array<any> = []
+  NACToAdd: string = ""
+  selectedContentieux: Array<string> = []
+  goToStep3_addNac : boolean = false
 
   constructor() { }
 
@@ -64,7 +68,10 @@ export class YamlToolsPage {
     this.finalYmlData = null
     this.textResultValue = ''
     this.actionSelection = 0
-
+    this.contentieuxLabelList = []
+    this.NACToAdd = ""
+    this.selectedContentieux = []
+    this.goToStep3_addNac = false
   }
 
   /**
@@ -159,7 +166,7 @@ export class YamlToolsPage {
   }
 
   /**
-   * Transforme le texte YML en Objet et récupère la liste des NAC inclues
+   * Transforme le texte YML en Objet et récupère la liste des NAC inclues ainsi que les labels des contentieux
    */
   validateYML() {
     const message = (document.getElementById('json') as HTMLInputElement);
@@ -173,9 +180,11 @@ export class YamlToolsPage {
           // @ts-ignore
           this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
           this.distinctNAC = _.uniq(this.distinctNAC)
+          this.contentieuxLabelList.push({code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
     }
+
 
     this.distinctNAC.map(NAC => { this.pathDictionary = { [NAC]: new Array(), ...this.pathDictionary } })
 
@@ -191,6 +200,45 @@ export class YamlToolsPage {
           })
         }
       }
+    }
+  }
+
+  /**
+   * Sauvegarde de la NAC à ajouter
+   * @param event
+   */
+  onNACToAdd (event: any) {
+    this.NACToAdd = event.target.value
+  }
+
+ /**
+   * S
+   * @param change
+   */
+  onSelectedContentieuxToAddNAC (change : any) {
+    this.selectedContentieux = change
+  }
+
+  addNAC(arr: Array<any>, nac: string) {
+    if (!arr.includes(nac))
+      arr.push(nac)
+    return arr;
+  }
+
+  /**
+   * Supprime les valeurs selectionnées et transforme le resultat en YML
+   */
+  validateAdding() {
+    const response = confirm("Etes-vous sur de vouloir effectuer cette action ?");
+    if (this.selectedContentieux.length && response) {
+      this.finalYmlData = _.cloneDeep(this.initialYmlData)
+      this.selectedContentieux.map((elem: any) => {
+        this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, this.NACToAdd)
+      })
+      
+      const message = (document.getElementById('yml') as HTMLInputElement);
+      this.finalYmlData = { categories: this.finalYmlData }
+      message.value = stringify(this.finalYmlData)
     }
   }
 

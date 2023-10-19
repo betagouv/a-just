@@ -12,9 +12,8 @@ export class SelectComponent {
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter()
 
   selectedRights: string[] = [];
-
   onNgModelChange(event: any) {
-    console.log('On ngModelChange : ', event);
     this.valueChange.emit(this.selectedRights)
   }
+  
 }
