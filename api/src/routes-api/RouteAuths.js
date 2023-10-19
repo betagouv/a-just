@@ -29,9 +29,7 @@ export default class RouteAuths extends Route {
   })
   async login (ctx) {
     const { password, email } = this.body(ctx)
-    console.log('[RouteAuths.js][line 32] email: |', email, '|')
-    console.log('[RouteAuths.js][line 33] password: |', password, '|')
-    const tryUserCon = await this.model.tryConnection(email, password, [0, null, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
+    const tryUserCon = await this.model.tryConnection(email, password, [0, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN], true)
     console.log('[RouteAuths.js][line 35] tryUserCon: |', tryUserCon, '|')
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
@@ -60,7 +58,6 @@ export default class RouteAuths extends Route {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
-    console.log('tryUserCon:')
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
