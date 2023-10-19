@@ -8,6 +8,7 @@ import config from 'config'
 import { getNbDay, humanDate } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
 import { differenceInMinutes } from 'date-fns'
+import { Op } from 'sequelize'
 
 /**
  * Table des utilisateurs
@@ -17,9 +18,8 @@ export default (sequelizeInstance, Model) => {
   /**
    * Control des connection avec les règles de blockages pour les users et admin
    */
-  Model.tryConnection = async (email, password, roles) => {
+  Model.tryConnection = async (email, password, roles, andNull = false) => {
     email = (email || '').toLowerCase()
-    console.log('[tableUsers.js][line 22] email:', email)
     const cleanUser = async (user) => {
       await user.update({
         nb_try_connection: null,
@@ -29,22 +29,26 @@ export default (sequelizeInstance, Model) => {
       user.dataValues.first_try_connection = null
       return user
     }
-    console.log('[tableUsers.js][line 32] roles:', roles)
 
-    let user = await Model.findOne({ where: { email, role: roles } })
-    console.log('[tableUsers.js][line 35] user:', user)
+    let options = {}
+    if (andNull) {
+      options = {
+        ...options,
+        role: { [Op.eq]: null },
+      }
+    }
+
+    let user = await Model.findOne({ where: { email, role: roles, ...options } })
     if (user) {
       if (user.dataValues.status === 0) {
         return "Votre compte n'est plus accessible."
       }
-      console.log('user:', user.dataValues)
 
       if (user.dataValues.first_try_connection) {
         const now = new Date()
         const tryDate = new Date(user.dataValues.first_try_connection)
         let nbMinutes = differenceInMinutes(now, tryDate)
 
-        console.log(nbMinutes, config.securities.users.delaiAboutLockConnection, nbMinutes >= config.securities.users.delaiAboutLockConnection)
         if (nbMinutes >= config.securities.users.delaiAboutLockConnection) {
           user = await cleanUser(user)
         }
