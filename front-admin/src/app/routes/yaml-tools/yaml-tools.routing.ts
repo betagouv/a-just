@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ImportsPage } from './imports.page';
-import { SelectComponent } from 'src/app/components/select/select.component';
+import { YamlToolsPage } from './yaml-tools.page';
 
 const routes: Routes = [
 	{
 		path: '',
-		component: ImportsPage
+		component: YamlToolsPage
 	}
 ];
 
@@ -14,4 +13,4 @@ const routes: Routes = [
 	imports: [RouterModule.forChild(routes)],
 	exports: [RouterModule]
 })
-export class ImportsPageModule { }
+export class YamlToolsPageModule { }
