@@ -44,6 +44,12 @@ const routes: Routes = [
     canActivate: [AdminAuthGuard],
   },
   {
+    path: 'yaml-tools',
+    loadChildren: () =>
+      import('./yaml-tools/yaml-tools.module').then((mod) => mod.YamlToolsModule),
+    canActivate: [AdminAuthGuard],
+  },
+  {
     path: 'data-analyse',
     loadChildren: () =>
       import('./data-analyse/data-analyse.module').then((mod) => mod.DataAnalyseModule),
@@ -51,9 +57,10 @@ const routes: Routes = [
   }
 ];
 
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   providers: [AdminAuthGuard],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
