@@ -92,7 +92,7 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
               this.tags[this.tags.length - 1].dateEnd = month(date, 0, 'lastday')
               this.tags[0].dateEnd = month(date, 0, 'lastday')
               this.tags[0].dateStart = month(this.tags[0].dateEnd, -11)
-              this.tags[0].label = `Dernier trimestre disponible : ${this.getShortMonthString(this.tags[0].dateStart)} ${this.tags[0].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[0].dateEnd)} ${this.tags[0].dateEnd.getFullYear()}`
+              this.tags[0].label = `Les 12 derniers mois disponibles : ${this.getShortMonthString(this.tags[0].dateStart)} ${this.tags[0].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[0].dateEnd)} ${this.tags[0].dateEnd.getFullYear()}`
               this.tags[1].dateEnd = month(date, 0, 'lastday')
               this.tags[1].dateStart = month(this.tags[1].dateEnd, -2)
               this.tags[1].label = `Dernier trimestre disponible : ${this.getShortMonthString(this.tags[1].dateStart)} ${this.tags[1].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[1].dateEnd)} ${this.tags[1].dateEnd.getFullYear()}`
