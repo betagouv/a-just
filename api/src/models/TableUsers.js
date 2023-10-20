@@ -30,15 +30,21 @@ export default (sequelizeInstance, Model) => {
       return user
     }
 
-    let options = {}
+    let options = { role: roles }
     if (andNull) {
       options = {
-        ...options,
-        role: { [Op.eq]: null },
+        [Op.or]: [
+          {
+            role: roles,
+          },
+          {
+            role: { [Op.eq]: null },
+          },
+        ],
       }
     }
 
-    let user = await Model.findOne({ where: { email, role: roles, ...options } })
+    let user = await Model.findOne({ where: { email, ...options } })
     if (user) {
       if (user.dataValues.status === 0) {
         return "Votre compte n'est plus accessible."
