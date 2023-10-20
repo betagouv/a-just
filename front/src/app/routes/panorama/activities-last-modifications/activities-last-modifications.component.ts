@@ -44,9 +44,11 @@ export class ActivitiesLastModificationsComponent extends MainClass implements O
       this.humanResourceService.hrBackup.subscribe(
         (hrBackup: BackupInterface | null) => {
           if (hrBackup) {
-            this.activitiesService.getLastUpdatedActivities().then((l) => {
+            setTimeout(() => {
+              this.activitiesService.getLastUpdatedActivities().then((l) => {
               this.list = l
             })
+          }, 1000)
           } else {
             this.list = []
           }
