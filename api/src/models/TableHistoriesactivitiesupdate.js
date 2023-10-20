@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { month } from '../utils/date'
 
 /**
  * Intermédiaire avec la table d'historisation des modifications d'activités
@@ -122,7 +123,7 @@ export default (sequelizeInstance, Model) => {
   Model.getLasHumanActivites = async (HRBackupId) => {
     const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels()) || []
 
-    const getHistory = async (historyId = null, activityDate = null, contentieuxId = null) => {
+    const getHistory = async (historyId = null, activityId = null, contentieuxId = null, activityDate = null) => {
       const whereActivity = {
         hr_backup_id: HRBackupId,
       }
@@ -134,26 +135,28 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      if (activityDate) {
-        whereActivity.periode = {
-          [Op.ne]: activityDate,
+      if (activityId) {
+        whereHistory.activity_id = {
+          [Op.ne]: activityId,
         }
       }
 
-      if (contentieuxId) {
+      /*if (contentieuxId) {
         whereActivity.contentieux_id = {
           [Op.ne]: contentieuxId,
         }
-      }
+      }*/
 
       const element = await Model.findOne({
         include: [
           {
+            attributes: ['contentieux_id', 'periode'],
             model: Model.models.Activities,
             required: true,
             where: whereActivity,
           },
           {
+            attributes: ['first_name', 'last_name'],
             model: Model.models.Users,
             required: true,
           },
@@ -163,7 +166,15 @@ export default (sequelizeInstance, Model) => {
         raw: true,
       })
 
-      if (element) {
+      if (element && !element.value) {
+        return await getHistory(element.id, element['Activity.id'], contentieuxId, activityDate)
+      } else if (
+        element &&
+        element['Activity.contentieux_id'] === contentieuxId &&
+        month(element['Activity.periode']).getTime() === month(activityDate).getTime()
+      ) {
+        return await getHistory(element.id, element['Activity.id'], contentieuxId, activityDate)
+      } else if (element) {
         let contentieux = referentiel.find((r) => r.id === element['Activity.contentieux_id'])
         if (!contentieux) {
           // is child referentiel
@@ -188,6 +199,7 @@ export default (sequelizeInstance, Model) => {
             id: contentieux?.id,
             label: contentieux?.label,
           },
+          db: element,
         }
       }
 
@@ -199,8 +211,9 @@ export default (sequelizeInstance, Model) => {
     do {
       elementHistoryElement = await getHistory(
         list.length ? list[list.length - 1].history.id : null,
-        list.length ? list[list.length - 1].activity.periode : null,
-        list.length ? list[list.length - 1].activity.contentieuxId : null
+        list.length ? list[list.length - 1].activity.id : null,
+        list.length ? list[list.length - 1].activity.contentieuxId : null,
+        list.length ? list[list.length - 1].activity.periode : null
       )
       if (elementHistoryElement) {
         list.push(elementHistoryElement)
