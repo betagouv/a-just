@@ -21,7 +21,7 @@ import {
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
 })
-export class ReferentielCalculatorComponent extends MainClass implements OnInit {
+export class ReferentielCalculatorComponent extends MainClass {
   /**
    * Un item de la liste du calculateur
    */
@@ -71,6 +71,19 @@ export class ReferentielCalculatorComponent extends MainClass implements OnInit 
   ) {
     super()
 
+    if (this.maxDateSelectionDate === null) {
+
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        if (date === null) {
+          date = new Date()
+        }
+        date = new Date(date ? date : '')
+        const max = month(date, 0, 'lastday')
+        this.maxDateSelectionDate = max
+      })
+
+    }
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -87,20 +100,6 @@ export class ReferentielCalculatorComponent extends MainClass implements OnInit 
     this.watcherDestroy()
   }
 
-  ngOnInit() {
-    if (this.maxDateSelectionDate === null) {
-
-      this.activitiesService.getLastMonthActivities().then((date) => {
-        if (date === null) {
-          date = new Date()
-        }
-        date = new Date(date ? date : '')
-        const max = month(date, 0, 'lastday')
-        this.maxDateSelectionDate = max
-      })
-
-    }
-  }
   /**
    * Switch la visibilité des enfants
    */
