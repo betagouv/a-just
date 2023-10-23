@@ -1,9 +1,11 @@
-import { Component, HostBinding, Input } from '@angular/core'
+import { Component, HostBinding, Input, OnInit } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -19,7 +21,7 @@ import {
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
 })
-export class ReferentielCalculatorComponent extends MainClass {
+export class ReferentielCalculatorComponent extends MainClass implements OnInit {
   /**
    * Un item de la liste du calculateur
    */
@@ -64,7 +66,8 @@ export class ReferentielCalculatorComponent extends MainClass {
   constructor(
     private userService: UserService,
     private referentielService: ReferentielService,
-    private calculatorService: CalculatorService
+    private calculatorService: CalculatorService,
+    private activitiesService: ActivitiesService,
   ) {
     super()
 
@@ -84,6 +87,20 @@ export class ReferentielCalculatorComponent extends MainClass {
     this.watcherDestroy()
   }
 
+  ngOnInit() {
+    if (this.maxDateSelectionDate === null) {
+
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        if (date === null) {
+          date = new Date()
+        }
+        date = new Date(date ? date : '')
+        const max = month(date, 0, 'lastday')
+        this.maxDateSelectionDate = max
+      })
+
+    }
+  }
   /**
    * Switch la visibilité des enfants
    */
