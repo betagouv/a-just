@@ -49,11 +49,13 @@
       <br />
       <br />
 
-      <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
-      </p>
-      <br />
-      <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
-      <br />
+      <div [ngClass]="{'disable':this.displayResult===false}">
+        <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
+        </p>
+        <br />
+        <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+        <br />
+      </div>
     </ng-container>
   </ng-template>
 
@@ -81,11 +83,13 @@
 
       <br />
       <br />
+      <div [ngClass]="{'disable':this.displayResult===false}">
 
-      <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
-      </p>
-      <br />
-      <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+        <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
+        </p>
+        <br />
+        <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+      </div>
       <br />
     </ng-container>
   </ng-template>

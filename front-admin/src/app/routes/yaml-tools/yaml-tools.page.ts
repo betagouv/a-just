@@ -38,10 +38,11 @@ export class YamlToolsPage {
   initialYmlData: any = null
   finalYmlData: any = null
   textResultValue = ''
-  contentieuxLabelList : Array<any> = []
+  contentieuxLabelList: Array<any> = []
   NACToAdd: string = ""
   selectedContentieux: Array<string> = []
-  goToStep3_addNac : boolean = false
+  goToStep3_addNac: boolean = false
+  displayResult: boolean = false
 
   constructor() { }
 
@@ -72,6 +73,7 @@ export class YamlToolsPage {
     this.NACToAdd = ""
     this.selectedContentieux = []
     this.goToStep3_addNac = false
+    this.displayResult = false
   }
 
   /**
@@ -125,6 +127,7 @@ export class YamlToolsPage {
   validateRemoval() {
     const response = confirm("Etes-vous sur de vouloir effectuer cette action ?");
     if (this.selectedPath.length && response) {
+      this.displayResult = true
       this.finalYmlData = _.cloneDeep(this.initialYmlData)
       this.selectedPath.map((elem: any) => {
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.removeAll(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, elem.NAC)
@@ -180,7 +183,7 @@ export class YamlToolsPage {
           // @ts-ignore
           this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
           this.distinctNAC = _.uniq(this.distinctNAC)
-          this.contentieuxLabelList.push({code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
+          this.contentieuxLabelList.push({ code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
     }
@@ -207,19 +210,19 @@ export class YamlToolsPage {
    * Sauvegarde de la NAC à ajouter
    * @param event
    */
-  onNACToAdd (event: any) {
+  onNACToAdd(event: any) {
     this.NACToAdd = event.target.value
   }
 
- /**
-   * S
-   * @param change
-   */
-  onSelectedContentieuxToAddNAC (change : any) {
+  /**
+    * S
+    * @param change
+    */
+  onSelectedContentieuxToAddNAC(change: any) {
     this.selectedContentieux = change
   }
 
-  addNAC(arr: Array<any>, nac: string) {
+  addNAC(arr: Array<any>, nac: string) {
     if (!arr.includes(nac))
       arr.push(nac)
     return arr;
@@ -231,11 +234,12 @@ export class YamlToolsPage {
   validateAdding() {
     const response = confirm("Etes-vous sur de vouloir effectuer cette action ?");
     if (this.selectedContentieux.length && response) {
+      this.displayResult = true
       this.finalYmlData = _.cloneDeep(this.initialYmlData)
       this.selectedContentieux.map((elem: any) => {
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, this.NACToAdd)
       })
-      
+
       const message = (document.getElementById('yml') as HTMLInputElement);
       this.finalYmlData = { categories: this.finalYmlData }
       message.value = stringify(this.finalYmlData)
