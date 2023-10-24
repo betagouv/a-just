@@ -107,7 +107,7 @@ export class ExcelService extends MainClass {
 
         const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
-        const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'","").replaceAll("(","").replaceAll(")","") + '"']
+        const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
         const viewModel = {
           agregat: this.tabs.onglet2.excelRef,
@@ -164,25 +164,38 @@ export class ExcelService extends MainClass {
 
             this.tabs.onglet2.values.forEach((element: any, index: number) => {
               report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
-                {
-                  type: 'list',
-                  allowBlank: true,
-                  formulae: tProximite,
-                  error:
-                    'Veuillez selectionner une valeur dans le menu déroulant',
-                  //prompt: 'je suis un prompteur',
-                  showErrorMessage: true,
-                  showInputMessage: true,
-                }
+              {
+                type: 'list',
+                allowBlank: true,
+                formulae: tProximite,
+                error:
+                  'Veuillez selectionner une valeur dans le menu déroulant',
+                //prompt: 'je suis un prompteur',
+                showErrorMessage: true,
+                showInputMessage: true,
+              }
             })
 
             this.tabs.onglet2.values.forEach((element: any, index: number) => {
-              report.worksheets[1].getCell('I' + (+index + 3)).dataValidation =
+
+
+              if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
+                console.log(report.worksheets[1].getCell('I' + (+index + 3)))
+                report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
                 {
                   type: 'list',
                   allowBlank: true,
-                  formulae: ['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'],
+                  formulae: ['"JA-Placé,JA-Pôle-Social,JA-Siège"'],
                 }
+              }
+
+
+              report.worksheets[1].getCell('I' + (+index + 3)).dataValidation =
+              {
+                type: 'list',
+                allowBlank: true,
+                formulae: ['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'],
+              }
             })
 
             return report.xlsx.writeBuffer()
@@ -207,12 +220,11 @@ export class ExcelService extends MainClass {
     return `Extraction ETPT_du ${new Date(this.dateStart.getValue())
       .toJSON()
       .slice(0, 10)} au ${new Date(this.dateStop.getValue())
-      .toJSON()
-      .slice(0, 10)}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}`
+        .toJSON()
+        .slice(0, 10)}_par ${this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}`
   }
 
   modifyExcel(file: any) {
