@@ -2,7 +2,7 @@
   <p>Extracteur de données d'activité</p>
 </div>
 <div class="exportateur-container">
-  <aj-date-select title="Pour la période du" dateType="month" [value]="dateStart"
+  <aj-date-select title="Pour la période de" dateType="month" [value]="dateStart"
     (valueChange)="selectDate('start', $event)" [max]="dateStop|| lastDataDate">
   </aj-date-select>
   <aj-date-select title="À" dateType="month" [value]="dateStop" (valueChange)="selectDate('stop', $event)"
