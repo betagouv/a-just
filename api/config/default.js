@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL,
+  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -30,6 +30,7 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
+    logging: (msg) => console.log(msg),
     //logging: false,
   },
   /**
@@ -97,7 +98,45 @@ module.exports = {
    */
   sentEmail: true,
   /**
+   * Juridiction type
+   */
+  juridictionType: process.env.TYPE_ID || 0,
+  /**
    * Token expiration delay
    */
-  nbMaxDayTokenLife: 30,
+  nbMaxDayTokenLife: 7,
+  /**
+   * Force HTTP to HTTPS
+   */
+  forceSSL: false,
+  /**
+   * Securities rules
+   */
+  securities: {
+    /**
+     * Securities about the user connected
+     */
+    users: {
+      /**
+       * Max essai de connection après blockage
+       */
+      nbMaxTryConnection: 5,
+      /**
+       * Tranche min d'essais de connection
+       */
+      nbMaxDelayAboutTryConnection: 10, // 10 minutes,
+      /**
+       * Delai de blockage d'un compte
+       */
+      delaiAboutLockConnection: 5, // 5 minutes,
+    },
+  },
+  /**
+   * Limite le nombre de requete en 5 min
+   */
+  maxQueryLimit: 1000,
+  /**
+   * Force to format logs
+   */
+  formatLogs: false,
 }

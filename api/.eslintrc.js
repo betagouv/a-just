@@ -25,6 +25,6 @@ module.exports = {
     semi: ['error', 'never'],
     'space-infix-ops': ['error', { int32Hint: false }],
     'block-spacing': ['error', 'always'],
-    'no-empty': ['error', { 'allowEmptyCatch': true }],
+    'no-empty': ['error', { allowEmptyCatch: true }],
   },
 }

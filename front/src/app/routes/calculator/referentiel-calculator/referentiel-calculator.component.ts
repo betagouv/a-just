@@ -1,8 +1,11 @@
-import { Component, HostBinding, Input } from '@angular/core'
+import { Component, HostBinding, Input, OnInit } from '@angular/core'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -36,6 +39,10 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   @Input() forceToShowChildren: boolean = false
   /**
+   * Derniere date de donnée d'activité disponible
+   */
+  @Input() maxDateSelectionDate: Date | null = null
+  /**
    * Connexion au css pour forcer l'affichage des enfants
    */
   @HostBinding('class.show-children') showChildren: boolean =
@@ -58,9 +65,24 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   constructor(
     private userService: UserService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private calculatorService: CalculatorService,
+    private activitiesService: ActivitiesService,
   ) {
     super()
+
+    if (this.maxDateSelectionDate === null) {
+
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        if (date === null) {
+          date = new Date()
+        }
+        date = new Date(date ? date : '')
+        const max = month(date, 0, 'lastday')
+        this.maxDateSelectionDate = max
+      })
+
+    }
 
     this.watch(
       this.userService.user.subscribe((u) => {
@@ -107,5 +129,12 @@ export class ReferentielCalculatorComponent extends MainClass {
    */
   trunc(value: number) {
     return Math.trunc(value * 100000) / 100000
+  }
+  /**
+   * Indique si la date de fin selectionnée est dans le passé
+   */
+  checkPastDate() {
+    console.log('Max date =>', this.maxDateSelectionDate, ' DateStop =>', this.calculatorService.dateStop.value)
+    return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
   }
 }

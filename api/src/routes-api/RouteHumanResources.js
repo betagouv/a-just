@@ -7,8 +7,9 @@ import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { today } from '../utils/date'
-import { findAllSituations } from '../utils/human-resource'
+import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
+import { etpLabel } from '../constants/referentiel'
 
 /**
  * Route des fiches
@@ -234,10 +235,12 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('step1')
     console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
+
     console.timeEnd('step2')
     console.time('step3')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
     console.timeEnd('step3')
+
     const allCategories = await this.models.HRCategories.getAll()
 
     if (categoriesIds && categoriesIds.length === allCategories.length && !contentieuxIds) {
@@ -247,6 +250,7 @@ export default class RouteHumanResources extends Route {
 
     console.time('step4')
     let listFiltered = [...list]
+
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
     const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
 
@@ -254,7 +258,6 @@ export default class RouteHumanResources extends Route {
       .filter((c) => categoriesIds.indexOf(c.id) !== -1)
       .map((category) => {
         let label = category.label
-
         let referentiel = copyArray(originalReferentiel)
           .filter((r) => r.label !== 'Indisponibilité')
           .map((ref) => {
@@ -272,11 +275,6 @@ export default class RouteHumanResources extends Route {
           }
         }
 
-        const hr = group.map((g) => {
-          delete g.situations
-
-          return g
-        })
         console.log('@@@@@', label)
         return {
           textColor: getCategoryColor(label),
@@ -284,7 +282,7 @@ export default class RouteHumanResources extends Route {
           hoverColor: getHoverCategoryColor(label),
           referentiel,
           label,
-          hr,
+          hr: group,
           categoryId: category.id,
         }
       })
@@ -307,15 +305,29 @@ export default class RouteHumanResources extends Route {
             // if no situation in the past get to the future
             sitations = findAllSituations(person, this.dateSelected, true, true)
           }
+          const { currentSituation } = findSituation(person, this.dateSelected)
+          let etp = (currentSituation && currentSituation.etp) || null
+          if (etp < 0) {
+            etp = 0
+          }
 
           return {
             id: person.id,
+            currentActivities: (currentSituation && currentSituation.activities) || [],
             lastName: person.lastName,
             firstName: person.firstName,
             isIn: false,
+            dateStart: person.dateStart,
+            dateEnd: person.dateEnd,
+            sitations: sitations,
+            etp,
+            etpLabel: etp ? etpLabel(etp) : null,
             categoryName: sitations.length && sitations[0].category ? sitations[0].category.label : '',
+            category: sitations.length && sitations[0].category ? sitations[0].category : null,
             categoryRank: sitations.length && sitations[0].category ? sitations[0].category.rank : null,
             fonctionRank: sitations.length && sitations[0].fonction ? sitations[0].fonction.rank : null,
+            fonction: sitations.length && sitations[0].fonction ? sitations[0].fonction : null,
+            indisponibilities: person.indisponibilities,
           }
         }),
         ['categoryRank', 'fonctionRank', 'lastName']

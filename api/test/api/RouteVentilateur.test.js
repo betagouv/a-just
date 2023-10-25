@@ -1,12 +1,7 @@
 import { assert } from 'chai'
-import { accessList } from '../../src/constants/access'
-import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
-import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
-import { onGetContentiousApi, onGetAllActivatedTjApi } from '../routes/ventilateur'
-import { onLoginAdminApi, onSignUpApi, onLoginApi, onUpdateAccountApi, onRemoveAccountApi, onGetUserDataApi, onGetMyInfosApi } from '../routes/user'
-import { onGetBackupListHrApi } from '../routes/hr'
-import { onFilterListApi } from '../routes/humanRessources'
-import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID } from '../constants/juridiction'
+import { onUpdateAccountApi } from '../routes/user'
+import { onFilterListHRApi } from '../routes/hr'
+import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 
 module.exports = function (datas) {
   describe('Check calcul -- Ventilateur ', () => {
@@ -27,7 +22,7 @@ module.exports = function (datas) {
       const contentieuxIds = [447]
       let sumEtpSocial = null
 
-      const response = await onFilterListApi({
+      const response = await onFilterListHRApi({
         userToken: datas.adminToken,
         backupId: JURIDICTION_BACKUP_ID,
         /*dateStart,

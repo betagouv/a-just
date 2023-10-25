@@ -1,7 +1,5 @@
 import { assert } from 'chai'
-import { accessList } from '../../src/constants/access'
 import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
-import { onUpdateAccountApi } from '../routes/user'
 
 module.exports = function (datas) {
   let hrId = null
@@ -229,12 +227,12 @@ module.exports = function (datas) {
         situations: [
           {
             ...oldSituation[0],
-            category: { id: 2, rank: 2, label: 'Fonctionnaire' },
+            category: { id: 2, rank: 2, label: 'Greffe' },
             fonction: {
               id: 44,
-              rank: 1,
-              code: 'B greffier',
-              label: 'B greffier',
+              rank: 3,
+              code: 'B',
+              label: 'B GREFFIER',
               category_detail: 'F-TIT',
               position: 'Titulaire',
               calculatriceIsActive: false,
@@ -248,10 +246,12 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
+
       const newSituation = response.data.data.situations[0]
       current_hr = response.data.data
 
       assert.strictEqual(response.status, 200)
+
       assert.notDeepEqual(oldSituation[0].category, newSituation.category)
       assert.notDeepEqual(oldSituation[0].fonction, newSituation.fonction)
       assert.deepEqual(hr.situations[0].category, newSituation.category)

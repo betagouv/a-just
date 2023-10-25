@@ -1,0 +1,77 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  padding: 24px;
+
+  table {
+    width: 100%;
+  }
+
+  th, td {
+    white-space: nowrap;
+  }
+  
+  h3 {
+    color: fColor(primary);
+    font-size: 20px;
+    margin-bottom: 22px;
+  }
+
+  .category {
+    border-radius: 4px;
+  }
+
+  .header-titles {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    color: #929292;
+    font-size: 14px;
+    line-height: 1.71;
+    padding: 4px 14px;
+
+    th {
+      font-weight: lighter;
+      text-align: left;
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 4px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 41px;
+  }
+
+  .label {
+    line-height: 16px;
+    width: 142px;
+  }
+
+  .percent {
+    padding: 0 8px;
+    text-align: right;
+  }
+
+  .update {
+    font-weight: bold;
+    width: 93px;
+  }
+
+  .arrow {
+    width: 1%;
+    margin-right: 12px;
+
+    mat-icon {
+      position: relative;
+      top: 2px;
+    }
+  }
+}

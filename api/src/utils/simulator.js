@@ -175,10 +175,6 @@ export async function getSituation (referentielId, hr, allActivities, categories
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
 
-  //console.log('To compare totalIn : ', totalIn)
-  //console.log('To compare totalOut : ', totalOut)
-  //console.log('To compare lastStock : ', lastStock)
-
   let realTimePerCase = undefined
   let DTES = undefined
   let Coverage = undefined
@@ -205,13 +201,14 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
-  if (lastActivities.length === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
+  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
   else {
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
+    console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
 
@@ -370,7 +367,6 @@ function computeDTES (lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
-  /**
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
@@ -386,7 +382,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
   })
-   */
+
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
   let stock = Math.floor(
@@ -417,7 +413,13 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
 function computeRealTimePerCase (totalOut, etp, sufix) {
+  console.log('[simulator.js][line 420] totalOut:', totalOut)
+  console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
+  console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
+  console.log('[simulator.js][line 423] etp:', etp)
+  console.log('[simulator.js][line 424] suffix:', sufix)
   let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 100)
+  console.log('[simulator.js][line 425] realTime:', realTime)
   return Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 }
 

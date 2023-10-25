@@ -1,4 +1,5 @@
 import { posad } from '../constants/hr'
+import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
@@ -185,9 +186,9 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-          case 'Fonctionnaire':
-            statut = 'Greffe'
-            break
+        case 'Fonctionnaire':
+          statut = 'Greffe'
+          break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -200,52 +201,51 @@ export default (sequelizeInstance, Model) => {
 
         console.log('findCategory', findCategory)
         if (findCategory) {
-          console.log('oui ?', filterNoEtpt.includes(list[i].fonction), privilegedInGreff.includes(list[i].grade))
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             situation.category_id = findEAM.id
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
-              case 'CONT A VIF JP':
-                code = 'CONT A JP'
-                break
-              case 'CONT B VIF JP':
-                code = 'CONT B JP'
-                break
-              case 'CONT C VIF JP':
-                code = 'CONT C JP'
-                break
-              default:
-                code = list[i].grade
-                break
+            case 'CONT A VIF JP':
+              code = 'CONT A JP'
+              break
+            case 'CONT B VIF JP':
+              code = 'CONT B JP'
+              break
+            case 'CONT C VIF JP':
+              code = 'CONT C JP'
+              break
+            default:
+              code = list[i].grade
+              break
             }
           } else situation.category_id = findCategory.id
         }
 
         switch (code) {
-          case 'MHFJS':
-            code = 'MHFJ'
-            break
-          case 'ATT A':
-            code = 'CHCAB'
-            break
-          case 'JA JP':
-            code = 'JA'
-            break
-          case 'CONT B IFPA':
-            code = 'CONT B'
-            break
+        case 'MHFJS':
+          code = 'MHFJ'
+          break
+        case 'ATT A':
+          code = 'CHCAB'
+          break
+        case 'JA JP':
+          code = 'JA'
+          break
+        case 'CONT B IFPA':
+          code = 'CONT B'
+          break
         }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
-            case 'CONT A':
-            case 'CONT B':
-            case 'CONT C':
-            case 'CONT CB':
-            case 'CONT CJ':
-              code = list[i].grade
-              break
+          case 'CONT A':
+          case 'CONT B':
+          case 'CONT C':
+          case 'CONT CB':
+          case 'CONT CJ':
+            code = list[i].grade
+            break
           }
         }
 
@@ -261,6 +261,7 @@ export default (sequelizeInstance, Model) => {
         let findFonction = await Model.models.HRFonctions.findOne({
           where: {
             code,
+            category_id: situation.category_id,
           },
           logging: false,
         })
@@ -290,6 +291,12 @@ export default (sequelizeInstance, Model) => {
           }
         }
 
+        // control ETP to complete
+        const gradeToETPComplete = ['MTT', 'MHFJ', 'MHFJS', 'MHFNJ', 'MRES', 'VAC', 'GRES', 'PPI', 'ADJ']
+        if (gradeToETPComplete.indexOf(list[i].fonction) !== -1) {
+          situation.etp = ETP_NEED_TO_BE_UPDATED
+        }
+
         let updatedAt = new Date()
         const dateUpdatedSplited = (list[i].date_modif || '').split('/')
         if (dateUpdatedSplited.length === 3) {
@@ -313,6 +320,8 @@ export default (sequelizeInstance, Model) => {
           options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
           situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
         }
+
+        //console.log(options, situation)
 
         // create person
         findHRToDB = await Model.create(options)
@@ -405,7 +414,6 @@ export default (sequelizeInstance, Model) => {
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
 
     const newHr = await Model.getHr(hr.id)
-
     return newHr
   }
 
@@ -442,7 +450,7 @@ export default (sequelizeInstance, Model) => {
         updatedAt: hr.updated_at,
         comment: hr['HRComment.comment'],
         backupId: hr.backup_id,
-        situations: await Model.models.HRSituations.getListByHumanId(hr.id),
+        situations: await Model.models.HRSituations.getListByHumanId(hr.id, hr.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
       }
     }

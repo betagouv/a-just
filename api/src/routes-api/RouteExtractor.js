@@ -24,7 +24,7 @@ export default class RouteExtractor extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'HumanResources' })
   }
 
@@ -44,7 +44,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterList (ctx) {
+  async filterList(ctx) {
     let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
@@ -115,8 +115,6 @@ export default class RouteExtractor extends Route {
     const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
 
-    console.log(flatReferentielsList)
-
     const label = (juridictionName.label || '').toUpperCase()
     let tproxs = (await this.models.TJ.getByTj(label, {}, { type: 'TPRX' })).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox }))
     if (tproxs.length === 0) {
@@ -131,6 +129,131 @@ export default class RouteExtractor extends Route {
     })
   }
 
+  /**
+   *
+   * @param {*} dateStart
+   * @param {*} dateStop
+   *
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async juridictionAjustedDataList (ctx) {
+    let { dateStart /*, dateStop */ } = this.body(ctx)
+    let result = []
+
+    await this.models.HRBackups.getAll()
+      .then(async (res) => {
+        res.map(async (elem) => {
+          await this.models.Activities.getByMonth(dateStart, elem.id)
+            .then(
+              (res) => {
+                if (res.length) {
+                  console.log('\n\n\n\n\n\n\n\nTj name data: ', elem.label, ' | id: ', res[0].backupId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+                  //console.log('res.length:', res.length)
+                  for (let i = 0; i < res.length; i++) {
+                    //console.log('res[i]:', res[i])
+                    if (res[i].entrees !== null || res[i].sorties !== null || res[i].stock !== null) {
+                      console.log('Is not null tj=', elem.label)
+                      result.push({ label: elem.label, id: res[0].backupId })
+                      break
+                    }
+                  }
+                }
+
+                //result.push({ label: tjLabel, id: tjId })
+              } //console.log('\n\n\n\n\n\n\n\nTj name data: ', tjLabel, ' | id: ', tjId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+            )
+            .catch((err) => console.log('error: ', err))
+        }, console.log('\n\n\n\n\n\n\n\nresult01:', result, '\n\n\n\n\n\n\n\n'))
+      })
+      .then((res) => {
+        console.log('\n\n\n\n\n\n\n\nHere:')
+        console.log('res:', res)
+        console.log('result final:', result, '\n\n\n\n\n\n\n\n')
+      })
+
+    // console.log('\n\n\n\n\n\n\n\nResult00:', list, '\n\n\n\n\n\n\n\n')
+    /*list.map(async (elem) => {
+      await this.models.Activities.getByMonth(dateStart, elem.id)
+        .then(
+          (res) => {
+            const tjId = elem.id
+            const tjLabel = elem.label
+            //console.log('res:', res)
+
+            if (res.length) {
+              console.log('\n\n\n\n\n\n\n\nTj name data: ', tjLabel, ' | id: ', res[0].backupId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+              //console.log('res.length:', res.length)
+              for (let i = 0; i < res.length; i++) {
+                //console.log('res[i]:', res[i])
+                if (res[i].entrees !== null || res[i].sorties !== null || res[i].stock !== null) {
+                  console.log('Is not null tj=', tjLabel)
+                  result.push({ label: tjLabel, id: res[0].backupId })
+
+                  break
+                }
+              }
+            }
+            //console.log('\n\n\n\n\n\n\n\nresult01:', result, '\n\n\n\n\n\n\n\n')
+
+            //result.push({ label: tjLabel, id: tjId })
+          } //console.log('\n\n\n\n\n\n\n\nTj name data: ', tjLabel, ' | id: ', tjId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+        )
+        .catch((err) => console.log('error: ', err))
+    })*/
+    //console.log('\n\n\n\n\n\n\n\nresult final:', result, '\n\n\n\n\n\n\n\n')
+
+    /*list.map(async (tj) => {
+      const label = tj.label
+      const id = tj.id
+
+      console.log('TJ label:', tj.label)
+      console.log('TJ id:', tj.id)
+
+      await this.models.Activities.getByMonth(dateStart, tj.id)
+        .then(
+          (res) => {
+            console.log('label:', label)
+            console.log('id:', id)
+
+            const tjId = tj.id
+            const tjLabel = tj.label
+            console.log('TJ name01:', tjLabel, ' | TJ id01: ', tjId)
+            console.log('res:', res)
+
+            console.log('res.length:', res.length)
+            if (res.length) {
+              console.log('\n\n\n\n\n\n\n\nTj name data: ', tjLabel, ' | id: ', tjId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+              //console.log('res.length:', res.length)
+              for (let i = 0; i < res.length; i++) {
+                //console.log('res[i]:', res[i])
+                if (res[i].entrees !== null || res[i].sorties !== null || res[i].stock !== null) {
+                  console.log('Is not null tj=', tjLabel)
+                  result.push({ label: tjLabel, id: tjId })
+
+                  break
+                }
+              }
+            }
+            //console.log('\n\n\n\n\n\n\n\nresult01:', result, '\n\n\n\n\n\n\n\n')
+
+            //result.push({ label: tjLabel, id: tjId })
+          } //console.log('\n\n\n\n\n\n\n\nTj name data: ', tjLabel, ' | id: ', tjId, 'TJ Data:', res, '\n\n\n\n\n\n\n\n')
+        )
+        .catch((err) => console.log('error: ', err))
+      console.log('\n\n\n\n\n\n\n\nresult00:', result, '\n\n\n\n\n\n\n\n')
+    })*/
+    /*.then(() => {
+      console.log('result00:', result)
+      this.sendOk(ctx, { list: result })
+    })*/
+  }
+
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -139,11 +262,13 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterListAct (ctx) {
+  async filterListAct(ctx) {
     let { backupId, dateStart, dateStop } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    if (!Access.isAdmin(ctx)) {
+      if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+        ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      }
     }
 
     const list = await this.models.Activities.getByMonth(dateStart, backupId)
@@ -158,7 +283,7 @@ export default class RouteExtractor extends Route {
       })
 
     let sum = cloneDeep(activities)
-    console.log(sum)
+
     sum = sum.map((x) => {
       const ajustedIn = x.entrees || x.originalEntrees
       const ajustedOut = x.sorties || x.originalSorties

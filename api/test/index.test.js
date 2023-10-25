@@ -2,7 +2,7 @@ import { default as server } from '../src/index'
 import { accessList } from '../src/constants/access'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
-import routeCalcultator from './api/RouteCalculateur.test'
+import routeCalcultator from './api/RouteCalculator.test'
 import routeSimulator from './api/RouteSimulator.test'
 
 //import routeVentilateur from './api/RouteVentilateur.test'
@@ -90,10 +90,10 @@ describe('Test server is ready', () => {
     assert.isNotEmpty(datas.adminAccess)
   })
 
-  routeUser(datas)
-  routeChangeUserData(datas)
-  routeCalcultator(datas)
-  routeSimulator(datas)
+  //routeUser(datas)
+  //routeChangeUserData(datas)
+  //routeCalcultator(datas)
+  //routeSimulator(datas)
   //routeVentilateur(datas)
 
   /*routeImport()

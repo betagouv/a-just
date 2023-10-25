@@ -3,6 +3,7 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
+  nbOfDays,
 } from 'src/app/utils/dates'
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -34,7 +35,7 @@ const etpMag = 'etpMag'
 /**
  * Variable ETP magistrat popup title
  */
-const etpMagTitle = 'des ETPT magistrat'
+const etpMagTitle = 'des ETPT siège'
 /**
  * Variable ETP magistrat unité
  */
@@ -178,7 +179,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Constante en cours d'impression
    */
-  onPrint:boolean=false
+  onPrint: boolean = false
   /**
    * Documentation widget
    */
@@ -267,9 +268,26 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-
+  /**
+     * Commentaires pour PDF
+     */
   commentaire: String = ''
-
+  /**
+   * Activation du simulator à blanc
+   */
+  whiteSimulator: boolean = false
+  /**
+   * Nombre de jour de simulation à blanc
+   */
+  whiteNbOfDays: number = 0
+  /**
+   * Affichage des boutons ajuster et simuler
+   */
+  displayWhiteElements: boolean = false
+  /**
+   * Affichage de l'écran de choix de simulateur
+   */
+  chooseScreen = true
   /**
    * Constructeur
    */
@@ -289,7 +307,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
           .slice(0, 10)}`
-        }))
+      }))
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -297,7 +315,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
-          .slice(0, 10)}`          
+          .slice(0, 10)}`
       })
     )
 
@@ -306,6 +324,17 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.resetParams()
       })
     )
+
+    this.watch(
+      this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
+        this.displayWhiteElements = b
+        if (b === false) {
+          this.toDisplaySimulation = false
+          this.initParamsToAjust()
+        }
+      })
+    )
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -350,7 +379,19 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Initialisation du composant
    */
   ngOnInit(): void {
+    this.resetParams()
     this.dateStop = null
+
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find(
+          (c: HRCategoryInterface) =>
+            c.label.toUpperCase() === this.categorySelected?.toUpperCase()
+        ) || null
+
+    this.simulatorService.selectedCategory.next(findCategory)
+
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -365,7 +406,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        console.log('Situation actuelle : ',d)
+        console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -373,15 +414,15 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        console.log('Situation proj : ',d)
+        console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-      
-      console.log('Situation simu : ',d)
+
+        console.log('Situation simu : ', d)
 
         this.simulatedSationData = d
         const findTitle = document.getElementsByClassName('simulation-title')
@@ -496,6 +537,24 @@ export class SimulatorPage extends MainClass implements OnInit {
   }
 
   /**
+   * Action lors de la selection d'une date simulateur à blanc
+   */
+  whiteDateSelector(type: string = '', event: any = null) {
+    if (type === 'dateStart') {
+      this.disabled = 'disabled-date'
+      this.dateStart = new Date(event)
+      this.startRealValue = findRealValue(this.dateStart)
+      this.simulatorService.dateStart.next(this.dateStart)
+    }
+    else if (type === 'dateStop') {
+      this.disabled = 'disabled-date'
+      this.dateStop = new Date(event)
+      this.stopRealValue = findRealValue(this.dateStop)
+      this.simulatorService.dateStop.next(this.dateStop)
+      this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
+    }
+  }
+  /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
    * @returns noeud du contentieux trouvé
@@ -536,7 +595,7 @@ export class SimulatorPage extends MainClass implements OnInit {
   /**
    * Réinitalisation de simulation
    */
-  resetParams() {
+  resetParams(changeCategory = false) {
     this.contentieuId = null
     this.subList = []
     this.firstSituationData = null
@@ -552,6 +611,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.toDisplay = []
     this.toCalculate = []
     this.simulateButton = 'disabled'
+    this.displayWhiteElements = false
+
+
+    const initButton = document.getElementById('editable-sim-name')!
+    if (initButton && !changeCategory) initButton.innerHTML = ''
+
   }
 
   /**
@@ -575,6 +640,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       this.categorySelected === 'MAGISTRAT'
         ? this.decisionTreeMag
         : this.decisionTreeFon
+
 
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
@@ -732,11 +798,11 @@ export class SimulatorPage extends MainClass implements OnInit {
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-            ? 0
-            : -1
+              ? 0
+              : -1
           : parseFloat(volumeInput) >= 0
-          ? parseFloat(volumeInput)
-          : -1
+            ? parseFloat(volumeInput)
+            : -1
     else if (
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
@@ -747,7 +813,7 @@ export class SimulatorPage extends MainClass implements OnInit {
     if (result > -1) {
       // affect the value to the editable input
       if (inputField.id === 'magRealTimePerCase' && result)
-        inputField.value = decimalToStringDate(result)
+        inputField.value = decimalToStringDate(result, ':')
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
@@ -842,24 +908,24 @@ export class SimulatorPage extends MainClass implements OnInit {
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
-          parseFloat(projectedValue as string)
-      )
+        parseFloat(projectedValue as string)
+      ) + 'pts'
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param2.label === 'realCoverage'
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
-          parseFloat(projectedValue as string)
-      )
+        parseFloat(projectedValue as string)
+      ) + 'pts'
 
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -868,6 +934,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @returns String contenant le chiffre ainsi que le signe + ou -
    */
   percantageWithSign(value: number | null) {
+    if (value !== null && !isFinite(value)) return 'NA'
     return value && value >= 0 ? '+' + value : value
   }
 
@@ -882,8 +949,9 @@ export class SimulatorPage extends MainClass implements OnInit {
       Math.round(
         (((parseFloat(result) - parseFloat(initialValue)) * 100) /
           parseFloat(initialValue as string)) *
-          100
+        100
       ) / 100
+    if (!isFinite(roundedValue)) return 'NA'
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
@@ -911,12 +979,20 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @param buttons bouton selecitonné
    */
   initParams(buttons: any) {
-    this.disabled = 'disabled-date'
-    this.toDisplaySimulation = false
+    //this.disabled = 'disabled-date'
+    this.initParamsToAjust()
+
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
+    //this.simulatorService.isValidatedWhiteSimu.next(false)
+
+  }
+
+  initParamsToAjust() {
+    this.toDisplaySimulation = false
+
     this.paramsToAjust = {
       param1: {
         label: '',
@@ -934,7 +1010,6 @@ export class SimulatorPage extends MainClass implements OnInit {
       },
     }
     this.simulateButton = 'disabled'
-
     this.toDisplay = []
     this.toCalculate = []
     this.pickersParamsToLock = []
@@ -943,7 +1018,6 @@ export class SimulatorPage extends MainClass implements OnInit {
       param2: { label: '', value: '' },
     }
   }
-
   /**
    * Retourne le titre complet d'un champs à éditer
    * @param label label correspondant à un input field (ex: etpMag)
@@ -1016,6 +1090,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @param allButton liste de tous les boutons clickables
    */
   simulate(allButton: any): void {
+    this.paramsToLock = {
+      param1: { label: '', value: '' },
+      param2: { label: '', value: '' },
+    }
     if (
       this.paramsToAjust.param1.input !== 0 &&
       this.paramsToAjust.param2.input !== 0
@@ -1034,6 +1112,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.toCalculate = find[0].toCalculate
         //compute ! no popup
         this.computeSimulation(allButton)
+
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -1053,6 +1132,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.computeSimulation(allButton)
       }
     }
+
   }
 
   /**
@@ -1140,9 +1220,9 @@ export class SimulatorPage extends MainClass implements OnInit {
         const objSecond =
           find && find.secondLocked
             ? find.secondLocked.find(
-                (obj: any) =>
-                  obj.locked === this.pickersParamsToLock[paramNumber]
-              )
+              (obj: any) =>
+                obj.locked === this.pickersParamsToLock[paramNumber]
+            )
             : null
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
@@ -1182,6 +1262,7 @@ export class SimulatorPage extends MainClass implements OnInit {
    * Calcul de la simulation
    */
   computeSimulation(allButton: any) {
+
     const params = {
       beginSituation: this.firstSituationData,
       endSituation: this.projectedSituationData,
@@ -1201,9 +1282,10 @@ export class SimulatorPage extends MainClass implements OnInit {
       realDTESInMonths: null,
       realCoverage: null,
     }
+    console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
-      this.simulateButton = 'disabled'
+      //this.simulateButton = 'disabled'
       allButton.map((x: any) => {
         x.classList.add('disable')
       })
@@ -1241,44 +1323,87 @@ export class SimulatorPage extends MainClass implements OnInit {
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
+    const editableName = document.getElementById('editable-sim-name')
 
-    const filename = `Simulation-${contentieuLabel}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}.pdf`
+    const filename = `${editableName?.innerText === "" ? 'Simulation' : editableName?.innerText}${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}.pdf`
+
+    const title = document.getElementById('print-title')
+    if (title) {
+      title.classList.remove('display-none')
+      title.style.display = 'flex'
+    }
+
+    const initButton = document.getElementById('main-init')
+    if (initButton)
+      //initButton.style.display = 'none'
+      initButton.classList.add('display-none')
+
+
+    const backButton = document.getElementById('main-back-menu')
+    if (backButton)
+      backButton.classList.add('display-none')
+
+
+    const editButton = document.getElementById('editable-sim-name')
+    if (editButton && editButton.innerHTML === "")
+      editButton.style.display = 'none'
+    //editButton.classList.add('display-none')
+    else if (title) title.classList.add('display-none')
 
 
 
-    const title: any = document.getElementById('print-title')!
-    title.style.display = 'flex'
 
-    const initButton = document.getElementById('main-init')!
-    initButton.style.display = 'none'
-
-    const exportButton = document.getElementById('export-button')!
-    exportButton.style.display = 'none'
+    const exportButton = document.getElementById('export-button')
+    if (exportButton)
+    //exportButton.style.display = 'none'
+    {
+      exportButton.classList.add('display-none')
+      console.log('Ex 1', exportButton)
+    }
 
     const ajWrapper = document.getElementById('simu-wrapper')
-    ajWrapper?.classList.add('full-screen')
+    if (ajWrapper)
+      ajWrapper?.classList.add('full-screen')
 
-    const commentAreaCopy = document.getElementById('comment-area-copy')!
-    commentAreaCopy.style.display = 'block'
+    const commentAreaCopy = document.getElementById('comment-area-copy')
+    if (commentAreaCopy)
+      commentAreaCopy.style.display = 'block'
 
     const commentArea = document.getElementById('comment-area')!
-    commentArea.style.display = 'none'
+    if (commentArea)
+      commentArea.classList.add('display-none')
+    //commentArea.style.display = 'none'
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename,true,false,null,true).then(() => {
+    this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
+      //title.style.display = 'none'
+      title?.classList.add('display-none')
+
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
-      exportButton.style.display = 'flex'
-      initButton.style.display = 'flex'
+
+      console.log('Ex 2', exportButton)
+      if (exportButton)
+        exportButton.classList.remove('display-none')
+      if (initButton)
+        initButton.classList.remove('display-none')
+      if (backButton)
+        backButton.classList.remove('display-none')
+
       commentArea.style.display = 'block'
-      commentAreaCopy.style.display = 'none'
-      title.style.display = 'none'
-    })  
+      commentArea.classList.remove('display-none')
+
+      editButton!.style.display = 'block'
+      editButton!.classList.remove('display-none')
+
+
+
+      commentAreaCopy!.style.display = 'none'
+    })
   }
 
   /**
@@ -1291,7 +1416,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       this.categorySelected !== category
     ) {
       this.categorySelected = category
-      this.resetParams()
+      this.resetParams(true)
       this.contentieuId = null
       this.subList = []
       const findCategory =
@@ -1302,8 +1427,7 @@ export class SimulatorPage extends MainClass implements OnInit {
               c.label.toUpperCase() === this.categorySelected?.toUpperCase()
           ) || null
 
-        console.log(findCategory, this.humanResourceService.categories
-          .getValue())
+
       this.simulatorService.selectedCategory.next(findCategory)
       this.loadFunctions()
     }
@@ -1339,11 +1463,20 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
+  /**
+   * Verifie s'il n'y a pas de valeur null dans la simulation
+   * @param obj 
+   * @returns 
+   */
   hasNoNullValue(obj: SimulatorInterface | null): boolean {
     if (obj && Object.values(obj).every((o) => o !== null)) return true
     else return false
   }
 
+  /**
+   * Indique le texte à renseigner dans le tooltip
+   * @returns 
+   */
   getTooltipText() {
     return (
       'Evolution par rapport ' +
@@ -1352,17 +1485,41 @@ export class SimulatorPage extends MainClass implements OnInit {
     )
   }
 
-      /**
-   * Troncage valeur numérique
-   */
-      trunc(param: string,
-        data: SimulatorInterface | SimulationInterface | null,
-        initialValue = false,
-        toCompute = false){
-        return Math.trunc(Number(this.getFieldValue(param,data,initialValue,toCompute))*100000)/100000
-      }
+  /**
+* Troncage valeur numérique
+*/
+  trunc(param: string,
+    data: SimulatorInterface | SimulationInterface | null,
+    initialValue = false,
+    toCompute = false) {
+    return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
+  }
 
-      setComment(event:any){
-      this.commentaire = event.target.value      
-      }
+  /**
+   * Set un commentaire
+   * @param event 
+   */
+  setComment(event: any) {
+    this.commentaire = event.target.value
+  }
+
+  /**
+   * Getter des parametres bloqués lors d'une simulation
+   * @param index 
+   * @returns 
+   */
+  getLockedResultedParams(index: number) {
+    return index === 0 ? this.simulatorService.getLabelTranslation(this.paramsToLock.param1.label) : this.simulatorService.getLabelTranslation(this.paramsToLock.param2.label)
+  }
+
+  /**
+   * Bloque le champ de texte à 100 characters maximum
+   * @param event 
+   * @returns 
+   */
+  keyPress(event: any) {
+    console.log(event.srcElement.innerHTML)
+    if (event.srcElement.innerHTML.length > 100) return false
+    return true
+  }
 }

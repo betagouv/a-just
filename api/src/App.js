@@ -1,19 +1,18 @@
-/*const tracer = require('dd-trace').init({
-  logInjection: true,
-})*/
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
 import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
+import sslMiddleware from './routes-api/middlewares/ssl'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
-//import logger from './utils/log'
+import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
-//import { tracingMiddleWare, requestHandler } from './utils/sentry'
+import { tracingMiddleWare, requestHandler } from './utils/sentry'
+const RateLimit = require('koa2-ratelimit').RateLimit
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -32,6 +31,19 @@ export default class App extends AppBase {
         startCrons(this) // start crons
         console.log('--- IS READY ---')
         this.isReady()
+
+        /** PASSWORD TESTER to move to unit tests ?
+        setTimeout(() => {
+          const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
+          for (let i = 0; i < password_to_test.length; i++) {
+            try {
+              console.log('----------\n')
+              console.log(cryptPassword(password_to_test[i], 'fxaviermontigny@gmail.com'))
+            } catch (err) {
+              console.error(err)
+            }
+          }
+        }, 100) */
       })
     })
 
@@ -41,7 +53,13 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
 
+    const limiter = RateLimit.middleware({
+      interval: { min: 5 }, // 5 minutes = 5*60*1000
+      max: config.maxQueryLimit, // limit each IP to 100 requests per interval
+    })
+
     super.addMiddlewares([
+      limiter,
       // we add the relevant middlewares to our API
       //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       cors({ credentials: true }), // add cors headers to the requests
@@ -59,16 +77,16 @@ export default class App extends AppBase {
         modes: ['query', 'subdomain', 'cookie', 'header', 'tld'],
       }), // allows us to easily localize the API
       auth,
-      //koaLogger(logger),
+      sslMiddleware,
+      koaLogger(logger),
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      //requestHandler,
-      //tracingMiddleWare,
-      /*csp({
-        enableWarn: true,
+      requestHandler,
+      tracingMiddleWare,
+      csp({
+        enableWarn: false,
         policy: {
-          'default-src': ['none'],
           'connect-src': [
             'https://www.google-analytics.com/j/collect',
             "'self'",
@@ -80,18 +98,14 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': [
-            "'unsafe-eval'",
-            "'self'",
-            "'unsafe-inline' https://js-eu1.hsforms.net",
-            "'unsafe-inline' https://www.google-analytics.com/analytics.js",
-            'stats.data.gouv.fr',
-          ],
+          //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.data.gouv.fr'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
+          'base-uri': ["'self'"],
+          'form-action': ["'self'"],
         },
-      }),*/
+      }),
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files

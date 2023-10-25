@@ -1,5 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core'
-import { Router } from '@angular/router'
+import { NavigationEnd, Router } from '@angular/router'
 import { environment } from 'src/environments/environment'
 import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
 import { AlertInterface } from './interfaces/alert'
@@ -7,7 +7,8 @@ import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
-import { copy } from './utils'
+import { filter } from 'rxjs'
+
 
 /**
  * Variable d'environement en global
@@ -49,7 +50,14 @@ export class AppComponent implements AfterViewInit {
       document.body.classList.add('iIOS')
     }
 
-    this.onControlSSL()
+    router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      // @ts-ignore
+      .subscribe((event: NavigationEnd) => {
+        this.appService.previousUrl = this.appService.currentUrl
+        this.appService.currentUrl = event.url
+      })
+
     router.events.subscribe(() => {
       const user = this.userService.user.getValue()
       if (user && this.dbReady === false) {
@@ -70,34 +78,27 @@ export class AppComponent implements AfterViewInit {
       var _paq = (window._paq = window._paq || [])
       _paq.push(['trackPageView'])
       _paq.push(['enableLinkTracking'])
-      ;(function () {
-        var u = 'https://stats.data.gouv.fr/'
-        _paq.push(['setTrackerUrl', u + 'piwik.php'])
-        _paq.push(['setSiteId', environment.matomo])
-        var d = document,
-          g = d.createElement('script'),
-          s = d.getElementsByTagName('script')[0]
-        g.async = true
-        g.src = u + 'piwik.js'
-        if (s && s.parentNode) {
-          s.parentNode.insertBefore(g, s)
-        }
-      })()
+        ; (function () {
+          var u = 'https://stats.data.gouv.fr/'
+          _paq.push(['setTrackerUrl', u + 'piwik.php'])
+          _paq.push(['setSiteId', environment.matomo])
+          var d = document,
+            g = d.createElement('script'),
+            s = d.getElementsByTagName('script')[0]
+          g.async = true
+          g.src = u + 'piwik.js'
+          if (s && s.parentNode) {
+            s.parentNode.insertBefore(g, s)
+          }
+        })()
     }
+
+    this.userService.getInterfaceType()
+    console.log(this.userService.interfaceType)
   }
 
   ngAfterViewInit(): void {
     this.listenSelectElement()
-  }
-  /**
-   * Control si on est en SSL ou non
-   */
-  onControlSSL() {
-    if (location.protocol !== 'https:' && environment.forceSSL) {
-      location.replace(
-        `https:${location.href.substring(location.protocol.length)}`
-      )
-    }
   }
 
   /**
@@ -106,7 +107,7 @@ export class AppComponent implements AfterViewInit {
   onCloseAlert(clickToOk = false) {
     const alertObject = this.appService.alert.getValue()
     this.appService.alert.next(null)
-    if(clickToOk && alertObject && alertObject.callback) {
+    if (clickToOk && alertObject && alertObject.callback) {
       alertObject.callback()
     }
   }
@@ -135,7 +136,6 @@ export class AppComponent implements AfterViewInit {
 
     observer.observe(elementToObserve, { subtree: true, childList: true });
     */
-
     /* document.addEventListener(
       'DOMNodeInserted',
       () => {

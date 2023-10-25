@@ -1,12 +1,9 @@
 import { Op } from 'sequelize'
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
 
 /**
  * Liste des juridctions auquels ont accès les utilisateur
  */
-
-import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
-import { sentEmail } from '../utils/email'
-import { TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -40,7 +37,6 @@ export default (sequelizeInstance, Model) => {
         })
       }
     }
-
     return list
   }
 
@@ -141,7 +137,9 @@ export default (sequelizeInstance, Model) => {
         })
       }
     }
-
+    //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
+    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
+    //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
     return list
   }
 
@@ -242,7 +240,6 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridicitionId
    */
   Model.addUserAccessToTeam = async (juridicitionId) => {
-    console.log('judiriciton id', juridicitionId)
     const usersAffected = (
       await Model.models.UserVentilations.findAll({
         where: {

@@ -5,4 +5,5 @@ module.exports = {
   nbMaxDayCanBeInactive: null,
   sentEmail: false,
   corsUrl: '*',
+  maxQueryLimit: 10000000,
 }

@@ -1,6 +1,8 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
 import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
+import { month } from '../utils/date'
+import { maxBy } from 'lodash'
 
 /**
  * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
@@ -42,6 +44,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          attributes: ['id', 'label', 'code_import'],
           model: Model.models.ContentieuxReferentiels,
         },
       ],
@@ -80,6 +83,7 @@ export default (sequelizeInstance, Model) => {
       },
       include: [
         {
+          attributes: ['id', 'label', 'code_import'],
           model: Model.models.ContentieuxReferentiels,
         },
       ],
@@ -216,10 +220,6 @@ export default (sequelizeInstance, Model) => {
         order: ['updated_at', 'id'],
       })
 
-      if (activities[i].contentieux_id === 475 && periode.getFullYear() === 2022 && periode.getMonth() === 0) {
-        console.log(activities[i].periode, [startOfMonth(periode), endOfMonth(periode)], duplicateActivities)
-      }
-
       if (duplicateActivities.length >= 2) {
         for (let z = 1; z < duplicateActivities.length; z++) {
           await duplicateActivities[z].destroy()
@@ -234,24 +234,26 @@ export default (sequelizeInstance, Model) => {
    * @param {*} minPeriode
    * @returns
    */
-  Model.cleanActivities = async (HRBackupId, minPeriode = null) => {
+  Model.cleanActivities = async (HRBackupId, minPeriode) => {
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    //await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
 
-    if (!minPeriode) {
-      const minPeriodeFromDB = await Model.min('periode', {
-        where: {
-          hr_backup_id: HRBackupId,
-        },
-      })
+    console.log('MIN PERIODE', HRBackupId, minPeriode)
+    /*const minPeriodeFromDB = await Model.min('periode', {
+      where: {
+        hr_backup_id: HRBackupId,
+      },
+    })
 
-      if (minPeriodeFromDB) {
-        minPeriode = new Date(minPeriodeFromDB)
-      }
-    }
+    if (minPeriodeFromDB) {
+      minPeriode = new Date(minPeriodeFromDB)
+    }*/
 
     if (!minPeriode) {
       return // stop we don't have values to analyse
     }
+
+    console.log('START')
 
     for (let i = 0; i < referentiels.length; i++) {
       await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId)
@@ -501,8 +503,13 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HrBackupId
    * @returns
    */
-  Model.getByMonth = async (date, HrBackupId) => {
+  Model.getByMonth = async (date, HrBackupId, contentieuxId = null) => {
+    const whereList = {}
     date = new Date(date)
+
+    if (contentieuxId) {
+      whereList.contentieux_id = contentieuxId
+    }
 
     const list = await Model.findAll({
       attributes: [
@@ -520,6 +527,7 @@ export default (sequelizeInstance, Model) => {
         periode: {
           [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
+        ...whereList,
       },
       include: [
         {
@@ -561,11 +569,17 @@ export default (sequelizeInstance, Model) => {
   Model.importMultipleJuridictions = async (csv) => {
     const contentieuxIds = {}
     const listBackupId = []
-    let minDate = null
+    let minDate = {}
+    const tmpJuridictions = {}
 
     for (let i = 0; i < csv.length; i++) {
       const code = csv[i].code_import
-      const HRBackupId = await Model.models.HRBackups.findOrCreateLabel(csv[i].juridiction)
+      let HRBackupId = tmpJuridictions[csv[i].juridiction]
+
+      if (!HRBackupId) {
+        HRBackupId = await Model.models.HRBackups.findOrCreateLabel(csv[i].juridiction)
+        tmpJuridictions[csv[i].juridiction] = HRBackupId
+      }
 
       if (HRBackupId === null) {
         continue
@@ -583,6 +597,7 @@ export default (sequelizeInstance, Model) => {
             code_import: code,
           },
           raw: true,
+          logging: false,
         })
 
         if (contentieux) {
@@ -595,11 +610,8 @@ export default (sequelizeInstance, Model) => {
         const month = +csv[i].periode.slice(-2) - 1
         const periode = new Date(year, month)
 
-        if (minDate === null || periode.getTime() < minDate.getTime()) {
-          minDate = new Date(periode)
-        }
-
         const findExist = await Model.findOne({
+          attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
           where: {
             hr_backup_id: HRBackupId,
             contentieux_id: contentieuxIds[code],
@@ -607,26 +619,36 @@ export default (sequelizeInstance, Model) => {
               [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
             },
           },
+          raw: true,
+          logging: false,
         })
 
         // clean null values
-        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : csv[i].entrees
-        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : csv[i].sorties
-        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : csv[i].stock
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : +csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : +csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : +csv[i].stock
 
         // if existe update content
         if (
           findExist &&
-          (csv[i].entrees !== findExist.dataValues.original_entrees ||
-            csv[i].sorties !== findExist.dataValues.original_sorties ||
-            csv[i].stock !== findExist.dataValues.original_stock)
+          (csv[i].entrees !== findExist.original_entrees || csv[i].sorties !== findExist.original_sorties || csv[i].stock !== findExist.original_stock)
         ) {
-          await findExist.update({
+          // save min date
+          if (!minDate[HRBackupId] || startOfMonth(periode).getTime() < minDate[HRBackupId].getTime()) {
+            minDate[HRBackupId] = new Date(startOfMonth(periode))
+          }
+
+          await Model.updateById(findExist.id, {
             original_entrees: csv[i].entrees,
             original_sorties: csv[i].sorties,
             original_stock: csv[i].stock,
           })
         } else if (!findExist) {
+          // save min date
+          if (!minDate[HRBackupId] || startOfMonth(periode).getTime() < minDate[HRBackupId].getTime()) {
+            minDate[HRBackupId] = new Date(startOfMonth(periode))
+          }
+
           // else create
           await Model.create({
             hr_backup_id: HRBackupId,
@@ -641,8 +663,91 @@ export default (sequelizeInstance, Model) => {
     }
 
     for (let i = 0; i < listBackupId.length; i++) {
-      await Model.cleanActivities(listBackupId[i], minDate)
+      await Model.cleanActivities(listBackupId[i], minDate[listBackupId[i]])
     }
+  }
+
+  /**
+   * List des activités non complétés d'une tranche
+   * @param {*} HrBackupId
+   * @param {*} dateStart
+   * @param {*} dateEnd
+   * @returns
+   */
+  Model.getNotCompleteActivities = async (HrBackupId, dateStart, dateEnd) => {
+    dateStart = new Date(dateStart)
+    dateEnd = new Date(dateEnd)
+
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels()) || [])
+      .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
+      .map((c) => {
+        const childrens = (c.childrens || [])
+          // liste ici https://resana.numerique.gouv.fr/public/document/consulter/9822459
+          .filter(
+            (r) => !['3.6.', '4.0.', '7.51.', '7.12.', '7.121.', '7.122.', '7.8.', '8.11.', '8.2.', '8.3.', '8.4.', '9.4.', '10.2.'].includes(r.code_import)
+          )
+          .map((ch) => ({ ...ch, lastDateWhithoutData: null }))
+        return { ...c, childrens }
+      })
+
+    let contentieuxToFind = []
+    do {
+      const date = month(dateEnd)
+      contentieuxToFind = []
+      list.map((c) => {
+        const childrensToSearch = (c.childrens || []).filter((ch) => ch.lastDateWhithoutData === null)
+        if (childrensToSearch.length) {
+          contentieuxToFind.push(c.id)
+          contentieuxToFind = contentieuxToFind.concat(childrensToSearch.map((ch) => ch.id))
+        }
+      })
+
+      const monthActivitiesContentieuxIds = ((await Model.getByMonth(date, HrBackupId, contentieuxToFind)) || [])
+        .filter(
+          (a) =>
+            (a.entrees !== null || a.originalEntrees !== null) &&
+            (a.sorties !== null || a.originalSorties !== null) &&
+            (a.stock !== null || a.originalStock !== null)
+        )
+        .map((f) => f.contentieux.id)
+
+      list = list.map((c) => {
+        let childrens = c.childrens || []
+        childrens = childrens.map((ch) => {
+          if (ch.lastDateWhithoutData === null && !monthActivitiesContentieuxIds.includes(ch.id)) {
+            ch.lastDateWhithoutData = new Date(date)
+          }
+
+          return {
+            ...ch,
+          }
+        })
+
+        return {
+          ...c,
+          childrens,
+        }
+      })
+
+      dateEnd.setMonth(dateEnd.getMonth() - 1)
+    } while (dateStart.getTime() < dateEnd.getTime() && contentieuxToFind.length)
+
+    return list
+      .map((c) => {
+        const childrens = (c.childrens || []).filter((ch) => ch.lastDateWhithoutData)
+        const max = maxBy(childrens, 'lastDateWhithoutData')
+
+        return {
+          ...c,
+          lastDateWhithoutData: max?.lastDateWhithoutData,
+          childrens,
+        }
+      })
+      .filter((c) => {
+        const childrens = c.childrens || []
+
+        return !childrens.every((c) => c.lastDateWhithoutData === null)
+      })
   }
 
   return Model

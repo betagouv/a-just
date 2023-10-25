@@ -93,4 +93,30 @@ export class ActivitiesService {
       })
       .then((data) => data.data.date || null)
   }
+
+  /**
+   * API retourne le dernier mois qui possède une activité pour une juridiction
+   * @returns 
+   */
+  getLastUpdatedActivities() {
+    return this.serverService
+      .post(`activities/get-last-human-activities`, {
+        hrBackupId: this.hrBackupId,
+      })
+      .then((data) => data.data.list || [])
+  }
+
+  /**
+   * API retourne le dernier mois qui possède une activité pour une juridiction
+   * @returns 
+   */
+  getNotCompleteActivities(dateStart: Date, dateEnd: Date) {
+    return this.serverService
+      .post(`activities/get-not-complete-activities`, {
+        hrBackupId: this.hrBackupId,
+        dateStart,
+        dateEnd,
+      })
+      .then((data) => data.data.list || [])
+  }
 }

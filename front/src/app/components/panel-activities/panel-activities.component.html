@@ -17,7 +17,9 @@
 
 <div class="activities-panel">
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
-    <progression-bar [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
+    <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
+    </progression-bar>
+    <progression-bar *ngIf="!showPlaceHolder" [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
       [color]="referentielMappingColor(ref.label)" (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
       (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
     </progression-bar>
@@ -31,7 +33,7 @@
   }">
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
-      [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Pour les “'+referentiel[refIndexSelected].label+'”, il est impératif de renseigner la ou les sous-rubriques concernées. Le total se calcule automatiquement.' : null"
+      [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Pour les “'+referentiel[refIndexSelected].label+'”, il est impératif de renseigner la ou les sous-rubriques . Le total se calcule automatiquement.' : null"
       [color]=" referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
       (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
@@ -98,7 +100,7 @@
   </ng-template>
 </ng-template>
 
-<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100 }">
+<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100, placeholder: showPlaceHolder }">
   <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
   <div class="progress-bar-line">
     <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>

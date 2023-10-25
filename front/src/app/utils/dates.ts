@@ -149,6 +149,7 @@ export function month(
   return date
 }
 
+
 /**
  * Calcul du nombre de jours travaillés entre 2 dates
  * @param startDate 
@@ -200,6 +201,7 @@ export function nbOfDays(startDate: Date, endDate: Date) {
 
   return convertMsToDays(differenceInMs)
 }
+
 
 /**
  * Ajout ou soustraction d'un nombre de jour à une date
@@ -426,3 +428,20 @@ export function setTimeToMidDay(date: Date | undefined|null) {
   date.setUTCMilliseconds(0)
   return date
 }
+
+
+/**
+ * Trie entre deux dates
+ * @param firstDate
+ * @param secondDate
+ * @param reverse
+ * @returns
+ */
+export function sortDates(firstDate: string | Date, secondDate: string | Date, reverse: boolean) {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
+
+  return (reverse ? secondDate.getTime() - firstDate.getTime() : firstDate.getTime() - secondDate.getTime())
+}
+
+

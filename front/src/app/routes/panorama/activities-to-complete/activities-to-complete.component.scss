@@ -1,0 +1,66 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  padding: 24px;
+
+  h3 {
+    color: fColor(primary);
+    font-size: 20px;
+    margin-bottom: 0px;
+  }
+
+  p.description {
+    color: fColor(grayRow);
+    font-size: 14px;
+    margin-bottom: 19px;
+  }
+
+  .tags {
+    margin-bottom: 22px;
+
+    > span {
+      display: inline-block;
+      padding: 0 8px;
+      margin-bottom: 4px;
+      border-radius: 12px;  
+      color: fColor(tagTextColor);
+      background-color: fColor(tagBgColor);
+      margin-right: 8px;
+      font-size: 12px;
+      height: 24px;
+      line-height: 24px;
+      cursor: pointer;
+
+      &.selected {
+        color: fColor(tagTextSelectedColor);
+        background-color: fColor(tagBgSelectedColor);
+      }
+    }
+  }
+
+  .referentiel-row {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+
+    > div:last-child {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      height: 20px;
+      border-radius: 4px;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 0 6px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      display: inline-block;
+    }
+  }
+}

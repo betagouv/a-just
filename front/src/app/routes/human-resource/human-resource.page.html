@@ -1,7 +1,9 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
   <div class="wrapper-content" *ngIf="contentieuxReferentiel.length">
-    <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
-      [backAnchor]="currentHR && currentHR.id ? ''+currentHR.id : undefined" [onEditIndex]="onEditIndex"
+    <cover-profil-details *ngIf="currentHR"
+      [backUrl]="!duringPrint ? (appService.previousUrl ? appService.previousUrl : '/' ) : ''" [currentHR]="currentHR"
+      [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
+      [onEditIndex]="onEditIndex"
       [etp]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].etp : 0"
       [indisponibilities]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []"
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
