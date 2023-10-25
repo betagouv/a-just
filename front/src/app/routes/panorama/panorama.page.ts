@@ -171,7 +171,9 @@ export class PanoramaPage
       this.humanResourceService.hrBackup.subscribe(
         (hrBackup: BackupInterface | null) => {
           this.backupId = hrBackup?.id || null
-          this.onFilterList(hrBackup)
+          if (this.canViewVentilation) {
+            this.onFilterList(hrBackup)
+          }
         }
       )
     )
@@ -189,12 +191,9 @@ export class PanoramaPage
    */
   listenScrollEvent() {
     if (this.domContainer && this.domContainer.nativeElement) {
-      this.domContainer.nativeElement.addEventListener(
-        'scroll',
-        () => {
-          this.controlScrollPosition()
-        }
-      )
+      this.domContainer.nativeElement.addEventListener('scroll', () => {
+        this.controlScrollPosition()
+      })
 
       this.controlScrollPosition()
     } else {
