@@ -61,7 +61,8 @@ export default class App extends AppBase {
     super.addMiddlewares([
       limiter,
       // we add the relevant middlewares to our API
-      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      cors({ credentials: true }), // add cors headers to the requests
       helmet(), // adds various security headers to our API's responses
       koaBody({
         multipart: true,
