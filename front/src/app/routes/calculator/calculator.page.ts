@@ -211,6 +211,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   ngOnDestroy() {
     this.watcherDestroy()
+    this.calculatorService.dateStart.next(null)
+    this.calculatorService.dateStop.next(null)
   }
 
   /**
