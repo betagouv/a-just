@@ -26,18 +26,21 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   }, {
     label: 'Juridictions',
     path: 'juridictions',
-  },  {
+  }, {
+    label: 'Yaml tools',
+    path: 'yaml-tools',
+  }, {
     label: 'Analyse de données',
     path: 'data-analyse',
   }];
-  
+
   constructor(private authService: AuthService, private router: Router) {
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 
   onDisconnect() {
     this.authService.onLogout().then(() => {
