@@ -78,8 +78,10 @@ export class UserService {
    */
   register(params = {}): Promise<any> {
     return this.serverService
-      .post('users/create-account', params)
-      .then((data) => data.data || null)
+      .post('users/create-account', params).then((data) => {
+        this.serverService.setToken(data.token);
+        return data;
+      });
   }
 
   /**
