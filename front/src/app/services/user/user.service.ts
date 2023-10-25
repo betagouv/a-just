@@ -6,6 +6,7 @@ import { UserInterface } from 'src/app/interfaces/user-interface'
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ReferentielService } from '../referentiel/referentiel.service'
+import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATOR, USER_ACCESS_SIMULATOR, USER_ACCESS_VENTILATIONS } from 'src/app/constants/user-access'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -21,6 +22,11 @@ export class UserService {
     new BehaviorSubject<UserInterface | null>(null)
 
   /**
+   * Interface front TJ ou CA
+   */
+  interfaceType: number | null = null
+
+  /**
    * Constructeur
    * @param serverService
    * @param humanResourceService
@@ -30,7 +36,7 @@ export class UserService {
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService
-  ) {}
+  ) { }
 
   /**
    * Sauvegarde d'une utilisateur
@@ -47,11 +53,22 @@ export class UserService {
   }
 
   /**
+   * Get process variables
+   * @returns 
+   */
+  getInterfaceType() {
+    return this.serverService.get('users/interface-type').then((data) => {
+      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null;
+      console.log(this.interfaceType)
+    })
+  }
+
+  /**
    * API Identification de qui est l'utilisateur connecté
    * @returns
    */
   me() {
-    return this.serverService.get('users/me').then((data) => data.data || null)
+    return this.serverService.getWithoutError('users/me').then((data) => data.data || null)
   }
 
   /**
@@ -134,7 +151,6 @@ export class UserService {
   getUserPageUrl(user: UserInterface) {
     if (user) {
       const allPages = this.getAllUserPageUrl(user)
-      console.log(allPages)
       if (allPages) {
         return `/${allPages[0].path}`
       }
@@ -144,39 +160,60 @@ export class UserService {
   }
 
   /**
+   * Can view Ventilations
+   */
+  canViewVentilation(user: UserInterface | null = null) {
+    user = user || this.user.getValue()
+    return (user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1) ? true : false
+  }
+
+  /**
+   * Can view Activites
+   */
+  canViewActivities(user: UserInterface | null = null) {
+    user = user || this.user.getValue()
+    return (user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1) ? true : false
+  }
+
+  /**
    * Retourne la liste des toutes les pages qu'un utilisateur à accès
    */
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
 
-    if (user && user.access && user.access.indexOf(2) !== -1) {
+    menu.push({
+      label: 'Panorama',
+      path: 'panorama',
+    })
+
+    if (this.canViewVentilation(user)) {
       menu.push({
         label: 'Ventilateur',
         path: 'ventilations',
       })
     }
-    if (user && user.access && user.access.indexOf(3) !== -1) {
+    if (this.canViewActivities(user)) {
       menu.push({
         label: "Données d'activité",
         path: 'donnees-d-activite',
       })
     }
 
-    if (user && user.access && user.access.indexOf(4) !== -1) {
+    if (user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1) {
       menu.push({
         label: 'Temps moyens',
         path: 'temps-moyens',
       })
     }
 
-    if (user && user.access && user.access.indexOf(5) !== -1) {
+    if (user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1) {
       menu.push({
         label: 'Calculateur',
         path: 'calculateur',
       })
     }
 
-    if (user && user.access && user.access.indexOf(6) !== -1) {
+    if (user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1) {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',

@@ -45,6 +45,10 @@ export class PersonPreviewComponent
    * Show component is visible
    */
   @Input() showComponent: boolean = false
+  /**
+   * Show empty activities
+   */
+  @Input() hideActivities: boolean = true
 
   /**
    * Constructeur

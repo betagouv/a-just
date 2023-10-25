@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import * as _ from 'lodash';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ImportService } from 'src/app/services/import/import.service';
 import { exportFileToString } from 'src/app/utils/file';
+import { parse, stringify } from 'yaml'
 
 @Component({
   templateUrl: './imports.page.html',
@@ -14,7 +16,7 @@ export class ImportsPage {
   constructor(
     private importService: ImportService,
     private humanResourceService: HumanResourceService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.onLoad();
@@ -97,3 +99,6 @@ export class ImportsPage {
       });
   }
 }
+
+
+

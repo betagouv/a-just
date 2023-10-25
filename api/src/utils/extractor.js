@@ -5,12 +5,16 @@ import { findSituation } from './human-resource'
 import { getHRVentilation } from '../utils/calculator'
 
 /**
+ * Exception relevés par madame De Jong - statistitienne de Lyon
+ */
+export const exceptionMadameDeJong = ["CONT A JP", "CONT B JP", "CONT C JP"]
+/**
  * Tri par catégorie et par fonction
  * @param {*} a
  * @param {*} b
  * @returns boolean
  */
-export function sortByCatAndFct (a, b) {
+export function sortByCatAndFct(a, b) {
   if (a['Catégorie'] === b['Catégorie']) {
     return a.Fonction < b.Fonction ? -1 : 1
   } else {
@@ -23,7 +27,7 @@ export function sortByCatAndFct (a, b) {
  * @param {*} flatReferentielsList
  * @returns
  */
-export function emptyRefObj (flatReferentielsList) {
+export function emptyRefObj(flatReferentielsList) {
   let obj = { ...JSON.parse(JSON.stringify({})) }
   flatReferentielsList.map((referentiel) => {
     if (referentiel.childrens !== undefined) {
@@ -105,10 +109,10 @@ export const getIndispoDetails = (referentiels) => {
     idsMainIndispo = refIndispo.id
     allIndispRef.push(refIndispo)
     idsIndispo.push(refIndispo.id)
-    ;(refIndispo.childrens || []).map((c) => {
-      idsIndispo.push(c.id)
-      allIndispRef.push(c)
-    })
+      ; (refIndispo.childrens || []).map((c) => {
+        idsIndispo.push(c.id)
+        allIndispRef.push(c)
+      })
   }
 
   const allIndispRefIds = allIndispRef.map(function (obj) {
@@ -353,6 +357,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
+      console.log(fonctionName)
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           onglet2.push({
@@ -363,7 +368,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
-            Fonction: fonctionName,
+            Fonction: exceptionMadameDeJong.includes(fonctionName) ? fonctionName + ' ' + categoryName : fonctionName,
             ['Code fonction']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
@@ -484,7 +489,7 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
         //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
-      console.log(categoryName.toUpperCase(), categoryFilter.toUpperCase())
+
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({

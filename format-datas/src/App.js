@@ -11,15 +11,13 @@ import {
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
-  I_ELST_LIST,
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from "./constants/SDSE-ref";
 import { groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
-import { instanceAxios } from "../utils/axios";
-import config from "config";
+import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
 
 export default class App {
   constructor() {}
@@ -35,39 +33,38 @@ export default class App {
     const categoriesOfRules = this.getRules(inputFolder);
     const referentiel = await this.getReferentiel(inputFolder);
 
-    rmSync(tmpFolder, { recursive: true, force: true });
-    mkdirSync(tmpFolder, { recursive: true });
+    //rmSync(tmpFolder, { recursive: true, force: true });
+    //mkdirSync(tmpFolder, { recursive: true });
 
     rmSync(outputFolder, { recursive: true, force: true });
     mkdirSync(outputFolder, { recursive: true });
     rmSync(outputAllFolder, { recursive: true, force: true });
     mkdirSync(outputAllFolder, { recursive: true });
 
-    const I_ELST_LIST = await instanceAxios
-      .get("/juridictions/get-all-ielst")
-      .then((res) => {
-        return res.data.data;
-      });
+    await onGetIelstListApi().then(async (response) => {
+      if (response) {
+        // CIVIL
+        //await this.getGroupByJuridiction(tmpFolder, inputFolder);
+        await this.formatAndGroupJuridiction(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          referentiel,
+          response
+        );
 
-    await this.getGroupByJuridiction(tmpFolder, inputFolder);
-    await this.formatAndGroupJuridiction(
-      tmpFolder,
-      outputFolder,
-      outputAllFolder,
-      categoriesOfRules,
-      referentiel,
-      I_ELST_LIST
-    );
-
-    // WIP datas pénal
-    /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST);
-    await this.formatAndGroupJuridictionPenal(
-      tmpFolder,
-      outputFolder,
-      outputAllFolder,
-      categoriesOfRules,
-      I_ELST_LIST
-    );*/
+        // WIP datas pénal
+        /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        await this.formatAndGroupJuridictionPenal(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          response
+        );*/
+      }
+    });
 
     this.done();
   }
@@ -90,7 +87,6 @@ export default class App {
         Object.values(yamlParsed.categories || [])
       );
     }
-
     return categories;
   }
 
@@ -234,55 +230,61 @@ export default class App {
 
   async getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".csv"));
-    console.log("FILES:", files);
+
     // generate header
     let header = null;
     let codeJuridiction = null;
     const ielstNames = ["tj", "tgi_code", "id_jur"];
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      console.log("File:", file);
+
       let liner = new lineByLine(`${inputFolder}/${file}`);
       let line = null;
       // get header
       line = liner.next();
       header = line.toString("ascii");
       //let getTypeOfJuridiction
-      while ((line = liner.next()) !== false) {
-        let lineFormated = "";
-        const data = line.toString("ascii");
-        lineFormated = header.concat("\n", data);
-        const lineobject = await csvToArrayJson(lineFormated, "utf8").then(
-          (res) => {
-            return res[0];
+      while ((line = liner.next().toString()) !== "false") {
+        line = line.split(" ").join("");
+        if (line.length > 0) {
+          let lineFormated = "";
+          const data = line.toString("ascii");
+          lineFormated = header.concat("\n", data);
+          const lineobject = await csvToArrayJson(lineFormated, "utf8").then(
+            (res) => {
+              return res[0];
+            }
+          );
+          for (let ielst of ielstNames) {
+            if (ielst in lineobject) {
+              codeJuridiction = lineobject[ielst];
+              break;
+            }
           }
-        );
-        for (let ielst of ielstNames) {
-          if (ielst in lineobject) {
-            codeJuridiction = lineobject[ielst];
-            break;
-          }
-        }
-        if (codeJuridiction.length === 6)
-          codeJuridiction = `00${codeJuridiction}`;
-        if (I_ELST_LIST[codeJuridiction]) {
-          const fileName = file.replace(".csv", "");
-          if (
-            !existsSync(
-              this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction)
-            )
-          ) {
-            // create file
-            writeFileSync(
+          if (codeJuridiction.length === 6)
+            codeJuridiction = `00${codeJuridiction}`;
+          if (I_ELST_LIST[codeJuridiction]) {
+            const fileName = file.replace(".csv", "");
+            if (
+              !existsSync(
+                this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction)
+              )
+            ) {
+              // create file
+              writeFileSync(
+                this.getCsvOutputPathPenal(
+                  fileName,
+                  tmpFolder,
+                  codeJuridiction
+                ),
+                header + "\n"
+              );
+            }
+            appendFileSync(
               this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction),
-              header + "\n"
+              `${data}\n`
             );
           }
-          appendFileSync(
-            this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction),
-            `${data}\n`
-          );
         }
       }
     }
@@ -314,7 +316,7 @@ export default class App {
 
     // id, code_import, periode, stock, entrees, sorties
     // .....
-
+    console.log("files:", files);
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i];
       const ielst = fileName
@@ -345,6 +347,7 @@ export default class App {
 
       let list = [];
       Object.values(groupByMonthObject).map((monthValues) => {
+        console.log("TJ:", I_ELST_LIST[ielst], " | monthValues:", monthValues);
         // format string to integer
         monthValues = monthValues.map((m) => ({
           ...m,
@@ -450,8 +453,8 @@ export default class App {
       }
       if (
         rule.filtres /* &&
-        list[rule["Code nomenclature"]].periode !==
-          "202305" && rule['Code nomenclature'] === '7.7.'*/
+        list[rule["Code nomenclature"]].periode !== "202301" &&
+        rule["Code nomenclature"] === "7.15."*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
@@ -476,13 +479,13 @@ export default class App {
             // save values
             const totalKeyNode = (newRules.TOTAL || "").toLowerCase();
             const sumByValues = sumBy(lines, totalKeyNode);
-            console.log(
+            /*console.log(
               node,
               sumByValues,
               lines.map((l) => l[totalKeyNode]),
               rule["Code nomenclature"],
               list[rule["Code nomenclature"]].periode
-            );
+            );*/
 
             list[rule["Code nomenclature"]][node] =
               (list[rule["Code nomenclature"]][node] || 0) + (sumByValues || 0);
@@ -561,7 +564,6 @@ export default class App {
         list = list.concat(xml.ROWSET.ROW);
       }
     }
-
     return list;
   }
 
@@ -577,7 +579,6 @@ export default class App {
 
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i].replace(/-export-activities-.*/, "");
-
       let ielst = files[i]
         .replace(/.+?(?=export-activities-)/, "")
         .replace("export-activities-", "")
@@ -594,25 +595,15 @@ export default class App {
       const arrayOfCsv = await csvToArrayJson(
         readFileSync(`${tmpFolder}/${files[i]}`, "utf8")
       );
-
       const tmpCategoriesOfRules = categoriesOfRules.filter((rule) => {
         return fileName.includes(rule.fichier);
       });
-      console.log("tmpCategoriesOfRules:", tmpCategoriesOfRules);
 
-      //let nodeIelst = ''
       let dateInFile = null;
       if (arrayOfCsv.length) {
         const line1 = arrayOfCsv[0];
-        //const ielstNames = ['tj', 'tgi_code', 'id_jur']
         const datesNames = ["cod_moi", "annee", "mois"];
 
-        /*for (let ielst of ielstNames) {
-                    if (ielst in line1) {
-                      nodeIelst = ielst
-                      break
-                    }
-                  }*/
         for (let date of datesNames) {
           if (date in line1) {
             if (date === datesNames[0]) {
@@ -629,12 +620,6 @@ export default class App {
           }
         }
       }
-
-      //for (let i = 0; i < Object.keys(juridictionsGrouped).length; i++) {}
-      // Object.keys(juridictionsGrouped).map((tj) => {
-      //let ielst = tj
-      //if (ielst.length === 6) ielst = `00${ielst}` // format tj to ielst
-      //if (I_ELST_LIST[ielst]) {
 
       // group by month
       let groupByMonthObject = null;
@@ -693,7 +678,7 @@ export default class App {
           tmp_date = monthValues[0][dateInFile[1]];
         }
 
-        if (tmp_date < "202306") {
+        if (tmp_date < now - 1) {
           let formatMonthDataFromRules = null;
           formatMonthDataFromRules = this.formatMonthFromRules(
             monthValues,

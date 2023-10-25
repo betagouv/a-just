@@ -89,10 +89,56 @@ export default class RouteActivities extends Route {
   })
   async getLastMonth (ctx) {
     const { hrBackupId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
       const date = await this.model.getLastMonth(hrBackupId)
       this.sendOk(ctx, {
         date,
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  /**
+   * API dernier mois où il y a des données d'une juridiction
+   * @param {*} hrBackupId
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async getLastHumanActivities (ctx) {
+    const { hrBackupId } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId)
+      this.sendOk(ctx, {
+        list,
+      })
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
+
+  /**
+   * API dernier mois où il y a des données d'une juridiction
+   * @param {*} hrBackupId
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrBackupId: Types.number(),
+      dateStart: Types.date(),
+      dateEnd: Types.date(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async getNotCompleteActivities (ctx) {
+    const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd)
+      this.sendOk(ctx, {
+        list,
       })
     } else {
       this.sendOk(ctx, null)

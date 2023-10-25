@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 import { EXECUTE_SIMULATION } from '../constants/log-codes'
+import config from 'config'
 
 /**
  * Route pour la page du simulateur
@@ -13,7 +14,7 @@ export default class RouteSimulator extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'HumanResources' })
   }
 
@@ -37,7 +38,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async getSituation (ctx) {
+  async getSituation(ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -68,6 +69,7 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
+    console.log()
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
@@ -91,7 +93,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async toSimulate (ctx) {
+  async toSimulate(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {

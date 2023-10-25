@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MainClass } from 'src/app/libs/main-class';
+import { AppService } from 'src/app/services/app/app.service';
 import { ExcelService } from 'src/app/services/excel/excel.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user';
@@ -9,7 +10,7 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
   templateUrl: './extractor-ventilation.component.html',
   styleUrls: ['./extractor-ventilation.component.scss']
 })
-export class ExtractorVentilationComponent extends MainClass  {
+export class ExtractorVentilationComponent extends MainClass {
   /**
    * Date de début selectionnée
    */
@@ -35,10 +36,6 @@ export class ExtractorVentilationComponent extends MainClass  {
    */
   selectedCategorieId: undefined | string = undefined
   /**
-   * Loader
-   */
-  isLoading: boolean = false
-  /**
    * Peux voir l'interface magistrat
    */
   canViewMagistrat: boolean = false
@@ -57,7 +54,8 @@ export class ExtractorVentilationComponent extends MainClass  {
    */
   constructor(
     private excelService: ExcelService,
-    private userService: UserService
+    private userService: UserService,
+    private appService: AppService
   ) {
     super()
 
@@ -71,13 +69,13 @@ export class ExtractorVentilationComponent extends MainClass  {
           this.canViewGreffier &&
           this.canViewContractuel
         )
-          this.categories.push({ id: 1, label: 'tous', value:'Tous' })
+          this.categories.push({ id: 1, label: 'tous', value: 'Tous' })
         if (this.canViewMagistrat)
-          this.categories.push({ id: 2, label: 'Magistrat', value:'Siège' })
+          this.categories.push({ id: 2, label: 'Magistrat', value: 'Siège' })
         if (this.canViewContractuel)
-          this.categories.push({ id: 3, label: 'Greffe', value:'Greffe' })
+          this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' })
         if (this.canViewGreffier)
-          this.categories.push({ id: 4, label: 'Autour du magistrat', value:'Equipe autour du magistrat' })
+          this.categories.push({ id: 4, label: 'Autour du magistrat', value: 'Equipe autour du magistrat' })
       })
     )
   }
@@ -86,8 +84,10 @@ export class ExtractorVentilationComponent extends MainClass  {
    * Export de fichier excel
    */
   export() {
-    this.isLoading = true
-    this.excelService.exportExcel().then(() => (this.isLoading = false))
+    this.appService.alert.next({
+      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+    })
+    this.excelService.exportExcel()
   }
 
   /**
@@ -147,7 +147,7 @@ export class ExtractorVentilationComponent extends MainClass  {
     }
 
     this.excelService.modifyExcel(file)
-    
+
   }
 
 }

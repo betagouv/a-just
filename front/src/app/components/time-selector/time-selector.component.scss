@@ -1,13 +1,69 @@
 :host {
+
+    &.disabled-tmd {
+        div>form>input {
+            background-color: rgba(185, 184, 182, 0.2901960784);
+            cursor: initial;
+            pointer-events: none;
+        }
+    }
+
+    &.disabled {
+        div>form>input {
+            cursor: initial;
+            pointer-events: none;
+        }
+    }
+
+    &.white-bg {
+        form {
+            input {
+                background-color: white;
+                border: solid 1px #e5e5e5;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+
+                text-align: center;
+
+                &.disabled {
+                    pointer-events: none;
+                    cursor: none;
+                    background-color: #b9b8b638;
+                    color: #4e4e4e;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-bottom: 2px solid black;
+
+                }
+
+                &.changed {
+                    color: black;
+                }
+            }
+
+            img {
+                display: none;
+            }
+        }
+    }
+
     form {
         position: relative;
 
         input {
+            border-bottom: 2px solid #e5e5e5;
+
             &.changed {
                 color: #000091
             }
 
             max-width: 140px;
+
+            &:focus {
+                border-bottom: 2px solid black;
+            }
         }
 
         img {
@@ -16,6 +72,10 @@
             margin: auto;
             top: 0px;
             bottom: 0px;
+
+            &.disabled {
+                //display: none;
+            }
         }
 
         input:invalid {
@@ -30,5 +90,6 @@
     .disabled {
         pointer-events: none;
         cursor: none;
+        background-color: #b9b8b64a;
     }
 }

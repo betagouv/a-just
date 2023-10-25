@@ -4,6 +4,10 @@ import { environment } from '../../../environments/environment'
 import { HttpService } from './http.service'
 import { BehaviorSubject } from 'rxjs'
 
+interface HandleErrorOptionsInterface {
+  noAlert?: boolean;
+}
+
 /**
  * Service d'ajout et formation des headers des appels serveur
  */
@@ -55,7 +59,8 @@ export class ServerService {
    * @param error 
    * @returns 
    */
-  handleError(error: any) {
+  handleError(error: any, options?: HandleErrorOptionsInterface) {
+    const canShowAlert = options?.noAlert !== true
     console.log('handleError', error)
     if (error.status) {
       console.log('error.status', error.status)
@@ -66,17 +71,17 @@ export class ServerService {
 
     if (error.status === 403) {
       window.location.href = '/'
-      alert('Vous n\'avez pas accès à cette section !')
+      canShowAlert ? alert('Vous n\'avez pas accès à cette section !') : ''
       return Promise.reject('Vous n\'avez pas accès à cette section !')
     } else if (error.status === 404) {
-      alert(
+      canShowAlert ? alert(
         'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.'
-      )
+      ) : ''
       return Promise.reject(
         'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.'
       )
     } else if (error.status === undefined) {
-      alert(error.toString())
+      canShowAlert ? alert(error.toString()) : ''
       return Promise.reject(error.toString())
     } else {
       const defaultErrorText =
@@ -86,7 +91,7 @@ export class ServerService {
         err = defaultErrorText
       }
 
-      alert(err)
+      canShowAlert ? alert(err) : ''
       return Promise.reject(err)
     }
   }
@@ -175,7 +180,7 @@ export class ServerService {
     console.log('HTTP POST ' + this.getUrl(url))
     return this._http
       .post(this.getUrl(url), params, { ...this.getOptions(), ...options })
-      .catch(this.handleError)
+      .catch((err) => this.handleError(err, options))
   }
 
   /**

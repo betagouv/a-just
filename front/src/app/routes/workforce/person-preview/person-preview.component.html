@@ -24,7 +24,7 @@
         <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="textColor">
           {{ hr.fonction && hr.fonction.code }}
         </p>
-        <p class="etp">{{ hr.etpLabel }}</p>
+        <p class="etp" *ngIf="hr.etpLabel">{{ hr.etpLabel }}</p>
       </div>
       <div class="flex-1"></div>
       <div class="updated-at">
@@ -34,8 +34,8 @@
       </div>
     </a>
     <div class="read-etp">
-      <p class="label">ETP Travaillé :</p>
-      <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
+      <p class="label" [ngClass]="{red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED}">ETP Travaillé :</p>
+      <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
         [indisponibility]="hr.hasIndisponibility">
       </etp-preview>
       <p class="unavailable" *ngIf="hr.hasIndisponibility">
@@ -45,8 +45,11 @@
   </div>
   <div class="activities">
     <div class="space"></div>
-    <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false">
+    <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED">
     </panel-activities>
+    <div *ngIf="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED" class="activities-button">
+      <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
+    </div>
   </div>
   <div class="actions">
     <a [routerLink]="['/resource-humaine', hr.id]">

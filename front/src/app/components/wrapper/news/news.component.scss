@@ -1,0 +1,41 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  position: relative;
+
+  > div {
+    padding: 12px 80px;
+    background-color: #e8edff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .content-news { 
+      max-width: 800px;
+      display: flex;
+      align-items: center;
+
+      .icon {
+        font-size: 20px;
+      }
+
+      p {
+        margin: 0 24px 0 16px;
+        position: relative;
+        top: -1px;
+      }
+
+      button {
+        background-color: transparent;
+        border: 1px solid #000091;
+        color: #000091;
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+.close {
+  position: absolute;
+  right: 32px;
+}

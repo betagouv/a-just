@@ -1,0 +1,41 @@
+@import '../../../styles/utils.scss';
+
+:host {
+  display: block;
+  border-bottom: solid 1px fColor(lightBorder);  
+  padding: 24px;
+
+  h3 {
+    color: fColor(primary);
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .tab-month {
+    display: flex;
+    flex-wrap: wrap;
+
+    > span {
+      height: 20px;
+      border-radius: 4px;
+      background-color: fColor(bgSelect);
+      color: fColor(grayRow);
+      font-size: 12px;
+      font-weight: bold;
+      padding: 0 6px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+
+      &.is-active {
+        background-color: fColor(bgBlueTag);
+        color: fColor(textBlueTag);
+      }
+
+      &.is-current {
+        background-color: fColor(bgYellowTag);
+        color: fColor(textYellowTag);
+      }
+    }
+  }
+}

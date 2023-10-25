@@ -66,3 +66,28 @@ export const onGetBackupListHrApi = async ({ userToken }) => {
       return err.response
     })
 }
+
+export const onFilterListHRApi = async ({ userToken, backupId, contentieuxIds, date = new Date() }) => {
+  return await instanceAxios
+    .post(
+      'human-resources/filter-list',
+      {
+        backupId,
+        categoriesIds: [1, 2, 3],
+        contentieuxIds,
+        date,
+        extractor: false,
+      },
+      {
+        headers: {
+          Authorization: userToken,
+        },
+      }
+    )
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      return err.response
+    })
+}

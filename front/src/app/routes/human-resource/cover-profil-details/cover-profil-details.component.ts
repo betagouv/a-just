@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core'
 import { FormGroup } from '@angular/forms'
+import { Location } from '@angular/common'
 import { sumBy } from 'lodash'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -37,7 +38,7 @@ export class CoverProfilDetailsComponent
   /**
    * Ajout d'un bouton "back" avec un url
    */
-  @Input() backUrl: string = ''
+  @Input() backUrl: string | undefined
   /**
    * Ajouter d'une ancre sur le lien de retour
    */
@@ -85,7 +86,7 @@ export class CoverProfilDetailsComponent
   /**
    * Temps de travail en text
    */
-  timeWorked: string = ''
+  timeWorked: string | null = ''
   /**
    * ETP des indispo
    */
@@ -166,10 +167,15 @@ export class CoverProfilDetailsComponent
    * @param nodeName
    * @param value
    */
-  updateHuman(nodeName: string, value: any) {
+  async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
       if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
+      }
+
+      if ((nodeName === 'dateStart' || nodeName === 'dateEnd') && value) {
+        value = new Date(value)
+        value.setHours(12)
       }
 
       this.currentHR = {
@@ -177,13 +183,10 @@ export class CoverProfilDetailsComponent
         [nodeName]: value,
       }
 
-      this.humanResourceService.updatePersonById(
-        this.currentHR,
-        {
-          [nodeName]: value,
-        }
-      )
-      this.ficheIsUpdated.emit(this.currentHR) // fix quick update front whitout waiting loading
+      const newHR = await this.humanResourceService.updatePersonById(this.currentHR, {
+        [nodeName]: value,
+      })
+      this.ficheIsUpdated.emit(newHR)
     }
   }
 }

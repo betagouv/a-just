@@ -63,7 +63,9 @@ export class HumanResourceService {
   /**
    * Liste des id que l'on peut affiche
    */
-  componentIdsCanBeView: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+  componentIdsCanBeView: BehaviorSubject<number[]> = new BehaviorSubject<
+    number[]
+  >([])
   /**
    * temp ids to can view
    */
@@ -669,7 +671,7 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
-        if(this.lastBackupId !== backupId) {
+        if (this.lastBackupId !== backupId) {
           this.tmpComponentIdsCanBeView = []
           this.componentIdsCanBeView.next([])
           this.lastBackupId = backupId
@@ -692,7 +694,7 @@ export class HumanResourceService {
   needIdToLoad(hrId: number) {
     this.tmpComponentIdsCanBeView.push(hrId)
 
-    if(!this.interfaceWatcherTmp) {
+    if (!this.interfaceWatcherTmp) {
       this.startWatcherTmp()
     }
   }
@@ -703,18 +705,61 @@ export class HumanResourceService {
       const newIds = this.tmpComponentIdsCanBeView.slice(0, nbFiche)
       const oldIds = this.componentIdsCanBeView.getValue()
       this.componentIdsCanBeView.next([...oldIds, ...newIds])
-      this.tmpComponentIdsCanBeView = this.tmpComponentIdsCanBeView.slice(nbFiche)
-      
-      if(this.tmpComponentIdsCanBeView.length === 0) {
+      this.tmpComponentIdsCanBeView =
+        this.tmpComponentIdsCanBeView.slice(nbFiche)
+
+      if (this.tmpComponentIdsCanBeView.length === 0) {
         this.stopWatcherTmp()
       }
     }, 100)
   }
 
   stopWatcherTmp() {
-    if(this.interfaceWatcherTmp) {
+    if (this.interfaceWatcherTmp) {
       clearInterval(this.interfaceWatcherTmp)
       this.interfaceWatcherTmp = null
     }
+  }
+
+  /**
+   * Calculate sub categories
+   */
+  calculateSubCategories(list: HumanResourceInterface[] = []) {
+    let subTotalEtp: { [key: string]: {etpt: number, total: number} } = {
+      titulaire: {
+        etpt: 0,
+        total: 0,
+      },
+      placé: {
+        etpt: 0,
+        total: 0,
+      },
+      contractuel: {
+        etpt: 0,
+        total: 0,
+      },
+    }
+    list.map((h: any) => {
+      let realETP = (h.etp || 0) - h.hasIndisponibility
+      if (realETP < 0) {
+        realETP = 0
+      }
+      switch (h.fonction.position) {
+        case 'Titulaire':
+          subTotalEtp['titulaire'].etpt += realETP
+          subTotalEtp['titulaire'].total += 1
+          break
+        case 'Placé':
+          subTotalEtp['placé'].etpt += realETP
+          subTotalEtp['placé'].total += 1
+          break
+        case 'Contractuel':
+          subTotalEtp['contractuel'].etpt += realETP
+          subTotalEtp['contractuel'].total += 1
+          break
+      }
+    })
+    
+    return subTotalEtp
   }
 }

@@ -1,6 +1,15 @@
 import { instanceAxios } from '../utils/axios'
 
-export const onFilterListApi = async ({ userToken, backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }) => {
+export const onFilterListCalculatorApi = async ({
+  userToken,
+  backupId,
+  dateStart,
+  dateStop,
+  contentieuxIds,
+  optionBackupId,
+  categorySelected,
+  selectedFonctionsIds,
+}) => {
   return await instanceAxios
     .post(
       '/calculator/filter-list',

@@ -1,0 +1,278 @@
+categories:
+  6.2.:
+    label: "6.2. Activité pénale"
+    Code nomenclature: 6.2.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS: "6"
+        ETAPE:
+         - "CPVMIN_JE"
+         - "COPJMEX"
+         - "CPVMIN_TE_1111"
+         - "CPVMIN_1108"
+         - "COPJ_TE"
+         - "COPJ_JE"
+         - "ORDREGL_JI_RVJE"
+         - "ORDREGL_JI_RVTE"
+         - "CPVMIN_TE"
+         - "CPVMIN_JE_1111"
+         - "SAISJE_CDR"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        CLE_REGLE_PHAROS: "6"
+        EMET_TES: 
+         - "JE"
+         - "TE"
+        ETAPE: 
+         - "JGTOPPO_JE_1108"
+         - "JGTOPPO_TE"
+         - "JGTOPPO_TE_1107"
+         - "JGT_TE_1122"
+         - "IRMENTA_JE"
+         - "TRANSF_PROTG_JE"
+         - "JGT_TE_1142"
+         - "JGT_JE"
+         - "JGTOPPO_TE_1122"
+         - "JGTOPPO_TE_1108"
+         - "ORDREGL_JE_RVJI"
+         - "ORDREGL_JE_RVJPROX"
+         - "JGT_TE_1112"
+         - "JGTOPPO_JE_1107"
+         - "JGT_JE_1107"
+         - "JGTOPPO_JE"
+         - "JGT_JE_1112"
+         - "JGT_TE_1108"
+         - "JGT_TE"
+         - "JGTOPPO_TE_1112"
+         - "JGT_TE_1107"
+         - "JGTOPPO_TE_1142"
+         - "JGT_JE_1122"
+         - "JGT_JE_1108"
+         - "JGTOPPO_JE_1122"
+         - "ORCOMPO"
+        TOTAL: "NB_AFF_END"
+  7.1.:
+    label: "7.1. Collégiales hors JIRS"
+    Code nomenclature: 7.1.
+    fichier: "decision_ajust"
+    filtres:
+      sorties:
+        ETAPE:
+          - "JGT_TC"
+          - "JGTOPPO_TC"
+        FILIERE_DER_ORI:
+          - "CITATC"
+          - "COPJTC"
+          - "INOPP"
+          - "INSTR"
+          - "NPOURS"
+          - "PROALT"
+          - "TRANSAC"
+          - ""
+        JGT_FORMATION: "325COL"
+        TOTAL: "NB_AFF"
+  7.13.:
+    label: "7.13. Juge unique"
+    Code nomenclature: 7.13.
+    fichier: "decision_ajust"
+    filtres:
+      sorties:
+        ETAPE:
+          - "JGT_TC"
+          - "JGTOPPO_TC"
+        FILIERE_DER_ORI:
+          - "CITATC"
+          - "COPJTC"
+          - "INOPP"
+          - "INSTR"
+          - "NPOURS"
+          - "PROALT"
+          - "TRANSAC"
+          - ""
+        JGT_FORMATION: 
+          - "325JU"
+          - "325CAB"
+          - "325PRES"
+        TOTAL: "NB_AFF"
+  7.14.:
+    label: "7.14. Comparutions immédiates"
+    Code nomenclature: 7.14.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "COMPIM"
+        ETAPE:
+          - "PV-CI"
+          - "PV-CP"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "COMPIM"
+        ETAPE:
+          - "PV-CI"
+          - "PV-CP"
+        TOTAL: "NB_AFF_END"
+      stock: 0
+      
+  7.15.:
+    label: "7.15. CPPV"
+    Code nomenclature: 7.15.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_END"
+      stock:
+        CLE_REGLE_PHAROS: "15"
+        FILIERE: "CPV"
+        ETAPE: "CPV"
+        TOTAL: "NB_AFF_OLD"
+  7.2:
+    label: "7.2. CRPC"
+    Code nomenclature: 7.2.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS:
+          - "7"
+          - "8"
+        FILIERE: "CRPC"
+        ETAPE: 
+          - "RHCPC"
+          - "RHCPC_DEFER"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        CLE_REGLE_PHAROS:
+          - "7"
+          - "8"
+        FILIERE: "CRPC"
+        ETAPE: 
+          - "RHCPC"
+          - "RHCPC_DEFER"
+        TOTAL: "NB_AFF_END"
+  7.3:
+    label: "7.3. OP correctionnelles"
+    Code nomenclature: 7.3.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_PRTGI"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        CLE_REGLE_PHAROS: "6"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_PRTGI"
+        TOTAL: "NB_AFF_END"
+      stock:
+        CLE_REGLE_PHAROS: "15"
+        FILIERE: "OPTC"
+        ETAPE: "ROP_PRTGI"
+        TOTAL: "NB_AFF_OLD"
+  7.6:
+    label: "7.6. Tribunal de police"
+    Code nomenclature: 7.6.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        ETAPE: 
+        - "COPJ_TPTGI"
+        - "CD_TPTGI"
+        - "CPP_TPTGI"
+        - "CVCEP_TPTGI"
+        - "CV_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        ETAPE: 
+        - "JGT_TPTGI"
+        - "JGTOPPO_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_END"
+      stock:
+        ETAPE: 
+        - "COPJ_TPTGI"
+        - "CD_TPTGI"
+        - "CPP_TPTGI"
+        - "CVCEP_TPTGI"
+        - "CV_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_OLD"
+  7.7:
+    label: "7.7. OP contraventionnelles"
+    Code nomenclature: 7.7.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        ETAPE: 
+        - "ROP_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_END"
+      sorties:
+        ETAPE: 
+        - "OP_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_END"
+      stock:
+        ETAPE: 
+        - "ROP_TPTGI"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_OLD"
+  7.4:
+    label: "7.4. Compositions pénales"
+    Code nomenclature: 7.4.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        CLE_REGLE_PHAROS: "1"
+        FILIERE: "COMPO"
+        ETAPE: "REQCOMP"
+        TOTAL: "NB_AFF_END"
+      sorties:
+        CLE_REGLE_PHAROS: "1"
+        FILIERE: "COMPO"
+        ETAPE: "ORCOMPO"
+        TOTAL: "NB_AFF_END"
+      stock:
+        CLE_REGLE_PHAROS: "1"
+        FILIERE: "COMPO"
+        ETAPE: "REQCOMP"
+        TOTAL: "NB_AFF_OLD"
+  8.1:
+    label: "8.1 Service général"
+    Code nomenclature: 8.1.
+    fichier: "instr_ajust"
+    filtres:
+      entrees:
+        TOTAL: "INSTR_NB_AFF_NOUV"
+      sorties:
+        TOTAL: "INSTR_NB_AFF_CLOTUREE"
+      stock:
+         TOTAL: "INSTR_NB_AFF_STOCK"  
+  10.1:
+    label: "10.1 Hors JIRS"
+    Code nomenclature: 10.1.
+    fichier: "export_pharos_ajust"
+    filtres:
+      entrees:
+        EMET_TES: "JLD"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_NOUV"
+      sorties:
+        EMET_TES: "JLD"
+        CLE_REGLE_PHAROS: "1"
+        TOTAL: "NB_AFF_END"
+      stock:
+        EMET_TES: "JLD"
+        CLE_REGLE_PHAROS: "15"
+        TOTAL: "NB_AFF_OLD"

@@ -1,15 +1,14 @@
-import config from "config";
-const tracer = require("dd-trace").init();
+import config from 'config'
 
 if (!config.consoleLog) {
   // hide console log
-  console.log("HIDE CONSOLE LOGS !!!");
-  console.log = function () {};
+  console.log('HIDE CONSOLE LOGS !!!')
+  console.log = function () {}
 }
 
-import App from "./App";
+import App from './App'
 
-const app = new App();
-app.start();
+const app = new App()
+app.start()
 
-export default app;
+export default app

@@ -43,6 +43,14 @@
     display: flex;
     align-items: center;
 
+    &.alert {
+      background-color: rgba(fColor(cred), 0.2);
+
+      p {
+        color: fColor(cred);
+      }
+    }
+
     p {
       font-size: 12px;
       color: fColor(cgreen);

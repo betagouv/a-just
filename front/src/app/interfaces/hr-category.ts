@@ -60,6 +60,10 @@ export interface HRCategorySelectedInterface extends HRCategoryInterface {
    * Fonction role
    */
   poste: HRCategorypositionInterface[];
+  /**
+   * Pourcent ventilé de la catégorie
+   */
+  percentAllocated?: number;
 }
 
 export interface HRCategorypositionInterface {

@@ -1,12 +1,14 @@
 import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
-import { controlPassword, snakeToCamelObject } from '../utils/utils'
+import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
-import { crypt } from '../utils'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate } from '../utils/date'
+import { comparePasswords, cryptPassword } from '../utils/password/password'
+import { differenceInMinutes } from 'date-fns'
+import { Op } from 'sequelize'
 
 /**
  * Table des utilisateurs
@@ -14,13 +16,89 @@ import { getNbDay, humanDate } from '../utils/date'
 
 export default (sequelizeInstance, Model) => {
   /**
+   * Control des connection avec les règles de blockages pour les users et admin
+   */
+  Model.tryConnection = async (email, password, roles, andNull = false) => {
+    email = (email || '').toLowerCase()
+    const cleanUser = async (user) => {
+      await user.update({
+        nb_try_connection: null,
+        first_try_connection: null,
+      })
+      user.dataValues.nb_try_connection = null
+      user.dataValues.first_try_connection = null
+      return user
+    }
+
+    let options = { role: roles }
+    if (andNull) {
+      options = {
+        [Op.or]: [
+          {
+            role: roles,
+          },
+          {
+            role: { [Op.eq]: null },
+          },
+        ],
+      }
+    }
+
+    let user = await Model.findOne({ where: { email, ...options } })
+    if (user) {
+      if (user.dataValues.status === 0) {
+        return "Votre compte n'est plus accessible."
+      }
+
+      if (user.dataValues.first_try_connection) {
+        const now = new Date()
+        const tryDate = new Date(user.dataValues.first_try_connection)
+        let nbMinutes = differenceInMinutes(now, tryDate)
+
+        if (nbMinutes >= config.securities.users.delaiAboutLockConnection) {
+          user = await cleanUser(user)
+        }
+      }
+
+      if ((user.dataValues.nb_try_connection || 0) >= config.securities.users.nbMaxTryConnection) {
+        const now = new Date()
+        const tryDate = new Date(user.dataValues.first_try_connection)
+        let nbMinutes = differenceInMinutes(now, tryDate)
+
+        return `Votre compte est bloqué ! Vous devez attendre ${config.securities.users.delaiAboutLockConnection - nbMinutes} minutes pour vous reconnecter.`
+      }
+
+      if (comparePasswords(password, user.dataValues.password)) {
+        delete user.dataValues.password
+        user = await cleanUser(user)
+
+        return user.dataValues
+      } else {
+        // add to try connection
+        const totalTryConnection = (user.dataValues.nb_try_connection || 0) + 1
+        user.update({
+          nb_try_connection: totalTryConnection,
+          first_try_connection: user.dataValues.first_try_connection || new Date(),
+        })
+        if (totalTryConnection / config.securities.users.nbMaxTryConnection < 0.3) {
+          return 'Email ou mot de passe incorrect.'
+        } else {
+          return `Email ou mot de passe incorrect. Essai ${totalTryConnection}/${config.securities.users.nbMaxTryConnection}`
+        }
+      }
+    }
+
+    return 'Email ou mot de passe incorrect'
+  }
+
+  /**
    * Change user password
    * @param {*} userId
    * @param {*} password
    * @returns
    */
-  Model.updatePassword = async (userId, password) => {
-    password = crypt.encryptPassword(password)
+  Model.updatePassword = async (userId, password, email) => {
+    password = cryptPassword(password, email)
 
     return await Model.updateById(userId, {
       new_password_token: null,
@@ -56,10 +134,7 @@ export default (sequelizeInstance, Model) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
-      if (controlPassword(password) === false) {
-        throw 'Mot de passe trop faible!'
-      }
-      password = crypt.encryptPassword(password)
+      password = cryptPassword(password, email)
       await Model.create({
         email,
         password,

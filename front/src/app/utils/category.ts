@@ -27,3 +27,41 @@ export const getCategoryTitlePlurial = (name: string): string => {
 
   return name + 's';
 }
+
+
+/**
+ * Conversion d'un nom de référentiel en version simplifiée
+ * @param name
+ * @returns
+ */
+export function categoryMappingName(name: string): string {
+  switch (name) {
+    case 'Magistrat':
+      return `Juge`
+    case 'Autour du magistrat':
+      return `EAM`
+  }
+
+  return name
+}
+
+/**
+ * Récupération du code couleur des catégories
+ * @param name
+ * @returns
+ */
+export function categoryMappingColor(
+  name: string | undefined,
+  opacity: number = 1
+): string {
+  switch (name) {
+    case 'Magistrat':
+      return `rgba(0, 0, 145, ${opacity})`
+    case 'Greffe':
+      return `rgba(165, 88, 160, ${opacity})`
+    case 'Autour du magistrat':
+      return `rgba(121, 104, 48, ${opacity})`
+  }
+
+  return ''
+}

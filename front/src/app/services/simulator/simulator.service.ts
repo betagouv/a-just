@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnInit } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -72,6 +72,11 @@ export class SimulatorService extends MainClass {
     })
 
   /**
+   * Validation de la situation de début sur simulateur à blanc
+   */
+  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+  /**
    * Constructeur
    * @param serverService
    * @param humanResourceService
@@ -82,7 +87,7 @@ export class SimulatorService extends MainClass {
   ) {
     super()
 
-    this.watch(this.chartAnnotationBox.subscribe(() => {}))
+    this.watch(this.chartAnnotationBox.subscribe(() => { }))
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
@@ -141,6 +146,7 @@ export class SimulatorService extends MainClass {
       this.selectedFonctionsIds.getValue() !== null
     ) {
       this.isLoading.next(true)
+
       return this.serverService
         .post(`simulator/get-situation`, {
           backupId: this.humanResourceService.backupId.getValue(),
@@ -166,7 +172,7 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface) {
     this.isLoading.next(true)
-console.log(params)
+    console.log(params)
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -177,6 +183,7 @@ console.log(params)
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
+        console.log('simu', data.data)
         this.situationSimulated.next(data.data)
         this.isLoading.next(false)
       })
@@ -190,7 +197,7 @@ console.log(params)
   getLabelTranslation(value: string): string {
     switch (value) {
       case 'etpMag':
-        return 'ETPT magistrat'
+        return 'ETPT'
       case 'etpFon':
         return 'ETPT greffe'
       case 'totalIn':
@@ -225,34 +232,34 @@ console.log(params)
   ): any {
     switch (param) {
       case 'etpMag':
-        if (data?.etpMag===null){return 'N/R'}
+        if (data?.etpMag === null) { return 'N/R' }
         return data?.etpMag || '0'
       case 'totalOut': {
-        if (data?.totalOut===null){return 'N/R'}
+        if (data?.totalOut === null) { return 'N/R' }
         if (data?.totalOut && data?.totalOut >= 0) {
           return data?.totalOut
         } else return '0'
       }
       case 'totalIn': {
-        if (data?.totalIn===null){return 'N/R'}
+        if (data?.totalIn === null) { return 'N/R' }
         if (data?.totalIn && data?.totalIn >= 0) {
           return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
         } else return '0'
       }
       case 'lastStock': {
-        if (data?.lastStock===null){return 'N/R'}
+        if (data?.lastStock === null) { return 'N/R' }
         if (data?.lastStock && data?.lastStock >= 0) {
           return data?.lastStock
         } else return '0'
       }
       case 'etpCont':
-        if (data?.etpCont===null){return 'N/R'}
+        if (data?.etpCont === null) { return 'N/R' }
         return data?.etpCont || '0'
       case 'etpFon':
-                if (data?.etpFon===null){return 'N/R'}
+        if (data?.etpFon === null) { return 'N/R' }
         return data?.etpFon || '0'
       case 'realCoverage': {
-        if (data?.realCoverage===null){return 'N/R'}
+        if (data?.realCoverage === null) { return 'N/R' }
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
         } else if (data?.realCoverage && initialValue === true)
@@ -262,7 +269,7 @@ console.log(params)
         else return '0'
       }
       case 'realDTESInMonths':
-        if (data?.realDTESInMonths===null){return 'N/R'}
+        if (data?.realDTESInMonths === null) { return 'N/R' }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
             return '0'
@@ -270,10 +277,10 @@ console.log(params)
         }
         return '0'
       case 'magRealTimePerCase':
-        if (data?.magRealTimePerCase===null){return 'N/R'}
+        if (data?.magRealTimePerCase === null) { return 'N/R' }
         if (initialValue) return data?.magRealTimePerCase || '0'
         else {
-          return decimalToStringDate(data?.magRealTimePerCase) || '0'
+          return decimalToStringDate(data?.magRealTimePerCase, ':') || '0'
         }
     }
     return ''

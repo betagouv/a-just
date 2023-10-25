@@ -42,12 +42,25 @@ const routes: Routes = [
     loadChildren: () =>
       import('./juridictions/juridictions.module').then((mod) => mod.JuridictionsModule),
     canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'yaml-tools',
+    loadChildren: () =>
+      import('./yaml-tools/yaml-tools.module').then((mod) => mod.YamlToolsModule),
+    canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'data-analyse',
+    loadChildren: () =>
+      import('./data-analyse/data-analyse.module').then((mod) => mod.DataAnalyseModule),
+    canActivate: [AdminAuthGuard],
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   providers: [AdminAuthGuard],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

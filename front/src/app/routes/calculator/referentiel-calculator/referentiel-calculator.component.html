@@ -8,7 +8,7 @@
     <div class="item actual">
         <div [ngClass]="{ selected: sortBy === 'totalIn' }">
             <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.totalIn !== null" [ngIfElse]="nr">
+                <ng-template [ngIf]="calculator.totalIn !== null && checkPastDate()" [ngIfElse]="nr">
                     <div>
                         <p #tooltip="matTooltip"
                             [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
@@ -20,7 +20,7 @@
         </div>
         <div [ngClass]="{ selected: sortBy === 'totalOut' }">
             <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.totalOut !== null" [ngIfElse]="nr">
+                <ng-template [ngIf]="calculator.totalOut !== null && checkPastDate()" [ngIfElse]="nr">
                     <div>
                         <p #tooltip="matTooltip"
                             [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
@@ -32,7 +32,7 @@
         </div>
         <div [ngClass]="{ selected: sortBy === 'lastStock' }">
             <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.lastStock !== null" [ngIfElse]="nr">
+                <ng-template [ngIf]="calculator.lastStock !== null && checkPastDate()" [ngIfElse]="nr">
                     <div>
                         <p>{{ calculator.lastStock }}</p>
                     </div>
@@ -65,12 +65,14 @@
         <div *ngIf="!isSoutien(calculator.contentieux.id)">
             <div [ngClass]="{ selected: sortBy === 'realCoverage' }">
                 <div class="block">
-                    <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+                    <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                        <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+                    </ng-template>
                 </div>
             </div>
             <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }">
                 <div class="block">
-                    <ng-template [ngIf]="calculator.realDTESInMonths !== null" [ngIfElse]="nr">
+                    <ng-template [ngIf]="calculator.realDTESInMonths !== null && checkPastDate()" [ngIfElse]="nr">
                         <p>{{ calculator.realDTESInMonths | number: '0.2-2' || 0 }}</p>
                         <p class="unity">mois</p>
                     </ng-template>
@@ -83,7 +85,7 @@
         }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                        <ng-template [ngIf]="calculator.magRealTimePerCase !== null" [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.magRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
                             <p>
                                 {{
                                 this.decimalToStringDate(calculator.magRealTimePerCase) || 0
@@ -93,7 +95,7 @@
                         </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                        <ng-template [ngIf]="calculator.fonRealTimePerCase !== null" [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.fonRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
                             <p>
                                 {{
                                 this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
@@ -111,17 +113,22 @@
             <div [ngClass]="{ selected: sortBy === 'magCalculateCoverage' }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                        <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>
+                        <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                            <aj-speedometer [percent]="(calculator.magCalculateCoverage || 0) * 100"></aj-speedometer>
+                        </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                        <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>
+                        <ng-template [ngIf]="checkPastDate()" [ngIfElse]="nr">
+                            <aj-speedometer [percent]="(calculator.fonCalculateCoverage || 0) * 100"></aj-speedometer>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>
             <div [ngClass]="{ selected: sortBy === 'magCalculateDTESInMonths' }">
                 <div class="block">
                     <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                        <ng-template [ngIf]="calculator.magCalculateDTESInMonths !== null" [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.magCalculateDTESInMonths !== null && checkPastDate()"
+                            [ngIfElse]="nr">
                             <p>
                                 {{ calculator.magCalculateDTESInMonths | number: '0.2-2' || 0 }}
                             </p>
@@ -129,7 +136,8 @@
                         </ng-template>
                     </ng-template>
                     <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                        <ng-template [ngIf]="calculator.fonCalculateDTESInMonths !== null" [ngIfElse]="nr">
+                        <ng-template [ngIf]="calculator.fonCalculateDTESInMonths !== null && checkPastDate()"
+                            [ngIfElse]="nr">
                             <p>
                                 {{ calculator.fonCalculateDTESInMonths | number: '0.2-2' || 0 }}
                             </p>
@@ -210,6 +218,8 @@
 
 <ng-template #nr>
     <div class="ref-nr">
+        <aj-tooltips title="Donnée non renseignée"
+            content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
         <p>N/R</p>
     </div>
 </ng-template>

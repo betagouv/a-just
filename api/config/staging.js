@@ -8,4 +8,6 @@ module.exports = {
   sendingBlue: {
     usersListId: 7,
   },
+  forceSSL: true,
+  formatLogs: true,
 }

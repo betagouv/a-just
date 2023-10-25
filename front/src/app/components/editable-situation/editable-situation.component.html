@@ -1,0 +1,130 @@
+<div class="white-begin-situation">
+  <div class="items before-after">
+    <div class="item blue-bg">
+      <p>Entrées moyennes mensuelles</p>
+    </div>
+    <div class="item">
+      <p>Sorties mensuelles</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Stock</p>
+    </div>
+    <div class="item">
+      <p>ETPT</p>
+    </div>
+    <div class="item blue-bg">
+      <p>Taux de couverture en %</p>
+      <aj-tooltips title="Taux de couverture" content="SORTIES / ENTREES en %."></aj-tooltips>
+    </div>
+    <div class="item">
+      <p>DTES en mois</p>
+      <aj-tooltips title="DTES"
+        content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure (STOCK / SORTIES en mois)"></aj-tooltips>
+    </div>
+    <div class="item blue-bg">
+      <p>Temps moyen / dossier en hh:mm</p>
+      <aj-tooltips title="Temps moyen / dossier"
+        content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux (NOMBRE HEURES TRAVAILLEES PAR MOIS PAR ETPT x ETPT / SORTIES)."></aj-tooltips>
+    </div>
+    <div class="item end-item">
+      <p></p>
+    </div>
+  </div>
+
+  <div class="white-date-selector situation-white">
+    <div class="actual-situation">
+      <div class="line-title">
+        <p>
+          Situation <br />à aujourd'hui
+        </p>
+      </div>
+      <form class="editable-line" [formGroup]="formWhiteSim">
+        <div class="line-item orange-bg">
+          <input formControlName="totalIn" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="totalOut" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item orange-bg">
+          <input formControlName="lastStock" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="etpMag" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <input formControlName="realDTESInMonths" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+            (keyup)="onDeletePressed($event)" type="text"
+            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+        </div>
+        <div class="line-item">
+          <app-time-selector class="white-bg" id="magRealTimePerCase" [value]="getStartTmd()"
+            [defaultValue]="defaultTmd" (valueChange)="updateTimeValue($event)" [disabled]="disabledTmd"
+            [category]="'MAGISTRATS'" [ngClass]="{'disabled-tmd': isValidatedWhiteSimu === true}"></app-time-selector>
+        </div>
+      </form>
+
+      <div class="line-item validate-button" *ngIf="!isValidatedWhiteSimu; else locked">
+        <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked"
+          class="validate-label effacer">Effacer</label>
+        <label (click)="validateWhiteSimulator()" class="validate-label"
+          [ngClass]="{'disable-button-validate': checkIfEmptyValue()}" #tooltip="matTooltip"
+          [matTooltipDisabled]="!checkIfEmptyValue()" [matTooltip]="getTooltipText()"
+          [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="after" matTooltipShowDelay="0"
+          matTooltipHideDelay="0">Valider</label>
+      </div>
+      <ng-template #locked>
+        <div class="line-item validate-button validate-button" (click)="editWhiteSimulator()">
+          <label class="validate-label effacer">Modifier</label>
+        </div>
+      </ng-template>
+    </div>
+    <div class="actual-situation color-blue end-situation" *ngIf="displayEndSituation">
+      <div class="line-title">
+        <p>
+          Situation <br /> au {{endDateToDisplay}}
+        </p>
+      </div>
+      <form class="editable-line" [formGroup]="formWhiteSim">
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.totalIn" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituation.totalOut" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituation.lastStock" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item" *ngIf="category === 'MAGISTRAT'">
+          <input [value]="endSituation.etpMag" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item" *ngIf="category !== 'MAGISTRAT'">
+          <input [value]="endSituation.etpFon" (keypress)="validateNo($event)" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="endSituationDisplay.realCoverage" type="text" class="disabled" />
+        </div>
+        <div class="line-item">
+          <input [value]="endSituationDisplay.realDTESInMonths" type="text" class="disabled" />
+        </div>
+        <div class="line-item grey-bg">
+          <input [value]="getTmd()" type="text" class="disabled" />
+        </div>
+      </form>
+      <div class="line-item validate-button">
+      </div>
+    </div>
+  </div>
+</div>

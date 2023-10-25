@@ -104,6 +104,16 @@
     }
   }
 
+  &.placeholder {
+    p {
+      color: fColor(cplaceholder);
+    }
+
+    .progress-bar-line, .progress-bar-line > div {
+      background-color: fColor(cplaceholder);
+    }
+  }
+
   p {
     width: 271px;
     font-size: 12px;

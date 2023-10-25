@@ -34,7 +34,7 @@
 
     <div class="menu-scrollable">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]">
+        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
           {{ item.label }}
         </a>
       </div>
@@ -68,7 +68,7 @@
         </ul>
       </div>
       <div class="menu-item">
-        <a href="mailto:support-utilisateurs@a-just.fr">
+        <a [routerLink]="['/contact']" [queryParams]="{backUrl: true}">
           <p>Nous contacter</p>
         </a>
       </div>

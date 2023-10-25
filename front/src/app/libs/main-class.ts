@@ -3,12 +3,15 @@ import {
   referentielMappingColor,
   referentielMappingName,
 } from '../utils/referentiel'
+import { categoryMappingName, categoryMappingColor } from '../utils/category'
+
 import { environment } from '../../environments/environment'
 import { fixDecimal } from '../utils/numbers'
 import {
   decimalToStringDate,
   getMonthString,
   getShortMonthString,
+  month,
   today,
 } from '../utils/dates'
 import {
@@ -17,6 +20,8 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
+import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
  * Class principal pour simplifier les doublons de méthodes générales
@@ -38,6 +43,8 @@ export class MainClass {
    * Variable global de string fonctionnaires
    */
   FONCTIONNAIRES = FONCTIONNAIRES
+  ETP_NEED_TO_BE_UPDATED = ETP_NEED_TO_BE_UPDATED
+  PLACEHOLDER_COLOR = PLACEHOLDER_COLOR
 
   /**
    * Methode d'arrondi
@@ -99,8 +106,27 @@ export class MainClass {
    * @param name
    * @returns
    */
-  public referentielMappingColor(name: string): string {
-    return referentielMappingColor(name)
+  public referentielMappingColor(name: string, opacity: number = 1): string {
+    return referentielMappingColor(name, opacity)
+  }
+
+  /**
+   * Methode de reprise des couleur de catégorie
+   * @param name
+   * @returns
+   */
+  public categoryMappingColor(
+    name: string | undefined,
+    opacity: number = 1
+  ): string {
+    return categoryMappingColor(name, opacity)
+  }
+
+  /**
+   * Methode de reprise des noms de categori
+   */
+  public categoryMappingName(name: string | undefined): string {
+    return categoryMappingName(name || '')
   }
 
   /**
@@ -231,12 +257,23 @@ export class MainClass {
   }
 
   /**
+   * Retourne la date d'aujourd'hui sinon du jour de la date choisie
+   * @param date
+   * @returns
+   */
+  public getMonth(date: Date | null | undefined = new Date()): Date {
+    return month(date)
+  }
+
+  /**
    * Retourne l'année d'une date en string ou objet
    * @param date
    * @returns
    */
-  public getFullYear(date: Date | string) {
-    if (typeof date === 'string') {
+  public getFullYear(date: Date | string | undefined) {
+    if (date === undefined) {
+      date = new Date()
+    } else if (typeof date === 'string') {
       date = new Date(date)
     }
 
@@ -248,8 +285,10 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getDate(date: Date | string) {
-    if (typeof date === 'string') {
+  public getDate(date: Date | string | undefined) {
+    if (date === undefined) {
+      date = new Date()
+    } else if (typeof date === 'string') {
       date = new Date(date)
     }
 
@@ -299,5 +338,31 @@ export class MainClass {
     }
 
     dom.focus()
+  }
+
+  /**
+   * Fonction qui permet de scroller à un ID
+   */
+  public scrollTo(id: string, dom?: any, detalScrollY?: number) {
+    const findElement = dom ? dom : document.getElementById('content')
+    const findIdElement = document.getElementById(id)
+
+    if (findElement && findIdElement) {
+      const findTopElement = document.getElementById('top')
+      let deltaToRemove = 0
+
+      if (findTopElement) {
+        deltaToRemove = findTopElement.getBoundingClientRect().height
+      }
+
+      findElement.scrollTo({
+        behavior: 'smooth',
+        top:
+          findElement.scrollTop +
+          findIdElement.getBoundingClientRect().top -
+          deltaToRemove -
+          (detalScrollY || 0),
+      })
+    }
   }
 }

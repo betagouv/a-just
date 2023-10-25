@@ -1,0 +1,44 @@
+@import '../../../styles/utils.scss';
+
+.main {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #0063cb;
+  margin: 17px 24px;
+  padding-right: 4px;
+  position: relative;
+
+  div.description {
+    margin: 8px 44px 8px 8px;
+
+    p {
+      margin-bottom: 8px;
+    }
+  }
+
+  .info-bubble {
+    width: 40px;
+    padding: 8px;
+    background-color: #0063cb;
+  
+    i {
+      color: white;
+    }
+  }
+
+  .close-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    color: #000091;
+
+    .material-icons{
+      width: 14px;
+      height: 14px;
+      font-size: 14px !important;
+      margin-right: 12px;
+      margin-top: 12px;
+    }
+  }
+}
