@@ -167,7 +167,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       if (element && !element.value) {
-        return await getHistory(element.id, element['Activity.id'], contentieuxId, activityDate)
+        return await getHistory(element.id, element['Activity.id'], element['Activity.contentieux_id'], element['Activity.periode'])
       } else if (
         element &&
         element['Activity.contentieux_id'] === contentieuxId &&
