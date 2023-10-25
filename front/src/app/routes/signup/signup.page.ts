@@ -74,10 +74,6 @@ export class SignupPage {
     this.userService
       .register({ email, password, firstName, lastName, fonction, tj })
       .then((returnLogin) => {
-        console.log('returnLogin', returnLogin)
-        alert(
-          "Merci de votre inscription. L'équipe A-JUST vous avertira dès que les droits vous auront été attribués"
-        )
         if (returnLogin) {
           this.router.navigate([
             this.userService.getUserPageUrl(returnLogin.user),

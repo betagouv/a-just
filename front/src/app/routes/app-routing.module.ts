@@ -26,6 +26,12 @@ const routes: Routes = [
       import('./about-us/about-us.module').then((mod) => mod.AboutUsModule),
   },
   {
+    path: 'bienvenue',
+    loadChildren: () =>
+      import('./welcome/welcome.module').then((mod) => mod.WelcomeModule),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'dashboard',
     loadChildren: () =>
       import('./dashboard/dashboard.module').then((mod) => mod.DashboardModule),

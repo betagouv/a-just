@@ -6,7 +6,15 @@ import { UserInterface } from 'src/app/interfaces/user-interface'
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ReferentielService } from '../referentiel/referentiel.service'
-import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATOR, USER_ACCESS_SIMULATOR, USER_ACCESS_VENTILATIONS } from 'src/app/constants/user-access'
+import {
+  USER_ACCESS_ACTIVITIES,
+  USER_ACCESS_AVERAGE_TIME,
+  USER_ACCESS_CALCULATOR,
+  USER_ACCESS_SIMULATOR,
+  USER_ACCESS_VENTILATIONS,
+} from 'src/app/constants/user-access'
+import { NEED_BOOKING_PAGE } from 'src/app/constants/pages'
+import { Router } from '@angular/router'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -33,10 +41,11 @@ export class UserService {
    * @param referentielService
    */
   constructor(
+    private router: Router,
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService
-  ) { }
+  ) {}
 
   /**
    * Sauvegarde d'une utilisateur
@@ -54,11 +63,11 @@ export class UserService {
 
   /**
    * Get process variables
-   * @returns 
+   * @returns
    */
   getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
-      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null;
+      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null
       console.log(this.interfaceType)
     })
   }
@@ -68,7 +77,9 @@ export class UserService {
    * @returns
    */
   me() {
-    return this.serverService.getWithoutError('users/me').then((data) => data.data || null)
+    return this.serverService
+      .getWithoutError('users/me')
+      .then((data) => data.data || null)
   }
 
   /**
@@ -78,10 +89,11 @@ export class UserService {
    */
   register(params = {}): Promise<any> {
     return this.serverService
-      .post('users/create-account', params).then((data) => {
-        this.serverService.setToken(data.token);
-        return data;
-      });
+      .post('users/create-account', params)
+      .then((data) => {
+        this.serverService.setToken(data.token)
+        return data
+      })
   }
 
   /**
@@ -144,6 +156,11 @@ export class UserService {
           date: new Date(b.date),
         }))
       )
+
+      // if no backup we need onboarding
+      if (result.backups.length === 0) {
+        this.router.navigate(['/' + NEED_BOOKING_PAGE])
+      }
     })
   }
 
@@ -166,7 +183,11 @@ export class UserService {
    */
   canViewVentilation(user: UserInterface | null = null) {
     user = user || this.user.getValue()
-    return (user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1) ? true : false
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1
+      ? true
+      : false
   }
 
   /**
@@ -174,7 +195,11 @@ export class UserService {
    */
   canViewActivities(user: UserInterface | null = null) {
     user = user || this.user.getValue()
-    return (user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1) ? true : false
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1
+      ? true
+      : false
   }
 
   /**
@@ -183,10 +208,12 @@ export class UserService {
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
 
-    menu.push({
-      label: 'Panorama',
-      path: 'panorama',
-    })
+    if (this.canViewVentilation(user) || this.canViewActivities(user)) {
+      menu.push({
+        label: 'Panorama',
+        path: 'panorama',
+      })
+    }
 
     if (this.canViewVentilation(user)) {
       menu.push({
@@ -201,24 +228,43 @@ export class UserService {
       })
     }
 
-    if (user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1) {
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+    ) {
       menu.push({
         label: 'Temps moyens',
         path: 'temps-moyens',
       })
     }
 
-    if (user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1) {
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
+    ) {
       menu.push({
         label: 'Calculateur',
         path: 'calculateur',
       })
     }
 
-    if (user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1) {
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+    ) {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',
+      })
+    }
+
+    if (menu.length === 0) {
+      menu.push({
+        label: 'Bienvenue',
+        path: 'bienvenue',
       })
     }
 

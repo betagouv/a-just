@@ -1,0 +1,28 @@
+@import '../../styles/utils.scss';
+
+.panel {
+  padding: 17px 24px;
+  background-color: white;
+  border-left: solid 1px fColor(lightBorder);
+  border-bottom: solid 1px fColor(lightBorder);
+}
+
+h4 {
+  text-align: center;
+  margin: 24px 0 24px 0; 
+}
+
+p {
+  text-align: center;
+  font-size: 16px;
+}
+
+.panel-calendly {
+  padding: 17px 24px;
+  background-color: white;
+  border-left: solid 1px fColor(lightBorder);
+
+  > div {
+    height: 1100px;
+  }
+}
