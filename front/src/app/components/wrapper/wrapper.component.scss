@@ -125,6 +125,12 @@
     }
   }
 
+  &.no-header {
+    .header {
+      display: none;
+    }
+  }
+
   &.dark-screen {
     .dark-mode {
       display: inherit;

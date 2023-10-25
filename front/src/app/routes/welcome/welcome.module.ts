@@ -1,23 +1,25 @@
 import { NgModule } from '@angular/core'
 import { RouterModule } from '@angular/router'
-import { NeedMeetingPage } from './need-meeting.page'
-import { NeedMeetingPageModule } from './need-meeting.routing'
+import { WelcomePage } from './welcome.page'
+import { WelcomePageModule } from './welcome.routing'
 import { ComponentsModule } from 'src/app/components/components.module'
 import { CommonModule } from '@angular/common'
 import { MaterialModule } from 'src/app/libs/material.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { PipesModule } from 'src/app/pipes/pipes.module'
 
 @NgModule({
   declarations: [
-    NeedMeetingPage,
+    WelcomePage,
   ],
   imports: [
-    NeedMeetingPageModule,
+    WelcomePageModule,
     RouterModule,
     ComponentsModule,
     CommonModule,
     MaterialModule,
     WrapperModule,
+    PipesModule
   ],
 })
-export class NeedMeetingModule {}
+export class WelcomeModule {}
