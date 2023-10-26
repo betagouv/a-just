@@ -68,6 +68,7 @@ export class LegendLabelComponent implements OnInit, OnChanges {
    */
   ngOnInit(): void {
     if (this.disabledEl === true) this.toogle.checked = !this.toogle.checked
+    console.log('etape 12.40')
   }
 
   /**
@@ -93,6 +94,9 @@ export class LegendLabelComponent implements OnInit, OnChanges {
       ) as HTMLCollectionOf<HTMLElement>
     )[0]
     contenteElement.innerHTML = this.label
+
+    console.log('etape 12.45')
+
   }
 
   /**
@@ -100,6 +104,8 @@ export class LegendLabelComponent implements OnInit, OnChanges {
    * @param event click souris
    */
   updateValue(event: any) {
+    console.log('etape 12.46')
+
     this.toogle = event
     this.value.emit(event)
   }

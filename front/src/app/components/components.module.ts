@@ -28,6 +28,7 @@ import { PopupModule } from './popup/popup.module'
 import { PanelActivitiesModule } from './panel-activities/panel-activities.module'
 import { SelectModule } from './select/select.module'
 import { DateSelectModule } from './date-select/date-select.module'
+import { NgChartsModule } from 'ng2-charts'
 
 /**
  * Liste des composants à importer
@@ -70,8 +71,9 @@ const list = [
     PopupModule,
     PanelActivitiesModule,
     SelectModule,
-    DateSelectModule
+    DateSelectModule,
+    NgChartsModule,
   ],
   exports: list,
 })
-export class ComponentsModule {}
+export class ComponentsModule { }

@@ -5,7 +5,7 @@ import {
   monthDiffList,
   nbOfDays,
 } from 'src/app/utils/dates'
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { AfterContentChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -27,6 +27,8 @@ import {
   userCanViewMagistrat,
 } from 'src/app/utils/user'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+import { Chart } from 'chart.js'
+declare var $: any;
 
 /**
  * Variable ETP magistrat field name
@@ -71,7 +73,8 @@ const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnInit {
+export class SimulatorPage extends MainClass implements OnInit, AfterContentChecked {
+  chartCreated = false
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -375,10 +378,37 @@ export class SimulatorPage extends MainClass implements OnInit {
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
+  ngAfterContentChecked() {
+
+    if (this.chartCreated === false) {
+      const ctx = document.getElementById('myChart');
+
+      new Chart($('#myChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+      //this.chartCreated = true
+    }
+  }
   /**
    * Initialisation du composant
    */
   ngOnInit(): void {
+
     this.resetParams()
     this.dateStop = null
 

@@ -24,7 +24,6 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "chart.js",
               "lodash",
               "moment",
               "core-js/modules/es.array.index-of.js",
@@ -55,7 +54,11 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/favicon.svg",
+              "src/assets"
+            ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/quill/dist/quill.snow.css",
@@ -65,7 +68,8 @@
             ],
             "scripts": [
               "node_modules/quill/dist/quill.min.js",
-              "node_modules/mapbox-gl/dist/mapbox-gl.js"
+              "node_modules/mapbox-gl/dist/mapbox-gl.js",
+              "node_modules/jquery/dist/jquery.min.js"
             ]
           },
           "configurations": {
@@ -136,7 +140,6 @@
                 },
                 "fonts": true
               },
-
               "budgets": [
                 {
                   "type": "initial",
@@ -195,18 +198,27 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/favicon.svg",
+              "src/assets"
+            ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/quill/dist/quill.snow.css",
               "src/app/styles/styles.scss",
               "node_modules/animate.css/animate.min.css"
             ],
-            "scripts": ["node_modules/quill/dist/quill.min.js"]
+            "scripts": [
+              "node_modules/quill/dist/quill.min.js"
+            ]
           }
         }
       }

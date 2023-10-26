@@ -1,10 +1,10 @@
 import { Component, ElementRef } from '@angular/core'
 import { getLongMonthString, getRangeOfMonths } from 'src/app/utils/dates'
 import * as _ from 'lodash'
-import { Chart, ChartItem, registerables } from 'chart.js'
+//import { Chart, ChartItem, registerables } from 'chart.js'
 import { findRealValue } from 'src/app/utils/dates'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import annotationPlugin from 'chartjs-plugin-annotation'
+//import annotationPlugin from 'chartjs-plugin-annotation'
 import { fixDecimal } from 'src/app/utils/numbers'
 /**
  * Composant graphique DTES simulateur
@@ -149,8 +149,8 @@ export class DtesChartComponent {
     })
 
     this.elementRef = element.nativeElement
-    Chart.register(...registerables)
-    Chart.register(annotationPlugin)
+    //Chart.register(...registerables)
+    //Chart.register(annotationPlugin)
   }
 
   /**
@@ -462,7 +462,7 @@ export class DtesChartComponent {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -584,10 +584,11 @@ export class DtesChartComponent {
       plugins: [yScaleTextStock, yScaleTextDTES],
     }
 
+    /**
     this.myChart = new Chart(
       document.getElementById('dtes-chart') as ChartItem,
       config
-    )
+    ) */
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {

@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core'
-import { Chart, ChartItem, registerables } from 'chart.js'
+//import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import annotationPlugin from 'chartjs-plugin-annotation'
+//import annotationPlugin from 'chartjs-plugin-annotation'
 import {
   findRealValue,
   getLongMonthString,
@@ -141,8 +141,8 @@ export class InOutChartComponent implements OnDestroy {
     })
 
     this.elementRef = element.nativeElement
-    Chart.register(...registerables)
-    Chart.register(annotationPlugin)
+    //Chart.register(...registerables)
+    //Chart.register(annotationPlugin)
   }
 
   /**
@@ -425,7 +425,7 @@ export class InOutChartComponent implements OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -540,10 +540,11 @@ export class InOutChartComponent implements OnDestroy {
       },
       plugins: [yScaleTextInOut],
     }
+    /**
     this.myChart = new Chart(
       document.getElementById('in-out-chart') as ChartItem,
       config
-    )
+    ) */
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {

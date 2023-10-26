@@ -5,8 +5,9 @@ import {
   Input,
   OnDestroy,
 } from '@angular/core'
-import { Chart, ChartItem, registerables } from 'chart.js'
-import annotationPlugin from 'chartjs-plugin-annotation'
+import { Chart, registerables } from 'chart.js'
+//const { Chart } = await import('chart.js');
+//import annotationPlugin from 'chartjs-plugin-annotation'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import {
   findRealValue,
@@ -14,6 +15,10 @@ import {
   getRangeOfMonths,
 } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
+declare var $: any;
+//declare var Chart: any;
+//declare var registerables: any;
+
 
 /**
  * Composant graphique etp du simulateur
@@ -122,6 +127,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     private element: ElementRef<HTMLElement>,
     private simulatorService: SimulatorService
   ) {
+    console.log('Step 1')
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
       this.dateStop = value
@@ -179,9 +185,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.data.projectedCont.values = new Array()
 
         Object.keys(monthlyMagValues).forEach((x: any) => {
-          this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
-          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
-          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
+          if (monthlyMagValues && monthlyFonValues && monthlyContValues) {
+            this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
+            this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+            this.data.projectedCont.values.push(monthlyContValues[x].etpt)
+          }
         })
 
         if (this.myChart !== null) {
@@ -243,9 +251,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       }
     })
 
+    console.log('Step 2')
     this.elementRef = element.nativeElement
     Chart.register(...registerables)
-    Chart.register(annotationPlugin)
+    //Chart.register(annotationPlugin)
+    console.log('Step 3')
   }
 
   /**
@@ -304,6 +314,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       ],
     }
 
+    console.log('Step 4')
     const yScaleTextStock = {
       id: 'yScaleTextStock',
       afterDraw(chart: any, args: any, options: any) {
@@ -317,6 +328,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       },
     }
 
+    console.log('Step 5')
     function localeParseFloat(s: string, locale?: any) {
       // Get the thousands and decimal separator characters used in the locale.
       let [, thousandsSeparator, , , , decimalSeparator] =
@@ -361,6 +373,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       return lbl
     }
 
+    console.log('Step 6')
     let $this = this
 
     const externalTooltipHandler = (context: any) => {
@@ -376,6 +389,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         ...tooltip,
       }
     }
+    console.log('Step 7')
 
     const config: any = {
       type: 'line',
@@ -523,7 +537,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -630,10 +644,17 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       },
       plugins: [yScaleTextStock],
     }
+
+    console.log('Step 8', $('#etp-chart'))
+
+
+
     this.myChart = new Chart(
-      document.getElementById('etp-chart') as ChartItem,
+      $('#etp-chart'),
       config
     )
+
+    console.log('Step 9')
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -706,7 +727,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
 
+        console.log('Step 10')
+
         this.myChart.update()
+        console.log('Step 11')
+
       }
     })
   }
@@ -716,6 +741,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param event évenement de click sur le toogle bouton en légende
    */
   display(event: any) {
+    /**
     let index: number | undefined = undefined
     if (event.label === 'projectedMag') index = 0
     if (event.label === 'simulatedMag') index = 1
@@ -729,6 +755,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       if (isDataShown === true) this.myChart.hide(index)
       else this.myChart.show(index)
     }
+     */
+    console.log('Step 12')
+
   }
 
   /**
@@ -736,10 +765,14 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param obj element détaillant le tooltip selectionné
    */
   affectTooltipValues(obj: any) {
+    console.log('Step 12.5')
+
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
       ...obj,
     })
+    console.log('Step 13')
+
   }
   /**
    * Maj de la popin
@@ -761,6 +794,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       xMax,
       content,
     })
+    console.log('Step 14')
+
   }
 
   /**
@@ -790,6 +825,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    */
   ngOnDestroy(): void {
     this.myChart.destroy()
+    console.log('Step 15')
+
     this.dateStart = new Date()
     this.dateStop = null
     this.myChart = null

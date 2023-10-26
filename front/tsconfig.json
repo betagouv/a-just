@@ -2,7 +2,14 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "paths": {"exceljs": ["node_modules/exceljs/dist/exceljs.min"]},
+    "paths": {
+      "exceljs": [
+        "node_modules/exceljs/dist/exceljs.min"
+      ],
+      "ng2-charts": [
+        "node_modules/ng2-charts/bundles/ng2-charts.umd.min.js"
+      ]
+    },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
