@@ -152,7 +152,12 @@ export class ExcelService extends MainClass {
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
-            report.worksheets[2].getCell('A' + +2).dataValidation = {
+            report.worksheets[1].columns[8].width = 0
+            report.worksheets[0].columns[0].width = 12
+            report.worksheets[1].columns[0].width = 12
+            report.worksheets[2].columns[0].width = 12
+
+            report.worksheets[2].getCell('A' + +3).dataValidation = {
               type: 'list',
               allowBlank: false,
               formulae: tProximite,
@@ -179,24 +184,39 @@ export class ExcelService extends MainClass {
             this.tabs.onglet2.values.forEach((element: any, index: number) => {
 
 
-              if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
-                console.log(report.worksheets[1].getCell('I' + (+index + 3)))
+              if ((report.worksheets[1].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
                 report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
                 {
                   type: 'list',
                   allowBlank: true,
-                  formulae: ['"JA-Placé,JA-Pôle-Social,JA-Siège"'],
+                  formulae: [`"${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL,${report.worksheets[1].getCell('H' + (+index + 3)).value} SUBSTITUTION"`],
+                }
+
+                report.worksheets[1].getCell('H' + (+index + 3)).value = `${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL`
+
+              }
+              if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
+                report.worksheets[1].getCell('H' + (+index + 3)).value = "JA - Siège autre"
+                report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
+                {
+                  type: 'list',
+                  allowBlank: true,
+                  formulae: ['"JA - Siège autre,JA - Pôle Social,JA - Parquet,JA - JP"'],
                 }
               }
 
 
+              /**
               report.worksheets[1].getCell('I' + (+index + 3)).dataValidation =
               {
                 type: 'list',
                 allowBlank: true,
                 formulae: ['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'],
               }
+               */
+
             })
+
 
             return report.xlsx.writeBuffer()
           })
