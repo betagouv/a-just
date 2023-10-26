@@ -196,12 +196,12 @@ export class ExcelService extends MainClass {
 
               }
               if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
-                report.worksheets[1].getCell('H' + (+index + 3)).value = "JA - Siège autre"
+                report.worksheets[1].getCell('H' + (+index + 3)).value = "JA Siège autres"
                 report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
                 {
                   type: 'list',
                   allowBlank: true,
-                  formulae: ['"JA - Siège autre,JA - Pôle Social,JA - Parquet,JA - JP"'],
+                  formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
                 }
               }
 
