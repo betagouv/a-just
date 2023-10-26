@@ -63,19 +63,33 @@
     <ng-container>
       <div class="textarea">
 
-        <div class="step-3">
+        <div class="step-3" [ngClass]="{'disable':this.goToStep3_addNac === true}">
           <p>Etape 2 : Indiquer la NAC à ajouter</p>
-          <input id="nac_to_add" (change)="onNACToAdd($event)" />
-          <button (click)="goToStep3_addNac=true">Valider</button>
+          <input id="nac_to_add" [(ngModel)]="tmpNACToAdd" />
+          <button (click)="goToStep3_addNac=true; onNACToAdd(tmpNACToAdd)">Valider</button>
         </div>
 
-        <div class="step-4" [ngClass]="{'disable':this.goToStep3_addNac === false}">
+        <div class="step-4" [ngClass]="{'disable':this.goToStep3_addNac === false  || this.goToStep5_addNac === true} ">
           <p>Etape 3 : Selectionner les contentieux dans lesquels vous souhaitez ajouter cette NAC</p>
           <div class="textarea path">
-            <aj-select class="path" [rightsUser]="contentieuxLabelList"
-              (valueChange)="onSelectedContentieuxToAddNAC($event)" [path]="true"></aj-select>
-            <button [ngClass]="{'disable':this.selectedContentieux.length===0}"
-              (click)="validateAdding()">Valider</button>
+            <div [ngClass]="{'disable':this.goToStep4_addNac === true}">
+              <aj-select class="path" [rightsUser]="contentieuxLabelList"
+                (valueChange)="onSelectedContentieuxToAddNAC($event)" [path]="true" #contentieuxSelect >
+              </aj-select>
+            </div>
+
+            <button [ngClass]="{'disable':this.selectedContentieuxTmp.length===0}"
+              (click)="this.goToStep4_addNac = true ; onAddNacValidation()">
+              Valider
+            </button>
+
+            <div  [ngClass]="{'disable':this.goToStep4_addNac === false || this.goToStep5_addNac === true}">
+              <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
+                (click)="goToStep3_addNac=false; ; goToStep4_addNac=false">Ajouter une autre NAC ?</button>
+              <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
+                (click)="goToStep4_addNac=true ; goToStep5_addNac=true; validateAdding()">Générer les nouvelles règles</button>
+            </div>
+            
           </div>
         </div>
 
@@ -84,7 +98,6 @@
       <br />
       <br />
       <div [ngClass]="{'disable':this.displayResult===false}">
-
         <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
         </p>
         <br />
