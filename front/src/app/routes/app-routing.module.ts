@@ -29,7 +29,6 @@ const routes: Routes = [
     path: 'bienvenue',
     loadChildren: () =>
       import('./welcome/welcome.module').then((mod) => mod.WelcomeModule),
-    canActivate: [AuthGuard],
   },
   {
     path: 'dashboard',
