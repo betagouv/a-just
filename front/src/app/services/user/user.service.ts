@@ -159,6 +159,7 @@ export class UserService {
 
       // if no backup we need onboarding
       if (result.backups.length === 0) {
+        this.serverService.removeToken() // logout user without access
         this.router.navigate(['/' + NEED_BOOKING_PAGE])
       }
     })
@@ -262,6 +263,7 @@ export class UserService {
     }
 
     if (menu.length === 0) {
+      this.serverService.removeToken() // logout user without access
       menu.push({
         label: 'Bienvenue',
         path: 'bienvenue',

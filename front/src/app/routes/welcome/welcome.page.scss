@@ -1,28 +1,74 @@
 @import '../../styles/utils.scss';
 
-.panel {
-  padding: 17px 24px;
-  background-color: white;
-  border-left: solid 1px fColor(lightBorder);
-  border-bottom: solid 1px fColor(lightBorder);
-}
+:host {
+  .logo {
+    height: 135px;
 
-h4 {
-  text-align: center;
-  margin: 24px 0 24px 0; 
-}
+    > img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
 
-p {
-  text-align: center;
-  font-size: 16px;
-}
+  h3 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    margin-top: 8px;
+    text-align: center;
+  }
 
-.panel-calendly {
-  padding: 17px 24px;
-  background-color: white;
-  border-left: solid 1px fColor(lightBorder);
+  .back-link {
+    margin-bottom: 0;
 
-  > div {
+    a {
+      font-size: 18px;
+      color: fColor(primary);
+      text-decoration: none;
+    }
+  }
+
+  .block {
+    max-width: 685px;
+    width: 90%;
+    margin: auto;
+  }
+
+  .block-info {
+    background-color: fColor(bgBlueTag);
+    padding: 16px 8px 16px 23px;
+
+    .icon-i {
+      font-size: 10px;
+      color: white;
+      width: 13px;
+      min-width: 13px;
+      line-height: 13px;
+      height: 13px;
+      text-align: center;
+      background-color: fColor(textBlueTag);
+      float: left;
+      margin-right: 5px;
+      margin-top: 6px;
+    }
+
+    p {
+      font-size: 16px;
+      color: fColor(textBlueTag);
+    }
+  }
+
+  .block-text {
+    padding: 24px 16px;
+    border-radius: 8px;
+    border: solid 1px fColor(cgraylightv3);
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  #calendly {
     height: 1100px;
+    margin-right: -16px;
+    margin-left: -16px;
   }
 }
