@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { PageAccessInterface } from 'src/app/interfaces/page-access-interface';
@@ -20,7 +19,7 @@ interface FormSelection {
 })
 export class UsersPage
   extends MainClass
-  implements OnInit, AfterViewInit, OnDestroy
+  implements OnInit, OnDestroy
 {
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
@@ -29,11 +28,11 @@ export class UsersPage
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
   userConnected: UserInterface | null = null;
+  sort: Sort | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
     { id: 'close', content: 'Fermer' },
   ];
-
   popupDeleteAction = [
     { id: 'confirm', content: 'Confirmer', fill: true, red: true },
     { id: 'cancel', content: 'Annuler' },
@@ -50,8 +49,6 @@ export class UsersPage
   ngOnInit() {
     this.onLoad();
   }
-
-  ngAfterViewInit() {}
 
   ngOnDestroy() {
     this.watcherDestroy();
@@ -79,7 +76,7 @@ export class UsersPage
         selected: false,
       }));
 
-      this.sortData({
+      this.sortData(this.sort ? this.sort : {
         active: "id", 
         direction: "desc"
       })
@@ -87,6 +84,7 @@ export class UsersPage
   }
 
   sortData(sort: Sort) {
+    this.sort = sort;
     const data = this.datas.slice();
     if (!sort.active || sort.direction === '') {
       this.datasSource = data;

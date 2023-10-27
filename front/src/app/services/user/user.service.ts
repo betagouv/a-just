@@ -10,6 +10,7 @@ import {
   USER_ACCESS_ACTIVITIES,
   USER_ACCESS_AVERAGE_TIME,
   USER_ACCESS_CALCULATOR,
+  USER_ACCESS_DASHBOARD,
   USER_ACCESS_SIMULATOR,
   USER_ACCESS_VENTILATIONS,
 } from 'src/app/constants/user-access'
@@ -182,6 +183,18 @@ export class UserService {
   /**
    * Can view Ventilations
    */
+  canViewPanorama(user: UserInterface | null = null) {
+    user = user || this.user.getValue()
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
+      ? true
+      : false
+  }
+
+  /**
+   * Can view Ventilations
+   */
   canViewVentilation(user: UserInterface | null = null) {
     user = user || this.user.getValue()
     return user &&
@@ -209,7 +222,7 @@ export class UserService {
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
 
-    if (this.canViewVentilation(user) || this.canViewActivities(user)) {
+    if (this.canViewPanorama(user)) {
       menu.push({
         label: 'Panorama',
         path: 'panorama',
