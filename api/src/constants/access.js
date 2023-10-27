@@ -47,7 +47,7 @@ export const HAS_ACCESS_TO_CONTRACTUEL = 10
 export const accessToString = (roleId) => {
   switch (roleId) {
   case USER_ACCESS_DASHBOARD:
-    return 'Tableau de board'
+    return 'Panorama'
   case USER_ACCESS_VENTILATIONS:
     return 'Ventilations'
   case USER_ACCESS_ACTIVITIES:
