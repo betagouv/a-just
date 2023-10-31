@@ -337,7 +337,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
         })
 
-        this.onFilterList()
+        //this.onFilterList()
       })
     )
     this.watch(
@@ -922,7 +922,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (category.poste && category.poste.length) {
       category.selected = category.poste.some((p) => p.selected)
     }
-
     this.onFilterList()
     this.orderListWithFiltersParams()
   }
