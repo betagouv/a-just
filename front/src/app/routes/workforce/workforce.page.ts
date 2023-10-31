@@ -241,7 +241,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Poste string
    */
   listPoste = ['titulaire', 'placé', 'contractuel']
-
   /**
    * Constructor
    * @param humanResourceService
@@ -532,6 +531,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * force to change filter values
    */
   async onSelectCategory(category: HRCategorySelectedInterface) {
+    this.isLoading = true
     if (
       category.selected &&
       this.filterParams &&
@@ -549,15 +549,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           filterValues.push(fId)
         }
       })
+      this.filterParams!.filterValues = filterValues
 
-      this.filterParams.filterValues = filterValues
     }
 
     this.categoriesFilterList.map((cat) => {
-      cat.poste.map((position) => {
+      cat.poste.map(async (position) => {
         if (cat.id === category.id) {
           position.selected = category.selected
-          this.switchSubFilter(cat, position)
+          await this.switchSubFilter(cat, position)
         }
       })
     })
@@ -583,9 +583,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds
     }
-
-    console.log('OUI', this.humanResourceService.categoriesFilterListIds)
-
     this.isLoading = true
     this.humanResourceService
       .onFilterList(
@@ -606,6 +603,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.route.snapshot.fragment) {
       this.onGoTo(+this.route.snapshot.fragment)
     }
+
   }
 
   /**
@@ -879,7 +877,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const focusFct = fonctions.filter(
           (f) =>
             f.position ===
-              position.charAt(0).toUpperCase() + position.slice(1) &&
+            position.charAt(0).toUpperCase() + position.slice(1) &&
             f.categoryId === category.id
         )
         let myArray = null
@@ -932,12 +930,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   getTooglePositionSelected(poste: HRCategorypositionInterface) {
     return poste.selected
   }
-  setTooglePositionSelected(
+  async setTooglePositionSelected(
     category: HRCategorySelectedInterface,
     poste: HRCategorypositionInterface
   ) {
     poste.selected = !poste.selected
-    this.switchSubFilter(category, poste)
+    await this.switchSubFilter(category, poste)
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
