@@ -23,6 +23,7 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { debounceTime } from 'rxjs'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -337,7 +338,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
         })
 
-        //this.onFilterList()
+        this.onFilterList()
       })
     )
     this.watch(
@@ -348,7 +349,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       )
     )
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(debounceTime(300)).subscribe((params) => {
       const { c: categoryId } = params
       console.log('params', params)
 
@@ -368,6 +369,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.onFilterList()
       }
     })
+
 
     const user = this.userService.user.getValue()
     this.canViewReaffectator =
