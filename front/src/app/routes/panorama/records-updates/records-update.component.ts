@@ -72,12 +72,12 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
         const listAgent = category.hr || []
         let agentFullComplete = 0
         listAgent.map((a) => {
-          const percent = sumBy(
+          const percent = Number(sumBy(
             (a.currentActivities || []).filter((c) =>
               contentieux.includes(c.contentieux.id)
             ),
             'percent'
-          )
+          ).toFixed(2))
 
           if (percent === 100) {
             agentFullComplete++
