@@ -4,8 +4,16 @@
   cursor: pointer;
   position: relative;
 
+
   &:not(.selected) {
     background-color: white !important;
+  }
+
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: pointer;
   }
 
   &.selected {

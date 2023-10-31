@@ -29,8 +29,7 @@ import { etpLabel } from 'src/app/utils/referentiel'
 })
 export class CoverProfilDetailsComponent
   extends MainClass
-  implements OnChanges
-{
+  implements OnChanges {
   /**
    * Fiche courante
    */
@@ -110,6 +109,9 @@ export class CoverProfilDetailsComponent
     if (this.indisponibility > 1) {
       this.indisponibility = 1
     }
+
+    (document.getElementById('firstName') as HTMLElement).innerHTML = this.basicHrInfo?.get('firstName')?.value;
+    (document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value;
 
     if (this.currentHR && this.currentHR.situations.length) {
       const dateEndToJuridiction =

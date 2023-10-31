@@ -21,10 +21,10 @@
 <div class="second-row">
   <div class="left-second-row">
     <div class="user-name">
-      <p contenteditable #firstNameDom data-placeholder="Prénom"
+      <p id="firstName" contenteditable #firstNameDom data-placeholder="Prénom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null">{{ currentHR?.firstName
-        }}</p>&nbsp;<p contenteditable data-placeholder="Nom"
+        }}</p>&nbsp;<p id="lastName" contenteditable data-placeholder="Nom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null">{{ currentHR?.lastName
         }}</p>
@@ -38,7 +38,7 @@
     <div class="matricule">
       <p contenteditable #matriculeDom data-placeholder="Matricule"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
-        (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR?.matricule
+        (blur)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR?.matricule
         }}</p>
       <mat-icon class="iconPenSmall no-print cursor-pointer"
         (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
