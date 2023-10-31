@@ -91,7 +91,7 @@ export default class RouteExtractor extends Route {
       })
 
     const excelRef = [
-      { global: null, sub: 'ETPT sur la période' },
+      { global: null, sub: 'ETPT sur la période hors indisponibilités' },
       { global: null, sub: 'Temps ventilés sur la période' },
       ...formatedExcelList,
       { global: null, sub: 'CET > 30 jours' },
