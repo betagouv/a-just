@@ -553,29 +553,4 @@
 
 
 
-
-  ::ng-deep .mat-mdc-tooltip-panel-left {
-    .mdc-tooltip__surface {
-      //background-color: #000091;
-
-      border: solid 1px gray !important;
-    }
-
-    .tooltip-gray {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .mdc-tooltip__surface {
-        width: 300px !important;
-        min-width: 300px !important;
-        background-color: gray;
-        border: solid 1px gray !important;
-        font-size: 12px;
-        text-align: center;
-        border-left: 100px;
-      }
-    }
-  }
-
 }

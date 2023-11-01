@@ -909,7 +909,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
         parseFloat(projectedValue as string)
-      ) + 'pts'
+      )
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param2.label === 'realCoverage'
@@ -917,7 +917,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
         parseFloat(projectedValue as string)
-      ) + 'pts'
+      )
 
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -955,6 +955,11 @@ export class SimulatorPage extends MainClass implements OnInit {
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
+  ratioStr(result: string, initialValue: string) {
+    let res = this.ratio(result, initialValue)
+    if (res === 'NA') return 'NA'
+    else return res + '%'
+  }
   /**
    * Soustrait 2 valeurs
    * @param value1
@@ -1521,5 +1526,13 @@ export class SimulatorPage extends MainClass implements OnInit {
     console.log(event.srcElement.innerHTML)
     if (event.srcElement.innerHTML.length > 100) return false
     return true
+  }
+
+
+  percentageModifiedInputTextStr(id: string,
+    projectedValue: string | number | undefined, ptsUnit = false) {
+    let res = this.percentageModifiedInputText(id, projectedValue)
+    if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
+    return res === 'NA' ? 'NA' : res + '%'
   }
 }
