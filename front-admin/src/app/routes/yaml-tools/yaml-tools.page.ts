@@ -22,11 +22,11 @@ interface filtreDetails {
   "NATAFF"?: [], "C_TUS"?: [], "TOTAL"?: string
 }
 
-interface elementToAdd  {
-  NACToAdd :  string,
+interface elementToAdd {
+  NACToAdd: string,
   code: string,
   name: string,
-  path : Array<string>,
+  path: Array<string>,
 }
 
 @Component({
@@ -34,7 +34,7 @@ interface elementToAdd  {
   styleUrls: ['./yaml-tools.page.scss'],
 })
 export class YamlToolsPage {
-  @ViewChild ( 'contentieuxSelect' ) contentieuxSelect : undefined | SelectComponent
+  @ViewChild('contentieuxSelect') contentieuxSelect: undefined | SelectComponent
   actionSelection = 0
   existingNAC: string[] = []
   distinctNAC: Array<string> = []
@@ -48,7 +48,7 @@ export class YamlToolsPage {
   finalYmlData: any = null
   textResultValue = ''
   contentieuxLabelList: Array<any> = []
-  tmpNACToAdd : string = ""
+  tmpNACToAdd: string = ""
   //NACToAdd: Array<string> = []
   selectedContentieuxTmp: Array<elementToAdd> = []
   selectedContentieux: Array<elementToAdd> = []
@@ -199,6 +199,7 @@ export class YamlToolsPage {
           // @ts-ignore
           this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
           this.distinctNAC = _.uniq(this.distinctNAC)
+          this.distinctNAC = _.sortBy(this.distinctNAC)
           this.contentieuxLabelList.push({ code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
@@ -226,7 +227,7 @@ export class YamlToolsPage {
    * Sauvegarde de la NAC à ajouter
    * @param event
    */
-  onNACToAdd(value : string) {
+  onNACToAdd(value: string) {
     console.log('tmp_NacToAdd:', this.tmpNACToAdd)
     console.log('NacToAdd:', value)
     //this.NACToAdd.push(value)
@@ -238,7 +239,7 @@ export class YamlToolsPage {
     * @param change
     */
   onSelectedContentieuxToAddNAC(change: any) {
-    let tmp = change.map((elem : elementToAdd) => {return ({...elem, NACToAdd: this.tmpNACToAdd})})
+    let tmp = change.map((elem: elementToAdd) => { return ({ ...elem, NACToAdd: this.tmpNACToAdd }) })
     this.selectedContentieuxTmp = tmp
     console.log('contentieuxSelect: ', this.contentieuxSelect)
   }
@@ -250,7 +251,7 @@ export class YamlToolsPage {
     console.log('selectedContentieux_tmp: ', this.selectedContentieuxTmp)
     this.selectedContentieuxTmp.map(elem => { this.selectedContentieux.push(elem) })
     this.selectedContentieuxTmp = []
-    
+
     if (this.contentieuxSelect) {
       this.contentieuxSelect.selectedRights = []
     }
@@ -277,7 +278,7 @@ export class YamlToolsPage {
     if (this.selectedContentieux.length && response) {
       this.displayResult = true
       this.finalYmlData = _.cloneDeep(this.initialYmlData)
-      
+
       this.selectedContentieux.map((elem: any) => {
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, elem.NACToAdd)
       })
