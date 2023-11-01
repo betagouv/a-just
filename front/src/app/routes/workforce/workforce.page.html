@@ -26,8 +26,9 @@
               category.labelPlural : category.label }}</span> {{ category.etpt | number:".2-2" }} ETPT</label>
         </div>
         <div class="radio-border-left">
-          <aj-radio-button [bgColor]="category.textColor" switchColor="white" [value]="category.selected"
-            (click)="category.selected=!category.selected;onSelectCategory(category)" #radio></aj-radio-button>
+          <aj-radio-button [ngClass]="{'disabled': isLoading}" [bgColor]="category.textColor" switchColor="white"
+            [value]="category.selected" (click)="category.selected=!category.selected;onSelectCategory(category)"
+            #radio></aj-radio-button>
         </div>
         <div *ngIf="category.openSubMenu && category.headerLabel!=='Autour du magistrat' && category.selected"
           class="open-menu">
@@ -41,8 +42,8 @@
                 <label class="poste-title">{{poste.nbPersonal > 1 ? poste.name+'s': poste.name }}</label>&nbsp;
                 <label class="poste-etp">{{poste.etpt | number:".2-2"}}</label>
                 <div class="radio-border-left">
-                  <aj-radio-button [bgColor]="category.textColor" [switchColor]="'white'"
-                    [value]="getTooglePositionSelected(poste)"
+                  <aj-radio-button [ngClass]="{'disabled': isLoading}" [bgColor]="category.textColor"
+                    [switchColor]="'white'" [value]="getTooglePositionSelected(poste)"
                     (click)="setTooglePositionSelected(category,poste);category.openSubMenu=false"
                     #radio></aj-radio-button>
                 </div>
