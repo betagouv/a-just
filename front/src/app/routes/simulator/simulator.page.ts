@@ -727,7 +727,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         })
       }
       // if param comming from input type %
-    } else if (this.valueToAjust.percentage) {
+    } else if (this.valueToAjust.percentage !== '') {
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -856,7 +856,9 @@ export class SimulatorPage extends MainClass implements OnInit {
       )
         this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null }
-    } else this.valueToAjust = event
+    }
+    //else if ()
+    else this.valueToAjust = event
   }
 
   /**
@@ -1523,7 +1525,6 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @returns 
    */
   keyPress(event: any) {
-    console.log(event.srcElement.innerHTML)
     if (event.srcElement.innerHTML.length > 100) return false
     return true
   }
