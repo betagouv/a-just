@@ -77,14 +77,16 @@ export class InputPercentageComponent implements OnChanges {
    * @param x numérateur
    * @returns %
    */
+  //PERMETTRE AJUSTEMENT A 0 %
   returnPercentage(x: any): string {
+    if (x === 0) return String(this.referenceValue)
     return x
       ? String(
-          Math.round(
-            this.referenceValue -
-              ((-parseInt(x) * 1) / 100) * this.referenceValue
-          )
+        Math.round(
+          this.referenceValue -
+          ((-parseInt(x) * 1) / 100) * this.referenceValue
         )
+      )
       : ''
   }
 }
