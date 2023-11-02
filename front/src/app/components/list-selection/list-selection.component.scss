@@ -1,6 +1,57 @@
 @import '../../styles/utils.scss';
 
 :host {
+  &.button-filter {
+
+    position: relative;
+    display: block;
+    height: 55px;
+    width: 170px;
+    border-radius: 4px;
+    background-color: fColor(bgSelect);
+    border: 1px solid fColor(borderSelect);
+    padding: 4px 8px;
+    cursor: pointer;
+
+    .ri-filter-2-line {
+      display: none;
+    }
+
+    >.list-selection {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .ellipis {
+        top: initial !important;
+        bottom: initial !important;
+        right: initial !important;
+        left: -8px !important;
+        width: 130px !important;
+        color: black !important;
+        font-weight: bold;
+      }
+
+      .title-list {
+        color: #666666;
+        white-space: nowrap;
+        font-size: 14px;
+        position: relative;
+        left: 0px;
+      }
+
+      mat-icon {
+        position: absolute;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-left: 8px;
+        right: 8px;
+        bottom: 4px;
+      }
+    }
+  }
+
   display: block;
   padding: 8px 12px 8px 16px;
   border-radius: 4px;
@@ -97,7 +148,7 @@
 
 .select-area {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 100%;
   left: 0;
   right: 0;
