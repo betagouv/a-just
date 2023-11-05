@@ -4,6 +4,7 @@ import {
   findRealValue,
   monthDiffList,
   nbOfDays,
+  stringToDecimalDate,
 } from 'src/app/utils/dates'
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -812,8 +813,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     // if result
     if (result > -1) {
       // affect the value to the editable input
-      if (inputField.id === 'magRealTimePerCase' && result)
+      if (inputField.id === 'magRealTimePerCase' && !Number.isNaN(this.valueToAjust.value)) {
+        inputField.value = decimalToStringDate(Number(this.valueToAjust.value), ':')
+      }
+      else if (inputField.id === 'magRealTimePerCase' && result) {
         inputField.value = decimalToStringDate(result, ':')
+      }
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
@@ -857,7 +862,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null }
     }
-    //else if ()
+    else if (this.buttonSelected.id === 'magRealTimePerCase' && event.percentage !== '') this.valueToAjust = event
     else this.valueToAjust = event
   }
 
@@ -977,7 +982,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @param value string
    * @returns integer
    */
-  getReferenceValue(value: any) {
+  getReferenceValue(value: any, time = false) {
+    if (time === true) {
+      return stringToDecimalDate(value, ':')
+    }
     return parseInt(value)
   }
 
