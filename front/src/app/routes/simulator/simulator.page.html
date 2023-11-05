@@ -308,14 +308,15 @@
         <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
           [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
       </div>
-      <div class="rectangle" *ngIf="getNbOfParams()===2">
+      <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
         <div class="title">
           Définir {{getText('secondInput')}} :<br />
           <span>(en % par rapport à la situation {{startRealValue? 'au' : "d'"}}
             {{startRealValue||"aujourd'hui"}})</span>
         </div>
         <aj-input-percentage (focusin)="volume.value = ''"
-          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
+          [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
+          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
           [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
         </aj-input-percentage>
       </div>
@@ -512,14 +513,15 @@
           <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
             [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
         </div>
-        <div class="rectangle" *ngIf="getNbOfParams()===2">
+        <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
           <div class="title">
             Définir {{getText('secondInput')}} :<br />
             <span>(en % par rapport à la situation {{startRealValue? 'au' : "d'"}}
               {{startRealValue||"aujourd'hui"}})</span>
           </div>
           <aj-input-percentage (focusin)="volume.value = ''"
-            [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
+            [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
+            [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
             [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
           </aj-input-percentage>
         </div>
