@@ -181,14 +181,22 @@ const routes: Routes = [
         (mod) => mod.CGUModule
       ),
   },
+  {
+    path: 'centre-d-aide',
+    loadChildren: () =>
+      import('./help-center/help-center.module').then(
+        (mod) => mod.HelpCenterModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ]
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
+    RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' }),
   ],
   providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
 
-export class AppRoutingModule {}
+export class AppRoutingModule { }
