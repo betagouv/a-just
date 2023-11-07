@@ -37,8 +37,9 @@ export class CanDeactivateGuardService implements CanDeactivate<IDeactivateCompo
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot,
   ): Observable<boolean> | Promise<boolean> | boolean {
-    if (currentRoute.url[0].path === "reaffectateur")
+    if (currentRoute.url[0].path === "reaffectateur" || currentRoute.url[0].path === "simulateur") {
       return component.canDeactivate(nextState.url)
-    return true
+    }
+      return true
   }
 }

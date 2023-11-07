@@ -27,6 +27,8 @@ import {
   userCanViewMagistrat,
 } from 'src/app/utils/user'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+import { IDeactivateComponent } from '../canDeactivate-guard-service'
+import { ActivatedRoute, Router } from '@angular/router'
 
 /**
  * Variable ETP magistrat field name
@@ -71,7 +73,7 @@ const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnInit {
+export class SimulatorPage extends MainClass implements OnInit, IDeactivateComponent {
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -181,12 +183,27 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   onPrint: boolean = false
   /**
+   * Utilisateur sort du composant
+   */
+  isLeaving: boolean = false
+
+  nextState: string | null = null
+
+  forceDeactivate: boolean = false
+
+  /**
    * Documentation widget
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
+
+  popupAction = [
+    { id: 'leave', content: 'Quitter sans exporter' },
+    { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
+  ];
+
 
   /**
    * Paramètres de simulation
@@ -296,10 +313,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService,
     private userService: UserService,
-    private contentieuxOptionsService: ContentieuxOptionsService
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private router: Router,
+    private route : ActivatedRoute
   ) {
     super()
-
+  
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
@@ -382,6 +401,8 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.resetParams()
     this.dateStop = null
 
+    this.route.data.subscribe((data) => console.log("route:", data))
+  
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -1386,7 +1407,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
+    this.wrapper?.exportAsPdf(filename, true, false, null, false/*true*/).then(() => {
       //title.style.display = 'none'
       title?.classList.add('display-none')
 
@@ -1401,15 +1422,20 @@ export class SimulatorPage extends MainClass implements OnInit {
       if (backButton)
         backButton.classList.remove('display-none')
 
-      commentArea.style.display = 'block'
-      commentArea.classList.remove('display-none')
+      if (commentArea) {
+        commentArea.style.display = 'block'
+        commentArea.classList.remove('display-none')
+        commentAreaCopy!.style.display = 'none'
+      }
 
-      editButton!.style.display = 'block'
-      editButton!.classList.remove('display-none')
+      if (editButton) {
+        editButton!.style.display = 'block'
+        editButton!.classList.remove('display-none')
+      }
 
 
-
-      commentAreaCopy!.style.display = 'none'
+      if (this.forceDeactivate)
+        this.router.navigate([this.nextState])
     })
   }
 
@@ -1535,5 +1561,39 @@ export class SimulatorPage extends MainClass implements OnInit {
     let res = this.percentageModifiedInputText(id, projectedValue)
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
     return res === 'NA' ? 'NA' : res + '%'
+  }
+
+  canDeactivate(nextState: string) {
+    /*const modified = this.listFormated.filter(elem => {
+      return elem.hrFiltered.some(hr => hr.isModify)
+    })
+    if (modified.length === 0)
+      return true*/
+    if (this.toDisplaySimulation) {
+      this.isLeaving = true
+      this.nextState = nextState
+      return this.forceDeactivate
+    }
+    return true
+  }
+
+  onPopupDetailAction(action: any) {
+    switch (action.id) {
+      case 'leave':
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          this.router.navigate([this.nextState])
+        }
+        break;
+      case 'export':
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          //this.onExport()
+          this.print()
+        }
+        break;
+    }
   }
 }
