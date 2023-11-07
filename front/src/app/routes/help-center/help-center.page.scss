@@ -8,8 +8,8 @@
         align-items: center;
         position: relative;
 
-        i {
-            margin-top: 48px;
+        img {
+            margin-top: 8px;
         }
 
         aj-input-button {
@@ -21,7 +21,7 @@
 
         .result-area {
             position: absolute;
-            top: 160px;
+            top: 200px;
             max-height: 400px;
             width: 500px !important;
             overflow-y: scroll;
@@ -132,6 +132,7 @@
             padding: 26px 32px;
             flex: 1;
             background-color: #f3f6fe;
+            height: fit-content;
         }
 
         span {

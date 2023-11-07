@@ -7,9 +7,11 @@ import { MaterialModule } from 'src/app/libs/material.module';
 import { InputButtonModule } from 'src/app/components/input-button/input-button.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DocCardComponent } from 'src/app/components/doc-card/doc-card.component';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
 	declarations: [HelpCenterPage],
-	imports: [HelpCenterPageModule, RouterModule, WrapperModule, MaterialModule, InputButtonModule, CommonModule, FormsModule]
+	imports: [HelpCenterPageModule, RouterModule, WrapperModule, MaterialModule, InputButtonModule, CommonModule, FormsModule, ComponentsModule]
 })
 export class HelpCenterModule { }
