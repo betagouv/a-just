@@ -1,7 +1,7 @@
 <aj-wrapper title="Centre d'aide" class="content-margin-null" [actionTemplate]="actions" class="white-bg">
 
     <div class="title-area">
-        <i>Icon to add</i>
+        <img src="/assets/images/community.svg" alt="a-just" />
         <p class="sub-title">Saisissez votre question ci-dessous</p>
         <div class="research-area"></div>
         <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
@@ -36,10 +36,15 @@
     <div class="content-area">
         <div class="documentation">
             <span>La documentation</span>
-            <p></p>
+            <div *ngFor="let card of docCards">
+                <aj-doc-card [data]="card"></aj-doc-card>
+            </div>
         </div>
         <div class="outil">
             <span>Les outil A-JUST</span>
+            <div *ngFor="let card of docTools">
+                <aj-doc-card class="tools" [data]="card"></aj-doc-card>
+            </div>
         </div>
     </div>
 </aj-wrapper>
