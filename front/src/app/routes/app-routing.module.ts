@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuardService } from './canDeactivate-guard-service'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
+import { SimulatorPage } from './simulator/simulator.page'
 
 const routes: Routes = [
   {
@@ -100,9 +101,9 @@ const routes: Routes = [
   },
   {
     path: 'simulateur',
-    loadChildren: () =>
-      import('./simulator/simulator.module').then((mod) => mod.SimulatorModule),
+    component: SimulatorPage,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuardService],
   },
   {
     path: 'reaffectateur',
