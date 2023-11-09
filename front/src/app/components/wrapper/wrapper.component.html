@@ -39,40 +39,12 @@
         </a>
       </div>
       <div class="flex-1"></div>
-      <div class="menu-item tools">
-        <p>Outils</p>
-        <ul>
-          <li>
-            <a [href]="DOCUMENTATION_URL" target="_blank">
-              <p>
-                Documentation
-                <i class="ri-external-link-line"></i>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">
-              <p>Nomenclature</p>
-            </a>
-          </li>
-          <li>
-            <a [href]="CALCULATE_DOWNLOAD_URL" (click)="onDownloadCalculator()" download>
-              <p>Calculatrice de ventilation</p>
-            </a>
-          </li>
-          <li>
-            <a routerLink="/dashboard">
-              <p>Extraire des données</p>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="menu-item">
-        <a [routerLink]="['/centre-d-aide']">
-          <p class="help-center">Centre d'aide</p>
+      <div class="menu-item" [class.selected]="isSelected({path:'centre-d-aide'})">
+        <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
+          Centre d'aide
         </a>
         <a [routerLink]="['/contact']" [queryParams]="{backUrl: true}">
-          <p>Nous contacter</p>
+          <p class="unselectable">Nous contacter</p>
         </a>
       </div>
 
