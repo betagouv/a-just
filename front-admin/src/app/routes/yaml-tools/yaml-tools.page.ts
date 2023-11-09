@@ -190,9 +190,9 @@ export class YamlToolsPage {
   validateYML() {
     const message = (document.getElementById('json') as HTMLInputElement);
     this.initialYmlData = parse(message.value).categories
-
     for (let [key, value] of Object.entries(this.initialYmlData)) {
       let ctx = value as contentieux
+
       for (let i of ['entrees', 'sorties', 'stock']) {
         // @ts-ignore
         if (ctx.filtres[i] && ctx.filtres[i].NATAFF) {
@@ -200,7 +200,8 @@ export class YamlToolsPage {
           this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
           this.distinctNAC = _.uniq(this.distinctNAC)
           this.distinctNAC = _.sortBy(this.distinctNAC)
-          this.contentieuxLabelList.push({ code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
+
+          this.contentieuxLabelList.push({ code: key, name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
     }
