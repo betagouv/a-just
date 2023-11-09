@@ -260,7 +260,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @returns
    */
   isSelected(item: any) {
-    console.log(item)
     return `/${item.path}` === window.location.pathname
   }
 

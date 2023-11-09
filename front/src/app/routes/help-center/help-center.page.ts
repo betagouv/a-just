@@ -105,7 +105,6 @@ export class HelpCenterPage {
   async onSearchBy() {
     const { data } = await this.gitbook.search.searchContent({ query: this.searchValue })
     this.data = data.items
-    console.log(this.data)
   }
 
   getDocIcon(title: string) {
