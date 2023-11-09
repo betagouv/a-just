@@ -3,6 +3,7 @@ import { Component } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL } from 'src/app/constants/documentation';
+import { environment } from 'src/environments/environment';
 
 /**
  * Contact
@@ -21,10 +22,6 @@ export class HelpCenterPage {
    * Valeur de rechercher
    */
   searchValue: string = ''
-  /**
-   * Authentification TOKEN
-   */
-  token = 'gb_api_rHt5wBv5WBzk2mjUuO2QymdKNpNujdBD8TLfYpsA'
   /**
    * Gitbook API
    */
@@ -99,7 +96,7 @@ export class HelpCenterPage {
    */
   constructor() {
     this.gitbook = new GitBookAPI({
-      authToken: this.token,
+      authToken: environment.gitbookToken,
     });
 
   }
