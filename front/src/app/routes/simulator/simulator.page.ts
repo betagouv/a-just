@@ -6,7 +6,7 @@ import {
   nbOfDays,
   stringToDecimalDate,
 } from 'src/app/utils/dates'
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -393,6 +393,17 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
     updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
+  }
+
+  /**
+   * Détection d'un click n'importe où pour fermer
+   */
+  @HostListener('window:beforeunload', ['$event'])
+  unloadHandler(event: Event) {
+    if (this.toDisplaySimulation) {
+      this.isLeaving = true;
+      event.preventDefault()
+    }
   }
 
   /**
