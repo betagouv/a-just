@@ -134,7 +134,6 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Indique si la date de fin selectionnée est dans le passé
    */
   checkPastDate() {
-    console.log('Max date =>', this.maxDateSelectionDate, ' DateStop =>', this.calculatorService.dateStop.value)
     return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
   }
 }

@@ -46,7 +46,7 @@ export class UserService {
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService
-  ) {}
+  ) { }
 
   /**
    * Sauvegarde d'une utilisateur
@@ -274,6 +274,18 @@ export class UserService {
         path: 'simulateur',
       })
     }
+
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
+    ) {
+      menu.push({
+        label: 'Extracteur',
+        path: 'dashboard',
+      })
+    }
+
 
     if (menu.length === 0) {
       this.serverService.removeToken() // logout user without access
