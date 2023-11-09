@@ -3,6 +3,18 @@
 :host {
   height: 100%;
 
+
+  .help-center:visited {
+    color: red !important;
+  }
+
+
+  &.white-bg {
+    #content {
+      background-image: linear-gradient(to bottom, #f6f6f6, #fff 14%);
+    }
+  }
+
   .content-popup {
     margin-top: 16px;
     margin-bottom: 24px;
@@ -254,6 +266,16 @@
     display: block;
     padding: 13px 4px 13px 13px;
 
+    a {
+      p {
+        margin-top: 8px;
+      }
+    }
+
+    .unselectable {
+      color: fColor(cblack) !important;
+    }
+
     &.disconnect,
     a,
     p {
@@ -460,4 +482,5 @@
     border: none;
     height: calc(100% + 80px);
   }
+
 }

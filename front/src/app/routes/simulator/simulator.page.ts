@@ -4,6 +4,7 @@ import {
   findRealValue,
   monthDiffList,
   nbOfDays,
+  stringToDecimalDate,
 } from 'src/app/utils/dates'
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
@@ -27,6 +28,8 @@ import {
   userCanViewMagistrat,
 } from 'src/app/utils/user'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+import { IDeactivateComponent } from '../canDeactivate-guard-service'
+import { ActivatedRoute, Router } from '@angular/router'
 
 /**
  * Variable ETP magistrat field name
@@ -71,7 +74,7 @@ const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnInit {
+export class SimulatorPage extends MainClass implements OnInit, IDeactivateComponent {
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -181,12 +184,27 @@ export class SimulatorPage extends MainClass implements OnInit {
    */
   onPrint: boolean = false
   /**
+   * Utilisateur sort du composant
+   */
+  isLeaving: boolean = false
+
+  nextState: string | null = null
+
+  forceDeactivate: boolean = false
+
+  /**
    * Documentation widget
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
+
+  popupAction = [
+    { id: 'leave', content: 'Quitter sans exporter' },
+    { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
+  ];
+
 
   /**
    * Paramètres de simulation
@@ -296,10 +314,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService,
     private userService: UserService,
-    private contentieuxOptionsService: ContentieuxOptionsService
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private router: Router,
+    private route : ActivatedRoute
   ) {
     super()
-
+  
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
@@ -382,6 +402,8 @@ export class SimulatorPage extends MainClass implements OnInit {
     this.resetParams()
     this.dateStop = null
 
+    this.route.data.subscribe((data) => console.log("route:", data))
+  
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -727,7 +749,7 @@ export class SimulatorPage extends MainClass implements OnInit {
         })
       }
       // if param comming from input type %
-    } else if (this.valueToAjust.percentage) {
+    } else if (this.valueToAjust.percentage !== '') {
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -812,8 +834,12 @@ export class SimulatorPage extends MainClass implements OnInit {
     // if result
     if (result > -1) {
       // affect the value to the editable input
-      if (inputField.id === 'magRealTimePerCase' && result)
+      if (inputField.id === 'magRealTimePerCase' && !Number.isNaN(this.valueToAjust.value)) {
+        inputField.value = decimalToStringDate(Number(this.valueToAjust.value), ':')
+      }
+      else if (inputField.id === 'magRealTimePerCase' && result) {
         inputField.value = decimalToStringDate(result, ':')
+      }
       else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
@@ -856,7 +882,9 @@ export class SimulatorPage extends MainClass implements OnInit {
       )
         this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null }
-    } else this.valueToAjust = event
+    }
+    else if (this.buttonSelected.id === 'magRealTimePerCase' && event.percentage !== '') this.valueToAjust = event
+    else this.valueToAjust = event
   }
 
   /**
@@ -909,7 +937,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
         parseFloat(projectedValue as string)
-      ) + 'pts'
+      )
     if (
       id === 'realCoverage' &&
       this.paramsToAjust.param2.label === 'realCoverage'
@@ -917,7 +945,7 @@ export class SimulatorPage extends MainClass implements OnInit {
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
         parseFloat(projectedValue as string)
-      ) + 'pts'
+      )
 
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -955,6 +983,11 @@ export class SimulatorPage extends MainClass implements OnInit {
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
+  ratioStr(result: string, initialValue: string) {
+    let res = this.ratio(result, initialValue)
+    if (res === 'NA') return 'NA'
+    else return res + '%'
+  }
   /**
    * Soustrait 2 valeurs
    * @param value1
@@ -970,7 +1003,10 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @param value string
    * @returns integer
    */
-  getReferenceValue(value: any) {
+  getReferenceValue(value: any, time = false) {
+    if (time === true) {
+      return stringToDecimalDate(value, ':')
+    }
     return parseInt(value)
   }
 
@@ -1379,7 +1415,7 @@ export class SimulatorPage extends MainClass implements OnInit {
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename, true, false, null, true).then(() => {
+    this.wrapper?.exportAsPdf(filename, true, false, null, false/*true*/).then(() => {
       //title.style.display = 'none'
       title?.classList.add('display-none')
 
@@ -1394,15 +1430,20 @@ export class SimulatorPage extends MainClass implements OnInit {
       if (backButton)
         backButton.classList.remove('display-none')
 
-      commentArea.style.display = 'block'
-      commentArea.classList.remove('display-none')
+      if (commentArea) {
+        commentArea.style.display = 'block'
+        commentArea.classList.remove('display-none')
+        commentAreaCopy!.style.display = 'none'
+      }
 
-      editButton!.style.display = 'block'
-      editButton!.classList.remove('display-none')
+      if (editButton) {
+        editButton!.style.display = 'block'
+        editButton!.classList.remove('display-none')
+      }
 
 
-
-      commentAreaCopy!.style.display = 'none'
+      if (this.forceDeactivate)
+        this.router.navigate([this.nextState])
     })
   }
 
@@ -1518,8 +1559,49 @@ export class SimulatorPage extends MainClass implements OnInit {
    * @returns 
    */
   keyPress(event: any) {
-    console.log(event.srcElement.innerHTML)
     if (event.srcElement.innerHTML.length > 100) return false
     return true
+  }
+
+
+  percentageModifiedInputTextStr(id: string,
+    projectedValue: string | number | undefined, ptsUnit = false) {
+    let res = this.percentageModifiedInputText(id, projectedValue)
+    if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
+    return res === 'NA' ? 'NA' : res + '%'
+  }
+
+  canDeactivate(nextState: string) {
+    /*const modified = this.listFormated.filter(elem => {
+      return elem.hrFiltered.some(hr => hr.isModify)
+    })
+    if (modified.length === 0)
+      return true*/
+    if (this.toDisplaySimulation) {
+      this.isLeaving = true
+      this.nextState = nextState
+      return this.forceDeactivate
+    }
+    return true
+  }
+
+  onPopupDetailAction(action: any) {
+    switch (action.id) {
+      case 'leave':
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          this.router.navigate([this.nextState])
+        }
+        break;
+      case 'export':
+        {
+          this.isLeaving = false
+          this.forceDeactivate = true
+          //this.onExport()
+          this.print()
+        }
+        break;
+    }
   }
 }

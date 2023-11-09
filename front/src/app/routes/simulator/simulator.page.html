@@ -1,5 +1,7 @@
+<!--<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
+  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">-->
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">
+[documentation]="documentation">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -308,25 +310,27 @@
         <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
           [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
       </div>
-      <div class="rectangle" *ngIf="getNbOfParams()===2">
+      <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
         <div class="title">
           Définir {{getText('secondInput')}} :<br />
           <span>(en % par rapport à la situation {{startRealValue? 'au' : "d'"}}
             {{startRealValue||"aujourd'hui"}})</span>
         </div>
         <aj-input-percentage (focusin)="volume.value = ''"
-          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
+          [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
+          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
           [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
         </aj-input-percentage>
       </div>
     </aj-popup>
+
     <div class="line-item blue-bg">
       <input class="ajusted-button" id="totalIn" [class.filled]="totalIn.value!=='Ajuster'"
         (click)="openPopupWithParams(totalIn)" value="Ajuster" readonly="readonly" #totalIn />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalIn.id  || paramsToAjust.param2.label===totalIn.id" [@fadeInOut]>
-        {{percentageModifiedInputText(totalIn.id,getFieldValue('totalIn',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(totalIn.id,getFieldValue('totalIn',firstSituationData))}}
 
         <div class="triangle"></div>
       </div>
@@ -338,7 +342,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id" [@fadeInOut]>
-        {{percentageModifiedInputText(totalOut.id,getFieldValue('totalOut',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(totalOut.id,getFieldValue('totalOut',firstSituationData))}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -349,7 +353,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id" [@fadeInOut]>
-        {{percentageModifiedInputText(lastStock.id,getFieldValue('lastStock',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(lastStock.id,getFieldValue('lastStock',firstSituationData))}}
 
         <div class="triangle"></div>
       </div>
@@ -362,7 +366,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id" [@fadeInOut]>
-        {{percentageModifiedInputText(etpMag.id,getFieldValue('etpMag',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(etpMag.id,getFieldValue('etpMag',firstSituationData))}}
 
         <div class="triangle"></div>
       </div>
@@ -375,7 +379,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id" [@fadeInOut]>
-        {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(etpFon.id,getFieldValue('etpFon',firstSituationData))}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -386,7 +390,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id" [@fadeInOut]>
-        {{percentageModifiedInputText(etpCont.id,getFieldValue('etpCont',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(etpCont.id,getFieldValue('etpCont',firstSituationData))}}
 
         <div class="triangle"></div>
       </div>
@@ -399,7 +403,7 @@
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
         [@fadeInOut]>
-        {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',firstSituationData))}}pts
+        {{percentageModifiedInputTextStr(realCoverage.id,getFieldValue('realCoverage',firstSituationData),true)}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -411,7 +415,7 @@
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
         [@fadeInOut]>
-        {{percentageModifiedInputText(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}%
+        {{percentageModifiedInputTextStr(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}
 
         <div class="triangle"></div>
       </div>
@@ -424,7 +428,7 @@
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===magRealTimePerCase.id  || paramsToAjust.param2.label===magRealTimePerCase.id"
         [@fadeInOut]>
-        {{percentageModifiedInputText(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}%
+        {{percentageModifiedInputTextStr(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -512,14 +516,15 @@
           <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
             [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
         </div>
-        <div class="rectangle" *ngIf="getNbOfParams()===2">
+        <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
           <div class="title">
             Définir {{getText('secondInput')}} :<br />
             <span>(en % par rapport à la situation {{startRealValue? 'au' : "d'"}}
               {{startRealValue||"aujourd'hui"}})</span>
           </div>
           <aj-input-percentage (focusin)="volume.value = ''"
-            [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData))"
+            [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
+            [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
             [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
           </aj-input-percentage>
         </div>
@@ -531,7 +536,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===totalInWhite.id  || paramsToAjust.param2.label===totalInWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputText(totalInWhite.id,getFieldValue('totalIn',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(totalInWhite.id,getFieldValue('totalIn',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
@@ -543,7 +548,7 @@
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id" [@fadeInOut]>
-          {{percentageModifiedInputText(totalOut.id,getFieldValue('totalOut',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(totalOut.id,getFieldValue('totalOut',firstSituationData))}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -554,7 +559,7 @@
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id" [@fadeInOut]>
-          {{percentageModifiedInputText(lastStock.id,getFieldValue('lastStock',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(lastStock.id,getFieldValue('lastStock',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
@@ -567,7 +572,7 @@
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id" [@fadeInOut]>
-          {{percentageModifiedInputText(etpMag.id,getFieldValue('etpMag',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(etpMag.id,getFieldValue('etpMag',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
@@ -580,7 +585,7 @@
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id" [@fadeInOut]>
-          {{percentageModifiedInputText(etpFon.id,getFieldValue('etpFon',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(etpFon.id,getFieldValue('etpFon',firstSituationData))}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -591,7 +596,7 @@
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id" [@fadeInOut]>
-          {{percentageModifiedInputText(etpCont.id,getFieldValue('etpCont',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(etpCont.id,getFieldValue('etpCont',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
@@ -604,7 +609,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
           [@fadeInOut]>
-          {{percentageModifiedInputText(realCoverage.id,getFieldValue('realCoverage',firstSituationData))}}pts
+          {{percentageModifiedInputTextStr(realCoverage.id,getFieldValue('realCoverage',firstSituationData),true)}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -617,7 +622,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
           [@fadeInOut]>
-          {{percentageModifiedInputText(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}%
+          {{percentageModifiedInputTextStr(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
@@ -631,7 +636,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===magRealTimePerCase.id  || paramsToAjust.param2.label===magRealTimePerCase.id"
           [@fadeInOut]>
-          {{percentageModifiedInputText(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}%
+          {{percentageModifiedInputTextStr(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -721,15 +726,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn'" [@fadeInOut]>
-            {{percentageModifiedInputText('totalIn',getFieldValue('totalIn',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('totalIn',getFieldValue('totalIn',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}"
             *ngIf="!(paramsToAjust.param1.label==='totalIn'  || paramsToAjust.param2.label==='totalIn') && getFieldValue('totalIn',simulatedSationData)!==getFieldValue('totalIn',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('totalIn',simulatedSationData),getFieldValue('totalIn',firstSituationData))}}%
+            {{ratioStr(getFieldValue('totalIn',simulatedSationData),getFieldValue('totalIn',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -740,15 +746,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut'" [@fadeInOut]>
-            {{percentageModifiedInputText('totalOut',getFieldValue('totalOut',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('totalOut',getFieldValue('totalOut',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='totalOut'  || paramsToAjust.param2.label==='totalOut') && getFieldValue('totalOut',simulatedSationData)!==getFieldValue('totalOut',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('totalOut',simulatedSationData),getFieldValue('totalOut',firstSituationData))}}%
+            {{ratioStr(getFieldValue('totalOut',simulatedSationData),getFieldValue('totalOut',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -759,15 +766,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock'" [@fadeInOut]>
-            {{percentageModifiedInputText('lastStock',getFieldValue('lastStock',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('lastStock',getFieldValue('lastStock',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='lastStock'  || paramsToAjust.param2.label==='lastStock') && getFieldValue('lastStock',simulatedSationData)!==getFieldValue('lastStock',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('lastStock',simulatedSationData),getFieldValue('lastStock',firstSituationData))}}%
+            {{ratioStr(getFieldValue('lastStock',simulatedSationData),getFieldValue('lastStock',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -780,15 +788,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag'" [@fadeInOut]>
-            {{percentageModifiedInputText('etpMag',getFieldValue('etpMag',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('etpMag',getFieldValue('etpMag',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag') && getFieldValue('etpMag',simulatedSationData)!==getFieldValue('etpMag',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('etpMag',simulatedSationData),getFieldValue('etpMag',firstSituationData))}}%
+            {{ratioStr(getFieldValue('etpMag',simulatedSationData),getFieldValue('etpMag',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -802,15 +811,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon'" [@fadeInOut]>
-            {{percentageModifiedInputText('etpFon',getFieldValue('etpFon',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('etpFon',getFieldValue('etpFon',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData) && whiteSimulator===false"
             [@fadeInOut]>
-            {{ratio(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}%
+            {{ratioStr(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -823,15 +833,16 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont'" [@fadeInOut]>
-            {{percentageModifiedInputText('etpCont',getFieldValue('etpCont',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('etpCont',getFieldValue('etpCont',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont') && getFieldValue('etpCont',projectedSituationData)!==getFieldValue('etpCont',firstSituationData) && whiteSimulator===false"
             [@fadeInOut]>
-            {{ratio(getFieldValue('etpCont',projectedSituationData),getFieldValue('etpCont',firstSituationData))}}%
+            {{ratioStr(getFieldValue('etpCont',projectedSituationData),getFieldValue('etpCont',firstSituationData))}}
             <div class=" triangle simulated blue"></div>
           </div>
         </div>
@@ -843,12 +854,13 @@
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage'"
             [@fadeInOut]>
-            {{percentageModifiedInputText('realCoverage',getFieldValue('realCoverage',firstSituationData))}}pts
+            {{percentageModifiedInputTextStr('realCoverage',getFieldValue('realCoverage',firstSituationData),true)}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='realCoverage'  || paramsToAjust.param2.label==='realCoverage') && getFieldValue('realCoverage',simulatedSationData)!==getFieldValue('realCoverage',firstSituationData)"
             [@fadeInOut]>
             {{calculCoverage(parseFloat(getFieldValue('realCoverage',simulatedSationData)),parseFloat(getFieldValue('realCoverage',firstSituationData)))>=
@@ -868,15 +880,16 @@
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths'"
             [@fadeInOut]>
-            {{percentageModifiedInputText('realDTESInMonths',getFieldValue('realDTESInMonths',firstSituationData))}}%
+            {{percentageModifiedInputTextStr('realDTESInMonths',getFieldValue('realDTESInMonths',firstSituationData))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='realDTESInMonths'  || paramsToAjust.param2.label==='realDTESInMonths') && getFieldValue('realDTESInMonths',simulatedSationData)!==getFieldValue('realDTESInMonths',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('realDTESInMonths',simulatedSationData),getFieldValue('realDTESInMonths',firstSituationData))}}%
+            {{ratioStr(getFieldValue('realDTESInMonths',simulatedSationData),getFieldValue('realDTESInMonths',firstSituationData))}}
 
             <div class="triangle simulated blue"></div>
           </div>
@@ -888,15 +901,16 @@
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='magRealTimePerCase'  || paramsToAjust.param2.label==='magRealTimePerCase'"
             [@fadeInOut]>
-            {{percentageModifiedInputText('magRealTimePerCase',getFieldValue('magRealTimePerCase',firstSituationData,true))}}%
+            {{percentageModifiedInputTextStr('magRealTimePerCase',getFieldValue('magRealTimePerCase',firstSituationData,true))}}
 
             <div class="triangle simulated"></div>
           </div>
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
-            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
+            [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
+            matTooltipHideDelay="0"
             *ngIf="!(paramsToAjust.param1.label==='magRealTimePerCase'  || paramsToAjust.param2.label==='magRealTimePerCase') && getFieldValue('magRealTimePerCase',simulatedSationData)!==getFieldValue('magRealTimePerCase',firstSituationData)"
             [@fadeInOut]>
-            {{ratio(getFieldValue('magRealTimePerCase',simulatedSationData,true,true),getFieldValue('magRealTimePerCase',firstSituationData,true,true))}}%
+            {{ratioStr(getFieldValue('magRealTimePerCase',simulatedSationData,true,true),getFieldValue('magRealTimePerCase',firstSituationData,true,true))}}
             <div class="triangle simulated blue"></div>
           </div>
         </div>
@@ -936,12 +950,19 @@
       <div class="space"></div>
     </div>
   </div>
-
-
-
+  
+  <aj-popup *ngIf="isLeaving" class="small" [closeIcon]="true" (onClose)="isLeaving = false"
+  title="Consever cette simulation ?" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
+  [removeShadow]="'noShadow'">
+    <div>
+      <p class="content">
+        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la en PDF afin de l'enregistrer sur votre ordinateur.
+      </p>
+    </div>
+  </aj-popup>
 </aj-wrapper>
-<ng-template #actions>
 
+<ng-template #actions>
   <p contenteditable id="editable-sim-name" class="editable-sim-name" *ngIf="!chooseScreen"
     data-placeholder="Indiquez le titre de votre simulation " (keypress)="keyPress($event)"></p>
 

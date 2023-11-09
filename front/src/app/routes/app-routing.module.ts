@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuardService } from './canDeactivate-guard-service'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
+import { SimulatorPage } from './simulator/simulator.page'
 
 const routes: Routes = [
   {
@@ -100,9 +101,9 @@ const routes: Routes = [
   },
   {
     path: 'simulateur',
-    loadChildren: () =>
-      import('./simulator/simulator.module').then((mod) => mod.SimulatorModule),
+    component: SimulatorPage,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuardService],
   },
   {
     path: 'reaffectateur',
@@ -181,14 +182,22 @@ const routes: Routes = [
         (mod) => mod.CGUModule
       ),
   },
+  {
+    path: 'centre-d-aide',
+    loadChildren: () =>
+      import('./help-center/help-center.module').then(
+        (mod) => mod.HelpCenterModule
+      ),
+    canActivate: [AuthGuard],
+  },
 ]
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
+    RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' }),
   ],
   providers: [AuthGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
 
-export class AppRoutingModule {}
+export class AppRoutingModule { }

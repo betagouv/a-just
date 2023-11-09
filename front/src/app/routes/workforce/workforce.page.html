@@ -9,6 +9,13 @@
       <aj-select title="Pour les contentieux" [value]="selectedReferentielIds" [datas]="formReferentiel"
         (valueChange)="onSelectedReferentielIdsChanged($event)">
       </aj-select>
+
+      <filter-panel class="button-filter" [button]="true" (update)="updateFilterParams($event)"
+        [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+        [categories]="humanResourceService.categoriesFilterListIds"
+        [filterValues]="(filterParams && filterParams.filterValues) || null">
+      </filter-panel>
+
       <div class="flex-1"></div>
       <div *ngFor="let category of categoriesFilterList" class="checkbox-button"
         [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
