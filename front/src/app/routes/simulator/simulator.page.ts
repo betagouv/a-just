@@ -316,10 +316,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
-    private route : ActivatedRoute
+    private route: ActivatedRoute
   ) {
     super()
-  
+
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
@@ -414,7 +414,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.dateStop = null
 
     this.route.data.subscribe((data) => console.log("route:", data))
-  
+
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -761,6 +761,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
+      if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && this.valueToAjust.percentage === null) {
+        console.log(this.valueToAjust.percentage)
+        alert('La valeur choisie ne peut pas être égale à 0')
+        return
+      }
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -792,6 +797,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       //else (no value filled in popup)
     } else {
+      if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && volumeInput === '0') {
+        console.log(this.paramsToAjust.param1.input, volumeInput)
+        alert('La valeur choisie ne peut pas être égale à 0')
+        return
+      }
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = ''
@@ -1614,5 +1624,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         }
         break;
     }
+  }
+
+  clicktodisp() {
+    console.log('RESULT', this.dateStart, monthDiffList(this.dateStart, this.dateStop))
   }
 }
