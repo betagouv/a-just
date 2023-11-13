@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
+import { decimalToStringDate } from 'src/app/utils/dates'
 
 /**
  * Composant input pourcentage
@@ -31,7 +32,9 @@ export class InputPercentageComponent implements OnChanges {
    */
   @Input() reset: boolean = false
 
-
+  /**
+   * Valeur pour TMD
+   */
   @Input() float: boolean = false
 
   /**
@@ -91,10 +94,10 @@ export class InputPercentageComponent implements OnChanges {
    * @returns %
    */
   //PERMETTRE AJUSTEMENT A 0 %
-  returnPercentage(x: any): string {
+  returnPercentage(x: any, displayValue = false): string {
     if (x === 0) return String(this.referenceValue)
-    if (this.float)
-      return x
+    if (this.float) {
+      const res = x
         ? String(
 
           this.referenceValue -
@@ -103,13 +106,24 @@ export class InputPercentageComponent implements OnChanges {
         )
         : ''
 
-    else return x
-      ? String(
-        Math.round(
-          this.referenceValue -
-          ((-parseInt(x) * 1) / 100) * this.referenceValue
+      if (displayValue) {
+        console.log(res)
+        if (x === '') return ''
+        else
+          return String(decimalToStringDate(parseFloat(res)))
+      }
+      return res
+    }
+    else {
+      const res = x
+        ? String(
+          Math.round(
+            this.referenceValue -
+            ((-parseInt(x) * 1) / 100) * this.referenceValue
+          )
         )
-      )
-      : ''
+        : ''
+      return res
+    }
   }
 }
