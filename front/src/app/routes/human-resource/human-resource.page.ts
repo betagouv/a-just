@@ -172,12 +172,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         if (Object.keys(options).length) {
           // @ts-ignore
           if (options.lastName === '' || options.lastName === 'Nom') {
-            alert('Vous devez saisir un nom pour valider la création !')
+            setTimeout(() => {
+              alert('Vous devez saisir un nom pour valider la création !')
+            }, 1500)
             return
           }
           // @ts-ignore
           if (options.firstName === '' || options.firstName === 'Prénom') {
-            alert('Vous devez saisir un prénom pour valider la création !')
+            setTimeout(() => {
+              alert('Vous devez saisir un prénom pour valider la création !')
+            }, 1500)
             return
           }
 
@@ -221,8 +225,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-      console.log('this.appService.previousUrl:', this.appService.previousUrl)
-      this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
+    console.log('this.appService.previousUrl:', this.appService.previousUrl)
+    this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
   }
 
   /**
@@ -420,8 +424,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           dateStop: null,
           situationForTheFirstTime:
             (id !== -1 && this.histories.length === 0) ||
-            (this.histories.length &&
-              this.histories[this.histories.length - 1].id !== id)
+              (this.histories.length &&
+                this.histories[this.histories.length - 1].id !== id)
               ? true
               : false,
         })
@@ -435,7 +439,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       currentDateEnd &&
       !this.histories[this.histories.length - 1].dateStop &&
       this.histories[this.histories.length - 1].dateStart.getTime() <
-        currentDateEnd.getTime()
+      currentDateEnd.getTime()
     ) {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
@@ -445,7 +449,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories.length &&
       this.currentHR.dateStart &&
       this.histories[0].dateStart.getTime() >
-        today(this.currentHR.dateStart).getTime()
+      today(this.currentHR.dateStart).getTime()
     ) {
       const firstSituationExistant = this.histories.find((h) => h.category)
       this.histories.splice(0, 0, {
@@ -624,13 +628,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.updateIndisponiblity = indispo
       ? copy(indispo)
       : {
-          id: this.allIndisponibilities.length * -1 - 1,
-          percent: 0,
-          contentieux: {
-            ...this.allIndisponibilityReferentiel[0],
-          },
-          dateStart: null,
-        }
+        id: this.allIndisponibilities.length * -1 - 1,
+        percent: 0,
+        contentieux: {
+          ...this.allIndisponibilityReferentiel[0],
+        },
+        dateStart: null,
+      }
   }
 
   /**
@@ -874,8 +878,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     const index = history
       ? this.histories.findIndex(
-          (h) => h.id === history.id && h.dateStart === history.dateStart
-        )
+        (h) => h.id === history.id && h.dateStart === history.dateStart
+      )
       : -1
 
     if (this.onEditIndex === null) {
@@ -923,10 +927,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Fiche individuelle${
-          this.currentHR
-            ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
-            : ''
+        `Fiche individuelle${this.currentHR
+          ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
+          : ''
         } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
@@ -948,7 +951,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   openHelpPanel(type: string | undefined) {
     switch (type) {
-      case 'indispo': 
+      case 'indispo':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
@@ -990,7 +993,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   preOpenSituation() {
     const findIndex = this.histories.findIndex(h => h.etp === this.ETP_NEED_TO_BE_UPDATED)
 
-    if(findIndex !== -1) {
+    if (findIndex !== -1) {
       this.onSelectSituationToEdit(this.histories[findIndex])
     }
   }
