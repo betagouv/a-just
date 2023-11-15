@@ -287,11 +287,16 @@ export default class RouteUsers extends Route {
       where: { email, new_password_token: code },
     })
     if (user) {
-      if (await this.model.updatePassword(user.dataValues.id, password, email)) {
-        this.sendOk(ctx, {
-          status: true,
-          msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
-        })
+      try {
+        if (await this.model.updatePassword(user.dataValues.id, password, email)) {
+          this.sendOk(ctx, {
+            status: true,
+            msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
+          })
+        }
+      } catch (err) {
+        console.log('test fx')
+        ctx.throw(401, err)
       }
       return
     }
