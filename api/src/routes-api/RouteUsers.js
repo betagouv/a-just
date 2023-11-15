@@ -287,7 +287,6 @@ export default class RouteUsers extends Route {
           })
         }
       } catch (err) {
-        console.log('test fx')
         ctx.throw(401, err)
       }
       return
