@@ -301,10 +301,7 @@ export default class RouteUsers extends Route {
       return
     }
 
-    ctx.throw(401, {
-      status: false,
-      msg: ctx.state.__('Information de contact non valide!'),
-    })
+    ctx.throw(401, ctx.state.__('Information de contact non valide!'))
   }
 
   /**
