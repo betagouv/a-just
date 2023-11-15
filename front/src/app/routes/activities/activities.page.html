@@ -143,7 +143,6 @@
                   [ngModel]="ref.originalStock"
                   disabled
                   placeholder="-"
-                  [ngClass]="{blue: ref.stock !== null}"
                 />
               </div>
               <div>
@@ -158,6 +157,7 @@
                     disabled
                     placeholder="-"
                     [id]="'m-'+ref.id+'-stock'"
+                    [ngClass]="{blue: ref.stock !== null}"
                   />
                 </span>
               </div>
