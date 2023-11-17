@@ -35,6 +35,10 @@ export class HelpCenterPage {
    */
   NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
   /**
+   * GitBook Token
+   */
+  gitToken
+  /**
    * Cards documentation
    */
   docCards: Array<DocCardInterface> = [
@@ -95,8 +99,9 @@ export class HelpCenterPage {
    * @param title
    */
   constructor() {
+    this.gitToken = environment.gitbookToken
     this.gitbook = new GitBookAPI({
-      authToken: environment.gitbookToken,
+      authToken: this.gitToken,
     });
 
   }
@@ -119,7 +124,7 @@ export class HelpCenterPage {
   }
 
   goTo(url: string) {
-    window.location.href = url;
+    window.open(url)
   }
 
   isValid(space: string) {
