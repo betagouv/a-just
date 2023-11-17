@@ -33,6 +33,6 @@ export class DocCardComponent {
   constructor() { }
 
   goTo(url: string) {
-    window.location.href = url;
+    window.open(url)
   }
 }
