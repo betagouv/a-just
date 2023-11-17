@@ -124,7 +124,7 @@ export class HelpCenterPage {
   }
 
   goTo(url: string) {
-    window.location.href = url;
+    window.open(url)
   }
 
   isValid(space: string) {
