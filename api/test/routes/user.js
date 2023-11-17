@@ -15,9 +15,6 @@ export const onLoginAdminApi = async ({ email, password }) => {
 }
 
 export const onLoginApi = async ({ email, password }) => {
-  console.log('[user.js][line 18] email:', email)
-  console.log('[user.js][line 18] password:', password)
-
   return await instanceAxios
     .post('/auths/login', {
       email,

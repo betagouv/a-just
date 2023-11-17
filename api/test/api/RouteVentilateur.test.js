@@ -33,7 +33,6 @@ module.exports = function (datas) {
         selectedFonctionsIds: [22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39],*/
       })
 
-      console.log('[RouteVentilateur.test.js][line 66]  Reponse catch data:', response.data.data.list)
       response.data.data.list.map((elem) => {
         // console.log('\n\nListe des ', elem.label, ':')
         elem.hr.map((hr) => {
@@ -54,7 +53,6 @@ module.exports = function (datas) {
           sumEtpSocial += (hr.currentActivities.filter((activite) => activite.contentieux.id === 447)[0].percent * hr.etp) / 100
         })
       })
-      console.log('[RouteVentilateur.test.js][line 66] SumEtpSocial:', sumEtpSocial)
     })
   })
 }
