@@ -244,7 +244,7 @@ export default class RouteHumanResources extends Route {
     const allCategories = await this.models.HRCategories.getAll()
 
     console.log('contentieuxIds', contentieuxIds, categoriesIds.length, allCategories.length)
-    if (categoriesIds && categoriesIds.length === allCategories.length && (!contentieuxIds || contentieuxIds.length === 0)) {
+    if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {
       // memorize first execution by user
       this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
     }
