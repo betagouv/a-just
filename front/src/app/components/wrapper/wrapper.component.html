@@ -93,13 +93,13 @@
   <div class="panel-header">
     <div class="over-title">
       <div class="panel-header-closing-row">
-        <h6>{{ documentationToShow && documentationToShow.title }}</h6>
+        <h6>{{ documentationToShow?.title }}</h6>
         <i class="ri-close-line" (click)="panelHelper = false"></i>
       </div>
       <p>
         <i class="ri-lightbulb-flash-line"></i>
         <span>{{
-          (documentationToShow && documentationToShow.subTitle) ||
+          (documentationToShow?.subTitle) ||
           'Comment ça marche ?'
           }}</span>
       </p>
@@ -107,7 +107,7 @@
   </div>
 
   <iframe [src]="
-      (documentationToShow && documentationToShow.path) || ''
+      (documentationToShow?.path) || ''
         | sanitizeResourceUrl
     "></iframe>
 </div>

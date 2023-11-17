@@ -27,13 +27,13 @@
         align-items: center;
         border-radius: 6px;
         cursor: pointer;
-        
+
         p {
             font-size: 12px;
             color: #f6f6f6
         }
     }
-    
+
     .empty-separator {
         display: flex;
         padding-left: 300px;
@@ -146,7 +146,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        position: fixed;
+        position: relative;
         padding: 0px 46px 0px 258px;
         left: 0px;
         bottom: 0;
@@ -170,7 +170,7 @@
             border: solid 1px fColor(cgraylightv3);
 
             &.alone {
-              border-radius: 4px;
+                border-radius: 4px;
             }
 
             p {
