@@ -12,6 +12,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} datas
    */
   Model.addLog = async (codeId, userId, datas = {}) => {
+    console.log(codeId, userId, datas)
     await Model.create({
       code_id: codeId,
       user_id: userId,
