@@ -172,7 +172,7 @@ export class WorkforceCompositionComponent
   }
 
   async getAllCle() {
-    const res = await this.serverService
+    this.cleByCategory = await this.serverService
       .post('juridictions-details/get-cle',
         {
           juridictionId: this.humanResourceService.backupId.getValue(),
@@ -180,6 +180,5 @@ export class WorkforceCompositionComponent
       .then((r) => {
         return r.data
       })
-    this.cleByCategory = res
   }
 }

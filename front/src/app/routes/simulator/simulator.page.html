@@ -1,7 +1,7 @@
 <!--<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
   [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">-->
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-[documentation]="documentation">
+  [documentation]="documentation">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -307,8 +307,9 @@
         <input [class.displayNone]="buttonSelected.id === 'magRealTimePerCase'" type="number"
           (oninput)="onUpdateValueToAjust($event)" (focusin)="resetPercentage = true"
           (focusout)="resetPercentage = false" value="{{valueSaved(1)}}" #volume />
-        <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
-          [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
+        <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(volume.value)"
+          [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)" (focusin)="resetPercentage = true"
+          (focusout)="resetPercentage = false" [defaultValue]="parseFloat(volume.value)||-1"></app-time-selector>
       </div>
       <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
         <div class="title">
@@ -950,13 +951,14 @@
       <div class="space"></div>
     </div>
   </div>
-  
+
   <aj-popup *ngIf="isLeaving" class="small" [closeIcon]="true" (onClose)="isLeaving = false"
-  title="Consever cette simulation ?" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
-  [removeShadow]="'noShadow'">
+    title="Consever cette simulation ?" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
+    [removeShadow]="'noShadow'">
     <div>
       <p class="content">
-        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la en PDF afin de l'enregistrer sur votre ordinateur.
+        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
+        en PDF afin de l'enregistrer sur votre ordinateur.
       </p>
     </div>
   </aj-popup>

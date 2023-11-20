@@ -228,9 +228,10 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+
     for (let i = 0; i < activities.length; i++) {
       const periode = new Date(activities[i].periode)
-      console.log('try =>', i + '/' + activities.length)
+      //console.log('try =>', i + '/' + activities.length)
 
       const duplicateActivities = await Model.findAll({
         where: {
@@ -258,6 +259,7 @@ export default (sequelizeInstance, Model) => {
         }
       }
     }
+
   }
 
   /**
