@@ -1593,11 +1593,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   canDeactivate(nextState: string) {
-    /*const modified = this.listFormated.filter(elem => {
-      return elem.hrFiltered.some(hr => hr.isModify)
-    })
-    if (modified.length === 0)
-      return true*/
     if (this.toDisplaySimulation) {
       this.isLeaving = true
       this.nextState = nextState
@@ -1624,9 +1619,5 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         }
         break;
     }
-  }
-
-  clicktodisp() {
-    console.log('RESULT', this.dateStart, monthDiffList(this.dateStart, this.dateStop))
   }
 }

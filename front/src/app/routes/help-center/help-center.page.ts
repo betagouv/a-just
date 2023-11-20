@@ -3,6 +3,7 @@ import { Component } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL } from 'src/app/constants/documentation';
+import { ServerService } from 'src/app/services/http-server/server.service';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -98,12 +99,12 @@ export class HelpCenterPage {
    * Constructeur
    * @param title
    */
-  constructor() {
+  constructor(private serverService: ServerService) {
     this.gitToken = environment.gitbookToken
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
     });
-
+    this.sendLog()
   }
 
 
@@ -123,7 +124,23 @@ export class HelpCenterPage {
     }
   }
 
-  goTo(url: string) {
+  async goTo(url: string) {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: url,
+        })
+      .then((r) => {
+        return r.data
+      })
+    await this.serverService
+      .post('centre-d-aide/log-documentation-recherche',
+        {
+          value: this.searchValue,
+        })
+      .then((r) => {
+        return r.data
+      })
     window.open(url)
   }
 
@@ -141,5 +158,12 @@ export class HelpCenterPage {
   delay() {
     setTimeout(() => { this.focusOn = false }, 200)
   }
-  //AJOUTER CARTE INDIVIDUEL COMPOSANT ET DEMANDER EXPORT MICKAEL
+
+  async sendLog() {
+    await this.serverService
+      .post('centre-d-aide/log-documentation')
+      .then((r) => {
+        return r.data
+      })
+  }
 }
