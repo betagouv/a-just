@@ -1,5 +1,4 @@
 import { assert } from 'chai'
-//import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
 import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi } from '../routes/user'
 
@@ -8,7 +7,7 @@ module.exports = function (datas) {
     /**
      *  Inscription - Vérification qu'on ait bien un erreur si le mail n'est pas indiqué
      */
-    /*it('Sign up - Missing email, should return 400', async () => {
+    it('Sign up - Missing email, should return 400', async () => {
       const response = await onSignUpApi({
         password: USER_TEST_PASSWORD,
         firstName: USER_TEST_FIRSTNAME,
@@ -16,12 +15,12 @@ module.exports = function (datas) {
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
-    })*/
+    })
 
     /**
      *  Inscription - Vérification qu'on ait bien un erreur si le mot de passe n'est pas indiqué
      */
-    /*it('Sign up - Missing password, should return 400', async () => {
+    it('Sign up - Missing password, should return 400', async () => {
       const response = await onSignUpApi({
         email: USER_TEST_EMAIL,
         firstName: USER_TEST_FIRSTNAME,
@@ -29,24 +28,24 @@ module.exports = function (datas) {
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
-    })*/
+    })
 
     /**
      *  Inscription - Vérification qu'on ait bien un erreur si l'email et le mot de passe ne sont pas indiqués
      */
-    /*it('Sign up - Missing email and password, should return 400', async () => {
+    it('Sign up - Missing email and password, should return 400', async () => {
       const response = await onSignUpApi({
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
-    })*/
+    })
 
     /**
      *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé long'
      */
-    /*it('Sign up - Password is not long enough, should return 401', async () => {
+    it('Sign up - Password is not long enough, should return 401', async () => {
       const response = await onSignUpApi({
         email: USER_TEST_EMAIL,
         password: '123456',
@@ -55,12 +54,12 @@ module.exports = function (datas) {
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé fort'
      */
-    /*it('Sign up - Password is not strong enough, should return 401', async () => {
+    it('Sign up - Password is not strong enough, should return 401', async () => {
       const response = await onSignUpApi({
         email: USER_TEST_EMAIL,
         password: '123456789',
@@ -69,24 +68,23 @@ module.exports = function (datas) {
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe est un mot du dictionnaire
      */
-    /*
+    
       it('Sign up - Password is a word in dictionary, should return 401', async () => {
         const response = await onSignUpApi({
-          email: USER_TEST_EMAIL,
+          email: "badPAssword@email.com",//USER_TEST_EMAIL,
           password: 'Zymotechnie',
           firstName: USER_TEST_FIRSTNAME,
           lastName: USER_TEST_LASTNAME,
           fonction: USER_TEST_FONCTION,
         })
-        console.log('[routeUser.test.js][line 83] res:', response)
         assert.strictEqual(response.status, 401)
       })
-    */
+    
 
     /**
      *  Inscription - Vérification que l'utilisateur peut bien s'inscrire si toutes les information obligatoires sont données
@@ -99,63 +97,61 @@ module.exports = function (datas) {
         lastName: USER_TEST_LASTNAME,
         fonction: USER_TEST_FONCTION,
       })
-      console.log('[RouteUser.test.js][line 102] response:', response)
-      console.log('[RouteUser.test.js][line 103] USER_TEST_EMAIL: |', USER_TEST_EMAIL, '|')
-      console.log('[RouteUser.test.js][line 104] USER_TEST_PASSWORD: |', USER_TEST_PASSWORD, '|')
-      assert.strictEqual(response.status, 200)
+      datas.userId = response.data.user.id
+      assert.strictEqual(response.status, 201)
     })
 
     /**
      * Mot de passe oublié - Vérification qu'on ait bien une erreur si l'email indiqué n'est pas reconnu
      */
-    /*it('Forgot password - Bad email, should return 401', async () => {
+    it('Forgot password - Bad email, should return 401', async () => {
       const response = await onForgotPasswordApi({ email: 'badEmail@mail.com' })
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      * Mot de passe oublié - Vérification que l'utilisateur puisse bien changer son mot de passe en cas de perte
      */
-    /*it('Forgot password - Good email, should return 200', async () => {
+    it('Forgot password - Good email, should return 200', async () => {
       const response = await onForgotPasswordApi({
         email: USER_TEST_EMAIL,
       })
       assert.strictEqual(response.status, 200)
-    })*/
+    })
 
     /**
-     * Login - Vérification qu'on ait bien un erreur si le mot de passe n'est pas correct
+     * Login - Vérification qu'un utilistaeur ne peut pas se connecter avec un mauvais mot de passe
      */
-    /*it('Login - Bad password, should return 401', async () => {
+    it('Login - Bad password, should return 401', async () => {
       const response = await onLoginApi({
         email: USER_TEST_EMAIL,
         password: '123481349',
       })
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      * Login - Vérification qu'on ait bien un erreur si l'email n'est pas correct
      */
-    /*it('Login - Bad email, should return 401', async () => {
+    it('Login - Bad email, should return 401', async () => {
       const response = await onLoginApi({
         email: 'badEmail@email.com',
         password: USER_TEST_PASSWORD,
       })
 
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      * Login - Vérification qu'on ait bien un erreur si le mot de passe et l'email ne sont pas corrects
      */
-    /*it('Login - Bad email AND bad password, should return 401', async () => {
+    it('Login - Bad email AND bad password, should return 401', async () => {
       const response = await onLoginApi({
         email: 'badEmail@mail.com',
         password: '124134683',
       })
       assert.strictEqual(response.status, 401)
-    })*/
+    })
 
     /**
      * Login - Vérification que la connexion avec les bonnes infos fonctionne
@@ -165,13 +161,7 @@ module.exports = function (datas) {
         email: USER_TEST_EMAIL,
         password: USER_TEST_PASSWORD,
       })
-      console.log('[RouteUser.test.js][line 160] USER_TEST_EMAIL: |', USER_TEST_EMAIL, '|')
-      console.log('[RouteUser.test.js][line 161] USER_TEST_PASSWORD: |', USER_TEST_PASSWORD, '|')
-      console.log('[RouteUser.test.js][line 162] response:', response.data)
-
       datas.userToken = response.status === 201 && response.data.token
-      datas.userId = response.data.user.id
-
       assert.isOk(datas.userToken, 'response 201 and user token created')
     })
 
