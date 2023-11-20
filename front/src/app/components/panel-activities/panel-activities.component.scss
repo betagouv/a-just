@@ -210,17 +210,18 @@
 
     .tooltip {
       position: absolute;
-      top: 85%;
-      left: 30%;
-      width: 130%;
+      top: 83%;
+      right: 30%;
+      width: 150%;
       z-index: 99;
+      overflow: hidden;
 
       .arrow-top {
         width: 15px;
         height: 15px;
         background-color: #33569e;
         display: inline-block;
-        margin-left: 15px;
+        margin-left: 75%;
         transform: rotate(-135deg);
         -webkit-transform: rotate(-135deg);
         margin-bottom: -13px;
