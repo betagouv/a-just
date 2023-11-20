@@ -228,7 +228,6 @@ export class ContentieuxOptionsService extends MainClass {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-    console.log('LIST', this.contentieuxOptions.getValue())
     return this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
@@ -324,7 +323,6 @@ export class ContentieuxOptionsService extends MainClass {
   async onSendAllActivity(form: any) {
     const file = form.file.files[0]
 
-    console.log(form.file.files)
     if (!file) {
       alert('Vous devez saisir une fichier !')
       return
@@ -373,7 +371,6 @@ export class ContentieuxOptionsService extends MainClass {
       else return res[key][0] as ContentieuxOptionsInterface
     })
 
-    console.log(resultat)
     this.contentieuxOptions.next(resultat)
     this.optionsIsModify.next(true)
 
@@ -392,7 +389,6 @@ export class ContentieuxOptionsService extends MainClass {
    */
   downloadTemplate() {
     const tmpList = this.generateFlateList(this.referentiel)
-    console.log(tmpList)
     this.refNameSelected =
       this.formDatas.getValue().find((x) => x.id === this.backupId.getValue())
         ?.value || ''
@@ -430,7 +426,6 @@ export class ContentieuxOptionsService extends MainClass {
   generateFlateList(list: any) {
     const flatList = new Array()
     list.getValue().map((x: any) => {
-      console.log(x)
       const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
       const foncAvg = decimalToStringDate(x.averageProcessingTimeFonc, ':')
 

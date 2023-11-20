@@ -297,7 +297,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
           if (this.categoriesFilterListIds.length === categories.length) {
             const { c: categoryId } = this.route.snapshot.queryParams
-            console.log('TEST 1', categoryId, c.id)
             if (categoryId && c.id !== +categoryId) {
               selected = false
             }
@@ -761,7 +760,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.workforceService.filterParams = event // memorize in cache
     this.filterParams = event
     this.orderListWithFiltersParams()
-    console.log('UPDATE', this.filterParams.filterValues)
   }
 
   /**

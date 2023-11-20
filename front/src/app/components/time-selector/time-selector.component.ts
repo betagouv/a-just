@@ -95,12 +95,10 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
     if (change.defaultValue && change.defaultValue.currentValue === -1) {
       this.timeForm.controls['time'].setValue('');
       this.onChangeHour('')
-      console.log('EMIT')
     }
     if (change.value && change.value.currentValue === 0 && this.defaultValue === -1) {
       this.timeForm.controls['time'].setValue('');
       this.onChangeHour('')
-      console.log('EMIT')
     }
 
   }

@@ -145,7 +145,6 @@ export class WorkforceCompositionComponent
   saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
     if (value) {
       const value = (document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value
-      console.log(value)
       const res = this.serverService
         .put('juridictions-details/update-cle',
           {

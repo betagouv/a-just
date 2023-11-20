@@ -107,7 +107,6 @@ export class InputPercentageComponent implements OnChanges {
         : ''
 
       if (displayValue) {
-        console.log(res)
         if (x === '') return ''
         else
           return String(decimalToStringDate(parseFloat(res)))
