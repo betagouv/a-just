@@ -20,8 +20,10 @@ import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { ServerService } from 'src/app/services/http-server/server.service';
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
 
 /**
  * Panneau pour ajouter / modifier une situation
@@ -141,7 +143,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private hrCategoryService: HRCategoryService,
     private humanResourceService: HumanResourceService,
     private appService: AppService,
-    private calculatriceService: CalculatriceService
+    private calculatriceService: CalculatriceService,
+    private serverService: ServerService
   ) {
     super()
   }
@@ -537,4 +540,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     )
     if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
   }
+
+  async downloadCalculator() {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: CALCULATE_DOWNLOAD_URL,
+        })
+      .then((r) => {
+        return r.data
+      })
+    window.open(CALCULATE_DOWNLOAD_URL)
+  }
+
 }
