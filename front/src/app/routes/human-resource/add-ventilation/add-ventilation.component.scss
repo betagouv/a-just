@@ -92,11 +92,24 @@
     padding: 16px 24px 24px 24px;
     border-bottom: solid 1px fColor(cgrayDefault);
 
-    > p {
-      font-weight: bold;
-      color: fColor(cblack);
+    .top {
+      display: flex;
+      align-items: center;
       margin-bottom: 16px;
-      margin-left: 16px;
+      
+      > p {
+        font-weight: bold;
+        color: fColor(cblack);
+        margin-left: 16px;
+      }
+
+      .download {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #000091;
+        color: #000091;
+      }
     }
   }
 

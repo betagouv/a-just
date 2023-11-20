@@ -80,7 +80,14 @@
     </aj-popup>
 
     <div class="activities">
-      <p>Répartition du temps disponible</p>
+      <div class="top">
+        <p>Répartition du temps disponible: </p>
+        <pre> </pre>
+        <a (click)="downloadCalculator()" class="download">
+          Télécharger la calculatrice de ventilations
+          <mat-icon>download</mat-icon>
+        </a>
+      </div>
       <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
         (referentielChange)="onNewReferentiel($event)" #panelActivities
         [forceToShowContentieuxDetail]="forceToShowContentieuxDetail">
