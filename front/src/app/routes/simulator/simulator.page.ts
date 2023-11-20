@@ -412,9 +412,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   ngOnInit(): void {
     this.resetParams()
     this.dateStop = null
-
     this.route.data.subscribe((data) => console.log("route:", data))
-
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -762,7 +760,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
       if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && this.valueToAjust.percentage === null) {
-        console.log(this.valueToAjust.percentage)
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -798,7 +795,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       //else (no value filled in popup)
     } else {
       if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && volumeInput === '0') {
-        console.log(this.paramsToAjust.param1.input, volumeInput)
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -1407,7 +1403,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     const editButton = document.getElementById('editable-sim-name')
     if (editButton && editButton.innerHTML === "")
       editButton.style.display = 'none'
-    //editButton.classList.add('display-none')
     else if (title) title.classList.add('display-none')
 
 
@@ -1415,10 +1410,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
     const exportButton = document.getElementById('export-button')
     if (exportButton)
-    //exportButton.style.display = 'none'
     {
       exportButton.classList.add('display-none')
-      console.log('Ex 1', exportButton)
     }
 
     const ajWrapper = document.getElementById('simu-wrapper')
@@ -1432,18 +1425,15 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     const commentArea = document.getElementById('comment-area')!
     if (commentArea)
       commentArea.classList.add('display-none')
-    //commentArea.style.display = 'none'
 
     this.onPrint = true
 
     this.wrapper?.exportAsPdf(filename, true, false, null, false/*true*/).then(() => {
-      //title.style.display = 'none'
       title?.classList.add('display-none')
 
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
 
-      console.log('Ex 2', exportButton)
       if (exportButton)
         exportButton.classList.remove('display-none')
       if (initButton)

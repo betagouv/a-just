@@ -115,7 +115,6 @@ export class ExtractorVentilationComponent extends MainClass {
     const category = this.categories.find(
       (category) => category.id === event[0]
     )
-    console.log(event)
     this.selectedCategorieId = category?.label
     if (this.selectedCategorieId) {
       this.excelService.selectedCategory.next(

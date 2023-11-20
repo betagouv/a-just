@@ -431,7 +431,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
 
   calculatorSaver() {
-    console.log(this.datas)
     let refToSave = new Array()
 
     this.datas.map(x => {
@@ -458,7 +457,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
     })
 
-    console.log(refToSave)
     this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
     this.contentieuxOptionsService.optionsIsModify.next(true)
 
