@@ -199,7 +199,7 @@ export default (sequelizeInstance, Model) => {
 
         let code = list[i][statut === 'Magistrat' ? 'fonction' : 'categorie']
 
-        console.log('findCategory', findCategory)
+        //console.log('findCategory', findCategory)
         if (findCategory) {
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             situation.category_id = findEAM.id
@@ -266,7 +266,7 @@ export default (sequelizeInstance, Model) => {
           logging: false,
         })
 
-        console.log('findFonction', code, findFonction)
+        //console.log('findFonction', code, findFonction)
 
         if (findFonction) {
           situation.fonction_id = findFonction.id
@@ -324,20 +324,20 @@ export default (sequelizeInstance, Model) => {
         //console.log(options, situation)
 
         // create person
-        findHRToDB = await Model.create(options)
+        /*findHRToDB = await Model.create(options)
 
         // create
         await Model.models.HRSituations.create({
           ...situation,
           human_id: findHRToDB.dataValues.id,
-        })
+        })*/
 
         importSituation.push(list[i].nom_usage + ' ADDED')
       } else {
         // force to save juridiction
-        await findHRToDB.update({
+        /*await findHRToDB.update({
           juridiction: list[i].juridiction || '',
-        })
+        })*/
         importSituation.push(list[i].nom_usage + ' no add by exist')
       }
     }
