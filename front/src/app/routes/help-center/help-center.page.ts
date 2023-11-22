@@ -110,6 +110,7 @@ export class HelpCenterPage {
 
   async onSearchBy() {
     const { data } = await this.gitbook.search.searchContent({ query: this.searchValue })
+    console.log(data)
     this.data = data.items
   }
 
@@ -124,11 +125,11 @@ export class HelpCenterPage {
     }
   }
 
-  async goTo(url: string) {
+  async goTo(researchRes: any, title: string) {
     await this.serverService
       .post('centre-d-aide/log-documentation-link',
         {
-          value: url,
+          value: researchRes.urls.app,
         })
       .then((r) => {
         return r.data
@@ -141,8 +142,20 @@ export class HelpCenterPage {
       .then((r) => {
         return r.data
       })
-    window.open(url)
+
+    switch (title) {
+      case 'Guide d\'utilisateur A-JUST':
+        window.open("https://docs.a-just.beta.gouv.fr/documentation-deploiement/" + researchRes.path)
+        break
+      case 'Le data-book':
+        window.open("https://docs.a-just.beta.gouv.fr/le-data-book/" + researchRes.path)
+        break
+      default:
+        break
+    }
+
   }
+
 
   isValid(space: string) {
     switch (space) {
@@ -167,3 +180,4 @@ export class HelpCenterPage {
       })
   }
 }
+
