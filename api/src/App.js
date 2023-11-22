@@ -60,7 +60,7 @@ export default class App extends AppBase {
     })
 
     super.addMiddlewares([
-      sslify(),
+      //sslify(),
       limiter,
       // we add the relevant middlewares to our API
       //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
