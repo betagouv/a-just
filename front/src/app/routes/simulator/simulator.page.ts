@@ -187,6 +187,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Utilisateur sort du composant
    */
   isLeaving: boolean = false
+  /**
+   * Utilisateur réinitialise la simulation
+   */
+  isReseting : boolean = false
 
   nextState: string | null = null
 
@@ -200,10 +204,16 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
-  popupAction = [
-    { id: 'leave', content: 'Quitter sans exporter' },
-    { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
-  ];
+  popupAction = {
+    leaving : [
+      { id: 'leave', content: 'Quitter sans exporter' },
+      { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
+    ],
+    reinit: [
+      { id: 'reseting', content: 'Continuer sans exporter' },
+      { id: 'export', content: 'Exporter en PDF et continuer', fill: true },
+    ]
+};
 
 
   /**
@@ -1453,6 +1463,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
 
 
+      this.resetParams()
       if (this.forceDeactivate)
         this.router.navigate([this.nextState])
     })
@@ -1591,23 +1602,40 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     return true
   }
 
-  onPopupDetailAction(action: any) {
-    switch (action.id) {
-      case 'leave':
-        {
-          this.isLeaving = false
-          this.forceDeactivate = true
-          this.router.navigate([this.nextState])
-        }
-        break;
-      case 'export':
-        {
-          this.isLeaving = false
-          this.forceDeactivate = true
-          //this.onExport()
-          this.print()
-        }
-        break;
+  onPopupDetailAction(action: any, situation : string) {
+    if (situation === "leaving") {
+      switch (action.id) {
+        case 'leave':
+          {
+            this.isLeaving = false
+            this.forceDeactivate = true
+            this.router.navigate([this.nextState])
+          }
+          break;
+        case 'export':
+          {
+            this.isLeaving = false
+            this.forceDeactivate = true
+            this.print()
+          }
+          break;
+      } 
+    } else if (situation === "reseting") {
+      switch (action.id) {
+        case 'reseting':
+          {
+            this.isReseting = false
+            this.resetParams()
+          }
+          break;
+        case 'export':
+          {
+            this.isReseting = false
+            this.print()
+          }
+          break;
+      } 
     }
+
   }
 }
