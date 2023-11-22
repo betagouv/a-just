@@ -13,10 +13,11 @@ import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 const RateLimit = require('koa2-ratelimit').RateLimit
+const sslify = require('koa-sslify').default // factory with default options
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -25,7 +26,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -59,6 +60,7 @@ export default class App extends AppBase {
     })
 
     super.addMiddlewares([
+      sslify(),
       limiter,
       // we add the relevant middlewares to our API
       //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
@@ -117,9 +119,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
