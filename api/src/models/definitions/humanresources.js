@@ -68,6 +68,11 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          fields: ['backup_id', 'registration_number'],
+        },
+      ],
     }
   )
 

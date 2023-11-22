@@ -16,12 +16,12 @@
                     {{res.title}}
                 </p>
                 <div *ngFor="let page of res.pages">
-                    <p class="pages" (click)="goTo(page.urls.app)" *ngIf="isValid(res.title)">
+                    <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
                         <mat-icon>insert_drive_file</mat-icon>
                         {{page.title}}
                     </p>
                     <div *ngFor="let section of page.sections">
-                        <p class="sections" (click)="goTo(section.urls.app)" *ngIf="isValid(res.title)">
+                        <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
                             <mat-icon>subdirectory_arrow_right</mat-icon>
                             {{section.body}}
                         </p>
