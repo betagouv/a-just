@@ -1464,6 +1464,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
 
       this.resetParams()
+      this.chooseScreen = true
       if (this.forceDeactivate)
         this.router.navigate([this.nextState])
     })
@@ -1602,6 +1603,15 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     return true
   }
 
+  onReturn() {
+    if (this.toDisplaySimulation) {
+      this.isLeaving = true
+    } else {
+      this.chooseScreen = true
+      this.resetParams()
+    }
+  }
+
   onPopupDetailAction(action: any, situation : string) {
     if (situation === "leaving") {
       switch (action.id) {
@@ -1609,6 +1619,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
           {
             this.isLeaving = false
             this.forceDeactivate = true
+            this.resetParams()
             this.router.navigate([this.nextState])
           }
           break;
