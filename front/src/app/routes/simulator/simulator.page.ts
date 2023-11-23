@@ -186,12 +186,24 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Utilisateur sort du composant
    */
-  isLeaving: boolean = false
+  userAction : {isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab : boolean } = {
+    isLeaving : false,
+    isReseting :  false,
+    isComingBack : false,
+    isClosingTab : false,
+  }
   /**
    * Utilisateur réinitialise la simulation
    */
-  isReseting : boolean = false
-
+  /**
+   * Utilisateur reviens sur la page d'accuel des simulations
+   */
+  /**
+   * Utilisateur tente de fermer la fenêtre
+   */
+  /**
+   * Nom de la prochaine route lors d'un changement de page
+   */
   nextState: string | null = null
 
   forceDeactivate: boolean = false
@@ -212,6 +224,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     reinit: [
       { id: 'reseting', content: 'Continuer sans exporter' },
       { id: 'export', content: 'Exporter en PDF et continuer', fill: true },
+    ],
+    closeTab: [
+      { id: 'cancel', content: 'Annuler' },
+      { id: 'export', content: 'Exporter en PDF', fill: true },
     ]
 };
 
@@ -411,8 +427,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
     if (this.toDisplaySimulation) {
-      this.isLeaving = true;
+      this.userAction.isClosingTab = true
       event.preventDefault()
+      //event.preventDefault()
     }
   }
 
@@ -595,6 +612,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
     }
   }
+
   /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
@@ -1416,8 +1434,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     else if (title) title.classList.add('display-none')
 
 
-
-
     const exportButton = document.getElementById('export-button')
     if (exportButton)
     {
@@ -1462,11 +1478,19 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         editButton!.classList.remove('display-none')
       }
 
-
-      this.resetParams()
-      this.chooseScreen = true
-      if (this.forceDeactivate)
+      this.userAction.isClosingTab = false
+      if (this.userAction.isReseting) {
+        this.userAction.isReseting = false;
+        this.resetParams()      
+      }
+      if (this.userAction.isComingBack) {
+        this.userAction.isComingBack = false
+        this.chooseScreen = true
+        this.resetParams()
+      }
+      else if (this.forceDeactivate && this.nextState) {
         this.router.navigate([this.nextState])
+      }
     })
   }
 
@@ -1596,7 +1620,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   canDeactivate(nextState: string) {
     if (this.toDisplaySimulation) {
-      this.isLeaving = true
+      this.userAction.isLeaving = true
       this.nextState = nextState
       return this.forceDeactivate
     }
@@ -1605,7 +1629,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   onReturn() {
     if (this.toDisplaySimulation) {
-      this.isLeaving = true
+      this.userAction.isLeaving = true
     } else {
       this.chooseScreen = true
       this.resetParams()
@@ -1617,15 +1641,20 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       switch (action.id) {
         case 'leave':
           {
-            this.isLeaving = false
+            this.userAction.isLeaving = false
             this.forceDeactivate = true
             this.resetParams()
-            this.router.navigate([this.nextState])
+            if (this.userAction.isComingBack) {
+              this.userAction.isComingBack = false
+              this.chooseScreen = true
+            } else {
+              this.router.navigate([this.nextState])
+            }
           }
           break;
         case 'export':
           {
-            this.isLeaving = false
+            this.userAction.isLeaving = false
             this.forceDeactivate = true
             this.print()
           }
@@ -1635,17 +1664,29 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       switch (action.id) {
         case 'reseting':
           {
-            this.isReseting = false
+            this.userAction.isReseting = false
             this.resetParams()
           }
           break;
         case 'export':
           {
-            this.isReseting = false
             this.print()
           }
           break;
       } 
+    } else if (situation === "closingTab") {
+      switch (action.id) {
+        case ('cancel'):
+          {
+            this.userAction.isClosingTab = false;
+          }
+          break;
+        case 'export' :
+          {
+            this.print()
+          }
+          break;
+      }
     }
 
   }
