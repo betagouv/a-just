@@ -98,6 +98,7 @@ export class ListSelectionComponent implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['value'] || changes['list'] || changes['values']) {
+
       if (this.multiple === false) {
         const value = this.value
           ? this.list.find((l) => l.id === this.value) || null
@@ -105,6 +106,7 @@ export class ListSelectionComponent implements OnChanges {
 
         this.itemsSelected = value ? [value] : []
       } else {
+
         this.itemsSelected = this.list.reduce(
           (acc: ItemInterface[], cur: ItemInterface) => {
             if (this.values && this.values.indexOf(cur.id) !== -1) {
@@ -115,9 +117,12 @@ export class ListSelectionComponent implements OnChanges {
           []
         )
       }
-
-      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
     }
+
+    if (this.values && this.values.length === this.list.length)
+      this.labelPreview = 'Toutes'
+    else
+      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
 
   /**
@@ -196,6 +201,22 @@ export class ListSelectionComponent implements OnChanges {
     } else {
       this.values = this.list.map(i => i.id)
     }
+
     this.valuesChanged.next(this.values)
+    console.log(this.values)
+
+    this.itemsSelected = this.list.reduce(
+      (acc: ItemInterface[], cur: ItemInterface) => {
+        if (this.values && this.values.indexOf(cur.id) !== -1) {
+          acc.push(cur)
+        }
+        return acc
+      },
+      []
+    )
+    if (this.values.length === this.list.length)
+      this.labelPreview = 'Toutes'
+    else
+      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
 }
