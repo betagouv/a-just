@@ -16,6 +16,7 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { SelectModule } from 'src/app/components/select/select.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { InputButtonModule } from 'src/app/components/input-button/input-button.module'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 
 @NgModule({
   declarations: [WorkforcePage, FilterPanelComponent, PersonPreviewComponent],
@@ -34,7 +35,8 @@ import { InputButtonModule } from 'src/app/components/input-button/input-button.
     WrapperModule,
     SelectModule,
     DateSelectModule,
-    InputButtonModule
+    InputButtonModule,
+    MatCheckboxModule
   ],
 })
-export class WorkforceModule {}
+export class WorkforceModule { }

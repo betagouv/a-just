@@ -34,17 +34,16 @@
     </ng-template>
     <ng-template [ngIf]="multiple">
         <div [ngClass]="{selected: values.length === list.length}" (click)="$event.stopPropagation(); onSelectAll()">
-            <i *ngIf="values.length === list.length" class="ri-checkbox-line"></i>
-            <i *ngIf="values.length !== list.length" class="ri-checkbox-blank-line"></i>
+            <mat-checkbox [checked]="values.length === list.length">
+            </mat-checkbox>
             <div>
-                <p>Tous</p>
+                <p>Toutes</p>
             </div>
         </div>
         <div *ngFor="let item of list" [ngClass]="{selected: values.indexOf(item.id) !== -1}"
             (click)="$event.stopPropagation(); onSelectMultiple(item.id)">
-
-            <i *ngIf="values.indexOf(item.id) !== -1" class="ri-checkbox-line"></i>
-            <i *ngIf="values.indexOf(item.id) === -1" class="ri-checkbox-blank-line"></i>
+            <mat-checkbox [checked]="values.indexOf(item.id) !== -1">
+            </mat-checkbox>
 
             <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>
         </div>

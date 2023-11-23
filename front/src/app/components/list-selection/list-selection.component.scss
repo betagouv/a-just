@@ -1,6 +1,20 @@
 @import '../../styles/utils.scss';
 
+::ng-deep .mdc-checkbox__ripple {
+  display: none;
+}
+
 :host {
+  .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple {
+    display: none !important;
+  }
+
+  .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
+    display: none !important;
+  }
+
+
+
   &.button-filter {
 
     position: relative;
@@ -61,6 +75,23 @@
 
   &.bg-white {
     background-color: white;
+
+
+
+
+    .select-area {
+      >div {
+        &.selected {
+          background-color: white !important;
+          color: gray;
+
+          p {
+            font-size: 16px !important;
+            color: black !important;
+          }
+        }
+      }
+    }
   }
 
   &.large-drop {
@@ -169,7 +200,7 @@
   >div {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 48px;
     padding: 0 16px;
     color: fColor(cblack);
     cursor: pointer;
