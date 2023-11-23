@@ -184,23 +184,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   onPrint: boolean = false
   /**
-   * Utilisateur sort du composant
+   * Actions de l'utilisateur
    */
   userAction : {isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab : boolean } = {
-    isLeaving : false,
-    isReseting :  false,
-    isComingBack : false,
-    isClosingTab : false,
+    isLeaving : false, // L'utilisateur change d'onglet
+    isReseting :  false, // L'utilisateur réinitialise la simulation
+    isComingBack : false, // L'utilisateur revient en arrière depuis le bouton retour
+    isClosingTab : false, // L'utilisateur ferme la fenêtre
   }
-  /**
-   * Utilisateur réinitialise la simulation
-   */
-  /**
-   * Utilisateur reviens sur la page d'accuel des simulations
-   */
-  /**
-   * Utilisateur tente de fermer la fenêtre
-   */
   /**
    * Nom de la prochaine route lors d'un changement de page
    */
