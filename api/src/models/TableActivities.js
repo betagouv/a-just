@@ -196,33 +196,65 @@ export default (sequelizeInstance, Model) => {
    * Control et supprimé les activités qui sont en double pour un même mois et un même contentieux
    * @param {*} HRBackupId
    */
-  Model.removeDuplicateDatas = async (HRBackupId) => {
+  Model.removeDuplicateDatas = async (HRBackupId, force = false) => {
+    if (force) {
+      // remove activities with deleted at is not null
+      const activitiesToDeleted = await Model.findAll({
+        where: {
+          deleted_at: {
+            [Op.ne]: null,
+          },
+        },
+        paranoid: false,
+      })
+      console.log('FORCE TO DELETE', activitiesToDeleted.length)
+      for (let i = 0; i < activitiesToDeleted.length; i++) {
+        await activitiesToDeleted[i].destroy({
+          truncate: true,
+          force: true,
+        })
+      }
+    }
+
+    // then
     const activities = await Model.findAll({
       attributes: ['periode', 'contentieux_id', 'hr_backup_id'],
-      where: {
-        hr_backup_id: HRBackupId,
-      },
+      where: HRBackupId
+        ? {
+          hr_backup_id: HRBackupId,
+        }
+        : {},
       group: ['periode', 'contentieux_id', 'hr_backup_id'],
       raw: true,
     })
 
     for (let i = 0; i < activities.length; i++) {
       const periode = new Date(activities[i].periode)
+      console.log('try =>', i + '/' + activities.length)
 
       const duplicateActivities = await Model.findAll({
         where: {
           periode: {
             [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
           },
-          hr_backup_id: HRBackupId,
+          hr_backup_id: activities[i].hr_backup_id,
           contentieux_id: activities[i].contentieux_id,
         },
+        logging: false,
         order: ['updated_at', 'id'],
       })
 
       if (duplicateActivities.length >= 2) {
+        console.log('DUPPLICATE', duplicateActivities[0].dataValues)
         for (let z = 1; z < duplicateActivities.length; z++) {
-          await duplicateActivities[z].destroy()
+          await duplicateActivities[z].destroy(
+            force
+              ? {
+                truncate: true,
+                force: true,
+              }
+              : {}
+          )
         }
       }
     }
