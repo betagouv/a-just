@@ -5,12 +5,12 @@ import config from 'config'
  */
 export default async (ctx, next) => {
   console.log('ctx.request.origin', ctx.request.origin, ctx.request, ctx.request.header['x-forwarded-proto'])
-  if (config.forceSSL && (ctx.request.origin || '').startsWith('http://')) {
-    /*ctx.res
+  if (config.forceSSL && ctx.request.header['x-forwarded-proto'] !== 'https') {
+    ctx.res
       .writeHead(301, {
         Location: (ctx.request.origin || '').replace('http://', 'https://') + (ctx.request.url || ''),
       })
-      .end()*/
+      .end()
   }
 
   await next()
