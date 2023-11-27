@@ -1,6 +1,6 @@
 <div class="background animate__animated animate__fadeIn"></div>
 
-<div class="popin animate__animated animate__fadeIn" #popin *ngIf="leftPosition !== 0" (click)="
+<div id="popin" class="popin animate__animated animate__fadeIn" #popin (click)="
     $event.stopPropagation();
     filterSelection.close();
     sortSelection.close();
