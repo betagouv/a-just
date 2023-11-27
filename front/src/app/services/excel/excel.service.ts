@@ -110,6 +110,8 @@ export class ExcelService extends MainClass {
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
         const viewModel = {
+          daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
+            .toLocaleDateString()}`,
           agregat: this.tabs.onglet2.excelRef,
           referentiel: data.data.referentiels.map((x: any) => {
             return {
@@ -153,9 +155,9 @@ export class ExcelService extends MainClass {
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
 
             report.worksheets[1].columns[8].width = 0
-            report.worksheets[0].columns[0].width = 12
-            report.worksheets[1].columns[0].width = 12
-            report.worksheets[2].columns[0].width = 12
+            report.worksheets[0].columns[0].width = 16
+            report.worksheets[1].columns[0].width = 16
+            report.worksheets[2].columns[0].width = 20
 
             report.worksheets[2].getCell('A' + +3).dataValidation = {
               type: 'list',
