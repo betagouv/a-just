@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HRBackups'
+const tableName = 'TJDetails'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -13,9 +13,17 @@ export default (sequelizeInstance) => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      juridiction_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      value: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -29,24 +37,17 @@ export default (sequelizeInstance) => {
       },
       deleted_at: {
         type: Sequelize.DATE,
-      },
+      }
     },
     {
       timestamps: true,
       paranoid: true,
       underscored: true,
       tableName,
-      indexes: [
-        {
-          fields: ['label'],
-        },
-      ],
     }
   )
 
   Model.associate = function (models) {
-    Model.hasOne(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'id' })
-
     return models
   }
 

@@ -22,14 +22,14 @@ module.exports = {
       const findCContEAMFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT C JP',
-          category_id: findEAMCat.dataValues.id
+          category_id: findEAMCat.dataValues.id,
         },
       })
 
       const findCContGreffeFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT C JP',
-          category_id: findGreffeCat.dataValues.id
+          category_id: findGreffeCat.dataValues.id,
         },
       })
 
@@ -49,21 +49,20 @@ module.exports = {
         }
       }
 
-
       /**
-     * CONT B
-     */
+       * CONT B
+       */
       const findBContEAMFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT B JP',
-          category_id: findEAMCat.dataValues.id
+          category_id: findEAMCat.dataValues.id,
         },
       })
 
       const findBContGreffeFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT B JP',
-          category_id: findGreffeCat.dataValues.id
+          category_id: findGreffeCat.dataValues.id,
         },
       })
 
@@ -84,19 +83,19 @@ module.exports = {
       }
 
       /**
-      * CONT A
-      */
+       * CONT A
+       */
       const findAContEAMFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT A JP',
-          category_id: findEAMCat.dataValues.id
+          category_id: findEAMCat.dataValues.id,
         },
       })
 
       const findAContGreffeFct = await models.HRFonctions.findOne({
         where: {
           code: 'CONT A JP',
-          category_id: findGreffeCat.dataValues.id
+          category_id: findGreffeCat.dataValues.id,
         },
       })
 
@@ -115,8 +114,7 @@ module.exports = {
             })
         }
       }
-
     }
   },
-  down: (/*queryInterface , Sequelize*/) => { },
+  down: (/*queryInterface , Sequelize*/) => {},
 }

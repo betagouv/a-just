@@ -1,13 +1,8 @@
 <div class="input-container">
     <form [formGroup]="valueForm">
-        <input
-            formControlName="percentage"
-            class="main-input"
-            type="number"
-            #percentageInput
-        /><span class="percent">{{ percentageInput.value ? '%' : '' }}</span
-        ><span class="compute"
-            >{{ returnPercentage(percentageInput.value) }}
+        <input formControlName="percentage" class="main-input" type="number" #percentageInput /><span class="percent">{{
+            percentageInput.value ? '%' : '' }}</span><span class="compute">{{
+            returnPercentage(percentageInput.value,true) }}
         </span>
     </form>
 </div>

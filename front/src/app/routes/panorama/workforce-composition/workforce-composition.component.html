@@ -13,7 +13,8 @@
     </div>
     <div class="middle">
       Personnels CLE
-      <input type="text" placeholder="-" [value]="getCLE(category)" (keyup)="saveCLE($event.srcElement, category)" />
+      <input id="cle-{{category.categoryId}}" type="text" placeholder="-" [value]="getCLE(category)"
+        (keyup)="saveCLE($event.srcElement, category)" />
     </div>
     <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class="separation">
     </span>

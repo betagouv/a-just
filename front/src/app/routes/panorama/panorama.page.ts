@@ -32,8 +32,7 @@ import { sumBy } from 'lodash'
 })
 export class PanoramaPage
   extends MainClass
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Dom du contenu scrollable
    */
@@ -347,9 +346,9 @@ export class PanoramaPage
    * Récuperer le type de l'app
    */
   getInterfaceType() {
-    return this.userService.interfaceType === 0
-      ? 'tribunal judiciaire'
-      : "cours d'appel"
+    return this.userService.interfaceType === 1
+      ? 'cours d\'appel'
+      : 'tribunal judiciaire'
   }
   /**
    * Destruction du composant

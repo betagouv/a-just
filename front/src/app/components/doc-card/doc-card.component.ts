@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ServerService } from 'src/app/services/http-server/server.service';
 
 
 export interface DocCardInterface {
@@ -30,9 +31,18 @@ export class DocCardComponent {
   /**
    * Constructeur
    */
-  constructor() { }
+  constructor(private serverService: ServerService) { }
 
-  goTo(url: string) {
-    window.location.href = url;
+  async goTo(url: string) {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: url,
+        })
+      .then((r) => {
+        return r.data
+      })
+
+    window.open(url)
   }
 }

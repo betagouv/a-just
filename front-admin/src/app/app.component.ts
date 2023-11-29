@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppService } from './services/app/app.service';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  isLoading: boolean = false;
 
-  constructor() {}
+  constructor(private appService: AppService) {
+    this.appService.isLoading.subscribe((s) => (this.isLoading = s));
+  }
 }

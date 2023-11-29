@@ -30,6 +30,7 @@ import {
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
 /**
  * Variable ETP magistrat field name
@@ -184,10 +185,17 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   onPrint: boolean = false
   /**
-   * Utilisateur sort du composant
+   * Actions de l'utilisateur
    */
-  isLeaving: boolean = false
-
+  userAction: { isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab: boolean } = {
+    isLeaving: false, // L'utilisateur change d'onglet
+    isReseting: false, // L'utilisateur réinitialise la simulation
+    isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
+    isClosingTab: false, // L'utilisateur ferme la fenêtre
+  }
+  /**
+   * Nom de la prochaine route lors d'un changement de page
+   */
   nextState: string | null = null
 
   forceDeactivate: boolean = false
@@ -200,10 +208,20 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
-  popupAction = [
-    { id: 'leave', content: 'Quitter sans exporter' },
-    { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
-  ];
+  popupAction = {
+    leaving: [
+      { id: 'leave', content: 'Quitter sans exporter' },
+      { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
+    ],
+    reinit: [
+      { id: 'reseting', content: 'Continuer sans exporter' },
+      { id: 'export', content: 'Exporter en PDF et continuer', fill: true },
+    ],
+    closeTab: [
+      { id: 'cancel', content: 'Annuler' },
+      { id: 'export', content: 'Exporter en PDF', fill: true },
+    ]
+  };
 
 
   /**
@@ -316,10 +334,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
-    private route : ActivatedRoute
+    private route: ActivatedRoute,
+    private serverService: ServerService
   ) {
     super()
-  
+
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
@@ -401,8 +420,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
     if (this.toDisplaySimulation) {
-      this.isLeaving = true;
+      this.userAction.isClosingTab = true
       event.preventDefault()
+      //event.preventDefault()
     }
   }
 
@@ -412,9 +432,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   ngOnInit(): void {
     this.resetParams()
     this.dateStop = null
-
     this.route.data.subscribe((data) => console.log("route:", data))
-  
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -587,6 +605,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
     }
   }
+
   /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
@@ -761,6 +780,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
+      if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && this.valueToAjust.percentage === null) {
+        alert('La valeur choisie ne peut pas être égale à 0')
+        return
+      }
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -792,6 +815,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       //else (no value filled in popup)
     } else {
+      if (['totalIn', 'totalOut', 'magRealTimePerCase'].includes(inputField.id) && volumeInput === '0') {
+        alert('La valeur choisie ne peut pas être égale à 0')
+        return
+      }
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = ''
@@ -1397,18 +1424,12 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     const editButton = document.getElementById('editable-sim-name')
     if (editButton && editButton.innerHTML === "")
       editButton.style.display = 'none'
-    //editButton.classList.add('display-none')
     else if (title) title.classList.add('display-none')
 
 
-
-
     const exportButton = document.getElementById('export-button')
-    if (exportButton)
-    //exportButton.style.display = 'none'
-    {
+    if (exportButton) {
       exportButton.classList.add('display-none')
-      console.log('Ex 1', exportButton)
     }
 
     const ajWrapper = document.getElementById('simu-wrapper')
@@ -1422,18 +1443,15 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     const commentArea = document.getElementById('comment-area')!
     if (commentArea)
       commentArea.classList.add('display-none')
-    //commentArea.style.display = 'none'
 
     this.onPrint = true
 
     this.wrapper?.exportAsPdf(filename, true, false, null, false/*true*/).then(() => {
-      //title.style.display = 'none'
       title?.classList.add('display-none')
 
       this.onPrint = false
       ajWrapper?.classList.remove('full-screen')
 
-      console.log('Ex 2', exportButton)
       if (exportButton)
         exportButton.classList.remove('display-none')
       if (initButton)
@@ -1452,9 +1470,19 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         editButton!.classList.remove('display-none')
       }
 
-
-      if (this.forceDeactivate)
+      this.userAction.isClosingTab = false
+      if (this.userAction.isReseting) {
+        this.userAction.isReseting = false;
+        this.resetParams()
+      }
+      if (this.userAction.isComingBack) {
+        this.userAction.isComingBack = false
+        this.chooseScreen = true
+        this.resetParams()
+      }
+      else if (this.forceDeactivate && this.nextState) {
         this.router.navigate([this.nextState])
+      }
     })
   }
 
@@ -1583,36 +1611,97 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   canDeactivate(nextState: string) {
-    /*const modified = this.listFormated.filter(elem => {
-      return elem.hrFiltered.some(hr => hr.isModify)
-    })
-    if (modified.length === 0)
-      return true*/
     if (this.toDisplaySimulation) {
-      this.isLeaving = true
+      this.userAction.isLeaving = true
       this.nextState = nextState
       return this.forceDeactivate
     }
     return true
   }
 
-  onPopupDetailAction(action: any) {
-    switch (action.id) {
-      case 'leave':
-        {
-          this.isLeaving = false
-          this.forceDeactivate = true
-          this.router.navigate([this.nextState])
-        }
-        break;
-      case 'export':
-        {
-          this.isLeaving = false
-          this.forceDeactivate = true
-          //this.onExport()
-          this.print()
-        }
-        break;
+  onReturn() {
+    if (this.toDisplaySimulation) {
+      this.userAction.isLeaving = true
+    } else {
+      this.chooseScreen = true
+      this.resetParams()
     }
+  }
+
+  onPopupDetailAction(action: any, situation: string) {
+    if (situation === "leaving") {
+      switch (action.id) {
+        case 'leave':
+          {
+            this.userAction.isLeaving = false
+            this.forceDeactivate = true
+            this.resetParams()
+            if (this.userAction.isComingBack) {
+              this.userAction.isComingBack = false
+              this.chooseScreen = true
+            } else {
+              this.router.navigate([this.nextState])
+            }
+          }
+          break;
+        case 'export':
+          {
+            this.userAction.isLeaving = false
+            this.forceDeactivate = true
+            this.print()
+          }
+          break;
+      }
+    } else if (situation === "reseting") {
+      switch (action.id) {
+        case 'reseting':
+          {
+            this.userAction.isReseting = false
+            this.resetParams()
+          }
+          break;
+        case 'export':
+          {
+            this.print()
+          }
+          break;
+      }
+    } else if (situation === "closingTab") {
+      switch (action.id) {
+        case ('cancel'):
+          {
+            this.userAction.isClosingTab = false;
+          }
+          break;
+        case 'export':
+          {
+            this.print()
+          }
+          break;
+      }
+    }
+
+  }
+
+  /**
+   * Log du lancement d'une simulation
+   */
+  async logWhiteSimulator() {
+    await this.serverService
+      .post('simulator/log-white-simulation')
+      .then((r) => {
+        return r.data
+      })
+  }
+
+  /**
+   * Log du lancement d'une simulation à blanc
+   */
+  async logSimulator() {
+    await this.serverService
+      .post('simulator/log-simulation')
+      .then((r) => {
+        return r.data
+      })
   }
 }

@@ -230,7 +230,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           nodeUpdated
         )
         .then(() => this.onLoadMonthActivities())
-    }, 750)
+    }, 1500)
   }
 
   /**

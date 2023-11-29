@@ -103,9 +103,6 @@ export class CalculatriceService {
     const nbHoursPerDay = ('nbHoursPerDayAnd' + cat) 
     const byDayAndCat = ('nbDaysBy' + cat)
 
-    console.log(nbHoursPerDay,byDayAndCat, option,value,unit,cat, categoryId)
-
-
     if (cat === 'Fonctionnaire' && this.dataCalculatrice.value.selectedTab === 'vacation'){
     return (
       (value / basicEtptData[nbHoursPerDay]) *
