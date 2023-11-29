@@ -170,7 +170,6 @@ export class WorkforceCompositionComponent
   }
 
   async getAllCle() {
-    if()
     this.cleByCategory = await this.serverService
       .post('juridictions-details/get-cle',
         {
