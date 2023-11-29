@@ -18,6 +18,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { HumanResourceSelectedInterface } from '../workforce.page'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 
+
 /**
  * Interface d'un filtre
  */
@@ -288,7 +289,7 @@ export class FilterPanelComponent
    */
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
-    const listUsedFunctions = orderBy(
+    let listUsedFunctions = orderBy(
       [...fonctions],
       ['categoryId', 'rank']
     ).filter((f) => this.categories.includes(f.categoryId))
@@ -296,6 +297,13 @@ export class FilterPanelComponent
       .filter((f) => !this.categories.includes(f.categoryId))
       .map((v) => +v.id)
 
+    listUsedFunctions = listUsedFunctions.map(fct => {
+      if (["CONT A JP", "CONT B JP", "CONT C JP"].includes(fct.code || '')) {
+        if (fct.categoryId === 2) return { ...fct, code: fct.code + ' (GR)' }
+        if (fct.categoryId === 3) return { ...fct, code: fct.code + ' (EAM)' }
+      }
+      return fct
+    })
     this.filterList = listUsedFunctions.map((f) => ({
       id: f.id,
       label: f.code || '',
@@ -309,6 +317,7 @@ export class FilterPanelComponent
     if (this.button === true && this.filterValues.length === 0) {
       this.filterValues = listUsedFunctions.map((f) => f.id)
     }
+
   }
 
   /**
