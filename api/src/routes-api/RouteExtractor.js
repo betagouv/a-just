@@ -14,6 +14,7 @@ import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { month } from '../utils/date'
 import { ABSENTEISME_LABELS } from '../constants/referentiel'
+import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 
 /**
  * Route de la page extrateur
@@ -49,6 +50,8 @@ export default class RouteExtractor extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
     const juridictionName = await this.models.HRBackups.findById(backupId)
 
@@ -142,7 +145,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async juridictionAjustedDataList (ctx) {
+  async juridictionAjustedDataList(ctx) {
     let { dateStart /*, dateStop */ } = this.body(ctx)
     let result = []
 
@@ -270,6 +273,8 @@ export default class RouteExtractor extends Route {
         ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
       }
     }
+
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
 
     const list = await this.models.Activities.getByMonth(dateStart, backupId)
 

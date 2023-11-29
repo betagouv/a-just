@@ -953,8 +953,8 @@
   </div>
 
   <aj-popup *ngIf="userAction.isLeaving" class="small" [closeIcon]="true" (onClose)="userAction.isLeaving = false"
-    title="Conserver cette simulation ?" [actions]="popupAction.leaving" (selectedAction)="onPopupDetailAction($event, 'leaving')"
-    [removeShadow]="'noShadow'">
+    title="Conserver cette simulation ?" [actions]="popupAction.leaving"
+    (selectedAction)="onPopupDetailAction($event, 'leaving')" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
@@ -964,8 +964,8 @@
   </aj-popup>
 
   <aj-popup *ngIf="userAction.isReseting" class="small" [closeIcon]="true" (onClose)="userAction.isReseting = false"
-    title="Conserver cette simulation ?" [actions]="popupAction.reinit" (selectedAction)="onPopupDetailAction($event, 'reseting')"
-    [removeShadow]="'noShadow'">
+    title="Conserver cette simulation ?" [actions]="popupAction.reinit"
+    (selectedAction)="onPopupDetailAction($event, 'reseting')" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
@@ -975,8 +975,8 @@
   </aj-popup>
 
   <aj-popup *ngIf="userAction.isClosingTab" class="small" [closeIcon]="true" (onClose)="userAction.isClosingTab = false"
-    title="Conserver cette simulation ?" [actions]="popupAction.closeTab" (selectedAction)="onPopupDetailAction($event, 'closingTab')"
-    [removeShadow]="'noShadow'">
+    title="Conserver cette simulation ?" [actions]="popupAction.closeTab"
+    (selectedAction)="onPopupDetailAction($event, 'closingTab')" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
@@ -995,11 +995,13 @@
     <p class="title">{{printTitle}}</p>
   </div>
 
-  <div id="main-back-menu" class="back-button-menu" (click)="onReturn(); userAction.isComingBack = true" *ngIf="!chooseScreen">
+  <div id="main-back-menu" class="back-button-menu" (click)="onReturn(); userAction.isComingBack = true"
+    *ngIf="!chooseScreen">
     <p class="title">Retour</p>
   </div>
 
-  <div id="main-init" class="reset-button {{disabled}}" (click)="toDisplaySimulation ? userAction.isReseting = true : resetParams()" *ngIf="!chooseScreen">
+  <div id="main-init" class="reset-button {{disabled}}"
+    (click)="toDisplaySimulation ? userAction.isReseting = true : resetParams()" *ngIf="!chooseScreen">
     <p class="title">Tout réinitialiser</p>
   </div>
 </ng-template>
