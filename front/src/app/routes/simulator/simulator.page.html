@@ -1,7 +1,5 @@
-<!--<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">-->
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation">
+  [documentation]="documentation" (pageSelected)="reloadPage()">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -242,7 +240,7 @@
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="options">
       <div id="init-button" class="init-button"
-        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="toDisplaySimulation ? onClickResetParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]) : initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser</p>
       </div>
       <div class="simulate-button {{simulateButton}}"
@@ -646,7 +644,7 @@
     </div>
     <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
       <div class="init-button"
-        (click)="initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="toDisplaySimulation ? onClickResetParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]) : initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser les ajustements</p>
       </div>
       <div class="simulate-button {{simulateButton}}">
@@ -952,7 +950,7 @@
     </div>
   </div>
 
-  <aj-popup *ngIf="userAction.isLeaving" class="small" [closeIcon]="true" (onClose)="userAction.isLeaving = false"
+  <aj-popup *ngIf="userAction.isLeaving || userAction.isComingBack" class="small" [closeIcon]="true" (onClose)="onResetUserAction()"
     title="Conserver cette simulation ?" [actions]="popupAction.leaving" (selectedAction)="onPopupDetailAction($event, 'leaving')"
     [removeShadow]="'noShadow'">
     <div>
@@ -963,7 +961,7 @@
     </div>
   </aj-popup>
 
-  <aj-popup *ngIf="userAction.isReseting" class="small" [closeIcon]="true" (onClose)="userAction.isReseting = false"
+  <aj-popup *ngIf="userAction.isReseting || userAction.isResetingParams " class="small" [closeIcon]="true" (onClose)="onResetUserAction()"
     title="Conserver cette simulation ?" [actions]="popupAction.reinit" (selectedAction)="onPopupDetailAction($event, 'reseting')"
     [removeShadow]="'noShadow'">
     <div>
@@ -974,7 +972,7 @@
     </div>
   </aj-popup>
 
-  <aj-popup *ngIf="userAction.isClosingTab" class="small" [closeIcon]="true" (onClose)="userAction.isClosingTab = false"
+  <aj-popup *ngIf="userAction.isClosingTab" class="small" [closeIcon]="true" (onClose)="onResetUserAction()"
     title="Conserver cette simulation ?" [actions]="popupAction.closeTab" (selectedAction)="onPopupDetailAction($event, 'closingTab')"
     [removeShadow]="'noShadow'">
     <div>
@@ -995,7 +993,7 @@
     <p class="title">{{printTitle}}</p>
   </div>
 
-  <div id="main-back-menu" class="back-button-menu" (click)="onReturn(); userAction.isComingBack = true" *ngIf="!chooseScreen">
+  <div id="main-back-menu" class="back-button-menu" (click)="onReturn()" *ngIf="!chooseScreen">
     <p class="title">Retour</p>
   </div>
 

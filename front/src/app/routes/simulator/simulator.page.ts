@@ -186,9 +186,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Actions de l'utilisateur
    */
-  userAction : {isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab : boolean } = {
+  userAction : {isLeaving: boolean, isReseting: boolean, isResetingParams: boolean, isComingBack: boolean, isClosingTab : boolean } = {
     isLeaving : false, // L'utilisateur change d'onglet
     isReseting :  false, // L'utilisateur réinitialise la simulation
+    isResetingParams :  false, // L'utilisateur réinitialise les paramètres ajusté 
     isComingBack : false, // L'utilisateur revient en arrière depuis le bouton retour
     isClosingTab : false, // L'utilisateur ferme la fenêtre
   }
@@ -198,6 +199,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   nextState: string | null = null
 
   forceDeactivate: boolean = false
+
+  valuesToReinit : any = null
 
   /**
    * Documentation widget
@@ -420,7 +423,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     if (this.toDisplaySimulation) {
       this.userAction.isClosingTab = true
       event.preventDefault()
-      //event.preventDefault()
     }
   }
 
@@ -496,6 +498,16 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.simulatorService.getSituation([this.contentieuId])
 
     this.loadFunctions()
+  }
+
+  reloadPage() {
+    if (this.toDisplaySimulation) {
+      this.userAction.isLeaving = true
+    }
+    else {
+      this.chooseScreen=true;
+      this.resetParams()
+    }
   }
 
   /**
@@ -655,18 +667,18 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    document.getElementById('init-button')?.click()
-    this.disabled = 'disabled'
+
     this.toDisplaySimulation = false
+    document.getElementById('init-button')?.click()
+    
+    this.disabled = 'disabled'
     this.toDisplay = []
     this.toCalculate = []
     this.simulateButton = 'disabled'
     this.displayWhiteElements = false
 
-
     const initButton = document.getElementById('editable-sim-name')!
     if (initButton && !changeCategory) initButton.innerHTML = ''
-
   }
 
   /**
@@ -1052,12 +1064,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   initParams(buttons: any) {
     //this.disabled = 'disabled-date'
-    this.initParamsToAjust()
 
+    this.initParamsToAjust()
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
+    if (this.valuesToReinit)
+      this.valuesToReinit = null
     //this.simulatorService.isValidatedWhiteSimu.next(false)
 
   }
@@ -1090,6 +1104,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       param2: { label: '', value: '' },
     }
   }
+
   /**
    * Retourne le titre complet d'un champs à éditer
    * @param label label correspondant à un input field (ex: etpMag)
@@ -1469,17 +1484,20 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         editButton!.classList.remove('display-none')
       }
 
-      this.userAction.isClosingTab = false
-      if (this.userAction.isReseting) {
-        this.userAction.isReseting = false;
-        this.resetParams()      
+      if (this.userAction.isReseting || this.userAction.isResetingParams || this.userAction.isComingBack) {
+        if (this.userAction.isReseting || this.userAction.isComingBack) {
+          this.resetParams()
+          this.initParamsToAjust()
+        }
+        if (this.userAction.isResetingParams) {
+          this.initParams(this.valuesToReinit)
+        }
+        if (this.userAction.isComingBack) {
+          this.chooseScreen = true
+        }
       }
-      if (this.userAction.isComingBack) {
-        this.userAction.isComingBack = false
-        this.chooseScreen = true
-        this.resetParams()
-      }
-      else if (this.forceDeactivate && this.nextState) {
+      this.onResetUserAction()
+      if (this.forceDeactivate && this.nextState) {
         this.router.navigate([this.nextState])
       }
     })
@@ -1620,32 +1638,45 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   onReturn() {
     if (this.toDisplaySimulation) {
-      this.userAction.isLeaving = true
+      this.userAction.isComingBack = true
     } else {
       this.chooseScreen = true
       this.resetParams()
     }
   }
 
+  onClickResetParams(buttons: any) {
+    this.userAction.isResetingParams = true
+    this.valuesToReinit = buttons
+  }
+
+  onResetUserAction () {
+    this.userAction.isLeaving = false
+    this.userAction.isReseting =  false
+    this.userAction.isResetingParams =  false
+    this.userAction.isComingBack = false
+    this.userAction.isClosingTab = false
+  }
+
   onPopupDetailAction(action: any, situation : string) {
     if (situation === "leaving") {
+
       switch (action.id) {
         case 'leave':
           {
-            this.userAction.isLeaving = false
             this.forceDeactivate = true
-            this.resetParams()
             if (this.userAction.isComingBack) {
-              this.userAction.isComingBack = false
+              this.resetParams()
+              this.onResetUserAction()
               this.chooseScreen = true
             } else {
+              this.resetParams()
               this.router.navigate([this.nextState])
             }
           }
           break;
         case 'export':
           {
-            this.userAction.isLeaving = false
             this.forceDeactivate = true
             this.print()
           }
@@ -1655,8 +1686,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       switch (action.id) {
         case 'reseting':
           {
-            this.userAction.isReseting = false
-            this.resetParams()
+            if (this.userAction.isReseting) {
+              this.resetParams()
+              this.initParamsToAjust()
+              this.onResetUserAction()
+            } else if (this.userAction.isResetingParams) {
+              this.initParams(this.valuesToReinit)
+              this.onResetUserAction()
+            }
           }
           break;
         case 'export':
@@ -1669,6 +1706,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       switch (action.id) {
         case ('cancel'):
           {
+            this.onResetUserAction()
             this.userAction.isClosingTab = false;
           }
           break;
