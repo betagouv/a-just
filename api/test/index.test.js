@@ -4,8 +4,8 @@ import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
 import routeSimulator from './api/RouteSimulator.test'
-
-//import routeVentilateur from './api/RouteVentilateur.test'
+import routeVentilateur from './api/RouteVentilateur.test'
+//import routePanorama from './api/RoutePanorama.test'
 
 import axios from 'axios'
 import { assert } from 'chai'
@@ -30,9 +30,10 @@ const datas = {
 }
 
 describe('Test server is ready', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     //sinon.stub(console, 'error').returns(undefined)
-  })
+  })*/
+
   before((done) => {
     console.log('BEFORE WAITING SERVER')
     server.isReady = function () {
@@ -85,16 +86,16 @@ describe('Test server is ready', () => {
     })
     response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access
-
     assert.strictEqual(response.status, 200)
     assert.isNotEmpty(datas.adminAccess)
   })
 
-  //routeUser(datas)
-  //routeChangeUserData(datas)
+  routeUser(datas)
+  routeChangeUserData(datas)
   //routeCalcultator(datas)
   //routeSimulator(datas)
-  //routeVentilateur(datas)
+  routeVentilateur(datas)
+  //routePanorama(datas)
 
   /*routeImport()
   routeHR()

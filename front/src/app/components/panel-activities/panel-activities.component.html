@@ -46,13 +46,18 @@
     <ng-template ngFor let-ref [ngForOf]="referentiel[refIndexSelected].childrens || []">
       <div *ngIf="ref.label === 'Fonctionnaires affectés au CPH'" class="sub-item"></div>
       <!-- Add element to put the next to an other line -->
-      <div class="sub-item">
+      <div class="sub-item" (mouseover)="setMouseHovering(referentielMappingName(ref.label))" (mouseout)="setMouseHovering()">
         <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(referentiel[refIndexSelected].label)"
           [selected]="selected" (percentChange)="
           onChangePercent(ref, $event, referentiel[refIndexSelected])
         " class="dark-mode">
         </progression-bar>
         <p>{{ referentielMappingName(ref.label) }}</p>
+        <div class='tooltip' *ngIf="this.mouseHovering === true && this.hoveredReferentielLabel === referentielMappingName(ref.label)" >
+          <span><i class="arrow-top"></i></span>
+          <div class="title">{{ referentielMappingName(ref.label) }}</div>
+          <div class="texte">{{ this.hoveredReferentielDetail }}</div>
+        </div>
       </div>
     </ng-template>
   </div>
@@ -84,7 +89,7 @@
           <p>Dont</p>
         </div>
         <div class="group-sub-item">
-          <ng-template ngFor let-ref [ngForOf]="mainReferentiel.childrens || []">
+          <ng-template ngFor let-ref [ngForOf]="mainReferentiel.childrens || []">
             <div *ngIf="ref.label === 'Fonctionnaires affectés au CPH'" class="sub-item"></div>
             <!-- Add element to put the next to an other line -->
             <div class="sub-item" *ngIf="ref.percent">

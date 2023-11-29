@@ -60,6 +60,11 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          fields: ['code', 'category_id'],
+        },
+      ],
     }
   )
 

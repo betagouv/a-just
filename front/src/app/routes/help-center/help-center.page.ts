@@ -3,6 +3,7 @@ import { Component } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL } from 'src/app/constants/documentation';
+import { ServerService } from 'src/app/services/http-server/server.service';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -98,17 +99,18 @@ export class HelpCenterPage {
    * Constructeur
    * @param title
    */
-  constructor() {
+  constructor(private serverService: ServerService) {
     this.gitToken = environment.gitbookToken
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
     });
-
+    this.sendLog()
   }
 
 
   async onSearchBy() {
     const { data } = await this.gitbook.search.searchContent({ query: this.searchValue })
+    console.log(data)
     this.data = data.items
   }
 
@@ -123,9 +125,37 @@ export class HelpCenterPage {
     }
   }
 
-  goTo(url: string) {
-    window.location.href = url;
+  async goTo(researchRes: any, title: string) {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: researchRes.urls.app,
+        })
+      .then((r) => {
+        return r.data
+      })
+    await this.serverService
+      .post('centre-d-aide/log-documentation-recherche',
+        {
+          value: this.searchValue,
+        })
+      .then((r) => {
+        return r.data
+      })
+
+    switch (title) {
+      case 'Guide d\'utilisateur A-JUST':
+        window.open("https://docs.a-just.beta.gouv.fr/documentation-deploiement/" + researchRes.path)
+        break
+      case 'Le data-book':
+        window.open("https://docs.a-just.beta.gouv.fr/le-data-book/" + researchRes.path)
+        break
+      default:
+        break
+    }
+
   }
+
 
   isValid(space: string) {
     switch (space) {
@@ -141,5 +171,13 @@ export class HelpCenterPage {
   delay() {
     setTimeout(() => { this.focusOn = false }, 200)
   }
-  //AJOUTER CARTE INDIVIDUEL COMPOSANT ET DEMANDER EXPORT MICKAEL
+
+  async sendLog() {
+    await this.serverService
+      .post('centre-d-aide/log-documentation')
+      .then((r) => {
+        return r.data
+      })
+  }
 }
+

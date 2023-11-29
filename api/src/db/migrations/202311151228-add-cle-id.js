@@ -1,11 +1,6 @@
-import Sequelize from 'sequelize'
-
-const tableName = 'HRCategories'
-
-export default (sequelizeInstance) => {
-  const Model = sequelizeInstance.define(
-    tableName,
-    {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('TJDetails', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -13,12 +8,16 @@ export default (sequelizeInstance) => {
         autoIncrement: true,
         unique: true,
       },
-      label: {
-        type: Sequelize.STRING(255),
+      juridiction_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      rank: {
+      category_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      value: {
+        type: Sequelize.STRING(255),
         allowNull: true,
       },
       created_at: {
@@ -34,23 +33,9 @@ export default (sequelizeInstance) => {
       deleted_at: {
         type: Sequelize.DATE,
       },
-    },
-    {
-      timestamps: true,
-      paranoid: true,
-      underscored: true,
-      tableName,
-      indexes: [
-        {
-          fields: ['label'],
-        },
-      ],
-    }
-  )
-
-  Model.associate = function (models) {
-    return models
-  }
-
-  return Model
+    })
+  },
+  down: async (/*queryInterface /*, Sequelize*/) => {
+    return queryInterface.dropTable('TjDetails')
+  },
 }

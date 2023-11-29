@@ -199,7 +199,7 @@ export default (sequelizeInstance, Model) => {
 
         let code = list[i][statut === 'Magistrat' ? 'fonction' : 'categorie']
 
-        console.log('findCategory', findCategory)
+        //console.log('findCategory', findCategory)
         if (findCategory) {
           if (filterNoEtpt.includes(list[i].fonction) || privilegedInGreff.includes(list[i].grade)) {
             situation.category_id = findEAM.id
@@ -266,7 +266,7 @@ export default (sequelizeInstance, Model) => {
           logging: false,
         })
 
-        console.log('findFonction', code, findFonction)
+        //console.log('findFonction', code, findFonction)
 
         if (findFonction) {
           situation.fonction_id = findFonction.id

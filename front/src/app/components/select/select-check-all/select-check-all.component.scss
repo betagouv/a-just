@@ -3,9 +3,13 @@
 ::ng-deep .mdc-form-field {
   font-size: 16px;
   color: black;
-  .mdc-checkbox {
 
+  .mdc-label {
+    font-size: 16px !important;
+    color: black !important;
+    font-family: Marianne !important;
   }
+
 }
 
 .mat-option {
