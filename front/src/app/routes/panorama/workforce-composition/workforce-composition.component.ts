@@ -71,7 +71,6 @@ export class WorkforceCompositionComponent
     private serverService: ServerService
   ) {
     super()
-    this.getAllCle()
   }
 
   /**
