@@ -19,6 +19,7 @@ export const EXECUTE_EXTRACTOR = 304
 export const EXECUTE_HELPCENTER = 305
 export const EXECUTE_HELPCENTER_LINK = 306
 export const EXECUTE_HELPCENTER_SEARCH = 307
+export const EXECUTE_WHITE_SIMULATOR = 308
 
 
 export const CODES = {
@@ -38,6 +39,6 @@ export const CODES = {
   [EXECUTE_EXTRACTOR]: '[UTILISATEUR] Un utilisateur vient de réaliser un extracteur',
   [EXECUTE_HELPCENTER]: '[UTILISATEUR] Un utilisateur vient d\'ouvrir le centre d\'aide',
   [EXECUTE_HELPCENTER_SEARCH]: '[UTILISATEUR] Un utilisateur vient de faire une recherche dans le centre d\'aide',
-  [EXECUTE_HELPCENTER_LINK]: '[UTILISATEUR] Un utilisateur vient d\'ouvrir une ressource du centre d\'aide'
-
+  [EXECUTE_HELPCENTER_LINK]: '[UTILISATEUR] Un utilisateur vient d\'ouvrir une ressource du centre d\'aide',
+  [EXECUTE_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation à blanc'
 }

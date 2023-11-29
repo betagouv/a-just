@@ -30,6 +30,7 @@ import {
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
 /**
  * Variable ETP magistrat field name
@@ -186,11 +187,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Actions de l'utilisateur
    */
-  userAction : {isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab : boolean } = {
-    isLeaving : false, // L'utilisateur change d'onglet
-    isReseting :  false, // L'utilisateur réinitialise la simulation
-    isComingBack : false, // L'utilisateur revient en arrière depuis le bouton retour
-    isClosingTab : false, // L'utilisateur ferme la fenêtre
+  userAction: { isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab: boolean } = {
+    isLeaving: false, // L'utilisateur change d'onglet
+    isReseting: false, // L'utilisateur réinitialise la simulation
+    isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
+    isClosingTab: false, // L'utilisateur ferme la fenêtre
   }
   /**
    * Nom de la prochaine route lors d'un changement de page
@@ -208,7 +209,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   popupAction = {
-    leaving : [
+    leaving: [
       { id: 'leave', content: 'Quitter sans exporter' },
       { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
     ],
@@ -220,7 +221,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ]
-};
+  };
 
 
   /**
@@ -333,7 +334,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private serverService: ServerService
   ) {
     super()
 
@@ -1426,8 +1428,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
 
     const exportButton = document.getElementById('export-button')
-    if (exportButton)
-    {
+    if (exportButton) {
       exportButton.classList.add('display-none')
     }
 
@@ -1472,7 +1473,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.userAction.isClosingTab = false
       if (this.userAction.isReseting) {
         this.userAction.isReseting = false;
-        this.resetParams()      
+        this.resetParams()
       }
       if (this.userAction.isComingBack) {
         this.userAction.isComingBack = false
@@ -1627,7 +1628,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     }
   }
 
-  onPopupDetailAction(action: any, situation : string) {
+  onPopupDetailAction(action: any, situation: string) {
     if (situation === "leaving") {
       switch (action.id) {
         case 'leave':
@@ -1650,7 +1651,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.print()
           }
           break;
-      } 
+      }
     } else if (situation === "reseting") {
       switch (action.id) {
         case 'reseting':
@@ -1664,7 +1665,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.print()
           }
           break;
-      } 
+      }
     } else if (situation === "closingTab") {
       switch (action.id) {
         case ('cancel'):
@@ -1672,7 +1673,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.userAction.isClosingTab = false;
           }
           break;
-        case 'export' :
+        case 'export':
           {
             this.print()
           }
@@ -1680,5 +1681,27 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
     }
 
+  }
+
+  /**
+   * Log du lancement d'une simulation
+   */
+  async logWhiteSimulator() {
+    await this.serverService
+      .post('simulator/log-white-simulation')
+      .then((r) => {
+        return r.data
+      })
+  }
+
+  /**
+   * Log du lancement d'une simulation à blanc
+   */
+  async logSimulator() {
+    await this.serverService
+      .post('simulator/log-simulation')
+      .then((r) => {
+        return r.data
+      })
   }
 }
