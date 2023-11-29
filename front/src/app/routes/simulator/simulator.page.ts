@@ -324,6 +324,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Affichage de l'écran de choix de simulateur
    */
   chooseScreen = true
+
+  onReloadAction = false
   /**
    * Constructeur
    */
@@ -1628,7 +1630,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     }
   }
 
-  onPopupDetailAction(action: any, situation: string) {
+  async onPopupDetailAction(action: any, situation: string) {
     if (situation === "leaving") {
       switch (action.id) {
         case 'leave':
@@ -1639,6 +1641,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             if (this.userAction.isComingBack) {
               this.userAction.isComingBack = false
               this.chooseScreen = true
+            } else if (this.onReloadAction = true
+            ) {
+              this.chooseScreen = true;
+              this.resetParams()
+              this.onReloadAction = false
             } else {
               this.router.navigate([this.nextState])
             }
@@ -1681,6 +1688,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
     }
 
+    if (this.onReloadAction === true) {
+      this.chooseScreen = true;
+      this.resetParams()
+      this.onReloadAction = false
+    }
   }
 
   /**
@@ -1703,5 +1715,17 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       .then((r) => {
         return r.data
       })
+  }
+
+
+
+  reloadPage() {
+    if (this.toDisplaySimulation) {
+      this.userAction.isLeaving = true
+      this.onReloadAction = true
+    } else {
+      this.chooseScreen = true;
+      this.resetParams()
+    }
   }
 }
