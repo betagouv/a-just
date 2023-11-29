@@ -10,10 +10,11 @@
         [multiple]="false" [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdChanged($event)">
       </aj-select>
       <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
-        [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)">
+        [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)"
+        [defaultAllValue]="'Toutes'">
       </aj-select>
       <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"
-        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)">
+        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)" [defaultAllValue]="'Tous'">
       </aj-select>
       <div class="flex-1"></div>
       <aj-input-button class="dark-mode" title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"
