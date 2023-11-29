@@ -1,7 +1,7 @@
 <!--<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">-->
+  [documentation]="documentation" >-->
 <aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation">
+  [documentation]="documentation" (pageSelected)="chooseScreen=true;resetParams()">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
