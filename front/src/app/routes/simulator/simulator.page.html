@@ -514,8 +514,9 @@
           <input [class.displayNone]="buttonSelected.id === 'magRealTimePerCase'" type="number"
             (oninput)="onUpdateValueToAjust($event)" (focusin)="resetPercentage = true"
             (focusout)="resetPercentage = false" value="{{valueSaved(1)}}" #volume />
-          <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(valueSaved(1))"
-            [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)"></app-time-selector>
+          <app-time-selector *ngIf="buttonSelected.id === 'magRealTimePerCase'" [value]="parseFloat(volume.value)"
+            [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)" (focusin)="resetPercentage = true"
+            (focusout)="resetPercentage = false" [defaultValue]="parseFloat(volume.value)||-1"></app-time-selector>
         </div>
         <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
           <div class="title">
