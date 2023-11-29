@@ -46,14 +46,14 @@ export class HelpCenterPage {
     {
       tag: 'Documentation',
       title: 'Le guide utilisateur',
-      description: 'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé !',
+      description: 'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
       image: '/assets/images/avatar.svg',
       url: DOCUMENTATION_URL
     },
     {
       tag: 'Documentation',
       title: 'Le data-book',
-      description: 'Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d\'activité. ».',
+      description: 'Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d\'activité».',
       image: '/assets/images/data-visualization.svg',
       url: DATA_GITBOOK
     },
