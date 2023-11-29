@@ -19,6 +19,7 @@ var osu = require('node-os-utils')
 
 var cpu = osu.cpu
 
+// CONTROL EVERY 30S
 setInterval(() => {
   console.log('MEM', os.freemem(), os.totalmem(), os.freemem() / os.totalmem())
   var count = cpu.count() // 8
@@ -32,7 +33,7 @@ setInterval(() => {
   osCmd.whoami().then((userName) => {
     console.log('WHO I AM', userName) // admin
   })
-}, 1000)
+}, 30000)
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
