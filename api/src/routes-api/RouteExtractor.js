@@ -51,7 +51,7 @@ export default class RouteExtractor extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
 
     const juridictionName = await this.models.HRBackups.findById(backupId)
 
@@ -274,7 +274,7 @@ export default class RouteExtractor extends Route {
       }
     }
 
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id)
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const list = await this.models.Activities.getByMonth(dateStart, backupId)
 

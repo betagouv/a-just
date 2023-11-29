@@ -246,7 +246,7 @@
         <p class="title">Réinitialiser</p>
       </div>
       <div class="simulate-button {{simulateButton}}"
-        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]);logSimulator()">
         <p class="title">Simuler</p>
       </div>
     </div>
@@ -651,7 +651,7 @@
       </div>
       <div class="simulate-button {{simulateButton}}">
         <p class="title"
-          (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+          (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]);logWhiteSimulator()">
           Simuler</p>
       </div>
     </div>
