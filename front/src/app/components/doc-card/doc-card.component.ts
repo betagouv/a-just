@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { AppService } from 'src/app/services/app/app.service';
 import { ServerService } from 'src/app/services/http-server/server.service';
-
 
 export interface DocCardInterface {
   title: string;
@@ -27,11 +27,16 @@ export class DocCardComponent {
     tag: '',
     url: '',
   }
+  /**
+ * Localisation du fichier nomenclature
+ */
+  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
+
 
   /**
    * Constructeur
    */
-  constructor(private serverService: ServerService) { }
+  constructor(private serverService: ServerService, private appService: AppService) { }
 
   async goTo(url: string) {
     await this.serverService
@@ -41,6 +46,10 @@ export class DocCardComponent {
         })
       .then((r) => {
         return r.data
+      })
+    if (this.NOMENCLATURE_DOWNLOAD_URL)
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
 
     window.open(url)
