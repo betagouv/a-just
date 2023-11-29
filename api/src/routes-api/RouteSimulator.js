@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
-import { EXECUTE_SIMULATION } from '../constants/log-codes'
+import { EXECUTE_SIMULATION, EXECUTE_WHITE_SIMULATOR } from '../constants/log-codes'
 import config from 'config'
 
 /**
@@ -100,9 +100,6 @@ export default class RouteSimulator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    // memorize first execution by user
-    await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
-
     const categories = await this.models.HRCategories.getAll()
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
@@ -111,4 +108,31 @@ export default class RouteSimulator extends Route {
 
     this.sendOk(ctx, simulatedSituation)
   }
+
+  /**
+ * Log cente
+ * @param {*} node
+ * @param {*} juridictionId
+ */
+  @Route.Post({
+    accesses: [Access.isLogin],
+  })
+  async logWhiteSimulation(ctx) {
+    await this.models.Logs.addLog(EXECUTE_WHITE_SIMULATOR, ctx.state.user.id)
+    this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+* Log cente
+* @param {*} node
+* @param {*} juridictionId
+*/
+  @Route.Post({
+    accesses: [Access.isLogin],
+  })
+  async logSimulation(ctx) {
+    await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
+    this.sendOk(ctx, 'Ok')
+  }
+
 }

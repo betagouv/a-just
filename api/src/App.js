@@ -13,7 +13,27 @@ import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 const RateLimit = require('koa2-ratelimit').RateLimit
-const sslify = require('koa-sslify').default // factory with default options
+
+var os = require('os')
+var osu = require('node-os-utils')
+
+var cpu = osu.cpu
+
+// CONTROL EVERY 30S
+setInterval(() => {
+  console.log('MEM', os.freemem(), os.totalmem(), os.freemem() / os.totalmem())
+  var count = cpu.count() // 8
+
+  cpu.usage().then((cpuPercentage) => {
+    console.log('CPU', count, cpuPercentage) // 10.38
+  })
+
+  var osCmd = osu.osCmd
+
+  osCmd.whoami().then((userName) => {
+    console.log('WHO I AM', userName) // admin
+  })
+}, 30000)
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
