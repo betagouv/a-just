@@ -30,7 +30,7 @@ export class DocCardComponent {
   /**
  * Localisation du fichier nomenclature
  */
-  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
+  CALCULATRICE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'
 
 
   /**
@@ -47,7 +47,8 @@ export class DocCardComponent {
       .then((r) => {
         return r.data
       })
-    if (this.NOMENCLATURE_DOWNLOAD_URL)
+
+    if (url === this.CALCULATRICE_DOWNLOAD_URL)
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
