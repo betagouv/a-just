@@ -26,8 +26,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 })
 export class PanelActivitiesComponent
   extends MainClass
-  implements OnChanges, OnDestroy
-{
+  implements OnChanges, OnDestroy {
   /**
    * Valeure de l'ETP
    */
@@ -84,15 +83,19 @@ export class PanelActivitiesComponent
   /**
    * État de la souris si elle hover un sous-référentiel du contentieux 'Autres Activités'
    */
-  mouseHovering : boolean = false
+  mouseHovering: boolean = false
   /**
   * Nom du sous-rérérentiel du contentieux 'Autres Activités' survolé
   */
-  hoveredReferentielLabel : string | null = null
+  hoveredReferentielLabel: string | null = null
   /**
   * Detail du référentiel survolé
   */
-  hoveredReferentielDetail : string | null = null
+  hoveredReferentielDetail: string | null = null
+  /**
+   * Tooltip right css
+   */
+  tooltipCssRight: number = 0
 
   /**
    * Constructeur
@@ -283,11 +286,21 @@ export class PanelActivitiesComponent
   /**
    * Change l'état de mouseHovering lorsque la souris hover un sous référentiel du contentieux 'Autres Activités'
    */
-  setMouseHovering(label?: string) {
+  setMouseHovering(label?: string, container?: any, item?: any) {
+    if (container && item) {
+      this.tooltipCssRight = 0;
+
+      const itemBounding = item.getBoundingClientRect()
+      const containerBounding = container.getBoundingClientRect()
+      const offset = (itemBounding.right - itemBounding.width) - containerBounding.x
+
+      if (offset < containerBounding.x)
+        this.tooltipCssRight = - (containerBounding.x - offset + 8)
+    }
     if (label) {
       this.hoveredReferentielDetail = getReferentielDetail(label)
-     if (this.hoveredReferentielDetail)
-      this.hoveredReferentielLabel = label
+      if (this.hoveredReferentielDetail)
+        this.hoveredReferentielLabel = label
     }
     this.mouseHovering = !this.mouseHovering
   }
