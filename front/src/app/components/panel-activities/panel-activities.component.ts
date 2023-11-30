@@ -292,10 +292,10 @@ export class PanelActivitiesComponent
 
       const itemBounding = item.getBoundingClientRect()
       const containerBounding = container.getBoundingClientRect()
-      const offset = itemBounding.left - containerBounding.x
+      const offset = itemBounding.x + itemBounding.width - containerBounding.x
 
-      if (offset < containerBounding.x)
-        this.tooltipCssRight = - offset + 8
+      if (offset < 450)
+        this.tooltipCssRight = (offset - 450)
     }
     if (label) {
       this.hoveredReferentielDetail = getReferentielDetail(label)
