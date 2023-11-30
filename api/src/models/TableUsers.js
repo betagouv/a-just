@@ -135,7 +135,7 @@ export default (sequelizeInstance, Model) => {
 
     if (!user) {
       password = cryptPassword(password, email)
-      await Model.create({
+      return await Model.create({
         email,
         password,
         first_name: firstName,

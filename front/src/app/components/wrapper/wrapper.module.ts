@@ -30,4 +30,4 @@ const list = [WrapperComponent]
   ],
   exports: list,
 })
-export class WrapperModule {}
+export class WrapperModule { }

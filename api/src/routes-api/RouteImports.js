@@ -94,11 +94,17 @@ export default class RouteImports extends Route {
   })
   async importAllActivities (ctx) {
     const { file } = this.body(ctx)
+    console.log('IMPORTS - START')
 
+    console.time('step0')
+    console.time('step1')
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
+    console.timeEnd('step1')
     await this.model.models.Activities.importMultipleJuridictions(arrayOfHR)
+    console.timeEnd('step0')
+    console.log('IMPORTS - DONE')
     this.sendOk(ctx, 'OK')
   }
 }

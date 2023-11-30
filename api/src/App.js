@@ -14,6 +14,27 @@ import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
+var os = require('os')
+var osu = require('node-os-utils')
+
+var cpu = osu.cpu
+
+// CONTROL EVERY 30S
+setInterval(() => {
+  console.log('MEM', os.freemem(), os.totalmem(), os.freemem() / os.totalmem())
+  var count = cpu.count() // 8
+
+  cpu.usage().then((cpuPercentage) => {
+    console.log('CPU', count, cpuPercentage) // 10.38
+  })
+
+  var osCmd = osu.osCmd
+
+  osCmd.whoami().then((userName) => {
+    console.log('WHO I AM', userName) // admin
+  })
+}, 30000)
+
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
   constructor () {
@@ -59,6 +80,7 @@ export default class App extends AppBase {
     })
 
     super.addMiddlewares([
+      //sslify(),
       limiter,
       // we add the relevant middlewares to our API
       //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
@@ -88,6 +110,7 @@ export default class App extends AppBase {
         enableWarn: false,
         policy: {
           'connect-src': [
+            'https://api.gitbook.com',
             'https://www.google-analytics.com/j/collect',
             "'self'",
             'https://api.mapbox.com',
@@ -101,7 +124,7 @@ export default class App extends AppBase {
           //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.data.gouv.fr'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/'],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
         },

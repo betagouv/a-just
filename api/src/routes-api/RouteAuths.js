@@ -30,7 +30,6 @@ export default class RouteAuths extends Route {
   async login (ctx) {
     const { password, email } = this.body(ctx)
     const tryUserCon = await this.model.tryConnection(email, password, [0, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN], true)
-    console.log('[RouteAuths.js][line 35] tryUserCon: |', tryUserCon, '|')
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {

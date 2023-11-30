@@ -17,24 +17,23 @@ export class CalculatriceComponent implements OnInit {
   /**
    * Model utilisé pour les calculs d'ETPT
    */
-  model :CalculatriceInterface = { 
-    vacation : { value : null, option:null,unit: null},
-    volume : { value : null, option:null},
-    selectedTab : ''
+  model: CalculatriceInterface = {
+    vacation: { value: null, option: null, unit: null },
+    volume: { value: null, option: null },
+    selectedTab: ''
   }
 
   /**
    * Constructeur
    * @param calculatriceService 
    */
-  constructor(private calculatriceService:CalculatriceService){}
+  constructor(private calculatriceService: CalculatriceService) { }
 
   /**
    * Déclenchemet à la création du composent
    */
   ngOnInit(): void {
     this.model = this.calculatriceService.dataCalculatrice.value
-    console.log(this.model)
   }
 
   /**
@@ -53,7 +52,7 @@ export class CalculatriceComponent implements OnInit {
   validateNumber(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     if (e.code !== "KeyM" && charCode > 31 && (charCode < 48 || charCode > 57)) {
-      if (charCode=== 46) return true
+      if (charCode === 46) return true
       return false
     }
     return true

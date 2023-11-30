@@ -94,7 +94,6 @@ export class AppComponent implements AfterViewInit {
     }
 
     this.userService.getInterfaceType()
-    console.log(this.userService.interfaceType)
   }
 
   ngAfterViewInit(): void {

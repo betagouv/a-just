@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'HRCategories'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -40,10 +40,15 @@ export default sequelizeInstance => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          fields: ['label'],
+        },
+      ],
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {
     return models
   }
 

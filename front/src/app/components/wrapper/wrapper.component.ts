@@ -161,17 +161,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * URL de la nomenclature
    */
-  NOMENCLATURE_DOWNLOAD_URL =
-    '/assets/nomenclature-A-Just.html'
+  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
   /**
    * Menu de gauche
    */
-  menu = [
-    {
-      label: 'Panorama',
-      path: 'panorama',
-    },
-  ]
+  menu: { label: string; path: string }[] = []
   /**
    * Answer of question
    */
@@ -202,7 +196,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private userService: UserService,
     private humanResourceService: HumanResourceService,
     private appService: AppService,
-    private titlePlatform: Title,
+    private titlePlatform: Title
   ) {
     super()
 
@@ -290,7 +284,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     exportName: string | null = null,
     noPopup: boolean = false
   ): Promise<any> {
-
     this.exportPDFTemp = {
       filename,
       header,
@@ -448,7 +441,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         if (this.exportAsPdfPromiseResolve) {
           this.exportAsPdfPromiseResolve(true)
         }
-        break;
+        break
     }
 
     this.promptComment = false

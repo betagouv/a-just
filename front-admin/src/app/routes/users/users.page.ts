@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Sort } from '@angular/material/sort';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import { PageAccessInterface } from 'src/app/interfaces/page-access-interface';
 import { UserInterface } from 'src/app/interfaces/user-interface';
 import { MainClass } from 'src/app/libs/main-class';
 import { UserService } from 'src/app/services/user/user.service';
+import { compare } from 'src/app/utils/array';
 
 interface FormSelection {
   id: number;
@@ -18,30 +19,20 @@ interface FormSelection {
 })
 export class UsersPage
   extends MainClass
-  implements OnInit, AfterViewInit, OnDestroy
+  implements OnInit, OnDestroy
 {
-  displayedColumns: string[] = [
-    'id',
-    'email',
-    'firstName',
-    'lastName',
-    'tj',
-    'fonction',
-    'access',
-    'ventilationsName',
-    'actions',
-  ];
-  dataSource = new MatTableDataSource();
+  datas: UserInterface[] = [];
+  datasSource: UserInterface[] = [];
   access: FormSelection[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
   userConnected: UserInterface | null = null;
+  sort: Sort | null = null;
   popupAction = [
     { id: 'save', content: 'Modifier', fill: true },
     { id: 'close', content: 'Fermer' },
   ];
-
   popupDeleteAction = [
     { id: 'confirm', content: 'Confirmer', fill: true, red: true },
     { id: 'cancel', content: 'Annuler' },
@@ -59,21 +50,21 @@ export class UsersPage
     this.onLoad();
   }
 
-  ngAfterViewInit() {}
-
   ngOnDestroy() {
     this.watcherDestroy();
   }
 
   onLoad() {
     this.userService.getAll().then((l) => {
-      this.dataSource.data = l.list.map((u: UserInterface) => ({
+      this.datas = l.list.map((u: UserInterface) => ({
         ...u,
         accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
         ventilationsName: (u.ventilations || [])
           .map((j) => j.label)
           .join(', <br/>'),
       }));
+      this.datasSource = this.datas.slice();
+
       this.access = l.access.map((u: PageAccessInterface) => ({
         id: u.id,
         label: u.label,
@@ -84,6 +75,26 @@ export class UsersPage
         label: u.label,
         selected: false,
       }));
+
+      this.sortData(this.sort ? this.sort : {
+        active: "id", 
+        direction: "desc"
+      })
+    });
+  }
+
+  sortData(sort: Sort) {
+    this.sort = sort;
+    const data = this.datas.slice();
+    if (!sort.active || sort.direction === '') {
+      this.datasSource = data;
+      return;
+    }
+
+    this.datasSource = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      // @ts-ignore
+      return compare(a[sort.active], b[sort.active], isAsc);
     });
   }
 

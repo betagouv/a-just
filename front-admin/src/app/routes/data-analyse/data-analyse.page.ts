@@ -455,7 +455,7 @@ export class DataAnalysePage {
             monthTabName
           )
         })
-        //console.log('Workbook:', workbook)
+
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
           type: 'array',

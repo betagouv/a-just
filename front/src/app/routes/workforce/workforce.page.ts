@@ -297,7 +297,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
           if (this.categoriesFilterListIds.length === categories.length) {
             const { c: categoryId } = this.route.snapshot.queryParams
-            console.log('TEST 1', categoryId, c.id)
             if (categoryId && c.id !== +categoryId) {
               selected = false
             }
@@ -760,7 +759,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   updateFilterParams(event: FilterPanelInterface) {
     this.workforceService.filterParams = event // memorize in cache
     this.filterParams = event
-
     this.orderListWithFiltersParams()
   }
 
@@ -921,6 +919,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     })
 
+
     if (category.poste && category.poste.length) {
       category.selected = category.poste.some((p) => p.selected)
     }
@@ -943,4 +942,29 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   switchBgColor(category: any, color: string) {
     category.style['background-color'] = color
   }
+
+  async onUpdateFilterId(event: any) {
+    this.filterParams = await {
+      display: 'prénom/nom',
+      filterFunction: (list: HumanResourceSelectedInterface[]) => {
+        return list.filter(
+          (h) =>
+            h.fonction &&
+            this.filterParams &&
+            this.filterParams.filterValues &&
+            this.filterParams.filterValues.indexOf(h.fonction.id) !== -1
+        )
+      },
+      filterNames: null,
+      filterValues: event,
+      order: 'asc',
+      orderIcon: 'sort-desc',
+      sort: 'function',
+      sortFunction: null,
+      sortName: null,
+    }
+  }
+
+
+
 }

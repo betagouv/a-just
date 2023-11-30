@@ -16,6 +16,8 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
+import { WorkforceService } from 'src/app/services/workforce/workforce.service'
+
 
 /**
  * Interface d'un filtre
@@ -70,8 +72,7 @@ export interface FilterPanelInterface {
 })
 export class FilterPanelComponent
   extends MainClass
-  implements AfterViewInit, OnChanges
-{
+  implements AfterViewInit, OnChanges {
   /**
    * Event au père lors d'une mise à jour
    */
@@ -158,6 +159,10 @@ export class FilterPanelComponent
     },
   ]
   /**
+   * Mode d'affichage du composant
+   */
+  @Input() button: boolean = false
+  /**
    * Valeur de filtre déjà selectionnée
    */
   @Input() filterValues: (string | number)[] | null = null
@@ -223,7 +228,8 @@ export class FilterPanelComponent
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private workforceService: WorkforceService
   ) {
     super()
   }
@@ -231,7 +237,7 @@ export class FilterPanelComponent
   /**
    * A chaque changement chercher l'élement de filtre selectionnée
    */
-  ngOnChanges(changes: SimpleChanges) {
+  async ngOnChanges(changes: SimpleChanges) {
     if (!this.sortList.find((o) => o.id === this.sortValue)) {
       this.sortValue = this.sortList[1].id
     }
@@ -241,6 +247,17 @@ export class FilterPanelComponent
 
     if (changes['categories']) {
       this.loadFonctions()
+    }
+    if (this.button === true && this.filterValues === null) {
+      const fonctions = await this.hrFonctionService.getAll()
+      const listUsedFunctions = orderBy(
+        [...fonctions],
+        ['categoryId', 'rank']
+      ).filter((f) => this.categories.includes(f.categoryId))
+      const idsToExclude = fonctions
+        .filter((f) => !this.categories.includes(f.categoryId))
+        .map((v) => +v.id)
+      this.filterValues = listUsedFunctions.map((f) => f.id)
     }
   }
 
@@ -272,7 +289,7 @@ export class FilterPanelComponent
    */
   async loadFonctions() {
     const fonctions = await this.hrFonctionService.getAll()
-    const listUsedFunctions = orderBy(
+    let listUsedFunctions = orderBy(
       [...fonctions],
       ['categoryId', 'rank']
     ).filter((f) => this.categories.includes(f.categoryId))
@@ -280,6 +297,13 @@ export class FilterPanelComponent
       .filter((f) => !this.categories.includes(f.categoryId))
       .map((v) => +v.id)
 
+    listUsedFunctions = listUsedFunctions.map(fct => {
+      if (["CONT A JP", "CONT B JP", "CONT C JP"].includes(fct.code || '')) {
+        if (fct.categoryId === 2) return { ...fct, code: fct.code + ' (GR)' }
+        if (fct.categoryId === 3) return { ...fct, code: fct.code + ' (EAM)' }
+      }
+      return fct
+    })
     this.filterList = listUsedFunctions.map((f) => ({
       id: f.id,
       label: f.code || '',
@@ -290,6 +314,10 @@ export class FilterPanelComponent
         : this.filterValues.filter((f) => !idsToExclude.includes(+f))
 
     this.defaultFilterValues = listUsedFunctions.map((f) => f.id)
+    if (this.button === true && this.filterValues.length === 0) {
+      this.filterValues = listUsedFunctions.map((f) => f.id)
+    }
+
   }
 
   /**

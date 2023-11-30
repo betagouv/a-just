@@ -33,8 +33,8 @@ export default class App {
     const categoriesOfRules = this.getRules(inputFolder);
     const referentiel = await this.getReferentiel(inputFolder);
 
-    //rmSync(tmpFolder, { recursive: true, force: true });
-    //mkdirSync(tmpFolder, { recursive: true });
+    rmSync(tmpFolder, { recursive: true, force: true });
+    mkdirSync(tmpFolder, { recursive: true });
 
     rmSync(outputFolder, { recursive: true, force: true });
     mkdirSync(outputFolder, { recursive: true });
@@ -44,7 +44,7 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        //await this.getGroupByJuridiction(tmpFolder, inputFolder);
+        /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
         await this.formatAndGroupJuridiction(
           tmpFolder,
           outputFolder,
@@ -52,17 +52,17 @@ export default class App {
           categoriesOfRules,
           referentiel,
           response
-        );
+        );*/
 
         // WIP datas pénal
-        /*await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
         await this.formatAndGroupJuridictionPenal(
           tmpFolder,
           outputFolder,
           outputAllFolder,
           categoriesOfRules,
           response
-        );*/
+        );
       }
     });
 

@@ -52,9 +52,9 @@ export class ListSelectionComponent implements OnChanges {
    */
   @Output() valueChanged: EventEmitter<string | number | null> =
     new EventEmitter<string | number | null>()
-    /**
-     * Valeurs des ID sélectionnées changées
-     */
+  /**
+   * Valeurs des ID sélectionnées changées
+   */
   @Output() valuesChanged: EventEmitter<(string | number)[]> = new EventEmitter<
     (string | number)[]
   >()
@@ -90,7 +90,7 @@ export class ListSelectionComponent implements OnChanges {
   /**
    * Construteur
    */
-  constructor() {}
+  constructor() { }
 
   /**
    * Detection de la valeure selectionnée et formatage des données pour un rendu visuel
@@ -98,6 +98,7 @@ export class ListSelectionComponent implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['value'] || changes['list'] || changes['values']) {
+
       if (this.multiple === false) {
         const value = this.value
           ? this.list.find((l) => l.id === this.value) || null
@@ -105,6 +106,7 @@ export class ListSelectionComponent implements OnChanges {
 
         this.itemsSelected = value ? [value] : []
       } else {
+
         this.itemsSelected = this.list.reduce(
           (acc: ItemInterface[], cur: ItemInterface) => {
             if (this.values && this.values.indexOf(cur.id) !== -1) {
@@ -115,9 +117,12 @@ export class ListSelectionComponent implements OnChanges {
           []
         )
       }
-
-      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
     }
+
+    if (this.values && this.values.length === this.list.length)
+      this.labelPreview = 'Toutes'
+    else
+      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
 
   /**
@@ -142,6 +147,16 @@ export class ListSelectionComponent implements OnChanges {
       this.values.splice(findIndex, 1)
     }
     this.valuesChanged.next(this.values)
+    this.itemsSelected = this.list.reduce(
+      (acc: ItemInterface[], cur: ItemInterface) => {
+        if (this.values && this.values.indexOf(cur.id) !== -1) {
+          acc.push(cur)
+        }
+        return acc
+      },
+      []
+    )
+    this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
 
   /**
@@ -181,11 +196,27 @@ export class ListSelectionComponent implements OnChanges {
    * Force la sélection de tout les éléments
    */
   onSelectAll() {
-    if(this.values.length === this.list.length) {
+    if (this.values.length === this.list.length) {
       this.values = []
     } else {
       this.values = this.list.map(i => i.id)
     }
+
     this.valuesChanged.next(this.values)
+    console.log(this.values)
+
+    this.itemsSelected = this.list.reduce(
+      (acc: ItemInterface[], cur: ItemInterface) => {
+        if (this.values && this.values.indexOf(cur.id) !== -1) {
+          acc.push(cur)
+        }
+        return acc
+      },
+      []
+    )
+    if (this.values.length === this.list.length)
+      this.labelPreview = 'Toutes'
+    else
+      this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
 }

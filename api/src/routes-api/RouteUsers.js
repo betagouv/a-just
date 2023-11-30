@@ -73,7 +73,7 @@ export default class RouteUsers extends Route {
     email = (email || '').toLowerCase() // force to lower case email
 
     try {
-      await this.model.createAccount({ ...this.body(ctx), email })
+      const user = await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(
         {
           email: config.supportEmail,
@@ -102,7 +102,15 @@ export default class RouteUsers extends Route {
         tj,
         fonction,
       })
-      this.sendOk(ctx, 'OK')
+
+      if (user) {
+        delete user.dataValues.password
+        await ctx.loginUser(user.dataValues)
+        await super.addUserInfoInBody(ctx)
+        this.sendCreated(ctx)
+      } else {
+        this.sendOk(ctx, null)
+      }
     } catch (err) {
       ctx.throw(401, err)
     }

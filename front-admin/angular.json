@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["moment"],
+            "allowedCommonJsDependencies": ["moment", "file-saver", "lodash"],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",

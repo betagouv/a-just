@@ -5,7 +5,7 @@ module.exports = {
     if (process.env.TYPE_ID === 1) {
       await models.Users.create(
         {
-          email: 'fx@a-just.fr',
+          email: 'ruskov@a-just.fr',
           first_name: 'François-Xavier',
           last_name: 'Montigny',
           password: '123456',

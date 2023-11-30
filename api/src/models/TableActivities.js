@@ -230,7 +230,7 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < activities.length; i++) {
       const periode = new Date(activities[i].periode)
-      console.log('try =>', i + '/' + activities.length)
+      //console.log('try =>', i + '/' + activities.length)
 
       const duplicateActivities = await Model.findAll({
         where: {
@@ -604,6 +604,7 @@ export default (sequelizeInstance, Model) => {
     let minDate = {}
     const tmpJuridictions = {}
 
+    console.time('step2')
     for (let i = 0; i < csv.length; i++) {
       const code = csv[i].code_import
       let HRBackupId = tmpJuridictions[csv[i].juridiction]
@@ -693,9 +694,13 @@ export default (sequelizeInstance, Model) => {
         }
       }
     }
+    console.timeEnd('step2')
 
     for (let i = 0; i < listBackupId.length; i++) {
+      console.time('step3')
       await Model.cleanActivities(listBackupId[i], minDate[listBackupId[i]])
+
+      console.timeEnd('step3')
     }
   }
 

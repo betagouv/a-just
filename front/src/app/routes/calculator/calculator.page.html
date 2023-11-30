@@ -199,8 +199,8 @@
     </div>
   </div>
 
-  <aj-select title="Fonctions" [value]="selectedFonctionsIds" [datas]="fonctions"
-    (valueChange)="onChangeFonctionsSelected($event)">
+  <aj-select class="large" title="Choix des fonctions (option)" [defaultAllValue]="'Toutes'"
+    [value]="selectedFonctionsIds" [datas]="fonctions" (valueChange)="onChangeFonctionsSelected($event)">
   </aj-select>
 
   <div class="flex-1"></div>

@@ -9,6 +9,14 @@
   position: relative;
   cursor: pointer;
 
+  &.extend {
+    div {
+      p {
+        width: 130px;
+      }
+    }
+  }
+
   &.bg-white {
     background-color: white;
   }

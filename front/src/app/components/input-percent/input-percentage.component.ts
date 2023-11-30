@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
+import { decimalToStringDate } from 'src/app/utils/dates'
 
 /**
  * Composant input pourcentage
@@ -30,6 +31,12 @@ export class InputPercentageComponent implements OnChanges {
    * Réinitialisation
    */
   @Input() reset: boolean = false
+
+  /**
+   * Valeur pour TMD
+   */
+  @Input() float: boolean = false
+
   /**
    * Valeur de sortie
    */
@@ -47,7 +54,16 @@ export class InputPercentageComponent implements OnChanges {
    */
   constructor() {
     this.valueForm.controls.percentage.valueChanges.subscribe((value) => {
-      this.valueChange.emit({
+      if (this.float === true)
+        this.valueChange.emit({
+          value:
+            parseFloat(
+              this.returnPercentage(this.valueForm.controls['percentage'].value)
+            )
+          ,
+          percentage: this.valueForm.controls['percentage'].value,
+        })
+      else this.valueChange.emit({
         value: Math.round(
           parseInt(
             this.returnPercentage(this.valueForm.controls['percentage'].value)
@@ -77,14 +93,36 @@ export class InputPercentageComponent implements OnChanges {
    * @param x numérateur
    * @returns %
    */
-  returnPercentage(x: any): string {
-    return x
-      ? String(
+  //PERMETTRE AJUSTEMENT A 0 %
+  returnPercentage(x: any, displayValue = false): string {
+    if (x === 0) return String(this.referenceValue)
+    if (this.float) {
+      const res = x
+        ? String(
+
+          this.referenceValue -
+          ((-parseInt(x) * 1) / 100) * this.referenceValue
+
+        )
+        : ''
+
+      if (displayValue) {
+        if (x === '') return ''
+        else
+          return String(decimalToStringDate(parseFloat(res)))
+      }
+      return res
+    }
+    else {
+      const res = x
+        ? String(
           Math.round(
             this.referenceValue -
-              ((-parseInt(x) * 1) / 100) * this.referenceValue
+            ((-parseInt(x) * 1) / 100) * this.referenceValue
           )
         )
-      : ''
+        : ''
+      return res
+    }
   }
 }

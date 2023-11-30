@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'Activities'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -68,11 +68,18 @@ export default sequelizeInstance => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: true,
+          name: 'activities-backup-periode-cont',
+          fields: ['hr_backup_id', 'periode', 'contentieux_id'],
+        },
+      ],
     }
   )
 
-  Model.associate = function (models) {    
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' }) 
+  Model.associate = function (models) {
+    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'contentieux_id' })
 
     return models
   }
