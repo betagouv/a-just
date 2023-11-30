@@ -195,12 +195,26 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     isClosingTab : false, // L'utilisateur ferme la fenêtre
   }
   /**
+   * Liste des actions possibles
+   */
+  action : {reinit: string, reinitAll: string, return: string, closeTab: string, leave: string} = {
+    reinit : 'réinitialiser',
+    reinitAll : 'tout réinitialiser',
+    return : 'retour',
+    closeTab : 'close',
+    leave : 'sort',
+  }
+
+  /**
    * Nom de la prochaine route lors d'un changement de page
    */
   nextState: string | null = null
 
   forceDeactivate: boolean = false
 
+  /** 
+   * Listes des paramètres de la simulation à réinitialiser
+  */  
   valuesToReinit : any = null
 
   /**
@@ -211,6 +225,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
+  /**
+   * Liste d'option pour les bouttons de la popup d'enregistrement, selon l'action de l'utilisateur
+   */
   popupAction = {
     leaving: [
       { id: 'leave', content: 'Quitter sans exporter' },
@@ -225,6 +242,16 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ]
   };
+
+  /**
+   * Option à utiliser pour les bouttons de la popup d'enregistrement, selon l'action de l'utilisateur
+   */
+  popupActionToUse : ({ id: string; content: string; fill?: undefined; } | { id: string; content: string; fill: boolean; })[] = [
+    { id: '', content: ''},
+    { id: '', content: '', fill: true }
+  ]
+
+  printPopup : boolean = false
 
 
   /**
@@ -327,6 +354,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Affichage de l'écran de choix de simulateur
    */
   chooseScreen = true
+
+  onReloadAction = false
   /**
    * Constructeur
    */
@@ -418,12 +447,12 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   /**
-   * Détection d'un click n'importe où pour fermer
+   * Détection de la fermeture de la fenêtre
    */
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
     if (this.toDisplaySimulation) {
-      this.userAction.isClosingTab = true
+      this.onUserActionClick(this.action.closeTab)
       event.preventDefault()
     }
   }
@@ -433,6 +462,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   ngOnInit(): void {
     this.resetParams()
+    this.onResetUserAction()
     this.dateStop = null
     this.route.data.subscribe((data) => console.log("route:", data))
     const findCategory =
@@ -500,16 +530,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.simulatorService.getSituation([this.contentieuId])
 
     this.loadFunctions()
-  }
-
-  reloadPage() {
-    if (this.toDisplaySimulation) {
-      this.userAction.isLeaving = true
-    }
-    else {
-      this.chooseScreen=true;
-      this.resetParams()
-    }
   }
 
   /**
@@ -1408,7 +1428,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Export pdf de simulation
    */
-  print() {
+  async print() {
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
@@ -1484,23 +1504,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         editButton!.style.display = 'block'
         editButton!.classList.remove('display-none')
       }
+    })
 
-      if (this.userAction.isReseting || this.userAction.isResetingParams || this.userAction.isComingBack) {
-        if (this.userAction.isReseting || this.userAction.isComingBack) {
-          this.resetParams()
-          this.initParamsToAjust()
-        }
-        if (this.userAction.isResetingParams) {
-          this.initParams(this.valuesToReinit)
-        }
-        if (this.userAction.isComingBack) {
-          this.chooseScreen = true
-        }
-      }
-      this.onResetUserAction()
-      if (this.forceDeactivate && this.nextState) {
-        this.router.navigate([this.nextState])
-      }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve("Export done"), 200)
     })
   }
 
@@ -1639,16 +1646,47 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   onReturn() {
     if (this.toDisplaySimulation) {
-      this.userAction.isComingBack = true
+      this.onUserActionClick(this.action.return)
     } else {
       this.chooseScreen = true
       this.resetParams()
     }
   }
 
-  onClickResetParams(buttons: any) {
-    this.userAction.isResetingParams = true
-    this.valuesToReinit = buttons
+  onUserActionClick(button : string, paramsToInit?: any ) {
+    if (this.toDisplaySimulation) {
+      this.printPopup = true
+      if (paramsToInit)
+        this.valuesToReinit = paramsToInit
+      switch (button) {
+        case this.action.reinit: {
+          this.popupActionToUse = this.popupAction.reinit
+          this.userAction.isResetingParams = true
+        }
+        break;
+        case this.action.reinitAll: {
+          this.popupActionToUse = this.popupAction.reinit
+          this.userAction.isReseting = true 
+        }
+        break;
+        case this.action.return: {
+          this.popupActionToUse = this.popupAction.leaving
+          this.userAction.isComingBack = true
+        }
+        break;
+        case this.action.closeTab: {
+          this.popupActionToUse = this.popupAction.closeTab
+          this.userAction.isClosingTab = true
+        }
+        break;
+        case this.action.leave: {
+          this.popupActionToUse = this.popupAction.leaving
+          this.userAction.isLeaving = true
+        }
+        break;
+      }
+    } 
+    return
   }
 
   onResetUserAction () {
@@ -1659,66 +1697,122 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.userAction.isClosingTab = false
   }
 
-  onPopupDetailAction(action: any, situation : string) {
-    if (situation === "leaving") {
-
+  async onPopupDetailAction(action: any) {
+    if (this.userAction.isComingBack) {
       switch (action.id) {
         case 'leave':
           {
-            this.forceDeactivate = true
-            if (this.userAction.isComingBack) {
-              this.resetParams()
-              this.onResetUserAction()
-              this.chooseScreen = true
-            } else {
-              this.resetParams()
-              this.router.navigate([this.nextState])
-            }
+            this.printPopup = false
+            this.onResetUserAction()
+            this.resetParams()
+            this.forceDeactivate = false
+            this.chooseScreen = true;
           }
           break;
         case 'export':
           {
+            this.printPopup = false
+            this.onResetUserAction()
             this.forceDeactivate = true
-            this.print()
+            await this.print().then((res) => {
+              this.resetParams()
+              this.forceDeactivate = false
+              this.chooseScreen = true;
+            })
           }
           break;
       }
-    } else if (situation === "reseting") {
+    } else if (this.userAction.isReseting) {
       switch (action.id) {
         case 'reseting':
           {
-            if (this.userAction.isReseting) {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.resetParams()
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            await this.print().then((res) => {
               this.resetParams()
-              this.initParamsToAjust()
-              this.onResetUserAction()
-            } else if (this.userAction.isResetingParams) {
+            })
+          }
+          break;
+      }
+    } else if (this.userAction.isResetingParams) {
+      switch (action.id) {
+        case 'reseting':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.initParams(this.valuesToReinit)
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            await this.print().then((res) => {
               this.initParams(this.valuesToReinit)
-              this.onResetUserAction()
+            })
+          }
+          break;
+      }
+    } else if (this.userAction.isClosingTab) {
+      switch (action.id) {
+        case ('cancel'):
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.print()
+          }
+          break;
+      }
+    } else if (this.userAction.isLeaving) {
+      switch (action.id) {
+        case ('leave'):
+          {
+            this.printPopup = false
+            //this.forceDeactivate = true;
+            this.onResetUserAction()
+            this.resetParams()
+            this.forceDeactivate = false;
+            if (this.nextState) {
+              this.router.navigate([this.nextState])
+            } else {
+              this.onReloadAction = false
+              this.chooseScreen = true;
             }
           }
           break;
         case 'export':
           {
-            this.print()
-          }
-          break;
-      }
-    } else if (situation === "closingTab") {
-      switch (action.id) {
-        case ('cancel'):
-          {
+            console.log('Exporting...')
+            this.printPopup = false
+            this.forceDeactivate = true;
             this.onResetUserAction()
-            this.userAction.isClosingTab = false;
-          }
-          break;
-        case 'export':
-          {
-            this.print()
+            await this.print().then(() => {
+              this.resetParams()
+              this.forceDeactivate = false;
+              if (this.nextState) {
+                this.router.navigate([this.nextState])
+              } else {
+                this.onReloadAction = false
+                this.chooseScreen = true;
+              }
+            })
           }
           break;
       }
     }
-
   }
 
   /**
@@ -1741,5 +1835,15 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       .then((r) => {
         return r.data
       })
+  }
+
+  reloadPage() {
+    if (this.toDisplaySimulation) {
+      this.onUserActionClick(this.action.leave)
+      this.onReloadAction = true
+    } else {
+      this.chooseScreen = true;
+      this.resetParams()
+    }
   }
 }
