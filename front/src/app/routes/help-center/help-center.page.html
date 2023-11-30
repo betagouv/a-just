@@ -1,0 +1,52 @@
+<aj-wrapper title="Centre d'aide" class="content-margin-null" [actionTemplate]="actions" class="white-bg">
+
+    <div class="title-area">
+        <img src="/assets/images/community.svg" alt="a-just" />
+        <p class="sub-title">Saisissez votre question ci-dessous</p>
+        <div class="research-area"></div>
+        <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
+            (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
+            ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+        </aj-input-button>
+        <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
+            <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
+            <div *ngFor="let res of this.data">
+                <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
+                    <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
+                    {{res.title}}
+                </p>
+                <div *ngFor="let page of res.pages">
+                    <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
+                        <mat-icon>insert_drive_file</mat-icon>
+                        {{page.title}}
+                    </p>
+                    <div *ngFor="let section of page.sections">
+                        <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
+                            <mat-icon>subdirectory_arrow_right</mat-icon>
+                            {{section.body}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p class="sub-title">Ou consultez notre documentation </p>
+    <div class="content-area">
+        <div class="documentation">
+            <span>La documentation</span>
+            <div *ngFor="let card of docCards">
+                <aj-doc-card [data]="card"></aj-doc-card>
+            </div>
+        </div>
+        <div class="outil">
+            <span>Les outils A-JUST</span>
+            <div *ngFor="let card of docTools">
+                <aj-doc-card class="tools" [data]="card"></aj-doc-card>
+            </div>
+        </div>
+    </div>
+</aj-wrapper>
+
+<ng-template #actions></ng-template>

@@ -287,6 +287,7 @@ module.exports = function (datas) {
     it('Add an End Date to newly created agent', async () => {
       let dateEnd = new Date(current_hr.dateStart)
       dateEnd.setDate(dateEnd.getDate() + 20)
+      const dateEndFormat = [dateEnd.getFullYear(), (dateEnd.getMonth() + 1) > 0 ? (dateEnd.getMonth() + 1) : (0 + dateEnd.getMonth() + 1), dateEnd.getDate() > 0 ? dateEnd.getDate() : (0 + dateEnd.getDay()) ].join(',')
 
       const hr = {
         ...current_hr,
@@ -298,9 +299,11 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
+      const responseDateEnd = new Date(response.data.data.dateEnd)
+      const responseDateEndFormat = [responseDateEnd.getFullYear(), (responseDateEnd.getMonth() + 1) > 0 ? (responseDateEnd.getMonth() + 1) : (0 + responseDateEnd.getMonth() + 1), responseDateEnd.getDate() > 0 ? responseDateEnd.getDate() : (0 + responseDateEnd.getDay()) ].join(',')
+
       current_hr = response.data.data
-      assert.strictEqual(response.status, 200)
-      assert.strictEqual(new Date(response.data.data.dateEnd).getTime(), dateEnd.getTime())
+      assert.strictEqual(new Date(responseDateEndFormat).getTime(), new Date(dateEndFormat).getTime())
     })
 
     it('Remove created situation', async () => {

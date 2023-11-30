@@ -1,11 +1,11 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
-import { getNbMonth } from '../utils/date'
+import { getNbMonth, month } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { EXECUTE_CALCULATOR } from '../constants/log-codes'
+import { EXECUTE_CALCULATOR, EXECUTE_CALCULATOR_CHANGE_DATE } from '../constants/log-codes'
 
 /**
  * Route des calculs de la page calcule
@@ -44,10 +44,18 @@ export default class RouteCalculator extends Route {
   })
   async filterList (ctx) {
     const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
+    const lastMonthStock = await this.model.models.Activities.getLastMonth(backupId)
 
     if (!selectedFonctionsIds) {
       // memorize first execution by user
       await this.models.Logs.addLog(EXECUTE_CALCULATOR, ctx.state.user.id)
+    }
+
+    if (
+      lastMonthStock &&
+      (month(dateStart).getTime() !== month(lastMonthStock, -2).getTime() || month(dateStop).getTime() !== month(lastMonthStock).getTime())
+    ) {
+      await this.models.Logs.addLog(EXECUTE_CALCULATOR_CHANGE_DATE, ctx.state.user.id)
     }
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1

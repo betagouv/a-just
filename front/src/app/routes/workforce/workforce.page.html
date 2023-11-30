@@ -6,9 +6,18 @@
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
       </aj-date-select>
-      <aj-select title="Pour les contentieux" [value]="selectedReferentielIds" [datas]="formReferentiel"
-        (valueChange)="onSelectedReferentielIdsChanged($event)">
+      <aj-select class="large" title="Choix des contentieux (option)" [value]="selectedReferentielIds"
+        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)" [defaultAllValue]="'Tous'">
       </aj-select>
+
+      <!--
+      <filter-panel class="button-filter" [button]="true" (update)="updateFilterParams($event)"
+        [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+        [categories]="humanResourceService.categoriesFilterListIds"
+        [filterValues]="(filterParams && filterParams.filterValues) || null">
+      </filter-panel>
+      -->
+
       <div class="flex-1"></div>
       <div *ngFor="let category of categoriesFilterList" class="checkbox-button"
         [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"

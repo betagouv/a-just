@@ -9,6 +9,7 @@ import { PopupModule } from './components/popup/popup.module'
 import { PipesModule } from './pipes/pipes.module'
 import { MaterialModule } from './libs/material.module'
 import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
+import { SimulatorModule } from './routes/simulator/simulator.module'
 
 /**
  * Module principal du projet
@@ -23,6 +24,7 @@ import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
     PipesModule,
     PopupModule,
     ReaffectatorModule,
+    SimulatorModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

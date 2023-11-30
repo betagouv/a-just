@@ -35,7 +35,7 @@ const magRealTimePerCaseTitle = 'du Temps moyen / Dossier'
 /**
  * Temps moyen par dossier field name
  */
-const magRealTimePerCaseToDefine = ['un temps moyen par dossier de']
+const magRealTimePerCaseToDefine = ['un temps moyen par dossier de', 'une variation de']
 
 /**
  * Entrée field name

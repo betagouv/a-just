@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
+import { SelectComponent } from 'src/app/components/select/select.component';
 import { ExtractsDataService } from 'src/app/services/extracts-data/extracts-data.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
@@ -21,11 +22,19 @@ interface filtreDetails {
   "NATAFF"?: [], "C_TUS"?: [], "TOTAL"?: string
 }
 
+interface elementToAdd {
+  NACToAdd: string,
+  code: string,
+  name: string,
+  path: Array<string>,
+}
+
 @Component({
   templateUrl: './yaml-tools.page.html',
   styleUrls: ['./yaml-tools.page.scss'],
 })
 export class YamlToolsPage {
+  @ViewChild('contentieuxSelect') contentieuxSelect: undefined | SelectComponent
   actionSelection = 0
   existingNAC: string[] = []
   distinctNAC: Array<string> = []
@@ -39,9 +48,13 @@ export class YamlToolsPage {
   finalYmlData: any = null
   textResultValue = ''
   contentieuxLabelList: Array<any> = []
-  NACToAdd: string = ""
-  selectedContentieux: Array<string> = []
+  tmpNACToAdd: string = ""
+  //NACToAdd: Array<string> = []
+  selectedContentieuxTmp: Array<elementToAdd> = []
+  selectedContentieux: Array<elementToAdd> = []
   goToStep3_addNac: boolean = false
+  goToStep4_addNac: boolean = false
+  goToStep5_addNac: boolean = false
   displayResult: boolean = false
 
   constructor() { }
@@ -70,9 +83,12 @@ export class YamlToolsPage {
     this.textResultValue = ''
     this.actionSelection = 0
     this.contentieuxLabelList = []
-    this.NACToAdd = ""
+    this.tmpNACToAdd = ''
+    this.selectedContentieuxTmp = []
     this.selectedContentieux = []
     this.goToStep3_addNac = false
+    this.goToStep4_addNac = false
+    this.goToStep5_addNac = false
     this.displayResult = false
   }
 
@@ -174,16 +190,18 @@ export class YamlToolsPage {
   validateYML() {
     const message = (document.getElementById('json') as HTMLInputElement);
     this.initialYmlData = parse(message.value).categories
-
     for (let [key, value] of Object.entries(this.initialYmlData)) {
       let ctx = value as contentieux
+
       for (let i of ['entrees', 'sorties', 'stock']) {
         // @ts-ignore
         if (ctx.filtres[i] && ctx.filtres[i].NATAFF) {
           // @ts-ignore
           this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
           this.distinctNAC = _.uniq(this.distinctNAC)
-          this.contentieuxLabelList.push({ code: ctx["Code nomenclature"], name: ctx.label, path: ['filtres', i, 'NATAFF'] })
+          this.distinctNAC = _.sortBy(this.distinctNAC)
+
+          this.contentieuxLabelList.push({ code: key, name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
     }
@@ -210,18 +228,43 @@ export class YamlToolsPage {
    * Sauvegarde de la NAC à ajouter
    * @param event
    */
-  onNACToAdd(event: any) {
-    this.NACToAdd = event.target.value
+  onNACToAdd(value: string) {
+    console.log('tmp_NacToAdd:', this.tmpNACToAdd)
+    console.log('NacToAdd:', value)
+    //this.NACToAdd.push(value)
+    //this.NACToAdd = event.target.value
   }
 
   /**
-    * S
+    * Sauvegarde dee contentieux dans lesquels ajouter la NAC dans un tableau temporaire
     * @param change
     */
   onSelectedContentieuxToAddNAC(change: any) {
-    this.selectedContentieux = change
+    let tmp = change.map((elem: elementToAdd) => { return ({ ...elem, NACToAdd: this.tmpNACToAdd }) })
+    this.selectedContentieuxTmp = tmp
+    console.log('contentieuxSelect: ', this.contentieuxSelect)
   }
 
+  /**
+  *   Copie des contentieux selectionnés pour une NAC dans le tableaux final des NAC à ajouter
+  */
+  onAddNacValidation() {
+    console.log('selectedContentieux_tmp: ', this.selectedContentieuxTmp)
+    this.selectedContentieuxTmp.map(elem => { this.selectedContentieux.push(elem) })
+    this.selectedContentieuxTmp = []
+
+    if (this.contentieuxSelect) {
+      this.contentieuxSelect.selectedRights = []
+    }
+    console.log('selectedContentieux : ', this.selectedContentieux)
+  }
+
+  /**
+   * Ajout de la NAC à la liste des NATAFF d'un contentieux en entree, sortie ou stock
+   * @param arr 
+   * @param nac 
+   * @returns 
+   */
   addNAC(arr: Array<any>, nac: string) {
     if (!arr.includes(nac))
       arr.push(nac)
@@ -236,8 +279,9 @@ export class YamlToolsPage {
     if (this.selectedContentieux.length && response) {
       this.displayResult = true
       this.finalYmlData = _.cloneDeep(this.initialYmlData)
+
       this.selectedContentieux.map((elem: any) => {
-        this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, this.NACToAdd)
+        this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, elem.NACToAdd)
       })
 
       const message = (document.getElementById('yml') as HTMLInputElement);

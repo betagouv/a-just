@@ -28,23 +28,35 @@ export class SignupPage {
 
   /**
    * Constructeur
-   * @param userService 
-   * @param router 
-   * @param title 
+   * @param userService
+   * @param router
+   * @param title
    */
-  constructor(private userService: UserService, private router: Router, private title: Title) {
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private title: Title
+  ) {
     this.title.setTitle('Embarquement | A-Just')
   }
 
   /**
    * Envoi des informations d'inscriptions
-   * @returns 
+   * @returns
    */
   onSubmit() {
-    const { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox } =
-      this.form.value
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      passwordConf,
+      fonction,
+      tj,
+      checkbox,
+    } = this.form.value
 
-    if(!checkbox) {
+    if (!checkbox) {
       alert("Vous devez valider les conditions générales d'utilisation")
       return
     }
@@ -61,11 +73,14 @@ export class SignupPage {
 
     this.userService
       .register({ email, password, firstName, lastName, fonction, tj })
-      .then(() => {
-        alert(
-          "Merci de votre inscription. L'équipe A-JUST vous avertira dès que les droits vous auront été attribués"
-        )
-        this.router.navigate(['/login'])
+      .then((returnLogin) => {
+        if (returnLogin) {
+          this.router.navigate([
+            this.userService.getUserPageUrl(returnLogin.user),
+          ])
+        } else {
+          this.router.navigate(['/login'])
+        }
       })
   }
 }

@@ -26,7 +26,8 @@
   </div>
 </div>
 
-<div *ngIf="!forceToShowContentieuxDetail && refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
+<div #subItemGroup *ngIf="!forceToShowContentieuxDetail && refIndexSelected !== -1" class="sub-panel-activites"
+  [ngStyle]="{
     'border-top-color': referentielMappingColor(
       referentiel[refIndexSelected].label
     )
@@ -46,13 +47,24 @@
     <ng-template ngFor let-ref [ngForOf]="referentiel[refIndexSelected].childrens || []">
       <div *ngIf="ref.label === 'Fonctionnaires affectés au CPH'" class="sub-item"></div>
       <!-- Add element to put the next to an other line -->
-      <div class="sub-item">
-        <progression-bar [percent]="ref.percent" [color]="referentielMappingColor(referentiel[refIndexSelected].label)"
-          [selected]="selected" (percentChange)="
+      <div #subItem class="sub-item">
+        <progression-bar (mouseover)="setMouseHovering(referentielMappingName(ref.label),subItemGroup,subItem)"
+          (mouseout)="setMouseHovering()" [percent]="ref.percent"
+          [color]="referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected" (percentChange)="
           onChangePercent(ref, $event, referentiel[refIndexSelected])
         " class="dark-mode">
         </progression-bar>
-        <p>{{ referentielMappingName(ref.label) }}</p>
+        <p (mouseover)="setMouseHovering(referentielMappingName(ref.label),subItemGroup,subItem)"
+          (mouseout)="setMouseHovering()">{{
+          referentielMappingName(ref.label) }}</p>
+        <div class="tooltip-container"
+          *ngIf="this.mouseHovering === true && this.hoveredReferentielLabel === referentielMappingName(ref.label)">
+          <i class="arrow-top"></i>
+          <div class='tooltip' [ngStyle]="{'right.px': tooltipCssRight}">
+            <div class="title">{{ referentielMappingName(ref.label) }}</div>
+            <div class="texte">{{ this.hoveredReferentielDetail }}</div>
+          </div>
+        </div>
       </div>
     </ng-template>
   </div>
@@ -70,10 +82,10 @@
   <ng-template ngFor let-mainReferentiel [ngForOf]="referentiel">
     <ng-template [ngIf]="mainReferentiel.percent">
       <div class="sub-panel-activites" [ngStyle]="{
-  'border-top-color': referentielMappingColor(
-    mainReferentiel.label
-  )
-}">
+        'border-top-color': referentielMappingColor(
+          mainReferentiel.label
+        )
+        }">
         <div class="sub-item">
           <progression-bar [percent]="mainReferentiel.percent" [color]="referentielMappingColor(mainReferentiel.label)"
             class="dark-mode">
@@ -84,7 +96,7 @@
           <p>Dont</p>
         </div>
         <div class="group-sub-item">
-          <ng-template ngFor let-ref [ngForOf]="mainReferentiel.childrens || []">
+          <ng-template ngFor let-ref [ngForOf]="mainReferentiel.childrens || []">
             <div *ngIf="ref.label === 'Fonctionnaires affectés au CPH'" class="sub-item"></div>
             <!-- Add element to put the next to an other line -->
             <div class="sub-item" *ngIf="ref.percent">

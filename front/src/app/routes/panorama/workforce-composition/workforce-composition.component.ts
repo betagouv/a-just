@@ -5,6 +5,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ucFirst } from 'src/app/utils/string'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { today } from 'src/app/utils/dates'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
 /**
  * Interface pour agencer la page
@@ -28,6 +29,13 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   poste?: { label: string; etpt: number; total: number }[]
 }
 
+interface cleInterface {
+  juridiction_id: number,
+  category_id: number,
+  value: number
+}
+
+
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
  */
@@ -38,8 +46,7 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
 })
 export class WorkforceCompositionComponent
   extends MainClass
-  implements OnChanges
-{
+  implements OnChanges {
   /**
    * Filter categories to view
    */
@@ -52,11 +59,17 @@ export class WorkforceCompositionComponent
    * Liste filtré pour l'affichage
    */
   listFormatedFiltered: listFormatedWithDatasInterface[] = []
+  /**
+   * Cle
+   */
+  cleByCategory: cleInterface[] | null = null
 
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService,
+    private serverService: ServerService
+  ) {
     super()
   }
 
@@ -65,6 +78,7 @@ export class WorkforceCompositionComponent
    */
   ngOnChanges() {
     if (this.backupId) {
+      this.getAllCle()
       this.humanResourceService
         .onFilterList(
           this.humanResourceService.backupId.getValue() || 0,
@@ -129,25 +143,40 @@ export class WorkforceCompositionComponent
 
   saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
     if (value) {
-      localStorage.setItem(
-        `CLE-${this.humanResourceService.backupId.getValue()}-${
-          category.categoryId
-        }`,
-        // @ts-ignore
-        value.value
-      )
+      const value = (document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value
+      const res = this.serverService
+        .put('juridictions-details/update-cle',
+          {
+            juridictionId: this.humanResourceService.backupId.getValue(),
+            categoryId: category.categoryId,
+            value: ((document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value)
+          })
+        .then((r) => {
+          return r.data
+        })
     }
   }
 
   getCLE(category: listFormatedWithDatasInterface) {
     if (this.humanResourceService.backupId.getValue()) {
-      return localStorage.getItem(
-        `CLE-${this.humanResourceService.backupId.getValue()}-${
-          category.categoryId
-        }`
-      )
+      let res = null
+      this.cleByCategory?.map(x => {
+        if (x.category_id === category.categoryId) res = x.value
+      })
+      return res
     }
 
     return ''
+  }
+
+  async getAllCle() {
+    this.cleByCategory = await this.serverService
+      .post('juridictions-details/get-cle',
+        {
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+      .then((r) => {
+        return r.data
+      })
   }
 }

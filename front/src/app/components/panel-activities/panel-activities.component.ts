@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
-import { REFERENTIELS_CANT_UPDATED } from 'src/app/constants/referentiel'
+import { REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -26,8 +26,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 })
 export class PanelActivitiesComponent
   extends MainClass
-  implements OnChanges, OnDestroy
-{
+  implements OnChanges, OnDestroy {
   /**
    * Valeure de l'ETP
    */
@@ -81,6 +80,22 @@ export class PanelActivitiesComponent
    * Réfentiels que l'on ne peut pas modifier
    */
   REFERENTIELS_CANT_UPDATED = REFERENTIELS_CANT_UPDATED
+  /**
+   * État de la souris si elle hover un sous-référentiel du contentieux 'Autres Activités'
+   */
+  mouseHovering: boolean = false
+  /**
+  * Nom du sous-rérérentiel du contentieux 'Autres Activités' survolé
+  */
+  hoveredReferentielLabel: string | null = null
+  /**
+  * Detail du référentiel survolé
+  */
+  hoveredReferentielDetail: string | null = null
+  /**
+   * Tooltip right css
+   */
+  tooltipCssRight: number = 0
 
   /**
    * Constructeur
@@ -266,5 +281,27 @@ export class PanelActivitiesComponent
    */
   countNbSubItem(referentiel: ContentieuReferentielInterface) {
     return (referentiel.childrens || []).filter((r) => r.percent).length
+  }
+
+  /**
+   * Change l'état de mouseHovering lorsque la souris hover un sous référentiel du contentieux 'Autres Activités'
+   */
+  setMouseHovering(label?: string, container?: any, item?: any) {
+    if (container && item) {
+      this.tooltipCssRight = 0;
+
+      const itemBounding = item.getBoundingClientRect()
+      const containerBounding = container.getBoundingClientRect()
+      const offset = itemBounding.x + itemBounding.width - containerBounding.x
+
+      if (offset < 450)
+        this.tooltipCssRight = (offset - 450)
+    }
+    if (label) {
+      this.hoveredReferentielDetail = getReferentielDetail(label)
+      if (this.hoveredReferentielDetail)
+        this.hoveredReferentielLabel = label
+    }
+    this.mouseHovering = !this.mouseHovering
   }
 }

@@ -10,6 +10,20 @@
   display: flex;
   align-items: stretch;
 
+  &.full-width {
+    .input {
+      width: 100%;
+    }
+
+    .input-container {
+      width: 100%;
+    }
+
+    input {
+      flex: 1;
+    }
+  }
+
   &.dark-mode {
     background-color: fColor(darkModeBgMenu);
     border: 1px solid fColor(darkModeBgMenu);

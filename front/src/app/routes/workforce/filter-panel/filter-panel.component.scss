@@ -8,6 +8,12 @@
   bottom: 0;
   z-index: 100;
   padding-bottom: 50px;
+
+  &.button-filter {
+    position: relative;
+    z-index: initial;
+    padding-bottom: 0px !important;
+  }
 }
 
 .background {
