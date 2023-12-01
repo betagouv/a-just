@@ -127,7 +127,7 @@ module.exports = function (datas) {
         const nbDaysByMagistrat = config.nbDaysByMagistrat
         const nbHoursPerDayAndMagistrat = config.nbHoursPerDayAndMagistrat
 
-        const res = Math.floor((magEtpAffected * nbHoursPerDayAndMagistrat * nbDaysByMagistrat) / (12 * magCalculateTimePerCase))
+        const res = Math.floor( Math.floor((magEtpAffected * nbHoursPerDayAndMagistrat * nbDaysByMagistrat) / 12) /  magCalculateTimePerCase)
         assert.strictEqual(res, calculatorData.magCalculateOut)
       } else {
         assert.fail()
