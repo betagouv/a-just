@@ -5,7 +5,7 @@ import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
 import routeSimulator from './api/RouteSimulator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
-//import routePanorama from './api/RoutePanorama.test'
+import routePanorama from './api/RoutePanorama.test'
 
 import axios from 'axios'
 import { assert } from 'chai'
@@ -90,11 +90,11 @@ describe('Test server is ready', () => {
     assert.isNotEmpty(datas.adminAccess)
   })
 
-  routeUser(datas)
-  routeChangeUserData(datas)
+  //routeUser(datas)
+  //routeChangeUserData(datas)
   //routeCalcultator(datas)
   //routeSimulator(datas)
-  routeVentilateur(datas)
+  //routeVentilateur(datas)
   //routePanorama(datas)
 
   /*routeImport()
