@@ -23,7 +23,6 @@
   margin-bottom: 8px;
 
   .sub-item {
-    cursor: pointer;
     flex: 1;
     align-self: stretch;
     display: flex;
@@ -56,7 +55,7 @@
         &.etp {
           flex: 1;
 
-          >p {
+          > p {
             color: fColor(headerNumberColor) !important;
           }
         }
@@ -81,7 +80,7 @@
   display: grid;
   grid-template-columns: repeat(11, 1fr);
 
-  >div {
+  > div {
     progression-bar {
       width: 90%;
       cursor: pointer;
@@ -100,7 +99,7 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line>div {
+    .progress-bar-line > div {
       background-color: fColor(cred);
     }
   }
@@ -110,8 +109,7 @@
       color: fColor(cplaceholder);
     }
 
-    .progress-bar-line,
-    .progress-bar-line>div {
+    .progress-bar-line, .progress-bar-line > div {
       background-color: fColor(cplaceholder);
     }
   }
@@ -129,7 +127,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    >div {
+    > div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
@@ -180,7 +178,7 @@
     display: grid;
     grid-template-columns: repeat(4, 25%);
 
-    >div.sub-item {
+    > div.sub-item {
       width: 100%;
       margin-bottom: 4px;
     }
@@ -203,55 +201,41 @@
       height: 62px;
     }
 
-    >p {
+    > p {
       text-align: center;
       font-size: 10px;
       font-weight: 500;
       margin-top: 4px;
     }
 
-    .tooltip-container {
-      position: relative;
-      width: 100%;
-      height: 0px;
+    .tooltip {
+      position: absolute;
+      top: 83%;
+      right: 30%;
+      width: 150%;
+      z-index: 99;
+      overflow: hidden;
 
       .arrow-top {
         width: 15px;
         height: 15px;
         background-color: #33569e;
         display: inline-block;
-        //transform: rotate(-135deg) translate(-50%, -50%);
-        //-webkit-transform: rotate(-135deg);
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-135deg);
-        position: absolute;
-        top: 112%;
-        z-index: 99;
-        margin-top: 12px;
+        margin-left: 75%;
+        transform: rotate(-135deg);
+        -webkit-transform: rotate(-135deg);
+        margin-bottom: -13px;
       }
-
-      .tooltip {
-        margin-top: 10px;
-        position: absolute;
-        top: 110%;
-        right: 0;
-        width: 450px;
-        z-index: 99;
-        overflow: hidden;
-
-
-        .title {
-          background-color: #33569e;
-          color: #fff;
-          font-size: 16px;
-          padding: 16px;
-        }
-
-        .texte {
-          background-color: #f3f6fe;
-          color: #29437c;
-          padding: 16px;
-        }
+      .title {
+        background-color: #33569e;
+        color: #fff;
+        font-size: 16px;
+        padding: 16px;
+      }
+      .texte {
+        background-color: #f3f6fe;
+        color: #29437c;
+        padding: 16px;
       }
     }
   }
