@@ -242,7 +242,7 @@
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="options">
       <div id="init-button" class="init-button"
-        (click)="initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase] ) : initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser</p>
       </div>
       <div class="simulate-button {{simulateButton}}"
@@ -434,19 +434,19 @@
       </div>
     </div>
   </div>
-  <!-- 
 
-  <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
-    <p>Selectionner une date de début :</p>
-    <aj-date-select-blue class="select-disabled aj-date-white" [value]="dateStart"
-      (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
-    </aj-date-select-blue>
-    <p>et une date de fin :</p>
-    <aj-date-select-blue class="aj-date-white" [title]="'Fin de période'" [value]="dateStop"
-      (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
-    </aj-date-select-blue>
-  </div>
--->
+  <!-- 
+    <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
+      <p>Selectionner une date de début :</p>
+      <aj-date-select-blue class="select-disabled aj-date-white" [value]="dateStart"
+        (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
+      </aj-date-select-blue>
+      <p>et une date de fin :</p>
+      <aj-date-select-blue class="aj-date-white" [title]="'Fin de période'" [value]="dateStop"
+        (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
+      </aj-date-select-blue>
+    </div>
+  -->
 
 
   <aj-editable-situation *ngIf="dateStop!==null" [@fadeInOut]
@@ -647,7 +647,7 @@
     </div>
     <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
       <div class="init-button"
-        (click)="initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]) : initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
         <p class="title">Réinitialiser les ajustements</p>
       </div>
       <div class="simulate-button {{simulateButton}}">
@@ -953,32 +953,9 @@
     </div>
   </div>
 
-  <aj-popup *ngIf="userAction.isLeaving" class="small" [closeIcon]="true"
-    (onClose)="userAction.isLeaving = false;onReloadAction=true" title="Conserver cette simulation ?"
-    [actions]="popupAction.leaving" (selectedAction)="onPopupDetailAction($event, 'leaving')"
+  <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true" (onClose)="printPopup = false;nextState = null;onResetUserAction()"
+    title="Conserver cette simulation ?" [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)"
     [removeShadow]="'noShadow'">
-    <div>
-      <p class="content">
-        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
-        en PDF afin de l'enregistrer sur votre ordinateur.
-      </p>
-    </div>
-  </aj-popup>
-
-  <aj-popup *ngIf="userAction.isReseting" class="small" [closeIcon]="true" (onClose)="userAction.isReseting = false"
-    title="Conserver cette simulation ?" [actions]="popupAction.reinit"
-    (selectedAction)="onPopupDetailAction($event, 'reseting')" [removeShadow]="'noShadow'">
-    <div>
-      <p class="content">
-        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
-        en PDF afin de l'enregistrer sur votre ordinateur.
-      </p>
-    </div>
-  </aj-popup>
-
-  <aj-popup *ngIf="userAction.isClosingTab" class="small" [closeIcon]="true" (onClose)="userAction.isClosingTab = false"
-    title="Conserver cette simulation ?" [actions]="popupAction.closeTab"
-    (selectedAction)="onPopupDetailAction($event, 'closingTab')" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
@@ -997,13 +974,12 @@
     <p class="title">{{printTitle}}</p>
   </div>
 
-  <div id="main-back-menu" class="back-button-menu" (click)="onReturn(); userAction.isComingBack = true"
-    *ngIf="!chooseScreen">
+  <div id="main-back-menu" class="back-button-menu" (click)="onReturn()" *ngIf="!chooseScreen">
     <p class="title">Retour</p>
   </div>
 
   <div id="main-init" class="reset-button {{disabled}}"
-    (click)="toDisplaySimulation ? userAction.isReseting = true : resetParams()" *ngIf="!chooseScreen">
+    (click)="toDisplaySimulation ? onUserActionClick(this.action.reinitAll) : resetParams()" *ngIf="!chooseScreen">
     <p class="title">Tout réinitialiser</p>
   </div>
 </ng-template>

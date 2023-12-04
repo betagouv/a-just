@@ -1,6 +1,8 @@
 import { assert } from 'chai'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
-import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi } from '../routes/user'
+import { accessList } from '../../src/constants/access'
+import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onUpdateAccountApi} from '../routes/user'
+import { JURIDICTION_TEST_NAME } from '../constants/juridiction'
 
 module.exports = function (datas) {
   describe('Users tests', () => {
@@ -12,6 +14,7 @@ module.exports = function (datas) {
         password: USER_TEST_PASSWORD,
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
@@ -25,6 +28,7 @@ module.exports = function (datas) {
         email: USER_TEST_EMAIL,
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
@@ -37,6 +41,7 @@ module.exports = function (datas) {
       const response = await onSignUpApi({
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 400)
@@ -51,6 +56,7 @@ module.exports = function (datas) {
         password: '123456',
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 401)
@@ -65,6 +71,7 @@ module.exports = function (datas) {
         password: '123456789',
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       assert.strictEqual(response.status, 401)
@@ -73,18 +80,17 @@ module.exports = function (datas) {
     /**
      *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe est un mot du dictionnaire
      */
-    
-      it('Sign up - Password is a word in dictionary, should return 401', async () => {
-        const response = await onSignUpApi({
-          email: "badPAssword@email.com",//USER_TEST_EMAIL,
-          password: 'Zymotechnie',
-          firstName: USER_TEST_FIRSTNAME,
-          lastName: USER_TEST_LASTNAME,
-          fonction: USER_TEST_FONCTION,
-        })
-        assert.strictEqual(response.status, 401)
+    it('Sign up - Password is a word in dictionary, should return 401', async () => {
+      const response = await onSignUpApi({
+        email: "badPAssword@email.com",//USER_TEST_EMAIL,
+        password: 'Zymotechnie',
+        firstName: USER_TEST_FIRSTNAME,
+        lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
+        fonction: USER_TEST_FONCTION,
       })
-    
+      assert.strictEqual(response.status, 401)
+    })
 
     /**
      *  Inscription - Vérification que l'utilisateur peut bien s'inscrire si toutes les information obligatoires sont données
@@ -95,9 +101,11 @@ module.exports = function (datas) {
         password: USER_TEST_PASSWORD,
         firstName: USER_TEST_FIRSTNAME,
         lastName: USER_TEST_LASTNAME,
+        tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
       datas.userId = response.data.user.id
+
       assert.strictEqual(response.status, 201)
     })
 
@@ -165,6 +173,23 @@ module.exports = function (datas) {
       assert.isOk(datas.userToken, 'response 201 and user token created')
     })
 
+    it('Give all accesses to user test', async () => {
+      const accessIds = accessList.map((elem) => {
+        return elem.id
+      })
+
+      let response = await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.userId,
+        accessIds: accessIds,
+        ventilations: [],
+      })
+      response = await onGetUserDataApi({ userToken: datas.userToken })
+
+      assert.strictEqual(response.status, 200)
+      assert.isNotEmpty(response.data.user.access)
+    })
+
     /**
      * Get my info as a user
      */
@@ -217,13 +242,15 @@ module.exports = function (datas) {
     /**
      * Login - Reconnexion de l'utilisateur pour les prochains tests
      */
-    /*it('Login - Login should succeed and return 201', async () => {
+    it('Re Login - Login should succeed and return 201', async () => {
       const response = await onLoginApi({
         email: USER_TEST_EMAIL,
         password: USER_TEST_PASSWORD,
       })
       datas.userToken = response.status === 201 && response.data.token
       assert.strictEqual(response.status, 201)
-    })*/
+      assert.isOk(datas.userToken, 'response 201 and user token created')
+    })
+
   })
 }
