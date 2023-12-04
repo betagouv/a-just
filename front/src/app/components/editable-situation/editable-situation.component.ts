@@ -225,13 +225,26 @@ export class EditableSituationComponent implements OnChanges {
               }
             });
           }
-
-
         }
-
       }
-
     }
+  }
+
+  /**
+   * Indique si une valeur est finit ou si c'est une division par 0
+   * @param val 
+   * @returns 
+   */
+  getFiniteValue(val: string) {
+    switch (val) {
+      case 'realCoverage':
+        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+      case 'realDTESInMonths':
+        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+      case 'magRealTimePerCase':
+        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+    }
+    return true
   }
 
   initFields() {
