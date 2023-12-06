@@ -9,7 +9,7 @@ export default class RouteHrFonctions extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'HRFonctions' })
   }
 
@@ -17,9 +17,8 @@ export default class RouteHrFonctions extends Route {
    * Interface de la liste de toutes les fonctions
    */
   @Route.Get({
-    accesses: [Access.isLogin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     this.sendOk(ctx, await this.model.getAll())
   }
 }
