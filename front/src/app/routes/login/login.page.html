@@ -20,6 +20,8 @@
     <input class="ethics-ui" placeholder="" formControlName="email" type="email" />
     <label>Mot de passe</label>
     <input class="ethics-ui" placeholder="" formControlName="password" type="password" />
+    <span class="remember-me"><input type="checkbox" formControlName="remember" /><label>Se souvenir de
+        moi</label></span>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     <div class="remember-row">
       <!--<div><input type="checkbox">

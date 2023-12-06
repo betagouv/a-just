@@ -121,8 +121,6 @@ export class SignupPage {
       })
   }
 
-  AJOUTER LA POPIN DE REINITIALISATION
-  AJOUTER LA CASE SE SOUVENIR DE MOI
 
   /**
    * Validation et verification des champs de l'étape 1

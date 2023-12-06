@@ -7,7 +7,7 @@ import { ENUM_TYPE } from '../../models/TableTokens'
  * @param {*} ctx
  * @returns
  */
-async function addUserToCtx (ctx) {
+async function addUserToCtx(ctx) {
   const token = ctx.get('Authorization')
   if (token) {
     try {
@@ -35,8 +35,11 @@ async function addUserToCtx (ctx) {
  * @param {*} ctx
  * @returns
  */
-function loginUser (ctx) {
-  return async (user) => {
+function loginUser(ctx) {
+  return async (user, tokenValidity) => {
+    const validityDate = new Date()
+    validityDate.setDate(validityDate.getDate() + tokenValidity)
+
     const userToRegister = {
       id: user.id,
       role: user.role,
@@ -45,7 +48,7 @@ function loginUser (ctx) {
       date: new Date(),
     }
     const token = crypt.generateJwtToken(userToRegister)
-    await ctx.models.tokens.createLogin({ entity_id: user.id, token })
+    await ctx.models.tokens.createLogin({ entity_id: user.id, token, consumable_until: validityDate })
     ctx.state.user = userToRegister
     ctx.body = { ...ctx.body }
     ctx.body.token = token
@@ -59,7 +62,7 @@ function loginUser (ctx) {
  * @param {*} ctx
  * @returns
  */
-function logoutUser (ctx) {
+function logoutUser(ctx) {
   return async () => {
     const token = ctx.get('Authorization')
     if (token) {
