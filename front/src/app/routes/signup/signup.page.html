@@ -69,8 +69,9 @@
     <ng-template [ngIf]="signUpStep===2">
       <label>Mon tribunal de rattachement :</label>
       <div class="tj">
-        <label>TJ </label> <select (change)="setTj($event.target)">
-          <option selected hidden></option>
+        <select (change)="setTj($event.target)">
+          <!--<option selected hidden></option>-->
+          <option selected hidden>Choisir un TJ</option>
           <option *ngFor="let tj of tjs" [value]="tj.id">
             {{ tj.label }}
           </option>

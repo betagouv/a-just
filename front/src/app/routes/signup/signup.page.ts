@@ -156,6 +156,7 @@ export class SignupPage {
 
     var arrayOfSp = ["!", "@", "#", "$", "%", "&", "*", "_", "?", "-"];
     var regex = "[" + arrayOfSp.join("") + "]";
+
     if (!password || password.length < MIN_PASSWORD_LENGTH || !password.match(/\d/) || !new RegExp(regex).test(password) || !password.match(/[A-Z]/g)) {
       alert("Vous devez saisir un mot de passe qui rempli les critères obligatoires")
       return
@@ -264,8 +265,8 @@ export class SignupPage {
     this.serverService
       .get('juridictions/get-all-visibles')
       .then((data) => {
-
-        this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
+        this.tjs = data.data
+        //this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
       });
   }
 
