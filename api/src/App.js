@@ -14,7 +14,7 @@ import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
-var os = require('os')
+/*var os = require('os')
 var osu = require('node-os-utils')
 
 var cpu = osu.cpu
@@ -33,7 +33,7 @@ setInterval(() => {
   osCmd.whoami().then((userName) => {
     console.log('WHO I AM', userName) // admin
   })
-}, 30000)
+}, 30000)*/
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
