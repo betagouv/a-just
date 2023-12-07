@@ -12,7 +12,7 @@ export const environment = {
   nbHoursPerDayAndFonctionnaire: 7,
   nbHoursPerDayAndMagistrat: 8,
   version: packageJSON.version,
-  matomo: 261,
+  matomo: 64,
   forceSSL: true,
   supportEmail: 'support-utilisateurs@a-just.fr',
   mapboxToken: 'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w',
