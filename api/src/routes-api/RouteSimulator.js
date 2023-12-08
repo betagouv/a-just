@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
-import { EXECUTE_SIMULATION, EXECUTE_WHITE_SIMULATOR } from '../constants/log-codes'
+import { EXECUTE_SIMULATION, EXECUTE_SIMULATOR_PARAM, EXECUTE_WHITE_SIMULATOR } from '../constants/log-codes'
 import config from 'config'
 
 /**
@@ -104,9 +104,14 @@ export default class RouteSimulator extends Route {
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
-    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
+    await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
 
-    this.sendOk(ctx, simulatedSituation)
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
+
+
+    if (simulatedSituation === null) ctx.throw(400, "Une erreur est survenue lors de votre simulation, veuillez réessayer !")
+    else
+      this.sendOk(ctx, simulatedSituation)
   }
 
   /**
