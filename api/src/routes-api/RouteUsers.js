@@ -105,7 +105,7 @@ export default class RouteUsers extends Route {
 
       if (user) {
         delete user.dataValues.password
-        await ctx.loginUser(user.dataValues)
+        await ctx.loginUser(user.dataValues, 7)
         await super.addUserInfoInBody(ctx)
         this.sendCreated(ctx)
       } else {

@@ -62,7 +62,7 @@ export default class RouteAuths extends Route {
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      await ctx.loginUser(tryUserCon)
+      await ctx.loginUser(tryUserCon, 7)
       await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
         userId: tryUserCon.id,
       })
