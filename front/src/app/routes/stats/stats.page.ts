@@ -33,6 +33,8 @@ export class StatsPage {
   */
   list: JuridictionInterface[] = []
 
+  positionMarkerSize : any[] = []
+
   /**
    * Constructeur
    * @param title 
@@ -57,46 +59,62 @@ export class StatsPage {
       center: this.center,
     })
 
-    map.on('style.load', () => {
-      this.list.map(j => {
-        const sourceName = `marker-${j.id}`
-        map.addSource(sourceName, {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [{
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [j.longitude || 0, j.latitude || 0],
-              },
-            }],
-          },
-        })
-  
-        let size = (j.population || 1) / 33333
-        if(size < 10) {
-          size = 10
+    let lastZoom = map.getZoom();
+
+    map.on('zoom', () => {
+      const currentZoom = map.getZoom();
+      this.positionMarkerSize.map(elem => {
+        if (currentZoom > lastZoom) {
+          map.setPaintProperty(elem.id, 'circle-radius', currentZoom + 3)
+          lastZoom = currentZoom
+        } else {
+          map.setPaintProperty(elem.id, 'circle-radius', currentZoom >= 0 ? currentZoom  : 0)
+          lastZoom = currentZoom
         }
-        map.addLayer({
-          id: `circles-${j.id}`,
-          source: sourceName,
-          type: 'circle',
-          paint: {
-            'circle-radius': size,
-            'circle-color': '#000091',
-            'circle-opacity': 0.5,
-            'circle-stroke-width': 0,
-          },
-        })
-      
-        const m = new mapboxgl.Marker()
-          .setLngLat([j.longitude || 0, j.latitude || 0])
-          .addTo(map)
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' habitants' : ''}`)
-        m.setPopup(popup)
       })
     })
+
+    map.on('style.load', () => {
+        this.list.map(j => {
+          const sourceName = `marker-${j.id}`
+          map.addSource(sourceName, {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [{
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [j.longitude || 0, j.latitude || 0],
+                },
+              }],
+            },
+          })
+         
+          const marker = /*map.addLayer(*/{
+            id: `circles-${j.id}`,
+            source: sourceName,
+            type: 'circle',
+            paint: {
+              'circle-radius': 5,
+              'circle-color': '#000091',
+              'circle-opacity': 0.5,
+              'circle-stroke-width': 0,
+            },
+          }//)
+          this.positionMarkerSize.push(marker)
+          map.addLayer(marker);
+          
+
+          /*const m = new mapboxgl.Marker()
+          .setLngLat([j.longitude || 0, j.latitude || 0])
+          .addTo(map)*/
+
+          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`${j.label}${j.population ? '<br/>' + j.population + ' habitants' : ''}`).addTo(map)
+          //m.setPopup(popup)
+        })
+      })
+    //})
   }
 
 
