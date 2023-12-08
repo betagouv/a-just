@@ -104,9 +104,27 @@ export default class RouteSimulator extends Route {
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
-    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix)
+    // SIMU A BLANC
+    params = {
+      beginSituation: { totalIn: 1, totalOut: 1, lastStock: 1, etpMag: 1, etpFon: 0, etpCont: 0, realCoverage: 1, realDTESInMonths: 1, magRealTimePerCase: 138.66666666666666, magCalculateCoverage: 0, fonCalculateCoverage: 0, magCalculateDTESInMonths: 0, fonCalculateDTESInMonths: 0, magCalculateTimePerCase: 0, nbMonth: 0, etpAffected: [{ name: "Magistrat", totalEtp: 0, rank: 1 }, { name: 'Greffe', totalEtp: 0, rank: 2 }, { name: "Autour du magistrat", totalEtp: 0, rank: 3 }] },
+      endSituation: { totalIn: 1, totalOut: 1, lastStock: 0, etpMag: 1, etpFon: 0, etpCont: null, realCoverage: 1, realDTESInMonths: 0, magRealTimePerCase: 138.66666666666666, magCalculateCoverage: null, fonCalculateCoverage: null, magCalculateDTESInMonths: null, fonCalculateDTESInMonths: null, magCalculateTimePerCase: null, nbMonth: 0, etpAffected: null },
+      lockedParams: { param1: { label: "magRealTimePerCase", value: 138.66666666666666 }, param2: { label: "", value: "" } },
+      modifiedParams: {
+        param1: { label: "lastStock", value: 2, percentage: null, input: 1, },
+        param2: { label: '', value: '', percentage: null, input: 0 }
+      },
+      toDisplay: ['totalIn', 'lastStock', 'magRealTimePerCase'], toCalculate: ['totalOut', 'etpMag', 'realCoverage', 'realDTESInMonths']
+    }
 
-    this.sendOk(ctx, simulatedSituation)
+
+    params.beginSituation.totalIn = 0
+
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
+
+    if (simulatedSituation === null) ctx.throw(400, "Une erreur est survenue lors de votre simulation, veuillez réessayer !")
+    else
+      this.sendOk(ctx, simulatedSituation)
+
   }
 
   /**
