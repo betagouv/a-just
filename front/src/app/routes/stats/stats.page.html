@@ -1,11 +1,14 @@
-<aj-wrapper-no-connected [title]="'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiction'"
-  class="small-left-panel">
-  <div class="logo">
-    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
-    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
+<aj-wrapper-no-connected class="stats-page" [showLeftPanel]="false" [contentPadding]="false">
+  <div class='main'>
+    <div id="map-juridictions"></div>
+    <div class="right-panel">
+      <div class="logo">
+        <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
+        <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
+      </div>
+      <!--<p class="back-link"><a routerLink="/">Retour</a></p>-->
+      <iframe src="https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278" id="child-iframe"
+        frameborder="0" scrolling="yes" (load)='callJavascript($event)'></iframe>
+    </div>
   </div>
-  <p class="back-link"><a routerLink="/">Retour</a></p>
-  <iframe src="https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278" id="child-iframe"
-    frameborder="0" scrolling="yes" (load)='callJavascript($event)'></iframe>
-  <div id="map-juridictions"></div>
 </aj-wrapper-no-connected>
