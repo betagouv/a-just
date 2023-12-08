@@ -1,11 +1,11 @@
-<!--<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" >-->
-<aj-wrapper #wrapper id="simu-wrapper" title="Simulateur" [actionTemplate]="actions" [alignLeft]="true"
-  [documentation]="documentation" (pageSelected)="reloadPage()">
+<aj-wrapper #wrapper class="no-padding" id="simu-wrapper" title="Simulateur" [actionTemplate]="actions"
+  [alignLeft]="true" [documentation]="documentation" (pageSelected)="reloadPage()">
+
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
+  <!-- ECRAN DE CHOIX SIMULATEUR -->
   <div class="intro-simulateur" [ngClass]="{'display-none': !chooseScreen}">
     <div class="first-pan">
       <p class="intro-title"> <img src="/assets/icons/calculatrice-black.svg" />
@@ -28,12 +28,14 @@
           temps moyen par dossier) sont calculées automatiquement à partir des données d'ETPT et d'activité enregistrées
           à ce jour dans l'outil.
           <br /> <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez jouer !
-          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false">Continuer</div>
+          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator()">Continuer</div>
         </div>
       </div>
 
-      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false"><u>Effectuer une simulation sans
-          données pré-alimentées par A-JUST</u></p>
+      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator()">
+        <u>Effectuer une simulation sans
+          données pré-alimentées par A-JUST</u>
+      </p>
       <p class="intro-second-desc">Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de temps moyen par
         dossier) pour effectuer
         des projections sur l&apos;activité (y compris non juridictionnelle) de votre choix.</p>
@@ -41,22 +43,10 @@
     </div>
   </div>
 
-  <div class="action-simulator-bar" [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-    <aj-select title="Contentieux (obligatoire)" class="contentieux width-auto {{disabled}}"
-      [defaultRealValue]="'Sélectionner un contentieux'" [value]="contentieuId" [datas]="formReferentiel"
-      (valueChange)="updateReferentielSelected('referentiel', $event)" [multiple]="false">
-    </aj-select>
-    <aj-select title="Sous-contentieux (option)" class="contentieux width-auto {{disabled}}"
-      [class.notSelectable]="contentieuId===null" [value]="subList" [datas]="formReferentiel" [subList]="subList"
-      [parent]="contentieuId" (valueChange)="updateReferentielSelected('subList', $event)">
-    </aj-select>
-    <aj-select class="contentieux fonctions-selection width-auto {{disabled}}" title="Choix des fonctions (option)"
-      [value]="selectedFonctionsIds" [datas]="functionsList" [defaultAllValue]="'Toutes'"
-      (valueChange)="onChangeFonctionsSelected($event)">
-    </aj-select>
-  </div>
+  <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
+  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen"></aj-header-selectors>
 
-
+  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
   <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="categories-switch">
       <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
@@ -73,59 +63,10 @@
       </div>
     </div>
 
-    <div class="top-bar-container" [ngClass]="{'hide': whiteSimulator === false, 'display-none': chooseScreen}">
-      <p>Période choisie :</p>
-
-      <div class="container-timeline">
-        <div class="container-timeline-button">
-          <aj-date-select-blue class="select-disabled {{mooveClass}} start-white-sim" [value]="dateStart"
-            [ngClass]="{'disabled': toDisplaySimulation === true}"
-            (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
-          </aj-date-select-blue>
-          <div class="space"></div>
-          <aj-date-select-blue [title]="'Fin de période'" [value]="dateStop"
-            [ngClass]="{'disabled': toDisplaySimulation === true}" (valueChange)="whiteDateSelector('dateStop', $event)"
-            [min]="getMin()" [side]="'right'">
-          </aj-date-select-blue>
-        </div>
-        <div class="Rectangle">
-          <div class="dot {{mooveClass}}"></div>
-          <div class="blue-line {{mooveClass}}">
-            <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
-              <div class="dot-generated"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="top-bar-container" [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-      <p>Période choisie :</p>
-      <div class="container-timeline">
-        <div class="container-timeline-button">
-          <aj-date-select-blue class="select-disabled {{mooveClass}} {{disabled}}" [value]="dateStart"
-            (valueChange)="updateReferentielSelected('dateStart', $event)" [max]="dateStop" [min]="today">
-          </aj-date-select-blue>
-          <div class="space"></div>
-          <aj-date-select-blue class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"
-            (valueChange)="updateReferentielSelected('dateStop', $event)" [min]="getMin()" [side]="'right'">
-          </aj-date-select-blue>
-        </div>
-        <div class="Rectangle">
-          <div class="dot {{mooveClass}}"></div>
-          <div class="blue-line {{mooveClass}}">
-            <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
-              <div class="dot-generated"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <aj-period-selector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
 
-
-
+  <!-- SIMULATOR STD -->
   <div class="items before-after" [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="item blue-bg">
       <p>Entrées moyennes mensuelles</p>
@@ -156,9 +97,10 @@
       <p>Temps moyen / dossier</p>
     </div>
   </div>
-  <div class="actual-situation"
-    *ngIf="((subList.length!==0 && selectedFonctionsIds.length!==0 ) || this.getElementById(this.contentieuId)?.childrens?.length===0) &&  firstSituationData !== null"
-    [@fadeInOut] [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
+
+  <!-- SIMULATOR STD - Situation début -->
+  <div class="actual-situation" *ngIf="displayBeginSituation()" [@fadeInOut]
+    [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="line-title">
       <p>
         Situation{{startRealValue? ' au':''}}<br />
@@ -198,6 +140,7 @@
     </div>
   </div>
 
+  <!-- SIMULATOR STD - Situation projeté -->
   <div class="actual-situation color-blue" *ngIf="dateStop!==null && projectedSituationData !== null" [@fadeInOut]
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
     <div class="line-title">
@@ -238,26 +181,18 @@
       <input [value]="getFieldValue('magRealTimePerCase',projectedSituationData)" disabled />
     </div>
   </div>
+  <!-- SIMULATOR STD - Action Simuler et ajustement -->
   <div class="actual-situation color-white" *ngIf="dateStop!==null  && projectedSituationData !== null" [@fadeInOut]
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-    <div class="options">
-      <div id="init-button" class="init-button"
-        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase] ) : initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
-        <p class="title">Réinitialiser</p>
-      </div>
-      <div class="simulate-button {{simulateButton}}"
-        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]);logSimulator()">
-        <p class="title">Simuler</p>
-      </div>
-    </div>
+
     <div class="line-title">
       <p>
         Modifier<br />
         des paramètres
       </p>
     </div>
-    <aj-popup style="z-index:200;" *ngIf="toSimulate===true" [closeIcon]="true" (onClose)="toSimulate = false"
-      [removeShadow]="'noShadow'">
+    <aj-popup style="z-index:200;" *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true"
+      (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
       <div id="circle">
         <img src="/assets/icons/calculatrice.svg" />
       </div>
@@ -433,26 +368,25 @@
         <div class="triangle"></div>
       </div>
     </div>
+    <div class="options">
+      <div id="init-button" class="init-button"
+        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase] ) : initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        <p class="title">Réinitialiser</p>
+      </div>
+      <div class="simulate-button {{simulateButton}}"
+        (click)="simulate([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        <p class="title">Simuler</p>
+      </div>
+    </div>
   </div>
 
-  <!-- 
-    <div class="white-date-selector" [ngClass]="{'hide': whiteSimulator === false}">
-      <p>Selectionner une date de début :</p>
-      <aj-date-select-blue class="select-disabled aj-date-white" [value]="dateStart"
-        (valueChange)="whiteDateSelector('dateStart', $event)" [max]="dateStop" [min]="today">
-      </aj-date-select-blue>
-      <p>et une date de fin :</p>
-      <aj-date-select-blue class="aj-date-white" [title]="'Fin de période'" [value]="dateStop"
-        (valueChange)="whiteDateSelector('dateStop', $event)" [min]="getMin()" [side]="'right'">
-      </aj-date-select-blue>
-    </div>
-  -->
 
-
+  <!-- SIMULATEUR BLANC - SITUATION DEBUT + PROJETE-->
   <aj-editable-situation *ngIf="dateStop!==null" [@fadeInOut]
-    [ngClass]="{'hide': whiteSimulator === false, 'display-none': chooseScreen}" [nbOfDays]="whiteNbOfDays"
-    [category]="categorySelected" [endDateToDisplay]="stopRealValue"></aj-editable-situation>
+    [ngClass]="{'hide': whiteSimulator === false, 'display-none': chooseScreen}" [category]="categorySelected"
+    [endDateToDisplay]="stopRealValue"></aj-editable-situation>
 
+  <!-- SIMULATEUR BLANC - AJUSTEMENT-->
   <div class="actual-situation actual-situation-white color-white white-actual-situation-height"
     [ngClass]="{'display-none': chooseScreen}" *ngIf="dateStop!==null  && whiteSimulator && displayWhiteElements"
     [@fadeInOut]>
@@ -463,21 +397,21 @@
           des paramètres
         </p>
       </div>
-      <aj-popup style="z-index:200;" *ngIf="toSimulate===true" [closeIcon]="true" (onClose)="toSimulate = false"
-        [removeShadow]="'noShadow'">
+      <aj-popup style="z-index:200;" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
+        (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
         <div id="circle">
           <img src="/assets/icons/calculatrice.svg" />
         </div>
         <p>Je souhaite lancer la simulation...</p>
         <div class="choices">
           <div class="choice"
-            (click)="selectParamToLock(0,[totalInWhite, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+            (click)="selectParamToLock(0,[totalInWhite, totalOutWhite, lastStockWhite, etpMagWhite,etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
             à {{getLockedParamLabel(0)}}
             <br />constant{{getLockedParamLabel(0)!=='entrées
             mensuelles'&&getLockedParamLabel(0)!=='sorties mensuelles'?'':'es'}}
           </div>
           <div class="choice"
-            (click)="selectParamToLock(1,[totalInWhite, totalOut, lastStock, etpMag,etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+            (click)="selectParamToLock(1,[totalInWhite, totalOutWhite, lastStockWhite, etpMagWhite,etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
             à {{getLockedParamLabel(1)}}
             <br />constant{{getLockedParamLabel(1)!=='entrées
             mensuelles'&&getLockedParamLabel(1)!=='sorties mensuelles'?'':'es'}}
@@ -486,10 +420,10 @@
       </aj-popup>
 
       <aj-popup *ngIf="openPopup===true" [actions]="[
-  { id: 'modify', content: 'Ajuster', fill: true }
-]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
-        (keypress)="onKeypressEvent($event,volume.value,buttonSelected,[totalInWhite, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])"
-        (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalInWhite, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])">
+      { id: 'modify', content: 'Ajuster', fill: true }
+      ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
+        (keypress)="onKeypressEvent($event,volume.value,buttonSelected,[totalInWhite, totalOutWhite, lastStockWhite, etpMagWhite, realCoverageWhite,realDTESInMonthsWhite,magRealTimePerCaseWhite])"
+        (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalInWhite, totalOutWhite, lastStockWhite, etpMagWhite, realCoverageWhite,realDTESInMonthsWhite,magRealTimePerCaseWhite])">
         <div id="circle">
           <img src="/assets/icons/stock.svg" />
         </div>
@@ -544,101 +478,108 @@
         </div>
       </div>
       <div class="line-item">
-        <input class="ajusted-button white-button" id="totalOut" [class.filled]="totalOut.value!=='Ajuster'"
-          (click)="openPopupWithParams(totalOut)" value="Ajuster" readonly="readonly" #totalOut />
+        <input class="ajusted-button white-button" id="totalOut" [class.filled]="totalOutWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(totalOutWhite)" value="Ajuster" readonly="readonly" #totalOutWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===totalOut.id  || paramsToAjust.param2.label===totalOut.id" [@fadeInOut]>
-          {{percentageModifiedInputTextStr(totalOut.id,getFieldValue('totalOut',firstSituationData))}}
+          *ngIf="paramsToAjust.param1.label===totalOutWhite.id  || paramsToAjust.param2.label===totalOutWhite.id"
+          [@fadeInOut]>
+          {{percentageModifiedInputTextStr(totalOutWhite.id,getFieldValue('totalOut',firstSituationData))}}
           <div class="triangle"></div>
         </div>
       </div>
       <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
-        <input class="ajusted-button white-button" id="lastStock" [class.filled]="lastStock.value!=='Ajuster'"
-          (click)="openPopupWithParams(lastStock)" value="Ajuster" readonly="readonly" #lastStock />
+        <input class="ajusted-button white-button" id="lastStock" [class.filled]="lastStockWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(lastStockWhite)" value="Ajuster" readonly="readonly" #lastStockWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===lastStock.id  || paramsToAjust.param2.label===lastStock.id" [@fadeInOut]>
-          {{percentageModifiedInputTextStr(lastStock.id,getFieldValue('lastStock',firstSituationData))}}
+          *ngIf="paramsToAjust.param1.label===lastStockWhite.id  || paramsToAjust.param2.label===lastStockWhite.id"
+          [@fadeInOut]>
+          {{percentageModifiedInputTextStr(lastStockWhite.id,getFieldValue('lastStock',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
       </div>
       <div [ngClass]="{'hide-by-category': !canViewMagistrat || categorySelected !== 'MAGISTRAT'}" class="line-item">
-        <input class="ajusted-button white-button" id="etpMag" [class.filled]="etpMag.value!=='Ajuster'"
-          (click)="openPopupWithParams(etpMag)" value="Ajuster" readonly="readonly"
-          [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}" #etpMag />
+        <input class="ajusted-button white-button" id="etpMag" [class.filled]="etpMagWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(etpMagWhite)" value="Ajuster" readonly="readonly"
+          [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}" #etpMagWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id" [@fadeInOut]>
-          {{percentageModifiedInputTextStr(etpMag.id,getFieldValue('etpMag',firstSituationData))}}
+          *ngIf="paramsToAjust.param1.label===etpMagWhite.id  || paramsToAjust.param2.label===etpMagWhite.id"
+          [@fadeInOut]>
+          {{percentageModifiedInputTextStr(etpMagWhite.id,getFieldValue('etpMag',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
       </div>
       <div [ngClass]="{'hide-by-category': !canViewGreffier ||categorySelected !== 'GREFFE'}" class="line-item">
-        <input class="ajusted-button white-button" id="etpFon" [class.filled]="etpFon.value!=='Ajuster'"
-          (click)="openPopupWithParams(etpFon)" value="Ajuster" readonly="readonly"
-          [ngClass]="{disable: categorySelected !== 'GREFFE'}" #etpFon />
+        <input class="ajusted-button white-button" id="etpFon" [class.filled]="etpFonWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(etpFonWhite)" value="Ajuster" readonly="readonly"
+          [ngClass]="{disable: categorySelected !== 'GREFFE'}" #etpFonWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id" [@fadeInOut]>
-          {{percentageModifiedInputTextStr(etpFon.id,getFieldValue('etpFon',firstSituationData))}}
+          *ngIf="paramsToAjust.param1.label===etpFonWhite.id  || paramsToAjust.param2.label===etpFonWhite.id"
+          [@fadeInOut]>
+          {{percentageModifiedInputTextStr(etpFonWhite.id,getFieldValue('etpFon',firstSituationData))}}
           <div class="triangle"></div>
         </div>
       </div>
       <div [ngClass]="{'hide-by-category': !canViewContractuel||whiteSimulator}" class="line-item">
-        <input class="ajusted-button white-button disable" id="etpCont" [class.filled]="etpCont.value!=='Ajuster'"
-          (click)="openPopupWithParams(etpCont)" value="Ajuster" readonly="readonly" #etpCont />
+        <input class="ajusted-button white-button disable" id="etpCont" [class.filled]="etpContWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(etpContWhite)" value="Ajuster" readonly="readonly" #etpContWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===etpCont.id  || paramsToAjust.param2.label===etpCont.id" [@fadeInOut]>
-          {{percentageModifiedInputTextStr(etpCont.id,getFieldValue('etpCont',firstSituationData))}}
+          *ngIf="paramsToAjust.param1.label===etpContWhite.id  || paramsToAjust.param2.label===etpContWhite.id"
+          [@fadeInOut]>
+          {{percentageModifiedInputTextStr(etpContWhite.id,getFieldValue('etpCont',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
       </div>
       <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
-        <input class="ajusted-button white-button" id="realCoverage" [class.filled]="realCoverage.value!=='Ajuster'"
-          (click)="openPopupWithParams(realCoverage)" value="Ajuster" readonly="readonly" #realCoverage />
+        <input class="ajusted-button white-button" id="realCoverage"
+          [class.filled]="realCoverageWhite.value!=='Ajuster'" (click)="openPopupWithParams(realCoverageWhite)"
+          value="Ajuster" readonly="readonly" #realCoverageWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===realCoverage.id  || paramsToAjust.param2.label===realCoverage.id"
+          *ngIf="paramsToAjust.param1.label===realCoverageWhite.id  || paramsToAjust.param2.label===realCoverageWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputTextStr(realCoverage.id,getFieldValue('realCoverage',firstSituationData),true)}}
+          {{percentageModifiedInputTextStr(realCoverageWhite.id,getFieldValue('realCoverage',firstSituationData),true)}}
           <div class="triangle"></div>
         </div>
       </div>
       <div class="line-item">
         <input class="ajusted-button white-button" id="realDTESInMonths"
-          [class.filled]="realDTESInMonths.value!=='Ajuster'" (click)="openPopupWithParams(realDTESInMonths)"
-          value="Ajuster" readonly="readonly" #realDTESInMonths />
+          [class.filled]="realDTESInMonthsWhite.value!=='Ajuster'" (click)="openPopupWithParams(realDTESInMonthsWhite)"
+          value="Ajuster" readonly="readonly" #realDTESInMonthsWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===realDTESInMonths.id  || paramsToAjust.param2.label===realDTESInMonths.id"
+          *ngIf="paramsToAjust.param1.label===realDTESInMonthsWhite.id  || paramsToAjust.param2.label===realDTESInMonthsWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputTextStr(realDTESInMonths.id,getFieldValue('realDTESInMonths',firstSituationData))}}
+          {{percentageModifiedInputTextStr(realDTESInMonthsWhite.id,getFieldValue('realDTESInMonths',firstSituationData))}}
 
           <div class="triangle"></div>
         </div>
       </div>
       <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
         <input class="ajusted-button white-button" id="magRealTimePerCase"
-          [class.filled]="magRealTimePerCase.value!=='Ajuster'" (click)="openPopupWithParams(magRealTimePerCase)"
-          value="Ajuster" readonly="readonly" #magRealTimePerCase />
+          [class.filled]="magRealTimePerCaseWhite.value!=='Ajuster'"
+          (click)="openPopupWithParams(magRealTimePerCaseWhite)" value="Ajuster" readonly="readonly"
+          #magRealTimePerCaseWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
           [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0"
-          *ngIf="paramsToAjust.param1.label===magRealTimePerCase.id  || paramsToAjust.param2.label===magRealTimePerCase.id"
+          *ngIf="paramsToAjust.param1.label===magRealTimePerCaseWhite.id  || paramsToAjust.param2.label===magRealTimePerCaseWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputTextStr(magRealTimePerCase.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}
+          {{percentageModifiedInputTextStr(magRealTimePerCaseWhite.id,getFieldValue('magRealTimePerCase',firstSituationData,true))}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -647,20 +588,23 @@
     </div>
     <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
       <div class="init-button"
-        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]) : initParams([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
+        (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite]) : initParams([totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
         <p class="title">Réinitialiser les ajustements</p>
       </div>
       <div class="simulate-button {{simulateButton}}">
         <p class="title"
-          (click)="simulate([totalInWhite, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase]);logWhiteSimulator()">
+          (click)="simulate([totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
           Simuler</p>
       </div>
     </div>
   </div>
 
+  <!-- ALL SIMULATORS - TITRE Résultat de simulation + HEADER situation simulée -->
+
+
   <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)"
     [ngClass]="{'display-none': chooseScreen}">
-    <div style="justify-content: space-between; display: flex;">
+    <div class="header-simulation">
       <p class="simulation-title">Résultat de la simulation
 
         <span *ngIf="paramsToLock.param1.label!==''">à
@@ -712,6 +656,7 @@
       </div>
     </div>
 
+    <!-- ALL SIMULATOR - Situation simulée -->
     <div class="simulation-situation" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)" [@fadeInOut]>
       <div class="line-title">
         <p>
@@ -830,7 +775,6 @@
 
         <div *ngIf="canViewContractuel" class="line-item" [ngClass]="{'display-none': whiteSimulator }">
           <input [value]="whiteSimulator?'':getFieldValue('etpCont',projectedSituationData)" disabled />
-          <!-- TODO ICI CHANGER POUR QU'IL Y AI UN VRAIS CALCUL -->
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
@@ -926,6 +870,8 @@
 
     <aj-in-out-chart></aj-in-out-chart>-->
 
+
+    <!-- WIDGETS -->
     <div class="widgets">
       <aj-loaders-widget [dateStart]="startRealValue" [dateStop]="stopRealValue" [print]="onPrint"
         [valueAt]="getFieldValue('realDTESInMonths',firstSituationData)"
@@ -953,9 +899,9 @@
     </div>
   </div>
 
-  <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true" (onClose)="printPopup = false;nextState = null;onResetUserAction()"
-    title="Conserver cette simulation ?" [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)"
-    [removeShadow]="'noShadow'">
+  <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true"
+    (onClose)="printPopup = false;nextState = null;onResetUserAction()" title="Conserver cette simulation ?"
+    [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la

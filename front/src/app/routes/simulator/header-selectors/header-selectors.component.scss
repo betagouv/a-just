@@ -1,0 +1,48 @@
+:host {
+
+    aj-select,
+    .fonctionnaires,
+    .magistrats {
+        pointer-events: all;
+        z-index: 1;
+        background-color: white;
+        width: auto;
+
+        &.contentieux {
+            margin: 0px 8px 0px 0px;
+
+            &.fonctions-selection {
+                margin: 0px 0px 0px 8px;
+            }
+        }
+
+        &.disabled-date {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+        }
+
+        &.disabled-only-date {
+            pointer-events: none;
+            cursor: auto;
+            opacity: 0.5;
+        }
+
+        &.notSelectable {
+            pointer-events: none;
+        }
+    }
+
+    .action-simulator-bar {
+        padding: 8px 24px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+            0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        background-color: #f6f6f6;
+        position: relative;
+        z-index: 1;
+
+    }
+}
