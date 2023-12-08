@@ -33,7 +33,20 @@ export class StatsPage {
   */
   list: JuridictionInterface[] = []
 
+  /**
+   * Liste des paramètres pour les layers à ajouter à la map pour chaques juridictions
+   */
   positionMarkerSize : any[] = []
+
+  /**
+   * Zoom de départ de la map
+   */
+  baseZoom = null
+
+  /**
+   * Taille de rayon de départ des points de localisation des juridictions sur la map
+   */
+  baseCircleRadius = 3
 
   /**
    * Constructeur
@@ -58,19 +71,11 @@ export class StatsPage {
       zoom: this.zoom,
       center: this.center,
     })
-
-    let lastZoom = map.getZoom();
-
+    
     map.on('zoom', () => {
       const currentZoom = map.getZoom();
       this.positionMarkerSize.map(elem => {
-        if (currentZoom > lastZoom) {
-          map.setPaintProperty(elem.id, 'circle-radius', currentZoom + 3)
-          lastZoom = currentZoom
-        } else {
-          map.setPaintProperty(elem.id, 'circle-radius', currentZoom >= 0 ? currentZoom  : 0)
-          lastZoom = currentZoom
-        }
+        this.baseZoom && map.setPaintProperty(elem.id, 'circle-radius', this.baseCircleRadius * Math.pow(2, currentZoom - this.baseZoom));
       })
     })
 
@@ -91,19 +96,21 @@ export class StatsPage {
             },
           })
          
-          const marker = /*map.addLayer(*/{
+          const marker = {
             id: `circles-${j.id}`,
             source: sourceName,
             type: 'circle',
             paint: {
-              'circle-radius': 5,
+              'circle-radius': this.baseCircleRadius, 
               'circle-color': '#000091',
               'circle-opacity': 0.5,
               'circle-stroke-width': 0,
             },
-          }//)
+          }
+
           this.positionMarkerSize.push(marker)
           map.addLayer(marker);
+          this.baseZoom = map.getZoom()
           
 
           /*const m = new mapboxgl.Marker()
