@@ -1,0 +1,49 @@
+<!-- SIMULATOR STD - Situation projeté -->
+<div class="actual-situation {{header.colorClass}}">
+    <div class="line-title">
+        <ng-container *ngIf="header.type==='début'">
+            <p>
+                Situation{{header.label? ' au':''}}<br />
+                {{header.label || "à aujourd'hui"}}
+            </p>
+        </ng-container>
+        <ng-container *ngIf="header.type==='fin'">
+            <p>
+                Situation projetée<br />
+                au {{header.label}}
+            </p>
+        </ng-container>
+    </div>
+
+    <div class="line-item {{header.elementColorClass}}" #tooltip="matTooltip"
+        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',situation,false,true)"
+        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+        <input [value]="getFieldValue('totalIn',situation)" disabled />
+    </div>
+    <div class="line-item">
+        <input [value]="getFieldValue('totalOut',situation)" disabled />
+    </div>
+    <div class="line-item {{header.elementColorClass}}">
+        <input [value]="getFieldValue('lastStock',situation)" disabled />
+    </div>
+    <div *ngIf="canViewMagistrat" class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
+        <input [value]="getFieldValue('etpMag',situation)" disabled />
+    </div>
+    <div *ngIf="canViewGreffier" class="line-item {{header.elementColorClass}}"
+        [ngClass]="{'selected': categorySelected === 'GREFFE'}">
+        <input [value]="getFieldValue('etpFon',situation)" disabled />
+    </div>
+    <div *ngIf="canViewContractuel" class="line-item">
+        <input [value]="getFieldValue('etpCont',situation)" disabled />
+    </div>
+    <div class="line-item {{header.elementColorClass}}">
+        <input [value]="getFieldValue('realCoverage',situation)" disabled />
+    </div>
+    <div class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+        <input [value]="getFieldValue('realDTESInMonths',situation)" disabled />
+    </div>
+    <div class="line-item {{header.elementColorClass}}"
+        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+        <input [value]="getFieldValue('magRealTimePerCase',situation)" disabled />
+    </div>
+</div>
