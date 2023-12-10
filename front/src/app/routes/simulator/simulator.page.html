@@ -99,88 +99,18 @@
   </div>
 
   <!-- SIMULATOR STD - Situation début -->
-  <div class="actual-situation" *ngIf="displayBeginSituation()" [@fadeInOut]
-    [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-    <div class="line-title">
-      <p>
-        Situation{{startRealValue? ' au':''}}<br />
-        {{startRealValue || "à aujourd'hui"}}
-      </p>
-    </div>
-
-    <div class="line-item orange-bg" #tooltip="matTooltip"
-      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',firstSituationData,false,true)"
-      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-      <input [value]="getFieldValue('totalIn',firstSituationData)" disabled />
-    </div>
-    <div class="line-item">
-      <input [value]="getFieldValue('totalOut',firstSituationData)" disabled />
-    </div>
-    <div class="line-item orange-bg">
-      <input [value]="getFieldValue('lastStock',firstSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewMagistrat" class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
-      <input [value]="getFieldValue('etpMag',firstSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewGreffier" class="line-item orange-bg" [ngClass]="{'selected': categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('etpFon',firstSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewContractuel" class="line-item">
-      <input [value]="getFieldValue('etpCont',firstSituationData)" disabled />
-    </div>
-    <div class="line-item orange-bg">
-      <input [value]="getFieldValue('realCoverage',firstSituationData)" disabled />
-    </div>
-    <div class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('realDTESInMonths',firstSituationData)" disabled />
-    </div>
-    <div class="line-item orange-bg"
-      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('magRealTimePerCase',firstSituationData)" disabled />
-    </div>
-  </div>
+  <aj-situation-displayer *ngIf="displayBeginSituation() && whiteSimulator === false && chooseScreen===false"
+    [categorySelected]="categorySelected" [situation]="firstSituationData"
+    [header]="{type:'début', label: startRealValue,colorClass:'',elementColorClass:'orange-bg'}">
+  </aj-situation-displayer>
 
   <!-- SIMULATOR STD - Situation projeté -->
-  <div class="actual-situation color-blue" *ngIf="dateStop!==null && projectedSituationData !== null" [@fadeInOut]
-    [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-    <div class="line-title">
-      <p>
-        Situation projetée<br />
-        au {{stopRealValue}}
-      </p>
-    </div>
+  <aj-situation-displayer
+    *ngIf="dateStop!==null && projectedSituationData !== null && whiteSimulator === false && chooseScreen === false"
+    [categorySelected]="categorySelected" [situation]="projectedSituationData"
+    [header]="{type:'fin', label: stopRealValue,colorClass:'color-blue',elementColorClass:'grey-bg'}">
+  </aj-situation-displayer>
 
-    <div class="line-item grey-bg" #tooltip="matTooltip"
-      [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc('totalIn',projectedSituationData,false,true)"
-      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-      <input [value]="getFieldValue('totalIn',projectedSituationData)" disabled />
-    </div>
-    <div class="line-item">
-      <input [value]="getFieldValue('totalOut',projectedSituationData)" disabled />
-    </div>
-    <div class="line-item grey-bg">
-      <input [value]="getFieldValue('lastStock',projectedSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewMagistrat" class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
-      <input [value]="getFieldValue('etpMag',projectedSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewGreffier" class="line-item grey-bg" [ngClass]="{'selected': categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('etpFon',projectedSituationData)" disabled />
-    </div>
-    <div *ngIf="canViewContractuel" class="line-item">
-      <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled />
-    </div>
-    <div class="line-item grey-bg">
-      <input [value]="getFieldValue('realCoverage',projectedSituationData)" disabled />
-    </div>
-    <div class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('realDTESInMonths',projectedSituationData)" disabled />
-    </div>
-    <div class="line-item grey-bg"
-      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
-      <input [value]="getFieldValue('magRealTimePerCase',projectedSituationData)" disabled />
-    </div>
-  </div>
   <!-- SIMULATOR STD - Action Simuler et ajustement -->
   <div class="actual-situation color-white" *ngIf="dateStop!==null  && projectedSituationData !== null" [@fadeInOut]
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
@@ -191,6 +121,8 @@
         des paramètres
       </p>
     </div>
+
+    <!-- AJ POPUP PARAM LOCK-->
     <aj-popup style="z-index:200;" *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true"
       (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
       <div id="circle">
@@ -213,9 +145,10 @@
       </div>
     </aj-popup>
 
+    <!-- AJ POPUP AJUSTEMENT-->
     <aj-popup *ngIf="openPopup===true" [actions]="[
-    { id: 'modify', content: 'Ajuster', fill: true }
-    ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
+      { id: 'modify', content: 'Ajuster', fill: true }
+      ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
       (keypress)="onKeypressEvent($event,volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])"
       (selectedAction)="setParamsToAjust(volume.value,buttonSelected,[totalIn, totalOut, lastStock, etpMag, realCoverage,realDTESInMonths,magRealTimePerCase])">
       <div id="circle">
@@ -260,6 +193,7 @@
       </div>
     </aj-popup>
 
+    <!-- BOUTON AJUSTER -->
     <div class="line-item blue-bg">
       <input class="ajusted-button" id="totalIn" [class.filled]="totalIn.value!=='Ajuster'"
         (click)="openPopupWithParams(totalIn)" value="Ajuster" readonly="readonly" #totalIn />
@@ -368,6 +302,8 @@
         <div class="triangle"></div>
       </div>
     </div>
+
+    <!-- OPTION ACTIONS-->
     <div class="options">
       <div id="init-button" class="init-button"
         (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase] ) : initParams([totalIn, totalOut, lastStock, categorySelected === 'MAGISTRAT' ?etpMag:etpFon, realCoverage, realDTESInMonths, magRealTimePerCase])">
@@ -390,13 +326,14 @@
   <div class="actual-situation actual-situation-white color-white white-actual-situation-height"
     [ngClass]="{'display-none': chooseScreen}" *ngIf="dateStop!==null  && whiteSimulator && displayWhiteElements"
     [@fadeInOut]>
-    <div style="display: flex; height: 100%;">
+    <div style="display: flex; height: 70px;">
       <div class="line-title white-title">
         <p>
           Modifier<br />
           des paramètres
         </p>
       </div>
+      <!-- POPUP PARAM LOCK-->
       <aj-popup style="z-index:200;" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
         (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
         <div id="circle">
@@ -419,6 +356,7 @@
         </div>
       </aj-popup>
 
+      <!-- POPUP AJUSTEMENT-->
       <aj-popup *ngIf="openPopup===true" [actions]="[
       { id: 'modify', content: 'Ajuster', fill: true }
       ]" [closeIcon]="true" (onClose)="openPopup = false" [removeShadow]="'noShadow'"
@@ -465,6 +403,8 @@
           </aj-input-percentage>
         </div>
       </aj-popup>
+
+      <!-- TOOLTIP DE MODIFICATION -->
       <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
         <input class="ajusted-button white-button" id="totalIn" [class.filled]="totalInWhite.value!=='Ajuster'"
           (click)="openPopupWithParams(totalInWhite)" value="Ajuster" readonly="readonly" #totalInWhite />
@@ -586,6 +526,8 @@
       <div class="line-item" [style]="!whiteSimulator?'flex: 0.855 !important;': 'flex: 1.5 !important;'">
       </div>
     </div>
+
+
     <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
       <div class="init-button"
         (click)="toDisplaySimulation ? onUserActionClick(action.reinit, [totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite]) : initParams([totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
@@ -600,8 +542,6 @@
   </div>
 
   <!-- ALL SIMULATORS - TITRE Résultat de simulation + HEADER situation simulée -->
-
-
   <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)"
     [ngClass]="{'display-none': chooseScreen}">
     <div class="header-simulation">

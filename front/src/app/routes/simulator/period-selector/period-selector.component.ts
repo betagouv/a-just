@@ -62,7 +62,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         if (ids === null) {
           this.mooveClass = ''
           this.dateStop = null
-
+          this.dateStart = new Date()
         }
       }))
 
@@ -81,6 +81,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         if (situation === null) {
           this.mooveClass = ''
           this.dateStop = null
+          this.dateStart = new Date()
         }
       }))
   }
