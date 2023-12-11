@@ -290,9 +290,9 @@ export default class RouteExtractor extends Route {
     let sum = cloneDeep(activities)
 
     sum = sum.map((x) => {
-      const ajustedIn = x.entrees || x.originalEntrees
-      const ajustedOut = x.sorties || x.originalSorties
-      const ajustedStock = x.stock || x.originalStock
+      const ajustedIn = x.entrees === 0 ? x.entrees : x.entrees || x.originalEntrees
+      const ajustedOut = x.sorties === 0 ? x.sorties : x.sorties || x.originalSorties
+      const ajustedStock = x.stock === 0 ? x.stock : x.stock || x.originalStock
 
       return { ajustedIn, ajustedOut, ajustedStock, ...x }
     })
@@ -302,14 +302,15 @@ export default class RouteExtractor extends Route {
     let sumTab = []
 
     Object.keys(sum).map((key) => {
+
       sumTab.push({
         periode: replaceIfZero(last(sum[key]).periode),
-        entrees: replaceIfZero(sumBy(sum[key], 'ajustedIn')),
-        sorties: replaceIfZero(sumBy(sum[key], 'ajustedOut')),
-        stock: replaceIfZero(last(sum[key]).ajustedStock),
-        originalEntrees: replaceIfZero(sumBy(sum[key], 'originalEntrees')),
-        originalSorties: replaceIfZero(sumBy(sum[key], 'originalSorties')),
-        originalStock: replaceIfZero(last(sum[key]).originalStock),
+        entrees: sumBy(sum[key], 'ajustedIn'),
+        sorties: sumBy(sum[key], 'ajustedOut'),
+        stock: last(sum[key]).ajustedStock,
+        originalEntrees: sumBy(sum[key], 'originalEntrees'),
+        originalSorties: sumBy(sum[key], 'originalSorties'),
+        originalStock: last(sum[key]).originalStock,
         idReferentiel: last(sum[key]).idReferentiel,
         contentieux: { code_import: last(sum[key]).contentieux.code_import, label: last(sum[key]).contentieux.label },
       })
