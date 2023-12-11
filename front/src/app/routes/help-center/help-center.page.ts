@@ -3,6 +3,7 @@ import { Component } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL } from 'src/app/constants/documentation';
+import { AppService } from 'src/app/services/app/app.service';
 import { ServerService } from 'src/app/services/http-server/server.service';
 import { environment } from 'src/environments/environment';
 
@@ -39,36 +40,40 @@ export class HelpCenterPage {
    * GitBook Token
    */
   gitToken
+  /** Carte guide utilisateur */
+  userGuide = {
+    tag: 'Documentation',
+    title: 'Le guide utilisateur',
+    description: 'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
+    image: '/assets/images/avatar.svg',
+    url: DOCUMENTATION_URL
+  }
+  /** Carte data book */
+  dataBook = {
+    tag: 'Documentation',
+    title: 'Le data-book',
+    description: 'Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d\'activité».',
+    image: '/assets/images/data-visualization.svg',
+    url: DATA_GITBOOK
+  }
+  /** Carte nomenclature */
+  nomenclature = {
+    tag: 'Documentation',
+    title: 'La nomenclature',
+    description: 'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
+    image: '/assets/images/system.svg',
+    url: this.NOMENCLATURE_DOWNLOAD_URL,
+    localUrl: false
+  }
   /**
    * Cards documentation
    */
-  docCards: Array<DocCardInterface> = [
-    {
-      tag: 'Documentation',
-      title: 'Le guide utilisateur',
-      description: 'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
-      image: '/assets/images/avatar.svg',
-      url: DOCUMENTATION_URL
-    },
-    {
-      tag: 'Documentation',
-      title: 'Le data-book',
-      description: 'Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d\'activité».',
-      image: '/assets/images/data-visualization.svg',
-      url: DATA_GITBOOK
-    },
-    {
-      tag: 'Documentation',
-      title: 'La nomenclature',
-      description: 'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
-      image: '/assets/images/system.svg',
-      url: this.NOMENCLATURE_DOWNLOAD_URL
-    }
-  ]
+  docCards: Array<DocCardInterface> = [this.userGuide, this.dataBook, this.nomenclature]
   /**
    * Cards outils
    */
   docTools: Array<DocCardInterface> = [
+    this.nomenclature,
     {
       tag: 'Les outils A-JUST',
       title: 'La calculatrice de ventilation des ETPT',
@@ -91,7 +96,7 @@ export class HelpCenterPage {
       image: '/assets/images/Tableur2.svg',
       url: '/dashboard',
       localUrl: true
-    }
+    },
   ]
 
 
@@ -99,7 +104,7 @@ export class HelpCenterPage {
    * Constructeur
    * @param title
    */
-  constructor(private serverService: ServerService) {
+  constructor(private serverService: ServerService, private appService: AppService) {
     this.gitToken = environment.gitbookToken
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
@@ -178,6 +183,22 @@ export class HelpCenterPage {
       .then((r) => {
         return r.data
       })
+  }
+
+  async goToLink(url: string) {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: url,
+        })
+      .then((r) => {
+        return r.data
+      })
+    if (CALCULATE_DOWNLOAD_URL === url)
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
+    window.open(url)
   }
 }
 

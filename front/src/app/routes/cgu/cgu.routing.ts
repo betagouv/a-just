@@ -4,13 +4,13 @@ import { CGUPage } from './cgu.page';
 
 const routes: Routes = [
 	{
-		path: '',
+		path: ':backPath',
 		component: CGUPage
 	}
 ];
 
 @NgModule({
-	imports: [ RouterModule.forChild(routes) ],
-	exports: [ RouterModule ]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule]
 })
-export class CGUPageModule {}
+export class CGUPageModule { }

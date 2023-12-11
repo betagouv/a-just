@@ -59,7 +59,8 @@
       <div class="checkbox-container checkbox-row">
         <input class="large" type="checkbox" formControlName="checkbox" #checkbox />
         <p (click)="checkbox.click()">Je certifie avoir lu et accepté les <a
-            routerLink="/conditions-generales-d-utilisation">Conditions générales d'utilisation</a>.</p>
+            [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales
+            d'utilisation</a>.</p>
       </div>
 
       <div class="next-step" (click)="onStepTwo()">
