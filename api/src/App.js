@@ -106,10 +106,10 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-      helmet({
+      /*helmet({
         xXssProtection: false,
         xFrameOptions: { action: 'deny' },
-      }),
+      }),*/
       csp({
         enableWarn: false,
         policy: {
