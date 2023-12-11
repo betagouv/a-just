@@ -39,14 +39,9 @@ export class StatsPage {
   positionMarkerSize : any[] = []
 
   /**
-   * Zoom de départ de la map
-   */
-  baseZoom = null
-
-  /**
    * Taille de rayon de départ des points de localisation des juridictions sur la map
    */
-  baseCircleRadius = 3
+  baseCircleRadius = 4
 
   /**
    * Constructeur
@@ -75,7 +70,7 @@ export class StatsPage {
     map.on('zoom', () => {
       const currentZoom = map.getZoom();
       this.positionMarkerSize.map(elem => {
-        this.baseZoom && map.setPaintProperty(elem.id, 'circle-radius', this.baseCircleRadius * Math.pow(2, currentZoom - this.baseZoom));
+        map.setPaintProperty(elem.id, 'circle-radius', this.baseCircleRadius * Math.pow(2, currentZoom - this.zoom[0]));
       })
     })
 
@@ -110,8 +105,6 @@ export class StatsPage {
 
           this.positionMarkerSize.push(marker)
           map.addLayer(marker);
-          this.baseZoom = map.getZoom()
-          
 
           /*const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
@@ -129,9 +122,10 @@ export class StatsPage {
   callJavascript(obj : any) {
     //iframe = obj.currentTarget.contentWindow.document
    // obj.currentTarget.style.height = obj.currentTarget.contentWindow.document.documentElement.scrollHeight + 'px';
-   let iframe = document.getElementById('child-iframe');
+   /*let iframe = document.getElementById('child-iframe');
    if (iframe) {
-     iframe.style.height = iframe.parentElement?.scrollHeight + 'px';
-   }
+    iframe.style.minHeight = iframe.parentElement?.clientHeight + 'px';
+   }*/
   }
+
 }
