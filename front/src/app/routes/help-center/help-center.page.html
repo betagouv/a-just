@@ -1,58 +1,38 @@
-<aj-wrapper title="Centre d'aide" [actionTemplate]="actions" class="white-bg content-margin-null">
+<aj-wrapper title="Centre d'aide" class="content-margin-null" [actionTemplate]="actions" class="white-bg">
 
-    <div class="toolbar">
-        <div *ngFor="let card of docTools" (click)="goToLink(card.url)"> <img src="{{card.image}}" alt="a-just" />
-            <p>{{card.title}}</p>
-        </div>
-    </div>
-
-    <div class="section-one">
-        <div class="title-area">
-            <img src="/assets/images/community.svg" alt="a-just" />
-            <p class="sub-title">Saisissez votre question ci-dessous</p>
-            <div class="research-area"></div>
-            <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
-                (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
-                ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
-            </aj-input-button>
-            <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
-                <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
-                <div *ngFor="let res of this.data">
-                    <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
-                        <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
-                        {{res.title}}
+    <div class="title-area">
+        <img src="/assets/images/community.svg" alt="a-just" />
+        <p class="sub-title">Saisissez votre question ci-dessous</p>
+        <div class="research-area"></div>
+        <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
+            (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
+            ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+        </aj-input-button>
+        <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
+            <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
+            <div *ngFor="let res of this.data">
+                <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
+                    <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
+                    {{res.title}}
+                </p>
+                <div *ngFor="let page of res.pages">
+                    <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
+                        <mat-icon>insert_drive_file</mat-icon>
+                        {{page.title}}
                     </p>
-                    <div *ngFor="let page of res.pages">
-                        <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
-                            <mat-icon>insert_drive_file</mat-icon>
-                            {{page.title}}
+                    <div *ngFor="let section of page.sections">
+                        <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
+                            <mat-icon>subdirectory_arrow_right</mat-icon>
+                            {{section.body}}
                         </p>
-                        <div *ngFor="let section of page.sections">
-                            <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
-                                <mat-icon>subdirectory_arrow_right</mat-icon>
-                                {{section.body}}
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="line"></div>
-        <div class="action-area">
-            <div (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}" alt="a-just" />
-                <p class="title">{{userGuide.title}}</p>
-            </div>
-            <div (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}" alt="a-just" />
-                <p class="title">{{dataBook.title}}</p>
-            </div>
-            <div class="blue"> <img src="/assets/images/call-center.png" alt="a-just" />
-                <p class="title">Être recontacté </p>
-            </div>
-        </div>
 
     </div>
 
-    <p class="sub-title">Suggestions d'usage</p>
+    <p class="sub-title">Ou consultez notre documentation </p>
     <div class="content-area">
         <div class="documentation">
             <span>La documentation</span>
