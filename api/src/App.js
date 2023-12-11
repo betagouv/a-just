@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { App as AppBase } from 'koa-smart'
 const koaBody = require('koa-body')
-import { i18n, compress, cors, helmet, addDefaultBody } from 'koa-smart/middlewares'
+import { i18n, compress, cors, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import sslMiddleware from './routes-api/middlewares/ssl'
@@ -12,6 +12,7 @@ import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
+import helmet from 'helmet'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
 /*var os = require('os')
@@ -85,7 +86,6 @@ export default class App extends AppBase {
       // we add the relevant middlewares to our API
       //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       cors({ credentials: true }), // add cors headers to the requests
-      helmet(), // adds various security headers to our API's responses
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -106,9 +106,14 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+      helmet({
+        xXssProtection: false,
+        xFrameOptions: { action: 'deny' },
+      }),
       csp({
         enableWarn: false,
         policy: {
+          'default-src': ["'self'"],
           'connect-src': [
             'https://api.gitbook.com',
             'https://www.google-analytics.com/j/collect',
@@ -121,12 +126,20 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr'],
+          'script-src': [
+            "'report-sample' 'self'",
+            'https://*.hsforms.net',
+            'https://stats.beta.gouv.fr',
+            'https://api.gitbook.com',
+            "'self' blob: assets.calendly.com",
+          ],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
+          'X-Frame-Options': ['DENY'],
+          'X-XSS-Protection': ['1'],
         },
       }),
     ])
