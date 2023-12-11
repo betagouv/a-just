@@ -853,7 +853,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
-      if (['totalIn', 'totalOut', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && this.valueToAjust.percentage === null) {
+      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && this.valueToAjust.percentage === null) {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -890,7 +890,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       //else (no value filled in popup)
     } else {
-      if (['totalIn', 'totalOut', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && volumeInput === '0') {
+      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && volumeInput === '0') {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
