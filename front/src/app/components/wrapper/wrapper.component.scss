@@ -10,6 +10,16 @@
     }
   }
 
+  &.no-padding-top {
+    div {
+      .contener {
+        #content {
+          padding-top: 0px !important;
+        }
+      }
+    }
+  }
+
   .help-center:visited {
     color: red !important;
   }
