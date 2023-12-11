@@ -46,7 +46,15 @@ export class SignupPage {
   /**
      * Liste des fonctions (1VP, VP, ...)
      */
-  fonctions: HRFonctionInterface[] = []
+  fonctions: string[] = ['Président(e)',
+    'Directeur/trice de greffe',
+    'Secrétaire général(e)',
+    'Chef(fe) de cabinet',
+    'Chargé(e) de mission',
+    'Secrétaire administratif - présidence',
+    'Secrétaire administratif - DG',
+    'Directeur/trice de greffe adjoint(e)',
+    'Directeur/trice des services de greffe judiciaires']
 
   tjs: any[] = []
 
@@ -64,7 +72,6 @@ export class SignupPage {
     private serverService: ServerService
   ) {
     this.title.setTitle('Embarquement | A-Just')
-    this.loadFunctions()
     this.loadTj()
   }
 
@@ -96,17 +103,17 @@ export class SignupPage {
       return
     }
 
-    if ((fonction === 'AUTRE' && !fonctionAutre)) {
+    if ((fonction === 'Autre' && !fonctionAutre)) {
       alert("Vous devez saisir un intitulé de fonction")
       return
     }
 
-    if ((fonction === 'AUTRE' && !responsable)) {
+    if ((fonction === 'Autre' && !responsable)) {
       alert("Vous devez saisir le nom d'un responsable hiérarchique")
       return
     }
 
-    if (fonction === 'AUTRE') fonction = fonctionAutre + ' - Resp hiér : ' + responsable
+    if (fonction === 'Autre') fonction = fonctionAutre + ' - Resp hiér : ' + responsable
 
     this.userService
       .register({ email, password, firstName, lastName, fonction, tj })
@@ -231,18 +238,7 @@ export class SignupPage {
     else return '#0063cb'
   }
 
-  /**
-   * Chargement de la liste des fonctions
- */
-  loadFunctions() {
-    this.serverService
-      .get('hr-fonctions/get-all')
-      .then((r) => r.data || [])
-      .then(list => {
-        this.fonctions = list;
-        return list;
-      })
-  }
+
 
   /**
    * Enregistre la fonction 
@@ -250,11 +246,11 @@ export class SignupPage {
    */
   setFonc(event: any) {
     this.fonctions.map(fct => {
-      if (fct.id === +event.value) {
-        this.form.controls['fonction'].setValue(fct.label)
+      if (fct === event.value) {
+        this.form.controls['fonction'].setValue(fct)
       }
     })
-    if (event.value === 'AUTRE') this.form.controls['fonction'].setValue('AUTRE')
+    if (event.value === 'Autre') this.form.controls['fonction'].setValue('Autre')
 
   }
 

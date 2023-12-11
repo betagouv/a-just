@@ -82,13 +82,13 @@
       <label>Ma fonction :</label>
       <select #fctSelect (change)="setFonc($event.target)">
         <option selected hidden>Choisir une fonction</option>
-        <option *ngFor="let fonc of fonctions" [value]="fonc.id">
-          {{ fonc.label }}
+        <option *ngFor="let fonc of fonctions" [value]="fonc">
+          {{ fonc }}
         </option>
-        <option>AUTRE</option>
+        <option>Autre</option>
       </select>
 
-      <ng-container *ngIf="fctSelect.value==='AUTRE'">
+      <ng-container *ngIf="fctSelect.value==='Autre'">
         <label>Intitulé de ma fonction :</label>
         <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" />
 
