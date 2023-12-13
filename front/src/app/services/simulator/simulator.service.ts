@@ -70,11 +70,21 @@ export class SimulatorService extends MainClass {
       xMax: null,
       content: undefined,
     })
+  /**
+ * Indicateur de selection de paramètre de simulation
+ */
+  disabled: BehaviorSubject<string> = new BehaviorSubject<string>('disabled')
 
   /**
    * Validation de la situation de début sur simulateur à blanc
    */
   isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+  /**
+ * Nombre de jour à projeter pour la situation projetee du simulateur a blanc
+ */
+  whiteSimulatorNbOfDays: BehaviorSubject<number> = new BehaviorSubject<number>(0)
+
 
   /**
    * Constructeur
@@ -91,7 +101,7 @@ export class SimulatorService extends MainClass {
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
+        if (this.contentieuOrSubContentieuId.getValue() !== null && this.contentieuOrSubContentieuId.getValue()?.length) {
           this.getSituation(this.contentieuOrSubContentieuId.getValue())
         }
       })

@@ -21,4 +21,8 @@ export class WrapperNoConnectedComponent {
    * Affiche ou non le paneau de gauche
    */
   @Input() showLeftPanel: boolean = true
-}
+    /**
+   * Ajout ou non de padding sur le contenu
+   */
+  @Input() contentPadding: boolean = true
+}; 

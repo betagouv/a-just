@@ -37,8 +37,11 @@ export const comparePasswords = (password, cryptedPassword) => {
 const checkPassword = (newPassword, email = '') => {
   const emailFormated = formatPassword(email).split(/[\s,.@]+/)
 
-  if (newPassword.length < MIN_PASSWORD_LENGTH) {
-    throw `Pour assurer la sécurité de votre compte, veuillez choisir un mot de passe comportant au moins ${MIN_PASSWORD_LENGTH} caractères, incluant des lettres majuscules, des lettres minuscules et éventuellement des caractères spéciaux.`
+
+  var arrayOfSp = ["!", "@", "#", "$", "%", "&", "*", "_", "?", "-"];
+  var regex = "[" + arrayOfSp.join("") + "]";
+  if (newPassword.length < MIN_PASSWORD_LENGTH || !newPassword.match(/[A-Z]/g) || !new RegExp(regex).test(newPassword) || !newPassword.match(/\d/)) {
+    throw `Pour assurer la sécurité de votre compte, veuillez choisir un mot de passe comportant au moins ${MIN_PASSWORD_LENGTH} caractères, incluant au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.`
   }
 
   if (ALL_RESTRICTED_PASSWORDS.includes(newPassword) || emailFormated.includes(newPassword)) {

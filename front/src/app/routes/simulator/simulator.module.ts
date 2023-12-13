@@ -8,10 +8,13 @@ import { CommonModule } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { PopupModule } from 'src/app/components/popup/popup.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
-import { SelectModule } from 'src/app/components/select/select.module'
+import { SelectModule } from 'src/app/components/select/select.module';
+import { HeaderSelectorsComponent } from './header-selectors/header-selectors.component';
+import { PeriodSelectorComponent } from './period-selector/period-selector.component';
+import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component';
 
 @NgModule({
-  declarations: [SimulatorPage],
+  declarations: [SimulatorPage, HeaderSelectorsComponent, PeriodSelectorComponent, SituationDisplayerComponent],
   imports: [
     SimulatorPageModule,
     RouterModule,
@@ -24,4 +27,4 @@ import { SelectModule } from 'src/app/components/select/select.module'
     SelectModule,
   ],
 })
-export class SimulatorModule {}
+export class SimulatorModule { }

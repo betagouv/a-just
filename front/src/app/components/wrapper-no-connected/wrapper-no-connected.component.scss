@@ -43,7 +43,11 @@
 }
 
 .content-panel {
- /* display: flex;
-  flex-direction: column;*/
-  padding: 40px 64px;
+  padding: 40px 64px; 
+}
+
+.no-padding {
+  display: flex;
+  flex-direction: row;
+  padding: 0 !important;  
 }

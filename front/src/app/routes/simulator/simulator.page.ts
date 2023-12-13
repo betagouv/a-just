@@ -71,7 +71,7 @@ const etpFonToDefine = '[un volume moyen de]'
         style({ opacity: 0 }),
         animate(500, style({ opacity: 1 })),
       ]),
-      transition(':leave', [animate(500, style({ opacity: 0 }))]),
+      transition(':leave', [animate(0, style({ opacity: 0 }))]),
     ]),
   ],
 })
@@ -187,18 +187,35 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Actions de l'utilisateur
    */
-  userAction: { isLeaving: boolean, isReseting: boolean, isComingBack: boolean, isClosingTab: boolean } = {
+  userAction: { isLeaving: boolean, isReseting: boolean, isResetingParams: boolean, isComingBack: boolean, isClosingTab: boolean } = {
     isLeaving: false, // L'utilisateur change d'onglet
     isReseting: false, // L'utilisateur réinitialise la simulation
+    isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté 
     isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
     isClosingTab: false, // L'utilisateur ferme la fenêtre
   }
+  /**
+   * Liste des actions possibles
+   */
+  action: { reinit: string, reinitAll: string, return: string, closeTab: string, leave: string } = {
+    reinit: 'réinitialiser',
+    reinitAll: 'tout réinitialiser',
+    return: 'retour',
+    closeTab: 'close',
+    leave: 'sort',
+  }
+
   /**
    * Nom de la prochaine route lors d'un changement de page
    */
   nextState: string | null = null
 
   forceDeactivate: boolean = false
+
+  /** 
+   * Listes des paramètres de la simulation à réinitialiser
+  */
+  valuesToReinit: any = null
 
   /**
    * Documentation widget
@@ -208,6 +225,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
   }
 
+  /**
+   * Liste d'option pour les bouttons de la popup d'enregistrement, selon l'action de l'utilisateur
+   */
   popupAction = {
     leaving: [
       { id: 'leave', content: 'Quitter sans exporter' },
@@ -222,6 +242,16 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ]
   };
+
+  /**
+   * Option à utiliser pour les bouttons de la popup d'enregistrement, selon l'action de l'utilisateur
+   */
+  popupActionToUse: ({ id: string; content: string; fill?: undefined; } | { id: string; content: string; fill: boolean; })[] = [
+    { id: '', content: '' },
+    { id: '', content: '', fill: true }
+  ]
+
+  printPopup: boolean = false
 
 
   /**
@@ -342,6 +372,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     super()
 
     this.watch(
+      this.simulatorService.disabled.subscribe((disabled) => {
+        this.disabled = disabled
+      }))
+    this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
         this.hrBackup = this.hrBackups.find((b) => b.id === this.humanResourceService.backupId.getValue())
@@ -371,6 +405,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.displayWhiteElements = b
         if (b === false) {
           this.toDisplaySimulation = false
+          //this.simulatorService.situationSimulated.next(null)
           this.initParamsToAjust()
         }
       })
@@ -400,16 +435,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       })
     )
 
-    this.watch(
-      this.humanResourceService.categories.subscribe(() => {
-        if (this.categorySelected !== null) {
-          this.changeCategorySelected(this.categorySelected)
-          this.simulatorService.selectedFonctionsIds.next(
-            this.selectedFonctionsIds
-          )
-        }
-      })
-    )
     const originalMsg = JSON.stringify(this.currentNode)
     let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
     updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
@@ -417,14 +442,13 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   /**
-   * Détection d'un click n'importe où pour fermer
+   * Détection de la fermeture de la fenêtre
    */
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
     if (this.toDisplaySimulation) {
-      this.userAction.isClosingTab = true
+      this.onUserActionClick(this.action.closeTab)
       event.preventDefault()
-      //event.preventDefault()
     }
   }
 
@@ -433,6 +457,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   ngOnInit(): void {
     this.resetParams()
+    this.onResetUserAction()
     this.dateStop = null
     this.route.data.subscribe((data) => console.log("route:", data))
     const findCategory =
@@ -475,18 +500,20 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
 
-        console.log('Situation simu : ', d)
+        if (d !== null) {
+          console.log('Situation simu : ', d)
 
-        this.simulatedSationData = d
-        const findTitle = document.getElementsByClassName('simulation-title')
-        const findElement = document.getElementById('content')
-        if (d && findElement && findTitle.length) {
-          if (findElement) {
-            const { top } = findTitle[0].getBoundingClientRect()
-            findElement.scrollTo({
-              behavior: 'smooth',
-              top: top - 100,
-            })
+          this.simulatedSationData = d
+          const findTitle = document.getElementsByClassName('simulation-title')
+          const findElement = document.getElementById('content')
+          if (d && findElement && findTitle.length) {
+            if (findElement) {
+              const { top } = findTitle[0].getBoundingClientRect()
+              findElement.scrollTo({
+                behavior: 'smooth',
+                top: top - 100,
+              })
+            }
           }
         }
       })
@@ -496,12 +523,33 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.isLoading = d
       })
     )
+
+    this.watch(
+      this.simulatorService.dateStart.subscribe((date) => {
+        this.dateStart = date
+        this.startRealValue = findRealValue(this.dateStart)
+      })
+    )
+    this.watch(
+      this.simulatorService.dateStop.subscribe((date) => {
+        this.dateStop = date
+        this.stopRealValue = findRealValue(this.dateStop)
+      })
+    )
+
+
     if (this.contentieuId)
       this.simulatorService.getSituation([this.contentieuId])
 
     this.loadFunctions()
   }
 
+  /**
+   * Affichage de la situation de début
+   */
+  displayBeginSituation() {
+    return this.simulatorService.contentieuOrSubContentieuId.getValue()?.length && this.simulatorService.selectedFonctionsIds.getValue()?.length
+  }
   /**
    * Formatage du référentiel
    */
@@ -537,6 +585,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
           this.contentieuId as number,
         ])
         this.disabled = ''
+        this.simulatorService.disabled.next(this.disabled)
+
       } else {
         alert(
           "Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur."
@@ -548,7 +598,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         (v) => v.id === this.contentieuId
       )
 
-      if (!event.length) this.disabled = 'disabled'
+      if (!event.length) {
+        this.disabled = 'disabled'
+        this.simulatorService.disabled.next(this.disabled)
+
+      }
       else {
         if (event.length === tmpRefLength?.childrens?.length)
           this.simulatorService.contentieuOrSubContentieuId.next([
@@ -557,6 +611,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         else
           this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
         this.disabled = ''
+        this.simulatorService.disabled.next(this.disabled)
+
       }
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
@@ -570,10 +626,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       else if (this.dateStop === null) this.mooveClass = ''
       else this.mooveClass = 'present'
       this.disabled = 'disabled-date'
+      this.simulatorService.disabled.next(this.disabled)
+
       this.simulatorService.dateStart.next(this.dateStart)
       this.startRealValue = findRealValue(this.dateStart)
     } else if (type === 'dateStop') {
       this.disabled = 'disabled-date'
+      this.simulatorService.disabled.next(this.disabled)
+
 
       this.dateStop = new Date(event)
       if (
@@ -595,12 +655,16 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   whiteDateSelector(type: string = '', event: any = null) {
     if (type === 'dateStart') {
       this.disabled = 'disabled-date'
+      this.simulatorService.disabled.next(this.disabled)
+
       this.dateStart = new Date(event)
       this.startRealValue = findRealValue(this.dateStart)
       this.simulatorService.dateStart.next(this.dateStart)
     }
     else if (type === 'dateStop') {
       this.disabled = 'disabled-date'
+      this.simulatorService.disabled.next(this.disabled)
+
       this.dateStop = new Date(event)
       this.stopRealValue = findRealValue(this.dateStop)
       this.simulatorService.dateStop.next(this.dateStop)
@@ -651,26 +715,31 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   resetParams(changeCategory = false) {
     this.contentieuId = null
+    this.simulatorService.contentieuOrSubContentieuId.next(null)
     this.subList = []
     this.firstSituationData = null
     this.projectedSituationData = null
     this.dateStart = new Date()
+    this.simulatorService.dateStart.next(this.dateStart)
     this.dateStop = null
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    document.getElementById('init-button')?.click()
-    this.disabled = 'disabled'
+
     this.toDisplaySimulation = false
+    //this.simulatorService.situationSimulated.next(null)
+    document.getElementById('init-button')?.click()
+
+    this.disabled = 'disabled'
+    this.simulatorService.disabled.next(this.disabled)
+
     this.toDisplay = []
     this.toCalculate = []
     this.simulateButton = 'disabled'
     this.displayWhiteElements = false
 
-
     const initButton = document.getElementById('editable-sim-name')!
     if (initButton && !changeCategory) initButton.innerHTML = ''
-
   }
 
   /**
@@ -762,6 +831,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.paramsToAjust.param1.button = inputField
         this.paramsToAjust.param1.percentage = null
         this.disabled = 'disabled-only-date'
+        this.simulatorService.disabled.next(this.disabled)
+
         //else edit param 2
       } else {
         this.paramsToAjust.param2.value = volumeInput
@@ -782,7 +853,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
-      if (['totalIn', 'totalOut', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && this.valueToAjust.percentage === null) {
+      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && this.valueToAjust.percentage === null) {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -797,6 +868,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.paramsToAjust.param1.button = inputField
         this.paramsToAjust.param1.percentage = this.valueToAjust.percentage
         this.disabled = 'disabled-only-date'
+        this.simulatorService.disabled.next(this.disabled)
+
         //else edit param 2
       } else {
         this.paramsToAjust.param2.value = this.valueToAjust.value
@@ -817,7 +890,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       //else (no value filled in popup)
     } else {
-      if (['totalIn', 'totalOut', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && volumeInput === '0') {
+      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && volumeInput === '0') {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -837,6 +910,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.paramsToAjust.param2.button.value = 'Ajuster'
         this.currentNode = undefined
         this.disabled = 'disabled-date'
+        this.simulatorService.disabled.next(this.disabled)
+
         // else if param2 reset =>  reset only param2
       } else if (inputField.id === this.paramsToAjust.param2.label) {
         this.paramsToAjust.param2.value = ''
@@ -1055,20 +1130,23 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * @param buttons bouton selecitonné
    */
   initParams(buttons: any) {
-    //this.disabled = 'disabled-date'
     this.initParamsToAjust()
-
     buttons.forEach((x: any) => {
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
+    if (this.valuesToReinit)
+      this.valuesToReinit = null
     //this.simulatorService.isValidatedWhiteSimu.next(false)
 
   }
 
+  /**
+   * Initialisation des paramètres à ajuster
+   */
   initParamsToAjust() {
     this.toDisplaySimulation = false
-
+    //this.simulatorService.situationSimulated.next(null)
     this.paramsToAjust = {
       param1: {
         label: '',
@@ -1094,6 +1172,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       param2: { label: '', value: '' },
     }
   }
+
   /**
    * Retourne le titre complet d'un champs à éditer
    * @param label label correspondant à un input field (ex: etpMag)
@@ -1230,12 +1309,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * @param allButton liste de tous les boutons clickables
    */
   selectParamToLock(paramNumber: number, allButton: any) {
+    /** SI AUCUN PARAMETRE BLOQUE */
     if (this.paramsToLock.param1.label === '') {
       this.paramsToLock.param1.label = this.pickersParamsToLock[paramNumber]
       this.paramsToLock.param1.value = this.firstSituationData
         ? this.firstSituationData[this.pickersParamsToLock[paramNumber]]
         : ''
 
+      /** SI 1 SEUL PARAMETRE AJUSTE */
       if (this.paramsToAjust.param2.input === 0) {
         const find = this.currentNode.toSimulate.find(
           (x: any) => x.locked === this.paramsToLock.param1.label
@@ -1255,6 +1336,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
           this.toCalculate = find.toCalculate
           this.computeSimulation(allButton)
         }
+
+        /** SI 2 PARAMETRES A AJUSTER */
       } else {
         const find = this.currentNode.toAjust.find(
           (x: any) => x.label === this.paramsToAjust.param2.label
@@ -1277,6 +1360,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
           this.computeSimulation(allButton)
         }
       }
+      /** SI 1 PARAMETRE BLOQUE */
     } else if (this.paramsToLock.param2.label === '') {
       this.paramsToLock.param2.label = this.pickersParamsToLock[paramNumber]
 
@@ -1365,6 +1449,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       allButton.map((x: any) => {
         x.classList.add('disable')
       })
+
+      if (this.whiteSimulator) this.logRunWhiteSimulator(params)
+      else this.logRunSimulator(params)
+
       this.simulatorService.toSimulate(params, simulation)
     } else {
       this.simulateButton = ''
@@ -1395,7 +1483,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Export pdf de simulation
    */
-  print() {
+  async print() {
     let contentieuLabel = this.referentiel
       .find((v) => v.id === this.contentieuId)
       ?.label.replace(' ', '_')
@@ -1471,20 +1559,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         editButton!.style.display = 'block'
         editButton!.classList.remove('display-none')
       }
+    })
 
-      this.userAction.isClosingTab = false
-      if (this.userAction.isReseting) {
-        this.userAction.isReseting = false;
-        this.resetParams()
-      }
-      if (this.userAction.isComingBack) {
-        this.userAction.isComingBack = false
-        this.chooseScreen = true
-        this.resetParams()
-      }
-      else if (this.forceDeactivate && this.nextState) {
-        this.router.navigate([this.nextState])
-      }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve("Export done"), 200)
     })
   }
 
@@ -1500,6 +1578,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.categorySelected = category
       this.resetParams(true)
       this.contentieuId = null
+      this.simulatorService.contentieuOrSubContentieuId.next(null)
+
       this.subList = []
       const findCategory =
         this.humanResourceService.categories
@@ -1605,6 +1685,13 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
 
+  /**
+   * Prévenir dans le cas d'un ajustement de pourcentage induisant une division par 0 (mention du label NA à la place de la valeur en %)
+   * @param id 
+   * @param projectedValue 
+   * @param ptsUnit 
+   * @returns 
+   */
   percentageModifiedInputTextStr(id: string,
     projectedValue: string | number | undefined, ptsUnit = false) {
     let res = this.percentageModifiedInputText(id, projectedValue)
@@ -1623,82 +1710,180 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   onReturn() {
     if (this.toDisplaySimulation) {
-      this.userAction.isLeaving = true
+      this.onUserActionClick(this.action.return)
     } else {
       this.chooseScreen = true
       this.resetParams()
     }
   }
 
-  async onPopupDetailAction(action: any, situation: string) {
-    if (situation === "leaving") {
+  onUserActionClick(button: string, paramsToInit?: any) {
+    if (this.toDisplaySimulation) {
+      this.printPopup = true
+      if (paramsToInit)
+        this.valuesToReinit = paramsToInit
+      switch (button) {
+        case this.action.reinit: {
+          this.popupActionToUse = this.popupAction.reinit
+          this.userAction.isResetingParams = true
+        }
+          break;
+        case this.action.reinitAll: {
+          this.popupActionToUse = this.popupAction.reinit
+          this.userAction.isReseting = true
+        }
+          break;
+        case this.action.return: {
+          this.popupActionToUse = this.popupAction.leaving
+          this.userAction.isComingBack = true
+        }
+          break;
+        case this.action.closeTab: {
+          this.popupActionToUse = this.popupAction.closeTab
+          this.userAction.isClosingTab = true
+        }
+          break;
+        case this.action.leave: {
+          this.popupActionToUse = this.popupAction.leaving
+          this.userAction.isLeaving = true
+        }
+          break;
+      }
+    }
+    return
+  }
+
+  onResetUserAction() {
+    this.userAction.isLeaving = false
+    this.userAction.isReseting = false
+    this.userAction.isResetingParams = false
+    this.userAction.isComingBack = false
+    this.userAction.isClosingTab = false
+  }
+
+  async onPopupDetailAction(action: any) {
+    if (this.userAction.isComingBack) {
       switch (action.id) {
         case 'leave':
           {
-            this.userAction.isLeaving = false
-            this.forceDeactivate = true
+            this.printPopup = false
+            this.onResetUserAction()
             this.resetParams()
-            if (this.userAction.isComingBack) {
-              this.userAction.isComingBack = false
-              this.chooseScreen = true
-            } else if (this.onReloadAction = true
-            ) {
-              this.chooseScreen = true;
+            this.forceDeactivate = false
+            this.chooseScreen = true;
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.forceDeactivate = true
+            await this.print().then((res) => {
               this.resetParams()
-              this.onReloadAction = false
-            } else {
+              this.forceDeactivate = false
+              this.chooseScreen = true;
+            })
+          }
+          break;
+      }
+    } else if (this.userAction.isReseting) {
+      switch (action.id) {
+        case 'reseting':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.resetParams()
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            await this.print().then((res) => {
+              this.resetParams()
+            })
+          }
+          break;
+      }
+    } else if (this.userAction.isResetingParams) {
+      switch (action.id) {
+        case 'reseting':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.initParams(this.valuesToReinit)
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            await this.print().then((res) => {
+              this.initParams(this.valuesToReinit)
+            })
+          }
+          break;
+      }
+    } else if (this.userAction.isClosingTab) {
+      switch (action.id) {
+        case ('cancel'):
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+          }
+          break;
+        case 'export':
+          {
+            this.printPopup = false
+            this.onResetUserAction()
+            this.print()
+          }
+          break;
+      }
+    } else if (this.userAction.isLeaving) {
+      switch (action.id) {
+        case ('leave'):
+          {
+            this.printPopup = false
+            //this.forceDeactivate = true;
+            this.onResetUserAction()
+            this.resetParams()
+            this.forceDeactivate = false;
+            if (this.nextState) {
               this.router.navigate([this.nextState])
+            } else {
+              this.onReloadAction = false
+              this.chooseScreen = true;
             }
           }
           break;
         case 'export':
           {
-            this.userAction.isLeaving = false
-            this.forceDeactivate = true
-            this.print()
+            console.log('Exporting...')
+            this.printPopup = false
+            this.forceDeactivate = true;
+            this.onResetUserAction()
+            await this.print().then(() => {
+              this.resetParams()
+              this.forceDeactivate = false;
+              if (this.nextState) {
+                this.router.navigate([this.nextState])
+              } else {
+                this.onReloadAction = false
+                this.chooseScreen = true;
+              }
+            })
           }
           break;
       }
-    } else if (situation === "reseting") {
-      switch (action.id) {
-        case 'reseting':
-          {
-            this.userAction.isReseting = false
-            this.resetParams()
-          }
-          break;
-        case 'export':
-          {
-            this.print()
-          }
-          break;
-      }
-    } else if (situation === "closingTab") {
-      switch (action.id) {
-        case ('cancel'):
-          {
-            this.userAction.isClosingTab = false;
-          }
-          break;
-        case 'export':
-          {
-            this.print()
-          }
-          break;
-      }
-    }
-
-    if (this.onReloadAction === true) {
-      this.chooseScreen = true;
-      this.resetParams()
-      this.onReloadAction = false
     }
   }
+
 
   /**
    * Log du lancement d'une simulation
    */
-  async logWhiteSimulator() {
+  async logOpenWhiteSimulator() {
     await this.serverService
       .post('simulator/log-white-simulation')
       .then((r) => {
@@ -1709,7 +1894,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Log du lancement d'une simulation à blanc
    */
-  async logSimulator() {
+  async logOpenSimulator() {
     await this.serverService
       .post('simulator/log-simulation')
       .then((r) => {
@@ -1717,11 +1902,34 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       })
   }
 
+  /**
+   * Log du lancement d'une simulation
+   */
+  async logRunWhiteSimulator(params: any) {
+    await this.serverService
+      .post('simulator/log-launch-white-simulation', { params })
+      .then((r) => {
+        return r.data
+      })
+  }
 
+  /**
+   * Log du lancement d'une simulation à blanc
+   */
+  async logRunSimulator(params: any) {
+    await this.serverService
+      .post('simulator/log-launch-simulation', { params })
+      .then((r) => {
+        return r.data
+      })
+  }
 
+  /**
+   * Demande de rechargement de la page
+   */
   reloadPage() {
     if (this.toDisplaySimulation) {
-      this.userAction.isLeaving = true
+      this.onUserActionClick(this.action.leave)
       this.onReloadAction = true
     } else {
       this.chooseScreen = true;

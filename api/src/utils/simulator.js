@@ -741,7 +741,8 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
  * @param {*} sufix catégorie
  * @returns simulation calculée
  */
-export function execSimulation(params, simulation, dateStart, dateStop, sufix) {
+
+export function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx) {
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
@@ -774,8 +775,8 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix) {
         : parseFloat(params.modifiedParams.param2.value)
 
   let counterExit = 0
-
   do {
+
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
@@ -889,5 +890,6 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix) {
       simulation.realCoverage !== undefined
     )
   )
+  console.log('LEAVE FONCTION EXECUTE SIMULATION')
   return simulation
 }

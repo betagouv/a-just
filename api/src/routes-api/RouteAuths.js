@@ -12,7 +12,7 @@ export default class RouteAuths extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -25,15 +25,17 @@ export default class RouteAuths extends Route {
     bodyType: Types.object().keys({
       email: Types.string().required(),
       password: Types.string().required(),
+      remember: Types.number()
     }),
   })
-  async login (ctx) {
-    const { password, email } = this.body(ctx)
+  async login(ctx) {
+    const { password, email, remember } = this.body(ctx)
     const tryUserCon = await this.model.tryConnection(email, password, [0, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN], true)
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      await ctx.loginUser(tryUserCon)
+      if (remember === 1) await ctx.loginUser(tryUserCon, 90)
+      else await ctx.loginUser(tryUserCon, 7)
       await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
         userId: tryUserCon.id,
       })
@@ -53,14 +55,14 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin (ctx) {
+  async loginAdmin(ctx) {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      await ctx.loginUser(tryUserCon)
+      await ctx.loginUser(tryUserCon, 7)
       await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
         userId: tryUserCon.id,
       })
@@ -73,7 +75,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin (ctx) {
+  async autoLogin(ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
@@ -101,7 +103,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin (ctx) {
+  async autoLoginAdmin(ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -114,7 +116,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout (ctx) {
+  async logout(ctx) {
     await ctx.logoutUser()
   }
 }

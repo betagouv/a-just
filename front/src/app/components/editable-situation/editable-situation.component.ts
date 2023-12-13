@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { map, pairwise, startWith } from 'rxjs'
 import { basicEtptData } from 'src/app/constants/etpt-calculation'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
+import { MainClass } from 'src/app/libs/main-class'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
@@ -15,11 +16,11 @@ const etpGreffeFactor = (229.57 / 12) * 7
   templateUrl: './editable-situation.component.html',
   styleUrls: ['./editable-situation.component.scss'],
 })
-export class EditableSituationComponent implements OnChanges {
+export class EditableSituationComponent extends MainClass implements OnChanges {
   /**
    * Number of day to simulate
    */
-  @Input() nbOfDays: number = 0
+  nbOfDays: number = 0
 
   @Input() endDateToDisplay: string = ''
 
@@ -136,10 +137,14 @@ export class EditableSituationComponent implements OnChanges {
    */
   constructor(private simulatorService: SimulatorService) {
 
+    super()
     this.formWhiteSim.valueChanges.pipe(startWith(this.formWhiteSim.value), pairwise())
       .subscribe(async (val) => {
         await this.changeInRealTime(val)
       })
+    this.watch(this.simulatorService.whiteSimulatorNbOfDays.subscribe((nbDays) => {
+      this.nbOfDays = nbDays
+    }))
   }
 
   async changeInRealTime(val: any) {
@@ -225,13 +230,30 @@ export class EditableSituationComponent implements OnChanges {
               }
             });
           }
-
-
         }
-
       }
-
     }
+  }
+
+  /**
+   * Indique si une valeur est finit ou si c'est une division par 0
+   * @param val 
+   * @returns 
+   */
+  getFiniteValue(val: string) {
+    switch (val) {
+      case 'realCoverage':
+        {
+          if (this.formWhiteSim.controls[val].value?.includes('%'))
+            return false
+          return !isFinite(Number(this.formWhiteSim.controls[val].value))
+        }
+      case 'realDTESInMonths':
+        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+      case 'magRealTimePerCase':
+        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+    }
+    return true
   }
 
   initFields() {
@@ -309,6 +331,11 @@ export class EditableSituationComponent implements OnChanges {
     this.isValidatedWhiteSimu = false
     this.displayEndSituation = false
     this.simulatorService.isValidatedWhiteSimu.next(false)
+    const coverage = this.formWhiteSim.controls['realCoverage'].value
+    if (coverage?.includes('%'))
+      this.formWhiteSim.controls['realCoverage'].setValue(
+        coverage.replace('%', '')
+      )
   }
   generateEndSituation() {
     let newStock =

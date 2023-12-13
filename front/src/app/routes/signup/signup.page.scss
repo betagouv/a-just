@@ -4,7 +4,7 @@
   .logo {
     height: 150px;
 
-    > img {
+    >img {
       height: 90px;
       margin-right: 27px;
     }
@@ -13,7 +13,105 @@
   h3 {
     font-size: 20px;
     font-weight: bold;
+  }
+
+  select {
+    font-size: 16px;
     margin-bottom: 24px;
+  }
+
+  .tj {
+    display: flex;
+  }
+
+  .sub-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 12px;
+
+    &.password {
+      display: flex;
+      font-size: 12px;
+      color: #0063cb;
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+
+      &.last {
+        margin-bottom: 24px;
+      }
+
+      span {
+        padding: -4px 0px;
+        text-align: center;
+        border-radius: 3px;
+        width: 13.3px;
+        height: 13.3px;
+        background-color: #0063cb;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .sub-title {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 24px;
+  }
+
+  .step-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #161616;
+    margin-bottom: 12px;
+
+  }
+
+  .steps {
+    margin-bottom: 12px;
+  }
+
+  .next-step {
+    cursor: pointer;
+    height: 48px;
+    background-color: #000091;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      color: #f5f5fe !important;
+    }
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .bordure-steps {
+    height: 8px;
+    margin-bottom: 24px;
+    display: flex;
+
+    .step-one {
+      flex: 1;
+      background-color: #000091;
+      margin-right: 3px;
+    }
+
+    .step-two {
+      flex: 1;
+      background-color: #eeeeee;
+      margin-left: 3px;
+    }
   }
 
   label {
@@ -29,38 +127,78 @@
     margin-bottom: 24px;
   }
 
+  .no-margin {
+    margin-bottom: 12px !important;
+  }
+
+  .password-line {
+    display: flex;
+
+    div {
+      &:last-child {
+        display: flex;
+        justify-content: flex-end;
+
+        span {
+          font-size: 14px;
+
+          input {
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
+
+      flex: 1;
+    }
+  }
+
   .login {
-    margin-top: 68px;
+    margin-top: 40px;
     padding: 16px 24px;
     background-color: fColor(bgProgressBar);
-  
+
     b {
       font-size: 20px;
     }
-  
+
     a {
       margin-top: 16px;
       display: block;
     }
-  
+
     button {
       width: 100%;
       font-weight: bold;
       font-size: 20px;
       height: 48px;
       line-height: 48px;
-  
+
       i {
         margin-right: 12px;
         position: relative;
-        top: 3px;
       }
     }
   }
+
+
 }
 
 .checkbox-row {
   margin-bottom: 32px;
+  font-size: 16px;
+
+  a {
+    color: #161616
+  }
+
+  input.large {
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    border: 1px solid #ccc;
+  }
 
   input[type=checkbox] {
     margin-right: 8px;
@@ -69,6 +207,5 @@
 }
 
 .asterisque {
-  margin-bottom: 16px; 
+  margin-bottom: 16px;
 }
-
