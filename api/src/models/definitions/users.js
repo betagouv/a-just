@@ -17,7 +17,7 @@ export default (sequelizeInstance) => {
       email: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
+        unique: false,
       },
       password: {
         type: Sequelize.STRING(255),
