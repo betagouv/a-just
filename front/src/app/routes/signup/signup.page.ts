@@ -145,14 +145,18 @@ export class SignupPage {
       checkbox,
     } = this.form.value
 
-
     if (!firstName || !lastName) {
       alert("Vous devez saisir un nom et un prénom")
       return
     }
 
     if (!email || !this.validateEmail(email)) {
-      alert("Vous devez saisir un mail valide")
+      alert("Vous devez saisir une adresse e-mail valide")
+      return
+    }
+
+    if (email.includes('@justice.fr') === false && email.includes('.gouv.fr') === false && email.includes('@a-just.fr') === false) {
+      alert("Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr")
       return
     }
 
