@@ -143,4 +143,10 @@ module.exports = {
    * TOKEN Hubspot
    */
   hubspotToken: process.env.HUBSPOT_TOKEN,
+  /**
+   * SSO URL
+   */
+  ssl: {
+    url: process.env.SSO_URL,
+  },
 }
