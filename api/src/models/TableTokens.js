@@ -23,10 +23,8 @@ export default (sequelizeInstance, Model) => {
 
     if (ref) {
       const date = new Date()
-      const tokenCreateAt = new Date(ref.dataValues.updated_at)
-      const nbDays = getNbDay(tokenCreateAt, date)
-
-      if (nbDays <= config.nbMaxDayTokenLife) {
+      //date.setDate(date.getDate() + 100)
+      if (date < ref.dataValues.consumable_until) {
         ref.update({ updated_at: new Date() })
         return ref
       } else {
@@ -67,11 +65,12 @@ export default (sequelizeInstance, Model) => {
    * @param {*} param0
    * @returns
    */
-  Model.createLogin = async function ({ entity_id, token }) {
+  Model.createLogin = async function ({ entity_id, token, consumable_until = null }) {
     return Model.create({
       entity_id,
       entity_name: ENTITY_NAME.USERS,
       token,
+      consumable_until,
       type: ENUM_TYPE.LOGIN,
     }).catch(console.error)
   }

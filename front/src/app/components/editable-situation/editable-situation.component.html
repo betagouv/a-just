@@ -60,21 +60,31 @@
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
         <div class="line-item">
-          <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
-            (keyup)="onDeletePressed($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+          <ng-container *ngIf="!getFiniteValue('realCoverage');else naTemplate">
+            <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
+              (keyup)="onDeletePressed($event)" type="text"
+              [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+          </ng-container>
         </div>
         <div class="line-item">
-          <input formControlName="realDTESInMonths" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
-            (keyup)="onDeletePressed($event)" type="text"
-            [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+          <ng-container *ngIf="!getFiniteValue('realDTESInMonths');else naTemplate">
+            <input formControlName="realDTESInMonths" (keypress)="validateNo($event)"
+              (keydown)="onDeletePressed($event)" (keyup)="onDeletePressed($event)" type="text"
+              [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
+          </ng-container>
         </div>
         <div class="line-item">
-          <app-time-selector class="white-bg" id="magRealTimePerCase" [value]="getStartTmd()"
-            [defaultValue]="defaultTmd" (valueChange)="updateTimeValue($event)" [disabled]="disabledTmd"
-            [category]="'MAGISTRATS'" [ngClass]="{'disabled-tmd': isValidatedWhiteSimu === true}"></app-time-selector>
+          <ng-container *ngIf="!getFiniteValue('magRealTimePerCase');else naTemplate">
+            <app-time-selector class="white-bg" id="magRealTimePerCase" [value]="getStartTmd()"
+              [defaultValue]="defaultTmd" (valueChange)="updateTimeValue($event)" [disabled]="disabledTmd"
+              [category]="'MAGISTRATS'" [ngClass]="{'disabled-tmd': isValidatedWhiteSimu === true}"></app-time-selector>
+          </ng-container>
         </div>
       </form>
+
+      <ng-template #naTemplate>
+        <ng-container>NA</ng-container>
+      </ng-template>
 
       <div class="line-item validate-button" *ngIf="!isValidatedWhiteSimu; else locked">
         <label (click)="initFields()" *ngIf="!isValidatedWhiteSimu; else locked"

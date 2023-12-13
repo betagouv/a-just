@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
 import { copyArray } from '../utils/array'
-import { EXECUTE_SIMULATION, EXECUTE_WHITE_SIMULATOR } from '../constants/log-codes'
+import { EXECUTE_LAUNCH_SIMULATOR, EXECUTE_LAUNCH_WHITE_SIMULATOR, EXECUTE_SIMULATION, EXECUTE_WHITE_SIMULATOR } from '../constants/log-codes'
 import config from 'config'
 
 /**
@@ -69,7 +69,6 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
-    console.log()
     this.sendOk(ctx, { situation: situationFiltered, categories, hr })
   }
 
@@ -109,16 +108,49 @@ export default class RouteSimulator extends Route {
     if (simulatedSituation === null) ctx.throw(400, "Une erreur est survenue lors de votre simulation, veuillez réessayer !")
     else
       this.sendOk(ctx, simulatedSituation)
-
   }
 
   /**
- * Log cente
+ * Log lancement simulation à blanc
  * @param {*} node
  * @param {*} juridictionId
  */
   @Route.Post({
-    accesses: [Access.isLogin],
+    bodyType: Types.object().keys({
+      params: Types.any().required(),
+    }),
+    accesses: [Access.canVewSimulation],
+  })
+  async logLaunchWhiteSimulation(ctx) {
+    let { params } = this.body(ctx)
+    await this.models.Logs.addLog(EXECUTE_LAUNCH_WHITE_SIMULATOR, ctx.state.user.id, { ...params })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+* Log lancement simulation classique
+* @param {*} node
+* @param {*} juridictionId
+*/
+  @Route.Post({
+    bodyType: Types.object().keys({
+      params: Types.any().required()
+    }),
+    accesses: [Access.canVewSimulation],
+  })
+  async logLaunchSimulation(ctx) {
+    let { params } = this.body(ctx)
+    await this.models.Logs.addLog(EXECUTE_LAUNCH_SIMULATOR, ctx.state.user.id, { ...params })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+* Log accès au simulateur à blanc
+* @param {*} node
+* @param {*} juridictionId
+*/
+  @Route.Post({
+    accesses: [Access.canVewSimulation],
   })
   async logWhiteSimulation(ctx) {
     await this.models.Logs.addLog(EXECUTE_WHITE_SIMULATOR, ctx.state.user.id)
@@ -126,12 +158,12 @@ export default class RouteSimulator extends Route {
   }
 
   /**
-* Log cente
+* Log accès au simulateur classique
 * @param {*} node
 * @param {*} juridictionId
 */
   @Route.Post({
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewSimulation],
   })
   async logSimulation(ctx) {
     await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)

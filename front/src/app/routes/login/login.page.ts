@@ -25,6 +25,7 @@ export class LoginPage {
   form = new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
+    remember: new FormControl()
   })
 
   /**
@@ -58,10 +59,10 @@ export class LoginPage {
    * Demande connexion
    */
   onSubmit() {
-    let { email, password } = this.form.value
+    let { email, password, remember } = this.form.value
     this.errorMessage = null
     this.authService
-      .login({ email, password }, { noAlert: true })
+      .login({ email, password, remember: Number(remember) }, { noAlert: true })
       .then((returnLogin) => {
         this.router.navigate([
           this.userService.getUserPageUrl(returnLogin.user),
