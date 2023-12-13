@@ -741,6 +741,7 @@ export async function getHRVentilation(hr, referentielId, categories, date) {
  * @param {*} sufix catégorie
  * @returns simulation calculée
  */
+
 export function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx) {
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
