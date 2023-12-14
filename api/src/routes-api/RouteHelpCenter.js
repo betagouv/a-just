@@ -1,6 +1,8 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { EXECUTE_HELPCENTER, EXECUTE_HELPCENTER_LINK, EXECUTE_HELPCENTER_SEARCH } from '../constants/log-codes'
+import { Client } from "@hubspot/api-client";
+const hubspotToken = 'pat-eu1-287525a5-7105-49fd-9102-dd76c78dc1c7'
 
 /**
  * Route des juridictions
@@ -60,4 +62,50 @@ export default class RouteCentreDAide extends Route {
     await this.models.Logs.addLog(EXECUTE_HELPCENTER, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
   }
+
+
+  /**
+* Poster un formulaire dans hubspot
+*/
+  @Route.Post({
+    bodyType: Types.object().keys({
+      userId: Types.number().required(),
+      phoneNumber: Types.string().required(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async postFormHubspot(ctx) {
+    const { userId, phoneNumber } = this.body(ctx)
+
+    let user = await this.models.Users.findOne({
+      attributes: ['id', 'email', 'first_name', 'last_name', 'tj', 'fonction'],
+      where: {
+        id: userId,
+        status: 1,
+      },
+      raw: true,
+    })
+
+    if (user) {
+      const str = ['Prénom: ' + user.first_name, 'Nom: ' + user.last_name, 'E-mail: ' + user.email, 'Tj: ' + user.tj, 'Fonction: ' + user.fonction, 'Numéro de téléphone: ' + phoneNumber].join('\n')
+      const hubspotClient = new Client({ accessToken: hubspotToken });
+      let apiResponse = await hubspotClient.apiRequest({
+        method: 'POST',
+        path: '/crm/v3/objects/tickets',
+        body: {
+          "properties": {
+            "hs_pipeline": "0",
+            "hs_pipeline_stage": "1",
+            "hs_ticket_priority": "HIGH",
+            "hubspot_owner_id": "",
+            "subject": "[TEST] Un utilisateur souhaite être rappelé",
+            "content": str
+          }
+        }
+      });
+      this.sendOk(ctx, 'OK')
+    }
+    this.sendOk(ctx, 'NOK')
+  }
+
 }

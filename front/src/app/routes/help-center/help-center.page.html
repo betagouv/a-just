@@ -60,9 +60,10 @@
                                 class="material-icons pointer">close</i>
                         </div>
                         <p class="label">Numéro de téléphone :</p>
-                        <input type="text" (keypress)="validateNo($event)" />
+                        <input #phone type="text" (keypress)="validateNo($event)" />
                         <div class="button"
-                            (click)="popinCall=!popinCall; callValidated=true; $event.stopPropagation()">Rappelez-moi
+                            (click)="popinCall=!popinCall; callValidated=true; $event.stopPropagation(); sendForm(phone.value)">
+                            Rappelez-moi
                         </div>
                     </div>
                 </div>
@@ -72,24 +73,29 @@
 
         <p class="sub-title">Suggestions d'usage</p>
         <div class="suggestion">
-            <div (click)="openToIframe='';openSuggestionPanel=!openSuggestionPanel"><label><span class="blue">Tout
+            <div
+                (click)="openToIframe={url:'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/', title:'Tout savoir en un coup d\'oeil'};openSuggestionPanel=!openSuggestionPanel">
+                <label><span class="blue">Tout
                         savoir</span><br />
                     <span class="blue">en
                         un coup
                         d’oeil</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe='';openSuggestionPanel=!openSuggestionPanel"><label><span
-                        class="green">Soulager</span><br /> <span class="green">les
+            <div
+                (click)="openToIframe={url:'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/',title:'Soulager les équipes'};openSuggestionPanel=!openSuggestionPanel">
+                <label><span class="green">Soulager</span><br /> <span class="green">les
                         équipes</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe='';openSuggestionPanel=!openSuggestionPanel"><label><span
-                        class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
+            <div
+                (click)="openToIframe={url:'https://docs.a-just.beta.gouv.fr/gagner-du-temps/',title:'Gagner du temps'};openSuggestionPanel=!openSuggestionPanel">
+                <label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe='';openSuggestionPanel=!openSuggestionPanel"><label><span
-                        class="yellow">Construire</span><br /> <span class="yellow">le
+            <div
+                (click)="openToIframe={url:'https://docs.a-just.beta.gouv.fr/construire-le-futur/',title:'Construire le futur'};openSuggestionPanel=!openSuggestionPanel">
+                <label><span class="yellow">Construire</span><br /> <span class="yellow">le
                         futur</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
@@ -121,10 +127,10 @@
     </ng-container>
     <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
         <div class="panel-header">
-            <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > titre
+            <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
         </div>
 
-        <iframe src="openToIframe"></iframe>
+        <iframe src="openToIframe.url"></iframe>
     </div>
 
 </aj-wrapper>

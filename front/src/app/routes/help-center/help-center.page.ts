@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
-import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL,HELP_CENTER_GITBOOK } from 'src/app/constants/documentation';
+import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, HELP_CENTER_GITBOOK } from 'src/app/constants/documentation';
 import { AppService } from 'src/app/services/app/app.service';
 import { ServerService } from 'src/app/services/http-server/server.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
 interface webinaire {
@@ -124,12 +125,12 @@ export class HelpCenterPage implements OnInit {
   /**
    * Doc à afficher dans une IFRAME
    */
-  openToIframe = ''
+  openToIframe = { url: '', title: '' }
   /**
-   * Constructeur
+   * Constructeur 
    * @param title
    */
-  constructor(private serverService: ServerService, private appService: AppService) {
+  constructor(private userService: UserService, private serverService: ServerService, private appService: AppService) {
     this.gitToken = environment.gitbookToken
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
@@ -201,16 +202,37 @@ export class HelpCenterPage implements OnInit {
     }
   }
 
+  /**
+   * Temporiser le focus d'un input
+   */
   delay() {
     setTimeout(() => { this.focusOn = false }, 200)
   }
 
+  /**
+   * Envoie de log
+   */
   async sendLog() {
     await this.serverService
       .post('centre-d-aide/log-documentation')
       .then((r) => {
         return r.data
       })
+  }
+
+
+  async sendForm(phoneNumber: string) {
+    console.log(this.userService.user.getValue()?.id)
+    let userId = this.userService.user.getValue()?.id || null
+    if (userId)
+      await this.serverService
+        .post('centre-d-aide/post-form-hubspot', {
+          userId, phoneNumber
+        })
+        .then((r) => {
+          console.log(r.data)
+          return r.data
+        })
   }
 
   async goToLink(url: string) {
@@ -245,7 +267,6 @@ export class HelpCenterPage implements OnInit {
         }
         if (data.title.includes('[CACHER]') === false)
           this.webinaires?.push(webinaire)
-        console.log(data)
       } catch (error) {
         console.log('Le format du webinaire gitbook n\'est pas conforme', data);
       }
