@@ -2,7 +2,7 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { EXECUTE_HELPCENTER, EXECUTE_HELPCENTER_LINK, EXECUTE_HELPCENTER_SEARCH } from '../constants/log-codes'
 import { Client } from "@hubspot/api-client";
-const hubspotToken = 'pat-eu1-287525a5-7105-49fd-9102-dd76c78dc1c7'
+import config from 'config'
 
 /**
  * Route des juridictions
@@ -88,7 +88,7 @@ export default class RouteCentreDAide extends Route {
 
     if (user) {
       const str = ['Prénom: ' + user.first_name, 'Nom: ' + user.last_name, 'E-mail: ' + user.email, 'Tj: ' + user.tj, 'Fonction: ' + user.fonction, 'Numéro de téléphone: ' + phoneNumber].join('\n')
-      const hubspotClient = new Client({ accessToken: hubspotToken });
+      const hubspotClient = new Client({ accessToken: config.hubspotToken });
       let apiResponse = await hubspotClient.apiRequest({
         method: 'POST',
         path: '/crm/v3/objects/tickets',
