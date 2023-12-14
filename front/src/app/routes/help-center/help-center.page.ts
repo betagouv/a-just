@@ -108,7 +108,6 @@ export class HelpCenterPage implements OnInit {
       localUrl: true
     },
   ]
-
   /**
    * webinaire
    */
@@ -118,6 +117,14 @@ export class HelpCenterPage implements OnInit {
    * Ouverture d'un iframe gitbook embeded
    */
   openSuggestionPanel = false
+  /**
+   * Ouverture de popin d appel
+   */
+  popinCall = false
+  /**
+   * Appel demandé
+   */
+  callValidated = false
   /**
    * Constructeur
    * @param title
@@ -248,5 +255,13 @@ export class HelpCenterPage implements OnInit {
     })
   }
 
+  validateNo(e: any) {
+    const charCode = e.which ? e.which : e.keyCode
+    if (charCode === 46) return true
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false
+    }
+    return true
+  }
 
 }
