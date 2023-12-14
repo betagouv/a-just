@@ -135,7 +135,7 @@ export default class App extends AppBase {
           ],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
+          'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com', 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/'],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
           'X-Frame-Options': ['DENY'],

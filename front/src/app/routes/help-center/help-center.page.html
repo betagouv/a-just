@@ -130,7 +130,7 @@
             <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
         </div>
 
-        <iframe src="'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/'"></iframe>
+        <iframe [src]="openToIframe.url || ''"></iframe>
     </div>
 
 </aj-wrapper>
