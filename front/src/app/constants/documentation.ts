@@ -22,3 +22,7 @@ export const DOCUMENTATION_VENTILATEUR_PERSON = 'https://docs.a-just.beta.gouv.f
  * Lien pour le guide de la donnée
  */
 export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"
+/**
+ * Lien pour le centre d aide gitbook
+ */
+export const HELP_CENTER_GITBOOK = "https://docs.a-just.beta.gouv.fr/centre-daide/"

@@ -75,7 +75,8 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #96b8f046;
+                border-bottom: 8px solid #96b8f0;
+                opacity: 0.4;
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
@@ -87,10 +88,11 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #00fb8e51;
+                border-bottom: 8px solid #00fb90;
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
+                opacity: 0.3;
             }
         }
 
@@ -99,7 +101,8 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #eba89f55;
+                border-bottom: 8px solid #a558a0;
+                opacity: 0.5;
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
@@ -112,7 +115,8 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #f6e1575d;
+                border-bottom: 8px solid #f6e157;
+                opacity: 0.5;
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
@@ -336,7 +340,7 @@
                         margin-bottom: 8px;
                         font-size: 16px;
                         color: #161616;
-                        font-weight: n;
+                        font-weight: normal;
                     }
 
 
