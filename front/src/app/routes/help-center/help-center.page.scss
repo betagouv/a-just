@@ -27,9 +27,104 @@
         }
     }
 
+    .suggestion {
+        display: flex;
+        padding: 16px 24px;
+        margin-bottom: 40px;
+
+        div:hover {
+            outline: solid 1px #0a76f6;
+            background-color: #f5f5fe;
+        }
+
+        div {
+            min-height: 115px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: column;
+            flex: 1;
+            background-color: #f6f6f6;
+            margin-right: 4px;
+            padding: 24px;
+
+
+
+            mat-icon {
+                font-size: 16px;
+            }
+
+            label {
+                text-align: center;
+                position: relative;
+
+                span {
+                    position: relative;
+                    font-weight: bold;
+                }
+            }
+        }
+
+
+        :last-child {
+            margin-right: 0px;
+        }
+
+        .blue {
+            &::before {
+                content: '';
+                height: 0px;
+                width: 100%;
+                border-bottom: 8px solid #96b8f046;
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+            }
+        }
+
+        .green {
+            &::before {
+                content: '';
+                height: 0px;
+                width: 100%;
+                border-bottom: 8px solid #00fb8e51;
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+            }
+        }
+
+        .red {
+            &::before {
+                content: '';
+                height: 0px;
+                width: 100%;
+                border-bottom: 8px solid #eba89f55;
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+
+            }
+        }
+
+        .yellow {
+            &::before {
+                content: '';
+                height: 0px;
+                width: 100%;
+                border-bottom: 8px solid #f6e1575d;
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+
+            }
+        }
+    }
+
     .section-one {
         display: flex;
         align-items: center;
+
 
         .title-area {
             flex: 1;
@@ -38,11 +133,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 24px;
+            padding: 32px 24px;
 
-            img {
-                margin-top: 8px;
-            }
 
             aj-input-button {
                 width: -webkit-fill-available;
@@ -52,7 +144,7 @@
 
             .result-area {
                 margin: 0 24px;
-
+                z-index: 1;
                 position: absolute;
                 top: 230px;
                 max-height: 400px;
@@ -149,7 +241,7 @@
 
         .action-area {
 
-            padding: 24px;
+            padding: 32px 32px 32px 24px;
 
             div {
                 cursor: pointer;
@@ -196,33 +288,96 @@
     .sub-title {
         font-size: 22px;
         font-weight: bold;
-        margin: 0px auto;
+        margin: 8px auto 0px auto;
     }
 
     .content-area {
-        display: flex;
         margin-top: 16px;
+        padding: 32px;
+        background-color: #f6f6f6;
 
+        .webinaire {
+            min-height: 224px;
+            display: flex;
+            background-color: white;
+            margin-bottom: 16px;
+            position: relative;
+            width: 100%;
 
-        .documentation {
-            margin: 0px 12px 0px 24px;
-            padding: 26px 32px;
-            flex: 1;
-            background-color: #fef4f2;
+            .cover {
+                object-fit: cover;
+                width: 326px !important;
+            }
+
+            .container {
+                padding: 40px;
+                display: block;
+                flex: 1;
+
+                .title {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 24px;
+                }
+
+                .content {
+                    line-height: 24px;
+                    font-size: 16px;
+                    margin-bottom: 24px;
+                }
+
+                .action {
+                    display: flex;
+
+                    div {
+                        cursor: pointer;
+                        height: 40px;
+                        line-height: 38px;
+                        display: inline;
+                        padding: 0 16px;
+                        border: solid 1px #000091;
+                        color: #000091;
+                        font-size: 14px;
+                        text-align: center;
+                        align-items: center;
+                        margin-right: 8px;
+                    }
+                }
+            }
+
+        }
+    }
+
+    .open-panel {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        background-color: white;
+
+        .panel-header {
+            color: #666666;
+            font-size: 12px;
+            height: 50px;
+            padding: 8px 24px 24px 16px;
+            border-bottom: 1px solid #eee4d9;
+            position: relative;
+
+            a {
+                cursor: pointer;
+            }
         }
 
-        .outil {
-            margin: 0px 24px 0px 12px;
-            padding: 26px 32px;
+        >iframe {
             flex: 1;
-            background-color: #f3f6fe;
-            height: fit-content;
-        }
-
-        span {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 24px;
+            border-radius: 4px;
+            box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            //margin: -148px 8px 8px 8px;
+            border: none;
+            width: 100%;
         }
     }
 }

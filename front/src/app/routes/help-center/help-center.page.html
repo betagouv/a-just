@@ -1,72 +1,108 @@
-<aj-wrapper title="Centre d'aide" [actionTemplate]="actions" class="white-bg content-margin-null">
+<aj-wrapper title="Aide" [actionTemplate]="actions" class="white-bg content-margin-null"
+    [ngClass]="{'help-center':openSuggestionPanel}">
 
-    <div class="toolbar">
-        <div *ngFor="let card of docTools" (click)="goToLink(card.url)"> <img src="{{card.image}}" alt="a-just" />
-            <p>{{card.title}}</p>
+    <ng-container *ngIf="openSuggestionPanel===false">
+        <div class="toolbar">
+            <div *ngFor="let card of docTools" (click)="goToLink(card.url)"> <img src="{{card.image}}" alt="a-just" />
+                <p>{{card.title}}</p>
+            </div>
         </div>
-    </div>
 
-    <div class="section-one">
-        <div class="title-area">
-            <img src="/assets/images/community.svg" alt="a-just" />
-            <p class="sub-title">Saisissez votre question ci-dessous</p>
-            <div class="research-area"></div>
-            <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
-                (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
-                ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
-            </aj-input-button>
-            <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
-                <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
-                <div *ngFor="let res of this.data">
-                    <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
-                        <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
-                        {{res.title}}
-                    </p>
-                    <div *ngFor="let page of res.pages">
-                        <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
-                            <mat-icon>insert_drive_file</mat-icon>
-                            {{page.title}}
+        <div class="section-one">
+            <div class="title-area">
+                <img src="/assets/images/community.svg" alt="a-just" />
+                <p class="sub-title">Saisissez votre question ci-dessous</p>
+                <div class="research-area"></div>
+                <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
+                    (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
+                    ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+                </aj-input-button>
+                <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
+                    <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
+                    <div *ngFor="let res of this.data">
+                        <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
+                            <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
+                            {{res.title}}
                         </p>
-                        <div *ngFor="let section of page.sections">
-                            <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
-                                <mat-icon>subdirectory_arrow_right</mat-icon>
-                                {{section.body}}
+                        <div *ngFor="let page of res.pages">
+                            <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
+                                <mat-icon>insert_drive_file</mat-icon>
+                                {{page.title}}
                             </p>
+                            <div *ngFor="let section of page.sections">
+                                <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
+                                    <mat-icon>subdirectory_arrow_right</mat-icon>
+                                    {{section.body}}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="line"></div>
-        <div class="action-area">
-            <div (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}" alt="a-just" />
-                <p class="title">{{userGuide.title}}</p>
-            </div>
-            <div (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}" alt="a-just" />
-                <p class="title">{{dataBook.title}}</p>
-            </div>
-            <div class="blue"> <img src="/assets/images/call-center.png" alt="a-just" />
-                <p class="title">Être recontacté </p>
+            <div class="line"></div>
+            <div class="action-area">
+                <div (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}" alt="a-just" />
+                    <p class="title">{{userGuide.title}}</p>
+                </div>
+                <div (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}" alt="a-just" />
+                    <p class="title">{{dataBook.title}}</p>
+                </div>
+                <div class="blue"> <img src="/assets/images/call-center.png" alt="a-just" />
+                    <p class="title">Être recontacté </p>
+                </div>
             </div>
         </div>
 
+        <p class="sub-title">Suggestions d'usage</p>
+        <div class="suggestion">
+            <div (click)="openSuggestionPanel=!openSuggestionPanel"><label><span class="blue">Tout savoir</span><br />
+                    <span class="blue">en
+                        un coup
+                        d’oeil</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div><label><span class="green">Soulager</span><br /> <span class="green">les équipes</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div><label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div><label><span class="yellow">Construire</span><br /> <span class="yellow">le futur</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+        </div>
+
+        <p class="sub-title">Webinaires</p>
+
+        <div class="content-area">
+            <ng-container *ngFor="let webinaire of webinaires">
+                <div class="webinaire">
+                    <img class="cover" src="{{webinaire.img}}" />
+                    <div class="container">
+                        <p class="title">{{webinaire.title}}</p>
+                        <p class="content">{{webinaire.content}}</p>
+                        <!--<div class="action" *ngFor="let action of webinaire.action">{{action}}</div>-->
+                        <div class="action">
+                            <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">M'inscrire
+                            </div>
+                            <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En savoir
+                                plus
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+    <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
+        <div class="panel-header">
+            <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > titre
+        </div>
+
+        <iframe [src]="'https://docs.a-just.beta.gouv.fr/le-data-book/' || ''"></iframe>
     </div>
 
-    <p class="sub-title">Suggestions d'usage</p>
-    <div class="content-area">
-        <div class="documentation">
-            <span>La documentation</span>
-            <div *ngFor="let card of docCards">
-                <aj-doc-card [data]="card"></aj-doc-card>
-            </div>
-        </div>
-        <div class="outil">
-            <span>Les outils A-JUST</span>
-            <div *ngFor="let card of docTools">
-                <aj-doc-card class="tools" [data]="card"></aj-doc-card>
-            </div>
-        </div>
-    </div>
 </aj-wrapper>
+
 
 <ng-template #actions></ng-template>

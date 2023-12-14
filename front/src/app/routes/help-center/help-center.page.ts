@@ -1,5 +1,4 @@
-import { Component } from '@angular/core'
-
+import { Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api';
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component';
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL } from 'src/app/constants/documentation';
@@ -7,6 +6,17 @@ import { AppService } from 'src/app/services/app/app.service';
 import { ServerService } from 'src/app/services/http-server/server.service';
 import { environment } from 'src/environments/environment';
 
+interface action {
+  label: string,
+  url: string
+}
+interface webinaire {
+  img: string
+  title: string
+  content: string
+  action: string[],
+  rank: number
+}
 /**
  * Contact
  */
@@ -15,7 +25,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './help-center.page.html',
   styleUrls: ['./help-center.page.scss'],
 })
-export class HelpCenterPage {
+export class HelpCenterPage implements OnInit {
   /**
    * Résultat de la recherche GitBook
    */
@@ -99,7 +109,15 @@ export class HelpCenterPage {
     },
   ]
 
+  /**
+   * webinaire
+   */
+  webinaires: Array<webinaire> | null = null
 
+  /**
+   * Ouverture d'un iframe gitbook embeded
+   */
+  openSuggestionPanel = false
   /**
    * Constructeur
    * @param title
@@ -112,6 +130,9 @@ export class HelpCenterPage {
     this.sendLog()
   }
 
+  ngOnInit() {
+    this.loadWebinaires()
+  }
 
   async onSearchBy() {
     const { data } = await this.gitbook.search.searchContent({ query: this.searchValue })
@@ -200,5 +221,32 @@ export class HelpCenterPage {
       })
     window.open(url)
   }
-}
 
+  openLink(url: string) {
+    window.open(url, "_blank");
+  }
+
+  async loadWebinaires() {
+    this.webinaires = new Array();
+    const { data } = await this.gitbook.spaces.getPageByPath('S99g6aJCtkSrC9hKXFqV', 'accueil/')
+
+    await Promise.all(data.pages.map(async (page, index) => {
+      const { data } = await this.gitbook.spaces.getPageById('S99g6aJCtkSrC9hKXFqV', page.id) as any
+      try {
+        let webinaire = {
+          img: data.document?.nodes[0].data.url, title: data.title, content: data.document?.nodes[1].nodes[0].leaves[0].text, action: [data.document.nodes[2].data.url || null, data.document.nodes[3]?.data.url || null], rank: index
+        }
+        if (data.title.includes('[CACHER]') === false)
+          this.webinaires?.push(webinaire)
+        console.log(data)
+      } catch (error) {
+        console.log('Le format du webinaire gitbook n\'est pas conforme', data);
+      }
+    })).then(() => {
+      this.webinaires?.sort((a, b) => a.rank - b.rank);
+      console.log(this.webinaires)
+    })
+  }
+
+
+}
