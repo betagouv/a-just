@@ -124,6 +124,7 @@ export default class App extends AppBase {
             'https://forms-eu1.hsforms.com',
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
           ],
+          'frame-ancestors': ['https://app.gitbook.com/'],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com', '*'],
           'script-src': [
