@@ -257,10 +257,10 @@ export class HelpCenterPage implements OnInit {
 
   async loadWebinaires() {
     this.webinaires = new Array();
-    const { data } = await this.gitbook.spaces.getPageByPath('S99g6aJCtkSrC9hKXFqV', 'accueil/')
+    const { data } = await this.gitbook.spaces.getPageByPath(environment.gitbookId, 'accueil/')
 
     await Promise.all(data.pages.map(async (page, index) => {
-      const { data } = await this.gitbook.spaces.getPageById('S99g6aJCtkSrC9hKXFqV', page.id) as any
+      const { data } = await this.gitbook.spaces.getPageById(environment.gitbookId, page.id) as any
       try {
         let webinaire = {
           img: data.document?.nodes[0].data.url, title: data.title, content: data.document?.nodes[1].nodes[0].leaves[0].text, action: [data.document.nodes[2].data.url || null, data.document.nodes[3]?.data.url || null], rank: index
