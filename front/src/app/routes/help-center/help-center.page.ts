@@ -285,4 +285,7 @@ export class HelpCenterPage implements OnInit {
     return true
   }
 
+  getIframeUrl() {
+    return this.openToIframe.url
+  }
 }
