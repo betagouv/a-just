@@ -15,6 +15,16 @@
         margin-right: 27px;
       }
     }
+
+    .back-link {
+      margin-top: 8px;
+  
+      a {
+        font-size: 18px;
+        color: fColor(primary);
+        text-decoration: none;
+      }
+    }
   
     iframe {
       margin-top: 8px;
