@@ -41,33 +41,53 @@
             </div>
             <div class="line"></div>
             <div class="action-area">
-                <div (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}" alt="a-just" />
+                <div class="clickable-link" (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}"
+                        alt="a-just" />
                     <p class="title">{{userGuide.title}}</p>
                 </div>
-                <div (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}" alt="a-just" />
+                <div class="clickable-link" (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}"
+                        alt="a-just" />
                     <p class="title">{{dataBook.title}}</p>
                 </div>
-                <div class="blue"> <img src="/assets/images/call-center.png" alt="a-just" />
-                    <p class="title">Être recontacté </p>
+                <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
+                    [ngClass]="{'validated':callValidated}"> <img src="/assets/images/call-center.png" alt="a-just" />
+                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est
+                        bien prise en compte !'}}</p>
+                    <div *ngIf="popinCall===true" class="popin-call">
+                        <div class="header">
+                            <h3 class="title">Être recontacté ?</h3> <i
+                                (click)="popinCall=!popinCall; $event.stopPropagation()"
+                                class="material-icons pointer">close</i>
+                        </div>
+                        <p class="label">Numéro de téléphone :</p>
+                        <input type="text" (keypress)="validateNo($event)" />
+                        <div class="button"
+                            (click)="popinCall=!popinCall; callValidated=true; $event.stopPropagation()">Rappelez-moi
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
         <p class="sub-title">Suggestions d'usage</p>
         <div class="suggestion">
-            <div (click)="openSuggestionPanel=!openSuggestionPanel"><label><span class="blue">Tout savoir</span><br />
+            <div (click)="openSuggestionPanel=!openSuggestionPanel"><label><span class="blue">Tout
+                        savoir</span><br />
                     <span class="blue">en
                         un coup
                         d’oeil</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div><label><span class="green">Soulager</span><br /> <span class="green">les équipes</span></label><br />
+            <div><label><span class="green">Soulager</span><br /> <span class="green">les
+                        équipes</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div><label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div><label><span class="yellow">Construire</span><br /> <span class="yellow">le futur</span></label><br />
+            <div><label><span class="yellow">Construire</span><br /> <span class="yellow">le
+                        futur</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
         </div>
@@ -83,9 +103,11 @@
                         <p class="content">{{webinaire.content}}</p>
                         <!--<div class="action" *ngFor="let action of webinaire.action">{{action}}</div>-->
                         <div class="action">
-                            <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">M'inscrire
+                            <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">
+                                M'inscrire
                             </div>
-                            <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En savoir
+                            <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En
+                                savoir
                                 plus
                             </div>
                         </div>
@@ -99,7 +121,7 @@
             <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > titre
         </div>
 
-        <iframe [src]="'https://docs.a-just.beta.gouv.fr/le-data-book/' || ''"></iframe>
+        <iframe src="https://docs.a-just.beta.gouv.fr/le-data-book/"></iframe>
     </div>
 
 </aj-wrapper>
