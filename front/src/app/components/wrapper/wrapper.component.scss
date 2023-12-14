@@ -4,6 +4,17 @@
   height: 100%;
 
 
+  &.help-center {
+    #content {
+      background-color: blue;
+    }
+
+    #top {
+      padding-bottom: 0px;
+      border-bottom: none;
+    }
+  }
+
   &.no-padding {
     #content {
       padding: 0px;
@@ -18,10 +29,6 @@
         }
       }
     }
-  }
-
-  .help-center:visited {
-    color: red !important;
   }
 
 
