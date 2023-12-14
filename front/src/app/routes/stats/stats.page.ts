@@ -67,12 +67,12 @@ export class StatsPage {
       center: this.center,
     })
     
-    map.on('zoom', () => {
+    /*map.on('zoom', () => {
       const currentZoom = map.getZoom();
       this.positionMarkerSize.map(elem => {
         map.setPaintProperty(elem.id, 'circle-radius', this.baseCircleRadius * Math.pow(2, currentZoom - this.zoom[0]));
       })
-    })
+    })*/
 
     map.on('style.load', () => {
         this.list.map(j => {
@@ -91,7 +91,23 @@ export class StatsPage {
             },
           })
          
-          const marker = {
+          let size = (j.population || 1) / 33333
+          if(size < 10) {
+            size = 10
+          }
+          map.addLayer({
+            id: `circles-${j.id}`,
+            source: sourceName,
+            type: 'circle',
+            paint: {
+              'circle-radius': size,
+              'circle-color': '#000091',
+              'circle-opacity': 0.5,
+              'circle-stroke-width': 0,
+            },
+          })
+
+          /*const marker = {
             id: `circles-${j.id}`,
             source: sourceName,
             type: 'circle',
@@ -104,7 +120,7 @@ export class StatsPage {
           }
 
           this.positionMarkerSize.push(marker)
-          map.addLayer(marker);
+          map.addLayer(marker);*/
 
           /*const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
