@@ -125,7 +125,6 @@ export default class App extends AppBase {
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
-          'frame-ancestors': ["'self'", '*'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com', '*'],
           'script-src': [
             "'report-sample' 'self'",
@@ -136,7 +135,7 @@ export default class App extends AppBase {
           ],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['*', 'https://app.gitbook.com/', 'https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com', 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/'],
+          'frame-src': ['https://app.gitbook.com/', 'https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com', 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/'],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
           'X-Frame-Options': ['DENY'],
