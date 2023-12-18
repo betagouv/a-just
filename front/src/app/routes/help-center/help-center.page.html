@@ -130,7 +130,8 @@
             <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
         </div>
 
-        <iframe [src]="(openToIframe.url)||'' | sanitizeResourceUrl"></iframe>
+        <iframe
+            [src]="'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest'||'' | sanitizeResourceUrl"></iframe>
     </div>
 
 </aj-wrapper>
