@@ -248,7 +248,11 @@ export class HelpCenterPage implements OnInit {
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
-    window.open(url)
+
+    if (url === '/dashboard')
+      window.location.href = url
+    else
+      window.open(url)
   }
 
   openLink(url: string) {
