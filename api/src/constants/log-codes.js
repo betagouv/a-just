@@ -23,6 +23,7 @@ export const EXECUTE_HELPCENTER_LINK = 306
 export const EXECUTE_HELPCENTER_SEARCH = 307
 export const EXECUTE_WHITE_SIMULATOR = 312
 export const EXECUTE_LAUNCH_WHITE_SIMULATOR = 313
+export const EXECUTE_SIMULATOR_PARAM = 315
 
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
@@ -46,4 +47,6 @@ export const CODES = {
   [EXECUTE_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient d ouvrir le simulateur à blanc',
   [EXECUTE_LAUNCH_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation à blanc',
   [EXECUTE_LAUNCH_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation',
+  [EXECUTE_SIMULATOR_PARAM]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation avec des parametres',
+
 }
