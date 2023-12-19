@@ -127,6 +127,15 @@ export class HelpCenterPage implements OnInit {
    */
   openToIframe = { url: '', title: '' }
   /**
+   * Liens vers la doc
+   */
+  documentation = {
+    toutSavoir: { url: 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/', title: 'Tout savoir en un coup d\'oeil' },
+    soulagerLEquipe: { url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', title: 'Soulager les équipes' },
+    gagnerDuTemps: { url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', title: 'Gagner du temps' },
+    construireLeFutur: { url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', title: 'Construire le futur' }
+  }
+  /**
    * Constructeur 
    * @param title
    */
