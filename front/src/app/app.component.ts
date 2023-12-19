@@ -9,7 +9,6 @@ import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
 import { filter } from 'rxjs'
 
-
 /**
  * Variable d'environement en global
  */
@@ -78,19 +77,32 @@ export class AppComponent implements AfterViewInit {
       var _paq = (window._paq = window._paq || [])
       _paq.push(['trackPageView'])
       _paq.push(['enableLinkTracking'])
-        ; (function () {
-          var u = 'https://stats.beta.gouv.fr/'
-          _paq.push(['setTrackerUrl', u + 'piwik.php'])
-          _paq.push(['setSiteId', environment.matomo])
-          var d = document,
-            g = d.createElement('script'),
-            s = d.getElementsByTagName('script')[0]
-          g.async = true
-          g.src = u + 'piwik.js'
-          if (s && s.parentNode) {
-            s.parentNode.insertBefore(g, s)
-          }
-        })()
+      ;(function () {
+        var u = 'https://stats.beta.gouv.fr/'
+        _paq.push(['setTrackerUrl', u + 'piwik.php'])
+        _paq.push(['setSiteId', environment.matomo])
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0]
+        g.async = true
+        g.src = u + 'piwik.js'
+        if (s && s.parentNode) {
+          s.parentNode.insertBefore(g, s)
+        }
+      })()
+    }
+
+    if (environment.matomoTM !== null) {
+      var _mtm = (window._mtm = window._mtm || [])
+      _mtm.push({ 'mtm.startTime': new Date().getTime(), event: 'mtm.Start' })
+      ;(function () {
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0]
+        g.async = true
+        g.src = `https://stats.beta.gouv.fr/js/container_${environment.matomoTM}.js`
+        s.parentNode?.insertBefore(g, s)
+      })()
     }
 
     this.userService.getInterfaceType()
