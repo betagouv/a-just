@@ -301,4 +301,13 @@ export class HelpCenterPage implements OnInit {
   getIframeUrl() {
     return this.openToIframe.url
   }
+
+  reloadContent() {
+    this.openSuggestionPanel = !this.openSuggestionPanel;
+    const element: HTMLIFrameElement = document.getElementById('iframe-doc') as HTMLIFrameElement;
+    if (element !== null) {
+      element.src = element.src + '';
+
+    }
+  }
 }

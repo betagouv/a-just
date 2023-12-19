@@ -73,7 +73,7 @@
 
         <p class="sub-title">Suggestions d'usage</p>
         <div class="suggestion">
-            <div (click)="openToIframe=documentation.toutSavoir;openSuggestionPanel=!openSuggestionPanel">
+            <div (click)="openToIframe=documentation.toutSavoir; reloadContent()">
                 <label><span class="blue">Tout
                         savoir</span><br />
                     <span class="blue">en
@@ -81,16 +81,16 @@
                         d’oeil</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.soulagerLEquipe;openSuggestionPanel=!openSuggestionPanel">
+            <div (click)="openToIframe=documentation.soulagerLEquipe;reloadContent()">
                 <label><span class="green">Soulager</span><br /> <span class="green">les
                         équipes</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.gagnerDuTemps;openSuggestionPanel=!openSuggestionPanel">
+            <div (click)="openToIframe=documentation.gagnerDuTemps;reloadContent()">
                 <label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.construireLeFutur;openSuggestionPanel=!openSuggestionPanel">
+            <div (click)="openToIframe=documentation.construireLeFutur;reloadContent()">
                 <label><span class="yellow">Construire</span><br /> <span class="yellow">le
                         futur</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
@@ -126,7 +126,7 @@
             <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
         </div>
 
-        <iframe [src]="(openToIframe.url)||'' | sanitizeResourceUrl"></iframe>
+        <iframe id="iframe-doc" [src]="(openToIframe.url)||'' | sanitizeResourceUrl"></iframe>
     </div>
 
 </aj-wrapper>
