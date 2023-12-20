@@ -136,6 +136,10 @@ export class HelpCenterPage implements OnInit {
     construireLeFutur: { url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', title: 'Construire le futur' }
   }
   /**
+   * Cle date pour usage unique
+   */
+  cleDate = '?date=' + new Date()
+  /**
    * Constructeur 
    * @param title
    */
@@ -304,10 +308,5 @@ export class HelpCenterPage implements OnInit {
 
   reloadContent() {
     this.openSuggestionPanel = !this.openSuggestionPanel;
-    const element: HTMLIFrameElement = document.getElementById('iframe-doc') as HTMLIFrameElement;
-    if (element !== null) {
-      element.src = element.src + '?date=' + new Date();
-
-    }
   }
 }
