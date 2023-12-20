@@ -109,7 +109,7 @@ export default class App extends AppBase {
       csp({
         enableWarn: false,
         policy: {
-          'default-src': ['stonly.com', '*.stonly.com', 'https://*.hotjar.com', 'https://*.hotjar.io', "wss://*.hotjar.com 'unsafe-inline'"],
+          //'default-src': ['stonly.com', '*.stonly.com', 'https://*.hotjar.com', 'https://*.hotjar.io', "wss://*.hotjar.com 'unsafe-inline'"],
           'connect-src': [
             'https://api.gitbook.com',
             'https://www.google-analytics.com/j/collect',
@@ -119,13 +119,13 @@ export default class App extends AppBase {
             'https://stats.beta.gouv.fr',
             'https://forms-eu1.hsforms.com',
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
-            'stonly.com',
-            '*.stonly.com',
+            //'stonly.com',
+            //'*.stonly.com',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
           //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
-          'script-src-elem': ['stonly.com', '*.stonly.com'],
+          //'script-src-elem': ['stonly.com', '*.stonly.com'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
           'frame-src': [
@@ -133,8 +133,8 @@ export default class App extends AppBase {
             'https://meta.a-just.beta.gouv.fr',
             'https://forms-eu1.hsforms.com/',
             'https://calendly.com',
-            'stonly.com',
-            '*.stonly.com',
+            //'stonly.com',
+            //'*.stonly.com',
           ],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
