@@ -460,7 +460,10 @@
             height: 50px;
             padding: 8px 24px 24px 16px;
             border-bottom: 1px solid #eee4d9;
-            position: relative;
+            position: absolute;
+            background: white;
+            width: 100%;
+            top: 48px;
 
             a {
                 cursor: pointer;

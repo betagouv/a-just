@@ -32,7 +32,17 @@
   }
 
 
-  &.white-bg {
+  &.white-bg-help {
+    .contener {
+      position: relative;
+    }
+
+    #top {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+    }
+
     #content {
       background-image: linear-gradient(to bottom, #f6f6f6, #fff 14%);
     }
