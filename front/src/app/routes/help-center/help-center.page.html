@@ -126,7 +126,7 @@
             <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
         </div>
 
-        <iframe id="iframe-doc" [src]="(openToIframe.url)||'' | sanitizeResourceUrl" name="'' + Date.now()"></iframe>
+        <iframe id="iframe-doc" [src]="(openToIframe.url)||'' | sanitizeResourceUrl"></iframe>
     </div>
 
 </aj-wrapper>

@@ -306,7 +306,7 @@ export class HelpCenterPage implements OnInit {
     this.openSuggestionPanel = !this.openSuggestionPanel;
     const element: HTMLIFrameElement = document.getElementById('iframe-doc') as HTMLIFrameElement;
     if (element !== null) {
-      element.src = element.src + '';
+      element.src = element.src + '?date=' + new Date();
 
     }
   }
