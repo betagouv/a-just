@@ -121,6 +121,7 @@ export default class App extends AppBase {
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
             'stonly.com',
             '*.stonly.com',
+            'https://stats.beta-gouv.cloud-ed.fr',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
