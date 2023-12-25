@@ -73,7 +73,7 @@
 
         <p class="sub-title">Suggestions d'usage</p>
         <div class="suggestion">
-            <div (click)="openToIframe=documentation.toutSavoir; reloadContent()">
+            <div (click)="openToIframe=documentation[0]; reloadContent()">
                 <label><span class="blue">Tout
                         savoir</span><br />
                     <span class="blue">en
@@ -81,16 +81,16 @@
                         d’oeil</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.soulagerLEquipe;reloadContent()">
+            <div (click)="openToIframe=documentation[1];reloadContent()">
                 <label><span class="green">Soulager</span><br /> <span class="green">les
                         équipes</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.gagnerDuTemps;reloadContent()">
+            <div (click)="openToIframe=documentation[2];reloadContent()">
                 <label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
-            <div (click)="openToIframe=documentation.construireLeFutur;reloadContent()">
+            <div (click)="openToIframe=documentation[3];reloadContent()">
                 <label><span class="yellow">Construire</span><br /> <span class="yellow">le
                         futur</span></label><br />
                 <mat-icon>arrow_forward</mat-icon>
@@ -123,7 +123,10 @@
     </ng-container>
     <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
         <div class="panel-header">
-            <a (click)="openSuggestionPanel=!openSuggestionPanel"><u>Aide</u></a> > <u>{{openToIframe.title}}</u>
+            <p class="tab" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
+                *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">
+                {{doc.title}}
+            </p>
         </div>
 
         <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl"></iframe>

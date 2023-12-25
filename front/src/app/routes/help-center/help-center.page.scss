@@ -458,12 +458,34 @@
             color: #666666;
             font-size: 12px;
             height: 50px;
-            padding: 8px 24px 24px 16px;
+            padding-left: 24px;
             border-bottom: 1px solid #eee4d9;
             position: absolute;
             background: white;
             width: 100%;
             top: 48px;
+            display: flex;
+            align-items: flex-end;
+
+            .tab {
+                height: 40px;
+                padding: 8px 16px;
+                background-color: #e3e3fd;
+                margin-right: 2px;
+                font-size: 16px;
+                font-weight: bold;
+                color: black;
+                cursor: pointer;
+
+                &.selected {
+                    border: solid 1px #ddd;
+                    background-color: white;
+                    color: #000091;
+                    //outline:10px solid black;
+                    border-top: solid 2px #000091;
+                    border-bottom: none;
+                }
+            }
 
             a {
                 cursor: pointer;
