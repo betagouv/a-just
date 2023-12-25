@@ -135,7 +135,7 @@
                 </p>
             </div>
         </div>
-        <iframe id="iframe-doc" src="http://www.google.com/"></iframe>
+        <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl"></iframe>
     </div>
 
 </aj-wrapper>
