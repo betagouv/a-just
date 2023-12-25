@@ -10,8 +10,7 @@
     }
 
     #top {
-      padding-bottom: 0px;
-      border-bottom: none;
+      display: none;
     }
   }
 
@@ -38,7 +37,7 @@
     }
 
     #top {
-      position: absolute;
+      //position: absolute;
       z-index: 1;
       width: 100%;
     }
