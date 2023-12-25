@@ -455,13 +455,14 @@
         background-color: white;
 
         .back-title {
-
+            z-index: 1;
             height: 48px;
-            position: relative;
             display: flex;
             background-color: white;
             align-items: center;
             padding-top: 14px;
+            position: absolute;
+            width: 100%;
 
             .back-button {
                 color: #000091;
@@ -480,46 +481,49 @@
             }
         }
 
-        .panel-header {
-            color: #666666;
-            font-size: 12px;
-            min-height: 50px;
-            padding-left: 24px;
-            border-bottom: 1px solid #eee4d9;
-            position: absolute;
-            background: white;
-            width: 100%;
-            top: 48px;
-            display: flex;
-            align-items: flex-end;
+        .suggestion-header {
+            .panel-header {
+                color: #666666;
+                font-size: 12px;
+                min-height: 50px;
+                padding-left: 24px;
+                border-bottom: 1px solid #eee4d9;
+                position: absolute;
+                background: white;
+                width: 100%;
+                top: 48px;
+                display: flex;
+                align-items: flex-end;
+                z-index: 1;
 
-            .tab {
-                min-height: 40px;
-                padding: 8px 16px;
-                background-color: #e3e3fd;
-                margin-right: 2px;
-                font-size: 16px;
-                font-weight: bold;
-                color: black;
-                cursor: pointer;
+                .tab {
+                    min-height: 40px;
+                    padding: 8px 16px;
+                    background-color: #e3e3fd;
+                    margin-right: 2px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: black;
+                    cursor: pointer;
 
-                &.selected {
-                    border: solid 1px #ddd;
-                    background-color: white;
-                    color: #000091;
-                    //outline:10px solid black;
-                    border-top: solid 2px #000091;
-                    border-bottom: none;
+                    &.selected {
+                        border: solid 1px #ddd;
+                        background-color: white;
+                        color: #000091;
+                        //outline:10px solid black;
+                        border-top: solid 2px #000091;
+                        border-bottom: none;
+                    }
                 }
-            }
 
-            a {
-                cursor: pointer;
+                a {
+                    cursor: pointer;
+                }
             }
         }
 
         >iframe {
-            padding-top: 18px;
+            position: relative;
             flex: 1;
             border-radius: 4px;
             box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
