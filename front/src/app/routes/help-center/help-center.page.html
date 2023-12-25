@@ -1,5 +1,5 @@
 <aj-wrapper title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
-    [ngClass]="{'help-center':openSuggestionPanel}">
+    [ngClass]="{'help-center':openSuggestionPanel===true}">
 
     <ng-container *ngIf="openSuggestionPanel===false">
         <div class="toolbar">
@@ -122,6 +122,11 @@
         </div>
     </ng-container>
     <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
+        <div class="back-title"> <label (click)="openSuggestionPanel=!openSuggestionPanel" class="back-button">
+                <span>
+                    < </span> Retour</label>
+            <p>Aide</p>
+        </div>
         <div class="panel-header">
             <p class="tab" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
                 *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">

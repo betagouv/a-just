@@ -2,7 +2,7 @@
 
 :host {
     .toolbar {
-        padding: 0 24px;
+        padding: 0 12px;
         display: flex;
 
         justify-content: flex-start;
@@ -454,10 +454,36 @@
         position: absolute;
         background-color: white;
 
+        .back-title {
+
+            height: 48px;
+            position: relative;
+            display: flex;
+            background-color: white;
+            align-items: center;
+            padding-top: 14px;
+
+            .back-button {
+                color: #000091;
+                font-size: 14px;
+                margin-left: 28px;
+
+                span {
+                    margin-right: 12px;
+                }
+            }
+
+            p {
+                margin-left: 28px;
+                font-weight: bold;
+                font-size: 20px;
+            }
+        }
+
         .panel-header {
             color: #666666;
             font-size: 12px;
-            height: 50px;
+            min-height: 50px;
             padding-left: 24px;
             border-bottom: 1px solid #eee4d9;
             position: absolute;
@@ -468,7 +494,7 @@
             align-items: flex-end;
 
             .tab {
-                height: 40px;
+                min-height: 40px;
                 padding: 8px 16px;
                 background-color: #e3e3fd;
                 margin-right: 2px;
