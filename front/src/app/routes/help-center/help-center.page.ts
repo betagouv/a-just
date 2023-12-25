@@ -129,12 +129,12 @@ export class HelpCenterPage implements OnInit {
   /**
    * Liens vers la doc
    */
-  documentation = {
-    toutSavoir: { url: 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/', title: 'Tout savoir en un coup d\'oeil' },
-    soulagerLEquipe: { url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', title: 'Soulager les équipes' },
-    gagnerDuTemps: { url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', title: 'Gagner du temps' },
-    construireLeFutur: { url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', title: 'Construire le futur' }
-  }
+  documentation = [
+    { url: 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/', title: 'Tout savoir en un coup d\'oeil' },
+    { url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', title: 'Soulager les équipes' },
+    { url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', title: 'Gagner du temps' },
+    { url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', title: 'Construire le futur' }
+  ]
   /**
    * Cle date pour usage unique
    */
@@ -308,5 +308,8 @@ export class HelpCenterPage implements OnInit {
 
   reloadContent() {
     this.openSuggestionPanel = !this.openSuggestionPanel;
+  }
+  getDocKeys(): Array<any> {
+    return Object.keys(this.documentation)
   }
 }
