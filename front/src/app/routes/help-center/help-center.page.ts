@@ -48,21 +48,24 @@ export class HelpCenterPage {
       title: 'Le guide utilisateur',
       description: 'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
       image: '/assets/images/avatar.svg',
-      url: DOCUMENTATION_URL
+      url: DOCUMENTATION_URL,
+      download: false,
     },
     {
       tag: 'Documentation',
       title: 'Le data-book',
       description: 'Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d\'activité».',
       image: '/assets/images/data-visualization.svg',
-      url: DATA_GITBOOK
+      url: DATA_GITBOOK,
+      download: false,
     },
     {
       tag: 'Documentation',
       title: 'La nomenclature',
       description: 'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
       image: '/assets/images/system.svg',
-      url: this.NOMENCLATURE_DOWNLOAD_URL
+      url: this.NOMENCLATURE_DOWNLOAD_URL,
+      download: true,
     }
   ]
   /**
