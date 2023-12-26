@@ -135,7 +135,10 @@
                 </p>
             </div>
         </div>
-        <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl"></iframe>
+        <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl">
+        </iframe>
+        <div class="hide-powered-by-gitbook"></div>
+
     </div>
 
 </aj-wrapper>

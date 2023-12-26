@@ -1,6 +1,16 @@
 @import '../../styles/utils.scss';
 
 :host {
+
+    .hide-powered-by-gitbook {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        width: 268px;
+        height: 60px;
+        background-color: white;
+    }
+
     .toolbar {
         padding: 0 12px;
         display: flex;
