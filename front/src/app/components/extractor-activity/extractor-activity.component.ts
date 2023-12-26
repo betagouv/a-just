@@ -199,7 +199,7 @@ export class ExtractorActivityComponent extends MainClass {
       [total === true ? 'Total sorties logiciel' : 'Sorties logiciel']: act.originalSorties,
       [total === true ? 'Total sorties après A-JUSTements' : 'Sorties A-JUSTées']: act.sorties,
       ['Stock logiciel']: act.originalStock,
-      ['Stock après A-JUSTements']: act.stock,
+      ['Stock après A-JUSTements']: act.stock !== null ? act.stock : act.originalStock,
     }
   }
 
@@ -307,7 +307,6 @@ export class ExtractorActivityComponent extends MainClass {
         )
 
         this.data = Object.keys(this.data).map((key: any) => {
-          console.log(this.data[key])
           this.data[key] = this.data[key].map((act: any) => {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)
@@ -316,7 +315,6 @@ export class ExtractorActivityComponent extends MainClass {
               this.referentielService.idsIndispo.indexOf(r.idReferentiel) === -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           )
-          console.log(this.data[key])
 
           this.data[key] = this.sortByCodeImport(this.data[key])
           xlsx.utils.book_append_sheet(
