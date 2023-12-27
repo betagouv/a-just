@@ -138,7 +138,7 @@ export default class App extends AppBase {
             'https://www.ionos.fr',
             'https://img.freepik.com',
           ],
-          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
+          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com', '*.calendly.com'],
           'script-src-elem': ['stonly.com', '*.stonly.com'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
