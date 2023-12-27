@@ -38,7 +38,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -47,7 +47,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -113,7 +113,7 @@ export default class App extends AppBase {
       csp({
         enableWarn: false,
         policy: {
-          'default-src': ["'self'"],
+          //'default-src': ['stonly.com', '*.stonly.com', 'https://*.hotjar.com', 'https://*.hotjar.io', "wss://*.hotjar.com 'unsafe-inline'"],
           'connect-src': [
             'https://api.gitbook.com',
             'https://www.google-analytics.com/j/collect',
@@ -123,19 +123,24 @@ export default class App extends AppBase {
             'https://stats.beta.gouv.fr',
             'https://forms-eu1.hsforms.com',
             'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+            'stonly.com',
+            '*.stonly.com',
+            'https://stats.beta-gouv.cloud-ed.fr',
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
-          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com', '*'],
-          'script-src': [
-            "'report-sample' 'self'",
-            'https://*.hsforms.net',
-            'https://stats.beta.gouv.fr',
-            'https://api.gitbook.com',
-            "'self' blob: assets.calendly.com",
-          ],
+          'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
+          //'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
+          'script-src-elem': ['stonly.com', '*.stonly.com'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': ['https://app.gitbook.com/', 'https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com', 'https://docs.a-just.beta.gouv.fr/construire-le-futur/', 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/', 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/', 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/'],
+          'frame-src': [
+            'https://docs.a-just.beta.gouv.fr',
+            'https://meta.a-just.beta.gouv.fr',
+            'https://forms-eu1.hsforms.com/',
+            'https://calendly.com',
+            'stonly.com',
+            '*.stonly.com',
+          ],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
           'X-Frame-Options': ['DENY'],
@@ -152,9 +157,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
