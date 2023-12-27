@@ -9,9 +9,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DocCardComponent } from 'src/app/components/doc-card/doc-card.component';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { PipesModule } from 'src/app/pipes/pipes.module';
 
 @NgModule({
 	declarations: [HelpCenterPage],
-	imports: [HelpCenterPageModule, RouterModule, WrapperModule, MaterialModule, InputButtonModule, CommonModule, FormsModule, ComponentsModule]
+	imports: [PipesModule, HelpCenterPageModule, RouterModule, WrapperModule, MaterialModule, InputButtonModule, CommonModule, FormsModule, ComponentsModule]
 })
 export class HelpCenterModule { }

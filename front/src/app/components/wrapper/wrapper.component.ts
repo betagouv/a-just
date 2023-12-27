@@ -182,7 +182,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Promise resolve export
    */
   exportAsPdfPromiseResolve: Function | null = null
-
+  /**
+   * Ouverture du menu
+   */
+  openTools: boolean = false
   /**
    * Constructeur
    * @param authService
@@ -477,5 +480,12 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   onSelect(path: string) {
     this.pageSelected.emit(path)
+  }
+
+  downloadAsset(type: string) {
+    if (type === 'nomenclature')
+      window.open(this.NOMENCLATURE_DOWNLOAD_URL)
+    else if (type === 'calculatrice')
+      window.open(this.CALCULATE_DOWNLOAD_URL)
   }
 }
