@@ -105,8 +105,9 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-      /*helmet({
+      helmet({
         contentSecurityPolicy: {
+          useDefaults: false,
           directives: {
             'connect-src': [
               'https://api.gitbook.com',
@@ -160,7 +161,20 @@ export default class App extends AppBase {
           },
           //reportOnly: true,
         },
-      }),*/
+        crossOriginEmbedderPolicy: false,
+        crossOriginOpenerPolicy: false,
+        crossOriginResourcePolicy: false,
+        originAgentCluster: false,
+        referrerPolicy: false,
+        strictTransportSecurity: false,
+        xContentTypeOptions: false,
+        xDnsPrefetchControl: false,
+        xDownloadOptions: false,
+        xFrameOptions: { action: 'sameorigin' },
+        xPermittedCrossDomainPolicies: false,
+        xPoweredBy: false,
+        xXssProtection: false,
+      }),
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
