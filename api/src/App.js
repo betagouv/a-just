@@ -10,9 +10,8 @@ import db from './models'
 import { start as startCrons } from './crons'
 import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
-import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
-import helmet from 'helmet'
+import helmet from 'koa-helmet'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
 /*var os = require('os')
@@ -106,64 +105,60 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-      /*helmet({
-        xXssProtection: false,
-        xFrameOptions: { action: 'deny' },
-      }),*/
-      csp({
-        enableWarn: false,
-        policy: {
-          //'default-src': ['stonly.com', '*.stonly.com', 'https://*.hotjar.com', 'https://*.hotjar.io', "wss://*.hotjar.com 'unsafe-inline'"],
-          'connect-src': [
-            'https://api.gitbook.com',
-            'https://www.google-analytics.com/j/collect',
-            "'self'",
-            'https://api.mapbox.com',
-            'https://events.mapbox.com',
-            'https://stats.beta.gouv.fr',
-            'https://forms-eu1.hsforms.com',
-            'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
-            'stonly.com',
-            '*.stonly.com',
-            'https://stats.beta-gouv.cloud-ed.fr',
-          ],
-          'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
-          'img-src': [
-            "'self'",
-            'data:',
-            'https://js-eu1.hsforms.net',
-            'https://api.hubspot.com',
-            'https://forms-eu1.hsforms.com',
-            'https://forms.hsforms.com',
-            'https://www.ionos.fr',
-            'https://img.freepik.com',
-          ],
-          'script-src': [
-            "'report-sample' 'self'",
-            'https://*.hsforms.net',
-            'https://stats.beta.gouv.fr',
-            'stonly.com',
-            '*.stonly.com',
-            '*.calendly.com',
-            "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
-            "'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
-          ],
-          'script-src-elem': ['stonly.com', '*.stonly.com'],
-          'worker-src': ['blob:'],
-          'style-src': ["'self'", "'unsafe-inline'"],
-          'frame-src': [
-            'https://docs.a-just.beta.gouv.fr',
-            'https://meta.a-just.beta.gouv.fr',
-            'https://forms-eu1.hsforms.com/',
-            'https://calendly.com',
-            'stonly.com',
-            '*.stonly.com',
-          ],
-          'object-src': ["'self'"],
-          'base-uri': ["'self'"],
-          'form-action': ["'self'"],
-          'X-Frame-Options': ['DENY'],
-          'X-XSS-Protection': ['1'],
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            'connect-src': [
+              'https://api.gitbook.com',
+              'https://www.google-analytics.com/j/collect',
+              "'self'",
+              'https://api.mapbox.com',
+              'https://events.mapbox.com',
+              'https://stats.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com',
+              'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+              'stonly.com',
+              '*.stonly.com',
+              'https://stats.beta-gouv.cloud-ed.fr',
+            ],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+            'img-src': [
+              "'self'",
+              'data:',
+              'https://js-eu1.hsforms.net',
+              'https://api.hubspot.com',
+              'https://forms-eu1.hsforms.com',
+              'https://forms.hsforms.com',
+              'https://www.ionos.fr',
+              'https://img.freepik.com',
+            ],
+            'script-src': [
+              "'report-sample' 'self'",
+              'https://*.hsforms.net',
+              'https://stats.beta.gouv.fr',
+              'stonly.com',
+              '*.stonly.com',
+              '*.calendly.com',
+              "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+              "'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+            ],
+            'script-src-elem': ["'self'", 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
+            'worker-src': ['blob:'],
+            'style-src': ["'self'", "'unsafe-inline'"],
+            'frame-src': [
+              'https://docs.a-just.beta.gouv.fr',
+              'https://meta.a-just.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com/',
+              'https://calendly.com',
+              'stonly.com',
+              '*.stonly.com',
+            ],
+            'object-src': ["'self'"],
+            'report-uri': ['/api/csp/report'],
+            'base-uri': ["'self'"],
+            'form-action': ["'self'"],
+          },
+          reportOnly: true,
         },
       }),
     ])
