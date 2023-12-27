@@ -154,11 +154,11 @@ export default class App extends AppBase {
               '*.stonly.com',
             ],
             'object-src': ["'self'"],
-            'report-uri': ['/api/csp/report'],
+            //'report-uri': ['/api/csp/report'],
             'base-uri': ["'self'"],
             'form-action': ["'self'"],
           },
-          reportOnly: true,
+          //reportOnly: true,
         },
       }),
     ])
