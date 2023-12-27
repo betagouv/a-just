@@ -105,7 +105,7 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-      helmet({
+      /*helmet({
         contentSecurityPolicy: {
           directives: {
             'connect-src': [
@@ -160,7 +160,7 @@ export default class App extends AppBase {
           },
           //reportOnly: true,
         },
-      }),
+      }),*/
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
