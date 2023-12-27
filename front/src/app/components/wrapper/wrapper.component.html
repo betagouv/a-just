@@ -37,7 +37,7 @@
 
         <ng-container *ngIf="item.label==='Extracteur';else other">
           <div class="menu-item tools" (click)="openTools=!openTools">
-            <a>Outil</a> <mat-icon class="arrow-list">{{ openTools ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <a>Outils</a> <mat-icon class="arrow-list">{{ openTools ? 'expand_less' : 'expand_more' }}</mat-icon>
           </div>
 
         </ng-container>
@@ -57,10 +57,10 @@
           La calculatrice
         </p>
         <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
-          L'extracteur d'effectifs
+          L'extracteur de données d'effectifs
         </p>
         <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
-          L'extracteur d'activités
+          L'extracteur de données d'activité
         </p>
       </div>
 
