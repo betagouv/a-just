@@ -11,7 +11,7 @@ import { MEETING_URL } from 'src/app/constants/pages'
 export class WelcomePage implements AfterViewInit {
   MEETING_URL = MEETING_URL
 
-  constructor() {}
+  constructor() { }
 
   ngAfterViewInit() {
     const my_awesome_script = document.createElement('script')
@@ -30,7 +30,7 @@ export class WelcomePage implements AfterViewInit {
     if (window.Calendly) {
       // @ts-ignore
       window.Calendly.initInlineWidget({
-        url: 'https://calendly.com/support-a-just/support',
+        url: 'https://calendly.com/support-a-just/support?hide_gdpr_banner=1',
         parentElement: document.getElementById('calendly'),
         prefill: {},
         utm: {},
@@ -38,7 +38,7 @@ export class WelcomePage implements AfterViewInit {
     } else {
       setTimeout(() => {
         this.loadCalendly()
-      }, 200)
+      }, 50)
     }
   }
 }
