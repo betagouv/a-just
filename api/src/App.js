@@ -129,7 +129,7 @@ export default class App extends AppBase {
           ],
           'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
           'img-src': ["'self'", 'data:', 'https://js-eu1.hsforms.net', 'https://api.hubspot.com', 'https://forms-eu1.hsforms.com', 'https://forms.hsforms.com'],
-          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', "'self' https://stats.beta.gouv.fr", 'stonly.com', '*.stonly.com'],
+          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'unsafe-inline https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
           'script-src-elem': ['stonly.com', '*.stonly.com'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
