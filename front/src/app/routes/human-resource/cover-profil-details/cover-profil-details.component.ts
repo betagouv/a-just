@@ -112,6 +112,7 @@ export class CoverProfilDetailsComponent
 
     (document.getElementById('firstName') as HTMLElement).innerHTML = this.basicHrInfo?.get('firstName')?.value;
     (document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value;
+    (document.getElementById('matricule') as HTMLElement).innerHTML = this.basicHrInfo?.get('matricule')?.value;
 
     if (this.currentHR && this.currentHR.situations.length) {
       const dateEndToJuridiction =

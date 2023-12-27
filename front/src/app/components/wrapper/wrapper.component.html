@@ -34,14 +34,42 @@
 
     <div class="menu-scrollable">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
-          {{ item.label }}
-        </a>
+
+        <ng-container *ngIf="item.label==='Extracteur';else other">
+          <div class="menu-item tools" (click)="openTools=!openTools">
+            <a>Outil</a> <mat-icon class="arrow-list">{{ openTools ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </div>
+
+        </ng-container>
+
+        <ng-template #other>
+          <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
+            {{ item.label }}
+          </a>
+        </ng-template>
       </div>
+
+      <div *ngIf="openTools" class="sub-tools">
+        <p (click)="downloadAsset('nomenclature')">
+          La nomenclature
+        </p>
+        <p (click)="downloadAsset('calculatrice')">
+          La calculatrice
+        </p>
+        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
+          L'extracteur d'effectifs
+        </p>
+        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
+          L'extracteur d'activités
+        </p>
+      </div>
+
+
+
       <div class="flex-1"></div>
       <div class="menu-item" [class.selected]="isSelected({path:'centre-d-aide'})">
         <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
-          Centre d'aide
+          Aide
         </a>
         <a [routerLink]="['/contact']" [queryParams]="{backUrl: true}">
           <p class="unselectable">Nous contacter</p>

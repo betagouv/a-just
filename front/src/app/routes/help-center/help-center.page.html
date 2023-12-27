@@ -1,52 +1,147 @@
-<aj-wrapper title="Centre d'aide" class="content-margin-null" [actionTemplate]="actions" class="white-bg">
+<aj-wrapper title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
+    [ngClass]="{'help-center':openSuggestionPanel===true}">
 
-    <div class="title-area">
-        <img src="/assets/images/community.svg" alt="a-just" />
-        <p class="sub-title">Saisissez votre question ci-dessous</p>
-        <div class="research-area"></div>
-        <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
-            (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
-            ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
-        </aj-input-button>
-        <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
-            <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
-            <div *ngFor="let res of this.data">
-                <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
-                    <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
-                    {{res.title}}
-                </p>
-                <div *ngFor="let page of res.pages">
-                    <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
-                        <mat-icon>insert_drive_file</mat-icon>
-                        {{page.title}}
-                    </p>
-                    <div *ngFor="let section of page.sections">
-                        <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
-                            <mat-icon>subdirectory_arrow_right</mat-icon>
-                            {{section.body}}
+    <ng-container *ngIf="openSuggestionPanel===false">
+        <div class="toolbar">
+            <div *ngFor="let card of docTools" (click)="goToLink(card.url)"> <img src="{{card.image}}" alt="a-just" />
+                <p>{{card.title}}</p>
+            </div>
+        </div>
+
+        <div class="section-one">
+            <div class="title-area">
+                <img src="/assets/images/community.svg" alt="a-just" />
+                <p class="sub-title">Saisissez votre question ci-dessous</p>
+                <div class="research-area"></div>
+                <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
+                    (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
+                    ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+                </aj-input-button>
+                <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
+                    <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
+                    <div *ngFor="let res of this.data">
+                        <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
+                            <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
+                            {{res.title}}
                         </p>
+                        <div *ngFor="let page of res.pages">
+                            <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
+                                <mat-icon>insert_drive_file</mat-icon>
+                                {{page.title}}
+                            </p>
+                            <div *ngFor="let section of page.sections">
+                                <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
+                                    <mat-icon>subdirectory_arrow_right</mat-icon>
+                                    {{section.body}}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="line"></div>
+            <div class="action-area">
+                <div class="clickable-link" (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}"
+                        alt="a-just" />
+                    <p class="title">{{userGuide.title}}</p>
+                </div>
+                <div class="clickable-link" (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}"
+                        alt="a-just" />
+                    <p class="title">{{dataBook.title}}</p>
+                </div>
+                <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
+                    [ngClass]="{'validated':callValidated}"> <img src="/assets/images/call-center.png" alt="a-just" />
+                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est
+                        bien prise en compte !'}}</p>
+                    <div *ngIf="popinCall===true" class="popin-call">
+                        <div class="header">
+                            <h3 class="title">Être recontacté ?</h3> <i
+                                (click)="popinCall=!popinCall; $event.stopPropagation()"
+                                class="material-icons pointer">close</i>
+                        </div>
+                        <p class="label">Numéro de téléphone :</p>
+                        <input #phone type="text" (keypress)="validateNo($event)" />
+                        <div class="button"
+                            (click)="popinCall=!popinCall; callValidated=true; $event.stopPropagation(); sendForm(phone.value)">
+                            Rappelez-moi
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+        <p class="sub-title">Suggestions d'usage</p>
+        <div class="suggestion">
+            <div (click)="openToIframe=documentation[0]; reloadContent()">
+                <label><span class="blue">Tout
+                        savoir</span><br />
+                    <span class="blue">en
+                        un coup
+                        d’oeil</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div (click)="openToIframe=documentation[1];reloadContent()">
+                <label><span class="green">Soulager</span><br /> <span class="green">les
+                        équipes</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div (click)="openToIframe=documentation[2];reloadContent()">
+                <label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div (click)="openToIframe=documentation[3];reloadContent()">
+                <label><span class="yellow">Construire</span><br /> <span class="yellow">le
+                        futur</span></label><br />
+                <mat-icon>arrow_forward</mat-icon>
+            </div>
+        </div>
+
+        <p class="sub-title">Webinaires</p>
+
+        <div class="content-area">
+            <ng-container *ngFor="let webinaire of webinaires">
+                <div class="webinaire">
+                    <img class="cover" src="{{webinaire.img}}" />
+                    <div class="container">
+                        <p class="title">{{webinaire.title}}</p>
+                        <p class="content">{{webinaire.content}}</p>
+                        <!--<div class="action" *ngFor="let action of webinaire.action">{{action}}</div>-->
+                        <div class="action">
+                            <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">
+                                M'inscrire
+                            </div>
+                            <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En
+                                savoir
+                                plus
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+    <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
+        <div class="suggestion-header">
+            <div class="back-title"> <label (click)="openSuggestionPanel=!openSuggestionPanel" class="back-button">
+                    <span>
+                        < </span> Retour</label>
+                <p>Aide</p>
+            </div>
+            <div class="panel-header">
+                <p class="tab" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
+                    *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">
+                    {{doc.title}}
+                </p>
+            </div>
+        </div>
+        <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl">
+        </iframe>
+        <div class="hide-powered-by-gitbook"></div>
 
     </div>
 
-    <p class="sub-title">Ou consultez notre documentation </p>
-    <div class="content-area">
-        <div class="documentation">
-            <span>La documentation</span>
-            <div *ngFor="let card of docCards">
-                <aj-doc-card [data]="card"></aj-doc-card>
-            </div>
-        </div>
-        <div class="outil">
-            <span>Les outils A-JUST</span>
-            <div *ngFor="let card of docTools">
-                <aj-doc-card class="tools" [data]="card"></aj-doc-card>
-            </div>
-        </div>
-    </div>
 </aj-wrapper>
+
 
 <ng-template #actions></ng-template>
