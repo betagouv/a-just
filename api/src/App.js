@@ -142,7 +142,15 @@ export default class App extends AppBase {
               "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               "'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
-            'script-src-elem': ["'self'", 'https://stats.beta.gouv.fr', '*.calendly.com', 'stonly.com', '*.stonly.com'],
+            'script-src-elem': [
+              "'self'",
+              'https://stats.beta.gouv.fr',
+              '*.calendly.com',
+              'stonly.com',
+              '*.stonly.com',
+              "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+              "'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+            ],
             'worker-src': ['blob:'],
             'style-src': ["'self'", "'unsafe-inline'"],
             'frame-src': [
