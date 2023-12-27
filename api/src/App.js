@@ -107,7 +107,6 @@ export default class App extends AppBase {
       tracingMiddleWare,
       helmet({
         contentSecurityPolicy: {
-          useDefaults: false,
           directives: {
             'connect-src': [
               'https://api.gitbook.com',
