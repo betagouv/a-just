@@ -106,6 +106,7 @@ export default class App extends AppBase {
       requestHandler,
       tracingMiddleWare,
       helmet({
+        // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
             'connect-src': [
@@ -162,12 +163,12 @@ export default class App extends AppBase {
               '*.stonly.com',
             ],
             'object-src': ["'self'"],
-            'report-uri': ['/api/csp/report'],
+            //'report-uri': ['/api/csp/report'],
             'base-uri': ["'self'"],
             'form-action': ["'self'"],
             'upgrade-insecure-requests': [],
           },
-          reportOnly: true,
+          //reportOnly: true,
         },
         crossOriginEmbedderPolicy: false,
         crossOriginOpenerPolicy: false,
