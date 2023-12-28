@@ -144,7 +144,7 @@ export default class App extends AppBase {
             ],
             'script-src-elem': [
               "'self'",
-              'https://stats.beta.gouv.fr',
+              "'unsafe-inline' https://stats.beta.gouv.fr",
               '*.calendly.com',
               'stonly.com',
               '*.stonly.com',
@@ -165,6 +165,7 @@ export default class App extends AppBase {
             'report-uri': ['/api/csp/report'],
             'base-uri': ["'self'"],
             'form-action': ["'self'"],
+            'upgrade-insecure-requests': [],
           },
           reportOnly: true,
         },
