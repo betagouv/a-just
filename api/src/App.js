@@ -162,6 +162,7 @@ export default class App extends AppBase {
               'https://calendly.com',
               'stonly.com',
               '*.stonly.com',
+              '*.hubspot',
             ],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
