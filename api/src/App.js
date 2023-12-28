@@ -10,9 +10,8 @@ import db from './models'
 import { start as startCrons } from './crons'
 import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
-import csp from 'koa-csp'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
-import helmet from 'helmet'
+import helmet from 'koa-helmet'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
 /*var os = require('os')
@@ -38,7 +37,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -47,7 +46,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -106,6 +105,7 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+<<<<<<< HEAD
       /*helmet({
         xXssProtection: false,
         xFrameOptions: { action: 'deny' },
@@ -138,7 +138,7 @@ export default class App extends AppBase {
             'https://www.ionos.fr',
             'https://img.freepik.com',
           ],
-          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'unsafe-inline https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
+          'script-src': ["'report-sample' 'self'", 'https://*.hsforms.net', 'https://stats.beta.gouv.fr', 'stonly.com', '*.stonly.com'],
           'script-src-elem': ['stonly.com', '*.stonly.com'],
           'worker-src': ['blob:'],
           'style-src': ["'self'", "'unsafe-inline'"],
@@ -154,7 +154,88 @@ export default class App extends AppBase {
           'form-action': ["'self'"],
           'X-Frame-Options': ['DENY'],
           'X-XSS-Protection': ['1'],
+=======
+      helmet({
+        // https://github.com/helmetjs/helmet
+        contentSecurityPolicy: {
+          directives: {
+            'connect-src': [
+              'https://api.gitbook.com',
+              'https://www.google-analytics.com/j/collect',
+              "'self'",
+              'https://api.mapbox.com',
+              'https://events.mapbox.com',
+              'https://stats.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com',
+              'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+              'stonly.com',
+              '*.stonly.com',
+              'https://stats.beta-gouv.cloud-ed.fr',
+            ],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+            'img-src': [
+              "'self'",
+              'data:',
+              'https://js-eu1.hsforms.net',
+              'https://api.hubspot.com',
+              'https://forms-eu1.hsforms.com',
+              'https://forms.hsforms.com',
+              'https://www.ionos.fr',
+              'https://img.freepik.com',
+            ],
+            'script-src': [
+              "'report-sample' 'self'",
+              'https://*.hsforms.net',
+              "'unsafe-inline' *.beta.gouv.fr",
+              'stonly.com',
+              '*.stonly.com',
+              '*.calendly.com',
+              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+            ],
+            'script-src-elem': [
+              "'self'",
+              "'unsafe-inline' *.beta.gouv.fr",
+              '*.hsforms.net',
+              '*.calendly.com',
+              'stonly.com',
+              '*.stonly.com',
+              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+            ],
+            'worker-src': ['blob:'],
+            'style-src': ["'self'", "'unsafe-inline'"],
+            'frame-src': [
+              'https://docs.a-just.beta.gouv.fr',
+              'https://meta.a-just.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com/',
+              'https://calendly.com',
+              'stonly.com',
+              '*.stonly.com',
+              '*.hubspot',
+            ],
+            'object-src': ["'self'"],
+            //'report-uri': ['/api/csp/report'],
+            'base-uri': ["'self'"],
+            'form-action': ["'self'"],
+            'upgrade-insecure-requests': [],
+          },
+          //reportOnly: true,
+>>>>>>> 64b31fb77b4c32d7446d133490f545046ee6fb92
         },
+        crossOriginEmbedderPolicy: false,
+        crossOriginOpenerPolicy: false,
+        crossOriginResourcePolicy: false,
+        originAgentCluster: false,
+        referrerPolicy: false,
+        strictTransportSecurity: false,
+        xContentTypeOptions: false,
+        xDnsPrefetchControl: false,
+        xDownloadOptions: false,
+        xFrameOptions: { action: 'sameorigin' },
+        xPermittedCrossDomainPolicies: false,
+        xPoweredBy: false,
+        xXssProtection: false,
       }),
     ])
 
@@ -166,9 +247,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
