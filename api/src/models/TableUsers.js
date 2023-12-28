@@ -145,7 +145,7 @@ export default (sequelizeInstance, Model) => {
         status: 1,
       })
     } else {
-      throw 'Email déjà existant'
+      throw 'Un compte existe déjà avec cet e-mail. Si vous avez oublié votre mot de passe, allez dans la section “Se connecter” et cliquez sur “Mot de passe oublié".'
     }
   }
 
