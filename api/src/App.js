@@ -37,7 +37,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -46,7 +46,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -134,12 +134,13 @@ export default class App extends AppBase {
               'https://img.freepik.com',
             ],
             'script-src': [
-              "'report-sample' 'self'",
+              "'report-sample' 'self' 'unsafe-eval'",
               'https://*.hsforms.net',
               "'unsafe-inline' *.beta.gouv.fr",
               'stonly.com',
               '*.stonly.com',
               '*.calendly.com',
+              '*.google-analytics.com',
               //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
@@ -150,6 +151,7 @@ export default class App extends AppBase {
               '*.calendly.com',
               'stonly.com',
               '*.stonly.com',
+              '*.google-analytics.com',
               //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
@@ -196,9 +198,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
