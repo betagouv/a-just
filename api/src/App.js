@@ -37,7 +37,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor () {
+  constructor() {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -46,7 +46,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start () {
+  async start() {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -105,7 +105,7 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
-<<<<<<< HEAD
+
       /*helmet({
         xXssProtection: false,
         xFrameOptions: { action: 'deny' },
@@ -154,103 +154,101 @@ export default class App extends AppBase {
           'form-action': ["'self'"],
           'X-Frame-Options': ['DENY'],
           'X-XSS-Protection': ['1'],
-=======
-      helmet({
-        // https://github.com/helmetjs/helmet
-        contentSecurityPolicy: {
-          directives: {
-            'connect-src': [
+          helmet({
+            // https://github.com/helmetjs/helmet
+            contentSecurityPolicy: {
+              directives: {
+                'connect-src': [
               'https://api.gitbook.com',
-              'https://www.google-analytics.com/j/collect',
-              "'self'",
-              'https://api.mapbox.com',
-              'https://events.mapbox.com',
-              'https://stats.beta.gouv.fr',
-              'https://forms-eu1.hsforms.com',
-              'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
-              'stonly.com',
-              '*.stonly.com',
-              'https://stats.beta-gouv.cloud-ed.fr',
+                'https://www.google-analytics.com/j/collect',
+                "'self'",
+                'https://api.mapbox.com',
+                'https://events.mapbox.com',
+                'https://stats.beta.gouv.fr',
+                'https://forms-eu1.hsforms.com',
+                'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+                'stonly.com',
+                '*.stonly.com',
+                'https://stats.beta-gouv.cloud-ed.fr',
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
-            'img-src': [
-              "'self'",
-              'data:',
-              'https://js-eu1.hsforms.net',
-              'https://api.hubspot.com',
-              'https://forms-eu1.hsforms.com',
-              'https://forms.hsforms.com',
-              'https://www.ionos.fr',
-              'https://img.freepik.com',
-            ],
-            'script-src': [
-              "'report-sample' 'self'",
-              'https://*.hsforms.net',
-              "'unsafe-inline' *.beta.gouv.fr",
-              'stonly.com',
-              '*.stonly.com',
-              '*.calendly.com',
-              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
-              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
-            ],
-            'script-src-elem': [
-              "'self'",
-              "'unsafe-inline' *.beta.gouv.fr",
-              '*.hsforms.net',
-              '*.calendly.com',
-              'stonly.com',
-              '*.stonly.com',
-              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
-              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
-            ],
-            'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'"],
-            'frame-src': [
-              'https://docs.a-just.beta.gouv.fr',
-              'https://meta.a-just.beta.gouv.fr',
-              'https://forms-eu1.hsforms.com/',
-              'https://calendly.com',
-              'stonly.com',
-              '*.stonly.com',
-              '*.hubspot',
-            ],
-            'object-src': ["'self'"],
-            //'report-uri': ['/api/csp/report'],
-            'base-uri': ["'self'"],
-            'form-action': ["'self'"],
-            'upgrade-insecure-requests': [],
+      'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      'img-src': [
+      "'self'",
+      'data:',
+      'https://js-eu1.hsforms.net',
+      'https://api.hubspot.com',
+      'https://forms-eu1.hsforms.com',
+      'https://forms.hsforms.com',
+      'https://www.ionos.fr',
+      'https://img.freepik.com',
+    ],
+      'script-src': [
+      "'report-sample' 'self'",
+      'https://*.hsforms.net',
+      "'unsafe-inline' *.beta.gouv.fr",
+      'stonly.com',
+      '*.stonly.com',
+      '*.calendly.com',
+      //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+      //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+    ],
+      'script-src-elem': [
+      "'self'",
+      "'unsafe-inline' *.beta.gouv.fr",
+      '*.hsforms.net',
+      '*.calendly.com',
+      'stonly.com',
+      '*.stonly.com',
+      //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
+      //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
+    ],
+      'worker-src': ['blob:'],
+      'style-src': ["'self'", "'unsafe-inline'"],
+      'frame-src': [
+      'https://docs.a-just.beta.gouv.fr',
+      'https://meta.a-just.beta.gouv.fr',
+      'https://forms-eu1.hsforms.com/',
+      'https://calendly.com',
+      'stonly.com',
+      '*.stonly.com',
+      '*.hubspot',
+    ],
+      'object-src': ["'self'"],
+      //'report-uri': ['/api/csp/report'],
+      'base-uri': ["'self'"],
+      'form-action': ["'self'"],
+      'upgrade-insecure-requests': [],
           },
-          //reportOnly: true,
->>>>>>> 64b31fb77b4c32d7446d133490f545046ee6fb92
-        },
-        crossOriginEmbedderPolicy: false,
-        crossOriginOpenerPolicy: false,
-        crossOriginResourcePolicy: false,
-        originAgentCluster: false,
+  //reportOnly: true,
+},
+crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+      originAgentCluster: false,
         referrerPolicy: false,
-        strictTransportSecurity: false,
-        xContentTypeOptions: false,
-        xDnsPrefetchControl: false,
-        xDownloadOptions: false,
-        xFrameOptions: { action: 'sameorigin' },
-        xPermittedCrossDomainPolicies: false,
-        xPoweredBy: false,
-        xXssProtection: false,
+          strictTransportSecurity: false,
+            xContentTypeOptions: false,
+              xDnsPrefetchControl: false,
+                xDownloadOptions: false,
+                  xFrameOptions: { action: 'sameorigin' },
+xPermittedCrossDomainPolicies: false,
+  xPoweredBy: false,
+    xXssProtection: false,
       }),
     ])
 
-    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
-    super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
-    super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files
-    super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files
+super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
+super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
+super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files
+super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files
 
-    return super.start()
+return super.start()
   }
 
-  isReady () {}
+isReady() { }
 
-  done () {
-    console.log('--- DONE ---')
-    process.exit()
-  }
+done() {
+  console.log('--- DONE ---')
+  process.exit()
+}
 }
