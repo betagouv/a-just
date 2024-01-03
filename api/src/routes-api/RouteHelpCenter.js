@@ -98,7 +98,7 @@ export default class RouteCentreDAide extends Route {
             "hs_pipeline_stage": "1",
             "hs_ticket_priority": "HIGH",
             "hubspot_owner_id": "",
-            "subject": "[TEST] Un utilisateur souhaite être rappelé",
+            "subject": "Un utilisateur souhaite être rappelé",
             "content": str
           }
         }
