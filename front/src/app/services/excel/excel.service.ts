@@ -105,6 +105,15 @@ export class ExcelService extends MainClass {
         const keys1 = Object.keys(this.tabs.onglet1.values[0])
         const keys2 = Object.keys(this.tabs.onglet2.values[0])
 
+
+        const tgilist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TGI').map(x => x.tprox)
+        const tpxlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TPRX').map(x => x.tprox)
+        const cphlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'CPH').map(x => x.tprox)
+
+        console.log(this.tabs.allJuridiction, tgilist, tpxlist, cphlist)
+
+
+        console.log(this.tabs.allJuridiction)
         const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
@@ -150,6 +159,11 @@ export class ExcelService extends MainClass {
           // 4. Get a report as buffer.
           .then(async (report) => {
             report.worksheets[3].insertRows(1, uniqueJurIndex, 'o')
+
+            tgilist.map((value, index) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
+            tpxlist.map((value, index) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
+            cphlist.map((value, index) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
+
 
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]

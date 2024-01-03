@@ -124,11 +124,14 @@ export default class RouteExtractor extends Route {
       tproxs = [{ id: 0, tj: label, tprox: label }]
     }
 
+    let allJuridiction = (await this.models.TJ.getByTj(label, {}, {})).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox, type: t.type }))
+
     this.sendOk(ctx, {
       referentiels,
       tproxs,
       onglet1: { values: onglet1, columnSize: columnSize1 },
       onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
+      allJuridiction
     })
   }
 
