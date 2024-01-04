@@ -90,12 +90,12 @@ describe('Test server is ready', () => {
     assert.isNotEmpty(datas.adminAccess)
   })
 
-  //routeUser(datas)
-  //routeChangeUserData(datas)
-  //routeCalcultator(datas)
+  routeUser(datas)
+  routeChangeUserData(datas)
+  routeCalcultator(datas)
   //routeSimulator(datas)
   //routeVentilateur(datas)
-  //routePanorama(datas)
+  routePanorama(datas)
 
   /*routeImport()
   routeHR()

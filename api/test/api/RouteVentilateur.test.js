@@ -4,6 +4,9 @@ import { onFilterListHRApi } from '../routes/hr'
 import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 
 module.exports = function (datas) {
+  let dateStop = null
+  let dateStart = null 
+
   describe('Check calcul -- Ventilateur ', () => {
     it('Add admin to a tj', async () => {
       const response = await onUpdateAccountApi({
@@ -16,25 +19,25 @@ module.exports = function (datas) {
     })
 
     it('Catch data', async () => {
-      /*const dateStop = new Date(lastMonth)
-      const dateStart = new Date(new Date(dateStop).setDate(1))
-      const categorySelected = 'magistrats'*/
+      dateStart = new Date(lastMonth)
+      dateStop = new Date(dateStart.getFullYear(), dateStart.getMonth() + 1, 0)
+
+      const categorySelected = 'magistrats'
       const contentieuxIds = [447]
       let sumEtpSocial = null
 
       const response = await onFilterListHRApi({
         userToken: datas.adminToken,
         backupId: JURIDICTION_BACKUP_ID,
-        /*dateStart,
-        dateStop,*/
+        dateStart,
+        dateStop,
         contentieuxIds,
-        /*optionBackupId: JURIDICTION_OPTION_BACKUP_ID,
+        optionBackupId: JURIDICTION_OPTION_BACKUP_ID,
         categorySelected,
-        selectedFonctionsIds: [22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39],*/
+        //selectedFonctionsIds: [22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39],*/
       })
-
-      response.data.data.list.map((elem) => {
-        // console.log('\n\nListe des ', elem.label, ':')
+      /*response.data.data.list.map((elem) => {
+        console.log('\n\nListe des ', elem.label, ':\n', elem)
         elem.hr.map((hr) => {
           if (hr.hasIndisponibility > 0) {
             console.log(
@@ -52,7 +55,8 @@ module.exports = function (datas) {
 
           sumEtpSocial += (hr.currentActivities.filter((activite) => activite.contentieux.id === 447)[0].percent * hr.etp) / 100
         })
-      })
+      })*/
+      assert.strictEqual(response.status, 200)
     })
   })
 }
