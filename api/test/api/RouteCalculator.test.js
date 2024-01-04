@@ -37,12 +37,14 @@ module.exports = function (datas) {
     })
 
     it('Catch data', async () => {
-      dateStop = new Date(lastMonth)
-      dateStart = new Date(new Date(dateStop).setDate(1))
+      dateStart = new Date(lastMonth)
+      dateStop = new Date(dateStart.getFullYear(), dateStart.getMonth() + 1, 0)
+
       const categorySelected = 'magistrats'
       const contentieuxIds = [SOCIAL_LITIGATION_ID]
       const backupId = JURIDICTION_BACKUP_ID
       const optionBackupId = JURIDICTION_OPTION_BACKUP_ID
+
       const response = await onFilterListCalculatorApi({
         userToken: datas.adminToken,
         backupId,
@@ -51,7 +53,7 @@ module.exports = function (datas) {
         contentieuxIds,
         optionBackupId,
         categorySelected,
-        selectedFonctionsIds: null,
+        selectedFonctionsIds : null,
       })
       calculatorData = response.data.data.list[0]
       assert.strictEqual(response.status, 200)
@@ -71,9 +73,10 @@ module.exports = function (datas) {
       })
       filteredHr.map((elem) => {
         let socialActivity = elem.currentActivities.filter((elem) => elem.contentieux.id === SOCIAL_LITIGATION_ID)
-        if (!elem.hasIndisponibility) totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
+        if (!elem.hasIndisponibility) {
+          totalEtpMag += (socialActivity[0].percent * elem.etp) / 100
+        }
       })
-
       assert.strictEqual(HR.status, 200)
       assert.strictEqual(totalEtpMag, calculatorData.etpMag)
     })
@@ -120,7 +123,7 @@ module.exports = function (datas) {
       }
     })
 
-    it('Possible folders out Mag', () => {
+    it('Possible folders out Siege', () => {
       if (calculatorData.etpMag && calculatorData.magCalculateTimePerCase && calculatorData.magCalculateOut) {
         const magEtpAffected = calculatorData.etpMag
         const magCalculateTimePerCase = calculatorData.magCalculateTimePerCase

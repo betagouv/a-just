@@ -1,4 +1,4 @@
-import { assert } from 'chai'
+import { assert, expect } from 'chai'
 import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
 
 module.exports = function (datas) {
@@ -8,10 +8,14 @@ module.exports = function (datas) {
 
   describe('Change User data test', () => {
     it('Create new hr', async () => {
+      const firstName = 'test'
+      const lastName = 'test'
+      const matricule = '123456'
+
       const hr = {
-        firstName: 'test',
-        lastName: 'test',
-        matricule: '123456',
+        firstName,
+        lastName,
+        matricule,
         situations: [],
         dateStart: new Date(),
         indisponibilities: [],
@@ -22,15 +26,24 @@ module.exports = function (datas) {
         hr: hr,
         backupId: 11,
       })
+      const tmp_firstName = response.data.data.firstName
+      const tmp_lastName = response.data.data.lastName
+      const tmp_matricule = response.data.data.matricule
+
       hrId = response.data.data.id
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
+      assert.strictEqual(firstName, tmp_firstName)
+      assert.strictEqual(lastName, tmp_lastName)
+      assert.strictEqual(matricule, tmp_matricule)
     })
 
     it('Change new hr firstname', async () => {
+      const firstName = 'firstname'
+
       const hr = {
         ...current_hr,
-        firstName: 'firstname',
+        firstName,
       }
 
       const response = await onUpdateHrApi({
@@ -39,13 +52,18 @@ module.exports = function (datas) {
         backupId: 11,
       })
       current_hr = response.data.data
+
+      const tmp_firstName = response.data.data.firstName
+
       assert.strictEqual(response.status, 200)
+      assert.strictEqual(firstName, tmp_firstName)
     })
 
     it('Change new hr lastname', async () => {
+      const lastName = 'lastname'
       const hr = {
         ...current_hr,
-        lastName: 'lastname',
+        lastName,
       }
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
@@ -53,24 +71,27 @@ module.exports = function (datas) {
         backupId: 11,
       })
       current_hr = response.data.data
+      const tmp_lastName = response.data.data.lastName
+
       assert.strictEqual(response.status, 200)
+      assert.strictEqual(lastName, tmp_lastName)
     })
 
     it('Add new hr situation', async () => {
       const activities = [
         {
           percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social', percent: 100 },
+          contentieux: { id: 447, label: 'Contentieux Social' },
         },
         {
           percent: 100,
-          contentieux: { id: 448, label: 'Contentieux du travail', percent: 100 },
+          contentieux: { id: 448, label: 'Contentieux du travail' },
         },
       ]
       const category = { id: 1, label: 'Magistrat', rank: 1 }
       const dateStart = new Date()
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
+      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         {
@@ -92,35 +113,46 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
+      const tmp_activities = response.data.data.situations[0].activities.map(activity => {delete activity.id; return activity})
+      const tmp_category = response.data.data.situations[0].category
+      const tmp_dateStart = new Date(response.data.data.situations[0].dateStart)
+      const tmp_etp = response.data.data.situations[0].etp
+      const tmp_fonction = response.data.data.situations[0].fonction
+
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
+      assert.deepEqual(activities, tmp_activities)
+      assert.deepEqual(category, tmp_category)
+      assert.deepEqual(dateStart, tmp_dateStart)
+      assert.strictEqual(etp, tmp_etp)
+      assert.deepEqual(fonction, tmp_fonction)
     })
 
     it('Add a second hr situation', async () => {
       const activities = [
         {
           percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social', percent: 100 },
+          contentieux: { id: 447, label: 'Contentieux Social' },
         },
         {
           percent: 100,
-          contentieux: { id: 448, label: 'Contentieux du travail', percent: 100 },
+          contentieux: { id: 448, label: 'Contentieux du travail' },
         },
         {
           percent: 20,
-          contentieux: { id: 460, label: 'Contentieux de la Protection', percent: 20 },
+          contentieux: { id: 460, label: 'Contentieux de la Protection' },
         },
         {
           percent: 20,
-          contentieux: { id: 462, label: 'Protection des majeurs', percent: 20 },
+          contentieux: { id: 462, label: 'Protection des majeurs' },
         },
       ]
       const category = { id: 1, label: 'Magistrat', rank: 1 }
-      const now = new Date()
-      const dateStart = now.setDate(now.getDate() + 20)
+      const dateStart= new Date()
+      dateStart.setDate(dateStart.getDate() + 20)
       const etp = 1
-      const fonction = { id: 0, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
+      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
       const situatiuons = [
         current_hr.situations[0],
@@ -132,7 +164,6 @@ module.exports = function (datas) {
           fonction,
         },
       ]
-
       const hr = {
         ...current_hr,
         situations: situatiuons,
@@ -142,29 +173,40 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
+      const tmp_activities = response.data.data.situations[0].activities.map(activity => {delete activity.id; return activity})
+      const tmp_category = response.data.data.situations[0].category
+      const tmp_dateStart = new Date(response.data.data.situations[0].dateStart)
+      const tmp_etp = response.data.data.situations[0].etp
+      const tmp_fonction = response.data.data.situations[0].fonction
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.strictEqual(response.data.data.situations.length, 2)
+      assert.sameDeepMembers(activities, tmp_activities)
+      assert.deepEqual(category, tmp_category)
+      assert.deepEqual(dateStart, tmp_dateStart)
+      assert.strictEqual(etp, tmp_etp)
+      assert.deepEqual(fonction, tmp_fonction)
     })
 
     it('Add new hr unavailability ', async () => {
       const contentieux = {
-        code_import: '12.3.',
         id: 508,
         label: 'Congé longue maladie',
-        rank: 87,
       }
 
-      const now = new Date()
-      const dateStop = now.getDate() + 20
+      const percent = 100
+      const dateStart =  new Date()
+      const dateStop = new Date()
+      dateStop.setDate(dateStop.getDate() + 20)
+
 
       const indisponibilities = [
         {
           contentieux,
-          percent: 100,
-          dateStart: new Date(),
+          percent,
+          dateStart,
           dateStop,
         },
       ]
@@ -179,8 +221,19 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
+
       current_hr = response.data.data
+
+      const tmp_dateStart = new Date(response.data.data.indisponibilities[0].dateStart)
+      const tmp_dateStop = new Date(response.data.data.indisponibilities[0].dateStop)
+      const tmp_contentieux =  response.data.data.indisponibilities[0].contentieux
+      const tmp_percent = response.data.data.indisponibilities[0].percent
+
       assert.strictEqual(response.status, 200)
+      assert.deepEqual(dateStart, tmp_dateStart)
+      assert.deepEqual(dateStop, tmp_dateStop)
+      assert.deepEqual(contentieux, tmp_contentieux)
+      assert.strictEqual(percent, tmp_percent)
     })
 
     it("Correct a situation - Change agent's Fonction only", async () => {
@@ -213,7 +266,6 @@ module.exports = function (datas) {
       })
 
       const newSituation = response.data.data.situations
-
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.notDeepEqual(oldSituation[1].fonction, newSituation[1].fonction)
@@ -247,26 +299,25 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
-      const newSituation = response.data.data.situations[0]
+      const newSituation = response.data.data.situations
       current_hr = response.data.data
 
       assert.strictEqual(response.status, 200)
-
-      assert.notDeepEqual(oldSituation[0].category, newSituation.category)
-      assert.notDeepEqual(oldSituation[0].fonction, newSituation.fonction)
-      assert.deepEqual(hr.situations[0].category, newSituation.category)
-      assert.deepEqual(hr.situations[0].fonction, newSituation.fonction)
+      assert.notDeepEqual(oldSituation[0].category, newSituation[0].category)
+      assert.notDeepEqual(oldSituation[0].fonction, newSituation[0].fonction)
+      assert.deepEqual(hr.situations[0].category, newSituation[0].category)
+      assert.deepEqual(hr.situations[0].fonction, newSituation[0].fonction)
     })
 
     it('Correct a situation - Change one situation etp', async () => {
       const oldSituation = current_hr.situations
-
+      const newEtp = 0.7
       const hr = {
         ...current_hr,
         situations: [
           {
             ...oldSituation[0],
-            etp: 0.7,
+            etp: newEtp,
           },
           oldSituation[1],
         ],
@@ -276,18 +327,16 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
-      const newSituation = response.data.data.situations[0]
-
+      const newSituation = response.data.data.situations
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
-      assert.notStrictEqual(oldSituation.etp, newSituation.etp)
-      assert.strictEqual(0.7, newSituation.etp)
+      assert.notStrictEqual(oldSituation[0].etp, newSituation[0].etp)
+      assert.strictEqual(newEtp, newSituation[0].etp)
     })
 
     it('Add an End Date to newly created agent', async () => {
       let dateEnd = new Date(current_hr.dateStart)
       dateEnd.setDate(dateEnd.getDate() + 20)
-      const dateEndFormat = [dateEnd.getFullYear(), (dateEnd.getMonth() + 1) > 0 ? (dateEnd.getMonth() + 1) : (0 + dateEnd.getMonth() + 1), dateEnd.getDate() > 0 ? dateEnd.getDate() : (0 + dateEnd.getDay()) ].join(',')
 
       const hr = {
         ...current_hr,
@@ -300,14 +349,14 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
       const responseDateEnd = new Date(response.data.data.dateEnd)
-      const responseDateEndFormat = [responseDateEnd.getFullYear(), (responseDateEnd.getMonth() + 1) > 0 ? (responseDateEnd.getMonth() + 1) : (0 + responseDateEnd.getMonth() + 1), responseDateEnd.getDate() > 0 ? responseDateEnd.getDate() : (0 + responseDateEnd.getDay()) ].join(',')
 
       current_hr = response.data.data
-      assert.strictEqual(new Date(responseDateEndFormat).getTime(), new Date(dateEndFormat).getTime())
+      assert.strictEqual(response.status, 200)
+      assert.deepEqual(responseDateEnd, dateEnd)
     })
 
     it('Remove created situation', async () => {
-      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
+      // ⚠️ This route must not be used in production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
       let response = null
       for (let id of hrSituationId) {
         response = await onRemoveSituationApi({
@@ -315,16 +364,16 @@ module.exports = function (datas) {
           id: id,
         })
       }
+      assert.strictEqual(response.status, 200)
       assert.isEmpty(response.data.data.situations)
     })
 
     it('Remove created hr', async () => {
-      // ⚠️ This route must not be used in code production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
+      // ⚠️ This route must not be used in production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
       const response = await onRemoveHrApi({
         userToken: datas.adminToken,
         hrId: hrId,
       })
-
       assert.strictEqual(response.status, 200)
     })
   })
