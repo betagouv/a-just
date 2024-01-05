@@ -6,6 +6,7 @@ import { onFilterListHRApi } from '../routes/hr'
 import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
 import { roundFloat } from '../utils/math'
 import config from 'config'
+import { EAM_ID, GREFFIER_ID, MAGISTART_ID } from '../constants/hrCategories'
 
 module.exports = function (datas) {
   let lastMonth = null
@@ -65,9 +66,10 @@ module.exports = function (datas) {
       let userToken = datas.adminToken
       let backupId = JURIDICTION_BACKUP_ID
       let contentieuxIds = [SOCIAL_LITIGATION_ID]
+      let categoriesIds = [MAGISTART_ID, GREFFIER_ID, EAM_ID]
       let totalEtpMag = null
 
-      const HR = await onFilterListHRApi({ userToken, backupId, contentieuxIds, date: dateStart })
+      const HR = await onFilterListHRApi({ userToken, backupId, contentieuxIds, categoriesIds, date: dateStart })
       const filteredHr = HR.data.data.list[0].hr.filter((elem) => {
         return new Date(elem.currentSituation.dateStart).getTime() <= new Date(dateStart).getTime()
       })

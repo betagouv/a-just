@@ -94,7 +94,7 @@ describe('Test server is ready', () => {
   routeChangeUserData(datas)
   routeCalcultator(datas)
   //routeSimulator(datas)
-  //routeVentilateur(datas)
+  routeVentilateur(datas)
   routePanorama(datas)
 
   /*routeImport()

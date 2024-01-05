@@ -31,7 +31,7 @@ module.exports = function (datas) {
       assert.strictEqual(response.status, 200)
     })
 
-    it('Check that value in Siege has not changed and tha value for Greffier category is the one registered right before', async () => {
+    it('Check that value in Siege has not changed and that value for Greffier category is the one registered right before', async () => {
       const response = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.userToken)
       const elementSiege = response.data.data.find(elem => elem.category_id === MAGISTART_ID)
       const elementGreffier = response.data.data.find(elem => elem.category_id === GREFFIER_ID)

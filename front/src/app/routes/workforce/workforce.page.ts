@@ -280,7 +280,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             id: r.id,
             value: this.referentielMappingName(r.label),
           }))
-
           this.selectedReferentielIds =
             this.humanResourceService.selectedReferentielIds
           this.onFilterList()
@@ -336,7 +335,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             ],
           }
         })
-
         this.onFilterList()
       })
     )
@@ -595,9 +593,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       .then(({ list, allPersons }) => {
         this.listFormated = list
         this.allPersons = allPersons
-
         this.orderListWithFiltersParams()
-        console.log('this.listFormated', this.listFormated)
         this.isLoading = false
       })
 
