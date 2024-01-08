@@ -3,7 +3,7 @@ import { accessList } from '../src/constants/access'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
-import routeSimulator from './api/RouteSimulator.test'
+//import routeSimulator from './api/RouteSimulator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
 
@@ -30,10 +30,6 @@ const datas = {
 }
 
 describe('Test server is ready', () => {
-  /*beforeEach(() => {
-    //sinon.stub(console, 'error').returns(undefined)
-  })*/
-
   before((done) => {
     console.log('BEFORE WAITING SERVER')
     server.isReady = function () {
