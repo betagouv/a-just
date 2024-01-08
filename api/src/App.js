@@ -121,8 +121,11 @@ export default class App extends AppBase {
               'stonly.com',
               '*.stonly.com',
               'https://stats.beta-gouv.cloud-ed.fr',
+              'https://*.hotjar.com',
+              'https://*.hotjar.io',
+              'wss://*.hotjar.com',
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
             'img-src': [
               "'self'",
               'data:',
@@ -132,7 +135,8 @@ export default class App extends AppBase {
               'https://forms.hsforms.com',
               'https://www.ionos.fr',
               'https://img.freepik.com',
-              'https://image.noelshack.com'
+              'https://image.noelshack.com',
+              'https://*.hotjar.com',
             ],
             'script-src': [
               "'report-sample' 'self' 'unsafe-eval'",
@@ -142,6 +146,7 @@ export default class App extends AppBase {
               '*.stonly.com',
               '*.calendly.com',
               '*.google-analytics.com',
+              "https://*.hotjar.com 'unsafe-inline'",
               //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
@@ -157,7 +162,7 @@ export default class App extends AppBase {
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
             'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'"],
+            'style-src': ["'self'", "'unsafe-inline'", 'https://*.hotjar.com'],
             'frame-src': [
               'https://docs.a-just.beta.gouv.fr',
               'https://meta.a-just.beta.gouv.fr',
