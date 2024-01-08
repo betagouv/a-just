@@ -70,6 +70,7 @@ describe('Test server is ready', () => {
     assert.strictEqual(response.status, 201)
   })
 
+  // On donne tous les accès à l'administrateur
   it('Give all accesses to Admin', async () => {
     const accessIds = accessList.map((elem) => {
       return elem.id
