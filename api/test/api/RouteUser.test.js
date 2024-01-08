@@ -48,7 +48,7 @@ module.exports = function (datas) {
     })
 
     /**
-     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé long'
+     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'est pas assez long
      */
     it('Sign up - Password is not long enough, should return 401', async () => {
       const response = await onSignUpApi({
@@ -63,7 +63,7 @@ module.exports = function (datas) {
     })
 
     /**
-     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé fort'
+     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'est pas assez fort
      */
     it('Sign up - Password is not strong enough, should return 401', async () => {
       const response = await onSignUpApi({

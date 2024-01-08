@@ -42,7 +42,7 @@ module.exports = function (datas) {
     })
 
     /**
-     * Changment du prénom de l'agent
+     * Changement du prénom de l'agent
      */
     it('Change new hr firstname', async () => {
       const firstName = 'firstname'
@@ -66,7 +66,7 @@ module.exports = function (datas) {
     })
 
     /**
-     * Changment du nom de l'agent
+     * Changement du nom de l'agent
      */
     it('Change new hr lastname', async () => {
       const lastName = 'lastname'
