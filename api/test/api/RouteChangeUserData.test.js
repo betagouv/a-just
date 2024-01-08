@@ -7,6 +7,9 @@ module.exports = function (datas) {
   let current_hr = null
 
   describe('Change User data test', () => {
+    /**
+     * Création d'un nouvel agent
+     */
     it('Create new hr', async () => {
       const firstName = 'test'
       const lastName = 'test'
@@ -38,6 +41,9 @@ module.exports = function (datas) {
       assert.strictEqual(matricule, tmp_matricule)
     })
 
+    /**
+     * Changment du prénom de l'agent
+     */
     it('Change new hr firstname', async () => {
       const firstName = 'firstname'
 
@@ -59,6 +65,9 @@ module.exports = function (datas) {
       assert.strictEqual(firstName, tmp_firstName)
     })
 
+    /**
+     * Changment du nom de l'agent
+     */
     it('Change new hr lastname', async () => {
       const lastName = 'lastname'
       const hr = {
@@ -77,6 +86,10 @@ module.exports = function (datas) {
       assert.strictEqual(lastName, tmp_lastName)
     })
 
+    
+    /**
+     * Ajout d'une nouvelle situation pour l'agent
+     */
     it('Add new hr situation', async () => {
       const activities = [
         {
@@ -129,6 +142,9 @@ module.exports = function (datas) {
       assert.deepEqual(fonction, tmp_fonction)
     })
 
+    /**
+     * Ajout d'une seconde situation pour l'agent
+     */
     it('Add a second hr situation', async () => {
       const activities = [
         {
@@ -190,6 +206,9 @@ module.exports = function (datas) {
       assert.deepEqual(fonction, tmp_fonction)
     })
 
+    /**
+     * Ajout d'indisponibilité pour l'agent
+     */
     it('Add new hr unavailability ', async () => {
       const contentieux = {
         id: 508,
@@ -236,6 +255,9 @@ module.exports = function (datas) {
       assert.strictEqual(percent, tmp_percent)
     })
 
+    /**
+     * Correction d'une situation pour l'agent - Changement de la fonction de l'agent
+     */
     it("Correct a situation - Change agent's Fonction only", async () => {
       const oldSituation = current_hr.situations
 
@@ -272,6 +294,9 @@ module.exports = function (datas) {
       assert.deepEqual(correctedSituation[1].fonction, newSituation[1].fonction)
     })
 
+    /**
+     * Correction d'une situation pour l'agent - Changement de la catégorie et de la fonction de l'agent
+     */
     it("Correct a situation - Change agent's Category and Fonction", async () => {
       const oldSituation = current_hr.situations
       const hr = {
@@ -309,6 +334,9 @@ module.exports = function (datas) {
       assert.deepEqual(hr.situations[0].fonction, newSituation[0].fonction)
     })
 
+    /**
+     * Correction d'une situation pour l'agent - Changement de l'ETP
+    */
     it('Correct a situation - Change one situation etp', async () => {
       const oldSituation = current_hr.situations
       const newEtp = 0.7
@@ -334,6 +362,9 @@ module.exports = function (datas) {
       assert.strictEqual(newEtp, newSituation[0].etp)
     })
 
+    /**
+     * Ajout d'une date de départ à l'agent
+     */
     it('Add an End Date to newly created agent', async () => {
       let dateEnd = new Date(current_hr.dateStart)
       dateEnd.setDate(dateEnd.getDate() + 20)
@@ -355,6 +386,9 @@ module.exports = function (datas) {
       assert.deepEqual(responseDateEnd, dateEnd)
     })
 
+    /**
+     * Suppression d'une situation pour l'agent'
+     */
     it('Remove created situation', async () => {
       // ⚠️ This route must not be used in production ! The equivalent route for production is '/human-resources/remove-situation/:situationId'
       let response = null
@@ -368,6 +402,9 @@ module.exports = function (datas) {
       assert.isEmpty(response.data.data.situations)
     })
 
+    /**
+     * Suppression de l'agent
+     */
     it('Remove created hr', async () => {
       // ⚠️ This route must not be used in production ! The equivalent route for production is '/human-resources/remove-hr/:hrId'
       const response = await onRemoveHrApi({

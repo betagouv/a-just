@@ -9,16 +9,9 @@ module.exports = function (datas) {
 
   describe('Check calcul -- Ventilateur ', () => {
     
-    it('Add admin to a tj', async () => {
-      const response = await onUpdateAccountApi({
-        userToken: datas.adminToken,
-        userId: datas.adminId,
-        accessIds: datas.adminAccess,
-        ventilations: [JURIDICTION_BACKUP_ID],
-      })
-      assert.strictEqual(response.status, 200)
-    })
-
+    /**
+     * Vérification que les référentiels (contentieux) proposés dans le filtre sont tous de niveau 1
+     */
     it('Check referentiels are all level 1', async () => {
       let referentiel = []
       const response = await onFilterListHRApi({

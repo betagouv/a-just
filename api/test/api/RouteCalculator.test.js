@@ -14,8 +14,11 @@ module.exports = function (datas) {
   let dateStop = null
   let dateStart = null
 
-  // Le backupId est ici prédéfini pour baser les tests sur une juridictions pour laquel on est sûr d'avoir des données
+  // Le backupId est ici prédéfini pour baser les tests sur une juridiction pour laquelle on est sûr d'avoir des données
   describe('Calculator Page - Check calcul ', () => {
+    /**
+     * Ajout de l'admin sur un TJ pour qu'il puisse accéder, modifier des données du TJ
+     */
     it('Add admin to a tj', async () => {
       const response = await onUpdateAccountApi({
         userToken: datas.adminToken,
@@ -27,6 +30,9 @@ module.exports = function (datas) {
       assert.strictEqual(response.status, 200)
     })
 
+    /**
+     * Obtention du dernier mois pour lequel le TJ a des données d'activités
+     */
     it('Get last month', async () => {
       //Récupération du dernier mois pour lequel on a des données d'activités
       let response = await onGetLastMonthApi({
@@ -37,6 +43,9 @@ module.exports = function (datas) {
       assert.strictEqual(response.status, 200)
     })
 
+    /**
+     * Récupération des données du Calculateur pour le TJ tel que: les entrées, le sorties, les stocks, etp (Siège, Greffier, EAM), DTES (Délai Théorique d’Écoulement du Stock), Taux de couverture .... 
+     */
     it('Catch data', async () => {
       dateStart = new Date(lastMonth)
       dateStop = new Date(dateStart.getFullYear(), dateStart.getMonth() + 1, 0)
@@ -57,10 +66,14 @@ module.exports = function (datas) {
         selectedFonctionsIds : null,
       })
       calculatorData = response.data.data.list[0]
+      
       assert.strictEqual(response.status, 200)
       assert.isNotEmpty(calculatorData)
     })
 
+    /**
+     * Vérification du calcul sur l'ETP du siège
+     */
     it('Check ETPT Siege', async () => {
       // Retrieving all the HR 'Siege' from a specific jurisdiction who are assigned exclusively to the Social litigation department
       let userToken = datas.adminToken
@@ -83,6 +96,9 @@ module.exports = function (datas) {
       assert.strictEqual(totalEtpMag, calculatorData.etpMag)
     })
 
+    /**
+     * Vérification du calcul sur le taux de couverture constaté
+     */
     it('Check Obeserved Coverage Rate', () => {
       if (calculatorData.totalOut && calculatorData.totalIn && calculatorData.realCoverage) {
         const totalOut = calculatorData.totalOut
@@ -96,6 +112,9 @@ module.exports = function (datas) {
       }
     })
 
+    /**
+     * Vérification du calcul du DTES instantané
+     */
     it('Theoretical instantaneous stock flow time', () => {
       if (calculatorData.totalOut && calculatorData.lastStock && calculatorData.realDTESInMonths) {
         const totalOut = calculatorData.totalOut
@@ -110,6 +129,9 @@ module.exports = function (datas) {
       }
     })
 
+    /**
+     * Vérification du calcul du temps moyen par dossier
+     */
     it('Observed average time per file', () => {
       if (calculatorData.totalOut && calculatorData.etpMag && calculatorData.magRealTimePerCase) {
         const totalOut = calculatorData.totalOut
@@ -125,6 +147,9 @@ module.exports = function (datas) {
       }
     })
 
+    /**
+     * Vérification du calcul du nombre possible de sorties de dossiers du siège.
+     */
     it('Possible folders out Siege', () => {
       if (calculatorData.etpMag && calculatorData.magCalculateTimePerCase && calculatorData.magCalculateOut) {
         const magEtpAffected = calculatorData.etpMag
@@ -139,6 +164,9 @@ module.exports = function (datas) {
       }
     })
 
+    /**
+     * Vérification du calcul du DTES calculé
+     */
     it('Theoretical calculated stock flow time', () => {
       if (calculatorData.magCalculateOut && calculatorData.lastStock && calculatorData.magCalculateDTESInMonths) {
         const totalOut = calculatorData.magCalculateOut
@@ -152,6 +180,9 @@ module.exports = function (datas) {
       }
     })
 
+    /**
+     * Vérification du calcul sur le taux de couverture calculé
+     */
     it('Theoretical calculated coverage rate', () => {
       if (calculatorData.magCalculateOut && calculatorData.totalIn && calculatorData.magCalculateCoverage) {
         const totalOut = calculatorData.magCalculateOut
