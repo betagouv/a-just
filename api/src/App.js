@@ -158,6 +158,7 @@ export default class App extends AppBase {
               'stonly.com',
               '*.stonly.com',
               '*.google-analytics.com',
+              'https://*.hotjar.com',
               //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
