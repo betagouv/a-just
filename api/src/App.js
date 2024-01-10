@@ -187,9 +187,11 @@ export default class App extends AppBase {
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: 1,
+        //xXssProtection: 1, don't work
       }),
       async (ctx, next) => {
+        ctx.set('x-xss-protection', '1')
+
         if (CSP_URL_IGNORE_RULES.indexOf(ctx.url) !== -1) {
           ctx.set('content-security-policy', '')
         }
