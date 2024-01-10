@@ -133,9 +133,10 @@ export default class App extends AppBase {
               'https://img.freepik.com',
             ],
             'script-src': [
-              "'report-sample' 'self' 'unsafe-eval'",
+              "'report-sample' 'self'",
               'https://*.hsforms.net',
               '*.beta.gouv.fr',
+              '*.a-just.incubateur.net',
               'stonly.com',
               '*.stonly.com',
               '*.calendly.com',
@@ -146,6 +147,7 @@ export default class App extends AppBase {
             'script-src-elem': [
               "'self'",
               '*.beta.gouv.fr',
+              '*.a-just.incubateur.net',
               '*.hsforms.net',
               '*.calendly.com',
               'stonly.com',
@@ -188,7 +190,7 @@ export default class App extends AppBase {
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: 1,
+        xXssProtection: '1',
       }),
     ])
 
