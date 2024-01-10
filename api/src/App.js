@@ -132,6 +132,7 @@ export default class App extends AppBase {
               'https://forms.hsforms.com',
               'https://www.ionos.fr',
               'https://img.freepik.com',
+              'https://image.noelshack.com',
             ],
             'script-src': [
               "'report-sample' 'self'",
