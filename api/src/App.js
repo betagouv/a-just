@@ -83,8 +83,7 @@ export default class App extends AppBase {
       //sslify(),
       limiter,
       // we add the relevant middlewares to our API
-      //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
-      cors({ credentials: true }), // add cors headers to the requests
+      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -179,14 +178,17 @@ export default class App extends AppBase {
         crossOriginResourcePolicy: false,
         originAgentCluster: false,
         referrerPolicy: false,
-        strictTransportSecurity: false,
-        xContentTypeOptions: false,
+        strictTransportSecurity: {
+          maxAge: 123456,
+          includeSubDomains: false,
+        },
+        xContentTypeOptions: 'nosniff',
         xDnsPrefetchControl: false,
         xDownloadOptions: false,
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: false,
+        xXssProtection: 0,
       }),
     ])
 
