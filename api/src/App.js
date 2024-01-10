@@ -12,6 +12,7 @@ import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 import helmet from 'koa-helmet'
+import { CSP_URL_IGNORE_RULES } from './constants/csp'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
 /*var os = require('os')
@@ -145,7 +146,7 @@ export default class App extends AppBase {
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
             'script-src-elem': [
-              "'self'",
+              "'self' 'unsafe-inline' 'unsafe-eval'",
               '*.beta.gouv.fr',
               '*.a-just.incubateur.net',
               '*.hsforms.net',
@@ -190,8 +191,14 @@ export default class App extends AppBase {
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: '1',
+        xXssProtection: 1,
       }),
+      async (ctx, next) => {
+        if (CSP_URL_IGNORE_RULES.indexOf(ctx.url) !== -1) {
+          ctx.set('content-security-policy', '')
+        }
+        await next()
+      },
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
