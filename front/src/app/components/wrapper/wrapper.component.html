@@ -51,7 +51,7 @@
 
       <div *ngIf="openTools" class="sub-tools">
         <p (click)="downloadAsset('nomenclature')">
-          La nomenclature
+          La nomenclature <i  (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)" class="ri-file-download-line"></i>
         </p>
         <p (click)="downloadAsset('calculatrice')">
           La calculatrice
