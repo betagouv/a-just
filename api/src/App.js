@@ -135,7 +135,7 @@ export default class App extends AppBase {
             'script-src': [
               "'report-sample' 'self' 'unsafe-eval'",
               'https://*.hsforms.net',
-              "'unsafe-inline' *.beta.gouv.fr",
+              '*.beta.gouv.fr',
               'stonly.com',
               '*.stonly.com',
               '*.calendly.com',
@@ -145,7 +145,7 @@ export default class App extends AppBase {
             ],
             'script-src-elem': [
               "'self'",
-              "'unsafe-inline' *.beta.gouv.fr",
+              '*.beta.gouv.fr',
               '*.hsforms.net',
               '*.calendly.com',
               'stonly.com',
@@ -179,7 +179,7 @@ export default class App extends AppBase {
         originAgentCluster: false,
         referrerPolicy: false,
         strictTransportSecurity: {
-          maxAge: 123456,
+          maxAge: 31536000,
           includeSubDomains: false,
         },
         xContentTypeOptions: 'nosniff',
@@ -188,7 +188,7 @@ export default class App extends AppBase {
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: 0,
+        xXssProtection: 1,
       }),
     ])
 
