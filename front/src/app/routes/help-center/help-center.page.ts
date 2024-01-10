@@ -98,7 +98,7 @@ export class HelpCenterPage implements OnInit {
     },
     {
       tag: 'Les outils A-JUST',
-      title: 'L’extracteur de données d’activités',
+      title: 'L’extracteur de données d’activité',
       description: '',
       image: '/assets/images/Tableur2.svg',
       url: '/dashboard',
