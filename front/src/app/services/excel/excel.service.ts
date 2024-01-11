@@ -110,15 +110,16 @@ export class ExcelService extends MainClass {
         const tpxlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TPRX').map(x => x.tprox)
         const cphlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'CPH').map(x => x.tprox)
 
-        console.log(this.tabs.allJuridiction)
+        //console.log(this.tabs.allJuridiction)
         const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
-
+        const agregat = this.tabs.onglet2.excelRef.filter((x: any) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
+        console.log(this.tabs.onglet2.excelRef)
         const viewModel = {
           daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
             .toLocaleDateString()}`,
-          agregat: this.tabs.onglet2.excelRef,
+          agregat,
           referentiel: data.data.referentiels.map((x: any) => {
             return {
               ...x,
