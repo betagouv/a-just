@@ -115,7 +115,7 @@ export class ExcelService extends MainClass {
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
         const agregat = this.tabs.onglet2.excelRef.filter((x: any) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
-        console.log(this.tabs.onglet2.excelRef)
+
         const viewModel = {
           daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
             .toLocaleDateString()}`,
@@ -165,8 +165,8 @@ export class ExcelService extends MainClass {
             const tgilistExcel = ['"' + await tgilist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
             const tpxlistExcel = ['"' + await tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
-            report.worksheets[14].getCell('D' + +5).value = tgilist[0] || ""
-            report.worksheets[14].getCell('D' + +5).dataValidation = {
+            report.worksheets[14].getCell('D' + +5).value = tgilist[0] || uniqueJur[0]
+            /**report.worksheets[14].getCell('D' + +5).dataValidation = {
               type: 'list',
               allowBlank: false,
               formulae: tgilistExcel,
@@ -174,14 +174,14 @@ export class ExcelService extends MainClass {
               prompt: 'Selectionner un TJ',
               showErrorMessage: true,
               showInputMessage: true,
-            }
+            }*/
             report.worksheets[15].getCell('D' + +5).value = tpxlist[0] || ""
             report.worksheets[15].getCell('D' + +5).dataValidation = {
               type: 'list',
               allowBlank: false,
               formulae: tpxlistExcel,
               error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner un TPROX',
+              prompt: tpxlist.length ? 'Selectionner un TPROX' : 'Aucun TPROX n\'est disponible pour cette juridiction',
               showErrorMessage: true,
               showInputMessage: true,
             }
