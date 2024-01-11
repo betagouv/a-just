@@ -3,7 +3,7 @@ import { accessList } from '../src/constants/access'
 import routeUser from './api/RouteUser.test'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
-import routeSimulator from './api/RouteSimulator.test'
+//import routeSimulator from './api/RouteSimulator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
 
@@ -30,10 +30,6 @@ const datas = {
 }
 
 describe('Test server is ready', () => {
-  /*beforeEach(() => {
-    //sinon.stub(console, 'error').returns(undefined)
-  })*/
-
   before((done) => {
     console.log('BEFORE WAITING SERVER')
     server.isReady = function () {
@@ -74,6 +70,7 @@ describe('Test server is ready', () => {
     assert.strictEqual(response.status, 201)
   })
 
+  // On donne tous les accès à l'administrateur
   it('Give all accesses to Admin', async () => {
     const accessIds = accessList.map((elem) => {
       return elem.id
@@ -90,12 +87,12 @@ describe('Test server is ready', () => {
     assert.isNotEmpty(datas.adminAccess)
   })
 
-  //routeUser(datas)
-  //routeChangeUserData(datas)
-  //routeCalcultator(datas)
+  routeUser(datas)
+  routeChangeUserData(datas)
+  routeCalcultator(datas)
   //routeSimulator(datas)
-  //routeVentilateur(datas)
-  //routePanorama(datas)
+  routeVentilateur(datas)
+  routePanorama(datas)
 
   /*routeImport()
   routeHR()

@@ -37,13 +37,25 @@ export default (sequelizeInstance) => {
       },
       deleted_at: {
         type: Sequelize.DATE,
-      }
+      },
     },
     {
       timestamps: true,
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'tj-details-juridiction_id',
+          fields: ['juridiction_id'],
+        },
+        {
+          unique: false,
+          name: 'tj-details-juridiction_id',
+          fields: ['juridiction_id', 'category_id'],
+        },
+      ],
     }
   )
 
