@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'HRComments'
 
-export default (sequelizeInstance) => {
+export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -40,17 +40,10 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
-      indexes: [
-        {
-          unique: false,
-          name: 'hr-comments-human_id',
-          fields: ['human_id'],
-        },
-      ],
     }
   )
 
-  Model.associate = function (models) {
+  Model.associate = function (models) {  
     Model.hasOne(models.HumanResources, { foreignKey: 'id', sourceKey: 'human_id' })
 
     return models

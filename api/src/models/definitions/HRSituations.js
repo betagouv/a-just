@@ -52,13 +52,6 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
-      indexes: [
-        {
-          unique: false,
-          name: 'hr-situations-human_id',
-          fields: ['human_id'],
-        },
-      ],
     }
   )
 
@@ -80,7 +73,10 @@ export default (sequelizeInstance) => {
   }
 
   Model.addHook('afterDestroy', async (situation) => {
-    await Model.models.HumanResources.updateById(situation.dataValues.human_id, { updated_at: new Date() })
+    await Model.models.HumanResources.updateById(
+      situation.dataValues.human_id,
+      { updated_at: new Date() }
+    )
     await Model.models.HRActivities.destroy({
       where: { hr_situation_id: situation.dataValues.id },
     })

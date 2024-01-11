@@ -3,9 +3,8 @@
 
     <ng-container *ngIf="openSuggestionPanel===false">
         <div class="toolbar">
-            <div *ngFor="let card of docTools"> <img src="{{card.image}}" alt="a-just"  (click)="goToLink(card.url)" />
-                <p  (click)="goToLink(card.url)">{{card.title}}</p>
-                <i *ngIf="card.download"  (click)="goToLink(card.url, true)" class="ri-file-download-line"></i>
+            <div *ngFor="let card of docTools" (click)="goToLink(card.url)"> <img src="{{card.image}}" alt="a-just" />
+                <p>{{card.title}}</p>
             </div>
         </div>
 
