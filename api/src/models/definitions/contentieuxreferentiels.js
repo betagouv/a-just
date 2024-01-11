@@ -48,6 +48,13 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'contentieux-referentiels-code_import',
+          fields: ['code_import'],
+        },
+      ],
     }
   )
 

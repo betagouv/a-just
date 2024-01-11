@@ -12,6 +12,7 @@ import logger from './utils/log'
 import koaLogger from 'koa-logger-winston'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 import helmet from 'koa-helmet'
+import { CSP_URL_IGNORE_RULES } from './constants/csp'
 const RateLimit = require('koa2-ratelimit').RateLimit
 
 /*var os = require('os')
@@ -83,8 +84,7 @@ export default class App extends AppBase {
       //sslify(),
       limiter,
       // we add the relevant middlewares to our API
-      //cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
-      cors({ credentials: true }), // add cors headers to the requests
+      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -132,28 +132,27 @@ export default class App extends AppBase {
               'https://forms.hsforms.com',
               'https://www.ionos.fr',
               'https://img.freepik.com',
+              'https://image.noelshack.com',
             ],
             'script-src': [
-              "'report-sample' 'self' 'unsafe-eval'",
+              "'report-sample' 'self'",
               'https://*.hsforms.net',
-              "'unsafe-inline' *.beta.gouv.fr",
+              '*.beta.gouv.fr',
+              '*.a-just.incubateur.net',
               'stonly.com',
               '*.stonly.com',
               '*.calendly.com',
               '*.google-analytics.com',
-              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
-              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
             'script-src-elem': [
               "'self'",
-              "'unsafe-inline' *.beta.gouv.fr",
+              '*.beta.gouv.fr',
+              '*.a-just.incubateur.net',
               '*.hsforms.net',
               '*.calendly.com',
               'stonly.com',
               '*.stonly.com',
               '*.google-analytics.com',
-              //"'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
-              //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
             'worker-src': ['blob:'],
             'style-src': ["'self'", "'unsafe-inline'"],
@@ -179,15 +178,26 @@ export default class App extends AppBase {
         crossOriginResourcePolicy: false,
         originAgentCluster: false,
         referrerPolicy: false,
-        strictTransportSecurity: false,
-        xContentTypeOptions: false,
+        strictTransportSecurity: {
+          maxAge: 31536000,
+          includeSubDomains: false,
+        },
+        xContentTypeOptions: 'nosniff',
         xDnsPrefetchControl: false,
         xDownloadOptions: false,
         xFrameOptions: { action: 'sameorigin' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
-        xXssProtection: false,
+        //xXssProtection: 1, don't work
       }),
+      async (ctx, next) => {
+        ctx.set('x-xss-protection', '1')
+
+        if (CSP_URL_IGNORE_RULES.indexOf(ctx.url) !== -1) {
+          ctx.set('content-security-policy', '')
+        }
+        await next()
+      },
     ])
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
