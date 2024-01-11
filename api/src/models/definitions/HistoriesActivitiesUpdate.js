@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'HistoriesActivitiesUpdate'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -48,12 +48,19 @@ export default sequelizeInstance => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'histories-activities-update-activity_id-activity_node_updated',
+          fields: ['activity_id', 'activity_node_updated'],
+        },
+      ],
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {
     Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
-    Model.hasOne(models.Activities, { foreignKey: 'id', sourceKey: 'activity_id' }) 
+    Model.hasOne(models.Activities, { foreignKey: 'id', sourceKey: 'activity_id' })
 
     return models
   }
