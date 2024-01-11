@@ -105,14 +105,21 @@ export class ExcelService extends MainClass {
         const keys1 = Object.keys(this.tabs.onglet1.values[0])
         const keys2 = Object.keys(this.tabs.onglet2.values[0])
 
+
+        const tgilist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TGI').map(x => x.tprox)
+        const tpxlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TPRX').map(x => x.tprox)
+        const cphlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'CPH').map(x => x.tprox)
+
+        //console.log(this.tabs.allJuridiction)
         const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
         const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
         const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+        const agregat = this.tabs.onglet2.excelRef.filter((x: any) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
 
         const viewModel = {
           daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
             .toLocaleDateString()}`,
-          agregat: this.tabs.onglet2.excelRef,
+          agregat,
           referentiel: data.data.referentiels.map((x: any) => {
             return {
               ...x,
@@ -150,6 +157,44 @@ export class ExcelService extends MainClass {
           // 4. Get a report as buffer.
           .then(async (report) => {
             report.worksheets[3].insertRows(1, uniqueJurIndex, 'o')
+
+            tgilist.map((value, index) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
+            tpxlist.map((value, index) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
+            cphlist.map((value, index) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
+
+            const tgilistExcel = ['"' + await tgilist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+            const tpxlistExcel = ['"' + await tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+
+            report.worksheets[14].getCell('D' + +5).value = tgilist[0] || uniqueJur[0]
+            /**report.worksheets[14].getCell('D' + +5).dataValidation = {
+              type: 'list',
+              allowBlank: false,
+              formulae: tgilistExcel,
+              error: 'Veuillez selectionner une valeur dans le menu déroulant',
+              prompt: 'Selectionner un TJ',
+              showErrorMessage: true,
+              showInputMessage: true,
+            }*/
+            report.worksheets[15].getCell('D' + +5).value = tpxlist[0] || ""
+            report.worksheets[15].getCell('D' + +5).dataValidation = {
+              type: 'list',
+              allowBlank: false,
+              formulae: tpxlistExcel,
+              error: 'Veuillez selectionner une valeur dans le menu déroulant',
+              prompt: tpxlist.length ? 'Selectionner un TPROX' : 'Aucun TPROX n\'est disponible pour cette juridiction',
+              showErrorMessage: true,
+              showInputMessage: true,
+            }
+            report.worksheets[16].getCell('D' + +5).value = uniqueJur[0] || ""
+            report.worksheets[16].getCell('D' + +5).dataValidation = {
+              type: 'list',
+              allowBlank: false,
+              formulae: tProximite,
+              error: 'Veuillez selectionner une valeur dans le menu déroulant',
+              prompt: 'Selectionner une juridiction',
+              showErrorMessage: true,
+              showInputMessage: true,
+            }
 
             report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
             report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
@@ -206,17 +251,6 @@ export class ExcelService extends MainClass {
                   formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
                 }
               }
-
-
-              /**
-              report.worksheets[1].getCell('I' + (+index + 3)).dataValidation =
-              {
-                type: 'list',
-                allowBlank: true,
-                formulae: ['"M-TIT,M-PLAC-ADD,M-PLAC-SUB,F-TIT,F-PLAC-ADD,F-PLAC-SUB,C"'],
-              }
-               */
-
             })
 
 
