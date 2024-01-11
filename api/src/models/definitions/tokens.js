@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-export default (sequelizeInstance) => {
+export default sequelizeInstance => {
   const Model = sequelizeInstance.define(
     'tokens',
     {

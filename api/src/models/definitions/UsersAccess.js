@@ -40,13 +40,6 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
-      indexes: [
-        {
-          unique: false,
-          name: 'user-access-user_id',
-          fields: ['user_id'],
-        },
-      ],
     }
   )
 

@@ -48,7 +48,7 @@ module.exports = function (datas) {
     })
 
     /**
-     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'est pas assez long
+     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé long'
      */
     it('Sign up - Password is not long enough, should return 401', async () => {
       const response = await onSignUpApi({
@@ -63,7 +63,7 @@ module.exports = function (datas) {
     })
 
     /**
-     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'est pas assez fort
+     *  Inscription - Vérification qu'on ait bien une erreur si le mot de passe n'ait pas assé fort'
      */
     it('Sign up - Password is not strong enough, should return 401', async () => {
       const response = await onSignUpApi({
@@ -172,7 +172,24 @@ module.exports = function (datas) {
       datas.userToken = response.status === 201 && response.data.token
       assert.isOk(datas.userToken, 'response 201 and user token created')
     })
-    
+
+    it('Give all accesses to user test', async () => {
+      const accessIds = accessList.map((elem) => {
+        return elem.id
+      })
+
+      let response = await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.userId,
+        accessIds: accessIds,
+        ventilations: [],
+      })
+      response = await onGetUserDataApi({ userToken: datas.userToken })
+
+      assert.strictEqual(response.status, 200)
+      assert.isNotEmpty(response.data.user.access)
+    })
+
     /**
      * Get my info as a user
      */
@@ -192,9 +209,7 @@ module.exports = function (datas) {
       })
       assert.strictEqual(response.status, 200)
     })
-
     /**
-     * 
      * Vérification qu'un simple utilisateur ne puisse accéder à la liste complète des utilisateurs
      */
     it('User list - Normal user do not have access. Should return 403', async () => {
@@ -215,7 +230,7 @@ module.exports = function (datas) {
     })
 
     /**
-     * Logout - Vérification que l'utilisateur peut bien se déconnecter
+     * Logout - Vérification que l'utilisateur peur bien se déconnecter
      */
     it('Logout - Logout should return 200', async () => {
       const response = await onLogoutApi({

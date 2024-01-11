@@ -678,7 +678,7 @@ export default class App {
           tmp_date = monthValues[0][dateInFile[1]];
         }
 
-        if (tmp_date <= now - 1) {
+        if (tmp_date < now - 1) {
           let formatMonthDataFromRules = null;
           formatMonthDataFromRules = this.formatMonthFromRules(
             monthValues,

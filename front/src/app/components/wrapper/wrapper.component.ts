@@ -27,7 +27,6 @@ import { addHTML } from 'src/app/utils/js-pdf'
 import { environment } from 'src/environments/environment'
 import { ActionsInterface } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
-import { downloadFile } from 'src/app/utils/system'
 
 declare const Quill: any
 
@@ -483,17 +482,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.pageSelected.emit(path)
   }
 
-  downloadAsset(type: string, download = false) {
-    let url = null
-    if (type === 'nomenclature') url = this.NOMENCLATURE_DOWNLOAD_URL
-    else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
-
-    if (url) {
-      if (download) {
-        downloadFile(url)
-      } else {
-        window.open(url)
-      }
-    }
+  downloadAsset(type: string) {
+    if (type === 'nomenclature')
+      window.open(this.NOMENCLATURE_DOWNLOAD_URL)
+    else if (type === 'calculatrice')
+      window.open(this.CALCULATE_DOWNLOAD_URL)
   }
 }
