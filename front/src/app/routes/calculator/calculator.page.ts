@@ -112,14 +112,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
-  /**
-   * id de la juridiction
-   */
-  backupId: number | null = null
-  /**
-   * Juridiction sélectionnée
-   */
-  backup: BackupInterface | undefined
 
   /**
    * Constructeur
@@ -139,19 +131,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private userService: UserService
   ) {
     super()
-
-    this.watch(
-      this.humanResourceService.backupId.subscribe((backupId) => {
-        if (backupId)
-          this.backupId = backupId
-      })
-    )
-
-    this.watch(
-      this.humanResourceService.backups.subscribe((backups) => {
-        this.backup = backups.find((b) => b.id === this.backupId)
-      })
-    )
   }
 
   /**
@@ -305,7 +284,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param list
    */
   formatDatas(list: CalculatorInterface[]) {
-    this.backup?.label && filterReferentielCalculator(list, this.backup.label)
+    const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentielCalculator(list, backupLabel)
+    
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
