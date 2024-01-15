@@ -95,14 +95,6 @@ export class PanelActivitiesComponent
   * Detail du référentiel survolé
   */
   hoveredReferentielDetail : string | null = null
-  /**
-   * Id de juridiction sélectionnée
-   */
-  backupId: number | null = null
-  /**
-   * Juridiction sélectionnée
-   */
-  backup: BackupInterface | undefined
 
   /**
    * Constructeur
@@ -110,19 +102,6 @@ export class PanelActivitiesComponent
    */
   constructor(private humanResourceService: HumanResourceService) {
     super()
-
-    this.watch(
-      this.humanResourceService.backupId.subscribe((backupId) => {
-        if (backupId)
-          this.backupId = backupId
-      })
-    )
-
-    this.watch(
-      this.humanResourceService.backups.subscribe((backups) => {
-        this.backup = backups.find((b) => b.id === this.backupId)
-      })
-    )
   }
 
   /**
@@ -175,8 +154,8 @@ export class PanelActivitiesComponent
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     )
     
-    if (this.backup?.label)
-      filterReferentiels(this.referentiel, this.backup.label)
+    const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentiels(this.referentiel, backupLabel)
 
     this.referentiel = this.referentiel.map((ref) => {
       const { percent, totalAffected } = this.getPercentAffected(ref)

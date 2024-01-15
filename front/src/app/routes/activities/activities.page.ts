@@ -9,7 +9,6 @@ import {
 } from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
-import { BackupInterface } from 'src/app/interfaces/backup'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
@@ -110,14 +109,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * timeoutOnFocus
    */
   timeoutOnFocus: any = {}
-  /**
-   * id de la juridiction
-   */
-  backupId: number | null = null
-  /**
-   * Juridiction sélectionnée
-   */
-  backup: BackupInterface | undefined
 
   /**
    * Constructeur
@@ -137,7 +128,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
-          this.backupId = backupId
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
             lastMonth = new Date(lastMonth)
 
@@ -153,12 +143,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             this.activitiesService.activityMonth.next(lastMonth)
           })
         }
-      })
-    )
-
-    this.watch(
-      this.humanResourceService.backups.subscribe((backups) => {
-        this.backup = backups.find((b) => b.id === this.backupId)
       })
     )
 
@@ -313,9 +297,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
+      
+        const backupLabel = localStorage.getItem('backupLabel')
+        backupLabel && filterReferentiels(referentiels, backupLabel)
         
-        if (this.backup) 
-          filterReferentiels(referentiels, this.backup.label)
 
         this.referentiel = referentiels
           .filter(
