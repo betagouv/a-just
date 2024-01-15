@@ -1,4 +1,6 @@
 import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
+import { juridictionJIRS } from "../constants/juridiction-jirs"
+import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 
 /**
  * Conversion d'un nom de référentiel en version simplifiée
@@ -91,4 +93,85 @@ export function etpLabel(value: number): string | null {
   }
 
   return `${Math.floor(value * 100)}%`
+}
+
+export function filterReferentiels (list: ContentieuReferentielInterface[], backupLabel: string) : void {
+
+  list.map((ref) => {
+    if (ref.childrens && juridictionJIRS.indexOf(backupLabel) == -1) {
+      ref.childrens?.map((elem) => {
+        switch(elem.label) {
+          case 'Collégiales hors JIRS':
+            elem.label = "Collégiales"
+            break;
+          case "Cour d'assises hors JIRS":
+            elem.label = "Cour d'assises"
+            break;
+          case "Cour d'assises JIRS":
+            ref.childrens = ref.childrens?.filter(elem => elem.label !== "Cour d'assises JIRS")
+            break;
+          case "Collégiales JIRS crim-org":
+            ref.childrens = ref.childrens?.filter(elem => elem.label !== "Collégiales JIRS crim-org")
+            break;
+          case "Collégiales JIRS eco-fi":
+            elem.label = "Collégiales eco-fi"
+            break;
+          case "Eco-fi hors JIRS":
+            elem.label = "Eco-fi"
+            break;
+          case "JIRS éco-fi":
+            ref.childrens = ref.childrens?.filter(elem => elem.label !== "JIRS éco-fi")
+            break;
+          case "JIRS crim-org":
+            ref.childrens = ref.childrens?.filter(elem => elem.label !== "JIRS crim-org")
+            break;
+          case "JIRS":
+            ref.childrens = ref.childrens?.filter(elem => elem.label !== "JIRS")
+            break
+        }
+      })
+    }
+  })
+  return;
+}
+
+
+export function filterReferentielCalculator (list: any, backupLabel: string) : void {
+
+  list.map((ref: any) => {
+    if (ref.childrens && juridictionJIRS.indexOf(backupLabel) == -1) {
+      ref.childrens?.map((elem :any) => {
+        switch(elem.contentieux.label) {
+          case 'Collégiales hors JIRS':
+            elem.contentieux.label = "Collégiales"
+            break;
+          case "Cour d'assises hors JIRS":
+            elem.contentieux.label = "Cour d'assises"
+            break;
+          case "Cour d'assises JIRS":
+            ref.childrens = ref.childrens.filter((elem: any) => elem.contentieux.label !== "Cour d'assises JIRS")
+            break;
+          case "Collégiales JIRS crim-org":
+            ref.childrens = ref.childrens.filter((elem : any) => elem.contentieux.label !== "Collégiales JIRS crim-org")
+            break;
+          case "Collégiales JIRS eco-fi":
+            elem.contentieux.label = "Collégiales eco-fi"
+            break;
+          case "Eco-fi hors JIRS":
+            elem.contentieux.label = "Eco-fi"
+            break;
+          case "JIRS éco-fi":
+            ref.childrens = ref.childrens.filter((elem : any) => elem.contentieux.label !== "JIRS éco-fi")
+            break;
+          case "JIRS crim-org":
+            ref.childrens = ref.childrens.filter((elem : any) => elem.contentieux.label !== "JIRS crim-org")
+            break;
+          case "JIRS":
+            ref.childrens = ref.childrens.filter((elem : any) => elem.contentieux.label !== "JIRS")
+            break
+        }
+      })
+    }
+  })
+  return;
 }

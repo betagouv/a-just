@@ -9,6 +9,7 @@ import {
 } from 'src/app/interfaces/activity'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
+import { BackupInterface } from 'src/app/interfaces/backup'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
@@ -16,6 +17,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
+import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Interface d'un référentiel spécifique à la page
@@ -108,6 +110,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * timeoutOnFocus
    */
   timeoutOnFocus: any = {}
+  /**
+   * id de la juridiction
+   */
+  backupId: number | null = null
+  /**
+   * Juridiction sélectionnée
+   */
+  backup: BackupInterface | undefined
 
   /**
    * Constructeur
@@ -127,6 +137,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
+          this.backupId = backupId
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
             lastMonth = new Date(lastMonth)
 
@@ -142,6 +153,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             this.activitiesService.activityMonth.next(lastMonth)
           })
         }
+      })
+    )
+
+    this.watch(
+      this.humanResourceService.backups.subscribe((backups) => {
+        this.backup = backups.find((b) => b.id === this.backupId)
       })
     )
 
@@ -296,6 +313,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
+        
+        if (this.backup) 
+          filterReferentiels(referentiels, this.backup.label)
+
         this.referentiel = referentiels
           .filter(
             (r) =>
