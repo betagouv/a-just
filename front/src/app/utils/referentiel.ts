@@ -137,7 +137,6 @@ export function filterReferentiels (list: ContentieuReferentielInterface[], back
 
 
 export function filterReferentielCalculator (list: any, backupLabel: string) : void {
-
   list.map((ref: any) => {
     if (ref.childrens && juridictionJIRS.indexOf(backupLabel) == -1) {
       ref.childrens?.map((elem :any) => {
@@ -174,4 +173,43 @@ export function filterReferentielCalculator (list: any, backupLabel: string) : v
     }
   })
   return;
+}
+
+
+export function filterReferentielActivityExtractor (list: any, backupLabel: string) : void {
+  if (juridictionJIRS.indexOf(backupLabel) == -1) {
+    list.map((ref: any) => {
+      switch(ref.contentieux.label) {
+        case 'Collégiales hors JIRS':
+          ref.contentieux.label = "Collégiales"
+          break;
+        case "Cour d'assises hors JIRS":
+          ref.contentieux.label = "Cour d'assises"
+          break;
+        case "Cour d'assises JIRS":
+          list = list.filter((ref: any) => ref.contentieux.label !== "Cour d'assises JIRS")
+          break;
+        case "Collégiales JIRS crim-org":
+          list = list.filter((ref : any) => ref.contentieux.label !== "Collégiales JIRS crim-org")
+          break;
+        case "Collégiales JIRS eco-fi":
+          ref.contentieux.label = "Collégiales eco-fi"
+          break;
+        case "Eco-fi hors JIRS":
+          ref.contentieux.label = "Eco-fi"
+          break;
+        case "JIRS éco-fi":
+          list = list.filter((ref : any) => ref.contentieux.label !== "JIRS éco-fi")
+          break;
+        case "JIRS crim-org":
+          list = list.filter((ref : any) => ref.contentieux.label !== "JIRS crim-org")
+          break;
+        case "JIRS":
+          list = list.filter((ref : any) => ref.contentieux.label !== "JIRS")
+          break
+      }
+    }
+  )}
+
+  return list;
 }
