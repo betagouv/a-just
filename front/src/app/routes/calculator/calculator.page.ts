@@ -305,11 +305,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param list
    */
   formatDatas(list: CalculatorInterface[]) {
-    //console.log('[calculator.page.ts][line 313] list:', list)
     this.backup?.label && filterReferentielCalculator(list, this.backup.label)
-    this.datas = list.map((l) => 
-      ({ ...l, childIsVisible: false })
-    )
+    this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
 
