@@ -10,10 +10,12 @@ import { sumBy } from 'lodash'
 import { REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
+import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Composant d'affichage de la liste des ventilations en grilles
@@ -93,6 +95,14 @@ export class PanelActivitiesComponent
   * Detail du référentiel survolé
   */
   hoveredReferentielDetail : string | null = null
+  /**
+   * Id de juridiction sélectionnée
+   */
+  backupId: number | null = null
+  /**
+   * Juridiction sélectionnée
+   */
+  backup: BackupInterface | undefined
 
   /**
    * Constructeur
@@ -100,6 +110,19 @@ export class PanelActivitiesComponent
    */
   constructor(private humanResourceService: HumanResourceService) {
     super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        if (backupId)
+          this.backupId = backupId
+      })
+    )
+
+    this.watch(
+      this.humanResourceService.backups.subscribe((backups) => {
+        this.backup = backups.find((b) => b.id === this.backupId)
+      })
+    )
   }
 
   /**
@@ -151,6 +174,10 @@ export class PanelActivitiesComponent
     this.referentiel = copyArray(
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     )
+    
+    if (this.backup?.label)
+      filterReferentiels(this.referentiel, this.backup.label)
+
     this.referentiel = this.referentiel.map((ref) => {
       const { percent, totalAffected } = this.getPercentAffected(ref)
       ref.percent = percent
