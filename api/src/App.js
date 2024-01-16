@@ -192,7 +192,7 @@ export default class App extends AppBase {
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
-    super.mountFolder(join(__dirname, 'routes-admin'), '/admin/') // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes'), '/') // adds a folder to scan for route files
 
     return super.start()
