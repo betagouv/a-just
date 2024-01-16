@@ -102,51 +102,10 @@ export class ExcelService extends MainClass {
       })
       .then(async (data) => {
         this.tabs = data.data
-        const keys1 = Object.keys(this.tabs.onglet1.values[0])
-        const keys2 = Object.keys(this.tabs.onglet2.values[0])
-
-
-        const tgilist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TGI').map(x => x.tprox)
-        const tpxlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'TPRX').map(x => x.tprox)
-        const cphlist = [...this.tabs.allJuridiction].filter((x: any) => x.type === 'CPH').map(x => x.tprox)
-
-        //console.log(this.tabs.allJuridiction)
-        const uniqueJur = await sortBy(this.tabs.tproxs, 'tprox').map((t) => t.tprox)
-        const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
-        const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
-        const agregat = this.tabs.onglet2.excelRef.filter((x: any) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
-
         const viewModel = {
-          daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
-            .toLocaleDateString()}`,
-          agregat,
-          referentiel: data.data.referentiels.map((x: any) => {
-            return {
-              ...x,
-              childrens: [
-                ...x.childrens.map((y: any) => {
-                  return y.label
-                }),
-              ],
-            }
-          }),
-          arrondissement: uniqueJur[0],
-          subtitles: [...Array(keys1.length - 6 || 0)],
-          days: keys1,
-          stats: {
-            ...this.tabs.onglet1.values.map((item: any) => {
-              return { actions: Object.keys(item).map((key: any) => item[key]) }
-            }),
-          },
-          subtitles1: [...Array(keys2.length - 6 || 0)],
-          days1: keys2,
-          stats1: {
-            ...this.tabs.onglet2.values.map((item: any) => {
-              return { actions: Object.keys(item).map((key: any) => item[key]) }
-            }),
-          },
+          ...this.tabs.viewModel, daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
+            .toLocaleDateString()}`
         }
-
         fetch('/assets/template4.xlsx')
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
@@ -156,104 +115,7 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
-            report.worksheets[3].insertRows(1, uniqueJurIndex, 'o')
-
-            tgilist.map((value, index) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
-            tpxlist.map((value, index) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
-            cphlist.map((value, index) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
-
-            const tgilistExcel = ['"' + await tgilist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
-            const tpxlistExcel = ['"' + await tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
-
-            report.worksheets[14].getCell('D' + +5).value = tgilist[0] || uniqueJur[0]
-            /**report.worksheets[14].getCell('D' + +5).dataValidation = {
-              type: 'list',
-              allowBlank: false,
-              formulae: tgilistExcel,
-              error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner un TJ',
-              showErrorMessage: true,
-              showInputMessage: true,
-            }*/
-            report.worksheets[15].getCell('D' + +5).value = tpxlist[0] || ""
-            report.worksheets[15].getCell('D' + +5).dataValidation = {
-              type: 'list',
-              allowBlank: false,
-              formulae: tpxlistExcel,
-              error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: tpxlist.length ? 'Selectionner un TPROX' : 'Aucun TPROX n\'est disponible pour cette juridiction',
-              showErrorMessage: true,
-              showInputMessage: true,
-            }
-            report.worksheets[16].getCell('D' + +5).value = uniqueJur[0] || ""
-            report.worksheets[16].getCell('D' + +5).dataValidation = {
-              type: 'list',
-              allowBlank: false,
-              formulae: tProximite,
-              error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner une juridiction',
-              showErrorMessage: true,
-              showInputMessage: true,
-            }
-
-            report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
-            report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
-
-            report.worksheets[1].columns[8].width = 0
-            report.worksheets[0].columns[0].width = 16
-            report.worksheets[1].columns[0].width = 16
-            report.worksheets[2].columns[0].width = 20
-
-            report.worksheets[2].getCell('A' + +3).dataValidation = {
-              type: 'list',
-              allowBlank: false,
-              formulae: tProximite,
-              error: 'Veuillez selectionner une valeur dans le menu déroulant',
-              prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
-              showErrorMessage: true,
-              showInputMessage: true,
-            }
-
-            this.tabs.onglet2.values.forEach((element: any, index: number) => {
-              report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
-              {
-                type: 'list',
-                allowBlank: true,
-                formulae: tProximite,
-                error:
-                  'Veuillez selectionner une valeur dans le menu déroulant',
-                //prompt: 'je suis un prompteur',
-                showErrorMessage: true,
-                showInputMessage: true,
-              }
-            })
-
-            this.tabs.onglet2.values.forEach((element: any, index: number) => {
-
-
-              if ((report.worksheets[1].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
-                report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
-                {
-                  type: 'list',
-                  allowBlank: true,
-                  formulae: [`"${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL,${report.worksheets[1].getCell('H' + (+index + 3)).value} SUBSTITUTION"`],
-                }
-
-                report.worksheets[1].getCell('H' + (+index + 3)).value = `${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL`
-
-              }
-              if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
-                report.worksheets[1].getCell('H' + (+index + 3)).value = "JA Siège autres"
-                report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
-                {
-                  type: 'list',
-                  allowBlank: true,
-                  formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
-                }
-              }
-            })
-
-
+            report = await this.getReport(report, viewModel)
             return report.xlsx.writeBuffer()
           })
           // 5. Use `saveAs` to download on browser site.
@@ -283,6 +145,10 @@ export class ExcelService extends MainClass {
         .slice(0, 10)}`
   }
 
+  /**
+   * Creation d'un worksheet excel
+   * @param file 
+   */
   modifyExcel(file: any) {
     import('xlsx').then(async (xlsx) => {
       const data = await file.arrayBuffer()
@@ -302,6 +168,98 @@ export class ExcelService extends MainClass {
       })
       FileSaver.saveAs(datas, filename + EXCEL_EXTENSION)
     })
+  }
+
+  /**
+   * Mise en forme du ficher DDG
+   * @param report 
+   * @param viewModel 
+   * @returns 
+   */
+  async getReport(report: any, viewModel: any) {
+    report.worksheets[3].insertRows(1, viewModel.uniqueJurIndex, 'o')
+
+    viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
+    viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
+    viewModel.cphlist.map((value: any, index: any) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
+
+    const tpxlistExcel = ['"' + await viewModel.tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+
+    report.worksheets[14].getCell('D' + +5).value = viewModel.tgilist[0] || viewModel.uniqueJur[0]
+    report.worksheets[15].getCell('D' + +5).value = viewModel.tpxlist[0] || ""
+    report.worksheets[15].getCell('D' + +5).dataValidation = {
+      type: 'list',
+      allowBlank: false,
+      formulae: tpxlistExcel,
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      prompt: viewModel.tpxlist.length ? 'Selectionner un TPROX' : 'Aucun TPROX n\'est disponible pour cette juridiction',
+      showErrorMessage: true,
+      showInputMessage: true,
+    }
+    report.worksheets[16].getCell('D' + +5).value = viewModel.uniqueJur[0] || ""
+    report.worksheets[16].getCell('D' + +5).dataValidation = {
+      type: 'list',
+      allowBlank: false,
+      formulae: viewModel.tProximite,
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      prompt: 'Selectionner une juridiction',
+      showErrorMessage: true,
+      showInputMessage: true,
+    }
+
+    report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
+    report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
+
+    report.worksheets[1].columns[8].width = 0
+    report.worksheets[0].columns[0].width = 16
+    report.worksheets[1].columns[0].width = 16
+    report.worksheets[2].columns[0].width = 20
+
+    report.worksheets[2].getCell('A' + +3).dataValidation = {
+      type: 'list',
+      allowBlank: false,
+      formulae: viewModel.tProximite,
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
+      showErrorMessage: true,
+      showInputMessage: true,
+    }
+
+    this.tabs.onglet2.values.forEach((element: any, index: number) => {
+      report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
+      {
+        type: 'list',
+        allowBlank: true,
+        formulae: viewModel.tProximite,
+        error:
+          'Veuillez selectionner une valeur dans le menu déroulant',
+        //prompt: 'je suis un prompteur',
+        showErrorMessage: true,
+        showInputMessage: true,
+      }
+    })
+
+    this.tabs.onglet2.values.forEach((element: any, index: number) => {
+      if ((report.worksheets[1].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
+        report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
+        {
+          type: 'list',
+          allowBlank: true,
+          formulae: [`"${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL,${report.worksheets[1].getCell('H' + (+index + 3)).value} SUBSTITUTION"`],
+        }
+        report.worksheets[1].getCell('H' + (+index + 3)).value = `${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL`
+      }
+      if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
+        report.worksheets[1].getCell('H' + (+index + 3)).value = "JA Siège autres"
+        report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
+        {
+          type: 'list',
+          allowBlank: true,
+          formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
+        }
+      }
+    })
+    return report
   }
 }
 

@@ -386,6 +386,48 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
   return onglet2
 }
 
+export const getViewModel = async (params) => {
+  const keys1 = Object.keys(params.onglet1.values[0])
+  const keys2 = Object.keys(params.onglet2.values[0])
+  const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map(x => x.tprox)
+  const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map(x => x.tprox)
+  const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map(x => x.tprox)
+  const uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
+  const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
+  const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+  const agregat = params.onglet2.excelRef.filter((x) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
+
+  return {
+    tgilist, tpxlist, cphlist, uniqueJur, uniqueJurIndex, tProximite,
+    agregat,
+    referentiel: params.referentiels.map((x) => {
+      return {
+        ...x,
+        childrens: [
+          ...x.childrens.map((y) => {
+            return y.label
+          }),
+        ],
+      }
+    }),
+    arrondissement: uniqueJur[0],
+    subtitles: [...Array(keys1.length - 6 || 0)],
+    days: keys1,
+    stats: {
+      ...params.onglet1.values.map((item) => {
+        return { actions: Object.keys(item).map((key) => item[key]) }
+      }),
+    },
+    subtitles1: [...Array(keys2.length - 6 || 0)],
+    days1: keys2,
+    stats1: {
+      ...params.onglet2.values.map((item) => {
+        return { actions: Object.keys(item).map((key) => item[key]) }
+      }),
+    },
+  }
+}
+
 export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let data = []
 
