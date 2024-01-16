@@ -102,10 +102,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   updateIndisponiblity: RHActivityInterface | null = null
   /**
-   * Ajout d'indispo impossible. Car agent sans ventilations
-   */
-  alertNoVentilations: boolean = false
-  /**
    * Référentiel des indispo
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
@@ -789,13 +785,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           // Verification that unavailability is not added while the agent has no ventilations provided.
           const totalActivities = this.currentHR?.situations.map((elem : any) => elem.activities.length)
           if (!sum(totalActivities)) {
-            this.alertNoVentilations = true;
             this.appService.alert.next({
               title: 'Attention',
               text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.`,
-              callback: () => {
-                this.alertNoVentilations = false;
-              },
             })
             this.updateIndisponiblity = null
             return false;
