@@ -19,6 +19,7 @@ import { copy } from 'src/app/utils'
 import { dateAddDays, today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 import { AppService } from 'src/app/services/app/app.service'
+import { sum } from 'lodash'
 
 /**
  * Interface d'une situation
@@ -100,6 +101,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Indispo en court d'édition
    */
   updateIndisponiblity: RHActivityInterface | null = null
+  /**
+   * Ajout d'indispo impossible. Car agent sans ventilations
+   */
+  alertNoVentilations: boolean = false
   /**
    * Référentiel des indispo
    */
@@ -781,6 +786,21 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             }
           }
 
+          // Verification that unavailability is not added while the agent has no ventilations provided.
+          const totalActivities = this.currentHR?.situations.map((elem : any) => elem.activities.length)
+          if (!sum(totalActivities)) {
+            this.alertNoVentilations = true;
+            this.appService.alert.next({
+              title: 'Attention',
+              text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.`,
+              callback: () => {
+                this.alertNoVentilations = false;
+              },
+            })
+            this.updateIndisponiblity = null
+            return false;
+          }
+      
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =
