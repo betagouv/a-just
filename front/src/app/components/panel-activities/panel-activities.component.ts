@@ -10,12 +10,11 @@ import { sumBy } from 'lodash'
 import { REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
-import { filterReferentiels } from 'src/app/utils/referentiel'
+//import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Composant d'affichage de la liste des ventilations en grilles
@@ -154,8 +153,8 @@ export class PanelActivitiesComponent
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     )
     
-    const backupLabel = localStorage.getItem('backupLabel')
-    backupLabel && filterReferentiels(this.referentiel, backupLabel)
+    /*const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentiels(this.referentiel, backupLabel)*/
 
     this.referentiel = this.referentiel.map((ref) => {
       const { percent, totalAffected } = this.getPercentAffected(ref)

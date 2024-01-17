@@ -11,7 +11,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
-import { filterReferentiels } from 'src/app/utils/referentiel'
+//import { filterReferentiels } from 'src/app/utils/referentiel'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import * as xlsx from 'xlsx'
 import { Renderer } from 'xlsx-renderer'
@@ -263,8 +263,8 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
           this.referentielService.idsSoutien.indexOf(r.id) === -1
       )
 
-      const backupLabel = localStorage.getItem('backupLabel')
-      backupLabel && filterReferentiels(referentiels, backupLabel)
+      /*const backupLabel = localStorage.getItem('backupLabel')
+      backupLabel && filterReferentiels(referentiels, backupLabel)*/
 
       // todo set in, out, stock for each
       this.referentiel = referentiels.map((ref) => {

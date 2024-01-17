@@ -16,7 +16,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
-import { filterReferentiels } from 'src/app/utils/referentiel'
+//import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Interface d'un référentiel spécifique à la page
@@ -298,8 +298,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         let autoFocusId = null
         // todo set in, out, stock for each
       
-        const backupLabel = localStorage.getItem('backupLabel')
-        backupLabel && filterReferentiels(referentiels, backupLabel)
+        /*const backupLabel = localStorage.getItem('backupLabel')
+        backupLabel && filterReferentiels(referentiels, backupLabel)*/
         
 
         this.referentiel = referentiels
