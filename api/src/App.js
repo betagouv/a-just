@@ -156,7 +156,7 @@ export default class App extends AppBase {
               //"'sha256-GX9y+a0qOal8zH/MzRAReev0Jj1fshWWRlJsFTPfHPo='",
             ],
             'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'"],
+            'style-src': ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
             'frame-src': [
               'https://docs.a-just.beta.gouv.fr',
               'https://meta.a-just.beta.gouv.fr',
