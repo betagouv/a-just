@@ -10,7 +10,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { generalizeTimeZone, getShortMonthString } from 'src/app/utils/dates'
-import { filterReferentielActivityExtractor } from 'src/app/utils/referentiel'
+//import { filterReferentielActivityExtractor } from 'src/app/utils/referentiel'
 import * as xlsx from 'xlsx'
 
 
@@ -284,10 +284,10 @@ export class ExtractorActivityComponent extends MainClass {
 
         let monthTabName = ''
         const workbook = xlsx.utils.book_new()
-        const backupLabel = localStorage.getItem('backupLabel')
+        /*const backupLabel = localStorage.getItem('backupLabel')
 
         if (backupLabel) 
-          this.sumTab = filterReferentielActivityExtractor(this.sumTab, backupLabel)
+          this.sumTab = filterReferentielActivityExtractor(this.sumTab, backupLabel)*/
 
         this.sumTab = this.sumTab.map((act: any) => {
           return this.generateFormatedDataMonth(
@@ -312,8 +312,8 @@ export class ExtractorActivityComponent extends MainClass {
         )
 
         this.data = Object.keys(this.data).map((key: any) => {
-          if (backupLabel) 
-            this.data[key] =  filterReferentielActivityExtractor(this.data[key], backupLabel)
+          /*if (backupLabel) 
+            this.data[key] =  filterReferentielActivityExtractor(this.data[key], backupLabel)*/
           this.data[key] = this.data[key].map((act: any) => {
             monthTabName = this.getMonthTabName(act)
             return this.generateFormatedDataMonth(act, monthTabName)

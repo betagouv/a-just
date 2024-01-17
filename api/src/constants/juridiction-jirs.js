@@ -1,0 +1,1 @@
+export const juridictionJIRS = ['TJ PARIS', 'TJ MARSEILLE', 'TJ RENNES', 'TJ FORT DE FRANCE', 'TJ NANCY', 'TJ LILLE', 'TJ BORDEAUX', 'TJ LYON', 'TJ DE DEMO', 'TJ Lyon - 2021 recette']

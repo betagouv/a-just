@@ -8,7 +8,6 @@ import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
@@ -22,7 +21,7 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
-import { filterReferentielCalculator } from 'src/app/utils/referentiel'
+//import { filterReferentielCalculator } from 'src/app/utils/referentiel'
 
 /**
  * Page du calculateur
@@ -284,8 +283,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param list
    */
   formatDatas(list: CalculatorInterface[]) {
-    const backupLabel = localStorage.getItem('backupLabel')
-    backupLabel && filterReferentielCalculator(list, backupLabel)
+    /*const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentielCalculator(list, backupLabel)*/
     
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()

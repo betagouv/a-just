@@ -13,7 +13,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.list = async (userId) => {
     const listAll = await Model.findAll({
-      attributes: ['id', 'label', ['updated_at', 'date']],
+      attributes: ['id', 'label', ['updated_at', 'date'], 'jirs'],
       include: [
         {
           attributes: ['id'],
@@ -34,6 +34,7 @@ export default (sequelizeInstance, Model) => {
           id: listAll[i].id,
           label: listAll[i].label,
           date: listAll[i].date,
+          jirs: listAll[i].jirs,
         })
       }
     }

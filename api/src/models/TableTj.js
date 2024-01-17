@@ -3,8 +3,9 @@ import { preformatHumanResources } from '../utils/ventilator'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
+
     const list = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'jirs'],
       where: {
         parent_id: null,
       },
