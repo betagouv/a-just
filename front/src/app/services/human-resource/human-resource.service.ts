@@ -128,8 +128,6 @@ export class HumanResourceService {
         this.backupId.next(list[0].id)
         list.find((b) => b.id === this.backupId.getValue())
       }
-      localStorage.setItem('backupLabel', '' + backup?.label)
-
       const bk: BackupInterface | undefined = list.find(
         (b) => b.id === this.backupId.getValue()
       )
