@@ -4,8 +4,8 @@ import config from 'config'
 
 var sp_options = {
   entity_id: `${config.serverUrl}/saml/metadata.xml`,
-  private_key: readFileSync(`${__dirname}/../../certificats/privateKey.pem`).toString(),
-  certificate: readFileSync(`${__dirname}/../../certificats/certificate.crt`).toString(),
+  private_key: readFileSync(`${__dirname}/../../certificats-sso/privateKey.pem`).toString(),
+  certificate: readFileSync(`${__dirname}/../../certificats-sso/certificate.crt`).toString(),
   assert_endpoint: `${config.serverUrl}/saml/assert`,
   force_authn: true,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
