@@ -11,7 +11,7 @@ import { ServerService } from '../http-server/server.service'
 import { AppService } from '../app/app.service'
 import { setTimeToMidDay } from 'src/app/utils/dates'
 import { Renderer } from 'xlsx-renderer'
-import { map, sortBy, uniq } from 'lodash'
+import { each, map, sortBy, uniq } from 'lodash'
 
 /**
  * Excel file details
@@ -177,17 +177,21 @@ export class ExcelService extends MainClass {
    * @returns 
    */
   async getReport(report: any, viewModel: any) {
-    report.worksheets[3].insertRows(1, viewModel.uniqueJurIndex, 'o')
+    const tpxlistExcel = ['"' + await viewModel.tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
+    report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
+
+    // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
     viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
     viewModel.cphlist.map((value: any, index: any) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
 
-    const tpxlistExcel = ['"' + await viewModel.tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
-    report.worksheets[14].getCell('D' + +5).value = viewModel.tgilist[0] || viewModel.uniqueJur[0]
-    report.worksheets[15].getCell('D' + +5).value = viewModel.tpxlist[0] || ""
-    report.worksheets[15].getCell('D' + +5).dataValidation = {
+    // DDG TJ
+    report.worksheets[11].getCell('D' + +5).value = viewModel.tgilist[0] || viewModel.uniqueJur[0]
+    // DDG TPROX
+    report.worksheets[12].getCell('D' + +5).value = viewModel.tpxlist[0] || ""
+    report.worksheets[12].getCell('D' + +5).dataValidation = {
       type: 'list',
       allowBlank: false,
       formulae: tpxlistExcel,
@@ -196,8 +200,9 @@ export class ExcelService extends MainClass {
       showErrorMessage: true,
       showInputMessage: true,
     }
-    report.worksheets[16].getCell('D' + +5).value = viewModel.uniqueJur[0] || ""
-    report.worksheets[16].getCell('D' + +5).dataValidation = {
+    // DDG CPH
+    report.worksheets[13].getCell('D' + +5).value = viewModel.uniqueJur[0] || ""
+    report.worksheets[13].getCell('D' + +5).dataValidation = {
       type: 'list',
       allowBlank: false,
       formulae: viewModel.tProximite,
@@ -207,15 +212,79 @@ export class ExcelService extends MainClass {
       showInputMessage: true,
     }
 
-    report.worksheets[0].columns = [...this.tabs.onglet1.columnSize]
-    report.worksheets[1].columns = [...this.tabs.onglet2.columnSize]
+    // ONGLET ETPT DDG
+    report.worksheets[2].columns = [...this.tabs.onglet2.columnSize]
+    report.worksheets[2].columns[0].width = 16
+    report.worksheets[2].columns[8].width = 0
 
-    report.worksheets[1].columns[8].width = 0
-    report.worksheets[0].columns[0].width = 16
+    this.tabs.onglet2.values.forEach((element: any, index: number) => {
+      const indexCell = + (+index + 3)
+
+      report.worksheets[2].getCell('EA' + (+index + 3)).value = {
+        formula: '=IF(H' + indexCell + '="","",IF(H' + indexCell + '="CONT A JP",IF(G' + indexCell + '="Autour du Juge","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' + indexCell + ',Table_Fonctions!C:F,4,FALSE)))',
+        result: "0"
+      }
+      report.worksheets[2].getCell('EB' + (+index + 3)).value = {
+        formula: '=IFERROR(SUM(O' + indexCell + ',T' + indexCell + ',AD' + indexCell + ',AM' + indexCell + ',BG' + indexCell + ',BL' + indexCell + '),"")',
+        result: "0"
+      }
+      report.worksheets[2].getCell('EC' + (+index + 3)).value = {
+        formula: '=IF(H' + indexCell + '="","",SUM(BM' + indexCell + ',BN' + indexCell + ',CE' + indexCell + ',CK' + indexCell + ',CP' + indexCell + '))',
+        result: "0"
+      }
+      report.worksheets[2].getCell('ED' + (+index + 3)).value = {
+        formula: '=IF(H' + indexCell + '="","",IF(EC' + indexCell + '+EB' + indexCell + '+CS' + indexCell + '+EE' + indexCell + '=M' + indexCell + ',"OK","ERREUR"))',
+        result: "0"
+      }
+      report.worksheets[2].getCell('EE' + (+index + 3)).value = {
+        formula: '=IF(ISERROR(DF' + indexCell + '+DH' + indexCell + '+DK' + indexCell + '+DL' + indexCell + '+DM' + indexCell + '+DO' + indexCell + '+DP' + indexCell + '+DQ' + indexCell + '+DR' + indexCell + '),"",DF' + indexCell + '+DH' + indexCell + '+DK' + indexCell + '+DL' + indexCell + '+DM' + indexCell + '+DO' + indexCell + '+DP' + indexCell + '+DQ' + indexCell + '+DR' + indexCell + ')',
+        result: "0"
+      }
+      report.worksheets[2].getCell('EF' + (+index + 3)).value = {
+        formula: '=IF(ISERROR(M' + indexCell + '+DE' + indexCell + '),"",M' + indexCell + '+DE' + indexCell + ')',
+        result: "0"
+      }
+
+      report.worksheets[2].getCell('C' + (+index + 3)).dataValidation =
+      {
+        type: 'list',
+        allowBlank: true,
+        formulae: viewModel.tProximite,
+        error:
+          'Veuillez selectionner une valeur dans le menu déroulant',
+        showErrorMessage: true,
+        showInputMessage: true,
+      }
+      if ((report.worksheets[2].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
+        report.worksheets[2].getCell('H' + (+index + 3)).dataValidation =
+        {
+          type: 'list',
+          allowBlank: true,
+          formulae: [`"${report.worksheets[2].getCell('H' + (+index + 3)).value} ADDITIONNEL,${report.worksheets[2].getCell('H' + (+index + 3)).value} SUBSTITUTION"`],
+        }
+        report.worksheets[2].getCell('H' + (+index + 3)).value = `${report.worksheets[2].getCell('H' + (+index + 3)).value} ADDITIONNEL`
+      }
+      if (report.worksheets[2].getCell('H' + (+index + 3)).value === "JA") {
+        report.worksheets[2].getCell('H' + (+index + 3)).value = "JA Siège autres"
+        report.worksheets[2].getCell('H' + (+index + 3)).dataValidation =
+        {
+          type: 'list',
+          allowBlank: true,
+          formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
+        }
+      }
+
+    })
+
+
+
+    //ONGLET ETPT AJUST
+    report.worksheets[1].columns = [...this.tabs.onglet1.columnSize]
     report.worksheets[1].columns[0].width = 16
-    report.worksheets[2].columns[0].width = 20
 
-    report.worksheets[2].getCell('A' + +3).dataValidation = {
+    // ONGLET AGREGAT
+    report.worksheets[3].columns[0].width = 20
+    report.worksheets[3].getCell('A' + +3).dataValidation = {
       type: 'list',
       allowBlank: false,
       formulae: viewModel.tProximite,
@@ -225,40 +294,7 @@ export class ExcelService extends MainClass {
       showInputMessage: true,
     }
 
-    this.tabs.onglet2.values.forEach((element: any, index: number) => {
-      report.worksheets[1].getCell('C' + (+index + 3)).dataValidation =
-      {
-        type: 'list',
-        allowBlank: true,
-        formulae: viewModel.tProximite,
-        error:
-          'Veuillez selectionner une valeur dans le menu déroulant',
-        //prompt: 'je suis un prompteur',
-        showErrorMessage: true,
-        showInputMessage: true,
-      }
-    })
 
-    this.tabs.onglet2.values.forEach((element: any, index: number) => {
-      if ((report.worksheets[1].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
-        report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
-        {
-          type: 'list',
-          allowBlank: true,
-          formulae: [`"${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL,${report.worksheets[1].getCell('H' + (+index + 3)).value} SUBSTITUTION"`],
-        }
-        report.worksheets[1].getCell('H' + (+index + 3)).value = `${report.worksheets[1].getCell('H' + (+index + 3)).value} ADDITIONNEL`
-      }
-      if (report.worksheets[1].getCell('H' + (+index + 3)).value === "JA") {
-        report.worksheets[1].getCell('H' + (+index + 3)).value = "JA Siège autres"
-        report.worksheets[1].getCell('H' + (+index + 3)).dataValidation =
-        {
-          type: 'list',
-          allowBlank: true,
-          formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
-        }
-      }
-    })
     return report
   }
 }
