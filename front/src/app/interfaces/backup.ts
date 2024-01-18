@@ -1,3 +1,4 @@
+import { ContentieuReferentielInterface } from "./contentieu-referentiel";
 /**
  * Interface des sauvegardes (Juridictions / Temps moyens par dossier ...)
  */
@@ -14,4 +15,8 @@ export interface BackupInterface {
 	 * Date de dernière mise à jour de lui ou de ses enfants
 	 */
 	date: Date;
+	/**
+	 * Interface du référentiel associé à la juridiction = contentieux
+	 */
+	referentiels: ContentieuReferentielInterface[]
 }
