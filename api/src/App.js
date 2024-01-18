@@ -13,8 +13,8 @@ import koaLogger from 'koa-logger-winston'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 import helmet from 'koa-helmet'
 import { CSP_URL_IGNORE_RULES } from './constants/csp'
+import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
-import './utils/justice-sso'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -75,6 +75,8 @@ export default class App extends AppBase {
     this.routeParam.replicaModels = this.replicaModels
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
+    // (session) - required for cookie signature generation
+    this.koaApp.keys = ['newest secresfsdt key', 'oldsdfsdfsder secdsfsdfsdfret key']
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
@@ -104,6 +106,7 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
+      session(this.koaApp), // start user session
       requestHandler,
       tracingMiddleWare,
       helmet({

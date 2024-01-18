@@ -146,7 +146,7 @@ module.exports = {
   /**
    * SSO URL
    */
-  ssl: {
+  sso: {
     url: process.env.SSO_URL,
   },
 }
