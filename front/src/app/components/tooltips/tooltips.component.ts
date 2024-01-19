@@ -1,9 +1,6 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-} from '@angular/core'
+import { AfterViewInit, Component, ElementRef, Input } from '@angular/core'
+import { AppService } from 'src/app/services/app/app.service'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * Composant de génération des tooltips
@@ -12,9 +9,11 @@ import {
 @Component({
   selector: 'aj-tooltips',
   templateUrl: './tooltips.component.html',
-  styleUrls: ['./tooltips.component.scss']
+  styleUrls: ['./tooltips.component.scss'],
 })
 export class TooltipsComponent implements AfterViewInit {
+  /** ID unique */
+  @Input() id: string = uuidv4()
   /**
    * Titre du tooltips
    */
@@ -46,9 +45,9 @@ export class TooltipsComponent implements AfterViewInit {
 
   /**
    * Constructeur
-   * @param elementRef 
+   * @param elementRef
    */
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef, private appService: AppService) {}
 
   /**
    * A l'initialisation préparation des événements de type click ou mouse pour l'apparition du tooltips
@@ -56,13 +55,19 @@ export class TooltipsComponent implements AfterViewInit {
   ngOnInit() {
     if (this.onClick) {
       this.onClick.addEventListener('click', (e: any) => {
-        this.tooltipsIsVisible = !this.tooltipsIsVisible
+        this.changeVisibility(!this.tooltipsIsVisible)
       })
 
       this.elementRef.nativeElement.addEventListener('mouseleave', (e: any) => {
-        // this.tooltipsIsVisible = false
+        // this.changeVisibility(false)
       })
     }
+
+    this.appService.tooltipsOpenId.subscribe((id) => {
+      if (id && id !== this.id) {
+        this.changeVisibility(false)
+      }
+    })
   }
 
   /**
@@ -79,7 +84,7 @@ export class TooltipsComponent implements AfterViewInit {
 
         this.timeoutBeforeShow = setTimeout(() => {
           this.timeoutBeforeShow = null
-          this.tooltipsIsVisible = true
+          this.changeVisibility(true)
         }, 1500)
       })
       parent?.addEventListener('click', (e: any) => {
@@ -94,11 +99,22 @@ export class TooltipsComponent implements AfterViewInit {
           this.timeoutBeforeShow = null
         }
 
-        this.tooltipsIsVisible = false
+        this.changeVisibility(false)
       })
       this.elementRef.nativeElement?.addEventListener('click', (e: any) => {
         e.stopPropagation()
       })
+    }
+  }
+
+  /**Change visibility of tooltips */
+  changeVisibility(status: boolean) {
+    this.tooltipsIsVisible = status
+
+    if (!status && this.appService.tooltipsOpenId.getValue() === this.id) {
+      this.appService.tooltipsOpenId.next(null)
+    } else if (status) {
+      this.appService.tooltipsOpenId.next(this.id)
     }
   }
 }

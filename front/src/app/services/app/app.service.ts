@@ -13,15 +13,20 @@ export class AppService {
   /**
    * Mettre à mettre en alert
    */
-  alert: BehaviorSubject<AlertInterface | null> = new BehaviorSubject<AlertInterface | null>(
-    null
-  )
+  alert: BehaviorSubject<AlertInterface | null> =
+    new BehaviorSubject<AlertInterface | null>(null)
   /**
    * Cache previous URL
    */
   previousUrl: string | null = null
   /**
-   * Cache current URL 
+   * Cache current URL
    */
   currentUrl: string | null = null
+  /**
+   * Mettre à mettre en alert
+   */
+  tooltipsOpenId: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null)
 }
