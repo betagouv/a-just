@@ -452,6 +452,14 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     }
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: Event) {
+    if (!this.chooseScreen) {
+      this.chooseScreen = true
+      this.resetParams()
+    }
+  }
+
   /**
    * Initialisation du composant
    */
@@ -1884,6 +1892,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Log du lancement d'une simulation
    */
   async logOpenWhiteSimulator() {
+    history.pushState({}, 'simulateur', '/simulateur')
     await this.serverService
       .post('simulator/log-white-simulation')
       .then((r) => {
@@ -1895,6 +1904,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Log du lancement d'une simulation à blanc
    */
   async logOpenSimulator() {
+    history.pushState({}, 'simulateur', '/simulateur')
     await this.serverService
       .post('simulator/log-simulation')
       .then((r) => {
