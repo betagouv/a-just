@@ -357,7 +357,6 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
-      console.log(fonctionName)
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           onglet2.push({
@@ -392,13 +391,22 @@ export const getViewModel = async (params) => {
   const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map(x => x.tprox)
   const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map(x => x.tprox)
   const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map(x => x.tprox)
-  const uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
+
+  let uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
+  const uniqueCity = uniqueJur.map(x => { const [first, rest] = x.split(/\s+(.*)/); return rest })
+  const isolatedCPH = cphlist.filter(x => {
+    const [first, rest] = x.split(/\s+(.*)/);
+    if (rest.length && uniqueCity.includes(rest))
+      return false
+    else return true
+  })
+  uniqueJur = [...uniqueJur, ...isolatedCPH]
   const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
   const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
   const agregat = params.onglet2.excelRef.filter((x) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
 
   return {
-    tgilist, tpxlist, cphlist, uniqueJur, uniqueJurIndex, tProximite,
+    tgilist, tpxlist, cphlist, uniqueJur, uniqueJurIndex, tProximite, isolatedCPH,
     agregat,
     referentiel: params.referentiels.map((x) => {
       return {
