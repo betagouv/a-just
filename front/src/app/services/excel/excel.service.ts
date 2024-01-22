@@ -177,7 +177,7 @@ export class ExcelService extends MainClass {
    * @returns 
    */
   async getReport(report: any, viewModel: any) {
-    const tpxlistExcel = ['"' + await viewModel.tpxlist.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+    const tpxlistExcel = ['"' + await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
 
     report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
 
@@ -185,6 +185,7 @@ export class ExcelService extends MainClass {
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
     viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
     viewModel.cphlist.map((value: any, index: any) => { report.worksheets[5].getCell('H' + (+index + 1)).value = value })
+    viewModel.isolatedCPH.map((value: any, index: any) => { report.worksheets[5].getCell('J' + (+index + 1)).value = value })
 
 
     // DDG TJ
