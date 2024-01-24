@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
 import { AuthService } from 'src/app/services/auth/auth.service'
+import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
 
 /**
@@ -18,7 +19,10 @@ export class LoginPage {
    * Error connection message on login
    */
   errorMessage: string | null = null
-
+  /**
+   * Can user SSO
+   */
+  canUseSSO: boolean = false
   /**
    * Formulaire
    */
@@ -39,7 +43,8 @@ export class LoginPage {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private title: Title
+    private title: Title,
+    private ssoService: SSOService,
   ) {
     this.title.setTitle('Se connecter | A-Just')
   }
@@ -48,6 +53,8 @@ export class LoginPage {
    * Vérificiation si l'utilisateur est connecté
    */
   ngOnInit() {
+    this.ssoService.canUseSSO().then(d => this.canUseSSO = d)
+
     this.userService.me().then((data) => {
       if (data) {
         this.router.navigate([this.userService.getUserPageUrl(data)])
@@ -71,5 +78,13 @@ export class LoginPage {
       .catch((err) => {
         this.errorMessage = err
       })
+  }
+
+  onUseSSO() {
+    if(!this.canUseSSO) {
+      alert('Vous devez être dans l\'environement Justice pour utiliser page blanche !')
+    }
+
+    window.location.href = this.ssoService.getSSOLogin()
   }
 }
