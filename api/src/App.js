@@ -121,8 +121,11 @@ export default class App extends AppBase {
               'stonly.com',
               '*.stonly.com',
               'https://stats.beta-gouv.cloud-ed.fr',
+              'https://*.hotjar.com',
+              'https://*.hotjar.io',
+              'wss://*.hotjar.com',
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
             'img-src': [
               "'self'",
               'data:',
@@ -216,4 +219,3 @@ export default class App extends AppBase {
     process.exit()
   }
 }
-
