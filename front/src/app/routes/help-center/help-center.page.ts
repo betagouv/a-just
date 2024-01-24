@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api'
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component'
-import {
-  CALCULATE_DOWNLOAD_URL,
-  DATA_GITBOOK,
-  DOCUMENTATION_URL,
-  HELP_CENTER_GITBOOK,
-} from 'src/app/constants/documentation'
+import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, HELP_CENTER_GITBOOK } from 'src/app/constants/documentation'
 import { AppService } from 'src/app/services/app/app.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -28,7 +23,7 @@ interface webinaire {
   templateUrl: './help-center.page.html',
   styleUrls: ['./help-center.page.scss'],
 })
-export class HelpCenterPage implements OnInit {
+export class HelpCenterPage implements OnInit, AfterViewInit {
   /**
    * Résultat de la recherche GitBook
    */
@@ -183,6 +178,15 @@ export class HelpCenterPage implements OnInit {
 
   ngOnInit() {
     this.loadWebinaires()
+  }
+  ngAfterViewInit(): void {
+    window.addEventListener('click', this.onClick.bind(this))
+  }
+
+  onClick(e: any) {
+    if (document.getElementById('help-center')?.contains(e.target)) {
+      this.popinCall = false;
+    }
   }
 
   async onSearchBy() {

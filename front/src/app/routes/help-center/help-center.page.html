@@ -1,5 +1,5 @@
-<aj-wrapper title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
-    [ngClass]="{'help-center':openSuggestionPanel===true}">
+<aj-wrapper  id='help-center' title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
+    [ngClass]="{'help-center':openSuggestionPanel===true}" (click)="loseFocus()">
 
     <ng-container *ngIf="openSuggestionPanel===false">
         <div class="toolbar">
