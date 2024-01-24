@@ -133,6 +133,7 @@ export default class App extends AppBase {
               'https://www.ionos.fr',
               'https://img.freepik.com',
               'https://image.noelshack.com',
+              'https://i.goopics.net/'
             ],
             'script-src': [
               "'report-sample' 'self'",
