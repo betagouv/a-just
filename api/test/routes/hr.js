@@ -67,16 +67,15 @@ export const onGetBackupListHrApi = async ({ userToken }) => {
     })
 }
 
-export const onFilterListHRApi = async ({ userToken, backupId, contentieuxIds, date = new Date() }) => {
+export const onFilterListHRApi = async ({ userToken, backupId, contentieuxIds, categoriesIds, date = new Date() }) => {
   return await instanceAxios
     .post(
       'human-resources/filter-list',
       {
         backupId,
-        categoriesIds: [1, 2, 3],
+        categoriesIds,
         contentieuxIds,
         date,
-        extractor: false,
       },
       {
         headers: {

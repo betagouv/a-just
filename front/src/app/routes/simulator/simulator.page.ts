@@ -75,7 +75,9 @@ const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnInit, IDeactivateComponent {
+export class SimulatorPage
+  extends MainClass
+  implements OnInit, IDeactivateComponent {
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -187,23 +189,35 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   /**
    * Actions de l'utilisateur
    */
-  userAction: { isLeaving: boolean, isReseting: boolean, isResetingParams: boolean, isComingBack: boolean, isClosingTab: boolean } = {
-    isLeaving: false, // L'utilisateur change d'onglet
-    isReseting: false, // L'utilisateur réinitialise la simulation
-    isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté 
-    isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
-    isClosingTab: false, // L'utilisateur ferme la fenêtre
-  }
+  userAction: {
+    isLeaving: boolean
+    isReseting: boolean
+    isResetingParams: boolean
+    isComingBack: boolean
+    isClosingTab: boolean
+  } = {
+      isLeaving: false, // L'utilisateur change d'onglet
+      isReseting: false, // L'utilisateur réinitialise la simulation
+      isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté
+      isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
+      isClosingTab: false, // L'utilisateur ferme la fenêtre
+    }
   /**
    * Liste des actions possibles
    */
-  action: { reinit: string, reinitAll: string, return: string, closeTab: string, leave: string } = {
-    reinit: 'réinitialiser',
-    reinitAll: 'tout réinitialiser',
-    return: 'retour',
-    closeTab: 'close',
-    leave: 'sort',
-  }
+  action: {
+    reinit: string
+    reinitAll: string
+    return: string
+    closeTab: string
+    leave: string
+  } = {
+      reinit: 'réinitialiser',
+      reinitAll: 'tout réinitialiser',
+      return: 'retour',
+      closeTab: 'close',
+      leave: 'sort',
+    }
 
   /**
    * Nom de la prochaine route lors d'un changement de page
@@ -212,9 +226,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   forceDeactivate: boolean = false
 
-  /** 
+  /**
    * Listes des paramètres de la simulation à réinitialiser
-  */
+   */
   valuesToReinit: any = null
 
   /**
@@ -240,19 +254,21 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     closeTab: [
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
-    ]
-  };
+    ],
+  }
 
   /**
    * Option à utiliser pour les bouttons de la popup d'enregistrement, selon l'action de l'utilisateur
    */
-  popupActionToUse: ({ id: string; content: string; fill?: undefined; } | { id: string; content: string; fill: boolean; })[] = [
-    { id: '', content: '' },
-    { id: '', content: '', fill: true }
-  ]
+  popupActionToUse: (
+    | { id: string; content: string; fill?: undefined }
+    | { id: string; content: string; fill: boolean }
+  )[] = [
+      { id: '', content: '' },
+      { id: '', content: '', fill: true },
+    ]
 
   printPopup: boolean = false
-
 
   /**
    * Paramètres de simulation
@@ -335,8 +351,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    */
   canViewContractuel: boolean = false
   /**
-     * Commentaires pour PDF
-     */
+   * Commentaires pour PDF
+   */
   commentaire: String = ''
   /**
    * Activation du simulator à blanc
@@ -374,15 +390,19 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
         this.disabled = disabled
-      }))
+      })
+    )
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
-        this.hrBackup = this.hrBackups.find((b) => b.id === this.humanResourceService.backupId.getValue())
+        this.hrBackup = this.hrBackups.find(
+          (b) => b.id === this.humanResourceService.backupId.getValue()
+        )
         this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
           .toJSON()
           .slice(0, 10)}`
-      }))
+      })
+    )
 
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
@@ -441,6 +461,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
+
   /**
    * Détection de la fermeture de la fenêtre
    */
@@ -451,6 +472,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       event.preventDefault()
     }
   }
+
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event: Event) {
@@ -467,7 +489,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
-    this.route.data.subscribe((data) => console.log("route:", data))
+    this.route.data.subscribe((data) => console.log('route:', data))
     const findCategory =
       this.humanResourceService.categories
         .getValue()
@@ -477,7 +499,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         ) || null
 
     this.simulatorService.selectedCategory.next(findCategory)
-
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -507,7 +528,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     )
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
-
         if (d !== null) {
           console.log('Situation simu : ', d)
 
@@ -545,7 +565,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       })
     )
 
-
     if (this.contentieuId)
       this.simulatorService.getSituation([this.contentieuId])
 
@@ -556,7 +575,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Affichage de la situation de début
    */
   displayBeginSituation() {
-    return this.simulatorService.contentieuOrSubContentieuId.getValue()?.length && this.simulatorService.selectedFonctionsIds.getValue()?.length
+    return (
+      this.simulatorService.contentieuOrSubContentieuId.getValue()?.length &&
+      this.simulatorService.selectedFonctionsIds.getValue()?.length
+    )
   }
   /**
    * Formatage du référentiel
@@ -594,7 +616,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         ])
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
-
       } else {
         alert(
           "Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur."
@@ -609,9 +630,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
-
-      }
-      else {
+      } else {
         if (event.length === tmpRefLength?.childrens?.length)
           this.simulatorService.contentieuOrSubContentieuId.next([
             this.contentieuId as number,
@@ -620,7 +639,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
           this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
-
       }
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
@@ -641,7 +659,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     } else if (type === 'dateStop') {
       this.disabled = 'disabled-date'
       this.simulatorService.disabled.next(this.disabled)
-
 
       this.dateStop = new Date(event)
       if (
@@ -668,8 +685,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.dateStart = new Date(event)
       this.startRealValue = findRealValue(this.dateStart)
       this.simulatorService.dateStart.next(this.dateStart)
-    }
-    else if (type === 'dateStop') {
+    } else if (type === 'dateStop') {
       this.disabled = 'disabled-date'
       this.simulatorService.disabled.next(this.disabled)
 
@@ -772,7 +788,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         ? this.decisionTreeMag
         : this.decisionTreeFon
 
-
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
 
     if (this.paramsToAjust.param1.input === 0) {
@@ -861,7 +876,18 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       // if param comming from input type %
     } else if (this.valueToAjust.percentage !== '') {
-      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && this.valueToAjust.percentage === null) {
+      if (
+        [
+          'totalIn',
+          'totalOut',
+          'realCoverage',
+          'magRealTimePerCase',
+          'etpMag',
+          'etpFon',
+          'etpCont',
+        ].includes(inputField.id) &&
+        this.valueToAjust.percentage === null
+      ) {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -898,7 +924,18 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       }
       //else (no value filled in popup)
     } else {
-      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase', 'etpMag', 'etpFon', 'etpCont'].includes(inputField.id) && volumeInput === '0') {
+      if (
+        [
+          'totalIn',
+          'totalOut',
+          'realCoverage',
+          'magRealTimePerCase',
+          'etpMag',
+          'etpFon',
+          'etpCont',
+        ].includes(inputField.id) &&
+        volumeInput === '0'
+      ) {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
       }
@@ -957,13 +994,17 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     // if result
     if (result > -1) {
       // affect the value to the editable input
-      if (inputField.id === 'magRealTimePerCase' && !Number.isNaN(this.valueToAjust.value)) {
-        inputField.value = decimalToStringDate(Number(this.valueToAjust.value), ':')
-      }
-      else if (inputField.id === 'magRealTimePerCase' && result) {
+      if (
+        inputField.id === 'magRealTimePerCase' &&
+        !Number.isNaN(this.valueToAjust.value)
+      ) {
+        inputField.value = decimalToStringDate(
+          Number(this.valueToAjust.value),
+          ':'
+        )
+      } else if (inputField.id === 'magRealTimePerCase' && result) {
         inputField.value = decimalToStringDate(result, ':')
-      }
-      else if (inputField.id === 'realCoverage' && result)
+      } else if (inputField.id === 'realCoverage' && result)
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
         inputField.value = result + ' mois'
@@ -1005,8 +1046,11 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       )
         this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null }
-    }
-    else if (this.buttonSelected.id === 'magRealTimePerCase' && event.percentage !== '') this.valueToAjust = event
+    } else if (
+      this.buttonSelected.id === 'magRealTimePerCase' &&
+      event.percentage !== ''
+    )
+      this.valueToAjust = event
     else this.valueToAjust = event
   }
 
@@ -1143,10 +1187,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       x.value = 'Ajuster'
       x.classList.remove('disable')
     })
-    if (this.valuesToReinit)
-      this.valuesToReinit = null
+    if (this.valuesToReinit) this.valuesToReinit = null
     //this.simulatorService.isValidatedWhiteSimu.next(false)
-
   }
 
   /**
@@ -1275,7 +1317,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.toCalculate = find[0].toCalculate
         //compute ! no popup
         this.computeSimulation(allButton)
-
       }
     } else if (
       this.paramsToAjust.param1.input !== 0 &&
@@ -1295,7 +1336,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         this.computeSimulation(allButton)
       }
     }
-
   }
 
   /**
@@ -1430,7 +1470,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
    * Calcul de la simulation
    */
   computeSimulation(allButton: any) {
-
     const params = {
       beginSituation: this.firstSituationData,
       endSituation: this.projectedSituationData,
@@ -1497,7 +1536,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       ?.label.replace(' ', '_')
     const editableName = document.getElementById('editable-sim-name')
 
-    const filename = `${editableName?.innerText === "" ? 'Simulation' : editableName?.innerText}${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
+    const filename = `${editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
+      }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
       }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
         .toJSON()
         .slice(0, 10)}.pdf`
@@ -1513,17 +1553,13 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       //initButton.style.display = 'none'
       initButton.classList.add('display-none')
 
-
     const backButton = document.getElementById('main-back-menu')
-    if (backButton)
-      backButton.classList.add('display-none')
-
+    if (backButton) backButton.classList.add('display-none')
 
     const editButton = document.getElementById('editable-sim-name')
-    if (editButton && editButton.innerHTML === "")
+    if (editButton && editButton.innerHTML === '')
       editButton.style.display = 'none'
     else if (title) title.classList.add('display-none')
-
 
     const exportButton = document.getElementById('export-button')
     if (exportButton) {
@@ -1531,46 +1567,42 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
     }
 
     const ajWrapper = document.getElementById('simu-wrapper')
-    if (ajWrapper)
-      ajWrapper?.classList.add('full-screen')
+    if (ajWrapper) ajWrapper?.classList.add('full-screen')
 
     const commentAreaCopy = document.getElementById('comment-area-copy')
-    if (commentAreaCopy)
-      commentAreaCopy.style.display = 'block'
+    if (commentAreaCopy) commentAreaCopy.style.display = 'block'
 
     const commentArea = document.getElementById('comment-area')!
-    if (commentArea)
-      commentArea.classList.add('display-none')
+    if (commentArea) commentArea.classList.add('display-none')
 
     this.onPrint = true
 
-    this.wrapper?.exportAsPdf(filename, true, false, null, false/*true*/).then(() => {
-      title?.classList.add('display-none')
+    this.wrapper
+      ?.exportAsPdf(filename, true, false, null, false /*true*/)
+      .then(() => {
+        title?.classList.add('display-none')
 
-      this.onPrint = false
-      ajWrapper?.classList.remove('full-screen')
+        this.onPrint = false
+        ajWrapper?.classList.remove('full-screen')
 
-      if (exportButton)
-        exportButton.classList.remove('display-none')
-      if (initButton)
-        initButton.classList.remove('display-none')
-      if (backButton)
-        backButton.classList.remove('display-none')
+        if (exportButton) exportButton.classList.remove('display-none')
+        if (initButton) initButton.classList.remove('display-none')
+        if (backButton) backButton.classList.remove('display-none')
 
-      if (commentArea) {
-        commentArea.style.display = 'block'
-        commentArea.classList.remove('display-none')
-        commentAreaCopy!.style.display = 'none'
-      }
+        if (commentArea) {
+          commentArea.style.display = 'block'
+          commentArea.classList.remove('display-none')
+          commentAreaCopy!.style.display = 'none'
+        }
 
-      if (editButton) {
-        editButton!.style.display = 'block'
-        editButton!.classList.remove('display-none')
-      }
-    })
+        if (editButton) {
+          editButton!.style.display = 'block'
+          editButton!.classList.remove('display-none')
+        }
+      })
 
     return new Promise((resolve, reject) => {
-      setTimeout(() => resolve("Export done"), 200)
+      setTimeout(() => resolve('Export done'), 200)
     })
   }
 
@@ -1596,7 +1628,6 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             (c: HRCategoryInterface) =>
               c.label.toUpperCase() === this.categorySelected?.toUpperCase()
           ) || null
-
 
       this.simulatorService.selectedCategory.next(findCategory)
       this.loadFunctions()
@@ -1635,8 +1666,8 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   /**
    * Verifie s'il n'y a pas de valeur null dans la simulation
-   * @param obj 
-   * @returns 
+   * @param obj
+   * @returns
    */
   hasNoNullValue(obj: SimulatorInterface | null): boolean {
     if (obj && Object.values(obj).every((o) => o !== null)) return true
@@ -1645,7 +1676,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   /**
    * Indique le texte à renseigner dans le tooltip
-   * @returns 
+   * @returns
    */
   getTooltipText() {
     return (
@@ -1656,18 +1687,25 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   }
 
   /**
-* Troncage valeur numérique
-*/
-  trunc(param: string,
+   * Troncage valeur numérique
+   */
+  trunc(
+    param: string,
     data: SimulatorInterface | SimulationInterface | null,
     initialValue = false,
-    toCompute = false) {
-    return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
+    toCompute = false
+  ) {
+    return (
+      Math.trunc(
+        Number(this.getFieldValue(param, data, initialValue, toCompute)) *
+        100000
+      ) / 100000
+    )
   }
 
   /**
    * Set un commentaire
-   * @param event 
+   * @param event
    */
   setComment(event: any) {
     this.commentaire = event.target.value
@@ -1675,33 +1713,41 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
 
   /**
    * Getter des parametres bloqués lors d'une simulation
-   * @param index 
-   * @returns 
+   * @param index
+   * @returns
    */
   getLockedResultedParams(index: number) {
-    return index === 0 ? this.simulatorService.getLabelTranslation(this.paramsToLock.param1.label) : this.simulatorService.getLabelTranslation(this.paramsToLock.param2.label)
+    return index === 0
+      ? this.simulatorService.getLabelTranslation(
+        this.paramsToLock.param1.label
+      )
+      : this.simulatorService.getLabelTranslation(
+        this.paramsToLock.param2.label
+      )
   }
 
   /**
    * Bloque le champ de texte à 100 characters maximum
-   * @param event 
-   * @returns 
+   * @param event
+   * @returns
    */
   keyPress(event: any) {
     if (event.srcElement.innerHTML.length > 100) return false
     return true
   }
 
-
   /**
    * Prévenir dans le cas d'un ajustement de pourcentage induisant une division par 0 (mention du label NA à la place de la valeur en %)
-   * @param id 
-   * @param projectedValue 
-   * @param ptsUnit 
-   * @returns 
+   * @param id
+   * @param projectedValue
+   * @param ptsUnit
+   * @returns
    */
-  percentageModifiedInputTextStr(id: string,
-    projectedValue: string | number | undefined, ptsUnit = false) {
+  percentageModifiedInputTextStr(
+    id: string,
+    projectedValue: string | number | undefined,
+    ptsUnit = false
+  ) {
     let res = this.percentageModifiedInputText(id, projectedValue)
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
     return res === 'NA' ? 'NA' : res + '%'
@@ -1728,34 +1774,38 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
   onUserActionClick(button: string, paramsToInit?: any) {
     if (this.toDisplaySimulation) {
       this.printPopup = true
-      if (paramsToInit)
-        this.valuesToReinit = paramsToInit
+      if (paramsToInit) this.valuesToReinit = paramsToInit
       switch (button) {
-        case this.action.reinit: {
-          this.popupActionToUse = this.popupAction.reinit
-          this.userAction.isResetingParams = true
-        }
-          break;
-        case this.action.reinitAll: {
-          this.popupActionToUse = this.popupAction.reinit
-          this.userAction.isReseting = true
-        }
-          break;
-        case this.action.return: {
-          this.popupActionToUse = this.popupAction.leaving
-          this.userAction.isComingBack = true
-        }
-          break;
-        case this.action.closeTab: {
-          this.popupActionToUse = this.popupAction.closeTab
-          this.userAction.isClosingTab = true
-        }
-          break;
-        case this.action.leave: {
-          this.popupActionToUse = this.popupAction.leaving
-          this.userAction.isLeaving = true
-        }
-          break;
+        case this.action.reinit:
+          {
+            this.popupActionToUse = this.popupAction.reinit
+            this.userAction.isResetingParams = true
+          }
+          break
+        case this.action.reinitAll:
+          {
+            this.popupActionToUse = this.popupAction.reinit
+            this.userAction.isReseting = true
+          }
+          break
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.leaving
+            this.userAction.isComingBack = true
+          }
+          break
+        case this.action.closeTab:
+          {
+            this.popupActionToUse = this.popupAction.closeTab
+            this.userAction.isClosingTab = true
+          }
+          break
+        case this.action.leave:
+          {
+            this.popupActionToUse = this.popupAction.leaving
+            this.userAction.isLeaving = true
+          }
+          break
       }
     }
     return
@@ -1778,9 +1828,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.onResetUserAction()
             this.resetParams()
             this.forceDeactivate = false
-            this.chooseScreen = true;
+            this.chooseScreen = true
           }
-          break;
+          break
         case 'export':
           {
             this.printPopup = false
@@ -1789,10 +1839,10 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             await this.print().then((res) => {
               this.resetParams()
               this.forceDeactivate = false
-              this.chooseScreen = true;
+              this.chooseScreen = true
             })
           }
-          break;
+          break
       }
     } else if (this.userAction.isReseting) {
       switch (action.id) {
@@ -1802,7 +1852,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.onResetUserAction()
             this.resetParams()
           }
-          break;
+          break
         case 'export':
           {
             this.printPopup = false
@@ -1811,7 +1861,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
               this.resetParams()
             })
           }
-          break;
+          break
       }
     } else if (this.userAction.isResetingParams) {
       switch (action.id) {
@@ -1821,7 +1871,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
             this.onResetUserAction()
             this.initParams(this.valuesToReinit)
           }
-          break;
+          break
         case 'export':
           {
             this.printPopup = false
@@ -1830,63 +1880,62 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
               this.initParams(this.valuesToReinit)
             })
           }
-          break;
+          break
       }
     } else if (this.userAction.isClosingTab) {
       switch (action.id) {
-        case ('cancel'):
+        case 'cancel':
           {
             this.printPopup = false
             this.onResetUserAction()
           }
-          break;
+          break
         case 'export':
           {
             this.printPopup = false
             this.onResetUserAction()
             this.print()
           }
-          break;
+          break
       }
     } else if (this.userAction.isLeaving) {
       switch (action.id) {
-        case ('leave'):
+        case 'leave':
           {
             this.printPopup = false
             //this.forceDeactivate = true;
             this.onResetUserAction()
             this.resetParams()
-            this.forceDeactivate = false;
+            this.forceDeactivate = false
             if (this.nextState) {
               this.router.navigate([this.nextState])
             } else {
               this.onReloadAction = false
-              this.chooseScreen = true;
+              this.chooseScreen = true
             }
           }
-          break;
+          break
         case 'export':
           {
             console.log('Exporting...')
             this.printPopup = false
-            this.forceDeactivate = true;
+            this.forceDeactivate = true
             this.onResetUserAction()
             await this.print().then(() => {
               this.resetParams()
-              this.forceDeactivate = false;
+              this.forceDeactivate = false
               if (this.nextState) {
                 this.router.navigate([this.nextState])
               } else {
                 this.onReloadAction = false
-                this.chooseScreen = true;
+                this.chooseScreen = true
               }
             })
           }
-          break;
+          break
       }
     }
   }
-
 
   /**
    * Log du lancement d'une simulation
@@ -1900,6 +1949,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       })
   }
 
+
   /**
    * Log du lancement d'une simulation à blanc
    */
@@ -1911,6 +1961,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
         return r.data
       })
   }
+
 
   /**
    * Log du lancement d'une simulation
@@ -1934,6 +1985,7 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       })
   }
 
+
   /**
    * Demande de rechargement de la page
    */
@@ -1942,8 +1994,9 @@ export class SimulatorPage extends MainClass implements OnInit, IDeactivateCompo
       this.onUserActionClick(this.action.leave)
       this.onReloadAction = true
     } else {
-      this.chooseScreen = true;
+      this.chooseScreen = true
       this.resetParams()
     }
   }
 }
+

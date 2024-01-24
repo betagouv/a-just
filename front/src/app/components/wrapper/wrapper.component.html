@@ -5,8 +5,7 @@
       <div class="logo white-mode block-marque-white"></div>
 
       <div class="logo dark-mode block-marque-dark"></div>
-      <div class="logo-ajust white-mode logo-white" [title]="'Déconnexion'" (click)="popin=true"></div>
-
+      <div class="logo-ajust white-mode logo-white" [title]="'Déconnexion'" (click)="popin = true"></div>
 
       <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
         <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
@@ -16,8 +15,7 @@
         </div>
       </aj-popup>
 
-
-      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin=true"></div>
+      <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin = true"></div>
     </div>
 
     <div class="juridiction" *ngIf="hrBackups.length">
@@ -34,12 +32,13 @@
 
     <div class="menu-scrollable">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-
-        <ng-container *ngIf="item.label==='Extracteur';else other">
-          <div class="menu-item tools" (click)="openTools=!openTools">
-            <a>Outils</a> <mat-icon class="arrow-list">{{ openTools ? 'expand_less' : 'expand_more' }}</mat-icon>
+        <ng-container *ngIf="item.label === 'Extracteur'; else other">
+          <div class="menu-item tools" (click)="openTools = !openTools">
+            <a>Outils</a>
+            <mat-icon class="arrow-list">{{
+              openTools ? 'expand_less' : 'expand_more'
+              }}</mat-icon>
           </div>
-
         </ng-container>
 
         <ng-template #other>
@@ -52,10 +51,11 @@
       <div *ngIf="openTools" class="sub-tools">
         <p (click)="downloadAsset('nomenclature')">
           La nomenclature
+          <i (click)="
+              $event.stopPropagation(); downloadAsset('nomenclature', true)
+            " class="ri-file-download-line"></i>
         </p>
-        <p (click)="downloadAsset('calculatrice')">
-          La calculatrice
-        </p>
+        <p (click)="downloadAsset('calculatrice')">La calculatrice</p>
         <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
           L'extracteur de données d'effectifs
         </p>
@@ -64,14 +64,12 @@
         </p>
       </div>
 
-
-
       <div class="flex-1"></div>
-      <div class="menu-item" [class.selected]="isSelected({path:'centre-d-aide'})">
+      <div class="menu-item" [class.selected]="isSelected({ path: 'centre-d-aide' })">
         <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
           Aide
         </a>
-        <a [routerLink]="['/contact']" [queryParams]="{backUrl: true}">
+        <a [routerLink]="['/contact']" [queryParams]="{ backUrl: true }">
           <p class="unselectable">Nous contacter</p>
         </a>
       </div>
@@ -127,17 +125,13 @@
       <p>
         <i class="ri-lightbulb-flash-line"></i>
         <span>{{
-          (documentationToShow?.subTitle) ||
-          'Comment ça marche ?'
+          documentationToShow?.subTitle || 'Comment ça marche ?'
           }}</span>
       </p>
     </div>
   </div>
 
-  <iframe [src]="
-      (documentationToShow?.path) || ''
-        | sanitizeResourceUrl
-    "></iframe>
+  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
@@ -150,8 +144,12 @@
 <aj-popup *ngIf="promptComment" [actions]="[
     { id: 'close', content: 'Annuler' },
     { id: 'export', content: 'Exporter sans commentaire', fill: true },
-    { id: 'export-with-comment', content: 'Export avec le commentaire', fill: true }
-  ]" [closeIcon]="true" (onClose)="onActionComment({id: 'close', content: 'Annuler'})"
+    {
+      id: 'export-with-comment',
+      content: 'Export avec le commentaire',
+      fill: true
+    }
+  ]" [closeIcon]="true" (onClose)="onActionComment({ id: 'close', content: 'Annuler' })"
   (selectedAction)="onActionComment($event, editor.value)" title="Export en PDF">
   <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor></aj-text-editor>
 </aj-popup>

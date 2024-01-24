@@ -20,7 +20,7 @@ import { XMLParser } from "fast-xml-parser";
 import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
 
 export default class App {
-  constructor() {}
+  constructor() { }
 
   async start() {
     console.log("--- START ---");
@@ -424,8 +424,7 @@ export default class App {
         value
           .map(
             (l) =>
-              `${key.replace(/[-_]/g, " ")},${l.code_import},${l.periode},${
-                l.entrees
+              `${key.replace(/[-_]/g, " ")},${l.code_import},${l.periode},${l.entrees
               },${l.sorties},${l.stock},\n`
           )
           .join("")
@@ -445,8 +444,8 @@ export default class App {
           stock: null,
           periode: monthValues.length
             ? monthValues[0].periode ||
-              monthValues[0].cod_moi ||
-              monthValues[0].mois
+            monthValues[0].cod_moi ||
+            monthValues[0].mois
             : null,
           code_import: rule["Code nomenclature"],
         };
@@ -678,7 +677,7 @@ export default class App {
           tmp_date = monthValues[0][dateInFile[1]];
         }
 
-        if (tmp_date < now - 1) {
+        if (tmp_date <= now - 1) {
           let formatMonthDataFromRules = null;
           formatMonthDataFromRules = this.formatMonthFromRules(
             monthValues,
@@ -747,8 +746,7 @@ export default class App {
         value
           .map(
             (l) =>
-              `${key.replace(/[-_]/g, " ")},${l.code_import},${l.periode},${
-                l.entrees
+              `${key.replace(/[-_]/g, " ")},${l.code_import},${l.periode},${l.entrees
               },${l.sorties},${l.stock},\n`
           )
           .join("")
