@@ -1,6 +1,7 @@
 import Route from './Route'
 import { Types } from '../utils/types'
 import { loginSSO, logoutSSO, postAssertSSO, sp } from '../utils/justice-sso'
+import config from 'config'
 
 /**
  * Route des SAML2
@@ -72,14 +73,11 @@ export default class RouteSaml extends Route {
    * @param {*} request_body
    */
   @Route.Post({
-    bodyType: Types.object().keys({
-      request_body: Types.any(),
-    }),
+    bodyType: Types.any(),
   })
   async assert (ctx) {
-    const { request_body } = this.body(ctx)
     try {
-      const assert = await postAssertSSO(request_body)
+      const assert = await postAssertSSO(this.body(ctx))
       if (assert) {
         if (!ctx.session.sso) {
           ctx.session.sso = { assert: null }
@@ -91,5 +89,13 @@ export default class RouteSaml extends Route {
     } catch (err) {
       ctx.throw(401, err)
     }
+  }
+
+  /**
+   * Get SSO Url
+   */
+  @Route.Get()
+  async getUrl (ctx) {
+    this.sendOk(ctx, config.sso.url)
   }
 }

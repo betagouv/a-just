@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
+import { Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { ping } from 'src/app/utils/system'
 
 /**
  * Service en lien avec le SSO
@@ -9,37 +10,40 @@ import { ServerService } from '../http-server/server.service';
 })
 export class SSOService {
   /**
-   * URL du serveur SSO
-   */
-  redirectUrl: string = '';
-
-  /**
    * Constructeur
-   * @param serverService 
+   * @param serverService
    */
-  constructor(
-    private serverService: ServerService
-  ) {}
+  constructor(private serverService: ServerService) {}
 
   /**
-   * API vérification si un utilisateur est connecté sans message d'erreur
-   * @returns 
+   * Récupération du serveur SSO justice
+   * @returns
    */
-  serverHaveSSO() {
-    return this.serverService
-      .get('sso/is-ready')
-      .then((data) => {
-        if(data.success) {
-          this.redirectUrl = data.url
-          return true
-        }
-
-        return false
-      });
+  serverGetUrl() {
+    return this.serverService.get('saml/get-url').then((d) => d.data)
   }
 
   /**
-   * API to test client SSO
+   * Test si serveur SSO justice est accesible
    */
-  
+  async canUseSSO() {
+    try {
+      const url = await this.serverGetUrl()
+
+      if (url) {
+        const pingDelay = await ping(url)
+        if (pingDelay) {
+          return true
+        }
+      }
+    } catch (err) {}
+    return false
+  }
+
+  /**
+   * Récuparation de l'url de login SSO coté A-Just
+   */
+  getSSOLogin() {
+    return this.serverService.getUrl('saml/login') 
+  }
 }
