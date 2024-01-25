@@ -15,6 +15,7 @@ import jsPDF from 'jspdf'
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_URL,
+  NOMENCLATURE_DOWNLOAD_URL,
 } from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
@@ -159,10 +160,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * URL de la doc de la calculatrice pour le calcul des ETP
    */
   CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL
-  /**
-   * URL de la nomenclature
-   */
-  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
   /**
    * Menu de gauche
    */
@@ -485,7 +482,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   downloadAsset(type: string, download = false) {
     let url = null
-    if (type === 'nomenclature') url = this.NOMENCLATURE_DOWNLOAD_URL
+    if (type === 'nomenclature') url = NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
 
     if (url) {

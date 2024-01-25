@@ -26,3 +26,7 @@ export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"
  * Lien pour le centre d aide gitbook
  */
 export const HELP_CENTER_GITBOOK = "https://docs.a-just.beta.gouv.fr/centre-daide/"
+/**
+ * URL de la nomenclature
+ */
+export const NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
