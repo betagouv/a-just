@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
 
 /**
  * Composant page activité
@@ -18,12 +19,9 @@ export class PopinEditActivitiesComponent extends MainClass {
 
   /**
    * Constructeur
-   * @param activitiesService
-   * @param humanResourceService
-   * @param referentielService
-   * @param userService
+   * @param appService
    */
-  constructor(
+  constructor(private appService: AppService
   ) {
     super()
   }
