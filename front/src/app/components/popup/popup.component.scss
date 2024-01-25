@@ -49,6 +49,24 @@
     }
   }
 
+  &.no-padding-content {
+    .popup .content {
+      padding: 0;
+    }
+  }
+
+  &.no-title {
+    .popup .title {
+      display: none;
+    }
+  }
+
+  &.border-radius {
+    .popup > div {
+      border-radius: 8px;
+    }
+  }
+
   &.padding-content-16 {
     .popup .content {
       padding: 16px;
