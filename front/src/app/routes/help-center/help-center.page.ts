@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api'
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component'
 import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, HELP_CENTER_GITBOOK } from 'src/app/constants/documentation'
