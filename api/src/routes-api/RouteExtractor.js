@@ -57,7 +57,7 @@ export default class RouteExtractor extends Route {
     const juridictionName = await this.models.HRBackups.findById(backupId)
 
     console.time('extractor-1')
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(true, true)
     console.timeEnd('extractor-1')
 
     console.time('extractor-2')
