@@ -152,7 +152,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       title: 'Gagner du temps',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/test-video-gitbook-pour-webinaire/',
+      url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/',
       title: 'Construire le futur',
     },
   ]
