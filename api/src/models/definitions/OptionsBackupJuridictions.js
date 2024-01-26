@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'OptionsBackupJuridictions'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -40,12 +40,19 @@ export default sequelizeInstance => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'options-backup-juridictions-option_backup_id',
+          fields: ['option_backup_id'],
+        },
+      ],
     }
   )
 
-  Model.associate = function (models) {   
-    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'option_backup_id' }) 
-    Model.hasMany(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'juridiction_id' })  
+  Model.associate = function (models) {
+    Model.hasOne(models.OptionsBackups, { foreignKey: 'id', sourceKey: 'option_backup_id' })
+    Model.hasMany(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'juridiction_id' })
 
     return models
   }

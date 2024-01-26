@@ -109,14 +109,14 @@ export class CalculatriceService {
         unit *
         periodicData[cat][option] /
       basicEtptData[byDayAndCat]
-    )*100
+    )
     }
     if(cat === 'Magistrat' && this.dataCalculatrice.value.selectedTab === 'vacation'){
     return (unit/basicEtptData[nbHoursPerDay]*value * periodicData[cat][option] /
-    basicEtptData[byDayAndCat])*100
+    basicEtptData[byDayAndCat])
     }
     else {
-    return value*periodicData[cat][option]/(periodicData[cat]['jour']*basicEtptData[nbHoursPerDay])*100
+    return value*periodicData[cat][option]/(periodicData[cat]['jour']*basicEtptData[nbHoursPerDay])
     }
   }
 

@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const tableName = 'Logs'
 
-export default sequelizeInstance => {
+export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
     tableName,
     {
@@ -44,10 +44,17 @@ export default sequelizeInstance => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'log-code_id-user_id',
+          fields: ['code_id', 'user_id'],
+        },
+      ],
     }
   )
 
-  Model.associate = function (models) {    
+  Model.associate = function (models) {
     Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
 
     return models

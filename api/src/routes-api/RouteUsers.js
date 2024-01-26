@@ -310,11 +310,23 @@ export default class RouteUsers extends Route {
     accesses: [Access.isLogin],
   })
   async getUserDatas(ctx) {
+    const backups = await this.models.HRBackups.list(ctx.state.user.id)
+    for (let i = 0; i < backups.length; i++ ) {
+      const isJirs = backups[i].jirs
+      const force = true
+      backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(isJirs, force)
+    }
+
+    const isJirs = backups.filter(backup => backup.jirs).length > 0 ? true : false
+    const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
+    const fonctions = await this.models.HRFonctions.getAll()
+    const referentiel = await this.models.ContentieuxReferentiels.getReferentiels(isJirs)
+
     this.sendOk(ctx, {
-      backups: await this.models.HRBackups.list(ctx.state.user.id),
-      categories: getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user),
-      fonctions: await this.models.HRFonctions.getAll(),
-      referentiel: await this.models.ContentieuxReferentiels.getReferentiels(),
+      backups,
+      categories,
+      fonctions,
+      referentiel,
     })
   }
 }

@@ -202,11 +202,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       etp = 0
     }
     this.etp = etp
-
     this.form
       .get('activitiesStartDate')
       ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null)
-    this.form.get('etp')?.setValue(etp * 100)
+    this.form.get('etp')?.setValue(fixDecimal(etp))
     this.form
       .get('categoryId')
       ?.setValue(
@@ -435,7 +434,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     })
 
     const options = {
-      etp: profil.etp / 100,
+      etp: profil.etp,
       category: cat,
       fonction: fonct,
       activities,

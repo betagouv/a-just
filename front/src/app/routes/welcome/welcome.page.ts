@@ -38,7 +38,7 @@ export class WelcomePage implements AfterViewInit {
     } else {
       setTimeout(() => {
         this.loadCalendly()
-      }, 200)
+      }, 100)
     }
   }
 }

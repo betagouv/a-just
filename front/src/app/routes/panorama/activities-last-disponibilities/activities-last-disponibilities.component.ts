@@ -4,7 +4,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { month } from 'src/app/utils/dates'
-
+import { sortBy } from 'lodash'
 interface TagMonthInterface {
   month: Date
   active: boolean
@@ -47,11 +47,12 @@ export class ActivitiesLastDisponibilitiesComponent
 
     for (let i = 0; i < nbMonth; i++) {
       this.months.push({
-        month: new Date(now.getFullYear(), i, 10),
+        month: new Date(now.getFullYear(), now.getMonth() - i, 10),
         active: false,
         current: false,
       })
     }
+    this.months = sortBy(this.months, [(elem) =>  elem.month ])
 
     this.watch(
       this.humanResourceService.hrBackup.subscribe(

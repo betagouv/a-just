@@ -44,6 +44,18 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'news-user-log-user_id-event_type',
+          fields: ['user_id', 'event_type'],
+        },
+        {
+          unique: false,
+          name: 'news-user-log-user_id-event_type-news_id',
+          fields: ['user_id', 'event_type', 'news_id'],
+        },
+      ],
     }
   )
 

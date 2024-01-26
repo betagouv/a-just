@@ -7,7 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AlertComponent } from './components/alert/alert.component'
 import { PopupModule } from './components/popup/popup.module'
 import { PipesModule } from './pipes/pipes.module'
-import { MaterialModule } from './libs/material.module'
 import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
 import { SimulatorModule } from './routes/simulator/simulator.module'
 

@@ -21,6 +21,7 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
+//import { filterReferentielCalculator } from 'src/app/utils/referentiel'
 
 /**
  * Page du calculateur
@@ -282,6 +283,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param list
    */
   formatDatas(list: CalculatorInterface[]) {
+    /*const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentielCalculator(list, backupLabel)*/
+    
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }

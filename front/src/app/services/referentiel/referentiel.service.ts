@@ -30,7 +30,13 @@ export class ReferentielService {
    * Constructor
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {}
+  constructor(private humanResourceService: HumanResourceService) {
+    this.humanResourceService.hrBackup.subscribe(backup => {
+      if (backup && backup.referentiels) {
+        this.formatDatas(backup.referentiels)
+      }
+    })
+  }
 
   /**
    * Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts
