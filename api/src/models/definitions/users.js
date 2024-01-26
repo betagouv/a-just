@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize'
-import { validateEmail } from '../../utils/utils'
 
 const tableName = 'Users'
 
@@ -92,18 +91,6 @@ export default (sequelizeInstance) => {
 
     return models
   }
-
-  Model.addHook('beforeCreate', (user) => {
-    if (validateEmail(user.email) === false) {
-      throw 'Email non valide!'
-    }
-  })
-
-  Model.addHook('beforeUpdate', async (user) => {
-    if (user.email !== undefined && validateEmail(user.email) === false) {
-      throw 'Email non valide!'
-    }
-  })
 
   return Model
 }

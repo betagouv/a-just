@@ -14,6 +14,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
+//import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Composant d'affichage de la liste des ventilations en grilles
@@ -151,6 +152,10 @@ export class PanelActivitiesComponent
     this.referentiel = copyArray(
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     )
+    
+    /*const backupLabel = localStorage.getItem('backupLabel')
+    backupLabel && filterReferentiels(this.referentiel, backupLabel)*/
+
     this.referentiel = this.referentiel.map((ref) => {
       const { percent, totalAffected } = this.getPercentAffected(ref)
       ref.percent = percent

@@ -1,4 +1,6 @@
 import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
+//import { juridictionJIRS } from "../constants/juridiction-jirs"
+//import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 
 /**
  * Conversion d'un nom de référentiel en version simplifiée

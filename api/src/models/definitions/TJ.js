@@ -64,6 +64,18 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
+      indexes: [
+        {
+          unique: false,
+          name: 'tj-label',
+          fields: ['label'],
+        },
+        {
+          unique: false,
+          name: 'tj-parent_id',
+          fields: ['parent_id'],
+        },
+      ],
     }
   )
 

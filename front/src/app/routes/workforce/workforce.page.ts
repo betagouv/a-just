@@ -597,8 +597,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.allPersons = allPersons
 
         this.orderListWithFiltersParams()
-        console.log('this.listFormated', this.listFormated)
         this.isLoading = false
+        console.log('this.listFormated', this.listFormated)
       })
 
     if (this.route.snapshot.fragment) {

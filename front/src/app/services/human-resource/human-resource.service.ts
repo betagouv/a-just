@@ -123,10 +123,11 @@ export class HumanResourceService {
     })
 
     this.backups.subscribe((list) => {
-      if (list.length && !list.find((b) => b.id === this.backupId.getValue())) {
+      let backup = list.find((b) => b.id === this.backupId.getValue())
+      if (list.length && !backup) {
         this.backupId.next(list[0].id)
+        list.find((b) => b.id === this.backupId.getValue())
       }
-
       const bk: BackupInterface | undefined = list.find(
         (b) => b.id === this.backupId.getValue()
       )

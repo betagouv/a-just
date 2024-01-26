@@ -1,5 +1,6 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { Subscription, from } from 'rxjs'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { DATA_GITBOOK } from 'src/app/constants/documentation'
 import {
@@ -15,6 +16,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
+//import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Interface d'un référentiel spécifique à la page
@@ -95,6 +97,18 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Support GitBook
    */
   supportGitBook = `mailto:${this.environment.supportEmail}?subject=[RETOUR DATA] Données d'activité&body=J’ai des interrogations/réactions sur les données d’activité de ma juridiction et n’ai pas trouvé de réponse dans le data-book.%0D %0D Ma question/réaction porte sur :%0D %0D %0D %0D %0D Je souhaite être recontacté : par téléphone/par mail %0D %0D Voici mes coordonnées :`
+  /**
+   * Boolean to need update
+   */
+  needUpdate: boolean = false
+  /**
+   * On focus
+   */
+  isOnFocus = false
+  /**
+   * timeoutOnFocus
+   */
+  timeoutOnFocus: any = {}
 
   /**
    * Constructeur
@@ -107,7 +121,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private userService: UserService,
     private route: ActivatedRoute
   ) {
     super()
@@ -229,8 +242,25 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           },
           nodeUpdated
         )
-        .then(() => this.onLoadMonthActivities())
-    }, 1500)
+        .then(() => (this.needUpdate = true))
+    }, 500)
+  }
+
+  onFocusInput(startTimeout = true) {
+    // save datas
+    if (this.timeoutOnFocus) {
+      clearTimeout(this.timeoutOnFocus)
+      this.timeoutOnFocus = null
+    }
+
+    if (startTimeout) {
+      this.timeoutOnFocus = setTimeout(() => {
+        if (this.needUpdate) {
+          this.needUpdate = false
+          this.onLoadMonthActivities()
+        }
+      }, 200)
+    }
   }
 
   /**
@@ -267,6 +297,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
+      
+        /*const backupLabel = localStorage.getItem('backupLabel')
+        backupLabel && filterReferentiels(referentiels, backupLabel)*/
+        
+
         this.referentiel = referentiels
           .filter(
             (r) =>

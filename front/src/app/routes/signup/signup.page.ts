@@ -150,11 +150,6 @@ export class SignupPage {
       return
     }
 
-    if (!email || !this.validateEmail(email)) {
-      alert("Vous devez saisir une adresse e-mail valide")
-      return
-    }
-
     if (email.includes('@justice.fr') === false && email.includes('.gouv.fr') === false && email.includes('@a-just.fr') === false) {
       alert("Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr")
       return
@@ -181,17 +176,6 @@ export class SignupPage {
     this.signUpStep = 2
 
   }
-
-  /**
-   * Validation du mail type
-   * @param email 
-   * @returns 
-   */
-  validateEmail(email: string) {
-    const res = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    return res.test(String(email).toLowerCase());
-  }
-
 
   /**
    * Retourne la couleur de l'étape 2 (indicateur)

@@ -15,7 +15,7 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
-    let url = ctx.request.url.replace('/admin', '')
+    let url = ctx.request.url.replace('/ap-bo', '')
     const file = `${__dirname}/../front-admin${url}`
 
     if (url && url !== '/' && existsSync(file)) {

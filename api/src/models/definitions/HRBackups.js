@@ -17,6 +17,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
+      jirs: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
