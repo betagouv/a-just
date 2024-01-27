@@ -125,6 +125,9 @@ export default class RouteExtractor extends Route {
       tproxs = [{ id: 0, tj: label, tprox: label }]
     }
 
+    if (onglet1 === null || onglet1 === undefined) onglet1 = []
+    if (onglet2 === null || onglet2 === undefined) onglet2 = []
+
     let allJuridiction = (await this.models.TJ.getByTj(label, {}, {})).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox, type: t.type }))
 
     let viewModel = await getViewModel({
