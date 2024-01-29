@@ -103,7 +103,20 @@ export class ExcelService extends MainClass {
       .then(async (data) => {
         this.tabs = data.data
         const viewModel = {
-          ...this.tabs.viewModel, daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
+          ...this.tabs.viewModel,
+          "firstLink": {
+            "label": "Consultez notre documentation en ligne ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs"
+          },
+          "secondLink": {
+            "label": "Pour une présentation de la méthodologie à suivre, consultez la documentation ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes"
+          },
+          "thirdLink": {
+            "label": "Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes"
+          }
+          , daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
             .toLocaleDateString()}`
         }
         fetch('/assets/template4.xlsx')
