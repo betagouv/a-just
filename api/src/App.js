@@ -139,7 +139,7 @@ export default class App extends AppBase {
               'https://i.goopics.net/',
             ],
             'script-src': [
-              "'self'",
+              "'report-sample' 'self'",
               'https://*.hsforms.net',
               '*.beta.gouv.fr',
               '*.a-just.incubateur.net',
