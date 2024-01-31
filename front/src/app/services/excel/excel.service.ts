@@ -102,6 +102,7 @@ export class ExcelService extends MainClass {
       })
       .then(async (data) => {
         this.tabs = data.data
+        console.log(this.tabs)
         const viewModel = {
           ...this.tabs.viewModel,
           "firstLink": {

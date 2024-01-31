@@ -82,6 +82,7 @@ export default class RouteExtractor extends Route {
 
     const absenteismeList = []
 
+    console.time('extractor-6.1')
     const formatedExcelList = flatReferentielsList
       .filter((elem) => {
         if (ABSENTEISME_LABELS.includes(elem.label) === false) return true
@@ -93,7 +94,9 @@ export default class RouteExtractor extends Route {
       .map((x) => {
         return x.childrens !== undefined ? { global: getExcelLabel(x, true), sub: null } : { global: null, sub: getExcelLabel(x, false) }
       })
+    console.timeEnd('extractor-6.1')
 
+    console.time('extractor-6.2')
     const excelRef = [
       { global: null, sub: 'ETPT sur la période hors indisponibilités' },
       { global: null, sub: 'Temps ventilés sur la période' },
@@ -105,6 +108,7 @@ export default class RouteExtractor extends Route {
         return { global: null, sub: getExcelLabel(y, false) }
       }),
     ]
+    console.timeEnd('extractor-6.2')
 
     console.time('extractor-7')
     let onglet2 = await computeExtractDdg(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)

@@ -439,6 +439,7 @@ export const getViewModel = async (params) => {
 export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let data = []
 
+  console.time('extractor-6.0')
   await Promise.all(
     allHuman.map(async (human) => {
       const { currentSituation } = findSituation(human)
@@ -562,6 +563,9 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
           })
     })
   )
+
+  console.timeEnd('extractor-6.0')
+
 
   return data
 }
