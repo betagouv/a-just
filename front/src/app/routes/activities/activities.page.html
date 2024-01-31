@@ -327,4 +327,4 @@
 </ng-template>
 
 
-<aj-popin-edit-activities></aj-popin-edit-activities>
+<aj-popin-edit-activities *ngIf="referentiel && referentiel.length" [referentiel]="referentiel[0]"></aj-popin-edit-activities>

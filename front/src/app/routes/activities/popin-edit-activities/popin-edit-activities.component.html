@@ -50,60 +50,177 @@
     </div>
   </div>
 
+  <div class="contentieux-title" *ngIf="referentiel">
+    <div class="contentieux-title-label">
+      <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
+    </div>
+    <div class="contentieux-title-label-entrees">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalIn,
+            newValue: referentiel.in,
+            type: 'entrees'
+          }
+        "
+      ></ng-container>
+    </div>
+    <div class="contentieux-title-label-sorties">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalOut,
+            newValue: referentiel.out,
+            type: 'sorties'
+          }
+        "
+      ></ng-container>
+    </div>
+    <div class="contentieux-title-label-stock">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalStock,
+            newValue: referentiel.stock,
+            type: 'stock'
+          }
+        "
+      ></ng-container>
+    </div>
+  </div>
+
   <div class="content-popin">
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
-    <p>Salut</p>
+    <div class="contentieux-item" *ngFor="let item of referentiel?.childrens">
+      <div class="contentieux-item-label">
+        <p>{{ item.label }}</p>
+      </div>
+      <div class="contentieux-item-label-entrees">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalIn,
+              newValue: item.in,
+              type: 'entrees'
+            }
+          "
+        ></ng-container>
+      </div>
+      <div class="contentieux-item-label-sorties">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalOut,
+              newValue: item.out,
+              type: 'sorties'
+            }
+          "
+        ></ng-container>
+      </div>
+      <div class="contentieux-item-label-stock">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalStock,
+              newValue: item.stock,
+              type: 'stock'
+            }
+          "
+        ></ng-container>
+      </div>
+    </div>
   </div>
 
   <div class="bottom-popin">Bottom</div>
 </aj-popup>
+
+<ng-template
+  #itemTemplate
+  let-items
+  let-original="original"
+  let-newValue="newValue"
+  let-type="type"
+>
+  <div class="item-template">
+    <div class="item-template-original">
+      <p>{{ original == null ? '-' : original }}</p>
+    </div>
+    <div class="item-template-new-total" *ngIf="items.childrens">
+      <ng-container
+        *ngTemplateOutlet="
+          tooltip;
+          context: {
+            type: type,
+            contentieux: items,
+            value: newValue,
+            level: 3
+          }
+        "
+      >
+      </ng-container>
+      <p>{{ newValue || '-' }}</p>
+    </div>
+    <div class="item-template-new" *ngIf="!items.childrens">
+      <ng-container
+        *ngTemplateOutlet="
+          tooltip;
+          context: {
+            type: type,
+            contentieux: items,
+            value: newValue,
+            level: 4
+          }
+        "
+      >
+      </ng-container>
+      <input
+        type="number"
+        [ngModel]="newValue"
+        placeholder="-"
+        [ngClass]="{ blue: newValue !== null }"
+      />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template
+  #tooltip
+  let-type="type"
+  let-contentieux="contentieux"
+  let-value="value"
+  let-level="level"
+>
+  <i
+    class="{{
+      value !== null &&
+      contentieux &&
+      contentieux.activityUpdated &&
+      contentieux.activityUpdated[type]
+        ? 'ri-lightbulb-flash-fill'
+        : 'ri-lightbulb-flash-line'
+    }} cursor-pointer {{ value !== null ? 'blue' : '' }}"
+    #light
+    (click)="$event.stopPropagation()"
+  ></i>
+  <aj-tooltips
+    [onOver]="false"
+    [onClick]="light"
+    [title]="getTooltipTitle(type, contentieux, value)"
+    [content]="getTooltipBody(type, contentieux, value, level)"
+    [footer]="getTooltipFooter(type, contentieux, value, level)"
+    class="medium"
+    [ngClass]="{ black: value === null, left: type === 'stock' }"
+  >
+  </aj-tooltips>
+</ng-template>
