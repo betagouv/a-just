@@ -93,6 +93,8 @@ $colors: (
 	tagBgSelectedColor: #518fff,
 	cplaceholder: rgb(246, 246, 246),
 	toastrBorderColor: #18753c,
+	activitiesItemTitle: #d5d8ea,
+	activitiesItemLastTitle: #ced0e0,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
