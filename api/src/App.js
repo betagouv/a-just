@@ -166,7 +166,7 @@ export default class App extends AppBase {
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
             'base-uri': ["'self'"],
-            'form-action': ["'self'"],
+            'form-action': ["'self'", '*.hsforms.com'],
             'upgrade-insecure-requests': [],
           },
           //reportOnly: true,
