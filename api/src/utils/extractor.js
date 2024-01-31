@@ -239,10 +239,14 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
 
 export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let onglet2 = []
+  let indexPeopleLog = 0
 
   console.time('extractor-7.1')
   await Promise.all(
     allHuman.map(async (human) => {
+      var t0 = performance.now()
+      indexPeopleLog += 1
+
       const { currentSituation } = findSituation(human)
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
@@ -350,11 +354,10 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
         })
 
         const isGone = dateStop > human.dateEnd
-        if (human.id === 2612)
-          if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
-            let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
-            reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
-          } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
       if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
@@ -379,10 +382,14 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             ['CET < 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
             ['Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)']: absenteisme,
           })
+
+      var t1 = performance.now()
+      console.log("Human " + indexPeopleLog + " : map occurence took " + (t1 - t0) + " milliseconds.")
+
     })
   )
   console.timeEnd('extractor-7.1')
-
+  console.log("Nb of people " + indexPeopleLog)
   return onglet2
 }
 
