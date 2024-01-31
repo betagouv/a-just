@@ -240,7 +240,7 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
 export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let onglet2 = []
 
-  console.time('extractor-5')
+  console.time('extractor-7.1')
   await Promise.all(
     allHuman.map(async (human) => {
       const { currentSituation } = findSituation(human)
@@ -381,6 +381,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           })
     })
   )
+  console.timeEnd('extractor-7.1')
 
   return onglet2
 }
