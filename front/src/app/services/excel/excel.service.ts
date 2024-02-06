@@ -55,6 +55,10 @@ export class ExcelService extends MainClass {
    */
   selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>('')
   /**
+ * En cours de chargement
+ */
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
    * Données d'extraction
    */
   data: Array<any> = []
@@ -135,6 +139,7 @@ export class ExcelService extends MainClass {
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
             const filename = this.getFileName()
+            this.isLoading.next(false)
             return FileSaver.saveAs(
               new Blob([buffer]),
               filename + EXCEL_EXTENSION
