@@ -1,6 +1,19 @@
-import { Component, Input, OnChanges } from '@angular/core'
-import { DATA_GITBOOK, NOMENCLATURE_DOWNLOAD_URL } from 'src/app/constants/documentation'
-import { ContentieuReferentielActivitiesInterface, ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core'
+import {
+  DATA_GITBOOK,
+  NOMENCLATURE_DOWNLOAD_URL,
+} from 'src/app/constants/documentation'
+import {
+  ContentieuReferentielActivitiesInterface,
+  ContentieuReferentielInterface,
+} from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
@@ -13,11 +26,22 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
   templateUrl: './popin-edit-activities.component.html',
   styleUrls: ['./popin-edit-activities.component.scss'],
 })
-export class PopinEditActivitiesComponent extends MainClass implements OnChanges {
+export class PopinEditActivitiesComponent
+  extends MainClass
+  implements OnChanges
+{
   /**
    * Référentiel
    */
   @Input() referentiel: ContentieuReferentielInterface | null = null
+  /**
+   * On Close event
+   */
+  @Output() onClose: EventEmitter<boolean> = new EventEmitter()
+  /**
+   * Current updates
+   */
+  updates: any = {}
   /**
    * Databook url
    */
@@ -26,17 +50,36 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
    * Nomeclature url
    */
   NOMENCLATURE_DOWNLOAD_URL = NOMENCLATURE_DOWNLOAD_URL
+  /**
+   * Total in, out, stock
+   */
+  total: {
+    in: null | number | undefined
+    out: null | number | undefined
+    stock: null | number | undefined
+  } = {
+    in: null,
+    out: null,
+    stock: null,
+  }
 
   /**
    * Constructeur
    * @param appService
    */
-  constructor(private appService: AppService, private referentielService: ReferentielService) {
+  constructor(
+    private appService: AppService,
+    private referentielService: ReferentielService
+  ) {
     super()
   }
 
-  ngOnChanges() {
-    console.log('new ref', this.referentiel)
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('new ref', this.referentiel, changes)
+
+    if (changes['referentiel']) {
+      this.updateTotal()
+    }
   }
 
   /**
@@ -204,5 +247,146 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     }
 
     return ''
+  }
+
+  /**
+   * Control to change
+   */
+  controlBeforeChange() {
+    return new Promise((resolve) => {
+      if (Object.values(this.updates).length === 0) {
+        resolve(true)
+      } else {
+        this.appService.alert.next({
+          title: 'Modifications non enregistrées',
+          text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
+          okText: 'Annuler les modifications',
+          callback: () => {
+            resolve(true)
+          },
+        })
+      }
+    })
+  }
+
+  /**
+   * Emit to close the popin
+   */
+  close() {
+    this.controlBeforeChange().then(() => {
+      this.onClose.emit(true)
+    })
+  }
+
+  /**
+   * Mise à jour des totaux
+   */
+  updateTotal() {
+    this.total.in = this.referentiel?.in
+    this.total.out = this.referentiel?.out
+    this.total.stock = this.referentiel?.stock
+
+    const updates = Object.values(this.updates)
+    if (updates.length) {
+      this.total.in = this.referentiel?.in || this.referentiel?.originalIn
+      this.total.out = this.referentiel?.out || this.referentiel?.originalOut
+      this.total.stock =
+        this.referentiel?.stock || this.referentiel?.originalStock
+
+      updates.map((value: any) => {
+        let nodeValue = null
+        switch (value.node) {
+          case 'entrees':
+            nodeValue = value.contentieux.in || value.contentieux.originalIn
+            break
+          case 'sorties':
+            nodeValue = value.contentieux.out || value.contentieux.originalOut
+            break
+          case 'stock':
+            nodeValue =
+              value.contentieux.stock || value.contentieux.originalStock
+            break
+        }
+
+        if (nodeValue !== value.value) {
+          const delta = (value.value || 0) - (nodeValue || 0)
+
+          switch (value.node) {
+            case 'entrees':
+              {
+                this.total.in = (this.total.in || 0) + delta
+              }
+              break
+            case 'sorties':
+              {
+                this.total.out = (this.total.out || 0) + delta
+              }
+              break
+            case 'stock':
+              {
+                this.total.stock = (this.total.stock || 0) + delta
+              }
+              break
+          }
+        }
+      })
+
+      const deltaEntrees = (this.referentiel?.in || 0) + (this.total.in || 0)
+      const deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
+
+      if (deltaEntrees || deltaSorties) {
+        this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
+      }
+
+      if (
+        this.total.in !== null &&
+        this.total.in !== undefined &&
+        this.total.in < 0
+      ) {
+        this.total.in = 0
+      }
+
+      if (
+        this.total.out !== null &&
+        this.total.out !== undefined &&
+        this.total.out < 0
+      ) {
+        this.total.out = 0
+      }
+
+      if (
+        this.total.stock !== null &&
+        this.total.stock !== undefined &&
+        this.total.stock < 0
+      ) {
+        this.total.stock = 0
+      }
+    }
+  }
+
+  /**
+   * onUpdateValue event
+   */
+  onUpdateValue(
+    newValue: string,
+    nodeName: string,
+    contentieux: ContentieuReferentielInterface
+  ) {
+    let value: null | number = null
+    if (newValue !== '') {
+      value = +newValue
+    }
+
+    if (newValue === null) {
+      delete this.updates[`${contentieux.id}-${nodeName}`]
+    } else {
+      this.updates[`${contentieux.id}-${nodeName}`] = {
+        value,
+        node: nodeName,
+        contentieux,
+      }
+    }
+
+    this.updateTotal()
   }
 }

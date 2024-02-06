@@ -7,7 +7,10 @@ import {
   ActivityInterface,
   NodeActivityUpdatedInterface,
 } from 'src/app/interfaces/activity'
-import { ContentieuReferentielActivitiesInterface, ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import {
+  ContentieuReferentielActivitiesInterface,
+  ContentieuReferentielInterface,
+} from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
@@ -88,6 +91,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * timeoutOnFocus
    */
   timeoutOnFocus: any = {}
+  /**
+   * Contentieux to update
+   */
+  contentieuxToUpdate: ContentieuReferentielActivitiesInterface | null = null
 
   /**
    * Constructeur
@@ -254,14 +261,16 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Chargement de la liste des activités d'un mois sélectionné
    */
   onLoadMonthActivities() {
-    if(this.humanResourceService.contentieuxReferentiel.getValue().length === 0) {
+    if (
+      this.humanResourceService.contentieuxReferentiel.getValue().length === 0
+    ) {
       // wait datas
       setTimeout(() => {
         this.onLoadMonthActivities()
       }, 300)
-      return 
+      return
     }
-    
+
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
@@ -283,10 +292,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
-      
+
         /*const backupLabel = localStorage.getItem('backupLabel')
         backupLabel && filterReferentiels(referentiels, backupLabel)*/
-        
+
         this.referentiel = referentiels
           .filter(
             (r) =>
@@ -394,6 +403,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               showActivityGroup,
             }
           })
+
+          if(this.referentiel && this.referentiel.length) {
+            this.contentieuxToUpdate = this.referentiel[3];
+          }
 
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
@@ -587,5 +600,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         })
         break
     }
+  }
+
+  /**
+   * On close contentieux updated
+   */
+  onCloseEditedPopin() {
+    this.contentieuxToUpdate = null
   }
 }

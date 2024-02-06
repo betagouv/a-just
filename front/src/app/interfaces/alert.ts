@@ -18,4 +18,8 @@ export interface AlertInterface {
 	 * Callback on click to ok
 	 */
 	callback?: Function;
+	/**
+	 * Texte du bouton de fermeture
+	 */
+	okText?: string;
 }

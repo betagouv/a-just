@@ -29,6 +29,10 @@ export class AlertComponent implements OnChanges {
    */
   @Input() delay: number | undefined
   /**
+   * Texte du bouton ok
+   */
+  @Input() okText: string | undefined = ''
+  /**
    * Event, clique sur le bouton pour fermer l'alert
    */
   @Output() onClose: EventEmitter<boolean> = new EventEmitter()
