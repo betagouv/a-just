@@ -29,6 +29,7 @@
     i {
       font-size: 24px;
       color: fColor(cblack);
+      cursor: pointer;
     }
   }
 }
@@ -235,6 +236,20 @@
         -webkit-appearance: none;
         margin: 0;
       }
+    }
+  }
+}
+
+.bottom-popin {
+  padding: 24px 16px;
+  border-top: solid 1px fColor(cgraylightv3);
+  display: flex;
+
+  button {
+    margin-right: 8px;
+
+    &:last-child {
+      margin-right: 0;
     }
   }
 }
