@@ -46,17 +46,21 @@ export class DashboardPage extends MainClass {
   /**
    * Constructor
    */
-  constructor(private userService: UserService){
-  super()
-  this.watch(
-    this.userService.user.subscribe((u) => {
-      this.canViewActivities = userCanViewActivities(u)
-      this.canViewMagistrat = userCanViewMagistrat(u)
-      this.canViewGreffier = userCanViewGreffier(u)
-      this.canViewContractuel = userCanViewContractuel(u)
-      this.canViewVentilateur = userCanViewVentilateur(u)
-    })
-  )
-}
+  constructor(private userService: UserService, private excelService: ExcelService) {
+    super()
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewActivities = userCanViewActivities(u)
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+        this.canViewVentilateur = userCanViewVentilateur(u)
+      })
+    )
+    this.watch(
+      this.excelService.isLoading.subscribe((b) => {
+        this.isLoading = b
+      }))
+  }
 
 }
