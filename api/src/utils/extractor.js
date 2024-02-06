@@ -266,19 +266,22 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 
       let CETTotalEtp = 0
       let nbGlobalDaysCET = 0
+
+
+      let nbCETDays = 0
+      let absLabels = [...ABSENTEISME_LABELS]
+
+      nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
+      nbGlobalDaysCET = nbCETDays
+
+      if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
+
+
       indispoArray = [
         ...(await Promise.all(
           flatReferentielsList.map(async (referentiel) => {
             const situations = human.situations || []
             const indisponibilities = human.indisponibilities || []
-
-            let nbCETDays = 0
-            let absLabels = [...ABSENTEISME_LABELS]
-
-            nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
-            nbGlobalDaysCET = nbCETDays
-
-            if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
 
             if (
               situations.some((s) => {
@@ -384,7 +387,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           })
 
       var t1 = performance.now()
-      console.log("Human " + indexPeopleLog + " : map occurence took " + (t1 - t0) + " milliseconds.")
+      //console.log("Human " + indexPeopleLog + " : map occurence took " + (t1 - t0) + " milliseconds.")
 
     })
   )
