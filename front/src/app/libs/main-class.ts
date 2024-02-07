@@ -261,8 +261,8 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getMonth(date: Date | null | undefined = new Date()): Date {
-    return month(date)
+  public getMonth(date: Date | null | undefined = new Date(), monthAdd: number = 0): Date {
+    return month(date, monthAdd)
   }
 
   /**

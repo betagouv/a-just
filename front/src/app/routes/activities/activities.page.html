@@ -325,3 +325,6 @@
   >
   </aj-tooltips>
 </ng-template>
+
+
+<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
