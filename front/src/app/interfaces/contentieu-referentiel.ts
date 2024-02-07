@@ -4,6 +4,7 @@ export enum ValueQualityEnum {
   ptional = "facultatif",
   good = "good",
   toComplete = "to_complete",
+  toVerify = "to_verify",
 }
 
 /**
@@ -103,9 +104,17 @@ export interface ContentieuReferentielInterface {
    */
   defaultValueFonc?: any
   /**
-   * Niveau de qualité de la donnée
+   * Niveau de qualité de la donnée d'entrées
    */
-  valueQuality?: ValueQualityEnum | null;
+  valueQualityIn?: ValueQualityEnum | null;
+  /**
+   * Niveau de qualité de la donnée de sorties
+   */
+  valueQualityOut?: ValueQualityEnum | null;
+  /**
+   * Niveau de qualité de la donnée de stock
+   */
+  valueQualityStock?: ValueQualityEnum | null;
   /**
    * Url d'aide de la donnée
    */

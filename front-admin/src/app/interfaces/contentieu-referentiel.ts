@@ -2,6 +2,7 @@ export enum ValueQualityEnum {
   ptional = "facultatif",
   good = "good",
   toComplete = "to_complete",
+  toVerify = "to_verify",
 }
 
 export interface ContentieuReferentielInterface {
@@ -20,6 +21,8 @@ export interface ContentieuReferentielInterface {
   averageProcessingTime: number | null;
   averageProcessingTimeFonc?: number | null;
   parent?: ContentieuReferentielInterface;
-  valueQuality?: ValueQualityEnum | null;
+  valueQualityIn?: ValueQualityEnum | null;
+  valueQualityOut?: ValueQualityEnum | null;
+  valueQualityStock?: ValueQualityEnum | null;
   helpUrl?: string | null;
 }

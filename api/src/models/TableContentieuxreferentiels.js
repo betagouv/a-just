@@ -23,7 +23,16 @@ export default (sequelizeInstance, Model) => {
   Model.getReferentiels = async (isJirs = false, force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
       let list = await Model.findAll({
-        attributes: ['id', 'label', 'code_import', 'rank', ['value_quality', 'valueQuality'], ['help_url', 'helpUrl']],
+        attributes: [
+          'id',
+          'label',
+          'code_import',
+          'rank',
+          ['value_quality_in', 'valueQualityIn'],
+          ['value_quality_out', 'valueQualityOut'],
+          ['value_quality_stock', 'valueQualityStock'],
+          ['help_url', 'helpUrl'],
+        ],
         where: {
           parent_id: parentId,
         },
