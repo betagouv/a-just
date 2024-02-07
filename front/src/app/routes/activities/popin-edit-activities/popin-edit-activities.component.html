@@ -2,7 +2,10 @@
   <div class="header-popin">
     <div class="title-popin">
       <p>Visualisation du détail des données d'activité du</p>
-      <h2>{{ referentiel?.label }}</h2>
+      <div>
+        <h2>{{ referentiel?.label }}</h2>
+        <i *ngIf="referentiel && referentiel.helpUrl" class="ri-lightbulb-flash-line cursor-pointer blue" (click)="onShowHelpPanel()"></i>
+      </div>
     </div>
 
     <div class="date-popin">
@@ -150,8 +153,18 @@
   <div class="bottom-popin">
     <button class="small outline gray" (click)="close()">Annuler</button>
     <div class="flex-1"></div>
-    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">Aller au mois précédent</button>
-    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, 1))">Aller au mois suivant</button>
+    <button
+      class="small outline blue"
+      (click)="selectMonth(getMonth(activityMonth, -1))"
+    >
+      Aller au mois précédent
+    </button>
+    <button
+      class="small outline blue"
+      (click)="selectMonth(getMonth(activityMonth, 1))"
+    >
+      Aller au mois suivant
+    </button>
     <button class="small primary" (click)="onSave()">Enregistrer</button>
   </div>
 </aj-popup>
@@ -180,7 +193,7 @@
         "
       >
       </ng-container>
-      <p>{{ newValue || '-' }}</p>
+      <p>{{ newValue || '-' }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container

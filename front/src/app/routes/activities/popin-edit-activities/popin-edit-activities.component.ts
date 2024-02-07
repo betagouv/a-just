@@ -6,6 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core'
+import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -32,6 +33,10 @@ export class PopinEditActivitiesComponent
   extends MainClass
   implements OnChanges
 {
+  /**
+   * Dom du wrapper
+   */
+  @Input() wrapper: WrapperComponent | undefined
   /**
    * Référentiel
    */
@@ -512,5 +517,14 @@ export class PopinEditActivitiesComponent
         }
       })
     })
+  }
+
+  onShowHelpPanel() {
+    if(this.wrapper && this.referentiel && this.referentiel.helpUrl) {
+      this.wrapper?.onForcePanelHelperToShow({
+        title: `Données d'activité ${this.referentielMappingName(this.referentiel.label)}`,
+        path: this.referentiel.helpUrl,
+      })
+    }
   }
 }
