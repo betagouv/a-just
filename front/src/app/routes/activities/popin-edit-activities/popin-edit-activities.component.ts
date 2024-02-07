@@ -276,7 +276,7 @@ export class PopinEditActivitiesComponent
         resolve(true)
       } else {
         this.appService.alert.next({
-          classPopin: 'width-750',
+          classPopin: 'width-600',
           title: 'Modifications non enregistrées',
           text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
           okText: 'Annuler les modifications',
@@ -419,7 +419,7 @@ export class PopinEditActivitiesComponent
   async onSave(force = false) {
     if (!force) {
       this.appService.alert.next({
-        classPopin: 'width-750',
+        classPopin: 'width-600',
         title: 'Impact de vos modifications',
         text: `Les valeurs A-JUSTées que vous allez enregistrer vont se substituer aux données logiciel dans l'écran de synthèse et seront prises en compte comme nouvelle base des calculs.<br/><br/>Vous conserverez, dans l'écran de saisie, les données "logiciels" et les A-JUSTements que vous avez réalisés afin de vous en servir comme donnée de référence si besoin.`,
         okText: 'Annuler les modifications',

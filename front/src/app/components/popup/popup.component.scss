@@ -25,9 +25,9 @@
     max-width: 500px;
   }
 
-  &.width-750 .popup > div {
+  &.width-600 .popup > div {
     width: 90%;
-    max-width: 750px;
+    max-width: 600px;
   }
 
   &.extra-large .popup > div {
@@ -109,7 +109,6 @@
     }
 
     .close {
-      color: fColor(darkModeTitle);
       i {
         color: fColor(darkModeTitle);
       }
@@ -173,10 +172,11 @@
 
   .title {
     font-size: 20px;
-    color: fColor(primary);
+    color: fColor(cblack);
     font-weight: 500;
     display: flex;
     margin: 20px 32px;
+    font-weight: bold;
 
     .close {
       display: inline-flex;
@@ -184,12 +184,12 @@
       justify-content: center;
       text-decoration: none;
       cursor: pointer;
-      color: fColor(primary);
+      color: fColor(cblack);
       font-size: 14px;
 
       i {
-        font-size: 16px;
-        color: fColor(primary);
+        font-size: 24px;
+        color: fColor(cblack);
         margin-left: 8px;
         position: relative;
         top: 1px;
@@ -203,19 +203,13 @@
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    padding: 16px 72px 32px 72px;
+    padding: 16px 32px;
     min-width: 480px;
   }
 
   .actions {
     padding: 32px 32px 32px 72px;
     display: flex;
-    box-shadow: 0 -8px 16px -16px rgba(0, 0, 0, 0.32),
-      0 -8px 8px 0 rgba(0, 0, 0, 0.1);
-
-    &.noShadow {
-      box-shadow: initial !important;
-    }
 
     > button {
       margin-left: 8px;
