@@ -1,0 +1,33 @@
+@import "../../styles/utils.scss";
+
+.item {
+  display: flex;
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: 16px;
+
+  p {
+    flex: 1;
+    margin-right: 32px;
+    font-weight: bold;
+  }
+
+  select {
+    flex: 1;
+    margin-right: 32px;
+  }
+
+  input {
+    flex: 1;
+    margin-right: 32px;
+  }
+}
+
+.list .item {
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  p {
+    font-weight: normal;
+  }
+}

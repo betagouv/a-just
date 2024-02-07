@@ -29,6 +29,14 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      value_quality: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      help_url: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
