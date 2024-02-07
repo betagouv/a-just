@@ -18,6 +18,9 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     label: 'Temps moyens de référentiel',
     path: 'backup-options',
   }, {
+    label: 'Référentiel',
+    path: 'referentiel',
+  }, {
     label: 'Imports',
     path: 'imports',
   }, {
