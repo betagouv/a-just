@@ -130,7 +130,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private route: ActivatedRoute
   ) {
     super()
-
+  
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
@@ -418,6 +418,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
 
+          console.log('REFERENTIEL:', this.referentiel)
+
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
@@ -467,21 +469,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Force l'ouverture du paneau d'aide
    * @param type
    */
-  onShowPanel(type: string) {
-    switch (type) {
-      case 'logiciel':
-        this.wrapper?.onForcePanelHelperToShow({
-          title: "Données d'activité logiciel",
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
-        })
-        break
-      case 'saisie':
-        this.wrapper?.onForcePanelHelperToShow({
-          title: "Données d'activité A-JUSTées",
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
-        })
-        break
-    }
+  onShowPanel({label, url} : {label: string, url: string}) {
+    this.wrapper?.onForcePanelHelperToShow({
+      title: label,
+      path: url,
+    })
   }
 
   /**
@@ -495,7 +487,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  
+
   downloadAsset(type: string, download = false) {
     let url = null
 
@@ -516,5 +508,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   getAcivityPercentColor(value : number) {
     return activityPercentColor(value)
+  }
+
+  getCompletionStatus( item : ContentieuReferentielInterface ) {
+    const quality = {in: item.valueQualityIn, out: item.valueQualityOut, stock: item.valueQualityStock}
+   
+    if (item){
+      if (Object.values(quality).find(value => value === 'facultatif'))
+        return 'Compléter'
+      else if (Object.values(quality).find(value => value === 'to_complete'))
+        return 'A compléter'
+      else if (Object.values(quality).find(value => value === 'to_verify'))
+        return 'A vérifier'
+    }
+    return 'A-JUSTer'
   }
 }
