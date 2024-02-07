@@ -18,4 +18,20 @@ export interface AlertInterface {
 	 * Callback on click to ok
 	 */
 	callback?: Function;
+	/**
+	 * Texte du bouton de fermeture
+	 */
+	okText?: string;
+	/**
+	 * Callback on click to second bt
+	 */
+	callbackSecondary?: Function;
+	/**
+	 * Texte du bouton secondaire
+	 */
+	secondaryText?: string;
+	/**
+	 * Class spécifique à la popin
+	 */
+	classPopin?: string;
 }

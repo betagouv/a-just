@@ -1,0 +1,239 @@
+<aj-popup class="large no-padding-content no-title border-radius">
+  <div class="header-popin">
+    <div class="title-popin">
+      <p>Visualisation du détail des données d'activité du</p>
+      <h2>{{ referentiel?.label }}</h2>
+    </div>
+
+    <div class="date-popin">
+      <aj-date-select
+        title="Voir les données de"
+        [value]="activityMonth"
+        dateType="month"
+        (valueChange)="selectMonth($event)"
+      >
+      </aj-date-select>
+    </div>
+
+    <div class="close-popin">
+      <i class="ri-close-line" (click)="close()"></i>
+    </div>
+  </div>
+
+  <div class="sub-header">
+    <p>Nos ressources :</p>
+    <a [href]="DATA_GITBOOK" target="_blank">Le databook</a>
+    <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">La nomenclature</a>
+  </div>
+
+  <div class="contentieux-header">
+    <div class="contentieux-title-header"><p>Contentieux</p></div>
+    <div class="contentieux-title-header-entrees">
+      <p>Entrées</p>
+      <div>
+        <p><span>Logiciel</span></p>
+        <p><span>A-JUSTées</span></p>
+      </div>
+    </div>
+    <div class="contentieux-title-header-sorties">
+      <p>Sorties</p>
+      <div>
+        <p><span>Logiciel</span></p>
+        <p><span>A-JUSTées</span></p>
+      </div>
+    </div>
+    <div class="contentieux-title-header-stock">
+      <p>Stock</p>
+      <div>
+        <p><span>Logiciel</span></p>
+        <p><span>A-JUSTées</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="contentieux-title" *ngIf="referentiel && hasValuesToShow">
+    <div class="contentieux-title-label">
+      <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
+    </div>
+    <div class="contentieux-title-label-entrees">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalIn,
+            newValue: total.in,
+            type: 'entrees'
+          }
+        "
+      ></ng-container>
+    </div>
+    <div class="contentieux-title-label-sorties">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalOut,
+            newValue: total.out,
+            type: 'sorties'
+          }
+        "
+      ></ng-container>
+    </div>
+    <div class="contentieux-title-label-stock">
+      <ng-container
+        *ngTemplateOutlet="
+          itemTemplate;
+          context: {
+            $implicit: referentiel,
+            original: referentiel.originalStock,
+            newValue: total.stock,
+            type: 'stock'
+          }
+        "
+      ></ng-container>
+    </div>
+  </div>
+
+  <div class="content-popin" *ngIf="hasValuesToShow">
+    <div class="contentieux-item" *ngFor="let item of referentiel?.childrens">
+      <div class="contentieux-item-label">
+        <p>{{ item.label }}</p>
+      </div>
+      <div class="contentieux-item-label-entrees">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalIn,
+              newValue: item.in,
+              type: 'entrees'
+            }
+          "
+        ></ng-container>
+      </div>
+      <div class="contentieux-item-label-sorties">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalOut,
+              newValue: item.out,
+              type: 'sorties'
+            }
+          "
+        ></ng-container>
+      </div>
+      <div class="contentieux-item-label-stock">
+        <ng-container
+          *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item,
+              original: item.originalStock,
+              newValue: item.stock,
+              type: 'stock'
+            }
+          "
+        ></ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-values" *ngIf="!hasValuesToShow">
+    <p>Cet écran sera accessible dès l'import des données logiciel du mois.</p>
+  </div>
+
+  <div class="bottom-popin">
+    <button class="small outline gray" (click)="close()">Annuler</button>
+    <div class="flex-1"></div>
+    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">Aller au mois précédent</button>
+    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, 1))">Aller au mois suivant</button>
+    <button class="small primary" (click)="onSave()">Enregistrer</button>
+  </div>
+</aj-popup>
+
+<ng-template
+  #itemTemplate
+  let-items
+  let-original="original"
+  let-newValue="newValue"
+  let-type="type"
+>
+  <div class="item-template">
+    <div class="item-template-original">
+      <p>{{ original == null ? '-' : original }}</p>
+    </div>
+    <div class="item-template-new-total" *ngIf="items.childrens">
+      <ng-container
+        *ngTemplateOutlet="
+          tooltip;
+          context: {
+            type: type,
+            contentieux: items,
+            value: newValue,
+            level: 3
+          }
+        "
+      >
+      </ng-container>
+      <p>{{ newValue || '-' }}</p>
+    </div>
+    <div class="item-template-new" *ngIf="!items.childrens">
+      <ng-container
+        *ngTemplateOutlet="
+          tooltip;
+          context: {
+            type: type,
+            contentieux: items,
+            value: newValue,
+            level: 4
+          }
+        "
+      >
+      </ng-container>
+      <input
+        #inputElement
+        type="number"
+        [ngModel]="newValue"
+        placeholder="-"
+        [ngClass]="{ blue: newValue !== null }"
+        (keyup)="onUpdateValue(inputElement.value, type, items)"
+      />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template
+  #tooltip
+  let-type="type"
+  let-contentieux="contentieux"
+  let-value="value"
+  let-level="level"
+>
+  <i
+    class="{{
+      value !== null &&
+      contentieux &&
+      contentieux.activityUpdated &&
+      contentieux.activityUpdated[type]
+        ? 'ri-lightbulb-flash-fill'
+        : 'ri-lightbulb-flash-line'
+    }} cursor-pointer {{ value !== null ? 'blue' : '' }}"
+    #light
+    (click)="$event.stopPropagation()"
+  ></i>
+  <aj-tooltips
+    [onOver]="false"
+    [onClick]="light"
+    [title]="getTooltipTitle(type, contentieux, value)"
+    [content]="getTooltipBody(type, contentieux, value, level)"
+    [footer]="getTooltipFooter(type, contentieux, value, level)"
+    class="medium"
+    [ngClass]="{ black: value === null, left: type === 'stock' }"
+  >
+  </aj-tooltips>
+</ng-template>

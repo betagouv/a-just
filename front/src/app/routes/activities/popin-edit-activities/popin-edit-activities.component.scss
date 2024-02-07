@@ -1,0 +1,262 @@
+@import '../../../styles/utils.scss';
+
+.header-popin {
+  display: flex;
+  padding: 13px 0 8px 0;
+
+  .title-popin {
+    flex: 1;
+    margin-left: 24px;
+
+    p {
+      font-size: 12px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0;
+      padding: 0;
+      line-height: 26px;
+    }
+  }
+
+  .close-popin {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: 24px;
+      color: fColor(cblack);
+      cursor: pointer;
+    }
+  }
+}
+
+.sub-header {
+  background-color: fColor(bgSelect);
+  display: flex;
+  align-items: center;
+  padding: 6px 25px;
+
+  > p {
+    font-size: 12px;
+  }
+
+  > a {
+    margin-left: 16px;
+    font-size: 14px;
+    color: fColor(primary);
+  }
+}
+
+.contentieux-header {
+  display: flex;
+  border-bottom: 2px solid fColor(cblack);
+
+  .contentieux-title-header {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    color: fColor(cblack);
+    font-weight: bold;
+  }
+
+  .contentieux-title-header-entrees,
+  .contentieux-title-header-sorties,
+  .contentieux-title-header-stock {
+    width: 178px;
+    border-left: solid 1px fColor(cgraylightv3);
+
+    > p {
+      margin: 11px 16px 8px 16px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    > div {
+      display: flex;
+      margin-bottom: 6px;
+
+      > p {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+
+        span {
+          padding: 2px 8px;
+          border-radius: 12px;
+          background-color: fColor(cgrayDefault);
+        }
+      }
+    }
+  }
+}
+
+.contentieux-title {
+  background-color: fColor(activitiesItemTitle);
+  display: flex;
+  align-items: center;
+  height: 56px;
+
+  .contentieux-title-label {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    color: fColor(cblack);
+    font-weight: bold;
+
+    p {
+      padding: 0;
+      font-size: 14px;
+    }
+  }
+
+  .contentieux-title-label-entrees,
+  .contentieux-title-label-sorties,
+  .contentieux-title-label-stock {
+    width: 178px;
+    align-self: stretch;
+  }
+
+  .item-template .item-template-original {
+    background-color: fColor(activitiesItemLastTitle);
+  }
+
+  .item-template-original p {
+    font-weight: bold;
+  }
+}
+
+.contentieux-item {
+  display: flex;
+  align-items: center;
+  height: 56px;
+
+  .contentieux-item-label {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    color: fColor(cblack);
+
+    p {
+      padding: 0;
+      font-size: 14px;
+    }
+  }
+
+  .contentieux-item-label-entrees,
+  .contentieux-item-label-sorties,
+  .contentieux-item-label-stock {
+    width: 178px;
+    align-self: stretch;
+  }
+}
+
+.content-popin {
+  overflow: auto;
+}
+
+.item-template {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+
+  > div {
+    flex: 1;
+  }
+
+  .item-template-original {
+    background-color: fColor(bgSelect);
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    p {
+      margin-right: 24px;
+      font-size: 14px;
+    }
+  }
+
+  .item-template-new-total {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    > i {
+      position: absolute;
+      right: 7px;
+      top: 20px;
+
+      &.blue {
+        color: fColor(darkModeTitle);
+      }
+    }
+
+    p {
+      text-align: right;
+      width: 100%;
+      padding-right: 28px;
+      font-size: 14px;
+    }
+  }
+
+  .item-template-new {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    > i {
+      position: absolute;
+      right: 7px;
+      top: 20px;
+
+      &.blue {
+        color: fColor(darkModeTitle);
+      }
+    }
+
+    input {
+      margin: 4px;
+      text-align: right;
+      /* Firefox */
+      -moz-appearance: textfield;
+      padding-right: 24px;
+      font-size: 14px;
+
+      /* Chrome, Safari, Edge, Opera */
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.bottom-popin {
+  padding: 24px 16px;
+  border-top: solid 1px fColor(cgraylightv3);
+  display: flex;
+
+  button {
+    margin-right: 8px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.no-values {
+  p {
+    margin: 64px 32px;
+    text-align: center;
+  }
+}

@@ -1,3 +1,11 @@
+import { NodeActivityUpdatedInterface } from "./activity"
+
+export enum ValueQualityEnum {
+  ptional = "facultatif",
+  good = "good",
+  toComplete = "to_complete",
+}
+
 /**
  * Interface du référentiel = contentieux
  */
@@ -94,4 +102,33 @@ export interface ContentieuReferentielInterface {
    * Temps moyen par défaut des greffier
    */
   defaultValueFonc?: any
+  /**
+   * Niveau de qualité de la donnée
+   */
+  valueQuality?: ValueQualityEnum | null;
+  /**
+   * Url d'aide de la donnée
+   */
+  helpUrl?: string | null;
+}
+
+/**
+ * Interface d'un référentiel spécifique à la page
+ */
+export interface ContentieuReferentielActivitiesInterface
+  extends ContentieuReferentielInterface {
+  /**
+   * Contentieux niveau 4
+   */
+  childrens?:
+    | ContentieuReferentielActivitiesInterface[]
+    | ContentieuReferentielInterface[]
+  /**
+   * Log de mise à jour de donnée d'activité
+   */
+  activityUpdated: NodeActivityUpdatedInterface | null
+  /**
+   * Auto focus value
+   */
+  autoFocusInput?: string
 }

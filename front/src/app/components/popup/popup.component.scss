@@ -25,6 +25,11 @@
     max-width: 500px;
   }
 
+  &.width-750 .popup > div {
+    width: 90%;
+    max-width: 750px;
+  }
+
   &.extra-large .popup > div {
     width: 90%;
     height: 90% !important;
@@ -46,6 +51,24 @@
     .popup .content {
       padding-top: 0;
       padding-bottom: 0;
+    }
+  }
+
+  &.no-padding-content {
+    .popup .content {
+      padding: 0;
+    }
+  }
+
+  &.no-title {
+    .popup .title {
+      display: none;
+    }
+  }
+
+  &.border-radius {
+    .popup > div {
+      border-radius: 8px;
     }
   }
 

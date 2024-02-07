@@ -7,7 +7,10 @@ import {
   ActivityInterface,
   NodeActivityUpdatedInterface,
 } from 'src/app/interfaces/activity'
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import {
+  ContentieuReferentielActivitiesInterface,
+  ContentieuReferentielInterface,
+} from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
@@ -17,27 +20,6 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
 //import { filterReferentiels } from 'src/app/utils/referentiel'
-
-/**
- * Interface d'un référentiel spécifique à la page
- */
-interface ContentieuReferentielActivitiesInterface
-  extends ContentieuReferentielInterface {
-  /**
-   * Contentieux niveau 4
-   */
-  childrens?:
-    | ContentieuReferentielActivitiesInterface[]
-    | ContentieuReferentielInterface[]
-  /**
-   * Log de mise à jour de donnée d'activité
-   */
-  activityUpdated: NodeActivityUpdatedInterface | null
-  /**
-   * Auto focus value
-   */
-  autoFocusInput?: string
-}
 
 /**
  * Composant page activité
@@ -109,6 +91,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * timeoutOnFocus
    */
   timeoutOnFocus: any = {}
+  /**
+   * Contentieux to update
+   */
+  contentieuxToUpdate: ContentieuReferentielActivitiesInterface | null = null
 
   /**
    * Constructeur
@@ -275,6 +261,16 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Chargement de la liste des activités d'un mois sélectionné
    */
   onLoadMonthActivities() {
+    if (
+      this.humanResourceService.contentieuxReferentiel.getValue().length === 0
+    ) {
+      // wait datas
+      setTimeout(() => {
+        this.onLoadMonthActivities()
+      }, 300)
+      return
+    }
+
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
@@ -288,7 +284,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         } else {
           this.canEditActivities = true
         }
-        console.log(monthValues.list)
 
         const referentiels = [
           ...this.humanResourceService.contentieuxReferentiel.getValue(),
@@ -297,10 +292,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
-      
+
         /*const backupLabel = localStorage.getItem('backupLabel')
         backupLabel && filterReferentiels(referentiels, backupLabel)*/
-        
 
         this.referentiel = referentiels
           .filter(
@@ -601,6 +595,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
         })
         break
+    }
+  }
+
+  /**
+   * On close contentieux updated
+   */
+  onCloseEditedPopin(reload = false) {
+    this.contentieuxToUpdate = null
+
+    if(reload) {
+      this.onLoadMonthActivities()
     }
   }
 }

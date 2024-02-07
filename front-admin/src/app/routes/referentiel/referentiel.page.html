@@ -1,0 +1,35 @@
+<aj-wrapper title="Référentiel">
+  <div *ngFor="let ref of referentiels">
+    <ng-container
+      *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: ref
+            }
+          "
+    ></ng-container>
+  </div>
+</aj-wrapper>
+
+<ng-template #itemTemplate let-items>
+  <div class="item">
+    <p>({{items.code_import}}) {{items.label}}</p>
+    <select #select (change)="onUpdateElement(items.id, 'valueQuality', select.value)">
+      <option value="" selected>-</option>
+      <option *ngFor="let i of QUALITY_LIST" [selected]="i.key === items.valueQuality" [value]="i.key">{{i.label}}</option>
+    </select>
+    <input placeholder="Url d'aide" [ngModel]="items.helpUrl || ''" (ngModelChange)="onUpdateElement(items.id, 'helpUrl', $event)" />
+  </div>
+  <div class="list" *ngIf="items.childrens">
+    <div *ngFor="let item of items.childrens">
+      <ng-container
+      *ngTemplateOutlet="
+            itemTemplate;
+            context: {
+              $implicit: item
+            }
+          "
+    ></ng-container>
+    </div>
+  </div>
+</ng-template>
