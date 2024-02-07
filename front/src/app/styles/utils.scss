@@ -99,6 +99,12 @@ $colors: (
 	activityBgColor: #ffffff,
 	progressionBarBg: #ededed,
 	dataCompletionTextColor: #0a76f6,
+	dataToCompleteBorder: #f5c137,
+	dataToCompleteBg: #fef5e8,
+	dataNotSettedBorder: #6a6af4,
+	dataNotSettedBg: #f5f5fe,
+	dataNotSettedIsSetBg: #e5e5e5,
+	dataNotSettedIsSetColor: rgba(22, 22, 22, 0.64),
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
