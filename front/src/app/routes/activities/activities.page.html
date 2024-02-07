@@ -109,7 +109,7 @@
                 />
               </div>
             </div>
-            <div class="column-item completion">
+            <div class="column-item completion" (click)="contentieuxToUpdate = ref">
               <!--<div class="completion">-->
                 <p>{{83}}% disponibles</p>
                 <span class='completion-bar'>
@@ -172,7 +172,7 @@
                     />
                   </div>
                 </div>
-                <div class="column-item completion">
+                <div class="column-item completion" (click)="contentieuxToUpdate = ref">
                     <p>{{83}}% disponibles</p>
                     <span class='completion-bar'>
                       <aj-completion-bar [value]=83></aj-completion-bar>
@@ -252,4 +252,4 @@
 </ng-template>
 
 
-<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
+<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
