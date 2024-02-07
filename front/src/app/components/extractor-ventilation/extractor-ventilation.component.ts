@@ -34,7 +34,7 @@ export class ExtractorVentilationComponent extends MainClass {
   /**
    * Categorie selectionée
    */
-  selectedCategorieId: undefined | string = undefined
+  selectedCategorieId: undefined | Array<string> = undefined
   /**
    * Peux voir l'interface magistrat
    */
@@ -64,12 +64,14 @@ export class ExtractorVentilationComponent extends MainClass {
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
-        if (
-          this.canViewMagistrat &&
-          this.canViewGreffier &&
-          this.canViewContractuel
-        )
-          this.categories.push({ id: 1, label: 'tous', value: 'Tous' })
+        /**
+                if (
+                  this.canViewMagistrat &&
+                  this.canViewGreffier &&
+                  this.canViewContractuel
+                )
+                  this.categories.push({ id: 1, label: 'tous', value: 'Tous' })
+                   */
         if (this.canViewMagistrat)
           this.categories.push({ id: 2, label: 'Magistrat', value: 'Siège' })
         if (this.canViewContractuel)
@@ -84,11 +86,13 @@ export class ExtractorVentilationComponent extends MainClass {
    * Export de fichier excel
    */
   export() {
-    this.appService.alert.next({
-      text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-    })
-    this.excelService.isLoading.next(true)
-    this.excelService.exportExcel()
+    if (this.selectedCategorieId?.length) {
+      this.appService.alert.next({
+        text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
+      })
+      this.excelService.isLoading.next(true)
+      this.excelService.exportExcel()
+    }
   }
 
   /**
@@ -113,15 +117,23 @@ export class ExtractorVentilationComponent extends MainClass {
    * @param event évenement click
    */
   updateCategory(event: any) {
-    const category = this.categories.find(
-      (category) => category.id === event[0]
-    )
-    this.selectedCategorieId = category?.label
-    if (this.selectedCategorieId) {
+    console.log(event)
+    const category = new Array()
+    if (event !== null)
+      event.map((x: any) => {
+        category.push(this.categories.find(
+          (category) => category.id === x
+        ))
+      })
+    console.log(category)
+    this.selectedCategorieId = category?.map(x => x.label.toLowerCase())
+
+    console.log(this.selectedCategorieId)
+    this.checkValidity()
+    if (this.selectedCategorieId.length) {
       this.excelService.selectedCategory.next(
-        this.selectedCategorieId.toLowerCase()
+        this.selectedCategorieId
       )
-      this.checkValidity()
     }
   }
 
@@ -132,7 +144,7 @@ export class ExtractorVentilationComponent extends MainClass {
     if (
       this.dateStart !== null &&
       this.dateStop !== null &&
-      this.selectedCategorieId !== undefined
+      this.selectedCategorieId?.length
     )
       this.classSelected = ''
     else this.classSelected = 'disabled'

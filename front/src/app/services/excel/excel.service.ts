@@ -53,7 +53,7 @@ export class ExcelService extends MainClass {
   /**
    * Catégories à extraire
    */
-  selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>('')
+  selectedCategory: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>(new Array())
   /**
  * En cours de chargement
  */
@@ -106,7 +106,6 @@ export class ExcelService extends MainClass {
       })
       .then(async (data) => {
         this.tabs = data.data
-        console.log(this.tabs)
         const viewModel = {
           ...this.tabs.viewModel,
           "firstLink": {
