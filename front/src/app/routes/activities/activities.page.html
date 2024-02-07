@@ -1,6 +1,7 @@
 <aj-wrapper
   #wrapper
   title="Données d'activité"
+  [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation"
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null"
   [actionTemplateBottom]="ressources"
@@ -58,18 +59,20 @@
                 </mat-icon>
 
                 <p>{{ref.label}}</p>
-                <div class="tooltip">
                   <!--<ng-container
                     *ngTemplateOutlet="tooltip; context: { contentieux: ref }"
                   >
                   </ng-container>-->
-                  <i
-                    class="ri-lightbulb-flash-line cursor-pointer blue"
-                    #light
-                    (click)="documentation.title = 'test' "
-                  >
-                  </i>
-                </div>
+                  <ng-template [ngIf]="ref.helpUrl">
+                    <div class="tooltip">
+                      <i
+                        class="ri-lightbulb-flash-line cursor-pointer blue"
+                        #light
+                        (click)="onShowPanel({label :ref.label, url: ref.helpUrl}) ; $event.stopPropagation() "
+                      >
+                      </i>
+                    </div>
+                  </ng-template>
             </div>
             <div class="column-item">
               <div>
@@ -83,7 +86,7 @@
                   [ngModel]="ref.in ? ref.in : ref.originalIn"
                   disabled
                   placeholder="-"
-                  [ngClass]="{blue: ref.in === null}"
+                  [ngClass]="{'data-changed': ref.in !== null}"
                 />
               </div>
             </div>
@@ -94,7 +97,7 @@
                   [ngModel]="ref.out ? ref.out : ref.originalOut"
                   disabled
                   placeholder="-"
-                  [ngClass]="{blue: ref.out !== null}"
+                  [ngClass]="{'data-changed': ref.out !== null}"
                 />
               </div>
             </div>
@@ -105,7 +108,7 @@
                   [ngModel]="ref.stock ? ref.stock : ref.originalStock"
                   disabled
                   placeholder="-"
-                  [ngClass]="{blue: ref.stock !== null}"
+                  [ngClass]="{'data-changed': ref.stock !== null}"
                 />
               </div>
             </div>
@@ -123,61 +126,90 @@
           <div class="group">
             <div>
               <div
-                class="group-item"
                 *ngFor="let itemGroup of (ref.childrens || [])"
               >
-                <div class="label">
-                  <p>{{itemGroup.label}}</p>
-                </div>
-                <div class="column-item">
-                  <div>
+                <div
+                  class="group-item"
+                  [ngClass]="{'grey': (itemGroup.valueQualityIn || itemGroup.valueQualityOut || itemGroup.valueQualityStock ) === 'facultatif'}"  
+                >
+                  <div 
+                    class="label"
+                    [ngClass]="{'grey-txt': (itemGroup.valueQualityIn || itemGroup.valueQualityOut || itemGroup.valueQualityStock ) === 'facultatif' }"  
+                  >
+                    <p>{{itemGroup.label}}</p>
+                      <ng-template [ngIf]="itemGroup.helpUrl">
+                        <div class="tooltip">
+                          <i
+                            class="ri-lightbulb-flash-line cursor-pointer blue"
+                            #light
+                            (click)="onShowPanel({label : ref.label === 'Juges des Enfants' ? 'Juges des Enfants - ' + itemGroup.label : ref.label, url: itemGroup.helpUrl}) ; $event.stopPropagation() "
+                          >
+                          </i>
+                        </div>
+                      </ng-template>
+                  </div>
+                  <div class="column-item">
+                    <div>
+                      <ng-template [ngIf]="itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'" >
+                        <div class="state-optional">
+                          <p>FACULTATIF</p>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div class="column-item">
+                    <div>
+                      <input
+                        type="number"
+                        [ngModel]="itemGroup.in ? itemGroup.in : itemGroup.originalIn"
+                        disabled
+                        placeholder="-"
+                        [ngClass]="{'blue': itemGroup.valueQualityIn === 'to_complete', 'yellow' : itemGroup.valueQualityIn === 'to_verify' }"
+                      />
+                      <ng-template [ngIf]="updatedBy && updatedBy.user">
+                        <aj-tooltips class="medium" title="A-JUSTé"
+                          content="par {{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }} le {{ updatedBy.date | date:'dd' }} {{ getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}">
+                        </aj-tooltips>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div class="column-item">
+                    <div>
+                      <input
+                        type="number"
+                        [ngModel]="itemGroup.out ? itemGroup.out : itemGroup.originalOut"
+                        disabled
+                        placeholder="-"
+                        [ngClass]="{'blue': itemGroup.valueQualityOut === 'to_complete', 'yellow' : itemGroup.valueQualityOut === 'to_verify' }"
+                      />
+                    </div>
+                  </div>
+                  <div class="column-item">
+                    <div>
+                      <input
+                        type="number"
+                        [ngModel]="itemGroup.stock ? itemGroup.stock : itemGroup.originalStock"
+                        disabled
+                        placeholder="-"
+                        [ngClass]="{'blue': itemGroup.valueQualityStock === 'to_complete', 'yellow' : itemGroup.valueQualityStock === 'to_verify' }"
+                      />
+                    </div>
+                  </div>
+                  <div 
+                    class="column-item complete-btn" 
+                    [ngClass]="{
+                      'grey-txt': (getCompletionStatus(itemGroup) === 'Compléter' || getCompletionStatus(itemGroup) === 'A-JUSTer'),
+                      'yellow-txt': getCompletionStatus(itemGroup) === 'A vérifier',
+                      'blue-txt': getCompletionStatus(itemGroup) === 'A compléter'
+                    }"
                     
+                    (click)="contentieuxToUpdate = ref"
+                  >
+                      <p>{{ getCompletionStatus(itemGroup) }}</p>
+                      <mat-icon>
+                        {{ 'chevron_right' }}
+                      </mat-icon>
                   </div>
-                </div>
-                <div class="column-item">
-                  <div>
-                    <input
-                      type="number"
-                      [ngModel]="itemGroup.in ? itemGroup.in : itemGroup.originalIn"
-                      disabled
-                      placeholder="-"
-                      [ngClass]="{blue: itemGroup.in === null}"
-                    />
-                    <!--<ng-template [ngIf]="updatedBy && updatedBy.user">-->
-                      <aj-tooltips class="medium" title="A-JUSTé"
-                        content="par Redwane Zafari le 7 Fev. 2024">
-                      </aj-tooltips>
-                    <!--</ng-template>-->
-                  </div>
-                </div>
-                <div class="column-item">
-                  <div>
-                    <input
-                      type="number"
-                      [ngModel]="itemGroup.out ? itemGroup.out :itemGroup.originalOut"
-                      disabled
-                      placeholder="-"
-                      [ngClass]="{blue: itemGroup.out !== null}"
-                    />
-                  </div>
-                </div>
-                <div class="column-item">
-                  <div>
-                    <input
-                      type="number"
-                      [ngModel]="itemGroup.stock ? itemGroup.stock : itemGroup.originalStock"
-                      disabled
-                      placeholder="-"
-                      [ngClass]="{blue: itemGroup.stock !== null}"
-                    />
-                  </div>
-                </div>
-                <div class="column-item completion" (click)="contentieuxToUpdate = ref">
-                    <p>{{83}}% disponibles</p>
-                    <span class='completion-bar'>
-                      <aj-completion-bar [value]=83></aj-completion-bar>
-                    </span>
-                    <p>{{83 < 100 ?  'il reste des données à compléter' : ''}}</p>
                 </div>
               </div>
             </div>
