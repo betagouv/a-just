@@ -310,6 +310,12 @@
         -webkit-appearance: none;
         margin: 0;
       }
+
+      &.is-not-setted-set {
+        color: fColor(dataToVerifySettedInputColor);
+        border-bottom-color: fColor(dataToVerifySettedInputBorderColor);
+        ;
+      }
     }
   }
 }
