@@ -491,7 +491,9 @@ export class PopinEditActivitiesComponent
 
           if (this.referentiel) {
             const getValuesFromList = (id: number) => {
-              const element = list.list.find((i:any) => i.contentieux.id === id)
+              const element = list.list.find(
+                (i: any) => i.contentieux.id === id
+              )
 
               return {
                 in: element ? element.entrees : null,
@@ -520,11 +522,35 @@ export class PopinEditActivitiesComponent
   }
 
   onShowHelpPanel() {
-    if(this.wrapper && this.referentiel && this.referentiel.helpUrl) {
+    if (this.wrapper && this.referentiel && this.referentiel.helpUrl) {
       this.wrapper?.onForcePanelHelperToShow({
-        title: `Données d'activité ${this.referentielMappingName(this.referentiel.label)}`,
+        title: `Données d'activité ${this.referentielMappingName(
+          this.referentiel.label
+        )}`,
         path: this.referentiel.helpUrl,
       })
     }
+  }
+
+  hasValue(cont: ContentieuReferentielInterface, node: string) {
+    switch (node) {
+      case 'entrees':
+        if (cont.in !== null) {
+          return true
+        }
+        break
+      case 'sorties':
+        if (cont.out !== null) {
+          return true
+        }
+        break
+      case 'stock':
+        if (cont.stock !== null) {
+          return true
+        }
+        break
+    }
+
+    return this.updates[`${cont.id}-${node}`]
   }
 }

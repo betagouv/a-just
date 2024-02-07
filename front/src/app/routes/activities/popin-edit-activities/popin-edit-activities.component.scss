@@ -145,8 +145,10 @@
     background-color: fColor(activitiesItemLastTitle);
   }
 
-  .item-template-original p {
-    font-weight: bold;
+  .item-template-original {
+    p {
+      font-weight: bold;
+    }
   }
 }
 
@@ -195,6 +197,60 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    &.is-not-setted > div {
+      background-color: fColor(dataNotSettedBg);
+      margin: 4px;
+      border: 1px solid fColor(borderProgressBar);
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      border-radius: 4px;
+
+      p {
+        color: fColor(borderProgressBar);
+      }
+    }
+
+    &.is-not-setted-set {
+      background-color: fColor(dataNotSettedIsSetBg);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      p {
+        color: fColor(dataNotSettedIsSetColor);
+      }
+    }
+
+    &.to-confirm > div {
+      background-color: fColor(dataToCompleteBg);
+      margin: 4px;
+      border: 1px solid fColor(dataToCompleteBorder);
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      border-radius: 4px;
+      position: relative;
+
+      &::before {
+        content: "Confirmer";
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        top: calc(100% - 10px);
+        padding: 2px 5px;
+        z-index: 1;
+        background-color: white;
+        border-radius: 4px;
+        font-size: 10px;
+        text-align: center;
+      }
+    }
 
     p {
       margin-right: 24px;
