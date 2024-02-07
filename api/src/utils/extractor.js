@@ -61,7 +61,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
       }
     }
   }
-  return allReferentiels //orderBy(allReferentiels, 'rank')
+  return allReferentiels
 }
 
 /**
@@ -239,14 +239,10 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
 
 export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let onglet2 = []
-  let indexPeopleLog = 0
 
   console.time('extractor-7.1')
   await Promise.all(
     allHuman.map(async (human) => {
-      var t0 = performance.now()
-      indexPeopleLog += 1
-
       const { currentSituation } = findSituation(human)
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
@@ -363,7 +359,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
-      if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
+      if (categoryFilter.includes(categoryName.toLowerCase()))
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           onglet2.push({
             ['Réf.']: String(human.id),
@@ -385,14 +381,9 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
             ['CET < 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
             ['Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)']: absenteisme,
           })
-
-      var t1 = performance.now()
-      //console.log("Human " + indexPeopleLog + " : map occurence took " + (t1 - t0) + " milliseconds.")
-
     })
   )
   console.timeEnd('extractor-7.1')
-  console.log("Nb of people " + indexPeopleLog)
   return onglet2
 }
 
@@ -540,7 +531,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
               countNbOfDays: countNbOfDays,
             })
           }
-          //          if (human.id === 2612) console.log('ETP Object =>', reelEtpObject, totalDaysGone, situation)
         })
 
         const isGone = dateStop > human.dateEnd
@@ -548,28 +538,23 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
           let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
           reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
-        //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
 
-      if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
+      if (categoryFilter.includes(categoryName.toLowerCase()))
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({
             ['Réf.']: String(human.id),
             Arrondissement: juridictionName.label,
             Nom: human.lastName,
             Prénom: human.firstName,
-            //Juridiction: human.juridiction || juridictionName.label,
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            //['Fonction catégorie']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période hors indisponibilités']: reelEtp,
             ['Temps ventilés sur la période']: totalEtpt,
-            //['Total indispo sur la période']: refObj[key],
-            //['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
           })
     })

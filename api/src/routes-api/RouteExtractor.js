@@ -42,7 +42,7 @@ export default class RouteExtractor extends Route {
       backupId: Types.number().required(),
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
-      categoryFilter: Types.string().required(),
+      categoryFilter: Types.any().required(),
     }),
     accesses: [Access.canVewHR],
   })
@@ -117,8 +117,6 @@ export default class RouteExtractor extends Route {
     console.time('extractor-8')
     await onglet1.sort((a, b) => sortByCatAndFct(a, b))
     await onglet2.sort((a, b) => sortByCatAndFct(a, b))
-    onglet1 = addSumLine(onglet1, categoryFilter)
-    onglet2 = addSumLine(onglet2, categoryFilter)
     const columnSize1 = await autofitColumns(onglet1, true)
     const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
