@@ -192,7 +192,11 @@
       class="item-template-original"
       [ngClass]="{
         'to-confirm':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type)
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
+        'is-not-setted':
+          valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
+        'is-not-setted-set':
+          valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type)
       }"
     >
       <div>
@@ -232,7 +236,11 @@
         type="number"
         [ngModel]="newValue"
         placeholder="-"
-        [ngClass]="{ blue: newValue !== null }"
+        [ngClass]="{
+          blue: newValue !== null,
+          'is-not-setted-set':
+            valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type)
+        }"
         (keyup)="onUpdateValue(inputElement.value, type, items)"
       />
     </div>

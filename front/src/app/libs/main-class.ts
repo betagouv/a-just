@@ -21,7 +21,7 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
-import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE } from '../constants/referentiel'
+import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE, VALUE_QUALITY_TO_VERIFY } from '../constants/referentiel'
 import { PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
@@ -49,6 +49,7 @@ export class MainClass {
   VALUE_QUALITY_OPTION = VALUE_QUALITY_OPTION;
   VALUE_QUALITY_GOOD = VALUE_QUALITY_GOOD;
   VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE;
+  VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY;
 
   /**
    * Methode d'arrondi
