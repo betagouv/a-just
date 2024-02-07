@@ -1,6 +1,7 @@
 import { Subscription } from 'rxjs'
 import {
   referentielMappingColor,
+  referentielMappingColorActivity,
   referentielMappingName,
 } from '../utils/referentiel'
 import { categoryMappingName, categoryMappingColor } from '../utils/category'
@@ -108,6 +109,15 @@ export class MainClass {
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
     return referentielMappingColor(name, opacity)
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorActivity(name, opacity)
   }
 
   /**
