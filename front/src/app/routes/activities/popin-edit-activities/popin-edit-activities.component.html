@@ -70,6 +70,7 @@
             $implicit: referentiel,
             original: referentiel.originalIn,
             newValue: total.in,
+            valueQuality: referentiel.valueQualityIn,
             type: 'entrees'
           }
         "
@@ -83,6 +84,7 @@
             $implicit: referentiel,
             original: referentiel.originalOut,
             newValue: total.out,
+            valueQuality: referentiel.valueQualityOut,
             type: 'sorties'
           }
         "
@@ -96,6 +98,7 @@
             $implicit: referentiel,
             original: referentiel.originalStock,
             newValue: total.stock,
+            valueQuality: referentiel.valueQualityStock,
             type: 'stock'
           }
         "
@@ -116,6 +119,7 @@
               $implicit: item,
               original: item.originalIn,
               newValue: item.in,
+              valueQuality: item.valueQualityIn,
               type: 'entrees'
             }
           "
@@ -129,6 +133,7 @@
               $implicit: item,
               original: item.originalOut,
               newValue: item.out,
+              valueQuality: item.valueQualityOut,
               type: 'sorties'
             }
           "
@@ -142,6 +147,7 @@
               $implicit: item,
               original: item.originalStock,
               newValue: item.stock,
+              valueQuality: item.valueQualityStock,
               type: 'stock'
             }
           "
@@ -176,12 +182,19 @@
 <ng-template
   #itemTemplate
   let-items
+  let-valueQuality="valueQuality"
   let-original="original"
   let-newValue="newValue"
   let-type="type"
 >
   <div class="item-template">
-    <div class="item-template-original" [ngClass]="{'to-confirm': items.valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type)}">
+    <div
+      class="item-template-original"
+      [ngClass]="{
+        'to-confirm':
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type)
+      }"
+    >
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>

@@ -29,7 +29,15 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      value_quality: {
+      value_quality_in: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      value_quality_out: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      value_quality_stock: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },

@@ -6,18 +6,23 @@
   margin-top: 32px;
   margin-bottom: 16px;
 
+  &.not-margin {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
   p {
-    flex: 1;
+    flex: 2;
     margin-right: 32px;
     font-weight: bold;
   }
 
-  select {
+  select, .select {
     flex: 1;
     margin-right: 32px;
   }
 
-  input {
+  input, .input {
     flex: 1;
     margin-right: 32px;
   }
