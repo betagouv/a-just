@@ -29,6 +29,8 @@ import { environment } from 'src/environments/environment'
 import { ActionsInterface } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
 import { downloadFile } from 'src/app/utils/system'
+import { DateSelectorinterface } from 'src/app/interfaces/date'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 
 declare const Quill: any
 
@@ -81,6 +83,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   @Input() actionTemplate: TemplateRef<any> | undefined
   /**
+   * Paramétrage d'un ng-template pour les boutons (partie bottom du header)
+   */
+  @Input() actionTemplateBottom: TemplateRef<any> | undefined
+  /**
    * Parmétrage d'un ng-template pour le titre et remplace le titre normal
    */
   @Input() titleTemplate: TemplateRef<any> | undefined
@@ -120,6 +126,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Affiche une bulle d'aide avec une doc derriere
    */
   @Input() documentation: DocumentationInterface | undefined | null
+  /**
+   * Affichage d'un calendreier pour choisir un mois de données à affihcer sur l'écran des données d'activités
+   */
+  @Input() dateSelector: DateSelectorinterface | undefined
   /**
    * Output pour recharger la page
    */
@@ -191,13 +201,15 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param userService
    * @param humanResourceService
    * @param appService
+   * @param activitiesService
    */
   constructor(
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
     private appService: AppService,
-    private titlePlatform: Title
+    private titlePlatform: Title,
+    private activitiesService: ActivitiesService,
   ) {
     super()
 
@@ -493,4 +505,12 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       }
     }
   }
+
+    /**
+   * Changement de la date via le selecteur
+   * @param date
+   */
+    changeMonth(date: Date) {
+      this.activitiesService.activityMonth.next(date)
+    }
 }

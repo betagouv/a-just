@@ -52,6 +52,7 @@ $colors: (
 	tooltipContentColor: #644636,
 	tooltipBgTitleColor: #8585f6,
 	tooltipContentTitleColor: #ffffff,
+	tooltipIconColor: #f6f6f6,
 	tooltipBgFooterColor: #8585f6,
 	tooltipContentFooterColor: #ffffff,
 	darkModeBgMenu: #272747,
@@ -95,6 +96,9 @@ $colors: (
 	toastrBorderColor: #18753c,
 	activitiesItemTitle: #d5d8ea,
 	activitiesItemLastTitle: #ced0e0,
+	activityBgColor: #ffffff,
+	progressionBarBg: #ededed,
+	dataCompletionTextColor: #0a76f6,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
