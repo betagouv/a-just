@@ -404,10 +404,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
 
-          if(this.referentiel && this.referentiel.length) {
-            this.contentieuxToUpdate = this.referentiel[3];
-          }
-
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
@@ -605,7 +601,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * On close contentieux updated
    */
-  onCloseEditedPopin() {
+  onCloseEditedPopin(reload = false) {
     this.contentieuxToUpdate = null
+
+    if(reload) {
+      this.onLoadMonthActivities()
+    }
   }
 }

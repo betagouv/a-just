@@ -8,8 +8,9 @@
     <div class="date-popin">
       <aj-date-select
         title="Voir les données de"
-        [value]="'2024-05-10'"
+        [value]="activityMonth"
         dateType="month"
+        (valueChange)="selectMonth($event)"
       >
       </aj-date-select>
     </div>
@@ -50,7 +51,7 @@
     </div>
   </div>
 
-  <div class="contentieux-title" *ngIf="referentiel">
+  <div class="contentieux-title" *ngIf="referentiel && hasValuesToShow">
     <div class="contentieux-title-label">
       <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
     </div>
@@ -95,7 +96,7 @@
     </div>
   </div>
 
-  <div class="content-popin">
+  <div class="content-popin" *ngIf="hasValuesToShow">
     <div class="contentieux-item" *ngFor="let item of referentiel?.childrens">
       <div class="contentieux-item-label">
         <p>{{ item.label }}</p>
@@ -142,12 +143,16 @@
     </div>
   </div>
 
+  <div class="no-values" *ngIf="!hasValuesToShow">
+    <p>Cet écran sera accessible dès l'import des données logiciel du mois.</p>
+  </div>
+
   <div class="bottom-popin">
     <button class="small outline gray" (click)="close()">Annuler</button>
     <div class="flex-1"></div>
-    <button class="small outline blue">Aller au mois précédent</button>
-    <button class="small outline blue">Aller au mois suivant</button>
-    <button class="small primary">Enregistrer</button>
+    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">Aller au mois précédent</button>
+    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, 1))">Aller au mois suivant</button>
+    <button class="small primary" (click)="onSave()">Enregistrer</button>
   </div>
 </aj-popup>
 

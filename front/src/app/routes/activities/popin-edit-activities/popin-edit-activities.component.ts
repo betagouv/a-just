@@ -15,8 +15,10 @@ import {
   ContentieuReferentielInterface,
 } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { copy } from 'src/app/utils'
 
 /**
  * Composant page activité
@@ -34,6 +36,10 @@ export class PopinEditActivitiesComponent
    * Référentiel
    */
   @Input() referentiel: ContentieuReferentielInterface | null = null
+  /**
+   * Date du mois sélectionné
+   */
+  @Input() activityMonth: Date = new Date()
   /**
    * On Close event
    */
@@ -62,14 +68,21 @@ export class PopinEditActivitiesComponent
     out: null,
     stock: null,
   }
+  /**
+   * have values to show
+   */
+  hasValuesToShow: boolean = true
 
   /**
    * Constructeur
    * @param appService
+   * @param referentielService
+   * @param activitiesService
    */
   constructor(
     private appService: AppService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private activitiesService: ActivitiesService
   ) {
     super()
   }
@@ -258,11 +271,16 @@ export class PopinEditActivitiesComponent
         resolve(true)
       } else {
         this.appService.alert.next({
+          classPopin: 'width-750',
           title: 'Modifications non enregistrées',
           text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
           okText: 'Annuler les modifications',
           callback: () => {
             resolve(true)
+          },
+          secondaryText: 'Enregistrer les modifications',
+          callbackSecondary: () => {
+            this.onSave(false)
           },
         })
       }
@@ -274,7 +292,7 @@ export class PopinEditActivitiesComponent
    */
   close() {
     this.controlBeforeChange().then(() => {
-      this.onClose.emit(true)
+      this.onClose.emit(false)
     })
   }
 
@@ -388,5 +406,111 @@ export class PopinEditActivitiesComponent
     }
 
     this.updateTotal()
+  }
+
+  /**
+   * On save
+   */
+  async onSave(force = false) {
+    if (!force) {
+      this.appService.alert.next({
+        classPopin: 'width-750',
+        title: 'Impact de vos modifications',
+        text: `Les valeurs A-JUSTées que vous allez enregistrer vont se substituer aux données logiciel dans l'écran de synthèse et seront prises en compte comme nouvelle base des calculs.<br/><br/>Vous conserverez, dans l'écran de saisie, les données "logiciels" et les A-JUSTements que vous avez réalisés afin de vous en servir comme donnée de référence si besoin.`,
+        okText: 'Annuler les modifications',
+        callback: () => {
+          this.onClose.emit(false)
+        },
+        secondaryText: 'Enregistrer les modifications',
+        callbackSecondary: () => {
+          this.onSave(true)
+        },
+      })
+    } else {
+      const updates = Object.values(this.updates)
+
+      for (let i = 0; i < updates.length; i++) {
+        const up: any = updates[i]
+
+        const options = {
+          entrees: up.contentieux.in,
+          sorties: up.contentieux.out,
+          stock: up.contentieux.stock,
+        }
+        switch (up.node) {
+          case 'entrees':
+            options.entrees = up.value
+            break
+          case 'sorties':
+            options.sorties = up.value
+            break
+          case 'stock':
+            options.stock = up.value
+            break
+        }
+
+        await this.activitiesService.updateDatasAt(
+          up.contentieux.id,
+          this.activityMonth,
+          options,
+          up.node
+        )
+      }
+
+      if (updates.length && this.referentiel) {
+        this.appService.notification(
+          `Le contentieux <b>${this.referentielMappingName(
+            this.referentiel.label
+          )}</b> a été ajusté avec succès pour ${this.getMonthString(
+            this.activityMonth
+          )} ${this.activityMonth.getFullYear()}`
+        )
+      }
+      this.updates = {} // clear datas
+
+      this.onClose.emit(updates.length ? true : false)
+    }
+  }
+
+  /**
+   * Change month selection
+   */
+  selectMonth(date: any) {
+    this.controlBeforeChange().then(() => {
+      this.activitiesService.loadMonthActivities(date).then((list: any) => {
+        this.activityMonth = new Date(date)
+        this.hasValuesToShow = list.list.length !== 0
+        console.log(list, this.activityMonth)
+        if (this.referentiel) {
+          this.referentiel = copy(this.referentiel)
+
+          if (this.referentiel) {
+            const getValuesFromList = (id: number) => {
+              const element = list.list.find((i:any) => i.contentieux.id === id)
+
+              return {
+                in: element ? element.entrees : null,
+                originalIn: element ? element.originalEntrees : null,
+                out: element ? element.sorties : null,
+                originalOut: element ? element.originalSorties : null,
+                stock: element ? element.stock : null,
+                originalStock: element ? element.originalStock : null,
+              }
+            }
+
+            this.referentiel = {
+              ...this.referentiel,
+              ...getValuesFromList(this.referentiel.id),
+            }
+
+            this.referentiel.childrens = (this.referentiel.childrens || []).map(
+              (child) => ({ ...child, ...getValuesFromList(child.id) })
+            )
+
+            this.updateTotal()
+          }
+        }
+      })
+    })
   }
 }

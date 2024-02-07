@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core'
+import { ActionsInterface } from '../popup/popup.component'
 
 /**
  * Composant alert qui affiche une alerte non bloquante
@@ -33,9 +34,21 @@ export class AlertComponent implements OnChanges {
    */
   @Input() okText: string | undefined = ''
   /**
+   * Texte du bouton secondary
+   */
+  @Input() secondaryText: string | undefined = ''
+  /**
+   * Texte du bouton secondary
+   */
+  @Input() classPopin: string | undefined = ''
+  /**
    * Event, clique sur le bouton pour fermer l'alert
    */
   @Output() onClose: EventEmitter<boolean> = new EventEmitter()
+  /**
+   * Event, clique sur le bouton pour fermer l'alert
+   */
+  @Output() onCloseSecondary: EventEmitter<boolean> = new EventEmitter()
   /**
    * Instance du timeout en cas de delay
    */
@@ -55,6 +68,16 @@ export class AlertComponent implements OnChanges {
         this.onClose.emit(false)
         this.timeout = undefined
       }, this.delay * 1000)
+    }
+  }
+
+  /**
+   * Close fonction
+   */
+  close(action: ActionsInterface) {
+    switch(action.id) {
+      case 'secondary': this.onCloseSecondary.emit(true); return;
+      default: this.onClose.emit(true); return;
     }
   }
 }
