@@ -26,6 +26,7 @@ export class ReferentielPage extends MainClass implements OnInit {
       .then((list: ContentieuReferentielInterface[]) => {
         this.referentiels = list;
       });
+    
   }
 
   onUpdateElement(id: number, node: string, value: any) {

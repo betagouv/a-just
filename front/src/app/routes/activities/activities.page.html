@@ -89,6 +89,10 @@
                   [ngClass]="{'data-changed': ref.in !== null}"
                 />
               </div>
+              <ng-template [ngIf]="ref.in && updatedBy && updatedBy.user">
+                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)">
+                </aj-tooltips>
+              </ng-template>
             </div>
             <div class="column-item">
               <div>
@@ -100,6 +104,10 @@
                   [ngClass]="{'data-changed': ref.out !== null}"
                 />
               </div>
+              <ng-template [ngIf]="ref.out && updatedBy && updatedBy.user">
+                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)">
+                </aj-tooltips>
+              </ng-template>
             </div>
             <div class="column-item">
               <div>
@@ -111,14 +119,18 @@
                   [ngClass]="{'data-changed': ref.stock !== null}"
                 />
               </div>
+              <ng-template [ngIf]="ref.stock && updatedBy && updatedBy.user">
+                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)"> 
+                </aj-tooltips>
+              </ng-template>
             </div>
             <div class="column-item completion" (click)="contentieuxToUpdate = ref">
               <!--<div class="completion">-->
-                <p>{{83}}% disponibles</p>
+                <p>{{ref.completion}}% disponibles</p>
                 <span class='completion-bar'>
-                  <aj-completion-bar [value]=83></aj-completion-bar>
+                  <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
                 </span>
-                <p>{{83 < 100 ?  'il reste des données à compléter' : ''}}</p>
+                <p>{{ref.completion && ref.completion < 100 ?  'il reste des données à compléter' : ''}}</p>
             
               <!--</div>-->
             </div>
@@ -166,11 +178,6 @@
                         placeholder="-"
                         [ngClass]="{'blue': itemGroup.valueQualityIn === 'to_complete', 'yellow' : itemGroup.valueQualityIn === 'to_verify' }"
                       />
-                      <ng-template [ngIf]="updatedBy && updatedBy.user">
-                        <aj-tooltips class="medium" title="A-JUSTé"
-                          content="par {{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }} le {{ updatedBy.date | date:'dd' }} {{ getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}">
-                        </aj-tooltips>
-                      </ng-template>
                     </div>
                   </div>
                   <div class="column-item">
@@ -223,9 +230,9 @@
 <ng-template #ressources>
   <div class="bottomHeader">
     <div class="left-panel">
-      <p>Complétude globale: <span [ngStyle]="{'color' : getAcivityPercentColor(48)}">{{48}}%</span></p>
+      <p>Complétude globale: <span [ngStyle]="{'color' : getAcivityPercentColor(48)}">{{totalCompletion}}%</span></p>
       <span class='completion-bar'>
-        <aj-completion-bar [value]=48></aj-completion-bar>
+        <aj-completion-bar [value]=totalCompletion></aj-completion-bar>
       </span>
     </div>
     <div class="right-panel">
@@ -261,6 +268,31 @@
     </ng-template>-->
   </p>
 </ng-template>
+
+<!--<ng-template
+  #dataChanged
+  let-firstName="firstName"
+  let-lastName="lastName"
+  let-day="day"
+  let-month="month"
+  let-year="year"
+>
+  <i
+    class="ri-lightbulb-flash-line cursor-pointer blue"
+    #light
+    (click)="$event.stopPropagation()"
+  ></i>
+  <aj-tooltips
+    [onOver]="false"
+    [onClick]="light"
+    [title]=""
+    [content]=""
+    [footer]="par {{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }} le {{ updatedBy.date | date:'dd' }} {{ getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}"
+    class="medium"
+    [ngClass]=""
+  >
+  </aj-tooltips>
+</ng-template>-->
 
 <ng-template
   #tooltip

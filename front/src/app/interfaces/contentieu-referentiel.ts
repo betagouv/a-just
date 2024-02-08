@@ -24,6 +24,10 @@ export interface ContentieuReferentielInterface {
    */
   childrens?: ContentieuReferentielInterface[]
   /**
+   *  Taux de completion de la donnée
+   */
+  completion?: number
+  /**
    * Somme des ETP du contentieux
    */
   totalAffected?: number

@@ -2,6 +2,8 @@
 
 .item {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   margin-top: 32px;
   margin-bottom: 16px;
@@ -20,12 +22,20 @@
   select, .select {
     flex: 1;
     margin-right: 32px;
+    width: 50px;
   }
 
   input, .input {
     flex: 1;
     margin-right: 32px;
+    width: 50px;
   }
+
+  input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+  }
+
 }
 
 .list .item {

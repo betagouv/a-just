@@ -45,6 +45,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      compter: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
