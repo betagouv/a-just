@@ -28,6 +28,10 @@ export interface ContentieuReferentielInterface {
    */
   completion?: number
   /**
+   * Element à compter ou non dans le calcul de complétion des données
+   */
+  compter?: boolean
+  /**
    * Somme des ETP du contentieux
    */
   totalAffected?: number
