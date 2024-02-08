@@ -114,6 +114,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Contentieux to update
    */
   contentieuxToUpdate: ContentieuReferentielActivitiesInterface | null = null
+  /**
+   * Taux de completion total des données
+  */
+  totalCompletion: number = 0
 
 
   /**
@@ -418,8 +422,34 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
 
-          console.log('REFERENTIEL:', this.referentiel)
-
+          let totalNotEmpty = 0
+          let childNotEmpty = 0
+          let totalContentieuxLevelFour = 0
+          let childToCount = 0
+          this.referentiel.map((elem: any) => {
+            childNotEmpty = 0
+            childToCount = 0
+            totalContentieuxLevelFour += (elem.childrens.length * 3)
+            elem.childrens?.map((child: any) =>  {
+              if (child.compter) {
+                childToCount += 3
+                if(child.in !== null || child.originalIn !== null) {
+                  childNotEmpty += 1
+                  totalNotEmpty += 1
+                }
+                if(child.out !== null || child.originalOut !== null) {
+                  childNotEmpty += 1
+                  totalNotEmpty += 1
+                }
+                if(child.stock !== null || child.originalStock !== null) {
+                  childNotEmpty += 1
+                  totalNotEmpty += 1
+                }
+              }
+           })
+           elem.completion = Math.round((childNotEmpty * 100) / childToCount) >= 0 ? Math.round((childNotEmpty * 100) / childToCount) : 0
+          })
+          this.totalCompletion = Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) >= 0 ? Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) : 0
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
@@ -432,12 +462,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @returns
    */
   getTooltipTitle(
-    contentieux: ContentieuReferentielActivitiesInterface,
+    updatedBy: {user: UserInterface | null, date: Date}
   ) {
-    /*switch (contentieux) {
-    }*/
-
-    return contentieux.label
+    if (updatedBy && updatedBy.user){
+      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${updatedBy.user.firstName } ${updatedBy.user.lastName } le ${this.getDate(updatedBy.date) || 'dd' } ${this.getMonthString(updatedBy.date) } ${this.getFullYear(updatedBy.date) || 'YYYY' }`
+    }
+    return ''
   }
 
   /**
@@ -445,13 +475,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @param contentieux
    * @returns
    */
-  getTooltipBody(
-    contentieux: ContentieuReferentielActivitiesInterface,
-  ) {
+  getTooltipBody(contentieux: ContentieuReferentielActivitiesInterface,) {
     /*switch (contentieux) {
     }*/
-
-    return 'Test'
+    return ''
   }
 
   /**
@@ -504,7 +531,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
      }
     }
   }
-
 
   getAcivityPercentColor(value : number) {
     return activityPercentColor(value)
