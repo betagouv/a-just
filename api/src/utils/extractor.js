@@ -388,8 +388,8 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 }
 
 export const getViewModel = async (params) => {
-  const keys1 = Object.keys(params.onglet1.values[0])
-  const keys2 = Object.keys(params.onglet2.values[0])
+  const keys1 = params.onglet1.values != null && params.onglet1.values.length ? Object.keys(params.onglet1.values[0]) : []
+  const keys2 = params.onglet2.values != null && params.onglet2.values.length ? Object.keys(params.onglet2.values[0]) : []
   const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map(x => x.tprox)
   const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map(x => x.tprox)
   const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map(x => x.tprox)
@@ -421,14 +421,14 @@ export const getViewModel = async (params) => {
       }
     }),
     arrondissement: uniqueJur[0],
-    subtitles: [...Array(keys1.length - 6 || 0)],
+    subtitles: [...Array(keys1.length > 6 ? keys1.length - 6 : 0)],
     days: keys1,
     stats: {
       ...params.onglet1.values.map((item) => {
         return { actions: Object.keys(item).map((key) => item[key]) }
       }),
     },
-    subtitles1: [...Array(keys2.length - 6 || 0)],
+    subtitles1: [...Array(keys1.length > 6 ? keys2.length - 6 : 0)],
     days1: keys2,
     stats1: {
       ...params.onglet2.values.map((item) => {

@@ -133,6 +133,10 @@ export class ExcelService extends MainClass {
           // 4. Get a report as buffer.
           .then(async (report) => {
             report = await this.getReport(report, viewModel)
+            if (this.tabs.onglet1.values.length === 0) {
+              alert('Une erreur est survenue lors de la génération de votre fichier.')
+              throw 'no values';
+            }
             return report.xlsx.writeBuffer()
           })
           // 5. Use `saveAs` to download on browser site.
@@ -274,7 +278,9 @@ export class ExcelService extends MainClass {
         showErrorMessage: true,
         showInputMessage: true,
       }
-      if ((report.worksheets[2].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
+
+      const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
+      if (fonctionCellToCheck.includes("PLACÉ")) {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation =
         {
           type: 'list',
