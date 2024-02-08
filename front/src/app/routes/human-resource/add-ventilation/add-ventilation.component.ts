@@ -556,7 +556,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Récupère le nom d'une catégorie
    */
   getCategoryLabel() {
-    const cat = this.categories.find((c) => this.form.get('categoryId')?.value === c.id) || null
+    const cat = this.categories.find((c) => this.form.get('categoryId')?.value == c.id) || null
     return cat
   }
 }
