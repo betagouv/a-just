@@ -7,8 +7,9 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
-import { REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
+import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_MAG, REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -27,8 +28,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 })
 export class PanelActivitiesComponent
   extends MainClass
-  implements OnChanges, OnDestroy
-{
+  implements OnChanges, OnDestroy {
   /**
    * Valeure de l'ETP
    */
@@ -62,6 +62,10 @@ export class PanelActivitiesComponent
    */
   @Input() showPlaceHolder: boolean = false
   /**
+ * Categorie courante
+ */
+  @Input() category: HRCategoryInterface | null = null
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
@@ -85,15 +89,15 @@ export class PanelActivitiesComponent
   /**
    * État de la souris si elle hover un sous-référentiel du contentieux 'Autres Activités'
    */
-  mouseHovering : boolean = false
+  mouseHovering: boolean = false
   /**
   * Nom du sous-rérérentiel du contentieux 'Autres Activités' survolé
   */
-  hoveredReferentielLabel : string | null = null
+  hoveredReferentielLabel: string | null = null
   /**
   * Detail du référentiel survolé
   */
-  hoveredReferentielDetail : string | null = null
+  hoveredReferentielDetail: string | null = null
 
   /**
    * Constructeur
@@ -152,7 +156,7 @@ export class PanelActivitiesComponent
     this.referentiel = copyArray(
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     )
-    
+
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentiels(this.referentiel, backupLabel)*/
 
@@ -291,9 +295,22 @@ export class PanelActivitiesComponent
   setMouseHovering(label?: string) {
     if (label) {
       this.hoveredReferentielDetail = getReferentielDetail(label)
-     if (this.hoveredReferentielDetail)
-      this.hoveredReferentielLabel = label
+      if (this.hoveredReferentielDetail)
+        this.hoveredReferentielLabel = label
     }
     this.mouseHovering = !this.mouseHovering
+  }
+
+  /**
+   * Indique si le contentieux est un contentieux à saisir pour les DDG ou non
+   */
+  isDdgContentieux(label: string) {
+    if (this.category?.label === "Magistrat")
+      return DDG_REFERENTIELS_MAG.includes(label.toUpperCase())
+    if (this.category?.label === "Greffe")
+      return DDG_REFERENTIELS_GREFFE.includes(label.toUpperCase())
+    if (this.category?.label === "Autour du magistrat")
+      return DDG_REFERENTIELS_EAM.includes(label.toUpperCase())
+    return false
   }
 }
