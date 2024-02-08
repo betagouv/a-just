@@ -7,6 +7,7 @@ import {
 } from '@angular/core'
 import { sumBy } from 'lodash'
 import { ETP_NEED_TO_BE_UPDATED } from 'src/app/constants/referentiel'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -24,8 +25,7 @@ import { etpLabel } from 'src/app/utils/referentiel'
 })
 export class PanelHistoryVentilationComponent
   extends MainClass
-  implements OnChanges
-{
+  implements OnChanges {
   /**
    * Date de début de situation
    */
@@ -42,6 +42,10 @@ export class PanelHistoryVentilationComponent
    * Fonction de la situation
    */
   @Input() fonction: HRFonctionInterface | null = null
+  /**
+ * Category de la situation
+ */
+  @Input() category: HRCategoryInterface | null = null
   /**
    * ETP de la situation
    */

@@ -1,4 +1,6 @@
-<div class="white-background"></div>
+<div class="white-background">
+  <div *ngIf="ddg && percent===0" class="ddg" [style.backgroundColor]="color">DDG</div>
+</div>
 <div class="background-bar" [style.backgroundColor]="color" (click)="changePercent()" [class.seleted]="selected">
 </div>
 <div class="progress-bar" [style.height.%]="percent && percent > 100 ? 100 : percent || 0"

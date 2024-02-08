@@ -82,7 +82,7 @@
           <mat-icon>download</mat-icon>
         </a>
       </div>
-      <panel-activities [activities]="activities" [etp]="etp" [selected]="true"
+      <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
         (referentielChange)="onNewReferentiel($event)" #panelActivities
         [forceToShowContentieuxDetail]="forceToShowContentieuxDetail">
       </panel-activities>

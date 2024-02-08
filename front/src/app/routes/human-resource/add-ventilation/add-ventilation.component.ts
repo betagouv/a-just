@@ -162,8 +162,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
         () =>
-          (this.allIndisponibilityReferentiel =
-            this.humanResourceService.allIndisponibilityReferentiel.slice(1))
+        (this.allIndisponibilityReferentiel =
+          this.humanResourceService.allIndisponibilityReferentiel.slice(1))
       )
     )
     this.watch(
@@ -404,14 +404,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           percent: r.percent || 0,
           contentieux: r,
         })
-        ;(r.childrens || [])
-          .filter((r) => r.percent && r.percent > 0)
-          .map((child) => {
-            activities.push({
-              percent: child.percent || 0,
-              contentieux: child,
+          ; (r.childrens || [])
+            .filter((r) => r.percent && r.percent > 0)
+            .map((child) => {
+              activities.push({
+                percent: child.percent || 0,
+                contentieux: child,
+              })
             })
-          })
       })
 
     console.log(
@@ -513,9 +513,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     ) {
       if (
         this.calculatriceService.dataCalculatrice.getValue().vacation.value !==
-          null &&
+        null &&
         this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==
-          null
+        null
       ) {
         this.openCalculatricePopup = false
         this.form
@@ -552,4 +552,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     window.open(CALCULATE_DOWNLOAD_URL)
   }
 
+  /**
+   * Récupère le nom d'une catégorie
+   */
+  getCategoryLabel() {
+    const cat = this.categories.find((c) => this.form.get('categoryId')?.value === c.id) || null
+    return cat
+  }
 }
