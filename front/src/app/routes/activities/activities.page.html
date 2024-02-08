@@ -142,11 +142,11 @@
               >
                 <div
                   class="group-item"
-                  [ngClass]="{'grey': (itemGroup.valueQualityIn || itemGroup.valueQualityOut || itemGroup.valueQualityStock ) === 'facultatif'}"  
+                  [ngClass]="{'grey': itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif' }"  
                 >
                   <div 
                     class="label"
-                    [ngClass]="{'grey-txt': (itemGroup.valueQualityIn || itemGroup.valueQualityOut || itemGroup.valueQualityStock ) === 'facultatif' }"  
+                    [ngClass]="{'grey-txt': itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif' }"  
                   >
                     <p>{{itemGroup.label}}</p>
                       <ng-template [ngIf]="itemGroup.helpUrl">
@@ -230,7 +230,7 @@
 <ng-template #ressources>
   <div class="bottomHeader">
     <div class="left-panel">
-      <p>Complétude globale: <span [ngStyle]="{'color' : getAcivityPercentColor(48)}">{{totalCompletion}}%</span></p>
+      <p>Complétude globale: <span [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">{{totalCompletion}}%</span></p>
       <span class='completion-bar'>
         <aj-completion-bar [value]=totalCompletion></aj-completion-bar>
       </span>

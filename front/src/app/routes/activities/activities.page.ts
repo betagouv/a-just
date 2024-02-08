@@ -422,34 +422,37 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
 
-          let totalNotEmpty = 0
-          let childNotEmpty = 0
-          let totalContentieuxLevelFour = 0
-          let childToCount = 0
-          this.referentiel.map((elem: any) => {
-            childNotEmpty = 0
-            childToCount = 0
-            totalContentieuxLevelFour += (elem.childrens.length * 3)
-            elem.childrens?.map((child: any) =>  {
-              if (child.compter) {
-                childToCount += 3
-                if(child.in !== null || child.originalIn !== null) {
-                  childNotEmpty += 1
-                  totalNotEmpty += 1
-                }
-                if(child.out !== null || child.originalOut !== null) {
-                  childNotEmpty += 1
-                  totalNotEmpty += 1
-                }
-                if(child.stock !== null || child.originalStock !== null) {
-                  childNotEmpty += 1
-                  totalNotEmpty += 1
-                }
+          // Calcul du taux de completion
+          let totalNotEmpty = 0;
+          let totalContentieuxLevelFour = 0;
+          for (const elem of this.referentiel) {
+            let childNotEmpty = 0;
+            let childToCount = 0;
+            if (elem.childrens) {
+              totalContentieuxLevelFour += elem.childrens.length * 3;
+            
+              for (const child of elem.childrens) {
+                  if (child.compter) {
+                    childToCount += 3;
+                    if(child.in !== null || child.originalIn !== null) {
+                      childNotEmpty += 1
+                      totalNotEmpty += 1
+                    }
+                    if(child.out !== null || child.originalOut !== null) {
+                      childNotEmpty += 1
+                      totalNotEmpty += 1
+                    }
+                    if(child.stock !== null || child.originalStock !== null) {
+                      childNotEmpty += 1
+                      totalNotEmpty += 1
+                    }
+                  }
               }
-           })
-           elem.completion = Math.round((childNotEmpty * 100) / childToCount) >= 0 ? Math.round((childNotEmpty * 100) / childToCount) : 0
-          })
-          this.totalCompletion = Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) >= 0 ? Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) : 0
+              elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
+            }
+          }
+          this.totalCompletion = Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) || 0;
+          console.log('referentiel:', this.referentiel)
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }

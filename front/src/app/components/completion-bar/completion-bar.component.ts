@@ -18,7 +18,7 @@ export class CompletionBarComponent implements OnInit {
    * Initialisation du composant
    */
     ngOnInit(): void {
-      console.log('Input:', this.value)
+      console.log('Completion Value:', this.value)
       //this.onDraw()
     }
 }
