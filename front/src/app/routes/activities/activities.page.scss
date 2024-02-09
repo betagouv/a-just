@@ -74,6 +74,11 @@
           background-color: fColor(dataNotSettedBg);
           border: 1px solid fColor(dataNotSettedBorder);
         }
+
+        input.blue-bottom {
+          border-bottom: 3px solid fColor(textBlueTag);
+          border-radius: 0;
+        }
       }
     }
   }
