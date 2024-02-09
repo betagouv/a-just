@@ -54,7 +54,6 @@
           border-radius: 0;
           background-color: transparent;
           text-align: right;
-          //height: 100%;
           border-radius: 4px;
           width: 100%;
         }
@@ -67,13 +66,13 @@
         }
 
         input.blue {
-          background-color: #f5f5fe;//fColor(textBlueTag);
+          background-color: fColor(dataToCompleteBg);
           border: 1px solid fColor(textBlueTag);
         }
 
         input.yellow {
-          background-color: #fef5e8;//fColor(textBlueTag);
-          border: 1px solid #f5c137;//fColor(textBlueTag);
+          background-color: fColor(dataNotSettedBg);
+          border: 1px solid fColor(dataNotSettedBorder);
         }
       }
     }
@@ -81,25 +80,25 @@
 
   .grey-txt {
     > p , mat-icon {
-      color: #929292;
+      color: fColor(dataGreyTxt);
     }
   }
   .yellow-txt {
     > p , mat-icon {
-      color: #b18a26;
+      color: fColor(dataYellowTxt);
     }
   }
   .blue-txt {
     > p , mat-icon {
-      color: #0063cb;
+      color: fColor(dataBlueTxt);
     }
   }
 
   .pastille {
-    background-color: #e3e3fd;
+    background-color: fColor(pastilleDataToCompleteBg);
     border-radius: 12px;
     padding: 2px 8px;
-    color: #000091;
+    color: fColor(pastilleDataToCompleteTxt);
   }
 }
 
@@ -129,7 +128,7 @@
       padding: 0;
       line-height: normal;
       font-weight: normal;
-      color: #3a3a3a;
+      color: fColor(cblack);
     }
 
     p {
@@ -142,7 +141,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      color: #000091;
+      color: fColor(cbluedark);
       div:first-child {
         margin-right: 32px;
       }
@@ -343,7 +342,7 @@
     }
 
     .grey {
-      background-color: #EDEDED;
+      background-color: fColor(dataGreyBg);
     }
     
 
@@ -369,13 +368,13 @@
       }
 
       .state-optional {
-        background-color: #e5e5e5;
+        background-color: fColor(dataNotSettedIsSetBg);
         padding: 0 6px;
         border-radius: 4px;
         p {
           font-size: 12px !important;
           font-weight: bold;
-          color:  #929292;
+          color:  fColor(dataGreyTxt);
         }
       }
 

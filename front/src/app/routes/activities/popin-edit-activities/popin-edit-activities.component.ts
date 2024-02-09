@@ -395,6 +395,11 @@ export class PopinEditActivitiesComponent
     nodeName: string,
     contentieux: ContentieuReferentielInterface
   ) {
+
+    console.log('newValue:',newValue)
+    console.log('nodeName:',nodeName)
+    console.log('contentieux:', contentieux)
+
     let value: null | number = null
     if (newValue !== '') {
       value = +newValue
@@ -533,19 +538,21 @@ export class PopinEditActivitiesComponent
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
+    if (node === "entrees")
+      console.log('Cont:', cont)
     switch (node) {
       case 'entrees':
-        if (cont.in !== null) {
+        if (cont.in !== null || cont.originalIn !== null) {
           return true
         }
         break
       case 'sorties':
-        if (cont.out !== null) {
+        if (cont.out !== null || cont.originalOut !== null) {
           return true
         }
         break
       case 'stock':
-        if (cont.stock !== null) {
+        if (cont.stock !== null || cont.originalStock !== null) {
           return true
         }
         break
