@@ -275,6 +275,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
+  compareDateActivityUpdated({ firstAct, secondAct }: { firstAct: { user: UserInterface | null; date: Date } , secondAct: { user: UserInterface | null; date: Date } }) {
+    const firstDate = new Date(firstAct.date);
+    const secondDate = new Date(secondAct.date);
+  
+    if (secondDate.getTime() > firstDate.getTime())
+      return secondAct;
+    return firstAct
+  }
+
   /**
    * Chargement de la liste des activités d'un mois sélectionné
    */
@@ -341,6 +350,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               : null
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
+
+              if (!c.activityUpdated) {
+                c.activityUpdated = {
+                  entrees: null,
+                  sorties: null,
+                  stock: null,
+                };
+              }
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
@@ -348,23 +365,58 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               c.originalIn = getChildrenActivity
                 ? getChildrenActivity.originalEntrees
                 : null
+              c.activityUpdated.entrees = (c.in && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
+              
               c.out = getChildrenActivity ? getChildrenActivity.sorties : null
               c.originalOut = getChildrenActivity
                 ? getChildrenActivity.originalSorties
                 : null
+              c.activityUpdated.sorties = (c.out && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
+              
               c.stock = getChildrenActivity ? getChildrenActivity.stock : null
               c.originalStock = getChildrenActivity
                 ? getChildrenActivity.originalStock
                 : null
+              c.activityUpdated.stock = (c.stock && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
 
               return {
                 ...c,
-                activityUpdated:
+                /*activityUpdated:
                   (getChildrenActivity && getChildrenActivity.updatedBy) ||
-                  null,
+                  null,*/
               }
             })
-
+            if (!newRef.activityUpdated) {
+              newRef.activityUpdated = {
+                entrees: null,
+                sorties: null,
+                stock: null,
+              };
+            }
+            
+            newRef.childrens.map(child => {
+              if (child.activityUpdated && newRef.activityUpdated) {
+                if (child.activityUpdated.entrees) {
+                  if (newRef.activityUpdated.entrees)
+                    newRef.activityUpdated.entrees = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.entrees, secondAct: child.activityUpdated.entrees})
+                  else
+                    newRef.activityUpdated.entrees = child.activityUpdated.entrees
+                }
+                if (child.activityUpdated.sorties) {
+                  if (newRef.activityUpdated.sorties)
+                    newRef.activityUpdated.sorties = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.sorties, secondAct: child.activityUpdated.sorties})
+                  else
+                    newRef.activityUpdated.sorties = child.activityUpdated.sorties
+                }
+                if (child.activityUpdated.stock) {
+                  if (newRef.activityUpdated.stock)
+                    newRef.activityUpdated.stock = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.stock, secondAct: child.activityUpdated.stock})
+                  else
+                    newRef.activityUpdated.stock = child.activityUpdated.stock
+                }
+              }
+            })
+ 
             const oldReferentielFinded = oldReferentielSetted.find(
               (i) => i.id === newRef.id
             )
@@ -414,14 +466,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 }
               }
             }
-
             return {
               ...newRef,
-              activityUpdated: (getActivity && getActivity.updatedBy) || null,
+              //activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
           })
-
           // Calcul du taux de completion
           let totalNotEmpty = 0;
           let totalContentieuxLevelFour = 0;
@@ -449,14 +499,27 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                   }
               }
               elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
+              for (const child of elem.childrens) {
+                let nbToComplete = 0
+                if (child.compter) {
+                  if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
+                    nbToComplete += 1
+                  if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
+                    nbToComplete += 1
+                  if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
+                    nbToComplete += 1
+                }
+                child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
+              }
             }
           }
           this.totalCompletion = Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) || 0;
-          console.log('referentiel:', this.referentiel)
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
+      //this.referentiel.map(elem => console.log('elem:', elem))
       })
+
   }
 
   /**
@@ -465,12 +528,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @returns
    */
   getTooltipTitle(
-    updatedBy: {user: UserInterface | null, date: Date}
+    {user, date} : {user: UserInterface , date: Date}
   ) {
-    if (updatedBy && updatedBy.user){
-      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${updatedBy.user.firstName } ${updatedBy.user.lastName } le ${this.getDate(updatedBy.date) || 'dd' } ${this.getMonthString(updatedBy.date) } ${this.getFullYear(updatedBy.date) || 'YYYY' }`
-    }
-    return ''
+     // console.log('user:', user, ' | date:', date)
+      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
   }
 
   /**
@@ -541,12 +602,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   getCompletionStatus( item : ContentieuReferentielInterface ) {
     const quality = {in: item.valueQualityIn, out: item.valueQualityOut, stock: item.valueQualityStock}
-   
+    // if (item.label === 'Référés civils' || item.label === 'Contentieux général <10.000€')
+    //   console.log('Item:', item)
     if (item){
       if (Object.values(quality).find(value => value === 'facultatif'))
         return 'Compléter'
       else if (Object.values(quality).find(value => value === 'to_complete'))
-        return 'A compléter'
+        return (((item.in === null || item.out === null || item.stock === null) && (item.originalIn === null || item.originalOut === null || item.originalStock === null))) ? 'A compléter' : 'A-JUSTer'
       else if (Object.values(quality).find(value => value === 'to_verify'))
         return 'A vérifier'
     }

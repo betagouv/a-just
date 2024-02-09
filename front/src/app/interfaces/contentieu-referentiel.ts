@@ -126,7 +126,15 @@ export interface ContentieuReferentielInterface {
   /**
    * Url d'aide de la donnée
    */
-  helpUrl?: string | null;
+  helpUrl?: string | null;
+  /**
+   * Possible gain sur le taux de complétion si complété par l'utilistateur
+   */
+  possibleGainCompletion? : number
+  /**
+   * Log de mise à jour de donnée d'activité
+   */
+  activityUpdated?: NodeActivityUpdatedInterface | null
 }
 
 /**
@@ -148,4 +156,8 @@ export interface ContentieuReferentielActivitiesInterface
    * Auto focus value
    */
   autoFocusInput?: string
+  /**
+   * Possible gain sur le taux de complétion si complété par l'utilistateur
+   */
+  possibleGainCompletion? : number
 }

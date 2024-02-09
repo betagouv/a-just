@@ -89,8 +89,8 @@
                   [ngClass]="{'data-changed': ref.in !== null}"
                 />
               </div>
-              <ng-template [ngIf]="ref.in && updatedBy && updatedBy.user">
-                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)">
+              <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
+                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.entrees.user, date: ref.activityUpdated.entrees.date})">
                 </aj-tooltips>
               </ng-template>
             </div>
@@ -104,8 +104,8 @@
                   [ngClass]="{'data-changed': ref.out !== null}"
                 />
               </div>
-              <ng-template [ngIf]="ref.out && updatedBy && updatedBy.user">
-                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)">
+              <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
+                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.sorties.user, date: ref.activityUpdated.sorties.date})">
                 </aj-tooltips>
               </ng-template>
             </div>
@@ -119,8 +119,8 @@
                   [ngClass]="{'data-changed': ref.stock !== null}"
                 />
               </div>
-              <ng-template [ngIf]="ref.stock && updatedBy && updatedBy.user">
-                <aj-tooltips class="medium" [title]="getTooltipTitle(updatedBy)"> 
+              <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
+                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
                 </aj-tooltips>
               </ng-template>
             </div>
@@ -176,7 +176,7 @@
                         [ngModel]="itemGroup.in ? itemGroup.in : itemGroup.originalIn"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': itemGroup.valueQualityIn === 'to_complete', 'yellow' : itemGroup.valueQualityIn === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityIn === 'to_complete' && itemGroup.in === null && itemGroup.originalIn === null), 'yellow' : itemGroup.valueQualityIn === 'to_verify' }"
                       />
                     </div>
                   </div>
@@ -187,7 +187,7 @@
                         [ngModel]="itemGroup.out ? itemGroup.out : itemGroup.originalOut"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': itemGroup.valueQualityOut === 'to_complete', 'yellow' : itemGroup.valueQualityOut === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityOut === 'to_complete' && itemGroup.out === null) && itemGroup.originalOut === null, 'yellow' : itemGroup.valueQualityOut === 'to_verify' }"
                       />
                     </div>
                   </div>
@@ -198,21 +198,27 @@
                         [ngModel]="itemGroup.stock ? itemGroup.stock : itemGroup.originalStock"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': itemGroup.valueQualityStock === 'to_complete', 'yellow' : itemGroup.valueQualityStock === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityStock === 'to_complete' && itemGroup.stock === null && itemGroup.originalStock === null), 'yellow' : itemGroup.valueQualityStock === 'to_verify' }"
                       />
                     </div>
                   </div>
                   <div 
                     class="column-item complete-btn" 
                     [ngClass]="{
-                      'grey-txt': (getCompletionStatus(itemGroup) === 'Compléter' || getCompletionStatus(itemGroup) === 'A-JUSTer'),
-                      'yellow-txt': getCompletionStatus(itemGroup) === 'A vérifier',
-                      'blue-txt': getCompletionStatus(itemGroup) === 'A compléter'
+                      'grey-txt': (getCompletionStatus(itemGroup).includes('Compléter') || getCompletionStatus(itemGroup).includes('A-JUSTer')),
+                      'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
+                      'blue-txt': getCompletionStatus(itemGroup).includes('A compléter')
                     }"
                     
                     (click)="contentieuxToUpdate = ref"
                   >
-                      <p>{{ getCompletionStatus(itemGroup) }}</p>
+                      <p *ngIf="getCompletionStatus(itemGroup).includes('A compléter')">
+                        {{getCompletionStatus(itemGroup) }}  <span class="pastille">+{{itemGroup.possibleGainCompletion }}%</span>
+                 
+                      </p>
+                      <p *ngIf="!getCompletionStatus(itemGroup).includes('A compléter')">
+                        {{getCompletionStatus(itemGroup) }}
+                      </p>
                       <mat-icon>
                         {{ 'chevron_right' }}
                       </mat-icon>
@@ -260,12 +266,6 @@
   <p *ngIf="updatedBy" class="sub-title">
     Dernière mise à jour le {{ updatedBy.date | date:'dd' }} {{
     getMonthString(updatedBy.date) }} {{ updatedBy.date | date:'YYYY' }}
-    <!--<ng-template [ngIf]="updatedBy.user"
-      >, par
-      <span class="tag"
-        >{{ updatedBy.user.firstName }} {{ updatedBy.user.lastName }}</span
-      >
-    </ng-template>-->
   </p>
 </ng-template>
 
