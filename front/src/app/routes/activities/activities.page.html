@@ -176,7 +176,7 @@
                         [ngModel]="itemGroup.in ? itemGroup.in : itemGroup.originalIn"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': (itemGroup.valueQualityIn === 'to_complete' && itemGroup.in === null && itemGroup.originalIn === null), 'yellow' : itemGroup.valueQualityIn === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null), 'yellow' : (itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null) }"
                       />
                     </div>
                   </div>
@@ -187,7 +187,7 @@
                         [ngModel]="itemGroup.out ? itemGroup.out : itemGroup.originalOut"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': (itemGroup.valueQualityOut === 'to_complete' && itemGroup.out === null) && itemGroup.originalOut === null, 'yellow' : itemGroup.valueQualityOut === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null) && itemGroup.originalOut === null, 'yellow' : (itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null )}"
                       />
                     </div>
                   </div>
@@ -198,7 +198,7 @@
                         [ngModel]="itemGroup.stock ? itemGroup.stock : itemGroup.originalStock"
                         disabled
                         placeholder="-"
-                        [ngClass]="{'blue': (itemGroup.valueQualityStock === 'to_complete' && itemGroup.stock === null && itemGroup.originalStock === null), 'yellow' : itemGroup.valueQualityStock === 'to_verify' }"
+                        [ngClass]="{'blue': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 'yellow' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ) }"
                       />
                     </div>
                   </div>

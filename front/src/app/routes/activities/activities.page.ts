@@ -601,16 +601,20 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   }
 
   getCompletionStatus( item : ContentieuReferentielInterface ) {
-    const quality = {in: item.valueQualityIn, out: item.valueQualityOut, stock: item.valueQualityStock}
-    // if (item.label === 'Référés civils' || item.label === 'Contentieux général <10.000€')
-    //   console.log('Item:', item)
+    const quality = {in: { quality: item.valueQualityIn, value: item.in} , out: { quality: item.valueQualityOut, value: item.out } ,  stock: { quality: item.valueQualityStock, value: item.stock }}
+
     if (item){
-      if (Object.values(quality).find(value => value === 'facultatif'))
+      if (Object.values(quality).find(value => value.quality === 'facultatif'))
         return 'Compléter'
-      else if (Object.values(quality).find(value => value === 'to_complete'))
+      else if (Object.values(quality).find(value => value.quality === 'to_complete'))
         return (((item.in === null || item.out === null || item.stock === null) && (item.originalIn === null || item.originalOut === null || item.originalStock === null))) ? 'A compléter' : 'A-JUSTer'
-      else if (Object.values(quality).find(value => value === 'to_verify'))
-        return 'A vérifier'
+      else if (Object.values(quality).find(value => value.quality === 'to_verify')) {
+        const obj : any = Object.values(quality).filter(value => value.quality === 'to_verify')
+        for (let elem of obj) {
+          if (elem.value === null)
+            return 'A vérifier'
+        }
+      }
     }
     return 'A-JUSTer'
   }

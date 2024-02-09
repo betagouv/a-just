@@ -192,16 +192,21 @@
       class="item-template-original"
       [ngClass]="{
         'to-confirm':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type) ,
         'is-not-setted':
           valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         'is-not-setted-set':
-          valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type)
+          valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type),
+        'grey-bg':
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),
       }"
     >
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>
+      <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
+        <p class="confirm-btn" (click)="onUpdateValue(original, type, items)">Confirmer</p>
+      </span>
     </div>
     <div class="item-template-new-total" *ngIf="items.childrens">
       <ng-container
@@ -211,7 +216,7 @@
             type: type,
             contentieux: items,
             value: newValue,
-            level: 3
+            level: 3,
           }
         "
       >
@@ -226,7 +231,8 @@
             type: type,
             contentieux: items,
             value: newValue,
-            level: 4
+            level: 4,
+            valueQuality: valueQuality,
           }
         "
       >
@@ -235,11 +241,11 @@
         #inputElement
         type="number"
         [ngModel]="newValue"
-        placeholder="-"
+        [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          blue: newValue !== null,
-          'is-not-setted-set':
-            valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type)
+          'blue-bottom': newValue !== null && valueQuality === VALUE_QUALITY_TO_COMPLETE,
+          'is-not-setted-to-verify':
+            valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
         (keyup)="onUpdateValue(inputElement.value, type, items)"
       />
@@ -253,6 +259,7 @@
   let-contentieux="contentieux"
   let-value="value"
   let-level="level"
+  let-valueQuality="valueQuality"
 >
   <i
     class="{{
@@ -262,7 +269,7 @@
       contentieux.activityUpdated[type]
         ? 'ri-lightbulb-flash-fill'
         : 'ri-lightbulb-flash-line'
-    }} cursor-pointer {{ value !== null ? 'blue' : '' }}"
+    }} cursor-pointer {{ value !== null ? (valueQuality === VALUE_QUALITY_TO_COMPLETE ? 'blue-light' : 'blue' ): '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>
