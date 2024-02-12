@@ -538,21 +538,32 @@ export class PopinEditActivitiesComponent
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-    if (node === "entrees")
+    if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY)
       console.log('Cont:', cont)
     switch (node) {
       case 'entrees':
-        if (cont.in !== null || cont.originalIn !== null) {
-          return true
+        if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {
+          if (cont.in !== null || cont.originalIn !== null)
+            return true
         }
+        else if (cont.in !== null)
+          return true
         break
       case 'sorties':
-        if (cont.out !== null || cont.originalOut !== null) {
+        if (cont.valueQualityOut === this.VALUE_QUALITY_TO_COMPLETE) {
+          if (cont.out !== null || cont.originalOut !== null)
+            return true
+        }
+        else if (cont.out !== null) {
           return true
         }
         break
       case 'stock':
-        if (cont.stock !== null || cont.originalStock !== null) {
+        if (cont.valueQualityStock === this.VALUE_QUALITY_TO_COMPLETE) {
+          if (cont.stock !== null || cont.originalStock !== null)
+            return true
+        }
+        else if (cont.stock !== null) {
           return true
         }
         break
