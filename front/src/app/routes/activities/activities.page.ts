@@ -5,7 +5,6 @@ import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { DATA_GITBOOK } from 'src/app/constants/documentation'
 import {
   ActivityInterface,
-  NodeActivityUpdatedInterface,
 } from 'src/app/interfaces/activity'
 import {
   ContentieuReferentielActivitiesInterface,
@@ -305,7 +304,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
         this.activities = activities
+        console.log('MonthValues:',)
 
+        monthValues.list.map((elem: any) => {
+          if (elem.contentieux.label === "Propriété littéraire et artistique")
+            console.log('Values:', elem)
+        })
         if (monthValues.list.length === 0) {
           this.canEditActivities = false
         } else {
@@ -350,7 +354,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               : null
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
-
               if (!c.activityUpdated) {
                 c.activityUpdated = {
                   entrees: null,
@@ -361,29 +364,30 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
+
               c.in = getChildrenActivity ? getChildrenActivity.entrees : null
               c.originalIn = getChildrenActivity
                 ? getChildrenActivity.originalEntrees
                 : null
-              c.activityUpdated.entrees = (c.in && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
+              //c.activityUpdated.entrees = (c.in && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
               
               c.out = getChildrenActivity ? getChildrenActivity.sorties : null
               c.originalOut = getChildrenActivity
                 ? getChildrenActivity.originalSorties
                 : null
-              c.activityUpdated.sorties = (c.out && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
+              //c.activityUpdated.sorties = (c.out && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
               
               c.stock = getChildrenActivity ? getChildrenActivity.stock : null
               c.originalStock = getChildrenActivity
                 ? getChildrenActivity.originalStock
                 : null
-              c.activityUpdated.stock = (c.stock && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
+              //c.activityUpdated.stock = (c.stock && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
 
               return {
                 ...c,
-                /*activityUpdated:
+                activityUpdated:
                   (getChildrenActivity && getChildrenActivity.updatedBy) ||
-                  null,*/
+                  null,
               }
             })
             if (!newRef.activityUpdated) {
@@ -394,7 +398,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               };
             }
             
-            newRef.childrens.map(child => {
+            /*newRef.childrens.map(child => {
               if (child.activityUpdated && newRef.activityUpdated) {
                 if (child.activityUpdated.entrees) {
                   if (newRef.activityUpdated.entrees)
@@ -415,7 +419,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                     newRef.activityUpdated.stock = child.activityUpdated.stock
                 }
               }
-            })
+            })*/
  
             const oldReferentielFinded = oldReferentielSetted.find(
               (i) => i.id === newRef.id
@@ -468,10 +472,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
             return {
               ...newRef,
-              //activityUpdated: (getActivity && getActivity.updatedBy) || null,
+              activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
           })
+          this.referentiel.map(elem => console.log('elem:', elem))
+
           // Calcul du taux de completion
           let totalNotEmpty = 0;
           let totalContentieuxLevelFour = 0;
@@ -517,9 +523,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
-      //this.referentiel.map(elem => console.log('elem:', elem))
       })
-
   }
 
   /**
@@ -530,7 +534,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   getTooltipTitle(
     {user, date} : {user: UserInterface , date: Date}
   ) {
-     // console.log('user:', user, ' | date:', date)
+      //console.log('user:', user, ' | date:', date)
       return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
   }
 
