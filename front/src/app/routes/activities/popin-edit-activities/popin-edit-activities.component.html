@@ -198,7 +198,7 @@
         'is-not-setted-set':
           valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type),
         'grey-bg':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),         
       }"
     >
       <div>
@@ -208,7 +208,12 @@
         <p class="confirm-btn" (click)="onUpdateValue(original, type, items)">Confirmer</p>
       </span>
     </div>
-    <div class="item-template-new-total" *ngIf="items.childrens">
+    <div
+      class="item-template-new-total" 
+      [ngClass]="{
+        'blue-bottom': newValue !== null
+      }" 
+      *ngIf="items.childrens">
       <ng-container
         *ngTemplateOutlet="
           tooltip;
@@ -243,7 +248,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': newValue !== null && valueQuality === VALUE_QUALITY_TO_COMPLETE,
+          'blue-bottom': newValue !== null,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -262,14 +267,7 @@
   let-valueQuality="valueQuality"
 >
   <i
-    class="{{
-      value !== null &&
-      contentieux &&
-      contentieux.activityUpdated &&
-      contentieux.activityUpdated[type]
-        ? 'ri-lightbulb-flash-fill'
-        : 'ri-lightbulb-flash-line'
-    }} cursor-pointer {{ value !== null ? (valueQuality === VALUE_QUALITY_TO_COMPLETE ? 'blue-light' : 'blue' ): '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null ? 'blue' : '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

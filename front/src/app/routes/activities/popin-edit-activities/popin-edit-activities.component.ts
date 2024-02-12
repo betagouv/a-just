@@ -396,10 +396,6 @@ export class PopinEditActivitiesComponent
     contentieux: ContentieuReferentielInterface
   ) {
 
-    console.log('newValue:',newValue)
-    console.log('nodeName:',nodeName)
-    console.log('contentieux:', contentieux)
-
     let value: null | number = null
     if (newValue !== '') {
       value = +newValue

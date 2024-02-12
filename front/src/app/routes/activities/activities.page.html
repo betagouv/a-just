@@ -86,7 +86,7 @@
                   [ngModel]="ref.in ? ref.in : ref.originalIn"
                   disabled
                   placeholder="-"
-                  [ngClass]="{'data-changed': ref.in !== null}"
+                  [ngClass]="{'data-changed': ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date}"
                 />
               </div>
               <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
@@ -101,7 +101,7 @@
                   [ngModel]="ref.out ? ref.out : ref.originalOut"
                   disabled
                   placeholder="-"
-                  [ngClass]="{'data-changed': ref.out !== null}"
+                  [ngClass]="{'data-changed': ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date}"
                 />
               </div>
               <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
@@ -116,7 +116,7 @@
                   [ngModel]="ref.stock ? ref.stock : ref.originalStock"
                   disabled
                   placeholder="-"
-                  [ngClass]="{'data-changed': ref.stock !== null}"
+                  [ngClass]="{'data-changed': ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
                 />
               </div>
               <ng-template [ngIf]="ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
@@ -179,10 +179,10 @@
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null), 
                           'yellow' : (itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null), 
-                          'blue-bottom' : (itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in !== null ),
+                          'blue-bottom' : (itemGroup.activityUpdated && itemGroup.activityUpdated.entrees),
                         }"
                       />
-                      <ng-template [ngIf]="itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
+                      <ng-template [ngIf]="itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.entrees.user, date: itemGroup.activityUpdated.entrees.date})">
                         </aj-tooltips>
                       </ng-template>
@@ -198,10 +198,10 @@
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null) && itemGroup.originalOut === null, 
                           'yellow' : (itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null ),
-                          'blue-bottom' : (itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out !== null ),
+                          'blue-bottom' : (itemGroup.activityUpdated && itemGroup.activityUpdated.sorties),
                         }"
                       />
-                      <ng-template [ngIf]="itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
+                      <ng-template [ngIf]="itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.sorties.user, date: itemGroup.activityUpdated.sorties.date})">
                         </aj-tooltips>
                       </ng-template>
@@ -217,10 +217,10 @@
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 
                           'yellow' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ),
-                          'blue-bottom' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock !== null ),
+                          'blue-bottom' : (itemGroup.activityUpdated && itemGroup.activityUpdated.stock),
                         }"
                       />
-                      <ng-template [ngIf]="itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
+                      <ng-template [ngIf]="itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
                         </aj-tooltips>
                       </ng-template>

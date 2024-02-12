@@ -280,7 +280,11 @@
       margin-right: 24px;
       font-size: 14px;
     }
-}
+  }
+
+  .blue-bottom {
+    border-bottom: 3px solid fColor(dataCompletionTextColor);
+  }
 
   .item-template-new-total {
     display: flex;
@@ -293,7 +297,7 @@
       top: 20px;
 
       &.blue {
-        color: fColor(darkModeTitle);
+        color: fColor(dataCompletionTextColor);
       }
     }
 
@@ -316,10 +320,6 @@
       top: 20px;
 
       &.blue {
-        color: fColor(darkModeTitle);
-      }
-
-      &.blue-light {
         color: fColor(dataCompletionTextColor);
       }
     }
@@ -351,7 +351,7 @@
       }
 
       &.blue-bottom {
-        border-bottom-color: fColor(dataCompletionTextColor);
+        border-bottom: 3px solid fColor(dataCompletionTextColor);
       }
     }
 
