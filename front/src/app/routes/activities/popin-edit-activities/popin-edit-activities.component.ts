@@ -451,9 +451,9 @@ export class PopinEditActivitiesComponent
       for (const cont of Object.keys(contentieux)) {
         const up: any = contentieux[cont]
         let options = {
-          entrees: up[0].in,
-          sorties:  up[0].out,
-          stock:  up[0].stock,
+          entrees: null,
+          sorties:  null,
+          stock:  null,
         }
         for (const elem of up) {
           
@@ -468,7 +468,6 @@ export class PopinEditActivitiesComponent
               options.stock = elem.value
               break
           }
-
           await this.activitiesService.updateDatasAt(
             Number(cont),
             this.activityMonth,
@@ -530,7 +529,8 @@ export class PopinEditActivitiesComponent
             this.referentiel.childrens = (this.referentiel.childrens || []).map(
               (child) => ({ ...child, ...getValuesFromList(child.id) })
             )
-
+            
+            
             this.updateTotal()
           }
         }
@@ -547,11 +547,11 @@ export class PopinEditActivitiesComponent
         path: this.referentiel.helpUrl,
       })
     }
-  }
+  }‡
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-    if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY)
-      console.log('Cont:', cont)
+   
+   
     switch (node) {
       case 'entrees':
         if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {

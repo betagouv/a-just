@@ -71,7 +71,8 @@
             original: referentiel.originalIn,
             newValue: total.in,
             valueQuality: referentiel.valueQualityIn,
-            type: 'entrees'
+            type: 'entrees',
+            updated: referentiel.activityUpdated?.entrees ? referentiel.activityUpdated?.entrees : null,
           }
         "
       ></ng-container>
@@ -85,7 +86,8 @@
             original: referentiel.originalOut,
             newValue: total.out,
             valueQuality: referentiel.valueQualityOut,
-            type: 'sorties'
+            type: 'sorties',
+            updated: referentiel.activityUpdated?.sorties ? referentiel.activityUpdated?.sorties : null,
           }
         "
       ></ng-container>
@@ -99,7 +101,8 @@
             original: referentiel.originalStock,
             newValue: total.stock,
             valueQuality: referentiel.valueQualityStock,
-            type: 'stock'
+            type: 'stock',
+            updated: referentiel.activityUpdated?.stock ? referentiel.activityUpdated?.stock : null,
           }
         "
       ></ng-container>
@@ -120,7 +123,8 @@
               original: item.originalIn,
               newValue: item.in,
               valueQuality: item.valueQualityIn,
-              type: 'entrees'
+              type: 'entrees',
+              updated: item.activityUpdated?.entrees ? item.activityUpdated?.entrees : null,
             }
           "
         ></ng-container>
@@ -134,7 +138,8 @@
               original: item.originalOut,
               newValue: item.out,
               valueQuality: item.valueQualityOut,
-              type: 'sorties'
+              type: 'sorties',
+              updated: item.activityUpdated?.sorties ? item.activityUpdated?.sorties : null,
             }
           "
         ></ng-container>
@@ -148,7 +153,8 @@
               original: item.originalStock,
               newValue: item.stock,
               valueQuality: item.valueQualityStock,
-              type: 'stock'
+              type: 'stock',
+              updated: item.activityUpdated?.stock ? item.activityUpdated?.stock : null,
             }
           "
         ></ng-container>
@@ -186,6 +192,7 @@
   let-original="original"
   let-newValue="newValue"
   let-type="type"
+  let-updated='updated'
 >
   <div class="item-template">
     <div
@@ -211,7 +218,7 @@
     <div
       class="item-template-new-total" 
       [ngClass]="{
-        'blue-bottom': newValue !== null
+        'blue-bottom': updated !== null && newValue !== null
       }" 
       *ngIf="items.childrens">
       <ng-container
@@ -248,7 +255,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': newValue !== null,
+          'blue-bottom': updated !== null && newValue !== null,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
