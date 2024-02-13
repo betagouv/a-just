@@ -304,7 +304,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
         this.activities = activities
-        console.log('MonthValues:',)
+        console.log('MonthValues:')
 
         monthValues.list.map((elem: any) => {
           if (elem.contentieux.label === "Propriété littéraire et artistique")
@@ -361,6 +361,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                   stock: null,
                 };
               }
+              if (newRef.label === "Juges des Enfants")
+                console.log('CNS Children:', c)
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
@@ -369,19 +371,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               c.originalIn = getChildrenActivity
                 ? getChildrenActivity.originalEntrees
                 : null
-              //c.activityUpdated.entrees = (c.in && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
+              //c.activityUpdated.entrees = (c.in !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
               
               c.out = getChildrenActivity ? getChildrenActivity.sorties : null
               c.originalOut = getChildrenActivity
                 ? getChildrenActivity.originalSorties
                 : null
-              //c.activityUpdated.sorties = (c.out && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
+              //c.activityUpdated.sorties = (c.out !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
               
               c.stock = getChildrenActivity ? getChildrenActivity.stock : null
               c.originalStock = getChildrenActivity
                 ? getChildrenActivity.originalStock
                 : null
-              //c.activityUpdated.stock = (c.stock && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
+              //c.activityUpdated.stock = (c.stock != null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
 
               return {
                 ...c,
@@ -398,7 +400,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               };
             }
             
-            /*newRef.childrens.map(child => {
+            newRef.childrens.map(child => {
               if (child.activityUpdated && newRef.activityUpdated) {
                 if (child.activityUpdated.entrees) {
                   if (newRef.activityUpdated.entrees)
@@ -419,7 +421,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                     newRef.activityUpdated.stock = child.activityUpdated.stock
                 }
               }
-            })*/
+            })
  
             const oldReferentielFinded = oldReferentielSetted.find(
               (i) => i.id === newRef.id
@@ -472,11 +474,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
             return {
               ...newRef,
-              activityUpdated: (getActivity && getActivity.updatedBy) || null,
+              //activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
           })
-          this.referentiel.map(elem => console.log('elem:', elem))
+          this.referentiel.map(elem => {
+            if (elem.label === "Juges des Enfants")
+               console.log('elem:', elem)
+          })
 
           // Calcul du taux de completion
           let totalNotEmpty = 0;
