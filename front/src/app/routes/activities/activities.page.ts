@@ -361,8 +361,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                   stock: null,
                 };
               }
-              if (newRef.label === "Juges des Enfants")
-                console.log('CNS Children:', c)
+
+
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
@@ -479,8 +479,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
           this.referentiel.map(elem => {
-            if (elem.label === "Juges des Enfants")
-               console.log('elem:', elem)
+
+
           })
 
           // Calcul du taux de completion
