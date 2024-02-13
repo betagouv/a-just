@@ -20,6 +20,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { copy } from 'src/app/utils'
+import { groupBy, mapValues, get } from 'lodash';
 
 /**
  * Composant page activité
@@ -433,35 +434,50 @@ export class PopinEditActivitiesComponent
         },
       })
     } else {
-      const updates = Object.values(this.updates)
+      const updates : any = Object.values(this.updates)
 
-      for (let i = 0; i < updates.length; i++) {
-        const up: any = updates[i]
+      let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
+      contentieux= mapValues(contentieux, (group) =>
+        group.map((elem) => {
+          const initialValues = {
+            in: elem.contentieux.in !== null ? elem.contentieux.in : elem.contentieux.originalIn,
+            out: elem.contentieux.out !== null ? elem.contentieux.out : elem.contentieux.originalOut,
+            stock: elem.contentieux.stock !== null ? elem.contentieux.stock : elem.contentieux.originalStock,
+          };
+          return { ...elem, ...initialValues };
+        })
+      )
 
-        const options = {
-          entrees: up.contentieux.in,
-          sorties: up.contentieux.out,
-          stock: up.contentieux.stock,
+      for (const cont of Object.keys(contentieux)) {
+        const up: any = contentieux[cont]
+        let options = {
+          entrees: up[0].in,
+          sorties:  up[0].out,
+          stock:  up[0].stock,
         }
-        switch (up.node) {
-          case 'entrees':
-            options.entrees = up.value
-            break
-          case 'sorties':
-            options.sorties = up.value
-            break
-          case 'stock':
-            options.stock = up.value
-            break
-        }
+        for (const elem of up) {
+          
+          switch (elem.node) {
+            case 'entrees':
+              options.entrees = elem.value
+              break
+            case 'sorties':
+              options.sorties = elem.value
+              break
+            case 'stock':
+              options.stock = elem.value
+              break
+          }
 
-        await this.activitiesService.updateDatasAt(
-          up.contentieux.id,
-          this.activityMonth,
-          options,
-          up.node
-        )
+          await this.activitiesService.updateDatasAt(
+            Number(cont),
+            this.activityMonth,
+            options,
+            elem.node
+          )
+        }
       }
+        
 
       if (updates.length && this.referentiel) {
         this.appService.notification(
