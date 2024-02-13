@@ -547,7 +547,7 @@ export class PopinEditActivitiesComponent
         path: this.referentiel.helpUrl,
       })
     }
-  }‡
+  }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
    
