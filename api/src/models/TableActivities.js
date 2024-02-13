@@ -315,7 +315,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (findActivity) {
-      await findActivity.update(values)
+      await findActivity.update({ [nodeUpdated]: values.nodeUpdated })
     } else {
       findActivity = await Model.create({
         ...values,
