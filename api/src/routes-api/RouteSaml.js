@@ -2,6 +2,8 @@ import Route from './Route'
 import { Types } from '../utils/types'
 import { loginSSO, logoutSSO, postAssertSSO, sp } from '../utils/justice-sso'
 import config from 'config'
+import { SAML_STATUS_EMPTY, SAML_STATUS_PENDING } from '../constants/saml'
+import { USER_USER_LOGIN } from '../constants/log-codes'
 
 /**
  * Route des SAML2
@@ -75,7 +77,7 @@ export default class RouteSaml extends Route {
   @Route.Post({
     bodyType: Types.any(),
   })
-  async assert (ctx) {
+  async assertReturn (ctx) {
     try {
       const assert = await postAssertSSO(this.body(ctx))
       if (assert) {
@@ -97,5 +99,34 @@ export default class RouteSaml extends Route {
   @Route.Get()
   async getUrl (ctx) {
     this.sendOk(ctx, config.sso.url)
+  }
+
+  /**
+   * Get SSO Url
+   */
+  @Route.Get()
+  async status (ctx) {
+    const email = ('mrLeDJ@judstice.fr' || '').toLowerCase()
+
+    const userInDb = await this.model.userPreviewWithEmail(email)
+    if (userInDb) {
+      await ctx.loginUser(userInDb, 7)
+      await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
+        userId: userInDb.id,
+      })
+      await super.addUserInfoInBody(ctx, userInDb.id)
+      this.sendCreated(ctx)
+    } else if (email) {
+      this.sendOk(ctx, {
+        status: SAML_STATUS_PENDING,
+        datas: {
+          email,
+        },
+      })
+    } else {
+      this.sendOk(ctx, {
+        status: SAML_STATUS_EMPTY,
+      })
+    }
   }
 }

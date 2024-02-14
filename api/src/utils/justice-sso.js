@@ -5,7 +5,7 @@ var sp_options = {
   entity_id: `${config.serverUrl}/saml/metadata.xml`,
   private_key: config.sso.privateKey,
   certificate: config.sso.publicKey,
-  assert_endpoint: `${config.serverUrl}/saml/assert`,
+  assert_endpoint: `${config.serverUrl}/saml/assert-return`,
   force_authn: true,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
   nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',

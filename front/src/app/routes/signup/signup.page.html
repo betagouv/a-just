@@ -1,66 +1,128 @@
 <aj-wrapper-no-connected
-  [title]="'Un outil d\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction'">
+  [title]="'Un outil d\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction'"
+>
   <div class="logo">
-    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
+    <img
+      src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg"
+      alt="ministère de la justice"
+    />
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <h3>Embarquement A-JUST</h3>
-    <label class="sub-title">Tous les champs de ce formulaire sont obligatoires</label>
+    <label class="sub-title"
+      >Tous les champs de ce formulaire sont obligatoires</label
+    >
 
     <label class="steps">Étape {{signUpStep}} sur 2</label>
     <p class="step-title">{{signUpStep===1 ?'Je suis :':'Ma fonction'}}</p>
     <div class="bordure-steps">
       <div class="step-one"></div>
-      <div class="step-two" [ngStyle]="{ 'background-color': getStepColor()}"></div>
+      <div
+        class="step-two"
+        [ngStyle]="{ 'background-color': getStepColor()}"
+      ></div>
     </div>
     <ng-template [ngIf]="signUpStep===1">
       <div class="grid-double">
         <div>
           <label>Prénom</label>
-          <input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text" />
+          <input
+            class="ethics-ui"
+            placeholder="Prénom"
+            formControlName="firstName"
+            type="text"
+          />
         </div>
         <div>
           <label>NOM</label>
-          <input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text" />
+          <input
+            class="ethics-ui"
+            placeholder="Nom"
+            formControlName="lastName"
+            type="text"
+          />
         </div>
       </div>
       <label>Courriel professionnel :</label>
-      <label class="sub-label">Adresse nominative uniquement, ne pas utiliser de
-        boîte générique ou structurelle</label>
-      <input class="ethics-ui" placeholder="" formControlName="email" type="email" />
+      <label class="sub-label"
+        >Adresse nominative uniquement, ne pas utiliser de boîte générique ou
+        structurelle</label
+      >
+      <input
+        class="ethics-ui"
+        placeholder=""
+        formControlName="email"
+        type="email"
+      />
 
-      <div class="password-line">
-        <div><label>Créer un mot de passe :</label></div>
-        <div>
-          <span><input type="checkbox" formControlName="checkboxPassword" /> Afficher</span>
+      <ng-template [ngIf]="!paramsUrl?.provider">
+        <div class="password-line">
+          <div><label>Créer un mot de passe :</label></div>
+          <div>
+            <span
+              ><input type="checkbox" formControlName="checkboxPassword" />
+              Afficher</span
+            >
+          </div>
         </div>
-      </div>
-      <input class="ethics-ui no-margin" placeholder="" formControlName="password"
-        type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)" />
-      <label class="sub-title no-margin">Votre mot de passe doit contenir au
-        moins :</label>
-      <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
-          [ngStyle]="{ 'background-color': getParamColor(0)}">i</span> &nbsp; 8 caractères
-        minimum</label>
-      <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(1)}"><span
-          [ngStyle]="{ 'background-color': getParamColor(1)}">i</span> &nbsp; 1 caractère
-        spécial</label>
-      <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(2)}"><span
-          [ngStyle]="{ 'background-color': getParamColor(2)}">i</span> &nbsp; 1 chiffre
-        minimum</label>
-      <label class="sub-label password last" [ngStyle]="{ 'color': getParamColor(3)}"><span
-          [ngStyle]="{ 'background-color': getParamColor(3)}">i</span> &nbsp; 1
-        majuscule</label>
+        <input
+          class="ethics-ui no-margin"
+          placeholder=""
+          formControlName="password"
+          type="{{!form.controls['checkboxPassword'].value?'password':'text'}}"
+          (keyup)="checkStrength($event)"
+        />
+        <label class="sub-title no-margin"
+          >Votre mot de passe doit contenir au moins :</label
+        >
+        <label
+          class="sub-label password"
+          [ngStyle]="{ 'color': getParamColor(0)}"
+          ><span [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
+          &nbsp; 8 caractères minimum</label
+        >
+        <label
+          class="sub-label password"
+          [ngStyle]="{ 'color': getParamColor(1)}"
+          ><span [ngStyle]="{ 'background-color': getParamColor(1)}">i</span>
+          &nbsp; 1 caractère spécial</label
+        >
+        <label
+          class="sub-label password"
+          [ngStyle]="{ 'color': getParamColor(2)}"
+          ><span [ngStyle]="{ 'background-color': getParamColor(2)}">i</span>
+          &nbsp; 1 chiffre minimum</label
+        >
+        <label
+          class="sub-label password last"
+          [ngStyle]="{ 'color': getParamColor(3)}"
+          ><span [ngStyle]="{ 'background-color': getParamColor(3)}">i</span>
+          &nbsp; 1 majuscule</label
+        >
 
-      <label>Confirmation de votre mot de passe :</label>
-      <input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password" />
+        <label>Confirmation de votre mot de passe :</label>
+        <input
+          class="ethics-ui"
+          placeholder=""
+          formControlName="passwordConf"
+          type="password"
+        />
+      </ng-template>
 
       <div class="checkbox-container checkbox-row">
-        <input class="large" type="checkbox" formControlName="checkbox" #checkbox />
-        <p (click)="checkbox.click()">Je certifie avoir lu et accepté les <a
-            [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales
-            d'utilisation</a>.</p>
+        <input
+          class="large"
+          type="checkbox"
+          formControlName="checkbox"
+          #checkbox
+        />
+        <p (click)="checkbox.click()">
+          Je certifie avoir lu et accepté les
+          <a [routerLink]="['/conditions-generales-d-utilisation', 'signUp']"
+            >Conditions générales d'utilisation</a
+          >.
+        </p>
       </div>
 
       <div class="next-step" (click)="onStepTwo()">
@@ -73,9 +135,7 @@
         <select (change)="setTj($event.target)">
           <!--<option selected hidden></option>-->
           <option selected hidden>Choisir un TJ</option>
-          <option *ngFor="let tj of tjs" [value]="tj.id">
-            {{ tj.label }}
-          </option>
+          <option *ngFor="let tj of tjs" [value]="tj.id">{{ tj.label }}</option>
         </select>
       </div>
 
@@ -90,26 +150,41 @@
 
       <ng-container *ngIf="fctSelect.value==='Autre'">
         <label>Intitulé de ma fonction :</label>
-        <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" />
+        <input
+          class="ethics-ui"
+          placeholder="Exemple"
+          formControlName="fonctionAutre"
+          type="text"
+        />
 
         <label>Mon responsable hiérarchique :</label>
-        <label class="sub-label">Personne qui validera l'ouverture de mes droits</label>
-        <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text" />
+        <label class="sub-label"
+          >Personne qui validera l'ouverture de mes droits</label
+        >
+        <input
+          class="ethics-ui"
+          placeholder="prénom nom et fonction"
+          formControlName="responsable"
+          type="text"
+        />
       </ng-container>
 
-
       <div>
-        <input type="submit" class="big-button" value="Valider mon embarquement" />
+        <input
+          type="submit"
+          class="big-button"
+          value="Valider mon embarquement"
+        />
       </div>
-
     </ng-template>
-
-
 
     <div class="login">
       <p><b>Vous avez déjà un compte</b></p>
-      <a routerLink="/connexion"><button class="outline white strict-border"><i class="ri-login-box-line"></i>Se
-          connecter</button></a>
+      <a routerLink="/connexion"
+        ><button class="outline white strict-border">
+          <i class="ri-login-box-line"></i>Se connecter
+        </button></a
+      >
     </div>
   </form>
 </aj-wrapper-no-connected>
