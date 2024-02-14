@@ -155,7 +155,7 @@ export class MainClass {
    * Méthode d'exclusion si c'est un IOS
    * @returns
    */
-  public isNotOS() {
+  public isNotIOS() {
     return !this.isOS()
   }
 

@@ -304,6 +304,8 @@ export default (sequelizeInstance, Model) => {
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
     date = new Date(date)
 
+    console.log(values)
+
     let findActivity = await Model.findOne({
       where: {
         periode: {
@@ -314,8 +316,15 @@ export default (sequelizeInstance, Model) => {
       },
     })
     if (findActivity) {
-      await findActivity.update(values)
+      console.log('edit', { [nodeUpdated]: values[nodeUpdated] })
+      await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
     } else {
+      console.log('create', {
+        ...values,
+        hr_backup_id: hrBackupId,
+        contentieux_id: contentieuxId,
+        periode: date,
+      })
       findActivity = await Model.create({
         ...values,
         hr_backup_id: hrBackupId,

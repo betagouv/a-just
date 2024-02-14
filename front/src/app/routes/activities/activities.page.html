@@ -124,7 +124,7 @@
                 </aj-tooltips>
               </ng-template>
             </div>
-            <div class="column-item completion" (click)="contentieuxToUpdate = ref">
+            <div class="column-item completion">
               <!--<div class="completion">-->
                 <p>{{ref.completion}}% disponibles</p>
                 <span class='completion-bar'>
@@ -227,7 +227,7 @@
                     </div>
                   </div>
                   <div 
-                    class="column-item complete-btn" 
+                    class="column-item complete-btn cursor-pointer" 
                     [ngClass]="{
                       'grey-txt': (getCompletionStatus(itemGroup).includes('Compléter') || getCompletionStatus(itemGroup).includes('A-JUSTer')),
                       'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
