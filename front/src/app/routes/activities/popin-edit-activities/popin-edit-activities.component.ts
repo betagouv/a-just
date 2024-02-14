@@ -396,23 +396,24 @@ export class PopinEditActivitiesComponent
     nodeName: string,
     contentieux: ContentieuReferentielInterface
   ) {
-
-    let value: null | number = null
-    if (newValue !== '') {
-      value = +newValue
-    }
-
-    if (newValue === null) {
-      delete this.updates[`${contentieux.id}-${nodeName}`]
-    } else {
-      this.updates[`${contentieux.id}-${nodeName}`] = {
-        value,
-        node: nodeName,
-        contentieux,
+    if (newValue.length > 0) {
+      let value: null | number = null
+      if (newValue !== '' && newValue.length > 0) {
+        value = +newValue
       }
-    }
 
-    this.updateTotal()
+      if (newValue === null) {
+        delete this.updates[`${contentieux.id}-${nodeName}`]
+      } else {
+        this.updates[`${contentieux.id}-${nodeName}`] = {
+          value,
+          node: nodeName,
+          contentieux,
+        }
+      }
+
+      this.updateTotal()
+    }
   }
 
   /**
