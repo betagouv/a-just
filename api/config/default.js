@@ -140,8 +140,7 @@ module.exports = {
    */
   formatLogs: false,
   /**
- * TOKEN Hubspot
- */
+   * TOKEN Hubspot
+   */
   hubspotToken: process.env.HUBSPOT_TOKEN,
-
 }

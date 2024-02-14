@@ -73,6 +73,10 @@
   display: flex;
   border-bottom: 2px solid fColor(cblack);
 
+  &.is-windows {
+    padding-right: 15px;
+  }
+
   .contentieux-title-header {
     padding: 16px;
     flex: 1;
@@ -119,6 +123,10 @@
   display: flex;
   align-items: center;
   height: 56px;
+
+  &.is-windows {
+    padding-right: 15px;
+  }
 
   .contentieux-title-label {
     padding: 16px;
@@ -179,7 +187,7 @@
 }
 
 .content-popin {
-  overflow: auto;
+  overflow-y: scroll;
 }
 
 .item-template {
@@ -242,14 +250,14 @@
     }
 
     &.is-not-setted-set {
-      /*background-color: Color(dataNotSettedIsSetBg);
+      background-color: Color(dataNotSettedIsSetBg);
       display: flex;
       align-items: center;
       justify-content: flex-end;
 
       p {
         color: fColor(dataNotSettedIsSetColor);
-      }*/
+      }
     }
 
     &.to-confirm > div {
@@ -267,7 +275,7 @@
     }
 
     &.confirmed > div {
-      background-color: red;//fColor(dataToCompleteBg);
+      background-color: fColor(dataToCompleteBg);
       margin: 4px;
       border: 1px solid fColor(dataToCompleteBorder);
       width: calc(100% - 8px);
@@ -342,8 +350,7 @@
 
       &.is-not-setted-set {
         color: fColor(dataToVerifySettedInputColor);
-        //border-bottom-color: fColor(dataToVerifySettedInputBorderColor);
-        ;
+        border-bottom-color: fColor(dataToVerifySettedInputBorderColor);
       }
 
       &.is-not-setted-to-verify::placeholder {

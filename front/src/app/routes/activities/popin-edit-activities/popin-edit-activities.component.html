@@ -33,7 +33,7 @@
     <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">La nomenclature</a>
   </div>
 
-  <div class="contentieux-header">
+  <div class="contentieux-header" [ngClass]="{'is-windows': isNotIOS()}">
     <div class="contentieux-title-header"><p>Contentieux</p></div>
     <div class="contentieux-title-header-entrees">
       <p>Entrées</p>
@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <div class="contentieux-title" *ngIf="referentiel && hasValuesToShow">
+  <div class="contentieux-title" *ngIf="referentiel && hasValuesToShow" [ngClass]="{'is-windows': isNotIOS()}">
     <div class="contentieux-title-label">
       <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
     </div>
