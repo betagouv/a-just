@@ -455,8 +455,8 @@ export class PopinEditActivitiesComponent
           sorties:  null,
           stock:  null,
         }
+        
         for (const elem of up) {
-          
           switch (elem.node) {
             case 'entrees':
               options.entrees = elem.value
@@ -472,12 +472,11 @@ export class PopinEditActivitiesComponent
             Number(cont),
             this.activityMonth,
             options,
-            elem.node
+            elem.node,
           )
         }
       }
         
-
       if (updates.length && this.referentiel) {
         this.appService.notification(
           `Le contentieux <b>${this.referentielMappingName(

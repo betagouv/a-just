@@ -339,6 +339,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               activityUpdated: null,
             }
 
+            
             const getActivity = activities.find(
               (a) => a.contentieux.id === newRef.id
             )
@@ -477,10 +478,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               //activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
-          })
-          this.referentiel.map(elem => {
-
-
           })
 
           // Calcul du taux de completion
