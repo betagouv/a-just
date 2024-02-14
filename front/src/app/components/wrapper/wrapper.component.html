@@ -81,29 +81,45 @@
   </div>
 
   <div class="contener" #contener title="">
-    <div class="header" id="top">
-      <div *ngIf="backUrl" class="back-url">
-        <a [routerLink]="backUrl" [fragment]="backAnchor">
-          <button class="primary small">
-            <mat-icon>chevron_left</mat-icon>Retour
-          </button>
-        </a>
-      </div>
-      <div>
-        <div class="title-with-doc">
-          <h3 [innerHTML]="title"></h3>
-          <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
+    <div class="header">
+      <div class="top-header"  id="top">
+        <div *ngIf="backUrl" class="back-url">
+          <a [routerLink]="backUrl" [fragment]="backAnchor">
+            <button class="primary small">
+              <mat-icon>chevron_left</mat-icon>Retour
+            </button>
+          </a>
         </div>
-        <p class="subtitle">
-          <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
-        </p>
+        <div>
+          <div class="title-with-doc">
+            <h3 [innerHTML]="title"></h3>
+            <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
+          </div>
+          <p class="subtitle">
+            <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+          </p>
+        </div>
+        <ng-template [ngIf]="dateSelector">
+          <aj-date-select
+            title={{dateSelector.title}}
+            dateType={{dateSelector.dateType}}
+            value={{dateSelector.value}}
+            (valueChange)=changeMonth($event)
+          >
+          </aj-date-select>
+        </ng-template>
+        <ng-template [ngIf]="titleTemplate">
+          <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        </ng-template>
+        <div *ngIf="!alignLeft" class="space"></div> 
+        <div class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+        </div>
       </div>
-      <ng-template [ngIf]="titleTemplate">
-        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-      </ng-template>
-      <div *ngIf="!alignLeft" class="space"></div>
-      <div class="actions">
-        <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+      <div class="bottom-header">
+        <ng-template [ngIf]="actionTemplateBottom" class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplateBottom"></ng-container>
+        </ng-template>
       </div>
       <div class="progress-bar" *ngIf="isLoading">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -135,6 +151,7 @@
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
+
 <ng-template #defaultSubtitleTemplate>{{ subtitle }}
   <label *ngIf="subtitleName !== ''" class="subtitle-name">{{
     subtitleName

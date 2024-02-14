@@ -127,6 +127,26 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
+   * Retourne les informations d'un utilisateur via l'email
+   * @param {*} userId
+   * @returns
+   */
+  Model.userPreviewWithEmail = async (userEmail) => {
+    const user = await Model.findOne({
+      attributes: ['id', 'email', 'first_name', 'last_name', 'role'],
+      where: { email: userEmail },
+      raw: true,
+    })
+
+    if (user) {
+      user.access = await Model.models.UsersAccess.getUserAccess(user.id)
+      return snakeToCamelObject(user)
+    }
+
+    return null
+  }
+
+  /**
    * Crée un compte utilisateur
    * @param {*} param0
    */
@@ -134,7 +154,10 @@ export default (sequelizeInstance, Model) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
-      password = cryptPassword(password, email)
+      if (password) {
+        password = cryptPassword(password, email)
+      }
+
       return await Model.create({
         email,
         password,

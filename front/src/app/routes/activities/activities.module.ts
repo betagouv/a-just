@@ -8,9 +8,12 @@ import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
+import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component'
+import { PopupModule } from 'src/app/components/popup/popup.module'
+import { CompletionBarModule } from 'src/app/components/completion-bar/completion-bar.module'
 
 @NgModule({
-  declarations: [ActivitiesPage],
+  declarations: [ActivitiesPage, PopinEditActivitiesComponent],
   imports: [
     ActivitiesPageModule,
     RouterModule,
@@ -21,6 +24,8 @@ import { DateSelectModule } from 'src/app/components/date-select/date-select.mod
     FormsModule,
     WrapperModule,
     DateSelectModule,
+    PopupModule,
+    CompletionBarModule,
   ],
 })
 export class ActivitiesModule {}

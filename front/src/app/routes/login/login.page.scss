@@ -104,3 +104,46 @@
     }
   }
 }
+
+.sso-bt {
+  display: flex;
+  width: 100%;
+  margin-bottom: 32px;
+
+  &.disabled {
+    opacity: 0.75;
+    border-color: fColor(cblack);
+    color: fColor(cblack);
+  }
+  
+  img {
+    align-self: stretch;
+    margin-right: 16px;
+  }
+}
+
+.or {
+  margin: 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: fColor(cblack);
+  }
+
+  p {
+    display: inline-block;
+    margin: 0;
+    padding: 8px;
+    background-color: white;
+    z-index: 1;
+  }
+}

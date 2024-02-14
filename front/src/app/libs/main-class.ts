@@ -1,6 +1,7 @@
 import { Subscription } from 'rxjs'
 import {
   referentielMappingColor,
+  referentielMappingColorActivity,
   referentielMappingName,
 } from '../utils/referentiel'
 import { categoryMappingName, categoryMappingColor } from '../utils/category'
@@ -20,7 +21,7 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
-import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE, VALUE_QUALITY_TO_VERIFY } from '../constants/referentiel'
 import { PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
@@ -45,6 +46,10 @@ export class MainClass {
   FONCTIONNAIRES = FONCTIONNAIRES
   ETP_NEED_TO_BE_UPDATED = ETP_NEED_TO_BE_UPDATED
   PLACEHOLDER_COLOR = PLACEHOLDER_COLOR
+  VALUE_QUALITY_OPTION = VALUE_QUALITY_OPTION;
+  VALUE_QUALITY_GOOD = VALUE_QUALITY_GOOD;
+  VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE;
+  VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY;
 
   /**
    * Methode d'arrondi
@@ -111,6 +116,15 @@ export class MainClass {
   }
 
   /**
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorActivity(name, opacity)
+  }
+
+  /**
    * Methode de reprise des couleur de catégorie
    * @param name
    * @returns
@@ -141,7 +155,7 @@ export class MainClass {
    * Méthode d'exclusion si c'est un IOS
    * @returns
    */
-  public isNotOS() {
+  public isNotIOS() {
     return !this.isOS()
   }
 
@@ -261,8 +275,8 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getMonth(date: Date | null | undefined = new Date()): Date {
-    return month(date)
+  public getMonth(date: Date | null | undefined = new Date(), monthAdd: number = 0): Date {
+    return month(date, monthAdd)
   }
 
   /**

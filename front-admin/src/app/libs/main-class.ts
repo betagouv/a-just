@@ -24,7 +24,7 @@ export class MainClass {
     return navigator.userAgent.indexOf('AppleWebKit') !== -1;
   }
 
-  public isNotOS() {
+  public isNotIOS() {
     return !this.isOS();
   }
 

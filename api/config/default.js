@@ -140,8 +140,15 @@ module.exports = {
    */
   formatLogs: false,
   /**
- * TOKEN Hubspot
- */
+   * TOKEN Hubspot
+   */
   hubspotToken: process.env.HUBSPOT_TOKEN,
-
+  /**
+   * SSO URL
+   */
+  sso: {
+    url: process.env.SSO_URL,
+    privateKey: process.env.SSO_PRIVATE_KEY,
+    publicKey: process.env.SSO_PUBLIC_KEY,
+  },
 }

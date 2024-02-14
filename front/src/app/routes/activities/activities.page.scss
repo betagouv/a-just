@@ -5,23 +5,24 @@
   flex-direction: column;
   height: 100%;
 
+  background-color: fColor(activityBgColor);
 
   .content-list {
     flex: 1;
     overflow: auto;
-
-    > div:last-child {
-      margin-bottom: 32px;
-    }
-
+    width: 100%;
+    
     .column-item {
+      &:last-child {
+        width: 200px;
+      }
+
       > div {
         width: 92px;
         display: flex;
         align-items: center;
 
         &:first-child {
-          background-color: fColor(bgSelect);
           align-self: stretch;
         }
 
@@ -38,50 +39,129 @@
             right: 3px;
             top: 13px;
 
-            &.blue {
+            &.data-changed {
               color: fColor(darkModeTitle);
             }
           }
 
           > input {
-            padding-right: 18px;
+            padding-right: 180px;
           }
         }
 
+        input {
+          border: none;
+          border-radius: 0;
+          background-color: transparent;
+          text-align: right;
+          border-radius: 4px;
+          width: 100%;
+        }
+
+        input.data-changed {
+          height: 100%;
+          border-radius: 0;
+          color: fColor(textBlueTag);
+          border-bottom: 3px solid fColor(textBlueTag);
+        }
+
         input.blue {
-          color: fColor(darkModeTitle);
-          border-color: fColor(darkModeTitle);
+          background-color: fColor(dataToCompleteBg);
+          border: 1px solid fColor(textBlueTag);
+        }
+
+        input.yellow {
+          background-color: fColor(dataNotSettedBg);
+          border: 1px solid fColor(dataNotSettedBorder);
+        }
+
+        input.blue-bottom {
+          border-bottom: 3px solid fColor(textBlueTag);
+          border-radius: 0;
         }
       }
     }
   }
+
+  .grey-txt {
+    > p , mat-icon {
+      color: fColor(dataGreyTxt);
+    }
+  }
+  .yellow-txt {
+    > p , mat-icon {
+      color: fColor(dataYellowTxt);
+    }
+  }
+  .blue-txt {
+    > p , mat-icon {
+      color: fColor(dataBlueTxt);
+    }
+  }
+
+  .pastille {
+    background-color: fColor(pastilleDataToCompleteBg);
+    border-radius: 12px;
+    padding: 2px 8px;
+    color: fColor(pastilleDataToCompleteTxt);
+  }
 }
 
-.rightHeader {
-  padding: 8px 12px;
-  background-color: fColor(activityGuideBg);
-  border-left: 4px solid fColor(activityGuideBorder);
+.bottomHeader {
+  padding: 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 
-  h2 {
-    font-size: 18px;
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 60%;
+    height: 100%;
+
+    .completion-bar {
+      width: 100%;
+      position: relative;
+    }
   }
+  
+  .right-panel {
+    h2 {
+      font-size: 14px;
+      margin: 0;
+      padding: 0;
+      line-height: normal;
+      font-weight: normal;
+      color: fColor(cblack);
+    }
 
-  p {
-    color: fColor(activityGuideSubTitle);
-    font-size: 12px;
-  }
+    p {
+      color: fColor(primary);
+      border-bottom: 2px solid fColor(primary);
+      font-size: 16px;
+    }
 
-  a {
-    margin-left: 8px;
-  }
+    .elements {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      color: fColor(cbluedark);
+      div:first-child {
+        margin-right: 32px;
+      }
+    }
 
-  .support-email {
-    color: fColor(primary);
-    font-size: 14px;
-  }
+    .element {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: 16px;
+    }
 
-  .flex-beteween {
-    margin: 2px 0 4px 0;
+    .element :hover {
+      cursor: pointer;
+    }
   }
 }
 
@@ -96,76 +176,86 @@
   }
 
   .column-item {
-    flex: 1;
+    //flex: 1;
+    //width: 200px;
+  }
+}
+
+.tooltip {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background-color: fColor(bgHelper);
+  border-radius: 100px;
+
+  > i {
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+
+    &.blue {
+      color: fColor(tooltipIconColor);
+    }
   }
 }
 
 .header-list {
-  padding: 25px 0 7px 0;
   display: flex;
+  height: 56px;
   align-items: center;
+  justify-content: space-around;
+
   background-color: white;
-
-  .label.month aj-date-select {
-    margin-left: 29px;
-  }
-
-  .margin-left {
-    width: 16px;
-  }
-
-  .margin-right {
-    width: 16px;
-  }
+  border-bottom: 2px solid fColor(cblack);
 
   .activities.is-not-ios {
     margin-right: 16px;
   }
 
   .column-item {
+    width: 92px;
     > p {
+      padding: 16px;
       text-align: center;
+      font-weight: bold;
     }
 
-    > div {
-      margin-top: 9px;
-      display: flex;
+  }
+}
 
-      > div {
-        flex: 1;
-        display: flex;
+.header-list div:nth-child(1) {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  width: 294px;
 
-        &:first-child {
-          justify-content: flex-end;
 
-          p {
-            margin-right: 1px;
-          }
-        }
+  p {
+    flex: 1;
+    text-align: left;
+  }
+}
 
-        &:last-child {
-          p {
-            margin-left: 1px;
-            margin-right: auto;
-          }
-        }
+.header-list :nth-child(2) {
+  width: 92px;
+  height: 100%;
+}
 
-        > p {
-          padding: 2px 8px;
-          border-radius: 12px;
-          background-color: fColor(cgrayDefault);
-          font-size: 12px;
-          color: fColor(cblackdark);
-          display: inline-block;
-        }
-      }
-    }
+.header-list div:last-child {
+  width: 200px;
+  > p {
+    text-align: left;
   }
 }
 
 .item {
   display: flex;
+  justify-content: space-around;
+  align-items: center;
   height: 67px;
+  width: 100%;
 
   &.selectable {
     cursor: pointer;
@@ -179,37 +269,65 @@
     display: flex;
     align-items: center;
     padding: 0 15px;
-
-    .color-border {
-      width: 3px;
-      height: 4px;
-      border-radius: 3px;
-    }
+    width: 294px;
+    height: 100%;
 
     p {
       flex: 1;
       margin-left: 8px;
+      font-size: 14;
+      font-weight: bold;
+
     }
   }
 
   .column-item {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-self: stretch;
+  }
+  
+  .completion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 200px;
+    padding: 7px 9px ;
+
+    p {
+      color: fColor(dataCompletionTextColor)
+    }
+
+    p:first-child {
+      font-size: 12px;
+    }
+
+    p:nth-child(3) {
+      font-size: 10px;
+      margin: 3px 9px 0 0;
+    }
+    
+    .completion-bar {
+      width: 100%;
+    }
+  }
+
+
+  input {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
   }
 }
 
+
 .item-grouped {
-  margin: 8px 16px 0 16px;
+  margin-bottom: 1px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   &.maximize {
     .item {
       position: relative;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-        0 1px 2px 0 rgba(0, 0, 0, 0.06);
     }
 
     .group {
@@ -222,37 +340,90 @@
     height: 0;
     overflow: hidden;
     display: flex;
+    width: 100%;
 
     > div:last-child {
       flex: 1;
     }
 
-    .color-border {
-      padding: 12px;
-      margin-right: 19px;
-
-      > div {
-        width: 3px;
-        border-radius: 3px;
-        height: 100%;
-      }
+    .grey {
+      background-color: fColor(dataGreyBg);
     }
+    
 
     .group-item {
       display: flex;
+      justify-content: space-around;
       align-items: center;
       height: 67px;
+      width: 100%;
 
       .label {
-        width: 254px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        width: 294px;
+        height: 100%;
+
+        p {
+          flex: 1;
+          margin-left: 33px;
+          font-size: 14px;
+        }
+      }
+
+      .state-optional {
+        background-color: fColor(dataNotSettedIsSetBg);
+        padding: 0 6px;
+        border-radius: 4px;
+        p {
+          font-size: 12px !important;
+          font-weight: bold;
+          color:  fColor(dataGreyTxt);
+        }
       }
 
       .column-item {
-        flex: 1;
         display: flex;
         justify-content: center;
         align-self: stretch;
       }
+
+      /*.completion {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 200px;
+        padding: 7px 9px ;
+    
+        p {
+          color: fColor(dataCompletionTextColor)
+        }
+    
+        p:first-child {
+          font-size: 12px;
+        }
+    
+        p:nth-child(3) {
+          font-size: 10px;
+          margin: 3px 9px 0 0;
+        }
+        
+        .completion-bar {
+          width: 100%;
+        }
+      }*/
+
+      .complete-btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 14px;
+        p > {
+          
+        }
+      }
+      
     }
   }
 }
@@ -263,7 +434,6 @@
   span {
     padding: 2px 8px;
     border-radius: 12px;
-    background-color: fColor(cgrayDefault);
     height: 24px;
     line-height: 24px;
     position: relative;
