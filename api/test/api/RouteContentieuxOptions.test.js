@@ -22,7 +22,7 @@ module.exports = function () {
 
   describe('Test Contentieux Options', () => {
     it('load Referentiel', async () => {
-      const response = await axios.get(`${config.serverUrl}/referentiels/get-referentiels`, {
+      const response = await axios.post(`${config.serverUrl}/referentiels/get-referentiels`, {
         headers: {
           Authorization: userToken,
         },
