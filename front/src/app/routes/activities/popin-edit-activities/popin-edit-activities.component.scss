@@ -230,7 +230,7 @@
       position: relative;
 
       .confirm-btn {
-       // content: "Confirmer";
+       cursor: pointer;
         position: absolute;
         left: 50%;
         transform: translate(-50%, 0);
