@@ -305,9 +305,7 @@
       top: 50%;
       right: 7px;
       transform: translateY(-50%);
-      .medium {
-        border: 1px solid red;
-      }
+      
       &.blue {
         color: fColor(dataCompletionTextColor);
       }
