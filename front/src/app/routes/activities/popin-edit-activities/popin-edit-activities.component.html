@@ -1,4 +1,4 @@
-<aj-popup class="large no-padding-content no-title border-radius">
+<aj-popup class="medium no-padding-content no-title border-radius">
   <div class="header-popin">
     <div class="title-popin">
       <p>Visualisation du détail des données d'activité du</p>
@@ -72,7 +72,7 @@
             newValue: total.in,
             valueQuality: referentiel.valueQualityIn,
             type: 'entrees',
-            updated: referentiel.activityUpdated?.entrees ? referentiel.activityUpdated?.entrees : null,
+            updated: total.in !== null ? true : false,
           }
         "
       ></ng-container>
@@ -87,7 +87,7 @@
             newValue: total.out,
             valueQuality: referentiel.valueQualityOut,
             type: 'sorties',
-            updated: referentiel.activityUpdated?.sorties ? referentiel.activityUpdated?.sorties : null,
+            updated: total.out !== null ? true : false
           }
         "
       ></ng-container>
@@ -102,7 +102,7 @@
             newValue: total.stock,
             valueQuality: referentiel.valueQualityStock,
             type: 'stock',
-            updated: referentiel.activityUpdated?.stock ? referentiel.activityUpdated?.stock : null,
+            updated: total.stock !== null ? true : false,
           }
         "
       ></ng-container>
