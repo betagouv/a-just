@@ -87,9 +87,9 @@ export const postAssertSSO = (requestBody) => {
         resolve({
           nameId: saml_response.user.name_id,
           sessionIndex: saml_response.user.session_index,
-          email: 'TODO EMAIL',
-          firstName: 'TODO first name',
-          lastName: 'TODO last name',
+          email: saml_response.user.attributes?.email,
+          firstName: saml_response.user.attributes?.prenom,
+          lastName: saml_response.user.attributes?.nom,
         })
       }
     })
