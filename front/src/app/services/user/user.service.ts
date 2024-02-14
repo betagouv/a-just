@@ -63,12 +63,13 @@ export class UserService {
   }
 
   /**
-   * Get process variables
+   * Get env variable of the interface type
    * @returns
    */
-  getInterfaceType() {
+  async getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
-      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null
+      this.interfaceType = [0, 1].includes(data.data) ? data.data : null
+      return this.interfaceType !== null ? true : false
     })
   }
 

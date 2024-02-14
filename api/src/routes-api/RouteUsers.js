@@ -41,7 +41,7 @@ export default class RouteUsers extends Route {
   @Route.Get()
   async interfaceType(ctx) {
     if (ctx.state && ctx.state.user) {
-      this.sendOk(ctx, process.env.TYPE_ID)
+      this.sendOk(ctx, Number(process.env.TYPE_ID))
     } else {
       this.sendOk(ctx, null)
     }
@@ -311,7 +311,7 @@ export default class RouteUsers extends Route {
   })
   async getUserDatas(ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
-    for (let i = 0; i < backups.length; i++ ) {
+    for (let i = 0; i < backups.length; i++) {
       const isJirs = backups[i].jirs
       const force = true
       backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(isJirs, force)
