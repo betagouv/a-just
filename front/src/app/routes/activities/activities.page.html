@@ -217,7 +217,7 @@
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 
                           'yellow' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ),
-                          'blue-bottom' : (itemGroup.stock !== null && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock),
+                          'blue-bottom' : (itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock),
                         }"
                       />
                       <ng-template [ngIf]="itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
