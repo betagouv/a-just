@@ -20,6 +20,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { copy } from 'src/app/utils'
+import { groupBy, mapValues, get } from 'lodash';
 
 /**
  * Composant page activité
@@ -396,10 +397,6 @@ export class PopinEditActivitiesComponent
     contentieux: ContentieuReferentielInterface
   ) {
 
-    console.log('newValue:',newValue)
-    console.log('nodeName:',nodeName)
-    console.log('contentieux:', contentieux)
-
     let value: null | number = null
     if (newValue !== '') {
       value = +newValue
@@ -437,36 +434,49 @@ export class PopinEditActivitiesComponent
         },
       })
     } else {
-      const updates = Object.values(this.updates)
+      const updates : any = Object.values(this.updates)
 
-      for (let i = 0; i < updates.length; i++) {
-        const up: any = updates[i]
+      let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
+      contentieux= mapValues(contentieux, (group) =>
+        group.map((elem) => {
+          const initialValues = {
+            in: elem.contentieux.in !== null ? elem.contentieux.in : elem.contentieux.originalIn,
+            out: elem.contentieux.out !== null ? elem.contentieux.out : elem.contentieux.originalOut,
+            stock: elem.contentieux.stock !== null ? elem.contentieux.stock : elem.contentieux.originalStock,
+          };
+          return { ...elem, ...initialValues };
+        })
+      )
 
-        const options = {
-          entrees: up.contentieux.in,
-          sorties: up.contentieux.out,
-          stock: up.contentieux.stock,
+      for (const cont of Object.keys(contentieux)) {
+        const up: any = contentieux[cont]
+        let options = {
+          entrees: null,
+          sorties:  null,
+          stock:  null,
         }
-        switch (up.node) {
-          case 'entrees':
-            options.entrees = up.value
-            break
-          case 'sorties':
-            options.sorties = up.value
-            break
-          case 'stock':
-            options.stock = up.value
-            break
+        
+        for (const elem of up) {
+          switch (elem.node) {
+            case 'entrees':
+              options.entrees = elem.value
+              break
+            case 'sorties':
+              options.sorties = elem.value
+              break
+            case 'stock':
+              options.stock = elem.value
+              break
+          }
+          await this.activitiesService.updateDatasAt(
+            Number(cont),
+            this.activityMonth,
+            options,
+            elem.node,
+          )
         }
-
-        await this.activitiesService.updateDatasAt(
-          up.contentieux.id,
-          this.activityMonth,
-          options,
-          up.node
-        )
       }
-
+        
       if (updates.length && this.referentiel) {
         this.appService.notification(
           `Le contentieux <b>${this.referentielMappingName(
@@ -518,7 +528,8 @@ export class PopinEditActivitiesComponent
             this.referentiel.childrens = (this.referentiel.childrens || []).map(
               (child) => ({ ...child, ...getValuesFromList(child.id) })
             )
-
+            
+            
             this.updateTotal()
           }
         }
@@ -538,8 +549,8 @@ export class PopinEditActivitiesComponent
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-    if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY || cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY)
-      console.log('Cont:', cont)
+   
+   
     switch (node) {
       case 'entrees':
         if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {
