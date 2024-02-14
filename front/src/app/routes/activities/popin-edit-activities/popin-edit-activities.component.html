@@ -229,11 +229,12 @@
             contentieux: items,
             value: newValue,
             level: 3,
+            updated: updated,
           }
         "
       >
       </ng-container>
-      <p>{{ newValue || '-' }}</p>
+      <p [ngClass]="{'blue' : newValue !== null}">{{ newValue  || '-' }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container
@@ -245,6 +246,7 @@
             value: newValue,
             level: 4,
             valueQuality: valueQuality,
+            updated: updated,
           }
         "
       >
@@ -272,9 +274,10 @@
   let-value="value"
   let-level="level"
   let-valueQuality="valueQuality"
+  let-updated="updated"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ (value !== null && updated) ? 'blue' : '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

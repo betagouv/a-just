@@ -291,6 +291,7 @@
   }
 
   .blue-bottom {
+    color: fColor(dataCompletionTextColor);
     border-bottom: 3px solid fColor(dataCompletionTextColor);
   }
 
@@ -301,8 +302,9 @@
 
     > i {
       position: absolute;
+      top: 50%;
       right: 7px;
-      top: 20px;
+      transform: translateY(-50%);
 
       &.blue {
         color: fColor(dataCompletionTextColor);
@@ -314,6 +316,10 @@
       width: 100%;
       padding-right: 28px;
       font-size: 14px;
+
+      &.blue {
+        color: fColor(dataCompletionTextColor);
+      }
     }
   }
 
@@ -324,9 +330,9 @@
 
     > i {
       position: absolute;
+      top: 50%;
       right: 7px;
-      top: 20px;
-
+      transform: translateY(-50%);
       &.blue {
         color: fColor(dataCompletionTextColor);
       }
