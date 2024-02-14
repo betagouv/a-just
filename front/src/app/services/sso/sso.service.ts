@@ -44,6 +44,23 @@ export class SSOService {
    * Récuparation de l'url de login SSO coté A-Just
    */
   getSSOLogin() {
-    return this.serverService.getUrl('saml/login') 
+    return this.serverService.getUrl('saml/login')
+  }
+
+  /**
+   * Récuparation de l'url de login SSO coté A-Just
+   */
+  getSSOStatus() {
+    return this.serverService.get('saml/status').then((s) => {
+      if (s && s.token) {
+        this.serverService.setToken(s.token)
+        return s
+      }
+      if (s.data) {
+        return s.data
+      }
+
+      return s
+    })
   }
 }

@@ -1,11 +1,8 @@
 import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
-import { Router } from '@angular/router'
-import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
+import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
 
 const MIN_PASSWORD_LENGTH = 8
@@ -42,11 +39,17 @@ export class SignupPage {
   /**
    * Mot de passe paramètres de validation
    */
-  passwordStrength = { length: false, char: false, number: false, majuscule: false }
+  passwordStrength = {
+    length: false,
+    char: false,
+    number: false,
+    majuscule: false,
+  }
   /**
-     * Liste des fonctions (1VP, VP, ...)
-     */
-  fonctions: string[] = ['Président(e)',
+   * Liste des fonctions (1VP, VP, ...)
+   */
+  fonctions: string[] = [
+    'Président(e)',
     'Directeur/trice de greffe',
     'Secrétaire général(e)',
     'Chef(fe) de cabinet',
@@ -54,9 +57,18 @@ export class SignupPage {
     'Secrétaire administratif - présidence',
     'Secrétaire administratif - DG',
     'Directeur/trice de greffe adjoint(e)',
-    'Directeur/trice des services de greffe judiciaires']
+    'Directeur/trice des services de greffe judiciaires',
+  ]
 
   tjs: any[] = []
+
+  /**
+   * Params
+   */
+  paramsUrl: {
+    email: string
+    provider: string
+  } | null = null
 
   /**
    * Constructeur
@@ -68,11 +80,21 @@ export class SignupPage {
     private userService: UserService,
     private router: Router,
     private title: Title,
-    private hrFonctionService: HRFonctionService,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private route: ActivatedRoute
   ) {
     this.title.setTitle('Embarquement | A-Just')
     this.loadTj()
+
+    this.route.queryParams.subscribe((p: any) => {
+      this.paramsUrl = p
+      if (p.email) {
+        this.form.get('email')?.setValue(p.email)
+        this.form.get('email')?.disable()
+      } else {
+        this.form.get('email')?.enable()
+      }
+    })
   }
 
   /**
@@ -90,30 +112,35 @@ export class SignupPage {
       tj,
       checkbox,
       fonctionAutre,
-      responsable
+      responsable,
     } = this.form.value
 
+    if (this.paramsUrl?.email) {
+      email = this.paramsUrl?.email
+    }
+
     if (!tj) {
-      alert("Vous devez saisir un TJ")
+      alert('Vous devez saisir un TJ')
       return
     }
 
     if (!fonction) {
-      alert("Vous devez saisir une fonction")
+      alert('Vous devez saisir une fonction')
       return
     }
 
-    if ((fonction === 'Autre' && !fonctionAutre)) {
-      alert("Vous devez saisir un intitulé de fonction")
+    if (fonction === 'Autre' && !fonctionAutre) {
+      alert('Vous devez saisir un intitulé de fonction')
       return
     }
 
-    if ((fonction === 'Autre' && !responsable)) {
+    if (fonction === 'Autre' && !responsable) {
       alert("Vous devez saisir le nom d'un responsable hiérarchique")
       return
     }
 
-    if (fonction === 'Autre') fonction = fonctionAutre + ' - Resp hiér : ' + responsable
+    if (fonction === 'Autre')
+      fonction = fonctionAutre + ' - Resp hiér : ' + responsable
 
     this.userService
       .register({ email, password, firstName, lastName, fonction, tj })
@@ -128,13 +155,12 @@ export class SignupPage {
       })
   }
 
-
   /**
    * Validation et verification des champs de l'étape 1
-   * @returns 
+   * @returns
    */
   onStepTwo() {
-    const {
+    let {
       email,
       password,
       firstName,
@@ -146,12 +172,23 @@ export class SignupPage {
     } = this.form.value
 
     if (!firstName || !lastName) {
-      alert("Vous devez saisir un nom et un prénom")
+      alert('Vous devez saisir un nom et un prénom')
       return
     }
 
-    if (email.includes('@justice.fr') === false && email.includes('.gouv.fr') === false && email.includes('@a-just.fr') === false) {
-      alert("Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr")
+    if (this.paramsUrl?.email) {
+      email = this.paramsUrl?.email
+    }
+
+    if (
+      !this.paramsUrl?.email &&
+      email.includes('@justice.fr') === false &&
+      email.includes('.gouv.fr') === false &&
+      email.includes('@a-just.fr') === false
+    ) {
+      alert(
+        'Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr'
+      )
       return
     }
 
@@ -160,26 +197,35 @@ export class SignupPage {
       return
     }
 
-    var arrayOfSp = ["!", "@", "#", "$", "%", "&", "*", "_", "?", "-"];
-    var regex = "[" + arrayOfSp.join("") + "]";
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
 
-    if (!password || password.length < MIN_PASSWORD_LENGTH || !password.match(/\d/) || !new RegExp(regex).test(password) || !password.match(/[A-Z]/g)) {
-      alert("Vous devez saisir un mot de passe qui rempli les critères obligatoires")
-      return
-    }
+    if (!this.paramsUrl?.provider) {
+      if (
+        !password ||
+        password.length < MIN_PASSWORD_LENGTH ||
+        !password.match(/\d/) ||
+        !new RegExp(regex).test(password) ||
+        !password.match(/[A-Z]/g)
+      ) {
+        alert(
+          'Vous devez saisir un mot de passe qui rempli les critères obligatoires'
+        )
+        return
+      }
 
-    if (password !== passwordConf) {
-      alert('Vos mots de passe ne sont pas identiques')
-      return
+      if (password !== passwordConf) {
+        alert('Vos mots de passe ne sont pas identiques')
+        return
+      }
     }
 
     this.signUpStep = 2
-
   }
 
   /**
    * Retourne la couleur de l'étape 2 (indicateur)
-   * @returns 
+   * @returns
    */
   getStepColor() {
     return this.signUpStep === 1 ? '#eeeeee' : '#000091'
@@ -187,7 +233,7 @@ export class SignupPage {
 
   /**
    * Vérifie la robustesse du mot de passe
-   * @param event 
+   * @param event
    */
   checkStrength(event: any) {
     const password = event.target.value
@@ -196,8 +242,8 @@ export class SignupPage {
       this.passwordStrength.number = true
     } else this.passwordStrength.number = false
 
-    var arrayOfSp = ["!", "@", "#", "$", "%", "&", "*", "_", "?", "-"];
-    var regex = "[" + arrayOfSp.join("") + "]";
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
     if (password && new RegExp(regex).test(password)) {
       this.passwordStrength.char = true
     } else this.passwordStrength.char = false
@@ -213,8 +259,8 @@ export class SignupPage {
 
   /**
    * Retourne la couleur des différents éléments de validation de mot de passe
-   * @param val 
-   * @returns 
+   * @param val
+   * @returns
    */
   getParamColor(val: number) {
     const password = this.form.controls['password'].value
@@ -226,44 +272,39 @@ export class SignupPage {
     else return '#0063cb'
   }
 
-
-
   /**
-   * Enregistre la fonction 
-   * @param event 
+   * Enregistre la fonction
+   * @param event
    */
   setFonc(event: any) {
-    this.fonctions.map(fct => {
+    this.fonctions.map((fct) => {
       if (fct === event.value) {
         this.form.controls['fonction'].setValue(fct)
       }
     })
-    if (event.value === 'Autre') this.form.controls['fonction'].setValue('Autre')
-
+    if (event.value === 'Autre')
+      this.form.controls['fonction'].setValue('Autre')
   }
 
   /**
    * Charge les TJ
    */
   loadTj() {
-    this.serverService
-      .get('juridictions/get-all-visibles')
-      .then((data) => {
-        this.tjs = data.data
-        //this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
-      });
+    this.serverService.get('juridictions/get-all-visibles').then((data) => {
+      this.tjs = data.data
+      //this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
+    })
   }
 
   /**
    * Enregistre la valeur de TJ choisie
-   * @param event 
+   * @param event
    */
   setTj(event: any) {
-    this.tjs.map(tj => {
+    this.tjs.map((tj) => {
       if (tj.id === +event.value) {
         this.form.controls['tj'].setValue(tj.label)
       }
     })
   }
-
 }

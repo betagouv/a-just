@@ -2,6 +2,10 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
+import {
+  PROVIDER_JUSTICE_NAME,
+  SAML_STATUS_PENDING,
+} from 'src/app/constants/saml'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -88,12 +92,31 @@ export class LoginPage {
   }
 
   onUseSSO() {
-    if (!this.canUseSSO) {
+    /*if (!this.canUseSSO) {
       alert(
         "Vous devez être dans l'environement Justice pour utiliser page blanche !"
       )
-    }
+    } else {
+      window.location.href = this.ssoService.getSSOLogin()
+    }*/
 
-    window.location.href = this.ssoService.getSSOLogin()
+    this.ssoService.getSSOStatus().then((s) => {
+      console.log(s)
+      if(s.token) {
+        this.router.navigate([
+          this.userService.getUserPageUrl(s.user),
+        ])
+        return
+      }
+      if (s && s && s.status === SAML_STATUS_PENDING) {
+        // we need to complete to signin
+        this.router.navigate(['/inscription'], {
+          queryParams: {
+            email: s.datas.email,
+            provider: PROVIDER_JUSTICE_NAME,
+          },
+        })
+      }
+    })
   }
 }
