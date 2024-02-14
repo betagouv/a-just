@@ -20,6 +20,10 @@
     width: 80%;
   }
 
+  &.medium .popup > div {
+    width: 60%;
+  }
+
   &.width-500 .popup > div {
     width: 90%;
     max-width: 500px;
