@@ -2,6 +2,7 @@ import { orderBy } from 'lodash'
 import { Op } from 'sequelize'
 import { referentielMappingIndex } from '../constants/referentiel'
 import { extractCodeFromLabelImported } from '../utils/referentiel'
+import { camel_to_snake } from '../utils/utils'
 
 /**
  * Scripts intermediaires des contentieux
@@ -22,7 +23,17 @@ export default (sequelizeInstance, Model) => {
   Model.getReferentiels = async (isJirs = false, force = false) => {
     const formatToGraph = async (parentId = null, index = 0) => {
       let list = await Model.findAll({
-        attributes: ['id', 'label', 'code_import', 'rank'],
+        attributes: [
+          'id',
+          'label',
+          'code_import',
+          'rank',
+          ['value_quality_in', 'valueQualityIn'],
+          ['value_quality_out', 'valueQualityOut'],
+          ['value_quality_stock', 'valueQualityStock'],
+          ['help_url', 'helpUrl'],
+          'compter',
+        ],
         where: {
           parent_id: parentId,
         },
@@ -62,42 +73,42 @@ export default (sequelizeInstance, Model) => {
       )
 
       if (!isJirs) {
-        list.map(elem => {
-          elem.childrens.map(child => {
-            switch(child.label) {
-              case 'Collégiales hors JIRS':
-                child.label = "Collégiales"
-                break;
-              case "Cour d'assises hors JIRS":
-                child.label = "Cour d'assises"
-                break;
-              case "Cour d'assises JIRS":
-                elem.childrens = elem.childrens.filter(elem => elem.label !== "Cour d'assises JIRS")
-                break;
-              case "Collégiales JIRS crim-org":
-                elem.childrens = elem.childrens.filter(elem => elem.label !== "Collégiales JIRS crim-org")
-                break;
-              case "Collégiales JIRS eco-fi":
-                child.label = "Collégiales eco-fi"
-                break;
-              case "Eco-fi hors JIRS":
-                child.label = "Eco-fi"
-                break;
-              case "JIRS éco-fi":
-                elem.childrens = elem.childrens.filter(elem => elem.label !== "JIRS éco-fi")
-                break;
-              case "JIRS crim-org":
-                elem.childrens = elem.childrens.filter(elem => elem.label !== "JIRS crim-org")
-                break;
-              case "JIRS":
-                elem.childrens = elem.childrens.filter(elem => elem.label !== "JIRS")
-                break
+        list.map((elem) => {
+          elem.childrens.map((child) => {
+            switch (child.label) {
+            case 'Collégiales hors JIRS':
+              child.label = 'Collégiales'
+              break
+            case "Cour d'assises hors JIRS":
+              child.label = "Cour d'assises"
+              break
+            case "Cour d'assises JIRS":
+              elem.childrens = elem.childrens.filter((elem) => elem.label !== "Cour d'assises JIRS")
+              break
+            case 'Collégiales JIRS crim-org':
+              elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Collégiales JIRS crim-org')
+              break
+            case 'Collégiales JIRS eco-fi':
+              child.label = 'Collégiales eco-fi'
+              break
+            case 'Eco-fi hors JIRS':
+              child.label = 'Eco-fi'
+              break
+            case 'JIRS éco-fi':
+              elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS éco-fi')
+              break
+            case 'JIRS crim-org':
+              elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS crim-org')
+              break
+            case 'JIRS':
+              elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS')
+              break
             }
           })
         })
       }
       Model.cacheReferentielMap = list
-    } 
+    }
     return Model.cacheReferentielMap
   }
 
@@ -301,6 +312,23 @@ export default (sequelizeInstance, Model) => {
 
     if (nodeLevel < 4) {
       await Model.setRankToContentieux(list, nodeLevel + 1)
+    }
+  }
+
+  Model.updateRef = async (id, node, value) => {
+    console.log('[TableContentieuxReferentiels] node:', node)
+    console.log('[TableContentieuxReferentiels] value:', value)
+    const ref = await Model.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (ref) {
+      console.log('[TableContentieuxReferentiels] camel_to_snake(node):', [camel_to_snake(node)])
+      ref.set({ [camel_to_snake(node)]: value })
+      await ref.save()
+      Model.cacheReferentielMap = null
     }
   }
 

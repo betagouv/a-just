@@ -1,0 +1,48 @@
+@import "../../styles/utils.scss";
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: 16px;
+
+  &.not-margin {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  p {
+    flex: 2;
+    margin-right: 32px;
+    font-weight: bold;
+  }
+
+  select, .select {
+    flex: 1;
+    margin-right: 32px;
+    width: 50px;
+  }
+
+  input, .input {
+    flex: 1;
+    margin-right: 32px;
+    width: 50px;
+  }
+
+  input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+  }
+
+}
+
+.list .item {
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  p {
+    font-weight: normal;
+  }
+}

@@ -123,6 +123,17 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * Suppression de l'alert et du texte dans le service
+   */
+  onCloseAlertSecondary(clickToOk = false) {
+    const alertObject = this.appService.alert.getValue()
+    this.appService.alert.next(null)
+    if (clickToOk && alertObject && alertObject.callbackSecondary) {
+      alertObject.callbackSecondary()
+    }
+  }
+
   listenSelectElement() {
     /*const elementToObserve = document.body;
 

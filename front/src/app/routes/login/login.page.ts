@@ -2,8 +2,14 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
+import {
+  PROVIDER_JUSTICE_NAME,
+  SAML_STATUS_PENDING,
+} from 'src/app/constants/saml'
 import { AuthService } from 'src/app/services/auth/auth.service'
+import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { environment } from 'src/environments/environment'
 
 /**
  * Page de connexion
@@ -15,17 +21,24 @@ import { UserService } from 'src/app/services/user/user.service'
 })
 export class LoginPage {
   /**
+   * SSO is activate to this env
+   */
+  ssoIsActivate: boolean = environment.enableSSO
+  /**
    * Error connection message on login
    */
   errorMessage: string | null = null
-
+  /**
+   * Can user SSO
+   */
+  canUseSSO: boolean = false
   /**
    * Formulaire
    */
   form = new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
-    remember: new FormControl()
+    remember: new FormControl(),
   })
 
   /**
@@ -39,7 +52,8 @@ export class LoginPage {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private title: Title
+    private title: Title,
+    private ssoService: SSOService
   ) {
     this.title.setTitle('Se connecter | A-Just')
   }
@@ -48,6 +62,10 @@ export class LoginPage {
    * Vérificiation si l'utilisateur est connecté
    */
   ngOnInit() {
+    if (this.ssoIsActivate) {
+      this.ssoService.canUseSSO().then((d) => (this.canUseSSO = d))
+    }
+
     this.userService.me().then((data) => {
       if (data) {
         this.router.navigate([this.userService.getUserPageUrl(data)])
@@ -71,5 +89,36 @@ export class LoginPage {
       .catch((err) => {
         this.errorMessage = err
       })
+  }
+
+  onUseSSO() {
+    /*if (!this.canUseSSO) {
+      alert(
+        "Vous devez être dans l'environement Justice pour utiliser page blanche !"
+      )
+    } else {
+      window.location.href = this.ssoService.getSSOLogin()
+    }*/
+
+    this.ssoService.getSSOStatus().then((s) => {
+      console.log(s)
+      if(s.token) {
+        this.router.navigate([
+          this.userService.getUserPageUrl(s.user),
+        ])
+        return
+      }
+      if (s && s && s.status === SAML_STATUS_PENDING) {
+        // we need to complete to signin
+        this.router.navigate(['/inscription'], {
+          queryParams: {
+            email: s.datas.email,
+            firstName: s.datas.firstName,
+            lastName: s.datas.lastName,
+            provider: PROVIDER_JUSTICE_NAME,
+          },
+        })
+      }
+    })
   }
 }
