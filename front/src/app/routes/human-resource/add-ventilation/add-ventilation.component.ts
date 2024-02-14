@@ -118,7 +118,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
-    etp: new FormControl<number | null>(null, [Validators.required]),
+    etp: new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(1)]),
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
@@ -174,6 +174,24 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           if (fct)
             this.calculatriceIsActive = fct.calculatrice_is_active || false
         })
+      })
+    )
+
+    this.watch(
+      this.form.get('etp')?.valueChanges.subscribe((value) => {
+        if (value) {
+          if (value > 1)
+            value = 1
+          else if (value < 0)
+            value = 0
+          let str_value = value?.toString()
+          let validationPattern = /^\d+(\.\d{0,2})?$/;
+
+          if (!validationPattern.test(str_value)) {
+            value = this.parseFloat(str_value.substring(0, str_value.length - 1))
+          }
+          this.form.get('etp')?.setValue(value, {emitEvent: false});
+        }
       })
     )
   }

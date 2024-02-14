@@ -73,6 +73,10 @@
   display: flex;
   border-bottom: 2px solid fColor(cblack);
 
+  &.is-windows {
+    padding-right: 15px;
+  }
+
   .contentieux-title-header {
     padding: 16px;
     flex: 1;
@@ -119,6 +123,10 @@
   display: flex;
   align-items: center;
   height: 56px;
+
+  &.is-windows {
+    padding-right: 15px;
+  }
 
   .contentieux-title-label {
     padding: 16px;
@@ -179,7 +187,7 @@
 }
 
 .content-popin {
-  overflow: auto;
+  overflow-y: scroll;
 }
 
 .item-template {
@@ -222,13 +230,13 @@
       position: relative;
 
       .confirm-btn {
-       // content: "Confirmer";
+       cursor: pointer;
         position: absolute;
         left: 50%;
         transform: translate(-50%, 0);
         top: calc(100% - 15px);
         padding: 2px 5px;
-        z-index: 1;
+        z-index: 0;
         background-color: white;
         color: fColor(dataToVerifyBtn);
         border-radius: 4px;
@@ -242,14 +250,14 @@
     }
 
     &.is-not-setted-set {
-      /*background-color: Color(dataNotSettedIsSetBg);
+      background-color: Color(dataNotSettedIsSetBg);
       display: flex;
       align-items: center;
       justify-content: flex-end;
 
       p {
         color: fColor(dataNotSettedIsSetColor);
-      }*/
+      }
     }
 
     &.to-confirm > div {
@@ -267,7 +275,7 @@
     }
 
     &.confirmed > div {
-      background-color: red;//fColor(dataToCompleteBg);
+      background-color: fColor(dataToCompleteBg);
       margin: 4px;
       border: 1px solid fColor(dataToCompleteBorder);
       width: calc(100% - 8px);
@@ -280,7 +288,12 @@
       margin-right: 24px;
       font-size: 14px;
     }
-}
+  }
+
+  .blue-bottom {
+    color: fColor(dataCompletionTextColor);
+    border-bottom: 3px solid fColor(dataCompletionTextColor);
+  }
 
   .item-template-new-total {
     display: flex;
@@ -289,11 +302,12 @@
 
     > i {
       position: absolute;
+      top: 50%;
       right: 7px;
-      top: 20px;
-
+      transform: translateY(-50%);
+      
       &.blue {
-        color: fColor(darkModeTitle);
+        color: fColor(dataCompletionTextColor);
       }
     }
 
@@ -302,6 +316,10 @@
       width: 100%;
       padding-right: 28px;
       font-size: 14px;
+
+      &.blue {
+        color: fColor(dataCompletionTextColor);
+      }
     }
   }
 
@@ -312,14 +330,10 @@
 
     > i {
       position: absolute;
+      top: 50%;
       right: 7px;
-      top: 20px;
-
+      transform: translateY(-50%);
       &.blue {
-        color: fColor(darkModeTitle);
-      }
-
-      &.blue-light {
         color: fColor(dataCompletionTextColor);
       }
     }
@@ -342,8 +356,7 @@
 
       &.is-not-setted-set {
         color: fColor(dataToVerifySettedInputColor);
-        //border-bottom-color: fColor(dataToVerifySettedInputBorderColor);
-        ;
+        border-bottom-color: fColor(dataToVerifySettedInputBorderColor);
       }
 
       &.is-not-setted-to-verify::placeholder {
@@ -351,7 +364,7 @@
       }
 
       &.blue-bottom {
-        border-bottom-color: fColor(dataCompletionTextColor);
+        border-bottom: 3px solid fColor(dataCompletionTextColor);
       }
     }
 

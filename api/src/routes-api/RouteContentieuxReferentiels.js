@@ -16,11 +16,15 @@ export default class RouteContentieuxReferentiels extends Route {
   /**
    * Interface pour avoir une liste des données standard d'un utilisateur connecté
    */
-  @Route.Get({
+  @Route.Post({
+    bodyType: Types.object().keys({
+      isJirs : Types.boolean(),
+    }),
     accesses: [Access.isAdmin],
   })
   async getReferentiels (ctx) {
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels())
+    const { isJirs } = this.body(ctx)
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(isJirs, true))
   }
 
   /**

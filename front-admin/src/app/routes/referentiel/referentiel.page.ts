@@ -22,7 +22,7 @@ export class ReferentielPage extends MainClass implements OnInit {
 
   onLoad() {
     this.referentielService
-      .getReferentiels()
+      .getReferentiels(true)
       .then((list: ContentieuReferentielInterface[]) => {
         this.referentiels = list;
       });
