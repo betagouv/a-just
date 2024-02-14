@@ -5,6 +5,7 @@ import { Router } from '@angular/router'
 import { AuthService } from 'src/app/services/auth/auth.service'
 import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { environment } from 'src/environments/environment'
 
 /**
  * Page de connexion
@@ -15,6 +16,10 @@ import { UserService } from 'src/app/services/user/user.service'
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
+  /**
+   * SSO is activate to this env
+   */
+  ssoIsActivate: boolean = environment.enableSSO
   /**
    * Error connection message on login
    */
@@ -29,7 +34,7 @@ export class LoginPage {
   form = new FormGroup({
     email: new FormControl(),
     password: new FormControl(),
-    remember: new FormControl()
+    remember: new FormControl(),
   })
 
   /**
@@ -44,7 +49,7 @@ export class LoginPage {
     private userService: UserService,
     private router: Router,
     private title: Title,
-    private ssoService: SSOService,
+    private ssoService: SSOService
   ) {
     this.title.setTitle('Se connecter | A-Just')
   }
@@ -53,7 +58,9 @@ export class LoginPage {
    * Vérificiation si l'utilisateur est connecté
    */
   ngOnInit() {
-    this.ssoService.canUseSSO().then(d => this.canUseSSO = d)
+    if (this.ssoIsActivate) {
+      this.ssoService.canUseSSO().then((d) => (this.canUseSSO = d))
+    }
 
     this.userService.me().then((data) => {
       if (data) {
@@ -81,8 +88,10 @@ export class LoginPage {
   }
 
   onUseSSO() {
-    if(!this.canUseSSO) {
-      alert('Vous devez être dans l\'environement Justice pour utiliser page blanche !')
+    if (!this.canUseSSO) {
+      alert(
+        "Vous devez être dans l'environement Justice pour utiliser page blanche !"
+      )
     }
 
     window.location.href = this.ssoService.getSSOLogin()

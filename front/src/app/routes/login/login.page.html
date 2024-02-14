@@ -9,12 +9,18 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
 
-  <button class="outline white strict-border sso-bt" (click)="onUseSSO()" [ngClass]="{disabled: !canUseSSO}">
-    <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
-    Continuer avec page blanche
-  </button>
+  <ng-template [ngIf]="ssoIsActivate">
+    <button
+      class="outline white strict-border sso-bt"
+      (click)="onUseSSO()"
+      [ngClass]="{disabled: !canUseSSO}"
+    >
+      <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
+      Continuer avec page blanche
+    </button>
 
-  <div class="or"><p>ou</p></div>
+    <div class="or"><p>ou</p></div>
+  </ng-template>
 
   <div class="signup">
     <p>Vous n’avez pas encore de compte</p>
