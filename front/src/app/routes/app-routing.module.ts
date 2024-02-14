@@ -4,6 +4,7 @@ import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuardService } from './canDeactivate-guard-service'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 import { SimulatorPage } from './simulator/simulator.page'
+import { AppTypeGuard } from './app-type-guard.service'
 
 const routes: Routes = [
   {
@@ -41,7 +42,7 @@ const routes: Routes = [
     path: 'ventilations',
     loadChildren: () =>
       import('./workforce/workforce.module').then((mod) => mod.WorkforceModule),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'donnees-d-activite',
@@ -49,7 +50,7 @@ const routes: Routes = [
       import('./activities/activities.module').then(
         (mod) => mod.ActivitiesModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'temps-moyens',
@@ -57,7 +58,7 @@ const routes: Routes = [
       import('./average-etp/average-etp.module').then(
         (mod) => mod.AverageEtpModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'calculateur',
@@ -65,7 +66,7 @@ const routes: Routes = [
       import('./calculator/calculator.module').then(
         (mod) => mod.CalculatorModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'resource-humaine',
@@ -73,7 +74,7 @@ const routes: Routes = [
       import('./human-resource/human-resource.module').then(
         (mod) => mod.HumanResourceModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'signup',
@@ -102,13 +103,13 @@ const routes: Routes = [
   {
     path: 'simulateur',
     component: SimulatorPage,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
     canDeactivate: [CanDeactivateGuardService],
   },
   {
     path: 'reaffectateur',
     component: ReaffectatorPage,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
     canDeactivate: [CanDeactivateGuardService],
   },
   {
@@ -117,7 +118,7 @@ const routes: Routes = [
       import('./panorama/panorama.module').then(
         (mod) => mod.PanoramaModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
   {
     path: 'carte-juridictions',
@@ -188,7 +189,7 @@ const routes: Routes = [
       import('./help-center/help-center.module').then(
         (mod) => mod.HelpCenterModule
       ),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AppTypeGuard],
   },
 ]
 
@@ -196,7 +197,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' }),
   ],
-  providers: [AuthGuard, CanDeactivateGuardService],
+  providers: [AuthGuard, AppTypeGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
 
