@@ -43,9 +43,9 @@ export class ReferentielService {
     private serverService: ServerService
   ) {}
 
-  getReferentiels() {
+  async getReferentiels(isJirs? : boolean) {
     return this.serverService
-      .get('contentieux-referentiels/get-referentiels', {})
+      .post('contentieux-referentiels/get-referentiels', {isJirs})
       .then((res) => {
         this.humanResourceService.contentieuxReferentiel.next(res.data);
         return res.data;
