@@ -79,6 +79,10 @@
           border-bottom: 3px solid fColor(textBlueTag);
           border-radius: 0;
         }
+
+        input.grey {
+          color: fColor(dataGreyTxt);
+        }
       }
     }
   }
