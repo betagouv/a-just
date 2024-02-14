@@ -106,7 +106,9 @@ export default class RouteSaml extends Route {
    */
   @Route.Get()
   async status (ctx) {
-    const email = ('mrLeDJ@judstice.fr' || '').toLowerCase()
+    const email = ('ctx.session.sso.email' || '').toLowerCase()
+    const firstName = 'ctx.session.sso.firstName' || ''
+    const lastName = 'ctx.session.sso.lastName' || ''
 
     const userInDb = await this.model.userPreviewWithEmail(email)
     if (userInDb) {
@@ -121,6 +123,8 @@ export default class RouteSaml extends Route {
         status: SAML_STATUS_PENDING,
         datas: {
           email,
+          firstName,
+          lastName,
         },
       })
     } else {

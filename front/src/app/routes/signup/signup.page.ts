@@ -94,6 +94,14 @@ export class SignupPage {
       } else {
         this.form.get('email')?.enable()
       }
+
+      if(p.firstName) {
+        this.form.get('firstName')?.setValue(p.firstName)
+      }
+
+      if(p.lastName) {
+        this.form.get('lastName')?.setValue(p.lastName)
+      }
     })
   }
 

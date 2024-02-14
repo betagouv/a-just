@@ -84,7 +84,13 @@ export const postAssertSSO = (requestBody) => {
       if (err != null) {
         reject(err)
       } else {
-        resolve({ nameId: saml_response.user.name_id, sessionIndex: saml_response.user.session_index })
+        resolve({
+          nameId: saml_response.user.name_id,
+          sessionIndex: saml_response.user.session_index,
+          email: 'TODO EMAIL',
+          firstName: 'TODO first name',
+          lastName: 'TODO last name',
+        })
       }
     })
   })

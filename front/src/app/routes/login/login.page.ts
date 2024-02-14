@@ -113,6 +113,8 @@ export class LoginPage {
         this.router.navigate(['/inscription'], {
           queryParams: {
             email: s.datas.email,
+            firstName: s.datas.firstName,
+            lastName: s.datas.lastName,
             provider: PROVIDER_JUSTICE_NAME,
           },
         })
