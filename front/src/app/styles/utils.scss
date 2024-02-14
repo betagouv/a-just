@@ -115,6 +115,7 @@ $colors: (
 	dataBlueTxt: #0063cb,
 	dataToVerifyBtn: #c3992a,
 	dataGeyBg: #dddddd,
+	dataHoverBg: #F6F6F6,
 );
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
