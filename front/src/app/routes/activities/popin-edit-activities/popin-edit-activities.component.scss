@@ -236,7 +236,7 @@
         transform: translate(-50%, 0);
         top: calc(100% - 15px);
         padding: 2px 5px;
-        z-index: 1;
+        z-index: 0;
         background-color: white;
         color: fColor(dataToVerifyBtn);
         border-radius: 4px;
@@ -305,7 +305,9 @@
       top: 50%;
       right: 7px;
       transform: translateY(-50%);
-
+      .medium {
+        border: 1px solid red;
+      }
       &.blue {
         color: fColor(dataCompletionTextColor);
       }
