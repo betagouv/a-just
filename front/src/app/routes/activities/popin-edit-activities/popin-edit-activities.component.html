@@ -1,18 +1,17 @@
 <aj-popup class="medium no-padding-content no-title border-radius">
   <div class="header-popin">
-    <div class="title-popin">
-      <p>Visualisation du détail des données d'activité du</p>
-      <div>
-        <h2>{{ referentiel?.label }}</h2>
-        <i
-          *ngIf="referentiel && referentiel.helpUrl"
-          class="ri-lightbulb-flash-line cursor-pointer blue"
-          (click)="onShowHelpPanel()"
-        ></i>
+    <div class="left-section">
+      <div class="title-popin">
+        <p>Visualisation du détail des données d'activité du</p>
+        <div>
+          <h2>{{ referentiel?.label }}</h2>
+          <i
+            *ngIf="referentiel && referentiel.helpUrl"
+            class="ri-lightbulb-flash-line cursor-pointer blue"
+            (click)="onShowHelpPanel()"
+          ></i>
+        </div>
       </div>
-    </div>
-
-    <div class="date-popin">
       <aj-date-select
         title="Voir les données de"
         [value]="activityMonth"
@@ -21,7 +20,7 @@
       >
       </aj-date-select>
     </div>
-
+    
     <div class="close-popin">
       <i class="ri-close-line" (click)="close()"></i>
     </div>
