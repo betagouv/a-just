@@ -167,6 +167,11 @@
   &.title-margin-right-null {
     .header {
       padding-right: 0;
+      .top-header{
+        .title-with-doc {
+          margin-right: 34px;
+        }
+      }
     }
   }
 

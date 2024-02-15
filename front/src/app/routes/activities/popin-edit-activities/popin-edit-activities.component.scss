@@ -2,40 +2,46 @@
 
 .header-popin {
   display: flex;
-  padding: 13px 0 8px 0;
+  justify-content: space-between;
+  padding: 13px 24px 8px 24px;
+  width: 100%;
 
-  .title-popin {
-    width: 100%;
-    //flex: 1;
-    margin-left: 24px;
-
-    p {
-      font-size: 12px;
-    }
-
-    h2 {
-      font-size: 18px;
-      margin: 0;
-      padding: 0;
-      line-height: 26px;
-    }
-
-    i {
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      text-align: center;
-      color: fColor(tooltipIconColor);
-      background-color: fColor(bgHelper);
-      border-radius: 24px;
-      margin-left: 16px;
-      position: relative;
-      top: 1px;
-    }
-
-    > div {
-      display: flex;
-      align-items: center;
+  .left-section {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    
+    .title-popin {
+      margin-right: 200px;      
+  
+      p {
+        font-size: 12px;
+      }
+  
+      h2 {
+        font-size: 18px;
+        margin: 0;
+        padding: 0;
+        line-height: 26px;
+      }
+  
+      i {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        color: fColor(tooltipIconColor);
+        background-color: fColor(bgHelper);
+        border-radius: 24px;
+        margin-left: 16px;
+        position: relative;
+        top: 1px;
+      }
+  
+      > div {
+        display: flex;
+        align-items: center;
+      }
     }
   }
 
