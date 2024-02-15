@@ -61,7 +61,7 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
       }
     }
   }
-  return allReferentiels //orderBy(allReferentiels, 'rank')
+  return allReferentiels
 }
 
 /**
@@ -240,7 +240,7 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
 export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let onglet2 = []
 
-  console.time('extractor-5')
+  console.time('extractor-7.1')
   await Promise.all(
     allHuman.map(async (human) => {
       const { currentSituation } = findSituation(human)
@@ -262,19 +262,22 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 
       let CETTotalEtp = 0
       let nbGlobalDaysCET = 0
+
+
+      let nbCETDays = 0
+      let absLabels = [...ABSENTEISME_LABELS]
+
+      nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
+      nbGlobalDaysCET = nbCETDays
+
+      if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
+
+
       indispoArray = [
         ...(await Promise.all(
           flatReferentielsList.map(async (referentiel) => {
             const situations = human.situations || []
             const indisponibilities = human.indisponibilities || []
-
-            let nbCETDays = 0
-            let absLabels = [...ABSENTEISME_LABELS]
-
-            nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
-            nbGlobalDaysCET = nbCETDays
-
-            if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
 
             if (
               situations.some((s) => {
@@ -350,14 +353,13 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
         })
 
         const isGone = dateStop > human.dateEnd
-        if (human.id === 2612)
-          if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
-            let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
-            reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
-          } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
-      if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
+      if (categoryFilter.includes(categoryName.toLowerCase()))
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           onglet2.push({
             ['Réf.']: String(human.id),
@@ -381,13 +383,13 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
           })
     })
   )
-
+  console.timeEnd('extractor-7.1')
   return onglet2
 }
 
 export const getViewModel = async (params) => {
-  const keys1 = Object.keys(params.onglet1.values[0])
-  const keys2 = Object.keys(params.onglet2.values[0])
+  const keys1 = params.onglet1.values != null && params.onglet1.values.length ? Object.keys(params.onglet1.values[0]) : []
+  const keys2 = params.onglet2.values != null && params.onglet2.values.length ? Object.keys(params.onglet2.values[0]) : []
   const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map(x => x.tprox)
   const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map(x => x.tprox)
   const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map(x => x.tprox)
@@ -419,14 +421,14 @@ export const getViewModel = async (params) => {
       }
     }),
     arrondissement: uniqueJur[0],
-    subtitles: [...Array(keys1.length - 6 || 0)],
+    subtitles: [...Array(keys1.length > 6 ? keys1.length - 6 : 0)],
     days: keys1,
     stats: {
       ...params.onglet1.values.map((item) => {
         return { actions: Object.keys(item).map((key) => item[key]) }
       }),
     },
-    subtitles1: [...Array(keys2.length - 6 || 0)],
+    subtitles1: [...Array(keys1.length > 6 ? keys2.length - 6 : 0)],
     days1: keys2,
     stats1: {
       ...params.onglet2.values.map((item) => {
@@ -439,6 +441,7 @@ export const getViewModel = async (params) => {
 export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let data = []
 
+  console.time('extractor-6.0')
   await Promise.all(
     allHuman.map(async (human) => {
       const { currentSituation } = findSituation(human)
@@ -528,7 +531,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
               countNbOfDays: countNbOfDays,
             })
           }
-          //          if (human.id === 2612) console.log('ETP Object =>', reelEtpObject, totalDaysGone, situation)
         })
 
         const isGone = dateStop > human.dateEnd
@@ -536,32 +538,30 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
           let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
           reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
-        //        if (human.id === 2612) console.log('LATIFA =>', sumBy(reelEtpObject, 'etp'), sumBy(reelEtpObject, 'countNbOfDays'), refObj[key])
       }
 
 
-      if (categoryName.toUpperCase() === categoryFilter.toUpperCase() || categoryFilter === 'tous')
+      if (categoryFilter.includes(categoryName.toLowerCase()))
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({
             ['Réf.']: String(human.id),
             Arrondissement: juridictionName.label,
             Nom: human.lastName,
             Prénom: human.firstName,
-            //Juridiction: human.juridiction || juridictionName.label,
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            //['Fonction catégorie']: fonctionCategory,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
             ['ETPT sur la période hors indisponibilités']: reelEtp,
             ['Temps ventilés sur la période']: totalEtpt,
-            //['Total indispo sur la période']: refObj[key],
-            //['Ecart -> à contrôler']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
             ...refObj,
           })
     })
   )
+
+  console.timeEnd('extractor-6.0')
+
 
   return data
 }

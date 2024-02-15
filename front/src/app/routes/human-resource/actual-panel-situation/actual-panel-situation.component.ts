@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
@@ -22,8 +23,7 @@ import { today } from 'src/app/utils/dates'
 })
 export class ActualPanelSituationComponent
   extends MainClass
-  implements OnChanges
-{
+  implements OnChanges {
   /**
    * Fiche courante
    */
@@ -56,6 +56,10 @@ export class ActualPanelSituationComponent
    * Force to show sub contentieux
    */
   @Input() forceToShowContentieuxDetail: boolean = false
+  /**
+ * Categorie courante
+ */
+  @Input() category: HRCategoryInterface | null = null
   /**
    * Event lors du choix d'éditer une ventilation
    */

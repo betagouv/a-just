@@ -25,7 +25,11 @@ export class ProgressionBarComponent {
   /**
    * Is locked message
    */
-  @Input() lockedMessage: string | null = null
+  @Input() lockedMessage: string | null = null
+  /**
+   * Is required for DDG
+   */
+  @Input() ddg: boolean = false
   /**
    * Remonté au parent du nouveau pourcentage
    */
@@ -35,7 +39,7 @@ export class ProgressionBarComponent {
    * Changement du pourcentage avec une saisie utilisateur
    */
   changePercent() {
-    if(this.lockedMessage) {
+    if (this.lockedMessage) {
       alert(this.lockedMessage)
       return
     }
@@ -46,7 +50,7 @@ export class ProgressionBarComponent {
         '' + (this.percent || 0)
       )
 
-      if(newPercent === null) {
+      if (newPercent === null) {
         return
       }
 

@@ -13,3 +13,6 @@ format-datas/assets/*.csv
 node_modules
 api/test/db/*
 api/certificats-sso
+*.csr
+*.key
+*.pem

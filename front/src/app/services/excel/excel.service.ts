@@ -53,7 +53,11 @@ export class ExcelService extends MainClass {
   /**
    * Catégories à extraire
    */
-  selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>('')
+  selectedCategory: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>(new Array())
+  /**
+ * En cours de chargement
+ */
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   /**
    * Données d'extraction
    */
@@ -103,7 +107,20 @@ export class ExcelService extends MainClass {
       .then(async (data) => {
         this.tabs = data.data
         const viewModel = {
-          ...this.tabs.viewModel, daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
+          ...this.tabs.viewModel,
+          "firstLink": {
+            "label": "Consultez notre documentation en ligne ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs"
+          },
+          "secondLink": {
+            "label": "Pour une présentation de la méthodologie à suivre, consultez la documentation ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes"
+          },
+          "thirdLink": {
+            "label": "Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.",
+            "url": "https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes"
+          }
+          , daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue())
             .toLocaleDateString()}`
         }
         fetch('/assets/template4.xlsx')
@@ -116,11 +133,16 @@ export class ExcelService extends MainClass {
           // 4. Get a report as buffer.
           .then(async (report) => {
             report = await this.getReport(report, viewModel)
+            if (this.tabs.onglet1.values.length === 0) {
+              alert('Une erreur est survenue lors de la génération de votre fichier.')
+              throw 'no values';
+            }
             return report.xlsx.writeBuffer()
           })
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
             const filename = this.getFileName()
+            this.isLoading.next(false)
             return FileSaver.saveAs(
               new Blob([buffer]),
               filename + EXCEL_EXTENSION
@@ -256,7 +278,9 @@ export class ExcelService extends MainClass {
         showErrorMessage: true,
         showInputMessage: true,
       }
-      if ((report.worksheets[2].getCell('H' + (+index + 3)).value! as string).includes("PLACÉ")) {
+
+      const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
+      if (fonctionCellToCheck.includes("PLACÉ")) {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation =
         {
           type: 'list',

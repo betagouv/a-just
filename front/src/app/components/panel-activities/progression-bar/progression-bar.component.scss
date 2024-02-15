@@ -11,12 +11,27 @@
   }
 
   &.no-opacity-to-background {
-    > div.background-bar {
+    >div.background-bar {
       opacity: 1;
     }
   }
 
+  .ddg {
+    opacity: 1 !important;
+    transform: rotate(-45deg);
+    position: absolute;
+    left: -16px;
+    top: 4px;
+    font-weight: bold;
+    font-size: 7px;
+    line-height: 12px;
+    width: 50px;
+    text-align: center;
+    color: white;
+  }
+
   >div.white-background {
+    overflow: hidden;
     background-color: white;
     position: absolute;
     height: 100%;
