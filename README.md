@@ -71,5 +71,5 @@ Les mots de passe sont sur le document des mots de passes de Resanna
 
 ## Creation de clée SHA1 pour le SSO
 
-openssl req -new -newkey rsa:2048 -nodes -out sso-recette.csr -keyout sso-recette.key -sha1 -> csr => (SSO_PRIVATE_KEY)
-openssl x509 -req -sha1 -days 3650 -in ./sso-recette.csr -signkey ./sso-recette.key -out ./sso-recette.pem -> pem => (SSO_PRIVATE_KEY)
+openssl req -new -newkey rsa:2048 -nodes -out sso-recette.csr -keyout sso-recette.key -sha1 -> pem => (SSO_PRIVATE_KEY)
+openssl x509 -req -sha1 -days 3650 -in ./sso-recette.csr -signkey ./sso-recette.key -out ./sso-recette.pem -> crt => (SSO_PRIVATE_KEY)
