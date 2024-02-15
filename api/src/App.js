@@ -83,6 +83,8 @@ export default class App extends AppBase {
       max: config.maxQueryLimit, // limit each IP to 100 requests per interval
     })
 
+    this.koaApp.use(session(config.session, this.koaApp))
+
     super.addMiddlewares([
       //sslify(),
       limiter,
@@ -106,7 +108,6 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      session(this.koaApp), // start user session
       requestHandler,
       tracingMiddleWare,
       helmet({

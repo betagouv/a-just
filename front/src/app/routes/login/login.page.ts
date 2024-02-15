@@ -2,6 +2,7 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
+import { LOGIN_STATUS_GET_CODE } from 'src/app/constants/login'
 import {
   PROVIDER_JUSTICE_NAME,
   SAML_STATUS_PENDING,
@@ -82,9 +83,20 @@ export class LoginPage {
     this.authService
       .login({ email, password, remember: Number(remember) }, { noAlert: true })
       .then((returnLogin) => {
-        this.router.navigate([
-          this.userService.getUserPageUrl(returnLogin.user),
-        ])
+        console.log(returnLogin)
+        if (
+          returnLogin &&
+          returnLogin.data &&
+          returnLogin.data.status === LOGIN_STATUS_GET_CODE
+        ) {
+          this.authService
+            .completeLogin({ code: '1234' })
+            .then((d) => console.log('code', d))
+        } else {
+          this.router.navigate([
+            this.userService.getUserPageUrl(returnLogin.user),
+          ])
+        }
       })
       .catch((err) => {
         this.errorMessage = err
@@ -102,10 +114,8 @@ export class LoginPage {
 
     this.ssoService.getSSOStatus().then((s) => {
       console.log(s)
-      if(s.token) {
-        this.router.navigate([
-          this.userService.getUserPageUrl(s.user),
-        ])
+      if (s.token) {
+        this.router.navigate([this.userService.getUserPageUrl(s.user)])
         return
       }
       if (s && s && s.status === SAML_STATUS_PENDING) {

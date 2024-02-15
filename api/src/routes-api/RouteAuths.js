@@ -1,8 +1,13 @@
 import Route from './Route'
 import { Types } from '../utils/types'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
-import { USER_AUTO_LOGIN, USER_USER_LOGIN } from '../constants/log-codes'
+import { USER_AUTO_LOGIN, USER_USER_LOGIN, USER_USER_LOGIN_CODE_INVALID, USER_USER_LOGIN_REQUEST_CODE } from '../constants/log-codes'
 import * as Sentry from '@sentry/node'
+import { LOGIN_STATUS_GET_CODE } from '../constants/login'
+import { crypt } from '../utils'
+import { sentEmail } from '../utils/email'
+import { TEMPLATE_2_AUTH_USER_LOGIN } from '../constants/email'
+import config from 'config'
 
 /**
  * Route des authentification
@@ -12,7 +17,7 @@ export default class RouteAuths extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
+  constructor (params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -25,21 +30,86 @@ export default class RouteAuths extends Route {
     bodyType: Types.object().keys({
       email: Types.string().required(),
       password: Types.string().required(),
-      remember: Types.number()
+      remember: Types.number(),
     }),
   })
-  async login(ctx) {
+  async login (ctx) {
     const { password, email, remember } = this.body(ctx)
     const tryUserCon = await this.model.tryConnection(email, password, [0, USER_ROLE_TEAM, USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN], true)
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      if (remember === 1) await ctx.loginUser(tryUserCon, 90)
-      else await ctx.loginUser(tryUserCon, 7)
-      await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
-        userId: tryUserCon.id,
+      if (config.login.enable2Atuh) {
+        const code = crypt.generateRandomNumber(4)
+        ctx.session.loginControl = {
+          email,
+          remember,
+          code,
+        }
+        await sentEmail(
+          {
+            email,
+          },
+          TEMPLATE_2_AUTH_USER_LOGIN,
+          {
+            email,
+            code,
+          }
+        )
+        await this.models.Logs.addLog(USER_USER_LOGIN_REQUEST_CODE, tryUserCon.id, {
+          userId: tryUserCon.id,
+        })
+        this.sendOk(ctx, {
+          status: LOGIN_STATUS_GET_CODE,
+          datas: {
+            code: config.login.shareAuthCode ? code : null,
+          },
+        })
+      } else {
+        await ctx.loginUser(tryUserCon, remember === 1 ? 90 : 7)
+        await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
+          userId: tryUserCon.id,
+        })
+        await super.addUserInfoInBody(ctx, tryUserCon.id)
+        this.sendCreated(ctx)
+      }
+    }
+  }
+
+  /**
+   * Interface de connexion utilisateur
+   * @param {*} email
+   * @param {*} password
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      code: Types.string().required(),
+    }),
+  })
+  async completeLogin (ctx) {
+    const { code } = this.body(ctx)
+
+    console.log(ctx.session)
+    if (!ctx.session || !ctx.session.loginControl) {
+      ctx.throw(401, "Nous n'arrivons pas à vous identifier !")
+    }
+
+    const userInDb = await this.model.userPreviewWithEmail(ctx.session.loginControl.email)
+
+    if (ctx.session.loginControl.code !== code) {
+      await this.models.Logs.addLog(USER_USER_LOGIN_CODE_INVALID, userInDb.id, {
+        userId: userInDb.id,
       })
-      await super.addUserInfoInBody(ctx)
+      ctx.throw(401, 'Code invalide !')
+    }
+
+    const remember = ctx.session.loginControl.remember
+    if (userInDb) {
+      await ctx.loginUser(userInDb, remember === 1 ? 90 : 7)
+      await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
+        userId: userInDb.id,
+      })
+      await super.addUserInfoInBody(ctx, userInDb.id)
       this.sendCreated(ctx)
     }
   }
@@ -55,7 +125,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin(ctx) {
+  async loginAdmin (ctx) {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
@@ -75,7 +145,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin(ctx) {
+  async autoLogin (ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
@@ -103,7 +173,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin(ctx) {
+  async autoLoginAdmin (ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -116,7 +186,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout(ctx) {
+  async logout (ctx) {
     await ctx.logoutUser()
   }
 }
