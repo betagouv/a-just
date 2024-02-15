@@ -272,18 +272,17 @@
     <div class="right-panel">
       <h2>Ressources:</h2>
       <div class="elements">
-        <div class="element">
-          <p (click)="downloadAsset('dataBook')">
+        <div class="element" (click)="downloadAsset('dataBook')">
+          <p>
             Le data-book
           </p>
+          <mat-icon inline=true>open_in_new</mat-icon>
         </div>
-        <div class="element">
-          <p (click)="downloadAsset('nomenclature')">
+        <div class="element" (click)="downloadAsset('nomenclature')">
+          <p>
             La nomenclature
           </p>
-          <i (click)="
-                $event.stopPropagation(); downloadAsset('nomenclature', true)
-              " class="ri-file-download-line"></i>
+          <mat-icon inline=true>open_in_new</mat-icon>
         </div>
       </div>
     </div>
