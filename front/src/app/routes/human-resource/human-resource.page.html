@@ -25,7 +25,8 @@
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
-      [forceToShowContentieuxDetail]="duringPrint">
+      [forceToShowContentieuxDetail]="duringPrint"
+      [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null">
     </actual-panel-situation>
 
     <ng-template [ngIf]="!duringPrint">
@@ -56,9 +57,9 @@
         Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir
         pré-renseignée{{historiesOfTheFutur.length >= 1 ? 's' : ''}}
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
-        [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-        [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [category]="h.category" [id]="h.id"
+        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
         [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
         (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">
@@ -71,9 +72,9 @@
         antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} {{
         categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }}
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
-        [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
-        [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
+        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
+        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
         [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
         (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">

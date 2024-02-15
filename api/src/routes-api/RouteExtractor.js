@@ -42,7 +42,7 @@ export default class RouteExtractor extends Route {
       backupId: Types.number().required(),
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
-      categoryFilter: Types.string().required(),
+      categoryFilter: Types.any().required(),
     }),
     accesses: [Access.canVewHR],
   })
@@ -57,7 +57,7 @@ export default class RouteExtractor extends Route {
     const juridictionName = await this.models.HRBackups.findById(backupId)
 
     console.time('extractor-1')
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(true, true)
     console.timeEnd('extractor-1')
 
     console.time('extractor-2')
@@ -82,6 +82,7 @@ export default class RouteExtractor extends Route {
 
     const absenteismeList = []
 
+    console.time('extractor-6.1')
     const formatedExcelList = flatReferentielsList
       .filter((elem) => {
         if (ABSENTEISME_LABELS.includes(elem.label) === false) return true
@@ -93,7 +94,9 @@ export default class RouteExtractor extends Route {
       .map((x) => {
         return x.childrens !== undefined ? { global: getExcelLabel(x, true), sub: null } : { global: null, sub: getExcelLabel(x, false) }
       })
+    console.timeEnd('extractor-6.1')
 
+    console.time('extractor-6.2')
     const excelRef = [
       { global: null, sub: 'ETPT sur la période hors indisponibilités' },
       { global: null, sub: 'Temps ventilés sur la période' },
@@ -105,6 +108,7 @@ export default class RouteExtractor extends Route {
         return { global: null, sub: getExcelLabel(y, false) }
       }),
     ]
+    console.timeEnd('extractor-6.2')
 
     console.time('extractor-7')
     let onglet2 = await computeExtractDdg(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
@@ -113,8 +117,6 @@ export default class RouteExtractor extends Route {
     console.time('extractor-8')
     await onglet1.sort((a, b) => sortByCatAndFct(a, b))
     await onglet2.sort((a, b) => sortByCatAndFct(a, b))
-    onglet1 = addSumLine(onglet1, categoryFilter)
-    onglet2 = addSumLine(onglet2, categoryFilter)
     const columnSize1 = await autofitColumns(onglet1, true)
     const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
@@ -124,6 +126,9 @@ export default class RouteExtractor extends Route {
     if (tproxs.length === 0) {
       tproxs = [{ id: 0, tj: label, tprox: label }]
     }
+
+    if (onglet1 === null || onglet1 === undefined) onglet1 = []
+    if (onglet2 === null || onglet2 === undefined) onglet2 = []
 
     let allJuridiction = (await this.models.TJ.getByTj(label, {}, {})).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox, type: t.type }))
 

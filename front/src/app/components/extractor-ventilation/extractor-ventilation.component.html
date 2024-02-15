@@ -9,8 +9,8 @@
     [min]="dateStart">
   </aj-date-select>
 
-  <aj-select title="Catégorie" class="category-select" [defaultRealValue]="'Sélectionner la catégorie'" [value]="'Tous'"
-    [datas]="categories" [multiple]="false" (valueChange)="updateCategory($event)">
+  <aj-select title="Catégorie" class="category-select" [defaultRealValue]="'Sélectionner la catégorie'" [value]="null"
+    [datas]="categories" [multiple]="true" (valueChange)="updateCategory($event)">
   </aj-select>
 
   <div id="export-excel-button" class="export-button {{classSelected}}" (click)="export()">
