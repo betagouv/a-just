@@ -84,6 +84,17 @@ export class AuthService {
   }
 
   /**
+   * API Control auth 2FA
+   * @param params 
+   * @returns 
+   */
+  completeLogin(params = {}, options = {}): Promise<any> {
+    return this.serverService.post('auths/complete-login', params, options).then((data) => {
+      return data;
+    });
+  }
+
+  /**
    * Déconnection d'un utilisateur
    * @returns 
    */
