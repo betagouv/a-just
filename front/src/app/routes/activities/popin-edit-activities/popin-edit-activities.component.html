@@ -256,7 +256,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': updated !== null && newValue !== null,
+          'blue-bottom': (updated !== null && newValue !== null) || inputElement.value,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -276,7 +276,7 @@
   let-updated="updated"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ (value !== null && updated) ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null  ? 'blue' : '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>
