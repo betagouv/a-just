@@ -117,7 +117,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Taux de completion total des données
   */
   totalCompletion: number = 0
-
+  /**
+   * Id du sous-contentieux selectionné
+   */
+  selectedReferentielId : number = 0
 
   /**
    * Constructeur

@@ -238,7 +238,7 @@
                       'blue-txt': getCompletionStatus(itemGroup).includes('A compléter')
                     }"
                     
-                    (click)="contentieuxToUpdate = ref"
+                    (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id"
                   >
                       <p *ngIf="getCompletionStatus(itemGroup).includes('A compléter')">
                         {{getCompletionStatus(itemGroup) }}  <span class="pastille">+{{itemGroup.possibleGainCompletion }}%</span>
@@ -343,4 +343,4 @@
 </ng-template>
 
 
-<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
+<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
