@@ -632,4 +632,20 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
     return 'A-JUSTer'
   }
+
+  setItemBgColor(label : string, elementId: number, remove : boolean = false) {
+    const element = document.querySelector(`#item-${elementId}`) as HTMLElement
+    const tmpColor = this.referentielMappingColorActivity(label).replace(/[^\d,]/g, '').split(',')
+    tmpColor.pop()
+    tmpColor.push('0.4')
+    const bgColor = `rgba(${tmpColor.join(',')})`
+
+    if (element){
+      if (remove)
+        element.style.backgroundColor = 'transparent';
+      else
+        element.style.backgroundColor = bgColor;
+    }
+
+  }
 }
