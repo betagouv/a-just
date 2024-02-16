@@ -1,18 +1,17 @@
 <aj-popup class="medium no-padding-content no-title border-radius">
   <div class="header-popin">
-    <div class="title-popin">
-      <p>Visualisation du détail des données d'activité du</p>
-      <div>
-        <h2>{{ referentiel?.label }}</h2>
-        <i
-          *ngIf="referentiel && referentiel.helpUrl"
-          class="ri-lightbulb-flash-line cursor-pointer blue"
-          (click)="onShowHelpPanel()"
-        ></i>
+    <div class="left-section">
+      <div class="title-popin">
+        <p>Visualisation du détail des données d'activité du</p>
+        <div>
+          <h2>{{ referentiel?.label }}</h2>
+          <i
+            *ngIf="referentiel && referentiel.helpUrl"
+            class="ri-lightbulb-flash-line cursor-pointer blue"
+            (click)="onShowHelpPanel()"
+          ></i>
+        </div>
       </div>
-    </div>
-
-    <div class="date-popin">
       <aj-date-select
         title="Voir les données de"
         [value]="activityMonth"
@@ -21,7 +20,7 @@
       >
       </aj-date-select>
     </div>
-
+    
     <div class="close-popin">
       <i class="ri-close-line" (click)="close()"></i>
     </div>
@@ -109,8 +108,8 @@
     </div>
   </div>
 
-  <div class="content-popin" *ngIf="hasValuesToShow">
-    <div class="contentieux-item" *ngFor="let item of referentiel?.childrens">
+  <div id="contentieux-list" class="content-popin " *ngIf="hasValuesToShow">
+    <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens" [id]="'contentieux-' + item.id">
       <div class="contentieux-item-label">
         <p>{{ item.label }}</p>
       </div>
@@ -257,7 +256,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': updated !== null && newValue !== null,
+          'blue-bottom': (updated !== null && newValue !== null) || inputElement.value,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -277,7 +276,7 @@
   let-updated="updated"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ (value !== null && updated) ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null  ? 'blue' : '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

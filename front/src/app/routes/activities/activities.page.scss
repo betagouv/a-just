@@ -79,6 +79,10 @@
           border-bottom: 3px solid fColor(textBlueTag);
           border-radius: 0;
         }
+
+        input.grey {
+          color: fColor(dataGreyTxt);
+        }
       }
     }
   }
@@ -145,8 +149,9 @@
     .elements {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      align-items: center;
       color: fColor(cbluedark);
+     
       div:first-child {
         margin-right: 32px;
       }
@@ -154,9 +159,14 @@
 
     .element {
       display: flex;
-      flex-direction: row;
       align-items: center;
       font-size: 16px;
+      position: relative;
+
+      .mat-icon {
+        padding: 4px;
+        font-size: 17px;
+      }
     }
 
     .element :hover {
@@ -347,16 +357,19 @@
     }
 
     .grey {
-      background-color: fColor(dataGreyBg);
+      background-color: fColor(dataGreyBg) !important;
     }
     
-
     .group-item {
       display: flex;
       justify-content: space-around;
       align-items: center;
       height: 67px;
       width: 100%;
+
+      &:hover{
+        background-color: fColor(dataHoverBg) //#F5F5FE;;
+      }
 
       .label {
         display: flex;
@@ -419,9 +432,6 @@
         align-items: center;
         justify-content: flex-end;
         font-size: 14px;
-        p > {
-          
-        }
       }
       
     }
