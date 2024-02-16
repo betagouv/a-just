@@ -171,6 +171,16 @@
   }
 }
 
+.blue-bg {
+  background-color: fColor(selectedReferentielBg);
+  border: 1px solid fColor(selectedReferentielBorder);
+  transition: background-color 3s;
+  .item-template .item-template-original {
+    background-color: fColor(selectedReferentielBg);
+    transition: background-color 3s;
+  }
+}
+
 .contentieux-item {
   display: flex;
   align-items: center;
@@ -263,7 +273,7 @@
     }
 
     &.is-not-setted-set {
-      background-color: Color(dataNotSettedIsSetBg);
+      background-color: fColor(dataNotSettedIsSetBg);
       display: flex;
       align-items: center;
       justify-content: flex-end;

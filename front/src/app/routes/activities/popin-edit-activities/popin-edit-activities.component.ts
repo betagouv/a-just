@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -32,7 +33,7 @@ import { groupBy, mapValues, get } from 'lodash';
 })
 export class PopinEditActivitiesComponent
   extends MainClass
-  implements OnChanges
+  implements OnChanges, AfterViewInit
 {
   /**
    * Dom du wrapper
@@ -42,6 +43,10 @@ export class PopinEditActivitiesComponent
    * Référentiel
    */
   @Input() referentiel: ContentieuReferentielInterface | null = null
+  /**
+   * Référentiel sélectionné
+   */
+  @Input() selectedReferentielId: number = 0
   /**
    * Date du mois sélectionné
    */
@@ -93,12 +98,50 @@ export class PopinEditActivitiesComponent
     super()
   }
 
+  ngAfterViewInit() {
+    const container = document.getElementById('contentieux-list')
+    if (container) {
+      const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
+      const logicielElement = container.querySelector(`.selected-contentieux-${this.selectedReferentielId}`)
+      if (element) {
+        const referentielList = container.querySelectorAll('.header-list')
+        const containerTop = container.getBoundingClientRect().top
+        const selectedElementTop = element.getBoundingClientRect().top
+        let delta = containerTop
+        
+        element.classList.add('blue-bg')
+
+        for (let i = 0; i < referentielList.length; i++) {
+          const topHeader = referentielList[i].getBoundingClientRect().top
+          if (topHeader === containerTop || containerTop < selectedElementTop) {
+            delta += referentielList[i].getBoundingClientRect().height
+            break
+          }
+        }
+
+        let scrollTop = selectedElementTop - delta + container.scrollTop - 8
+        container.scroll({
+          behavior: 'smooth',
+          top: scrollTop,
+        })
+      }
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     console.log('new ref', this.referentiel, changes)
 
     if (changes['referentiel']) {
       this.updateTotal()
     }
+
+    /*console.log("selectedReferentielId:", this.selectedReferentielId)
+    const container = document.getElementById('referentiel-list')
+    console.log("container:", container)
+    if (container) {
+      const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
+      console.log('Element:', element)
+    }*/
   }
 
   /**
