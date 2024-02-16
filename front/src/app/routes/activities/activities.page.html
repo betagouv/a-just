@@ -142,7 +142,9 @@
               >
                 <div
                   class="group-item"
-              
+                  (mouseenter)="setItemBgColor(ref.label, itemGroup.id)"
+                  (mouseleave)="setItemBgColor(ref.label, itemGroup.id, true)"
+                  [id]="'item-' + itemGroup.id"
                   [ngClass]="{'grey': itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif' }"  
                 >
                   <div 
