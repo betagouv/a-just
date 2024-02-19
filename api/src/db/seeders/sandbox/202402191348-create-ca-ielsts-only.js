@@ -260,7 +260,11 @@ module.exports = {
 
     // ONLY FOR CA
     if (Number(config.juridictionType) === 1) {
-      await models.TJ.destroy({ where: {} })
+      await models.TJ.destroy({
+        where: {},
+        truncate: true,
+        force: true,
+      })
       CATable.map(async CA => {
         await models.TJ.addIELST(CA.I_ELST, CA.Nom, CA.Latitude, CA.Longitude, CA.Population)
       })
