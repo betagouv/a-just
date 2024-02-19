@@ -388,7 +388,12 @@
       }
 
       &.blue-bottom {
+        color: fColor(dataCompletionTextColor);
         border-bottom: 3px solid fColor(dataCompletionTextColor);
+
+        &::placeholder {
+          color: fColor(dataCompletionTextColor) !important;
+        }
       }
     }
 

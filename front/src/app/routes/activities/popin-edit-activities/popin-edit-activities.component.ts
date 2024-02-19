@@ -591,6 +591,32 @@ export class PopinEditActivitiesComponent
     }
   }
 
+
+  hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
+    let value = null
+    
+    if (node === "entrees")
+      value = cont.in
+    else if  (node === "sorties")
+      value = cont.out
+    else
+      value = cont.stock
+    
+    if (value) {
+      if (!this.updates[`${cont.id}-${node}`] || this.updates[`${cont.id}-${node}`].value !== null) 
+        return true
+      else {
+        return false
+      }
+    }
+    else {
+      if (!this.updates[`${cont.id}-${node}`] || this.updates[`${cont.id}-${node}`].value === null) {
+        return false
+      } else
+        return true 
+    }
+  }
+
   hasValue(cont: ContentieuReferentielInterface, node: string) {
     switch (node) {
       case 'entrees':
@@ -600,6 +626,9 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.in !== null || cont.originalIn !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
+        }
+        else if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
         }
         else if (cont.in !== null)
           return true
@@ -612,6 +641,9 @@ export class PopinEditActivitiesComponent
           else if (cont.out !== null || cont.originalOut !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
+        else if (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
+        }
         else if (cont.out !== null) {
           return true
         }
@@ -623,6 +655,9 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.stock !== null || cont.originalStock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
+        }
+        else if (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
         }
         else if (cont.stock !== null) {
           return true
