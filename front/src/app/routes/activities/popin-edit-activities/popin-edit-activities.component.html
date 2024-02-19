@@ -246,6 +246,7 @@
             level: 4,
             valueQuality: valueQuality,
             updated: updated,
+            inputValue: inputElement.value,
           }
         "
       >
@@ -274,9 +275,10 @@
   let-level="level"
   let-valueQuality="valueQuality"
   let-updated="updated"
+  let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null  ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ (value !== null || inputValue) ? 'blue' : '' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>
