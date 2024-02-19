@@ -43,11 +43,6 @@ module.exports = {
         raw: true,
       })
       if (findEAM) {
-        await models.HRFonctions.destroy({
-          where: {},
-          truncate: true,
-          force: true,
-        })
         CAFonctions.map(async (CA, index) => {
           await models.HRFonctions.create({ code: CA.FONCTION, label: CA.FONCTION_NL, category_id: findEAM.id, rank: index })
         })
