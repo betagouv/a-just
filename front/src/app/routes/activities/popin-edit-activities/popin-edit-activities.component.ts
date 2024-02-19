@@ -592,12 +592,13 @@ export class PopinEditActivitiesComponent
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-   
-   
     switch (node) {
       case 'entrees':
         if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.in !== null || cont.originalIn !== null)
+          if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) {
+            return false
+          }
+          else if (cont.in !== null || cont.originalIn !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
         else if (cont.in !== null)
@@ -605,7 +606,10 @@ export class PopinEditActivitiesComponent
         break
       case 'sorties':
         if (cont.valueQualityOut === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.out !== null || cont.originalOut !== null)
+          if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) {
+            return false
+          }
+          else if (cont.out !== null || cont.originalOut !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
         else if (cont.out !== null) {
@@ -614,7 +618,10 @@ export class PopinEditActivitiesComponent
         break
       case 'stock':
         if (cont.valueQualityStock === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.stock !== null || cont.originalStock !== null)
+          if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) {
+            return false
+          }
+          else if (cont.stock !== null || cont.originalStock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
         else if (cont.stock !== null) {

@@ -307,12 +307,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         this.updatedBy = monthValues.lastUpdate
         const activities: ActivityInterface[] = monthValues.list
         this.activities = activities
-        console.log('MonthValues:')
 
-        monthValues.list.map((elem: any) => {
-          if (elem.contentieux.label === "Propriété littéraire et artistique")
-            console.log('Values:', elem)
-        })
         if (monthValues.list.length === 0) {
           this.canEditActivities = false
         } else {
