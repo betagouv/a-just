@@ -332,6 +332,10 @@
       &.blue {
         color: fColor(dataCompletionTextColor);
       }
+
+      &.grey  {
+        color: fColor(cgray);
+      }
     }
 
     p {
@@ -342,6 +346,10 @@
 
       &.blue {
         color: fColor(dataCompletionTextColor);
+      }
+
+      &.grey  {
+        color: fColor(cgray);
       }
     }
   }
@@ -359,6 +367,10 @@
       transform: translateY(-50%);
       &.blue {
         color: fColor(dataCompletionTextColor);
+      }
+
+      &.grey  {
+        color: fColor(cgray);
       }
     }
 
