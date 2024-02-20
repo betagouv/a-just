@@ -233,6 +233,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   documentation: DocumentationInterface = {
     title: 'Le ventilateur :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
+    printSubTitle: true,
   }
   /**
    * En cours de chargement

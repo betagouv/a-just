@@ -587,6 +587,7 @@ export class PopinEditActivitiesComponent
           this.referentiel.label
         )}`,
         path: this.referentiel.helpUrl,
+        printSubTitle: true,
       })
     }
   }

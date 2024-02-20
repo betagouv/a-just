@@ -82,6 +82,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   documentation: DocumentationInterface = {
     title: 'Calculateur',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
+    printSubTitle: true,
   }
   /**
    * Mémorisation de la dernière categorie
@@ -384,18 +385,21 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Données renseignées',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/visualiser-son-activite-grace-aux-donnees-renseignees',
+          printSubTitle: true,
         })
         break
       case 'activité constatée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité constatée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/indicateurs-issus-de-lactivite-constatee',
+          printSubTitle: true,
         })
         break
       case 'activité calculée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité calculée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/comparer-son-activite-grace-a-lactivite-calculee',
+          printSubTitle: true,
         })
         break
     }

@@ -72,6 +72,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    printSubTitle: true,
   }
   /**
    * Selection d'un mois de donnée à afficher
@@ -534,7 +535,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   getTooltipTitle(
     {user, date} : {user: UserInterface , date: Date}
   ) {
-      //console.log('user:', user, ' | date:', date)
       return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
   }
 
@@ -566,8 +566,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   onShowPanel({label, url} : {label: string, url: string}) {
     this.wrapper?.onForcePanelHelperToShow({
-      title: label,
+      title: '',
       path: url,
+      subTitle: '',
+      printSubTitle: false,
     })
   }
 
