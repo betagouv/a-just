@@ -515,11 +515,10 @@
   align-items: stretch;
 
   >div.panel-header {
-    background-color: fColor(bgHelper);
     padding: 14px 0 90px 0;
 
     .over-title {
-      background-color: fColor(bgHelper);
+      background-color: inherit;
       position: relative;
       z-index: 30;
       padding: 0 14px;

@@ -570,6 +570,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       path: url,
       subTitle: '',
       printSubTitle: false,
+      bgColor: this.referentielMappingColorActivity(label)
     })
   }
 

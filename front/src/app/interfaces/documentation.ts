@@ -18,4 +18,8 @@ export interface DocumentationInterface {
    * Lien de la doc à mettre en iframe
    */
   path: string;
+  /**
+   * Couler du background 
+   */
+  bgColor?: string;
 }
