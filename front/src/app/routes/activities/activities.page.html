@@ -81,13 +81,11 @@
             </div>
             <div class="column-item">
               <div>
-                <input
-                  type="number"
-                  [ngModel]="ref.in  !== null ? ref.in : ref.originalIn"
-                  disabled
-                  placeholder="-"
+                <p 
                   [ngClass]="{'data-changed': ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date}"
-                />
+                >
+                  {{ ref.in !== null ? ref.in : ( ref.originalIn !== null ? ref.originalIn : '-' ) }}
+                </p>
               </div>
               <ng-template [ngIf]="ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.entrees.user, date: ref.activityUpdated.entrees.date})">
@@ -96,13 +94,11 @@
             </div>
             <div class="column-item">
               <div>
-                <input
-                  type="number"
-                  [ngModel]="ref.out !== null ? ref.out : ref.originalOut"
-                  disabled
-                  placeholder="-"
+                <p 
                   [ngClass]="{'data-changed': ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date}"
-                />
+                >
+                  {{ ref.out !== null ? ref.out : ( ref.originalOut !== null ? ref.originalOut : '-' ) }}
+                </p>
               </div>
               <ng-template [ngIf]="ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.sorties.user, date: ref.activityUpdated.sorties.date})">
@@ -111,13 +107,11 @@
             </div>
             <div class="column-item">
               <div>
-                <input
-                  type="number"
-                  [ngModel]="ref.stock !== null ? ref.stock : ref.originalStock"
-                  disabled
-                  placeholder="-"
+                <p 
                   [ngClass]="{'data-changed': ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
-                />
+                >
+                  {{ ref.stock !== null ? ref.stock : ( ref.originalStock !== null ? ref.originalStock : '-' ) }}
+                </p>
               </div>
               <ng-template [ngIf]="ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
@@ -146,6 +140,7 @@
                   (mouseleave)="setItemBgColor(ref.label, itemGroup.id, true)"
                   [id]="'item-' + itemGroup.id"
                   [ngClass]="{'grey': itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif' }"  
+                  (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id"
                 >
                   <div 
                     class="label"
@@ -174,18 +169,16 @@
                   </div>
                   <div class="column-item">
                     <div>
-                      <input
-                        type="number"
-                        [ngModel]="itemGroup.in !== null ? itemGroup.in : itemGroup.originalIn"
-                        disabled
-                        placeholder="-"
+                      <p
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null), 
                           'yellow' : (itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null), 
                           'blue-bottom' : (itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
-                      />
+                      >
+                        {{ itemGroup.in !== null ? itemGroup.in : ( itemGroup.originalIn !== null ? itemGroup.originalIn : '-' ) }}
+                      </p>
                       <ng-template [ngIf]="itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.entrees.user, date: itemGroup.activityUpdated.entrees.date})">
                         </aj-tooltips>
@@ -194,18 +187,16 @@
                   </div>
                   <div class="column-item">
                     <div>
-                      <input
-                        type="number"
-                        [ngModel]="itemGroup.out !== null ? itemGroup.out : itemGroup.originalOut"
-                        disabled
-                        placeholder="-"
+                      <p
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null) && itemGroup.originalOut === null, 
                           'yellow' : (itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null ),
                           'blue-bottom' : (itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
-                      />
+                      >
+                        {{ itemGroup.out !== null ? itemGroup.out : ( itemGroup.originalOut !== null ? itemGroup.originalOut : '-' ) }}
+                      </p>
                       <ng-template [ngIf]="itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.sorties.user, date: itemGroup.activityUpdated.sorties.date})">
                         </aj-tooltips>
@@ -213,23 +204,18 @@
                     </div>
                   </div>
                   <div class="column-item">
-                    <div>
-                      <input
-                        type="number"
-                        [ngModel]="itemGroup.stock !== null ? itemGroup.stock : itemGroup.originalStock"
-                        disabled
-                        placeholder="-"
+                    <div (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
+                      <p 
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 
                           'yellow' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ),
                           'blue-bottom' : (itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
-                      />
-                      <ng-template [ngIf]="itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
-                        <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
-                        </aj-tooltips>
-                      </ng-template>
+                      >
+                        {{ itemGroup.stock !== null ? itemGroup.stock : ( itemGroup.originalStock !== null ? itemGroup.originalStock : '-' ) }}
+                      </p>
+                      
                     </div>
                   </div>
                   <div 
@@ -239,7 +225,6 @@
                       'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
                       'blue-txt': getCompletionStatus(itemGroup).includes('A compléter')
                     }"
-                    
                     (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id"
                   >
                       <p *ngIf="getCompletionStatus(itemGroup).includes('A compléter')">

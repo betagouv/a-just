@@ -49,38 +49,29 @@
           }
         }
 
-        input {
-          border: none;
-          border-radius: 0;
-          background-color: transparent;
-          text-align: right;
-          border-radius: 4px;
-          width: 100%;
-        }
-
-        input.data-changed {
+        p.data-changed {
           height: 100%;
           border-radius: 0;
           color: fColor(textBlueTag);
           border-bottom: 3px solid fColor(textBlueTag);
         }
 
-        input.blue {
+        p.blue {
           background-color: fColor(dataToCompleteBg);
           border: 1px solid fColor(textBlueTag);
         }
 
-        input.yellow {
+        p.yellow {
           background-color: fColor(dataNotSettedBg);
           border: 1px solid fColor(dataNotSettedBorder);
         }
 
-        input.blue-bottom {
+        p.blue-bottom {
           border-bottom: 3px solid fColor(textBlueTag);
           border-radius: 0;
         }
 
-        input.grey {
+        p.grey {
           color: fColor(dataGreyTxt);
         }
       }
@@ -224,13 +215,15 @@
   }
 
   .column-item {
-    width: 92px;
-    > p {
-      padding: 16px;
-      text-align: center;
-      font-weight: bold;
-    }
+    display: flex;
 
+    width: 92px;
+    justify-content: right;
+    > p {
+      text-align: right;
+      width: 100%;
+      padding: 5px;
+    };
   }
 }
 
@@ -292,9 +285,20 @@
   }
 
   .column-item {
-    display: flex;
-    justify-content: center;
-    align-self: stretch;
+    //height: 100%;
+
+    > div {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      height: 100%;
+
+      > p {
+        text-align: right;
+        width: 70%;
+        padding: 5px;
+      };
+    }
   }
   
   .completion {
@@ -367,6 +371,10 @@
       height: 67px;
       width: 100%;
 
+      &:hover {
+        cursor: pointer;
+      } 
+
       .label {
         display: flex;
         align-items: center;
@@ -393,9 +401,18 @@
       }
 
       .column-item {
-        display: flex;
-        justify-content: center;
-        align-self: stretch;
+        > div {
+          display: flex;
+          justify-content: right;
+          align-items: center;
+          height: 100%;
+
+          > p {
+            text-align: right;
+            width: 70%;
+            padding: 5px;
+          };
+        }
       }
 
       /*.completion {
