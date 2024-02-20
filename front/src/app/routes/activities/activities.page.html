@@ -130,7 +130,7 @@
                 <span class='completion-bar'>
                   <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
                 </span>
-                <p>{{ref.completion && ref.completion < 100 ?  'il reste des données à compléter' : ''}}</p>
+                <p>{{ (ref.completion !== undefined && ref.completion < 100 ) ?  'il reste des données à compléter' : ''}}</p>
             
               <!--</div>-->
             </div>
