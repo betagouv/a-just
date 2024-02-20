@@ -647,41 +647,41 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   }
 
   checkIfBlueBottom(item : ContentieuReferentielInterface, node: string) {
-      switch (node) {
-        case 'entrees': 
-          if (item.valueQualityIn === 'to_verify') {
-            if (item.in === item.originalIn)
-              return false
-            else if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
-              return true
-          } else {
-            if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
-              return true
-          }
-          break;
-        case 'sorties': 
-          if (item.valueQualityOut === 'to_verify') {
-            if (item.out === item.originalOut)
-              return false
-            else if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
-              return true
-          } else {
-            if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
-              return true
-          }
-          break;
-        case 'stocks': 
-          if (item.valueQualityStock === 'to_verify') {
-            if (item.stock === item.originalStock)
-              return false
-            else if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
-              return true
-          } else {
-            if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
-              return true
-          }
-          break;
-     }
+    switch (node) {
+      case 'entrees': 
+        if (item.valueQualityIn === 'to_verify') {
+          if (item.in === item.originalIn)
+            return false
+          else if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+            return true
+        } else {
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+            return true
+        }
+        break;
+      case 'sorties': 
+        if (item.valueQualityOut === 'to_verify') {
+          if (item.out === item.originalOut)
+            return false
+          else if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+            return true
+        } else {
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+            return true
+        }
+        break;
+      case 'stocks': 
+        if (item.valueQualityStock === 'to_verify') {
+          if (item.stock === item.originalStock)
+            return false
+          else if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+            return true
+        } else {
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+            return true
+        }
+        break;
+    }
     return false
   }
 }
