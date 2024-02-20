@@ -134,12 +134,12 @@
 
 <div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
   <div class="panel-header">
-    <div class="over-title">
+    <div  class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
       <div class="panel-header-closing-row">
         <h6>{{ documentationToShow?.title }}</h6>
         <i class="ri-close-line" (click)="panelHelper = false"></i>
       </div>
-      <p>
+      <p *ngIf="documentationToShow?.printSubTitle">
         <i class="ri-lightbulb-flash-line"></i>
         <span>{{
           documentationToShow?.subTitle || 'Comment ça marche ?'

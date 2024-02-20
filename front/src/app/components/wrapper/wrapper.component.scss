@@ -520,10 +520,14 @@
 
     .over-title {
       background-color: fColor(bgHelper);
-      height: 85px;
       position: relative;
       z-index: 30;
       padding: 0 14px;
+      height: 85px;
+    }
+
+    .over-title-small {
+      height: 42px !important;
     }
 
     .panel-header-closing-row {
@@ -551,6 +555,11 @@
       }
     }
   }
+
+  >div.panel-header:has(.over-title-small) {
+    padding: 0 !important;
+  }
+
 
   >iframe {
     border-radius: 4px;

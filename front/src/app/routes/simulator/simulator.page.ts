@@ -237,6 +237,7 @@ export class SimulatorPage
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
+    printSubTitle: true,
   }
 
   /**
