@@ -278,7 +278,7 @@
   let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ (updated !== null && value !== null || inputValue || (valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(contentieux, type))) ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ (updated !== null && value !== null || inputValue || (valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(contentieux, type))) ? 'blue' : 'grey' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>
