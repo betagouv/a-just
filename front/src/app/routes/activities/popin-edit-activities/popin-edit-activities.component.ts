@@ -594,28 +594,25 @@ export class PopinEditActivitiesComponent
 
 
   hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
-    let value = null
-    
-    if (node === "entrees")
-      value = cont.in
-    else if  (node === "sorties")
-      value = cont.out
-    else
-      value = cont.stock
-    
-    if (value) {
-      if (!this.updates[`${cont.id}-${node}`] || this.updates[`${cont.id}-${node}`].value !== null) 
-        return true
-      else {
-        return false
-      }
-    }
-    else {
-      if (!this.updates[`${cont.id}-${node}`] || this.updates[`${cont.id}-${node}`].value === null) {
-        return false
-      } else
-        return true 
-    }
+
+    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) 
+      return false
+
+    switch (node) {
+      case 'entrees': 
+        if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+      case 'sorties': 
+        if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+      case 'stocks': 
+        if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+   }
+   return false
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
