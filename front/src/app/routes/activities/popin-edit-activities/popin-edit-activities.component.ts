@@ -666,7 +666,7 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlueBottom (newValue : any, item : ContentieuReferentielInterface, node: string, inputValue : any) {
+  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any) {
     const input = +inputValue
     switch (node) {
       case 'entrees': 
