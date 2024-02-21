@@ -72,6 +72,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    printSubTitle: true,
   }
   /**
    * Selection d'un mois de donnée à afficher
@@ -507,14 +508,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
               for (const child of elem.childrens) {
                 let nbToComplete = 0
-                if (child.compter) {
+                //if (child.compter) {
                   if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
                     nbToComplete += 1
                   if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
                     nbToComplete += 1
                   if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
                     nbToComplete += 1
-                }
+                //}
                 child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
               }
             }
@@ -534,7 +535,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   getTooltipTitle(
     {user, date} : {user: UserInterface , date: Date}
   ) {
-      //console.log('user:', user, ' | date:', date)
       return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
   }
 
@@ -566,8 +566,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   onShowPanel({label, url} : {label: string, url: string}) {
     this.wrapper?.onForcePanelHelperToShow({
-      title: label,
+      title: '',
       path: url,
+      subTitle: '',
+      printSubTitle: false,
+      bgColor: this.referentielMappingColorActivity(label)
     })
   }
 
@@ -641,6 +644,44 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       else
         element.style.backgroundColor = bgColor;
     }
+  }
 
+  checkIfBlueBottom(item : ContentieuReferentielInterface, node: string) {
+    switch (node) {
+      case 'entrees': 
+        if (item.valueQualityIn === 'to_verify') {
+          if (item.in === item.originalIn)
+            return false
+          else if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+            return true
+        } else {
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+            return true
+        }
+        break;
+      case 'sorties': 
+        if (item.valueQualityOut === 'to_verify') {
+          if (item.out === item.originalOut)
+            return false
+          else if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+            return true
+        } else {
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+            return true
+        }
+        break;
+      case 'stocks': 
+        if (item.valueQualityStock === 'to_verify') {
+          if (item.stock === item.originalStock)
+            return false
+          else if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+            return true
+        } else {
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+            return true
+        }
+        break;
+    }
+    return false
   }
 }

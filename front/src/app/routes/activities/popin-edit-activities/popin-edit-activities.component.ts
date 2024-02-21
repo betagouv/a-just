@@ -587,8 +587,32 @@ export class PopinEditActivitiesComponent
           this.referentiel.label
         )}`,
         path: this.referentiel.helpUrl,
+        printSubTitle: true,
       })
     }
+  }
+
+
+  hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
+
+    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) 
+      return false
+
+    switch (node) {
+      case 'entrees': 
+        if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+      case 'sorties': 
+        if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+      case 'stock': 
+        if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+          return true
+        break;
+   }
+   return false
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
@@ -601,6 +625,9 @@ export class PopinEditActivitiesComponent
           else if (cont.in !== null || cont.originalIn !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
+        else if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
+        }
         else if (cont.in !== null)
           return true
         break
@@ -611,6 +638,9 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.out !== null || cont.originalOut !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
+        }
+        else if (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
         }
         else if (cont.out !== null) {
           return true
@@ -624,6 +654,9 @@ export class PopinEditActivitiesComponent
           else if (cont.stock !== null || cont.originalStock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
             return true
         }
+        else if (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) {
+          return this.hasValueForToVerifyData(cont, node)
+        }
         else if (cont.stock !== null) {
           return true
         }
@@ -631,5 +664,45 @@ export class PopinEditActivitiesComponent
     }
 
     return this.updates[`${cont.id}-${node}`]
+  }
+
+  checkIfBlueBottom (newValue : any, item : ContentieuReferentielInterface, node: string, inputValue : any) {
+    const input = +inputValue
+    switch (node) {
+      case 'entrees': 
+        if (item.valueQualityIn === 'to_verify') {
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees && input && input !==  item.originalIn)
+            return true
+          else if (item.in === item.originalIn || input === item.originalIn)
+            return false
+        } else {
+          if (/*item.in !== null && item.activityUpdated && item.activityUpdated.entrees &&*/input && input !== item.originalIn)
+            return true
+        }
+        break;
+      case 'sorties': 
+        if (item.valueQualityOut === 'to_verify') {
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && input && input !==  item.originalOut)
+            return true
+          else if (item.out === item.originalOut || input === item.originalOut)
+            return false
+        } else {
+          if (/*item.out !== null && item.activityUpdated && item.activityUpdated.sorties && */input && input !== item.originalOut)
+            return true
+        }
+        break;
+      case 'stock': 
+        if (item.valueQualityStock === 'to_verify') {
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && input && input !==  item.originalStock)
+            return true
+          else if (item.stock === item.originalStock || input === item.originalStock)
+            return false
+        } else {
+          if (/*item.stock !== null && item.activityUpdated && item.activityUpdated.stock*/input && input !== item.originalStock)
+            return true
+        }
+        break;
+    }
+    return false
   }
 }
