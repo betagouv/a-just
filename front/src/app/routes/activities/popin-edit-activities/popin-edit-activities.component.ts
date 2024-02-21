@@ -666,8 +666,11 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any) {
-    const input = +inputValue
+  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any, level: number) {
+    let input = null
+    if (inputValue)
+      input = +inputValue
+
     switch (node) {
       case 'entrees': 
         if (item.valueQualityIn === 'to_verify') {
@@ -676,6 +679,8 @@ export class PopinEditActivitiesComponent
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
         } else {
+          if (level === 3)
+            input = item.in
           if (/*item.in !== null && item.activityUpdated && item.activityUpdated.entrees &&*/input && input !== item.originalIn)
             return true
         }
@@ -687,6 +692,8 @@ export class PopinEditActivitiesComponent
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
         } else {
+          if (level === 3)
+            input = item.out
           if (/*item.out !== null && item.activityUpdated && item.activityUpdated.sorties && */input && input !== item.originalOut)
             return true
         }
@@ -698,6 +705,8 @@ export class PopinEditActivitiesComponent
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
+          if (level === 3)
+            input = item.stock
           if (/*item.stock !== null && item.activityUpdated && item.activityUpdated.stock*/input && input !== item.originalStock)
             return true
         }

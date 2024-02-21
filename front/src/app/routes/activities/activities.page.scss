@@ -64,7 +64,7 @@
 
         p.blue {
           background-color: fColor(dataToCompleteBg);
-          border: 1px solid fColor(textBlueTag);
+          border: 1px solid fColor(textBlueTag) !important;
           border-radius: 4px;
         }
 
@@ -76,7 +76,7 @@
 
         p.blue-bottom {
           border-bottom: 3px solid fColor(textBlueTag);
-          color: fColor(textBlueTag);
+          color: fColor(textBlueTag) !important;
           border-radius: 0;
         }
 

@@ -217,7 +217,7 @@
     <div
       class="item-template-new-total" 
       [ngClass]="{
-        'blue-bottom': updated !== null && newValue !== null
+        'blue-bottom': checkIfBlueBottom(items, type, null, 3)
       }" 
       *ngIf="items.childrens">
       <ng-container
@@ -233,7 +233,9 @@
         "
       >
       </ng-container>
-      <p [ngClass]="{'blue' : newValue !== null}">{{ newValue  || '-' }}</p>
+      <p [ngClass]="{
+        'blue': checkIfBlueBottom(items, type, newValue, 3)
+      }" >{{ newValue  || '-' }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container
@@ -257,7 +259,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': checkIfBlueBottom(items, type, inputElement.value) ,
+          'blue-bottom': checkIfBlueBottom(items, type, inputElement.value, 4) ,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -278,7 +280,7 @@
   let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{  checkIfBlueBottom(contentieux, type, inputValue) ? 'blue' : 'grey' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{  checkIfBlueBottom(contentieux, type, inputValue, level) ? 'blue' : 'grey' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

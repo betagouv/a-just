@@ -87,7 +87,7 @@
                   {{ ref.in !== null ? ref.in : ( ref.originalIn !== null ? ref.originalIn : '-' ) }}
                 </p>
               </div>
-              <ng-template [ngIf]="ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
+              <ng-template [ngIf]="checkIfBlueBottom(ref, 'entrees') && ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.entrees.user, date: ref.activityUpdated.entrees.date})">
                 </aj-tooltips>
               </ng-template>
@@ -100,7 +100,7 @@
                   {{ ref.out !== null ? ref.out : ( ref.originalOut !== null ? ref.originalOut : '-' ) }}
                 </p>
               </div>
-              <ng-template [ngIf]="ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
+              <ng-template [ngIf]="checkIfBlueBottom(ref, 'sorties') && ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.sorties.user, date: ref.activityUpdated.sorties.date})">
                 </aj-tooltips>
               </ng-template>
@@ -113,7 +113,7 @@
                   {{ ref.stock !== null ? ref.stock : ( ref.originalStock !== null ? ref.originalStock : '-' ) }}
                 </p>
               </div>
-              <ng-template [ngIf]="ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
+              <ng-template [ngIf]="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
                 <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
                 </aj-tooltips>
               </ng-template>
@@ -179,7 +179,8 @@
                       >
                         {{ itemGroup.in !== null ? itemGroup.in : ( itemGroup.originalIn !== null ? itemGroup.originalIn : '-' ) }}
                       </p>
-                      <ng-template [ngIf]="itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
+                      <!--itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date-->
+                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'entrees') && itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.entrees.user, date: itemGroup.activityUpdated.entrees.date})">
                         </aj-tooltips>
                       </ng-template>
@@ -197,7 +198,8 @@
                       >
                         {{ itemGroup.out !== null ? itemGroup.out : ( itemGroup.originalOut !== null ? itemGroup.originalOut : '-' ) }}
                       </p>
-                      <ng-template [ngIf]="itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
+                      <!--itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date-->
+                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'sorties') && itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
                         <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.sorties.user, date: itemGroup.activityUpdated.sorties.date})">
                         </aj-tooltips>
                       </ng-template>
@@ -209,13 +211,16 @@
                         [ngClass]="{
                           'blue': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 
                           'yellow' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ),
-                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'stocks'),
+                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'stock'),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
                       >
                         {{ itemGroup.stock !== null ? itemGroup.stock : ( itemGroup.originalStock !== null ? itemGroup.originalStock : '-' ) }}
                       </p>
-                      
+                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
+                        <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
+                        </aj-tooltips>
+                      </ng-template>
                     </div>
                   </div>
                   <div 

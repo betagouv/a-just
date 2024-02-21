@@ -670,7 +670,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             return true
         }
         break;
-      case 'stocks': 
+      case 'stock': 
         if (item.valueQualityStock === 'to_verify') {
           if (item.stock === item.originalStock)
             return false
