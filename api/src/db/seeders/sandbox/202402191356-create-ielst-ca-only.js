@@ -13,7 +13,7 @@ module.exports = {
       },
       {
         "I_ELST": 100001,
-        "Nom": "CA Aix-en-Provence",
+        "Nom": "CA AIX EN PROVENCE",
         "Latitude": 43.5288948,
         "Longitude": 5.4472993,
         "Population": "4378412"
@@ -104,7 +104,7 @@ module.exports = {
       },
       {
         "I_ELST": 100031,
-        "Nom": "CA Basse-Terre",
+        "Nom": "CA BASSE TERRE",
         "Latitude": 15.99208,
         "Longitude": -61.7283038,
         "Population": "384239"
@@ -188,7 +188,7 @@ module.exports = {
       },
       {
         "I_ELST": 100032,
-        "Nom": "CA Fort-de-France",
+        "Nom": "CA FORT DE FRANCE",
         "Latitude": 14.5843669,
         "Longitude": -61.0086114,
         "Population": "364508"
@@ -251,7 +251,7 @@ module.exports = {
       },
       {
         "I_ELST": 100033,
-        "Nom": "CA Saint-Denis-de-La-Réunion",
+        "Nom": "CA SAINT DENIS DE LA REUNION",
         "Latitude": -12.7631419,
         "Longitude": 45.2219673,
         "Population": "861210"
