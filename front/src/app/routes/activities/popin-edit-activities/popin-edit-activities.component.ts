@@ -109,7 +109,7 @@ export class PopinEditActivitiesComponent
         const selectedElementTop = element.getBoundingClientRect().top
         let delta = containerTop
         
-        element.classList.add('blue-bg')
+        element.classList.add('grey-bg')
 
         for (let i = 0; i < referentielList.length; i++) {
           const topHeader = referentielList[i].getBoundingClientRect().top
@@ -126,6 +126,14 @@ export class PopinEditActivitiesComponent
         })
       }
     }
+
+    if (this.referentiel){
+      const element = document.getElementById('header-popin') 
+      const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
+
+      if (element)
+        element.style.backgroundColor = bgColor;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -134,14 +142,10 @@ export class PopinEditActivitiesComponent
     if (changes['referentiel']) {
       this.updateTotal()
     }
+  }
 
-    /*console.log("selectedReferentielId:", this.selectedReferentielId)
-    const container = document.getElementById('referentiel-list')
-    console.log("container:", container)
-    if (container) {
-      const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
-      console.log('Element:', element)
-    }*/
+  setItemBgColor(label : string, elementId: number, remove : boolean = false) {
+    
   }
 
   /**
