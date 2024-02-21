@@ -16,7 +16,7 @@
       &:last-child {
         width: 200px;
       }
-
+      
       > div {
         width: 92px;
         display: flex;
@@ -49,6 +49,12 @@
           }
         }
 
+        > p {
+          text-align: right;
+          width: 60%;
+          padding: 5px;
+        };
+
         p.data-changed {
           height: 100%;
           border-radius: 0;
@@ -59,15 +65,18 @@
         p.blue {
           background-color: fColor(dataToCompleteBg);
           border: 1px solid fColor(textBlueTag);
+          border-radius: 4px;
         }
 
         p.yellow {
           background-color: fColor(dataNotSettedBg);
           border: 1px solid fColor(dataNotSettedBorder);
+          border-radius: 4px;
         }
 
         p.blue-bottom {
           border-bottom: 3px solid fColor(textBlueTag);
+          color: fColor(textBlueTag);
           border-radius: 0;
         }
 
@@ -219,11 +228,6 @@
 
     width: 92px;
     justify-content: right;
-    > p {
-      text-align: right;
-      width: 100%;
-      padding: 5px;
-    };
   }
 }
 
@@ -292,12 +296,6 @@
       justify-content: right;
       align-items: center;
       height: 100%;
-
-      > p {
-        text-align: right;
-        width: 70%;
-        padding: 5px;
-      };
     }
   }
   
@@ -406,12 +404,6 @@
           justify-content: right;
           align-items: center;
           height: 100%;
-
-          > p {
-            text-align: right;
-            width: 70%;
-            padding: 5px;
-          };
         }
       }
 

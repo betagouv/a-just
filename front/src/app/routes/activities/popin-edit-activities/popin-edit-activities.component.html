@@ -257,7 +257,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': checkIfBlueBottom(newValue, items, type, inputElement.value) ,
+          'blue-bottom': checkIfBlueBottom(items, type, inputElement.value) ,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -278,7 +278,7 @@
   let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ (updated !== null && value !== null || inputValue || (valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(contentieux, type))) ? 'blue' : 'grey' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{  checkIfBlueBottom(contentieux, type, inputValue) ? 'blue' : 'grey' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>
