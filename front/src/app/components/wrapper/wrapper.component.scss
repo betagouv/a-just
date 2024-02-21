@@ -515,15 +515,18 @@
   align-items: stretch;
 
   >div.panel-header {
-    background-color: fColor(bgHelper);
-    padding: 14px 0 84px 0;
+    padding: 14px 0 90px 0;
 
     .over-title {
-      background-color: fColor(bgHelper);
-      height: 85px;
+      background-color: inherit;
       position: relative;
       z-index: 30;
       padding: 0 14px;
+      height: 85px;
+    }
+
+    .over-title-small {
+      height: 42px !important;
     }
 
     .panel-header-closing-row {
@@ -551,6 +554,11 @@
       }
     }
   }
+
+  >div.panel-header:has(.over-title-small) {
+    padding: 0 !important;
+  }
+
 
   >iframe {
     border-radius: 4px;

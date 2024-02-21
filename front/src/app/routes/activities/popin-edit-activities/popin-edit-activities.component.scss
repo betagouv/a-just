@@ -9,6 +9,7 @@
   .left-section {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 90%;
     
     .title-popin {
@@ -172,11 +173,11 @@
 }
 
 .blue-bg {
-  background-color: fColor(selectedReferentielBg);
-  border: 1px solid fColor(selectedReferentielBorder);
+  background-color: fColor(cgraylightv3);//fColor(selectedReferentielBg);
+  border: 1px solid fColor(cgraylightv3);//fColor(selectedReferentielBorder);
   transition: background-color 3s;
   .item-template .item-template-original {
-    background-color: fColor(selectedReferentielBg);
+    background-color: fColor(cgraylightv3);//fColor(selectedReferentielBg);
     transition: background-color 3s;
   }
 }
@@ -332,6 +333,10 @@
       &.blue {
         color: fColor(dataCompletionTextColor);
       }
+
+      &.grey  {
+        color: fColor(cgray);
+      }
     }
 
     p {
@@ -342,6 +347,10 @@
 
       &.blue {
         color: fColor(dataCompletionTextColor);
+      }
+
+      &.grey  {
+        color: fColor(cgray);
       }
     }
   }
@@ -359,6 +368,10 @@
       transform: translateY(-50%);
       &.blue {
         color: fColor(dataCompletionTextColor);
+      }
+
+      &.grey  {
+        color: fColor(cgray);
       }
     }
 
@@ -388,7 +401,12 @@
       }
 
       &.blue-bottom {
+        color: fColor(dataCompletionTextColor);
         border-bottom: 3px solid fColor(dataCompletionTextColor);
+
+        &::placeholder {
+          color: fColor(dataCompletionTextColor) !important;
+        }
       }
     }
 

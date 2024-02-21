@@ -198,13 +198,13 @@
       class="item-template-original"
       [ngClass]="{
         'to-confirm':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type) ,
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
+        'grey-bg':
+          valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),   
         'is-not-setted':
           valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         'is-not-setted-set':
           valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type),
-        'grey-bg':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),         
       }"
     >
       <div>
@@ -212,7 +212,7 @@
       </div>
       <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
         <p class="confirm-btn" (click)="onUpdateValue(original.toString(), type, items)">Confirmer</p>
-      </span>
+      </span> 
     </div>
     <div
       class="item-template-new-total" 
@@ -246,6 +246,7 @@
             level: 4,
             valueQuality: valueQuality,
             updated: updated,
+            inputValue: inputElement.value,
           }
         "
       >
@@ -256,7 +257,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': (updated !== null && newValue !== null) || inputElement.value,
+          'blue-bottom': checkIfBlueBottom(newValue, items, type, inputElement.value) ,
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -274,9 +275,10 @@
   let-level="level"
   let-valueQuality="valueQuality"
   let-updated="updated"
+  let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{ value !== null  ? 'blue' : '' }}"
+    class=" ri-lightbulb-flash-line  cursor-pointer {{ (updated !== null && value !== null || inputValue || (valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(contentieux, type))) ? 'blue' : 'grey' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

@@ -195,12 +195,14 @@ export class YamlToolsPage {
 
       for (let i of ['entrees', 'sorties', 'stock']) {
         // @ts-ignore
-        if (ctx.filtres[i] && ctx.filtres[i].NATAFF) {
+        if (ctx.filtres !== undefined && ctx.filtres !== null && ctx.filtres[i] !== undefined) {
           // @ts-ignore
-          this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
-          this.distinctNAC = _.uniq(this.distinctNAC)
-          this.distinctNAC = _.sortBy(this.distinctNAC)
-
+          if (ctx.filtres[i].NATAFF !== undefined) {
+            // @ts-ignore
+            this.distinctNAC = this.distinctNAC.concat(ctx.filtres[i].NATAFF);
+            this.distinctNAC = _.uniq(this.distinctNAC)
+            this.distinctNAC = _.sortBy(this.distinctNAC)
+          }
           this.contentieuxLabelList.push({ code: key, name: ctx.label, path: ['filtres', i, 'NATAFF'] })
         }
       }
@@ -213,7 +215,7 @@ export class YamlToolsPage {
       let ctx = value as contentieux
       for (let i of ['entrees', 'sorties', 'stock']) {
         // @ts-ignore
-        if (ctx.filtres[i] && ctx.filtres[i].NATAFF) {
+        if (ctx.filtres && ctx.filtres[i] && ctx.filtres[i].NATAFF) {
           // @ts-ignore
           ctx.filtres[i].NATAFF.map((NAC: any) => {
             // @ts-ignore
@@ -281,6 +283,7 @@ export class YamlToolsPage {
       this.finalYmlData = _.cloneDeep(this.initialYmlData)
 
       this.selectedContentieux.map((elem: any) => {
+        if (this.finalYmlData[elem.code].filtres[elem.path[1]] && this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF === undefined) this.finalYmlData[elem.code].filtres[elem.path[1]] = { NATAFF: [], ...this.finalYmlData[elem.code].filtres[elem.path[1]] }
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF, elem.NACToAdd)
       })
 
