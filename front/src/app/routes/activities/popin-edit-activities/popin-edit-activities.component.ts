@@ -667,7 +667,9 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any, level: number) {
+  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any) {
+
+   
     let input = null
     if (inputValue !== null)
       input = +inputValue
@@ -679,7 +681,7 @@ export class PopinEditActivitiesComponent
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
         } else {
-          if (level === 3 && !inputValue)
+          if (!inputValue)
             input = item.in
           if (input !== null && input !== item.originalIn)
             return true
@@ -692,7 +694,7 @@ export class PopinEditActivitiesComponent
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
         } else {
-          if (level === 3 && !inputValue)
+          if (!inputValue)
             input = item.out
           if (input !== null && input !== item.originalOut)
             return true
@@ -705,8 +707,13 @@ export class PopinEditActivitiesComponent
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
-          if (level === 3 && !inputValue)
+          if (!inputValue)
             input = item.stock
+          if (item.label === "Contentieux du travail" && node === "stock") {
+            console.log("\n\n\nitem:", item)
+            console.log("inputValue:", !inputValue ? true : false)
+            console.log("input:", input)
+          }
           if (input !== null && input !== item.originalStock)
             return true
         }
