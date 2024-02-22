@@ -646,38 +646,38 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  checkIfBlueBottom(item : ContentieuReferentielInterface, node: string) {
+  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string) {
     switch (node) {
       case 'entrees': 
         if (item.valueQualityIn === 'to_verify') {
-          if (item.in === item.originalIn)
-            return false
-          else if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees && item.in !==  item.originalIn)
             return true
+          else if (item.in === item.originalIn)
+            return false
         } else {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees)
+          if (item.in && item.in !== item.originalIn)
             return true
         }
         break;
       case 'sorties': 
         if (item.valueQualityOut === 'to_verify') {
-          if (item.out === item.originalOut)
-            return false
-          else if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && item.out && item.out !==  item.originalOut)
             return true
+          else if (item.out === item.originalOut)
+            return false
         } else {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties)
+          if (item.out && item.out !== item.originalOut)
             return true
         }
         break;
       case 'stock': 
         if (item.valueQualityStock === 'to_verify') {
-          if (item.stock === item.originalStock)
-            return false
-          else if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && item.stock && item.stock !==  item.originalStock)
             return true
+          else if (item.stock === item.originalStock)
+            return false
         } else {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock)
+          if (item.stock && item.stock !== item.originalStock)
             return true
         }
         break;
