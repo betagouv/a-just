@@ -313,7 +313,6 @@
   }
 
   .blue-bottom {
-    color: fColor(dataCompletionTextColor) !important;
     border-bottom: 3px solid fColor(dataCompletionTextColor);
   }
 
@@ -402,12 +401,15 @@
       }
 
       &.blue-bottom {
-        color: fColor(dataCompletionTextColor) !important;
         border-bottom: 3px solid fColor(dataCompletionTextColor);
 
         &::placeholder {
           color: fColor(dataCompletionTextColor) !important;
         }
+      }
+
+      &.blue-txt {
+        color: fColor(dataCompletionTextColor) !important;
       }
     }
 

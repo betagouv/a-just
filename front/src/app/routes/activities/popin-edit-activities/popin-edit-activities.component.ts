@@ -126,7 +126,8 @@ export class PopinEditActivitiesComponent
         })
       }
     }
-
+    
+    // Mettre la couleur du background du header selon le contentieux
     if (this.referentiel){
       const element = document.getElementById('header-popin') 
       const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
@@ -142,10 +143,6 @@ export class PopinEditActivitiesComponent
     if (changes['referentiel']) {
       this.updateTotal()
     }
-  }
-
-  setItemBgColor(label : string, elementId: number, remove : boolean = false) {
-    
   }
 
   /**
