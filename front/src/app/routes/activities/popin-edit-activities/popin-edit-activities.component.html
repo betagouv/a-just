@@ -243,11 +243,10 @@
           context: {
             type: type,
             contentieux: items,
-            value: newValue,
+            value: inputElement.value,
             level: 4,
             valueQuality: valueQuality,
             updated: updated,
-            inputValue: inputElement.value,
           }
         "
       >
@@ -277,15 +276,14 @@
   let-level="level"
   let-valueQuality="valueQuality"
   let-updated="updated"
-  let-inputValue="inputValue"
 >
   <i
     class="{{
-      (checkIfBlueBottom(contentieux, type, inputValue, 4) && updated && updated.value) ?
+      (checkIfBlueBottom(contentieux, type, value, level) && updated && updated.value) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }} 
     cursor-pointer 
-    {{  checkIfBlueBottom(contentieux, type, inputValue, level) ? 'blue' : 'grey' }}"
+    {{  checkIfBlueBottom(contentieux, type, value, level) ? 'blue' : 'grey' }}"
     #light
     (click)="$event.stopPropagation()"
   ></i>

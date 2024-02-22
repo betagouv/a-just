@@ -680,9 +680,9 @@ export class PopinEditActivitiesComponent
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
         } else {
-          if (level === 3)
+          if (level === 3 && !inputValue)
             input = item.in
-          if (/*item.in !== null && item.activityUpdated && item.activityUpdated.entrees &&*/input && input !== item.originalIn)
+          if (input && input !== item.originalIn)
             return true
         }
         break;
@@ -693,9 +693,9 @@ export class PopinEditActivitiesComponent
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
         } else {
-          if (level === 3)
+          if (level === 3 && !inputValue)
             input = item.out
-          if (/*item.out !== null && item.activityUpdated && item.activityUpdated.sorties && */input && input !== item.originalOut)
+          if (input && input !== item.originalOut)
             return true
         }
         break;
@@ -706,9 +706,9 @@ export class PopinEditActivitiesComponent
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
-          if (level === 3)
+          if (level === 3 && !inputValue)
             input = item.stock
-          if (/*item.stock !== null && item.activityUpdated && item.activityUpdated.stock*/input && input !== item.originalStock)
+          if (input && input !== item.originalStock)
             return true
         }
         break;
