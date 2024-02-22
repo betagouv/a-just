@@ -82,7 +82,7 @@
             <div class="column-item">
               <div>
                 <p 
-                  [ngClass]="{'data-changed': ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date}"
+                  [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'entrees') && ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date}"
                 >
                   {{ ref.in !== null ? ref.in : ( ref.originalIn !== null ? ref.originalIn : '-' ) }}
                 </p>
@@ -95,7 +95,7 @@
             <div class="column-item">
               <div>
                 <p 
-                  [ngClass]="{'data-changed': ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date}"
+                  [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'sorties') &&  ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date}"
                 >
                   {{ ref.out !== null ? ref.out : ( ref.originalOut !== null ? ref.originalOut : '-' ) }}
                 </p>
@@ -108,7 +108,7 @@
             <div class="column-item">
               <div>
                 <p 
-                  [ngClass]="{'data-changed': ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
+                  [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
                 >
                   {{ ref.stock !== null ? ref.stock : ( ref.originalStock !== null ? ref.originalStock : '-' ) }}
                 </p>
@@ -173,8 +173,8 @@
                         [ngClass]="{
                           'to-complete': (itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null), 
                           'to-verify' : (itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null), 
-                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'entrees'),
-                          'blue-txt' : checkIfBlueBottom(itemGroup, 'entrees') && itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.value && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date,
+                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'entrees')  && itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.value && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date,
+                          'blue-txt' : checkIfBlueBottom(itemGroup, 'entrees'),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
                       >
@@ -193,8 +193,8 @@
                         [ngClass]="{
                           'to-complete': (itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null) && itemGroup.originalOut === null, 
                           'to-verify' : (itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null ),
-                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'sorties'),
-                          'blue-txt' : checkIfBlueBottom(itemGroup, 'sorties') && itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.value && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date,
+                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'sorties') && itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.value && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date,
+                          'blue-txt' : checkIfBlueBottom(itemGroup, 'sorties'),
                           'grey-txt' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
                       >
@@ -213,8 +213,8 @@
                         [ngClass]="{
                           'to-complete': (itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE && itemGroup.stock === null && itemGroup.originalStock === null), 
                           'to-verify' : (itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null ),
-                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'stock'),
-                          'blue-txt' : checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.value && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date,
+                          'blue-bottom' : checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.value && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date,
+                          'blue-txt' : checkIfBlueBottom(itemGroup, 'stock'),
                           'grey' : (itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif'),
                         }"
                       >
