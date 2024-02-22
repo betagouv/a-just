@@ -62,13 +62,13 @@
           border-bottom: 3px solid fColor(textBlueTag);
         }
 
-        p.blue {
+        p.to-complete {
           background-color: fColor(dataToCompleteBg);
           border: 1px solid fColor(textBlueTag) !important;
           border-radius: 4px;
         }
 
-        p.yellow {
+        p.to-verify {
           background-color: fColor(dataNotSettedBg);
           border: 1px solid fColor(dataNotSettedBorder);
           border-radius: 4px;
@@ -76,12 +76,16 @@
 
         p.blue-bottom {
           border-bottom: 3px solid fColor(textBlueTag);
-          color: fColor(textBlueTag) !important;
+          //color: fColor(textBlueTag) !important;
           border-radius: 0;
         }
 
-        p.grey {
+        p.grey-text {
           color: fColor(dataGreyTxt);
+        }
+
+        p.blue-txt {
+          color: fColor(dataBlueTxt);
         }
       }
     }
