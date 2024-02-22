@@ -655,29 +655,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           else if (item.in === item.originalIn)
             return false
         } else {
-          if (item.in && item.in !== item.originalIn)
+          if (item.in !== null && item.in !== item.originalIn)
             return true
         }
         break;
       case 'sorties': 
         if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && item.out && item.out !==  item.originalOut)
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && item.out !==  item.originalOut)
             return true
           else if (item.out === item.originalOut)
             return false
         } else {
-          if (item.out && item.out !== item.originalOut)
+          if (item.out !== null && item.out !== item.originalOut)
             return true
         }
         break;
       case 'stock': 
         if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && item.stock && item.stock !==  item.originalStock)
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && item.stock !==  item.originalStock)
             return true
           else if (item.stock === item.originalStock)
             return false
         } else {
-          if (item.stock && item.stock !== item.originalStock)
+          if (item.stock !== null && item.stock !== item.originalStock)
             return true
         }
         break;
