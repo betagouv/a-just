@@ -295,7 +295,7 @@ export class ExcelService extends MainClass {
         {
           type: 'list',
           allowBlank: true,
-          formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP"'],
+          formulae: ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"'],
         }
       }
 
