@@ -486,41 +486,42 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             let childNotEmpty = 0;
             let childToCount = 0;
             if (elem.childrens) {
-              totalContentieuxLevelFour += elem.childrens.length * 3;
             
               for (const child of elem.childrens) {
                   if (child.compter) {
-                    childToCount += 3;
-                    if(child.in !== null || child.originalIn !== null) {
-                      childNotEmpty += 1
+                    totalContentieuxLevelFour += 3
+                  }
+                  childToCount += 3;
+                  if(child.in !== null || child.originalIn !== null) {
+                    childNotEmpty += 1
+                    if (child.compter)
                       totalNotEmpty += 1
-                    }
-                    if(child.out !== null || child.originalOut !== null) {
-                      childNotEmpty += 1
+                  }
+                  if(child.out !== null || child.originalOut !== null) {
+                    childNotEmpty += 1
+                    if (child.compter)
                       totalNotEmpty += 1
-                    }
-                    if(child.stock !== null || child.originalStock !== null) {
-                      childNotEmpty += 1
+                  }
+                  if(child.stock !== null || child.originalStock !== null) {
+                    childNotEmpty += 1
+                    if (child.compter)
                       totalNotEmpty += 1
-                    }
                   }
               }
               elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
               for (const child of elem.childrens) {
                 let nbToComplete = 0
-                //if (child.compter) {
-                  if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
-                    nbToComplete += 1
-                  if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
-                    nbToComplete += 1
-                  if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
-                    nbToComplete += 1
-                //}
+                if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
+                  nbToComplete += 1
+                if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
+                  nbToComplete += 1
+                if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
+                  nbToComplete += 1
                 child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
               }
             }
           }
-          this.totalCompletion = Math.round((totalNotEmpty * 100) / totalContentieuxLevelFour) || 0;
+          this.totalCompletion = parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2)) || 0;
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
