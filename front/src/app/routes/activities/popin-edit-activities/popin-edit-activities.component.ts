@@ -669,46 +669,45 @@ export class PopinEditActivitiesComponent
 
   checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any, level: number) {
     let input = null
-    if (inputValue)
+    if (inputValue !== null)
       input = +inputValue
-
     switch (node) {
       case 'entrees': 
         if (item.valueQualityIn === 'to_verify') {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees && input && input !==  item.originalIn)
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees !== null && input !== null && input !==  item.originalIn)
             return true
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
         } else {
           if (level === 3 && !inputValue)
             input = item.in
-          if (input && input !== item.originalIn)
+          if (input !== null && input !== item.originalIn)
             return true
         }
         break;
       case 'sorties': 
         if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && input && input !==  item.originalOut)
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties !== null && input !== null && input !==  item.originalOut)
             return true
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
         } else {
           if (level === 3 && !inputValue)
             input = item.out
-          if (input && input !== item.originalOut)
+          if (input !== null && input !== item.originalOut)
             return true
         }
         break;
       case 'stock': 
         if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && input && input !==  item.originalStock)
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock !== null && input !== null && input !==  item.originalStock)
             return true
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
           if (level === 3 && !inputValue)
             input = item.stock
-          if (input && input !== item.originalStock)
+          if (input !== null && input !== item.originalStock)
             return true
         }
         break;
