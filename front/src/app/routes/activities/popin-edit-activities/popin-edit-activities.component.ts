@@ -462,7 +462,7 @@ export class PopinEditActivitiesComponent
         let contentieuxOut = 0;
         let stock =  contentieux.originalStock || 0
 
-        if (stock && (contentieux.activityUpdated && (!contentieux.activityUpdated.stock || !contentieux.activityUpdated.stock.value) )) {
+        if (stock && (contentieux.activityUpdated && (!contentieux.activityUpdated.stock || !contentieux.activityUpdated.stock.value) &&  !this.updates[`${contentieux.id}-stock`]?.value)) {
           switch (nodeName) {
             case 'entrees':
               {
