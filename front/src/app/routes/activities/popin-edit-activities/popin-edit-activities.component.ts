@@ -457,6 +457,36 @@ export class PopinEditActivitiesComponent
         }
       }
 
+      if(nodeName !== 'stock' && newValue !== '' && newValue.length > 0) {
+        let contentieuxIn = 0;
+        let contentieuxOut = 0;
+        let stock =  contentieux.originalStock || 0
+
+        if (stock && (contentieux.activityUpdated && (!contentieux.activityUpdated.stock || !contentieux.activityUpdated.stock.value) )) {
+          switch (nodeName) {
+            case 'entrees':
+              {
+                contentieuxIn = this.updates[`${contentieux.id}-${nodeName}`].value || contentieux.originalIn
+                contentieuxOut = this.updates[`${contentieux.id}-sorties`]?.value || contentieux.out || contentieux.originalOut
+              }
+              break
+            case 'sorties':
+              {
+                contentieuxIn = this.updates[`${contentieux.id}-entrees`]?.value || contentieux.in || contentieux.originalIn
+                contentieuxOut = this.updates[`${contentieux.id}-sorties`].value || contentieux.originalOut
+              }
+              break
+          }
+        
+          const newStock = stock + contentieuxIn - contentieuxOut
+
+          const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+          if (element) {
+            element.value = newStock.toString()
+          }
+
+        }
+      }
       this.updateTotal()
 
   }
