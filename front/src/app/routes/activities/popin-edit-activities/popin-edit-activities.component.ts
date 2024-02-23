@@ -375,10 +375,8 @@ export class PopinEditActivitiesComponent
               value.contentieux.stock || value.contentieux.originalStock
             break
         }
-
         if (nodeValue !== value.value) {
           const delta = (value.value || 0) - (nodeValue || 0)
-
           switch (value.node) {
             case 'entrees':
               {
@@ -398,9 +396,13 @@ export class PopinEditActivitiesComponent
           }
         }
       })
+      let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
+      let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
 
-      const deltaEntrees = (this.referentiel?.in || 0) + (this.total.in || 0)
-      const deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
+      if ((this.referentiel?.in || 0) > (this.total.in || 0)) 
+       deltaEntrees *= -1
+      if ((this.referentiel?.out || 0) > (this.total.out || 0))
+        deltaSorties *= -1
 
       if (deltaEntrees || deltaSorties) {
         this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
@@ -456,7 +458,7 @@ export class PopinEditActivitiesComponent
       }
 
       this.updateTotal()
-    
+
   }
 
   /**
@@ -709,11 +711,6 @@ export class PopinEditActivitiesComponent
         } else {
           if (!inputValue)
             input = item.stock
-          if (item.label === "Contentieux du travail" && node === "stock") {
-            console.log("\n\n\nitem:", item)
-            console.log("inputValue:", !inputValue ? true : false)
-            console.log("input:", input)
-          }
           if (input !== null && input !== item.originalStock)
             return true
         }
