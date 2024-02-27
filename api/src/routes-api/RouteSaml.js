@@ -130,4 +130,13 @@ export default class RouteSaml extends Route {
       })
     }
   }
+
+  /**
+   * Vide la session en cour
+   */
+  @Route.Get()
+  async cleanSession (ctx) {
+    ctx.session.sso = null
+    this.sendOk(ctx, 'OK')
+  }
 }

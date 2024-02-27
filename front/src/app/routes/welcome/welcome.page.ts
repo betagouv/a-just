@@ -1,5 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core'
 import { MEETING_URL } from 'src/app/constants/pages'
+import { SSOService } from 'src/app/services/sso/sso.service'
 
 /**
  * Page pour onboarder des nouveaux utilisateurs
@@ -11,7 +12,7 @@ import { MEETING_URL } from 'src/app/constants/pages'
 export class WelcomePage implements AfterViewInit {
   MEETING_URL = MEETING_URL
 
-  constructor() { }
+  constructor(private ssoService: SSOService) { }
 
   ngAfterViewInit() {
     const my_awesome_script = document.createElement('script')
@@ -23,6 +24,7 @@ export class WelcomePage implements AfterViewInit {
     document.head.appendChild(my_awesome_script)
 
     this.loadCalendly()
+    this.ssoService.clearSession()
   }
 
   loadCalendly() {
