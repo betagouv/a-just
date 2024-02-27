@@ -41,6 +41,10 @@ export class LoginPage {
     password: new FormControl(),
     remember: new FormControl(),
   })
+  /**
+   * Waiting screen to be ready
+   */
+  isReady: boolean = false;
 
   /**
    * Constructeur
@@ -75,6 +79,7 @@ export class LoginPage {
 
     this.ssoService.getSSOStatus().then((s) => {
       console.log(s)
+      this.isReady = true
       if (s.token) {
         this.router.navigate([this.userService.getUserPageUrl(s.user)])
         return
