@@ -119,14 +119,11 @@
               </ng-template>
             </div>
             <div class="column-item completion">
-              <!--<div class="completion">-->
-                <p>{{ref.completion}}% disponibles</p>
-                <span class='completion-bar'>
-                  <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
-                </span>
-                <p>{{ (ref.completion !== undefined && ref.completion < 100 ) ?  'il reste des données à compléter' : ''}}</p>
-            
-              <!--</div>-->
+              <p [id]="'referentiel-' + ref.id" [style.--percent]="ref.completion"> disponibles</p>
+              <span class='completion-bar'>
+                <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
+              </span>
+              <p>{{ (ref.completion !== undefined && ref.completion < 100 ) ?  'il reste des données à compléter' : ''}}</p>
             </div>
           </div>
           <div class="group">
@@ -259,7 +256,7 @@
 <ng-template #ressources>
   <div class="bottomHeader">
     <div class="left-panel">
-      <p>Complétude globale: <span [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">{{totalCompletion}}%</span></p>
+      <p [id]="'total-completion'" [style.--percent]="totalCompletion" [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">Complétude globale: </p>
       <span class='completion-bar'>
         <aj-completion-bar [value]=totalCompletion></aj-completion-bar>
       </span>
