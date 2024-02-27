@@ -1,4 +1,4 @@
-<aj-popup class="medium no-padding-content no-title border-radius">
+<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4}">
   <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
@@ -304,8 +304,8 @@
     [ngClass]="{ 
       black: value === null, 
       left: type === 'stock',
-      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 6 ),
-      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 6,
+      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 5 ),
+      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 5,
     }"
   >
   </aj-tooltips>

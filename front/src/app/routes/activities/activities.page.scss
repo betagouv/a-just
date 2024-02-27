@@ -1,5 +1,26 @@
 @import '../../styles/utils.scss';
 
+@property --percent {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --temp {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --v1 {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --v2 {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -126,6 +147,18 @@
     justify-content: space-between;
     width: 60%;
     height: 100%;
+
+    p {
+      transition: --percent 1s;
+      --temp: var(--percent);
+      --v1: max(var(--temp) - 0.5, 0);
+      --v2: max((var(--temp) - var(--v1)) * 100 - 0.5, 0);
+      counter-reset: v1 var(--v1) v2 var(--v2);
+    }
+
+    p::after {
+      content: counter(v1) "." counter(v2, decimal-leading-zero) "%";
+    }
 
     .completion-bar {
       width: 100%;
@@ -310,12 +343,26 @@
     padding: 7px 9px ;
 
     p {
-      color: fColor(dataCompletionTextColor)
+      color: fColor(dataCompletionTextColor);
     }
 
     p:first-child {
       font-size: 12px;
     }
+
+
+    p:first-child {
+      color: fColor(dataCompletionTextColor);
+      transition: --percent 1s;
+      --temp: var(--percent);
+      --v1: max(var(--temp), 0);
+      counter-reset: v1 var(--v1);
+    }
+
+    p:first-child::before {
+      content: counter(v1)"%";
+    }
+
 
     p:nth-child(3) {
       font-size: 10px;
