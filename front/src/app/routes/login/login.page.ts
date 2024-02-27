@@ -72,6 +72,25 @@ export class LoginPage {
         this.router.navigate([this.userService.getUserPageUrl(data)])
       }
     })
+
+    this.ssoService.getSSOStatus().then((s) => {
+      console.log(s)
+      if (s.token) {
+        this.router.navigate([this.userService.getUserPageUrl(s.user)])
+        return
+      }
+      if (s && s && s.status === SAML_STATUS_PENDING) {
+        // we need to complete to signin
+        this.router.navigate(['/inscription'], {
+          queryParams: {
+            email: s.datas.email,
+            firstName: s.datas.firstName,
+            lastName: s.datas.lastName,
+            provider: PROVIDER_JUSTICE_NAME,
+          },
+        })
+      }
+    })
   }
 
   /**
@@ -104,31 +123,12 @@ export class LoginPage {
   }
 
   onUseSSO() {
-    /*if (!this.canUseSSO) {
+    if (!this.canUseSSO) {
       alert(
         "Vous devez être dans l'environement Justice pour utiliser page blanche !"
       )
     } else {
       window.location.href = this.ssoService.getSSOLogin()
-    }*/
-
-    this.ssoService.getSSOStatus().then((s) => {
-      console.log(s)
-      if (s.token) {
-        this.router.navigate([this.userService.getUserPageUrl(s.user)])
-        return
-      }
-      if (s && s && s.status === SAML_STATUS_PENDING) {
-        // we need to complete to signin
-        this.router.navigate(['/inscription'], {
-          queryParams: {
-            email: s.datas.email,
-            firstName: s.datas.firstName,
-            lastName: s.datas.lastName,
-            provider: PROVIDER_JUSTICE_NAME,
-          },
-        })
-      }
-    })
+    }
   }
 }
