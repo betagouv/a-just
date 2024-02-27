@@ -114,6 +114,7 @@ export default class RouteSaml extends Route {
         userId: userInDb.id,
       })
       await super.addUserInfoInBody(ctx, userInDb.id)
+      ctx.session.sso = null
       this.sendCreated(ctx)
     } else if (email) {
       this.sendOk(ctx, {
