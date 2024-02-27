@@ -129,6 +129,7 @@ export default class App extends AppBase {
               'https://*.hotjar.com',
               'https://*.hotjar.io',
               'wss://*.hotjar.com',
+              '*.justice.gouv.fr',
             ],
             'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
             'img-src': [
