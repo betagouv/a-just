@@ -62,7 +62,7 @@ export const logoutSSO = (options) => {
 export const postAssertSSO = (requestBody) => {
   return new Promise((resolve, reject) => {
     sp.post_assert(idp, { request_body: requestBody }, function (err, saml_response) {
-      console.log(saml_response)
+      console.log(JSON.stringify(saml_response))
       /**
        * Exemple de retour
        * {
