@@ -73,3 +73,12 @@ Les mots de passe sont sur le document des mots de passes de Resanna
 
 openssl req -new -newkey rsa:2048 -nodes -out sso-recette.csr -keyout sso-recette.key -sha1 -> pem => (SSO_PRIVATE_KEY)
 openssl x509 -req -sha1 -days 3650 -in ./sso-recette.csr -signkey ./sso-recette.key -out ./sso-recette.pem -> crt => (SSO_PRIVATE_KEY)
+
+# Compte de test page blanche
+
+francois-xavier.mont
+Az....0&
+
+http://recette.pagesblanches.intranet.justice.gouv.fr/
+
+Les admin doivent ajouter le role "USER" dans "ma fiche" / "Habilitations"
