@@ -81,10 +81,7 @@ export default class RouteSaml extends Route {
     try {
       const assert = await postAssertSSO(this.body(ctx))
       if (assert) {
-        if (!ctx.session.sso) {
-          ctx.session.sso = { assert: null }
-        }
-        ctx.session.sso.assert = assert
+        ctx.session.sso = assert
       }
 
       ctx.redirect(config.frontUrl)
