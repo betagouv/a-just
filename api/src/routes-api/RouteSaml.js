@@ -86,13 +86,8 @@ export default class RouteSaml extends Route {
         }
         ctx.session.sso.assert = assert
       }
-      console.log(ctx.session)
 
-      ctx.res
-        .writeHead(302, {
-          Location: config.frontUrl,
-        })
-        .end()
+      ctx.redirect(config.frontUrl)
     } catch (err) {
       ctx.throw(401, err)
     }
