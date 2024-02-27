@@ -63,4 +63,11 @@ export class SSOService {
       return s
     })
   }
+
+  /**
+   * Récuparation de l'url de login SSO coté A-Just
+   */
+  clearSession() {
+    return this.serverService.get('saml/clean-session')
+  }
 }
