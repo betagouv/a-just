@@ -208,8 +208,12 @@
   }
 }
 
-.content-popin {
+.content-popin-scroll {
   overflow-y: scroll;
+}
+
+.content-popin-no-scroll {
+  overflow: visible;
 }
 
 .item-template {
