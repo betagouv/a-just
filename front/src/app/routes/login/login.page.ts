@@ -32,7 +32,7 @@ export class LoginPage {
   /**
    * Can user SSO
    */
-  canUseSSO: boolean = false
+  canUseSSO: boolean = true
   /**
    * Formulaire
    */
