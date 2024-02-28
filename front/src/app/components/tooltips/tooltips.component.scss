@@ -34,9 +34,7 @@
   }
 
   &.medium .tooltip-text {
-    //border: 3px solid red;
-    width: 400px;
-    max-height: 350px;
+    min-width: 400px;
   }
 
   &.large .tooltip-text {
@@ -74,8 +72,8 @@
   }
 
   .tooltip-text {
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
     position: absolute;
     z-index: 1;
     visibility: hidden;
@@ -135,7 +133,7 @@
     .content {
       padding: 16px;
       color: fColor(tooltipContentColor);
-      max-height: 200px;
+      max-height: 130px;
       overflow-y: scroll;
       margin-bottom: 4px;
     }
