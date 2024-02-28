@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import { EXECUTE_HELPCENTER, EXECUTE_HELPCENTER_LINK, EXECUTE_HELPCENTER_SEARCH } from '../constants/log-codes'
 import { Client } from "@hubspot/api-client";
 import config from 'config'
+import { TEMPLATE_CALL_ME_BACK } from '../constants/email';
 
 /**
  * Route des juridictions
@@ -88,6 +89,15 @@ export default class RouteCentreDAide extends Route {
 
     if (user) {
       const str = ['Prénom: ' + user.first_name, 'Nom: ' + user.last_name, 'E-mail: ' + user.email, 'Tj: ' + user.tj, 'Fonction: ' + user.fonction, 'Numéro de téléphone: ' + phoneNumber].join('\n')
+      await sentEmail(
+        {
+          email: config.supportEmail,
+        },
+        TEMPLATE_CALL_ME_BACK,
+        {
+          info: str
+        }
+      )
       const hubspotClient = new Client({ accessToken: config.hubspotToken });
       let apiResponse = await hubspotClient.apiRequest({
         method: 'POST',
