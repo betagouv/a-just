@@ -68,7 +68,7 @@ export class LoginPage {
    */
   ngOnInit() {
     if (this.ssoIsActivate) {
-      this.ssoService.canUseSSO().then((d) => (this.canUseSSO = d))
+      //this.ssoService.canUseSSO().then((d) => (this.canUseSSO = d))
     }
 
     this.userService.me().then((data) => {
