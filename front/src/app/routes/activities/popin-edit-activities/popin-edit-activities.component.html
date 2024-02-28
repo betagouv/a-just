@@ -1,5 +1,5 @@
-<aj-popup class="medium no-padding-content no-title border-radius">
-  <div class="header-popin">
+<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4}">
+  <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
         <p>Visualisation du détail des données d'activité du</p>
@@ -108,7 +108,12 @@
     </div>
   </div>
 
-  <div id="contentieux-list" class="content-popin " *ngIf="hasValuesToShow">
+  <div id="contentieux-list" [ngClass]="{
+      'content-popin-scroll': referentiel && referentiel.childrens && referentiel.childrens.length > 4,
+      'content-popin-no-scroll': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
+     }"
+    *ngIf="hasValuesToShow"
+  >
     <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens" [id]="'contentieux-' + item.id">
       <div class="contentieux-item-label">
         <p>{{ item.label }}</p>
@@ -217,7 +222,6 @@
     <div
       class="item-template-new-total" 
       [ngClass]="{
-        'blue-bottom': updated !== null && newValue !== null
       }" 
       *ngIf="items.childrens">
       <ng-container
@@ -233,7 +237,9 @@
         "
       >
       </ng-container>
-      <p [ngClass]="{'blue' : newValue !== null}">{{ newValue  || '-' }}</p>
+      <p [ngClass]="{
+        'blue': checkIfBlue(items, type, newValue)
+      }" >{{ newValue  || '-' }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container
@@ -242,11 +248,10 @@
           context: {
             type: type,
             contentieux: items,
-            value: newValue,
+            value: inputElement.value,
             level: 4,
             valueQuality: valueQuality,
             updated: updated,
-            inputValue: inputElement.value,
           }
         "
       >
@@ -257,10 +262,12 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': checkIfBlueBottom(items, type, inputElement.value) ,
+          'blue-bottom': checkIfBlue(items, type, inputElement.value) && ( updated ? updated.value >= 0 : false) ,
+          'blue-txt': checkIfBlue(items, type, inputElement.value),
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
+        [id]="'contentieux-' + items.id +'-' + type " 
         (keyup)="onUpdateValue(inputElement.value, type, items)"
       />
     </div>
@@ -275,11 +282,16 @@
   let-level="level"
   let-valueQuality="valueQuality"
   let-updated="updated"
-  let-inputValue="inputValue"
 >
   <i
-    class=" ri-lightbulb-flash-line  cursor-pointer {{  checkIfBlueBottom(contentieux, type, inputValue) ? 'blue' : 'grey' }}"
+    class="{{
+      ( checkIfBlue(contentieux, type, value) && level === 4) ?
+      'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
+    }} 
+    cursor-pointer 
+    {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"
     #light
+    [id]="'tooltip-icon-' + contentieux.id +'-' + type " 
     (click)="$event.stopPropagation()"
   ></i>
   <aj-tooltips
@@ -288,8 +300,13 @@
     [title]="getTooltipTitle(type, contentieux, value)"
     [content]="getTooltipBody(type, contentieux, value, level)"
     [footer]="getTooltipFooter(type, contentieux, value, level)"
-    class="medium"
-    [ngClass]="{ black: value === null, left: type === 'stock' }"
+    class="medium bottom"
+    [ngClass]="{ 
+      black: value === null, 
+      left: type === 'stock',
+      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 5 ),
+      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 5,
+    }"
   >
   </aj-tooltips>
 </ng-template>

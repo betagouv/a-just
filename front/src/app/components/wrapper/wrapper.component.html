@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"></iframe>
+  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl" [ngStyle]="{'margin' : documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>

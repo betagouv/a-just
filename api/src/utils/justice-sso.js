@@ -62,24 +62,10 @@ export const logoutSSO = (options) => {
 export const postAssertSSO = (requestBody) => {
   return new Promise((resolve, reject) => {
     sp.post_assert(idp, { request_body: requestBody }, function (err, saml_response) {
-      console.log(saml_response)
+      console.log(JSON.stringify(saml_response))
       /**
        * Exemple de retour
-       * {
-  response_header: {
-    version: '2.0',
-    destination: 'https://1deb-176-162-49-49.ngrok-free.app/api/saml/assert',
-    in_response_to: '_674995339ad69de97e68926ae28821e32c2a6a182f',
-    id: '_D008ED343759D3E2A323F1F4FE9BCB34'
-  },
-  type: 'authn_response',
-  user: {
-    name_id: '_1FE55BD82E773C66DD89105731B750F0',
-    session_index: 'caTau3LET0bsZa8vNM91QgSV8tPjexzKbxwZsq9ni66BQn0AhMjWk3cfSaZOVKnSAJSffXiW69gY7bd3P1G34g==',
-    session_not_on_or_after: '2024-01-24T11:19:58Z',
-    attributes: {}
-  }
-}
+       * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return","in_response_to":"_4096398212cc124d92684962d856aeddab1165ed5a","id":"_EBCBE3560C5AA612F647DA351B07301B"},"type":"authn_response","user":{"name_id":"_C65A794EDBDB5D494116B510D8607B7C","session_index":"QRKbkPL6ucP1gf3vj4p3fsBpZ60NoMaX9g5lH/nXo5yui9gPbJeeoob+r8NM3etGI8umGO2vJ7cT7mb/ESU/KA==","session_not_on_or_after":"2024-02-28T07:44:46Z","attributes":{"roles":["A_JUST_DEV:USER"],"nom":["MONTIGNY"],"affectationOp3":[],"logonId":["francois-xavier.mont"],"affectationOp4":[],"siteDescription":[],"prenom":["François-Xavier"],"igcid":["L0340347"],"affectationOp2":[],"bureauIGC":[],"mail":["francois-xavier.montigny@justice.gouv.fr"]}}}
        */
       if (err != null) {
         reject(err)
@@ -87,9 +73,9 @@ export const postAssertSSO = (requestBody) => {
         resolve({
           nameId: saml_response.user.name_id,
           sessionIndex: saml_response.user.session_index,
-          email: saml_response.user.attributes?.email,
-          firstName: saml_response.user.attributes?.prenom,
-          lastName: saml_response.user.attributes?.nom,
+          email: saml_response.user.attributes?.mail[0],
+          firstName: saml_response.user.attributes?.prenom[0],
+          lastName: saml_response.user.attributes?.nom[0],
         })
       }
     })

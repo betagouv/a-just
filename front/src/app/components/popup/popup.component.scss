@@ -149,6 +149,12 @@
       }
     }
   }
+
+  &.overflow-visible .popup {
+    .content {
+      overflow: visible !important;
+    }
+  }
 }
 
 .popup {
@@ -203,8 +209,9 @@
 
   .content {
     flex: 1;
+    //overflow: visible;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     display: flex;
     flex-direction: column;
     padding: 16px 32px;
