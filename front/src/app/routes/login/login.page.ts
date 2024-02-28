@@ -128,12 +128,12 @@ export class LoginPage {
   }
 
   onUseSSO() {
-    /*if (!this.canUseSSO) {
+    if (!this.canUseSSO) {
       alert(
         "Vous devez être dans l'environement Justice pour utiliser page blanche !"
       )
-    } else {*/
+    } else {
       window.location.href = this.ssoService.getSSOLogin()
-    //}
+    }
   }
 }

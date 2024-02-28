@@ -94,8 +94,8 @@ export default class RouteSaml extends Route {
    * Get SSO Url
    */
   @Route.Get()
-  async getUrl (ctx) {
-    this.sendOk(ctx, config.sso.url)
+  async getTestUrl (ctx) {
+    this.sendOk(ctx, config.sso.testUrl)
   }
 
   /**

@@ -20,7 +20,7 @@ export class SSOService {
    * @returns
    */
   serverGetUrl() {
-    return this.serverService.get('saml/get-url').then((d) => d.data)
+    return this.serverService.get('saml/get-test-url').then((d) => d.data)
   }
 
   /**
