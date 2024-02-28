@@ -300,12 +300,13 @@
     [title]="getTooltipTitle(type, contentieux, value)"
     [content]="getTooltipBody(type, contentieux, value, level)"
     [footer]="getTooltipFooter(type, contentieux, value, level)"
-    class="medium bottom"
+    class="medium"
     [ngClass]="{ 
       black: value === null, 
       left: type === 'stock',
-      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 5 ),
-      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 5,
+      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 6 ),
+      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 6,
+      large: referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 6 ) && type === 'stock',
     }"
   >
   </aj-tooltips>
