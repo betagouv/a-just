@@ -4,6 +4,7 @@ import { EXECUTE_HELPCENTER, EXECUTE_HELPCENTER_LINK, EXECUTE_HELPCENTER_SEARCH 
 import { Client } from "@hubspot/api-client";
 import config from 'config'
 import { TEMPLATE_CALL_ME_BACK } from '../constants/email';
+import { sentEmail } from '../utils/email';
 
 /**
  * Route des juridictions
