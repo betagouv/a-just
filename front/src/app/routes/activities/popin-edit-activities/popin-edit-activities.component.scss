@@ -1,11 +1,10 @@
 @import '../../../styles/utils.scss';
 
-.header-popin {
+#header-popin {
   display: flex;
   justify-content: space-between;
   padding: 13px 24px 8px 24px;
   width: 100%;
-
   .left-section {
     display: flex;
     justify-content: space-between;
@@ -172,13 +171,12 @@
   }
 }
 
-.blue-bg {
-  background-color: fColor(cgraylightv3);//fColor(selectedReferentielBg);
-  border: 1px solid fColor(cgraylightv3);//fColor(selectedReferentielBorder);
+.grey-bg {
+  background-color: fColor(cgrayDefault);//fColor(selectedReferentielBg);
+  border: 1px solid fColor(cgrayDefault);//fColor(selectedReferentielBorder);
   transition: background-color 3s;
   .item-template .item-template-original {
-    background-color: fColor(cgraylightv3);//fColor(selectedReferentielBg);
-    transition: background-color 3s;
+    background-color: fColor(cgrayDefault);//fColor(selectedReferentielBg);
   }
 }
 
@@ -210,8 +208,12 @@
   }
 }
 
-.content-popin {
+.content-popin-scroll {
   overflow-y: scroll;
+}
+
+.content-popin-no-scroll {
+  overflow: visible;
 }
 
 .item-template {
@@ -315,7 +317,6 @@
   }
 
   .blue-bottom {
-    color: fColor(dataCompletionTextColor);
     border-bottom: 3px solid fColor(dataCompletionTextColor);
   }
 
@@ -346,7 +347,7 @@
       font-size: 14px;
 
       &.blue {
-        color: fColor(dataCompletionTextColor);
+        color: fColor(dataCompletionTextColor) !important;
       }
 
       &.grey  {
@@ -378,6 +379,9 @@
     input {
       margin: 4px;
       text-align: right;
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      border-radius: 4px;
       //width: 80%;
       /* Firefox */
       -moz-appearance: textfield;
@@ -401,12 +405,15 @@
       }
 
       &.blue-bottom {
-        color: fColor(dataCompletionTextColor);
         border-bottom: 3px solid fColor(dataCompletionTextColor);
 
         &::placeholder {
           color: fColor(dataCompletionTextColor) !important;
         }
+      }
+
+      &.blue-txt {
+        color: fColor(dataCompletionTextColor) !important;
       }
     }
 

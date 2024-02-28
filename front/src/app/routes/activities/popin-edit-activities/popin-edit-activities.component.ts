@@ -109,7 +109,7 @@ export class PopinEditActivitiesComponent
         const selectedElementTop = element.getBoundingClientRect().top
         let delta = containerTop
         
-        element.classList.add('blue-bg')
+        element.classList.add('grey-bg')
 
         for (let i = 0; i < referentielList.length; i++) {
           const topHeader = referentielList[i].getBoundingClientRect().top
@@ -126,6 +126,15 @@ export class PopinEditActivitiesComponent
         })
       }
     }
+    
+    // Mettre la couleur du background du header selon le contentieux
+    if (this.referentiel){
+      const element = document.getElementById('header-popin') 
+      const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
+
+      if (element)
+        element.style.backgroundColor = bgColor;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -134,14 +143,6 @@ export class PopinEditActivitiesComponent
     if (changes['referentiel']) {
       this.updateTotal()
     }
-
-    /*console.log("selectedReferentielId:", this.selectedReferentielId)
-    const container = document.getElementById('referentiel-list')
-    console.log("container:", container)
-    if (container) {
-      const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
-      console.log('Element:', element)
-    }*/
   }
 
   /**
@@ -374,10 +375,8 @@ export class PopinEditActivitiesComponent
               value.contentieux.stock || value.contentieux.originalStock
             break
         }
-
         if (nodeValue !== value.value) {
           const delta = (value.value || 0) - (nodeValue || 0)
-
           switch (value.node) {
             case 'entrees':
               {
@@ -397,9 +396,13 @@ export class PopinEditActivitiesComponent
           }
         }
       })
+      let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
+      let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
 
-      const deltaEntrees = (this.referentiel?.in || 0) + (this.total.in || 0)
-      const deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
+      if ((this.referentiel?.in || 0) > (this.total.in || 0)) 
+       deltaEntrees *= -1
+      if ((this.referentiel?.out || 0) > (this.total.out || 0))
+        deltaSorties *= -1
 
       if (deltaEntrees || deltaSorties) {
         this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
@@ -454,8 +457,78 @@ export class PopinEditActivitiesComponent
         }
       }
 
+      if (nodeName === 'stock') {
+        const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+        if (element) {
+          element.classList.add('blue-bottom')
+          const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
+          if (tooltip) {
+            tooltip.classList.replace('ri-lightbulb-flash-line' , 'ri-lightbulb-flash-fill')
+          }
+        }
+      }
+      
+      if(nodeName !== 'stock' && newValue !== '' && newValue.length > 0) {
+        let contentieuxIn = 0;
+        let contentieuxOut = 0;
+        let stock =  contentieux.originalStock || 0
+
+        if (stock !== null && ((contentieux.activityUpdated && (!contentieux.activityUpdated.stock || contentieux.activityUpdated.stock.value !== null )) &&  this.updates[`${contentieux.id}-stock`]?.value !== null)) {
+          switch (nodeName) {
+            case 'entrees':
+              {
+                if (this.updates[`${contentieux.id}-entrees`].value >= 0) {
+                  contentieuxIn = this.updates[`${contentieux.id}-entrees`].value
+                } else if (contentieux.originalIn && contentieux.originalIn >= 0)
+                  contentieuxIn = contentieux.originalIn
+
+                if (this.updates[`${contentieux.id}-sorties`]?.value >= 0) {
+                  contentieuxOut = this.updates[`${contentieux.id}-sorties`]?.value
+                } else {
+                  if (contentieux.out && contentieux.out >= 0)
+                    contentieuxOut = contentieux.out
+                  else if (contentieux.originalOut && contentieux.originalOut >= 0) {
+                    contentieuxOut = contentieux.originalOut
+                  }
+                }
+              }
+              break
+            case 'sorties':
+              {
+                if (this.updates[`${contentieux.id}-sorties`].value >= 0) {
+                  contentieuxOut= this.updates[`${contentieux.id}-sorties`].value
+                } else if (contentieux.originalOut && contentieux.originalOut >= 0)
+                  contentieuxOut = contentieux.originalOut 
+
+                if (this.updates[`${contentieux.id}-entrees`]?.value >= 0) {
+                  contentieuxIn = this.updates[`${contentieux.id}-entrees`]?.value
+                } else {
+                  if (contentieux.in && contentieux.in >= 0)
+                    contentieuxIn = contentieux.in
+                  else if (contentieux.originalIn && contentieux.originalIn >= 0)
+                    contentieuxIn = contentieux.originalIn
+                }
+              }
+              break
+          }
+        
+          const newStock = stock + contentieuxIn - contentieuxOut
+
+          const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+          if (element) {
+            newStock >= 0 ? element.value = newStock.toString() : element.value = '0'
+            element.classList.remove('blue-bottom')
+            const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
+
+            if (tooltip) {
+              tooltip.classList.replace('ri-lightbulb-flash-fill', 'ri-lightbulb-flash-line')
+            }
+          }
+
+        }
+      }
       this.updateTotal()
-    
+
   }
 
   /**
@@ -666,39 +739,47 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string, inputValue : any) {
-    const input = +inputValue
+  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any) {   
+    let input = null
+    if (inputValue !== null)
+      input = +inputValue
     switch (node) {
       case 'entrees': 
         if (item.valueQualityIn === 'to_verify') {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees && input && input !==  item.originalIn)
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees !== null && input !== null && input !==  item.originalIn)
             return true
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
         } else {
-          if (/*item.in !== null && item.activityUpdated && item.activityUpdated.entrees &&*/input && input !== item.originalIn)
+          if (!inputValue)
+            input = item.in
+          if (input !== null && input !== item.originalIn)// && this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].value !== null)
             return true
         }
         break;
       case 'sorties': 
         if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && input && input !==  item.originalOut)
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties !== null && input !== null && input !==  item.originalOut)
             return true
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
         } else {
-          if (/*item.out !== null && item.activityUpdated && item.activityUpdated.sorties && */input && input !== item.originalOut)
+          if (!inputValue)
+            input = item.out
+          if (input !== null && input !== item.originalOut) // && this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].value !== null) {
             return true
         }
         break;
       case 'stock': 
         if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && input && input !==  item.originalStock)
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock !== null && input !== null && input !==  item.originalStock)
             return true
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
-          if (/*item.stock !== null && item.activityUpdated && item.activityUpdated.stock*/input && input !== item.originalStock)
+          if (!inputValue)
+            input = item.stock
+          if (input !== null && input !== item.originalStock) 
             return true
         }
         break;

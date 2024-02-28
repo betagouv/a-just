@@ -92,7 +92,7 @@ export function referentielMappingColorActivity(
     case 'Contentieux JAF':
       return `rgba(210, 227, 243, ${opacity})`
     case 'Contentieux Social':
-      return `rgba(212, 230, 232, ${opacity}`
+      return `rgba(212, 230, 232, ${opacity})`
     case 'Contentieux de la Protection':
       return `rgba(210, 224, 243, ${opacity})`
     case 'Juges des Enfants':

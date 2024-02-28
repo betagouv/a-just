@@ -16,8 +16,27 @@
     }
   }
 
+  &.top .tooltip-text {
+    bottom: calc(85% + 4px);
+    .triangle {
+      transform: rotate(0.5turn);
+      position: absolute;
+      bottom: -4px;
+    }
+  }
+
+  &.bottom .tooltip-text {
+    top: calc(85% + 4px);
+    .triangle {
+      position: absolute;
+      top: -4px;
+    }
+  }
+
   &.medium .tooltip-text {
+    //border: 3px solid red;
     width: 400px;
+    max-height: 350px;
   }
 
   &.large .tooltip-text {
@@ -55,10 +74,11 @@
   }
 
   .tooltip-text {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     z-index: 1;
     visibility: hidden;
-    top: calc(85% + 4px);
     left: 50%;
     cursor: auto;
 
@@ -79,8 +99,6 @@
       border-color: transparent transparent fColor(tooltipBgTitleColor)
         transparent;
       border-style: solid;
-      position: absolute;
-      top: -4px;
       left: calc(50% - 2px);
     }
 
@@ -117,6 +135,9 @@
     .content {
       padding: 16px;
       color: fColor(tooltipContentColor);
+      max-height: 200px;
+      overflow-y: scroll;
+      margin-bottom: 4px;
     }
 
     .footer {

@@ -81,13 +81,10 @@ export default class RouteSaml extends Route {
     try {
       const assert = await postAssertSSO(this.body(ctx))
       if (assert) {
-        if (!ctx.session.sso) {
-          ctx.session.sso = { assert: null }
-        }
-        ctx.session.sso.assert = assert
+        ctx.session.sso = assert
       }
 
-      this.sendOk(ctx, 'OK')
+      ctx.redirect(config.frontUrl)
     } catch (err) {
       ctx.throw(401, err)
     }
@@ -97,8 +94,8 @@ export default class RouteSaml extends Route {
    * Get SSO Url
    */
   @Route.Get()
-  async getUrl (ctx) {
-    this.sendOk(ctx, config.sso.url)
+  async getTestUrl (ctx) {
+    this.sendOk(ctx, config.sso.testUrl)
   }
 
   /**
@@ -117,6 +114,7 @@ export default class RouteSaml extends Route {
         userId: userInDb.id,
       })
       await super.addUserInfoInBody(ctx, userInDb.id)
+      ctx.session.sso = null
       this.sendCreated(ctx)
     } else if (email) {
       this.sendOk(ctx, {
@@ -132,5 +130,14 @@ export default class RouteSaml extends Route {
         status: SAML_STATUS_EMPTY,
       })
     }
+  }
+
+  /**
+   * Vide la session en cour
+   */
+  @Route.Get()
+  async cleanSession (ctx) {
+    ctx.session.sso = null
+    this.sendOk(ctx, 'OK')
   }
 }

@@ -20,7 +20,7 @@ export class SSOService {
    * @returns
    */
   serverGetUrl() {
-    return this.serverService.get('saml/get-url').then((d) => d.data)
+    return this.serverService.get('saml/get-test-url').then((d) => d.data)
   }
 
   /**
@@ -62,5 +62,12 @@ export class SSOService {
 
       return s
     })
+  }
+
+  /**
+   * Récuparation de l'url de login SSO coté A-Just
+   */
+  clearSession() {
+    return this.serverService.get('saml/clean-session')
   }
 }
