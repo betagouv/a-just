@@ -485,28 +485,25 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           for (const elem of this.referentiel) {
             let childNotEmpty = 0;
             let childToCount = 0;
-            if (elem.childrens) {
             
+            if (elem.childrens) {
               for (const child of elem.childrens) {
-                  if (child.compter) {
-                    totalContentieuxLevelFour += 3
-                  }
+                if (child.compter) {
+                  totalContentieuxLevelFour += 3
                   childToCount += 3;
                   if(child.in !== null || child.originalIn !== null) {
+                    totalNotEmpty += 1
                     childNotEmpty += 1
-                    if (child.compter)
-                      totalNotEmpty += 1
                   }
                   if(child.out !== null || child.originalOut !== null) {
+                    totalNotEmpty += 1
                     childNotEmpty += 1
-                    if (child.compter)
-                      totalNotEmpty += 1
                   }
                   if(child.stock !== null || child.originalStock !== null) {
+                    totalNotEmpty += 1
                     childNotEmpty += 1
-                    if (child.compter)
-                      totalNotEmpty += 1
                   }
+                }
               }
               elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
               for (const child of elem.childrens) {
