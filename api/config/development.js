@@ -7,6 +7,7 @@ module.exports = {
   maxQueryLimit: 10000000,
   login: {
     shareAuthCode: true,
-    enable2Atuh: false,
+    enable2Auth: true,
+    max2AuthByMonth: 1,
   },
 }

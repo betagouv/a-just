@@ -65,4 +65,23 @@
     </div>
     <input type="submit" class="big-button" value="Se connecter" />
   </form>
+
+  <aj-popup
+    *ngIf="needToGetCode !== null"
+    [actions]="[
+    { id: 'close', content: 'Annuler' },
+    { id: 'connect', content: 'Se connecter', fill: true }]"
+    [closeIcon]="true"
+    (onClose)="needToGetCode = null"
+    title="Connection"
+    (selectedAction)="onContinuToLogin($event, codeInput)"
+  >
+    <div class="popin-code">
+      <p>
+        Vous devez saisir le code envoyé par mail pour confirmer votre
+        connection.
+      </p>
+      <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />
+    </div>
+  </aj-popup>
 </aj-wrapper-no-connected>
