@@ -9,6 +9,7 @@ export const USER_USER_LOGIN = 104
 export const USER_AUTO_LOGIN = 105
 export const USER_USER_LOGIN_CODE_INVALID = 106
 export const USER_USER_LOGIN_REQUEST_CODE = 107
+export const USER_AUTH_BY_2FA = 108
 
 export const ADMIN_CHANGE_USER_ACCESS = 200
 export const ADMIN_REMOVE_HR = 201
