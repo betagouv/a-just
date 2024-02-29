@@ -255,6 +255,10 @@
   &.large-actions .actions {
     width: 50% !important;
   }
+
+  &.padding-bottom-0 .top-header {
+    padding-bottom: 0px !important;
+  }
 }
 
 .menu {
@@ -426,7 +430,7 @@
   border-bottom: 1px solid fColor(bgColor);
 
   .top-header {
-    padding: 16px 16px;
+    padding: 16px 16px;//x 8px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
