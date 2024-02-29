@@ -21,10 +21,26 @@
   }
 
   &.no-padding-top {
+    .top-header {
+      padding-top: 0px !important;
+    }
     div {
       .contener {
         #content {
           padding-top: 0px !important;
+        }
+      }
+    }
+  }
+
+  &.no-padding-bottom  {
+    .top-header {
+      padding-bottom: 0px !important;
+    }
+    div {
+      .contener {
+        #content {
+          padding-bottom: 0px !important;
         }
       }
     }
@@ -254,10 +270,6 @@
 
   &.large-actions .actions {
     width: 50% !important;
-  }
-
-  &.padding-bottom-0 .top-header {
-    padding-bottom: 0px !important;
   }
 }
 
