@@ -90,6 +90,7 @@ export class AuthService {
    */
   completeLogin(params = {}, options = {}): Promise<any> {
     return this.serverService.post('auths/complete-login', params, options).then((data) => {
+      this.serverService.setToken(data.token);
       return data;
     });
   }

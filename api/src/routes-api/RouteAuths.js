@@ -1,13 +1,14 @@
 import Route from './Route'
 import { Types } from '../utils/types'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
-import { USER_AUTO_LOGIN, USER_USER_LOGIN, USER_USER_LOGIN_CODE_INVALID, USER_USER_LOGIN_REQUEST_CODE } from '../constants/log-codes'
+import { USER_AUTH_BY_2FA, USER_AUTO_LOGIN, USER_USER_LOGIN, USER_USER_LOGIN_CODE_INVALID, USER_USER_LOGIN_REQUEST_CODE } from '../constants/log-codes'
 import * as Sentry from '@sentry/node'
 import { LOGIN_STATUS_GET_CODE } from '../constants/login'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
 import { TEMPLATE_2_AUTH_USER_LOGIN } from '../constants/email'
 import config from 'config'
+import { Op } from 'sequelize'
 
 /**
  * Route des authentification
@@ -39,7 +40,24 @@ export default class RouteAuths extends Route {
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      if (config.login.enable2Atuh) {
+      let required2Auth = config.login.enable2Auth
+      if (required2Auth) {
+        const now = new Date()
+        now.setMonth(now.getMonth() - 1)
+        const nbAuthBy2FAOffMonth = (
+          await this.models.Logs.getLogs({
+            code_id: USER_AUTH_BY_2FA,
+            user_id: tryUserCon.id,
+            created_at: { [Op.gte]: now },
+          })
+        ).length
+
+        if (nbAuthBy2FAOffMonth >= config.login.max2AuthByMonth) {
+          required2Auth = false
+        }
+      }
+
+      if (required2Auth) {
         const code = crypt.generateRandomNumber(4)
         ctx.session.loginControl = {
           email,
@@ -89,7 +107,6 @@ export default class RouteAuths extends Route {
   async completeLogin (ctx) {
     const { code } = this.body(ctx)
 
-    console.log(ctx.session)
     if (!ctx.session || !ctx.session.loginControl) {
       ctx.throw(401, "Nous n'arrivons pas à vous identifier !")
     }
@@ -107,6 +124,9 @@ export default class RouteAuths extends Route {
     if (userInDb) {
       await ctx.loginUser(userInDb, remember === 1 ? 90 : 7)
       await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
+        userId: userInDb.id,
+      })
+      await this.models.Logs.addLog(USER_AUTH_BY_2FA, userInDb.id, {
         userId: userInDb.id,
       })
       await super.addUserInfoInBody(ctx, userInDb.id)

@@ -1,17 +1,17 @@
 module.exports = {
-  envName: 'STAGING',
-  displayEnvName: '[STAGING] ',
+  envName: 'PREPROD',
+  displayEnvName: '',
   serverUrl: process.env.SERVER_URL,
   frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   preloadHumanResourcesDatas: true,
-  nbMaxDayCanBeInactive: null,
   sendingBlue: {
-    usersListId: 7,
+    usersListId: 30,
   },
   forceSSL: true,
   formatLogs: true,
+  sentEmail: false,
   login: {
-    shareAuthCode: true,
+    shareAuthCode: false,
     enable2Auth: true,
     max2AuthByMonth: 1,
   },
