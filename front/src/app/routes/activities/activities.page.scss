@@ -129,7 +129,7 @@
   }
 }
 
-.bottomHeader {
+.top-right-header {
   padding: 16px 16px;
   display: flex;
   justify-content: space-between;
@@ -138,7 +138,8 @@
   .left-panel {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-self: center;
     width: 60%;
     height: 100%;
 
@@ -160,6 +161,8 @@
   }
   
   .right-panel {
+    width: auto;
+
     h2 {
       font-size: 14px;
       margin: 0;
@@ -177,7 +180,7 @@
 
     .elements {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
       color: fColor(cbluedark);
      

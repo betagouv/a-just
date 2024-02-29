@@ -251,6 +251,10 @@
   &.no-header .contener .header {
     display: none;
   }
+
+  &.large-actions .actions {
+    width: 50% !important;
+  }
 }
 
 .menu {
@@ -429,6 +433,9 @@
     background-color: white;
     position: relative;
 
+    .left-panel {
+      display: flex;
+    }
 
     .back-url {
       margin-right: 16px;
