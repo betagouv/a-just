@@ -154,7 +154,8 @@ module.exports = {
   },
   login: {
     shareAuthCode: false,
-    enable2Atuh: false,
+    enable2Auth: false,
+    max2AuthByMonth: 1,
   },
   /**
    * SESSION CONFIG

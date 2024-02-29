@@ -16,3 +16,4 @@ api/certificats-sso
 *.csr
 *.key
 *.pem
+*.crt

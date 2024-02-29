@@ -44,7 +44,11 @@ export class LoginPage {
   /**
    * Waiting screen to be ready
    */
-  isReady: boolean = false;
+  isReady: boolean = false
+  /**
+   * Popin to required code
+   */
+  needToGetCode: string | null = null
 
   /**
    * Constructeur
@@ -107,15 +111,12 @@ export class LoginPage {
     this.authService
       .login({ email, password, remember: Number(remember) }, { noAlert: true })
       .then((returnLogin) => {
-        console.log(returnLogin)
         if (
           returnLogin &&
           returnLogin.data &&
           returnLogin.data.status === LOGIN_STATUS_GET_CODE
         ) {
-          this.authService
-            .completeLogin({ code: '1234' })
-            .then((d) => console.log('code', d))
+          this.needToGetCode = returnLogin.data.datas.code || ''
         } else {
           this.router.navigate([
             this.userService.getUserPageUrl(returnLogin.user),
@@ -133,7 +134,25 @@ export class LoginPage {
     //    "Vous devez être dans l'environement Justice pour utiliser page blanche !"
     //  )
     //} else {
-      window.location.href = this.ssoService.getSSOLogin()
+    window.location.href = this.ssoService.getSSOLogin()
     //}
+  }
+
+  onContinuToLogin(action: any, input: any) {
+    console.log(action, input.value)
+    switch (action.id) {
+      case 'connect':
+        this.authService
+          .completeLogin({ code: input.value })
+          .then((returnLogin) => {
+            this.router.navigate([
+              this.userService.getUserPageUrl(returnLogin.user),
+            ])
+          })
+        break
+      default:
+        this.needToGetCode = null
+        break
+    }
   }
 }

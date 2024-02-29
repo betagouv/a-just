@@ -10,4 +10,9 @@ module.exports = {
   },
   forceSSL: true,
   formatLogs: true,
+  login: {
+    shareAuthCode: true,
+    enable2Auth: true,
+    max2AuthByMonth: 1,
+  },
 }

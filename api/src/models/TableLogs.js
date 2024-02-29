@@ -24,10 +24,11 @@ export default (sequelizeInstance, Model) => {
    * Liste des tous les events et qui l'a fait
    * @returns
    */
-  Model.getLogs = async () => {
+  Model.getLogs = async (where = {}) => {
     const list = await Model.findAll({
       order: [['created_at', 'DESC']],
       raw: true,
+      where,
       include: [
         {
           model: Model.models.Users,
