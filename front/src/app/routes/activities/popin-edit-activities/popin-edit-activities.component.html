@@ -27,9 +27,23 @@
   </div>
 
   <div class="sub-header">
-    <p>Nos ressources :</p>
-    <a [href]="DATA_GITBOOK" target="_blank">Le databook</a>
-    <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">La nomenclature</a>
+    <h2>Nos ressources :</h2>
+    <!-- <a [href]="DATA_GITBOOK" target="_blank">Le databook <mat-icon inline=true>open_in_new</mat-icon></a>
+    <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">La nomenclature <mat-icon inline=true>open_in_new</mat-icon></a> -->
+    <div class="elements">
+      <div class="element" (click)="downloadAsset('dataBook')">
+        <p>
+          Le data-book
+        </p>
+        <mat-icon inline=true>open_in_new</mat-icon>
+      </div>
+      <div class="element" (click)="downloadAsset('nomenclature')">
+        <p>
+          La nomenclature
+        </p>
+        <mat-icon inline=true>open_in_new</mat-icon>
+      </div>
+    </div>
   </div>
 
   <div class="contentieux-header" [ngClass]="{'is-windows': isNotIOS()}">
