@@ -256,13 +256,13 @@
 <ng-template #ressources>
   <div class="bottomHeader">
     <div class="left-panel">
-      <p [id]="'total-completion'" [style.--percent]="totalCompletion" [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">Complétude globale: </p>
+      <p [id]="'total-completion'" [style.--percent]="totalCompletion" [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">Complétude globale : </p>
       <span class='completion-bar'>
         <aj-completion-bar [value]=totalCompletion></aj-completion-bar>
       </span>
     </div>
     <div class="right-panel">
-      <h2>Ressources:</h2>
+      <h2>Ressources :</h2>
       <div class="elements">
         <div class="element" (click)="downloadAsset('dataBook')">
           <p>

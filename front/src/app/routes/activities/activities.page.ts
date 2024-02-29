@@ -518,7 +518,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               }
             }
           }
-          this.totalCompletion = parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2)) || 0;
+          this.totalCompletion = Math.round(parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2)))|| 0;
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
