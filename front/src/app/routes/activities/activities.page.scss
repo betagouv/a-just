@@ -239,7 +239,7 @@
 
 .item, .header-list, .group-item  {
   display: flex;
-  height: 40px;
+  height: 56px;
   align-items: center;
   justify-content: flex-start;
   padding: 0 5px;
@@ -249,6 +249,7 @@
 .header-list {
   background-color: white;
   border-bottom: 2px solid fColor(cblack);
+  height: 40px;
 
   .activities.is-not-ios {
     margin-right: 16px;
