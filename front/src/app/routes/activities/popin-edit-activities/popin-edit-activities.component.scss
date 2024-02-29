@@ -65,14 +65,42 @@
   align-items: center;
   padding: 6px 25px;
 
-  > p {
+  h2 {
+    font-size: 12px;
+    padding: 0;
+    line-height: normal;
+    font-weight: normal;
+    color: fColor(cblack);
+  }
+
+  p {
+    color: fColor(primary);
+    border-bottom: 2px solid fColor(primary);
     font-size: 12px;
   }
 
-  > a {
+  .elements {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: fColor(cbluedark);
+  }
+
+  .element {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    position: relative;
     margin-left: 16px;
-    font-size: 14px;
-    color: fColor(primary);
+
+    .mat-icon {
+      padding: 4px;
+      font-size: 14px;
+    }
+  }
+
+  .element :hover {
+    cursor: pointer;
   }
 }
 

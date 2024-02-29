@@ -21,6 +21,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { copy } from 'src/app/utils'
+import { downloadFile } from 'src/app/utils/system'
 import { groupBy, mapValues, get } from 'lodash';
 
 /**
@@ -83,6 +84,14 @@ export class PopinEditActivitiesComponent
    * have values to show
    */
   hasValuesToShow: boolean = true
+    /**
+   * Lien vers la nomenclature a-just
+   */
+    nomenclature = '/assets/nomenclature-A-Just.html'
+    /**
+     * Lien vers le data book
+     */
+    dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
 
   /**
    * Constructeur
@@ -786,4 +795,22 @@ export class PopinEditActivitiesComponent
     }
     return false
   }
+
+  downloadAsset(type: string, download = false) {
+    let url = null
+
+    if (type === 'nomenclature')
+      url = this.nomenclature
+    else if (type === 'dataBook')
+      url = this.dataBook
+
+    if (url) {
+      if (download) {
+        downloadFile(url)
+      } else {
+        window.open(url)
+     }
+    }
+  }
+
 }
