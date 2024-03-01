@@ -3,7 +3,7 @@
 #header-popin {
   display: flex;
   justify-content: space-between;
-  padding: 13px 24px 8px 24px;
+  padding: 0.5em 1em;
   width: 100%;
 
   .left-section {
@@ -15,6 +15,7 @@
       margin-right: 20px;      
       p {
         font-size: 12px;
+        white-space: nowrap;
       }
   
       h2 {
@@ -455,7 +456,7 @@
 }
 
 .bottom-popin {
-  padding: 8px 16px;
+  padding: 0.5em 1em;
   border-top: solid 1px fColor(cgraylightv3);
   display: flex;
 
