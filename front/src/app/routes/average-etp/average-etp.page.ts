@@ -44,7 +44,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   /**
    * Label du referentiel selectionné
    */
-  refNameSelected: string |null= null
+  refNameSelected: string | null = null
   /**
    * Titre de la page
    */
@@ -119,9 +119,14 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
+        if (this.contentieuxOptionsService.nbOfBackups.getValue() === 0) {
+          this.contentieuxOptionsService.createEmpy(true)
+          this.contentieuxOptionsService.setInitValue()
+        }
         this.formatDatas()
       })
     )
+
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(
         (b) => (this.selectedIds = [b])
@@ -441,9 +446,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
     const viewModel = {
       referentiels: tmpList,
-      name: this.refNameSelected+' - MAGISTRATS',
+      name: this.refNameSelected + ' - MAGISTRATS',
       referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
+      nameFonc: this.refNameSelected + ' - FONCTIONNAIRES',
     }
 
     fetch('/assets/template2.xlsx')
@@ -468,11 +473,11 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Fonction qui génère automatiquement le nom du fichier téléchargé
    * @returns String - Nom du fichier téléchargé
    */
-  getFileName(label:string|null) {
-    return `Extraction_Référentiel de temps moyen - `+ (label||'')
+  getFileName(label: string | null) {
+    return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
-  generateFlateList(){
+  generateFlateList() {
     const flatList = new Array()
     this.referentiel.map((x) => {
       if (x.childrens) {
@@ -494,27 +499,29 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     return flatList
   }
 
-  getFileValues(ref:any){
-    return {id:Number(ref.id),nbPerDay: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerDay',
-      'averageProcessingTime'
-    ),
-    nbPerMonth: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerMonth',
-      'averageProcessingTime'
-    ),
-    nbPerDayFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerDay',
-      'averageProcessingTimeFonc'
-    ),
-    nbPerMonthFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerMonth',
-      'averageProcessingTimeFonc'
-    )}
+  getFileValues(ref: any) {
+    return {
+      id: Number(ref.id), nbPerDay: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerDay',
+        'averageProcessingTime'
+      ),
+      nbPerMonth: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerMonth',
+        'averageProcessingTime'
+      ),
+      nbPerDayFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerDay',
+        'averageProcessingTimeFonc'
+      ),
+      nbPerMonthFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerMonth',
+        'averageProcessingTimeFonc'
+      )
+    }
   }
 
 }
