@@ -3,7 +3,7 @@
   title="Données d'activité"
   [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation"
-  class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions no-padding-bottom no-padding-top"
+  class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
   [actionTemplate]="ressources"
   [alignLeft]="false"
   [dateSelector]="dateSelector"
@@ -257,9 +257,9 @@
   <div class="top-right-header">
     <div class="left-panel">
       <p [id]="'total-completion'" [style.--percent]="totalCompletion" [ngStyle]="{'color' : getAcivityPercentColor(totalCompletion)}">Complétude globale : </p>
-      <span class='completion-bar'>
+      <div class='completion-bar'>
         <aj-completion-bar [value]=totalCompletion></aj-completion-bar>
-      </span>
+      </div>
     </div>
     <div class="right-panel">
       <h2>Ressources :</h2>

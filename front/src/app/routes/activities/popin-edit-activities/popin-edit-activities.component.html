@@ -185,7 +185,7 @@
   </div>
 
   <div class="bottom-popin">
-    <button class="small outline gray" (click)="close()">Annuler</button>
+    <button class="small outline blue" (click)="close()">Annuler</button>
     <div class="flex-1"></div>
     <button
       class="small outline blue"
@@ -194,8 +194,13 @@
       Aller au mois précédent
     </button>
     <button
-      class="small outline blue"
+      class="small outline"
+      [ngClass]="{
+        'gray': !hasNextMonth,
+        'blue': hasNextMonth
+      }"
       (click)="selectMonth(getMonth(activityMonth, 1))"
+      [disabled]="!hasNextMonth"
     >
       Aller au mois suivant
     </button>
@@ -299,8 +304,8 @@
 >
   <i
     class="{{
-      ( checkIfBlue(contentieux, type, value) && level === 4) ?
-      'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
+      (  level === 3 || value === null || !checkIfBlue(contentieux, type, value, true) ) ?
+      'ri-lightbulb-flash-line' : 'ri-lightbulb-flash-fill'
     }} 
     cursor-pointer 
     {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"

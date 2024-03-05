@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  OnInit,
   Component,
   EventEmitter,
   Input,
@@ -84,14 +85,19 @@ export class PopinEditActivitiesComponent
    * have values to show
    */
   hasValuesToShow: boolean = true
-    /**
+  /**
    * Lien vers la nomenclature a-just
    */
-    nomenclature = '/assets/nomenclature-A-Just.html'
-    /**
-     * Lien vers le data book
-     */
-    dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
+  nomenclature = '/assets/nomenclature-A-Just.html'
+  /**
+   * Lien vers le data book
+   */
+  dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
+
+  /**
+   *  Vérifie que le mois prochain comporte des données d'activité
+  */
+  hasNextMonth : boolean = false  
 
   /**
    * Constructeur
@@ -108,6 +114,7 @@ export class PopinEditActivitiesComponent
   }
 
   ngAfterViewInit() {
+    this.checkIfNextMonthHasValue()
     const container = document.getElementById('contentieux-list')
     if (container) {
       const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
@@ -152,6 +159,20 @@ export class PopinEditActivitiesComponent
     if (changes['referentiel']) {
       this.updateTotal()
     }
+  }
+
+  checkIfNextMonthHasValue() {
+    this.activitiesService.getLastMonthActivities().then((resp) => {
+      const tmp = new Date(resp)
+
+      const date1 = new Date(tmp.getFullYear(), tmp.getMonth(), 1)
+      const date2 = new Date(this.activityMonth.getFullYear(), this.activityMonth.getMonth(), 1)
+      
+      if (date1 > date2)
+        this.hasNextMonth = true
+      else 
+        this.hasNextMonth = false
+    })
   }
 
   /**
@@ -457,85 +478,38 @@ export class PopinEditActivitiesComponent
       }
 
       if (newValue.length !== 0 && newValue === null) {
+        console.log('hey')
         delete this.updates[`${contentieux.id}-${nodeName}`]
       } else  {
         this.updates[`${contentieux.id}-${nodeName}`] = {
           value,
           node: nodeName,
           contentieux,
+          calculated: false,
         }
       }
 
-      if (nodeName === 'stock') {
-        const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-        if (element) {
-          element.classList.add('blue-bottom')
-          const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
-          if (tooltip) {
-            tooltip.classList.replace('ri-lightbulb-flash-line' , 'ri-lightbulb-flash-fill')
+      const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+      if (contentieux.stock === null) {
+        if ( (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated) || !this.updates[`${contentieux.id}-stock`]) {
+          const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
+          const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
+          
+          const entreeValue : number =  Number(entree.value) || contentieux.originalIn || 0
+          const sortieValue : number = Number(sortie.value) || contentieux.originalOut || 0
+          const stockValue = contentieux.originalStock ? contentieux.originalStock : 0
+
+          const newStock = stockValue + entreeValue - sortieValue
+          this.updates[`${contentieux.id}-stock`] = {
+            value: newStock,
+            node: 'stock',
+            contentieux,
+            calculated: true,
           }
+          stock.value =  newStock > 0 ? newStock.toString() : '0'
         }
       }
-      
-      if(nodeName !== 'stock' && newValue !== '' && newValue.length > 0) {
-        let contentieuxIn = 0;
-        let contentieuxOut = 0;
-        let stock =  contentieux.originalStock || 0
-
-        if (stock !== null && ((contentieux.activityUpdated && (!contentieux.activityUpdated.stock || contentieux.activityUpdated.stock.value !== null )) &&  this.updates[`${contentieux.id}-stock`]?.value !== null)) {
-          switch (nodeName) {
-            case 'entrees':
-              {
-                if (this.updates[`${contentieux.id}-entrees`].value >= 0) {
-                  contentieuxIn = this.updates[`${contentieux.id}-entrees`].value
-                } else if (contentieux.originalIn && contentieux.originalIn >= 0)
-                  contentieuxIn = contentieux.originalIn
-
-                if (this.updates[`${contentieux.id}-sorties`]?.value >= 0) {
-                  contentieuxOut = this.updates[`${contentieux.id}-sorties`]?.value
-                } else {
-                  if (contentieux.out && contentieux.out >= 0)
-                    contentieuxOut = contentieux.out
-                  else if (contentieux.originalOut && contentieux.originalOut >= 0) {
-                    contentieuxOut = contentieux.originalOut
-                  }
-                }
-              }
-              break
-            case 'sorties':
-              {
-                if (this.updates[`${contentieux.id}-sorties`].value >= 0) {
-                  contentieuxOut= this.updates[`${contentieux.id}-sorties`].value
-                } else if (contentieux.originalOut && contentieux.originalOut >= 0)
-                  contentieuxOut = contentieux.originalOut 
-
-                if (this.updates[`${contentieux.id}-entrees`]?.value >= 0) {
-                  contentieuxIn = this.updates[`${contentieux.id}-entrees`]?.value
-                } else {
-                  if (contentieux.in && contentieux.in >= 0)
-                    contentieuxIn = contentieux.in
-                  else if (contentieux.originalIn && contentieux.originalIn >= 0)
-                    contentieuxIn = contentieux.originalIn
-                }
-              }
-              break
-          }
-        
-          const newStock = stock + contentieuxIn - contentieuxOut
-
-          const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-          if (element) {
-            newStock >= 0 ? element.value = newStock.toString() : element.value = '0'
-            element.classList.remove('blue-bottom')
-            const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
-
-            if (tooltip) {
-              tooltip.classList.replace('ri-lightbulb-flash-fill', 'ri-lightbulb-flash-line')
-            }
-          }
-
-        }
-      }
+    
       this.updateTotal()
 
   }
@@ -559,7 +533,8 @@ export class PopinEditActivitiesComponent
         },
       })
     } else {
-      const updates : any = Object.values(this.updates)
+      const updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
+      updates.map((elem : any) => delete elem.calculated)
 
       let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
@@ -624,6 +599,7 @@ export class PopinEditActivitiesComponent
     this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
         this.activityMonth = new Date(date)
+        this.checkIfNextMonthHasValue()
         this.hasValuesToShow = list.list.length !== 0
         console.log(list, this.activityMonth)
         if (this.referentiel) {
@@ -748,7 +724,7 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any) {   
+  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any, isForBulb? : boolean) {   
     let input = null
     if (inputValue !== null)
       input = +inputValue
@@ -788,11 +764,22 @@ export class PopinEditActivitiesComponent
         } else {
           if (!inputValue)
             input = item.stock
-          if (input !== null && input !== item.originalStock) 
+          
+          if ((input !== null && input !== item.originalStock)) {
+            if (isForBulb && this.checkIfCalculated(item, 'stock')) {
+              return false
+            }
             return true
+          }
         }
         break;
     }
+    return false
+  }
+
+  checkIfCalculated(item : ContentieuReferentielInterface, node: string) {
+    if (this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].calculated === true)
+      return true
     return false
   }
 
