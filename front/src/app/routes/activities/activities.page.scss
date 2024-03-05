@@ -20,7 +20,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-
   background-color: fColor(activityBgColor);
 
   .content-list {
@@ -37,6 +36,7 @@
         width: 92px;
         display: flex;
         align-items: center;
+        padding: 0.625em 0.875em;
 
         &:first-child {
           align-self: stretch;
@@ -76,18 +76,6 @@
           color: fColor(textBlueTag);
         }
 
-        p.to-complete {
-          background-color: fColor(dataToCompleteBg);
-          border: 1px solid fColor(textBlueTag) !important;
-          border-radius: 4px;
-        }
-
-        p.to-verify {
-          background-color: fColor(dataNotSettedBg);
-          border: 1px solid fColor(dataNotSettedBorder);
-          border-radius: 4px;
-        }
-
         p.blue-bottom {
           border-bottom: 3px solid fColor(textBlueTag);
           border-radius: 0;
@@ -100,6 +88,17 @@
         p.blue-txt {
           color: fColor(dataBlueTxt);
         }
+      }
+
+      >div:has(p.to-complete) {
+        background-color: fColor(dataToCompleteBg);
+        border: 1px solid fColor(textBlueTag) !important;
+        border-radius: 4px;
+      }
+      >div:has(p.to-verify) {
+        background-color: fColor(dataNotSettedBg);
+        border: 1px solid fColor(dataNotSettedBorder);
+        border-radius: 4px;
       }
     }
   }
@@ -129,28 +128,36 @@
 }
 
 .top-right-header {
-  padding: 8px 16px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  //justify-content: space-between;
   width: 100%;
 
   .left-panel {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-self: center;
+    justify-content: center;
     width: 60%;
     height: 100%;
-    margin: 0.5em;
+    margin-right: 0.5em;
+    flex: 1;
+    border-radius: 8px;
+    background-color: fColor(bgSelect);
+    border: 1px solid fColor(borderSelect);
+    padding: 4px 8px;
+    white-space: nowrap;
 
     p {
       transition: --percent 1s;
       --temp: var(--percent);
       --v1: max(var(--temp) - 0.5, 0);
       counter-reset: v1 var(--v1);
-      padding: 0.5em 0em;
-      font-size: 14px;//0.75em;
+      margin-bottom: 0.5em;
+      font-size: 0.875em;
       font-weight: 400;
+      flex: 1;
+      height: 100%;
+      //border: 1px solid red;
     }
 
     p::after {
@@ -166,9 +173,10 @@
   
   .right-panel {
     width: auto;
+    padding: 4px 8px;
 
     h2 {
-      font-size: 14px;
+      font-size: 0.875em;
       margin: 0;
       padding: 0;
       line-height: normal;
@@ -179,7 +187,7 @@
     p {
       color: fColor(primary);
       border-bottom: 2px solid fColor(primary);
-      font-size: 16px;
+      font-size: 0.875em;
     }
 
     .elements {
@@ -187,10 +195,6 @@
       flex-direction: column;
       align-items: flex-start;
       color: fColor(cbluedark);
-     
-      div:first-child {
-        margin-right: 32px;
-      }
     }
 
     .element {
@@ -198,10 +202,9 @@
       align-items: center;
       font-size: 16px;
       position: relative;
-
       .mat-icon {
         padding: 4px;
-        font-size: 17px;
+        font-size: 0.875em;
       }
     }
 
@@ -253,7 +256,7 @@
 .header-list {
   background-color: white;
   border-bottom: 2px solid fColor(cblack);
-  height: 40px;
+  height: 3em;
 
   .activities.is-not-ios {
     margin-right: 16px;
@@ -263,6 +266,11 @@
     display: flex;
     width: 92px;
     justify-content: right;
+    padding: 0.625em 0.875em;
+    p {
+      color: fColor(cgray);
+      font-size: 0.875em;
+    }
   }
 
   .label {
@@ -271,7 +279,6 @@
     align-items: center;
     padding: 0 15px;
     min-width: 294px;
-  
     p {
       flex: 1;
       text-align: left;
@@ -289,9 +296,11 @@
 .header-list div:last-child {
   width: 200px;
   justify-content: flex-start;
+  padding-left: 0;
 }
 
 .item {
+  height: 3.5em;
   &.selectable {
     cursor: pointer;
 
@@ -312,7 +321,6 @@
       margin-left: 8px;
       font-size: 14;
       font-weight: bold;
-
     }
   }
 
@@ -405,7 +413,8 @@
     .group-item{
       .column-item:nth-child(2) {
         >div {
-          justify-content: left;
+          justify-content: center;
+          text-align: center;
         }
       }
     }
@@ -433,6 +442,7 @@
         background-color: fColor(dataNotSettedIsSetBg);
         padding: 0 6px;
         border-radius: 4px;
+        justify-content: center;
         p {
           font-size: 12px !important;
           font-weight: bold;
