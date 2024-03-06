@@ -130,7 +130,7 @@
 .top-right-header {
   display: flex;
   align-items: center;
-  //justify-content: space-between;
+  justify-content: space-between;
   width: 100%;
 
   .left-panel {
@@ -138,13 +138,13 @@
     flex-direction: column;
     justify-content: center;
     width: 60%;
-    height: 100%;
+    //height: 100%;
     margin-right: 0.5em;
     flex: 1;
     border-radius: 8px;
     background-color: fColor(bgSelect);
     border: 1px solid fColor(borderSelect);
-    padding: 4px 8px;
+    padding: 8.5px;
     white-space: nowrap;
 
     p {
