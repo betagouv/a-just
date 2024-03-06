@@ -281,7 +281,7 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': checkIfBlue(items, type, inputElement.value) && ( updated ? updated.value >= 0 : false) ,
+          'blue-bottom': checkIfBlue(items, type, inputElement.value, true) ,
           'blue-txt': checkIfBlue(items, type, inputElement.value),
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),

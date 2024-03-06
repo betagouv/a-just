@@ -478,7 +478,6 @@ export class PopinEditActivitiesComponent
       }
 
       if (newValue.length !== 0 && newValue === null) {
-        console.log('hey')
         delete this.updates[`${contentieux.id}-${nodeName}`]
       } else  {
         this.updates[`${contentieux.id}-${nodeName}`] = {
@@ -490,7 +489,7 @@ export class PopinEditActivitiesComponent
       }
 
       const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-      if (contentieux.stock === null) {
+      if (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && contentieux.activityUpdated.stock.value === null || !contentieux.activityUpdated.stock))) {
         if ( (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated) || !this.updates[`${contentieux.id}-stock`]) {
           const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
           const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
@@ -533,8 +532,10 @@ export class PopinEditActivitiesComponent
         },
       })
     } else {
-      const updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
+      let updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
+      console.log('Updates_00:', updates)
       updates.map((elem : any) => delete elem.calculated)
+      console.log('Updates_01:', updates)
 
       let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
@@ -738,7 +739,7 @@ export class PopinEditActivitiesComponent
         } else {
           if (!inputValue)
             input = item.in
-          if (input !== null && input !== item.originalIn)// && this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].value !== null)
+          if (input !== null && input !== item.originalIn)
             return true
         }
         break;
@@ -751,7 +752,7 @@ export class PopinEditActivitiesComponent
         } else {
           if (!inputValue)
             input = item.out
-          if (input !== null && input !== item.originalOut) // && this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].value !== null) {
+          if (input !== null && input !== item.originalOut)
             return true
         }
         break;
@@ -766,7 +767,7 @@ export class PopinEditActivitiesComponent
             input = item.stock
           
           if ((input !== null && input !== item.originalStock)) {
-            if (isForBulb && this.checkIfCalculated(item, 'stock')) {
+            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
               return false
             }
             return true
