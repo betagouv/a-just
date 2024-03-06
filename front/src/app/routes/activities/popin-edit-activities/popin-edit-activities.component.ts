@@ -731,48 +731,25 @@ export class PopinEditActivitiesComponent
       input = +inputValue
     switch (node) {
       case 'entrees': 
-        if (item.valueQualityIn === 'to_verify') {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees !== null && input !== null && input !==  item.originalIn)
-            return true
-          else if (item.in === item.originalIn || input === item.originalIn)
-            return false
-        } else {
           if (!inputValue)
             input = item.in
           if (input !== null && input !== item.originalIn)
             return true
-        }
         break;
       case 'sorties': 
-        if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties !== null && input !== null && input !==  item.originalOut)
-            return true
-          else if (item.out === item.originalOut || input === item.originalOut)
-            return false
-        } else {
           if (!inputValue)
             input = item.out
           if (input !== null && input !== item.originalOut)
             return true
-        }
         break;
       case 'stock': 
-        if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock !== null && input !== null && input !==  item.originalStock)
-            return true
-          else if (item.stock === item.originalStock || input === item.originalStock)
-            return false
-        } else {
           if (!inputValue)
             input = item.stock
-          
           if ((input !== null && input !== item.originalStock)) {
-            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
+            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock))))
               return false
-            }
             return true
           }
-        }
         break;
     }
     return false
