@@ -839,6 +839,12 @@
       </div>
       <div class="space"></div>
     </div>
+    <div class="button-row">
+    <div id=" export-button" class="export-button bottom" [class.enable]="toDisplaySimulation" (click)="print()">
+      <mat-icon class="shape">save</mat-icon>
+      <p class="title">Exporter cette simulation en PDF</p>
+    </div>
+  </div>
   </div>
 
   <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true"
