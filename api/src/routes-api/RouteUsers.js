@@ -6,7 +6,7 @@ import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
 import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ONBOARDING } from '../constants/email'
 import config from 'config'
-import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
+import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
@@ -289,6 +289,7 @@ export default class RouteUsers extends Route {
     if (user) {
       try {
         if (await this.model.updatePassword(user.dataValues.id, password, email)) {
+          await this.models.Logs.addLog(USER_USER_PASSWORD_CHANGED, user.dataValues.id)
           this.sendOk(ctx, {
             status: true,
             msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
