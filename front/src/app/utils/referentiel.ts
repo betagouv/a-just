@@ -87,19 +87,19 @@ export function referentielMappingColorActivity(
       return `rgba(66, 66, 66, ${opacity})`
     case 'Indisponibilité':
       return `rgba(55, 71, 79, ${opacity})`
-    case 'Siège Pénal':
+    case 'Pénal':
       return `rgba(245, 214, 213, ${opacity})`
-    case 'Contentieux JAF':
+    case 'JAF':
       return `rgba(210, 227, 243, ${opacity})`
-    case 'Contentieux Social':
+    case 'Social':
       return `rgba(212, 230, 232, ${opacity})`
-    case 'Contentieux de la Protection':
+    case 'JCP':
       return `rgba(210, 224, 243, ${opacity})`
-    case 'Juges des Enfants':
+    case 'JE':
       return `rgba(225, 210, 236, ${opacity})`
-    case 'Civil Non Spécialisé':
+    case 'Civil NS':
       return `rgba(213, 216, 233, ${opacity})`
-    case "Juges d'Instruction":
+    case "JI":
       return `rgba(249, 219, 210, ${opacity})`
     case 'JLD Civil':
       return `rgba(218, 212, 237, ${opacity})`

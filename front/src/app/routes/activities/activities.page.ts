@@ -1,6 +1,5 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { Subscription, from } from 'rxjs'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { DATA_GITBOOK } from 'src/app/constants/documentation'
 import {
@@ -17,10 +16,10 @@ import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
 import { downloadFile } from 'src/app/utils/system'
 import { activityPercentColor } from 'src/app/utils/activity'
+import { referentielMappingName } from 'src/app/utils/referentiel'
 //import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
@@ -318,7 +317,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         const referentiels = [
           ...this.humanResourceService.contentieuxReferentiel.getValue(),
         ]
-
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
@@ -338,7 +336,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               activityUpdated: null,
             }
 
-            
+            newRef.label = referentielMappingName(ref.label)
+
             const getActivity = activities.find(
               (a) => a.contentieux.id === newRef.id
             )
