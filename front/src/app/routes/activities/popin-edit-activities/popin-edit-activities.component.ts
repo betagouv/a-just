@@ -391,7 +391,7 @@ export class PopinEditActivitiesComponent
       this.total.in = this.referentiel?.in || this.referentiel?.originalIn
       this.total.out = this.referentiel?.out || this.referentiel?.originalOut
       this.total.stock = this.referentiel?.stock || this.referentiel?.originalStock
-      console.log('Updates:', updates)
+      //console.log('Updates 01:', updates)
       updates.map((value: any) => {
         let nodeValue = null
         switch (value.node) {
@@ -469,6 +469,16 @@ export class PopinEditActivitiesComponent
       }
     }
   }
+  
+  checkInput(event : KeyboardEvent) {
+    // Laisse passer ces touches
+    if ((event.key >= '0' && event.key <= '9') || event.key === 'Backspace') {
+          return true
+    } else {
+      // Empêche l'action pour toutes les autres touches
+     return false
+    }
+  }
 
   /**
    * onUpdateValue event
@@ -478,48 +488,45 @@ export class PopinEditActivitiesComponent
     nodeName: string,
     contentieux: ContentieuReferentielInterface
   ) {
-      let value: null | number = null
-      if (newValue !== '' && newValue.length > 0) {
-        value = +newValue
-      }
 
-      if (newValue.length !== 0 && newValue === null) {
-        delete this.updates[`${contentieux.id}-${nodeName}`]
-      } else  {
-        this.updates[`${contentieux.id}-${nodeName}`] = {
-          value,
-          node: nodeName,
-          contentieux,
-          calculated: false,
-        }
-      }
-      if (nodeName === "stock") {
-        console.log('this.updates[`${contentieux.id}-${nodeName}`] 00:', this.updates[`${contentieux.id}-${nodeName}`])
-      }
-      const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-      if (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && contentieux.activityUpdated.stock.value === null || !contentieux.activityUpdated.stock))) {
-        if (( this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated ) || !this.updates[`${contentieux.id}-stock`]) {
-          const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
-          const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
-          const entreeValue : number =  (entree.value !== null && entree.value.length > 0) ? Number(entree.value) : (contentieux.originalIn ? contentieux.originalIn : 0)
-          const sortieValue : number = (sortie.value !== null && sortie.value.length > 0) ? Number(sortie.value) : (contentieux.originalOut ? contentieux.originalOut : 0)
+    let value: null | number = null
+    if (newValue !== '' && newValue.length > 0) {
+      value = +newValue
+    }
 
-          this.getLastMonthStock(contentieux.id).then(resp => {
-            const newStock = resp + entreeValue - sortieValue
-            this.updates[`${contentieux.id}-stock`] = {
-              value: newStock,
-              node: 'stock',
-              contentieux,
-              calculated: true,
-            }
-            console.log('this.updates[`${contentieux.id}-${nodeName}`] 01:', this.updates[`${contentieux.id}-stock`])
-            stock.value =  newStock > 0 ? newStock.toString() : '0'
-          })
-        }
+    if (newValue.length !== 0 && newValue === null) {
+      delete this.updates[`${contentieux.id}-${nodeName}`]
+    } else  {
+      this.updates[`${contentieux.id}-${nodeName}`] = {
+        value,
+        node: nodeName,
+        contentieux,
+        calculated: false,
       }
+    }
+    const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+    if (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && contentieux.activityUpdated.stock.value === null || !contentieux.activityUpdated.stock))) {
+      if (( this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated ) || !this.updates[`${contentieux.id}-stock`]) {
+        const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
+        const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
+        const entreeValue : number =  (entree.value !== null && entree.value.length > 0) ? Number(entree.value) : (contentieux.originalIn ? contentieux.originalIn : 0)
+        const sortieValue : number = (sortie.value !== null && sortie.value.length > 0) ? Number(sortie.value) : (contentieux.originalOut ? contentieux.originalOut : 0)
 
-      this.updateTotal()
-
+        this.getLastMonthStock(contentieux.id).then(resp => {
+          const newStock = resp + entreeValue - sortieValue
+          this.updates[`${contentieux.id}-stock`] = {
+            value: newStock > 0 ? newStock : 0,
+            node: 'stock',
+            contentieux,
+            calculated: true,
+          }
+          //console.log('this.updates[`${contentieux.id}-${nodeName}`] 01:', this.updates[`${contentieux.id}-stock`])
+          stock.value =  newStock > 0 ? newStock.toString() : '0'
+        })
+      }
+    }
+    //console.log('this.updates 00:', this.updates)
+    setTimeout(() => this.updateTotal(), 1000)
   }
 
   async getLastMonthStock(contentieuxId : number) {
@@ -803,10 +810,8 @@ export class PopinEditActivitiesComponent
   getScrollbarWidth() {
     if (this.isNotIOS()) {
       const element =document.getElementById('contentieux-list')
-      console.log('element:', element)
       if (element) {
         let scrollWidth = element.offsetWidth - element.clientWidth;
-        console.log('scrollWidth:', scrollWidth.toString() + 'px')
         return  scrollWidth.toString() + 'px';
       }
     }
