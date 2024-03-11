@@ -28,12 +28,13 @@
     width: 100%;
     
     .column-item {
-      &:last-child {
-        width: 200px;
-      }
+      // &:last-child {
+      //   width: 16em;//200px;
+      //   border: 1px solid blue;
+      // }
       
       > div {
-        width: 92px;
+        width: 5.75em;
         display: flex;
         align-items: center;
         padding: 0.625em 0.875em;
@@ -157,7 +158,6 @@
       font-weight: 400;
       flex: 1;
       height: 100%;
-      //border: 1px solid red;
     }
 
     p::after {
@@ -217,7 +217,7 @@
 .header-list,
 .content-list {
   .label {
-    width: 300px;
+    width: 17.5em;
 
     &.month {
       display: flex;
@@ -250,7 +250,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: 0 5px;
-  gap: 2em;
+  gap: 1em;
 }
 
 .header-list {
@@ -264,7 +264,7 @@
 
   .column-item {
     display: flex;
-    width: 92px;
+    width: 5.75em;
     justify-content: right;
     padding: 0.625em 0.875em;
     p {
@@ -278,7 +278,7 @@
     display: flex;
     align-items: center;
     padding: 0 15px;
-    min-width: 294px;
+    min-width: 17.5em;
     p {
       flex: 1;
       text-align: left;
@@ -289,12 +289,12 @@
 
 
 .header-list :nth-child(2) {
-  width: 92px;
+  width: 5.75em;
   height: 100%;
 }
 
-.header-list div:last-child {
-  width: 200px;
+.header-list div:last-child, .column-item:last-child {
+  width: 16em;
   justify-content: flex-start;
   padding-left: 0;
 }
@@ -313,13 +313,13 @@
     display: flex;
     align-items: center;
     padding: 0 15px;
-    width: 294px;
+    width: 17.5em;
     height: 100%;
 
     p {
       flex: 1;
       margin-left: 8px;
-      font-size: 14;
+      font-size: 0.875em;
       font-weight: bold;
     }
   }
@@ -337,7 +337,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 200px;
     padding: 0.5em 0em;
 
     p {
@@ -428,7 +427,7 @@
         display: flex;
         align-items: center;
         padding: 0 15px;
-        width: 294px;
+        width: 17.5em;
         height: 100%;
 
         p {

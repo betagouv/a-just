@@ -128,7 +128,7 @@
      }"
     *ngIf="hasValuesToShow"
   >
-    <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens" [id]="'contentieux-' + item.id">
+    <div class="contentieux-item header-list"  [ngClass]="{'is-windows': isNotIOS()}" *ngFor="let item of referentiel?.childrens" [id]="'contentieux-' + item.id">
       <div class="contentieux-item-label">
         <p>{{ item.label }}</p>
       </div>
