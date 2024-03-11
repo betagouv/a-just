@@ -806,11 +806,11 @@ export class PopinEditActivitiesComponent
       console.log('element:', element)
       if (element) {
         let scrollWidth = element.offsetWidth - element.clientWidth;
-        console.log('scrollWidth:', scrollWidth)
-        return scrollWidth.toString()
+        console.log('scrollWidth:', scrollWidth.toString() + 'px')
+        return  scrollWidth.toString() + 'px';
       }
     }
-    return '0';
+    return '0px';
   }
 
 }
