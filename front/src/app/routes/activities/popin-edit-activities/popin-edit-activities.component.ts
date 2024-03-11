@@ -97,7 +97,7 @@ export class PopinEditActivitiesComponent
   /**
    *  Vérifie que le mois prochain comporte des données d'activité
   */
-  hasNextMonth : boolean = false  
+  hasNextMonth : boolean = false
 
   /**
    * Constructeur
@@ -115,18 +115,21 @@ export class PopinEditActivitiesComponent
 
   ngAfterViewInit() {
     this.checkIfNextMonthHasValue()
+    // Mise en gris du background du sous-contentieux sélectionné et scroll automatique au niveau de ce contentieux
     const container = document.getElementById('contentieux-list')
     if (container) {
       const element = container.querySelector(`#contentieux-${this.selectedReferentielId}`)
       const logicielElement = container.querySelector(`.selected-contentieux-${this.selectedReferentielId}`)
       if (element) {
+        // Mise en gris du background
         const referentielList = container.querySelectorAll('.header-list')
         const containerTop = container.getBoundingClientRect().top
         const selectedElementTop = element.getBoundingClientRect().top
         let delta = containerTop
-        
+
         element.classList.add('grey-bg')
 
+        // Scroll automatique au niveau de ce contentieux
         for (let i = 0; i < referentielList.length; i++) {
           const topHeader = referentielList[i].getBoundingClientRect().top
           if (topHeader === containerTop || containerTop < selectedElementTop) {
@@ -134,7 +137,6 @@ export class PopinEditActivitiesComponent
             break
           }
         }
-
         let scrollTop = selectedElementTop - delta + container.scrollTop - 8
         container.scroll({
           behavior: 'smooth',
@@ -142,10 +144,10 @@ export class PopinEditActivitiesComponent
         })
       }
     }
-    
+
     // Mettre la couleur du background du header selon le contentieux
     if (this.referentiel){
-      const element = document.getElementById('header-popin') 
+      const element = document.getElementById('header-popin')
       const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
 
       if (element)
@@ -167,10 +169,10 @@ export class PopinEditActivitiesComponent
 
       const date1 = new Date(tmp.getFullYear(), tmp.getMonth(), 1)
       const date2 = new Date(this.activityMonth.getFullYear(), this.activityMonth.getMonth(), 1)
-      
+
       if (date1 > date2)
         this.hasNextMonth = true
-      else 
+      else
         this.hasNextMonth = false
     })
   }
@@ -388,9 +390,8 @@ export class PopinEditActivitiesComponent
     if (updates.length) {
       this.total.in = this.referentiel?.in || this.referentiel?.originalIn
       this.total.out = this.referentiel?.out || this.referentiel?.originalOut
-      this.total.stock =
-        this.referentiel?.stock || this.referentiel?.originalStock
-
+      this.total.stock = this.referentiel?.stock || this.referentiel?.originalStock
+      console.log('Updates:', updates)
       updates.map((value: any) => {
         let nodeValue = null
         switch (value.node) {
@@ -407,6 +408,7 @@ export class PopinEditActivitiesComponent
         }
         if (nodeValue !== value.value) {
           const delta = (value.value || 0) - (nodeValue || 0)
+
           switch (value.node) {
             case 'entrees':
               {
@@ -426,17 +428,21 @@ export class PopinEditActivitiesComponent
           }
         }
       })
-      let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
-      let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
+      // let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
+      // let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
 
-      if ((this.referentiel?.in || 0) > (this.total.in || 0)) 
-       deltaEntrees *= -1
-      if ((this.referentiel?.out || 0) > (this.total.out || 0))
-        deltaSorties *= -1
+      // // if ((this.referentiel?.in || 0) > (this.total.in || 0))
+      // //   deltaEntrees *= -1
+      // // if ((this.referentiel?.out || 0) > (this.total.out || 0))
+      // //   deltaSorties *= -1
 
-      if (deltaEntrees || deltaSorties) {
-        this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
-      }
+      // console.log('DeltaEntrees:', deltaEntrees)
+      // console.log('DeltaSorties:', deltaSorties)
+      // console.log('total.stock_01:', this.total.stock)
+      // if (deltaEntrees || deltaSorties) {
+      //   this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
+      //   console.log('this.total.stock_02:', this.total.stock)
+      // }
 
       if (
         this.total.in !== null &&
@@ -487,30 +493,46 @@ export class PopinEditActivitiesComponent
           calculated: false,
         }
       }
-
+      if (nodeName === "stock") {
+        console.log('this.updates[`${contentieux.id}-${nodeName}`] 00:', this.updates[`${contentieux.id}-${nodeName}`])
+      }
       const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
       if (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && contentieux.activityUpdated.stock.value === null || !contentieux.activityUpdated.stock))) {
-        if ( (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated) || !this.updates[`${contentieux.id}-stock`]) {
+        if (( this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated ) || !this.updates[`${contentieux.id}-stock`]) {
           const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
           const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
-          
-          const entreeValue : number =  Number(entree.value) || contentieux.originalIn || 0
-          const sortieValue : number = Number(sortie.value) || contentieux.originalOut || 0
-          const stockValue = contentieux.originalStock ? contentieux.originalStock : 0
+          const entreeValue : number =  (entree.value !== null && entree.value.length > 0) ? Number(entree.value) : (contentieux.originalIn ? contentieux.originalIn : 0)
+          const sortieValue : number = (sortie.value !== null && sortie.value.length > 0) ? Number(sortie.value) : (contentieux.originalOut ? contentieux.originalOut : 0)
 
-          const newStock = stockValue + entreeValue - sortieValue
-          this.updates[`${contentieux.id}-stock`] = {
-            value: newStock,
-            node: 'stock',
-            contentieux,
-            calculated: true,
-          }
-          stock.value =  newStock > 0 ? newStock.toString() : '0'
+          this.getLastMonthStock(contentieux.id).then(resp => {
+            const newStock = resp + entreeValue - sortieValue
+            this.updates[`${contentieux.id}-stock`] = {
+              value: newStock,
+              node: 'stock',
+              contentieux,
+              calculated: true,
+            }
+            console.log('this.updates[`${contentieux.id}-${nodeName}`] 01:', this.updates[`${contentieux.id}-stock`])
+            stock.value =  newStock > 0 ? newStock.toString() : '0'
+          })
         }
       }
-    
+
       this.updateTotal()
 
+  }
+
+  async getLastMonthStock(contentieuxId : number) {
+    let date : Date =  new Date(this.activityMonth)
+    date.setMonth(this.activityMonth.getMonth() - 1)
+    return this.activitiesService.loadMonthActivities(date).then(resp => {
+      const tmp = resp.list.find((elem: any) => {
+        if (elem.contentieux.id === contentieuxId)
+          return elem
+      })
+      const stock = tmp.stock | tmp.originalStock | 0
+      return stock
+    })
   }
 
   /**
@@ -556,7 +578,7 @@ export class PopinEditActivitiesComponent
           sorties:  null,
           stock:  null,
         }
-        
+
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
@@ -577,7 +599,7 @@ export class PopinEditActivitiesComponent
           )
         }
       }
-        
+
       if (updates.length && this.referentiel) {
         this.appService.notification(
           `Le contentieux <b>${this.referentielMappingName(
@@ -630,8 +652,8 @@ export class PopinEditActivitiesComponent
             this.referentiel.childrens = (this.referentiel.childrens || []).map(
               (child) => ({ ...child, ...getValuesFromList(child.id) })
             )
-            
-            
+
+
             this.updateTotal()
           }
         }
@@ -654,19 +676,19 @@ export class PopinEditActivitiesComponent
 
   hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
 
-    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) 
+    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null)
       return false
 
     switch (node) {
-      case 'entrees': 
+      case 'entrees':
         if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-      case 'sorties': 
+      case 'sorties':
         if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-      case 'stock': 
+      case 'stock':
         if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
@@ -725,24 +747,24 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any, isForBulb? : boolean) {   
+  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any, isForBulb? : boolean) {
     let input = null
     if (inputValue !== null)
       input = +inputValue
     switch (node) {
-      case 'entrees': 
+      case 'entrees':
           if (!inputValue)
             input = item.in
           if (input !== null && input !== item.originalIn)
             return true
         break;
-      case 'sorties': 
+      case 'sorties':
           if (!inputValue)
             input = item.out
           if (input !== null && input !== item.originalOut)
             return true
         break;
-      case 'stock': 
+      case 'stock':
           if (!inputValue)
             input = item.stock
           if ((input !== null && input !== item.originalStock)) {
@@ -776,6 +798,19 @@ export class PopinEditActivitiesComponent
         window.open(url)
      }
     }
+  }
+
+  getScrollbarWidth() {
+    if (this.isNotIOS()) {
+      const element =document.getElementById('contentieux-list')
+      console.log('element:', element)
+      if (element) {
+        let scrollWidth = element.offsetWidth - element.clientWidth;
+        console.log('scrollWidth:', scrollWidth)
+        return scrollWidth.toString()
+      }
+    }
+    return '0';
   }
 
 }
