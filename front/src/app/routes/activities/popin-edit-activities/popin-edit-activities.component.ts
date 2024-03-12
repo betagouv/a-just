@@ -177,6 +177,12 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  checkIfHasUpdates() {
+    if (Object.keys(this.updates).length > 0)
+      return true
+    return false
+  }
+
   /**
    * Retour des titres des infos bulles
    * @param type
@@ -488,6 +494,7 @@ export class PopinEditActivitiesComponent
     nodeName: string,
     contentieux: ContentieuReferentielInterface
   ) {
+    console.log('this.updates 00:', this.updates)
 
     let value: null | number = null
     if (newValue !== '' && newValue.length > 0) {
@@ -525,7 +532,7 @@ export class PopinEditActivitiesComponent
         })
       }
     }
-    //console.log('this.updates 00:', this.updates)
+    console.log('this.updates 00:', this.updates)
     setTimeout(() => this.updateTotal(), 1000)
   }
 

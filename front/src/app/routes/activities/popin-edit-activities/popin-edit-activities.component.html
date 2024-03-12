@@ -204,7 +204,18 @@
     >
       Aller au mois suivant
     </button>
-    <button class="small primary" (click)="onSave()">Enregistrer</button>
+    <button 
+      class="small"
+      [ngClass]="{
+        'gray': !checkIfHasUpdates(),
+        'outline': !checkIfHasUpdates(),
+        'primary': checkIfHasUpdates(),
+      }"
+      (click)="onSave()"
+      [disabled]="!checkIfHasUpdates()"
+    >
+      Enregistrer
+    </button>
   </div>
 </aj-popup>
 
