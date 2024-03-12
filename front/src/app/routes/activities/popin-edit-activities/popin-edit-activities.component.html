@@ -1,4 +1,4 @@
-<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4}">
+<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4, 'margin-left': this.wrapper?.panelHelper }">
   <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
@@ -304,8 +304,8 @@
 >
   <i
     class="{{
-      (  level === 3 || value === null || !checkIfBlue(contentieux, type, value, true) ) ?
-      'ri-lightbulb-flash-line' : 'ri-lightbulb-flash-fill'
+      (  level === 3 || value === null || checkIfBlue(contentieux, type, value, true) ) ?
+      'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }} 
     cursor-pointer 
     {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"

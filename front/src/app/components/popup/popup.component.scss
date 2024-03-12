@@ -155,6 +155,12 @@
       overflow: visible !important;
     }
   }
+
+  &.margin-left .popup {
+    margin-left: 18%;
+    width: 100%;
+    transition: margin-left 1s;
+  }
 }
 
 .popup {

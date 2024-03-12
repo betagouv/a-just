@@ -562,9 +562,7 @@ export class PopinEditActivitiesComponent
       })
     } else {
       let updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
-      console.log('Updates_00:', updates)
       updates.map((elem : any) => delete elem.calculated)
-      console.log('Updates_01:', updates)
 
       let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
@@ -682,7 +680,6 @@ export class PopinEditActivitiesComponent
 
 
   hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
-
     if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null)
       return false
 
@@ -775,8 +772,9 @@ export class PopinEditActivitiesComponent
           if (!inputValue)
             input = item.stock
           if ((input !== null && input !== item.originalStock)) {
-            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock))))
+            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
               return false
+            }
             return true
           }
         break;
@@ -809,7 +807,7 @@ export class PopinEditActivitiesComponent
 
   getScrollbarWidth() {
     if (this.isNotIOS()) {
-      const element =document.getElementById('contentieux-list')
+      const element = document.getElementById('contentieux-list')
       if (element) {
         let scrollWidth = element.offsetWidth - element.clientWidth;
         return  scrollWidth.toString() + 'px';
