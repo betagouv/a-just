@@ -10,19 +10,6 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
 
-  <ng-template [ngIf]="ssoIsActivate">
-    <button
-      class="outline white strict-border sso-bt"
-      (click)="onUseSSO()"
-      [ngClass]="{disabled: !canUseSSO}"
-    >
-      <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
-      Rejoindre avec Pages Blanches
-    </button>
-
-    <div class="or"><p>ou</p></div>
-  </ng-template>
-
   <div class="signup">
     <p>Vous n’avez pas encore de compte</p>
     <p><b>Rejoindre A-JUST</b></p>
@@ -35,7 +22,22 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <p>Vous avez déjà un compte</p>
-    <h3>Se connecter</h3>
+
+    <ng-template [ngIf]="ssoIsActivate">
+      <button
+        class="outline white strict-border sso-bt"
+        (click)="onUseSSO()"
+        [ngClass]="{disabled: !canUseSSO}"
+      >
+        <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
+        Se connecter avec Pages Blanches
+      </button>
+  
+      <div class="or"><p>ou</p></div>
+    </ng-template>
+
+    <h3>Se connecter avec son compte</h3>
+
     <label>Email</label>
     <input
       class="ethics-ui"
