@@ -3,7 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
+import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { environment } from 'src/environments/environment'
 
 const MIN_PASSWORD_LENGTH = 8
 
@@ -31,7 +33,14 @@ export class SignupPage {
     fonctionAutre: new FormControl(),
     responsable: new FormControl(),
   })
-
+  /**
+   * SSO is activate to this env
+   */
+  ssoIsActivate: boolean = environment.enableSSO
+  /**
+   * Can user SSO
+   */
+  canUseSSO: boolean = true
   /**
    * Step d'inscription
    */
@@ -59,8 +68,8 @@ export class SignupPage {
     'Directeur/trice de greffe adjoint(e)',
     'Directeur/trice des services de greffe judiciaires',
   ]
-
   tjs: any[] = []
+  provider: string = "";
 
   /**
    * Params
@@ -81,7 +90,8 @@ export class SignupPage {
     private router: Router,
     private title: Title,
     private serverService: ServerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ssoService: SSOService
   ) {
     this.title.setTitle('Embarquement | A-Just')
     this.loadTj()
@@ -101,6 +111,11 @@ export class SignupPage {
 
       if(p.lastName) {
         this.form.get('lastName')?.setValue(p.lastName)
+      }
+
+      if(p.provider) {
+        this.provider = p.provider
+        this.signUpStep = 2
       }
     })
   }
@@ -314,5 +329,15 @@ export class SignupPage {
         this.form.controls['tj'].setValue(tj.label)
       }
     })
+  }
+
+  onUseSSO() {
+    //if (!this.canUseSSO) {
+    //  alert(
+    //    "Vous devez être dans l'environement Justice pour utiliser page blanche !"
+    //  )
+    //} else {
+    window.location.href = this.ssoService.getSSOLogin()
+    //}
   }
 }
