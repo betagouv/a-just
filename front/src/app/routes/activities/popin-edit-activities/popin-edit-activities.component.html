@@ -8,7 +8,7 @@
           <i
             *ngIf="referentiel && referentiel.helpUrl"
             class="ri-lightbulb-flash-line cursor-pointer blue"
-            (click)="onShowHelpPanel()"
+            (click)="onShowHelpPanel({label: referentiel.label, url: referentiel.helpUrl})"
           ></i>
         </div>
       </div>
@@ -317,11 +317,11 @@
     class="{{
       ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value, true) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
-    }} 
-    cursor-pointer 
+    }}
+    cursor-pointer
     {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"
     #light
-    [id]="'tooltip-icon-' + contentieux.id +'-' + type " 
+    [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="$event.stopPropagation()"
   ></i>
   <aj-tooltips
@@ -331,7 +331,7 @@
     [content]="getTooltipBody(type, contentieux, value, level)"
     [footer]="getTooltipFooter(type, contentieux, value, level)"
     class="medium"
-    [ngClass]="{ 
+    [ngClass]="{
       black: value === null, 
       left: type === 'stock',
       top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 4 ),
