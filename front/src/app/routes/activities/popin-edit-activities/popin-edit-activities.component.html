@@ -315,7 +315,7 @@
 >
   <i
     class="{{
-      (  level === 3 || value === null || checkIfBlue(contentieux, type, value, true) ) ?
+      ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value, true) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }} 
     cursor-pointer 
