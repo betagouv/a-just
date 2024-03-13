@@ -673,14 +673,14 @@ export class PopinEditActivitiesComponent
     })
   }
 
-  onShowHelpPanel() {
+  onShowHelpPanel({label, url} : {label: string, url: string}) {
     if (this.wrapper && this.referentiel && this.referentiel.helpUrl) {
       this.wrapper?.onForcePanelHelperToShow({
-        title: `Données d'activité ${this.referentielMappingName(
-          this.referentiel.label
-        )}`,
-        path: this.referentiel.helpUrl,
-        printSubTitle: true,
+        title: '',
+        path: url,
+        subTitle: '',
+        printSubTitle: false,
+        bgColor: this.referentielMappingColorActivity(label)
       })
     }
   }
