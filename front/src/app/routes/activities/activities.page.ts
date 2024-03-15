@@ -20,7 +20,6 @@ import { autoFocus } from 'src/app/utils/dom-js'
 import { downloadFile } from 'src/app/utils/system'
 import { activityPercentColor } from 'src/app/utils/activity'
 import { referentielMappingName } from 'src/app/utils/referentiel'
-//import { filterReferentiels } from 'src/app/utils/referentiel'
 
 /**
  * Composant page activité

@@ -673,14 +673,66 @@ export class PopinEditActivitiesComponent
     })
   }
 
-  onShowHelpPanel({label, url} : {label: string, url: string}) {
-    if (this.wrapper && this.referentiel && this.referentiel.helpUrl) {
+  onShowHelpPanel({level, cont, node, url} : {level?: number, cont?: ContentieuReferentielInterface, node?: string, url?: string}) {
+    console.log('referentiels:', this.referentiel)
+    if (cont && node) {
+      console.log('level:', level)
+      console.log('cont:', cont)
+      console.log('Node:', node)
+      switch (node) {
+        case 'entrees':
+          if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
+            //updated
+            console.log('Entree modifié')
+            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+          } else {
+            //Not updated
+            console.log('Entree non modifié')
+            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+          }
+          break;
+        case 'sorties':
+          if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
+            //updated
+            console.log('Sortie modifié')
+            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+          } else {
+            //Not updated
+            console.log('Sortie non modifié')
+            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+          }
+          break;
+        case 'stock':
+          if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
+            //updated
+            if (level === 3) //Level 3 -> Total | Leval 4: sous-contentieux
+              url = ''
+            else { // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
+              console.log('this.updates[`${cont.id}-${node}`]:', this.updates[`${cont.id}-${node}`])
+              if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null) || (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
+                console.log('Stock Ajusté')
+                url = ''
+              }
+              else {
+                console.log('Stock calculé')
+                url = ''              
+              }
+            }
+          } else {
+            //Not updated
+            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            console.log('Stock jamais modififé')
+          }
+          break;
+      }
+    }
+    if (this.wrapper && this.referentiel && url) {
       this.wrapper?.onForcePanelHelperToShow({
         title: '',
         path: url,
         subTitle: '',
         printSubTitle: false,
-        bgColor: this.referentielMappingColorActivity(label)
+        bgColor: this.referentielMappingColorActivity(this.referentiel.label)
       })
     }
   }
@@ -703,7 +755,7 @@ export class PopinEditActivitiesComponent
         if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-   }
+    }
    return false
   }
 
