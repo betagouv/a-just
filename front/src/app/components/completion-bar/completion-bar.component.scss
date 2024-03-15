@@ -1,6 +1,15 @@
 @import '../../styles/utils.scss';
 
 :host {
+  &.flex-center .progression-bar {
+    display: flex;
+    align-items: center;
+  }
+
+  &.height-24 .progression-bar {
+    height: 24px;
+  }
+  
   .progression-bar {
     width: 100%;
 
