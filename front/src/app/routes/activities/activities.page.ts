@@ -529,9 +529,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @returns
    */
   getTooltipTitle(
-    {user, date} : {user: UserInterface , date: Date}
+    {user, date} : {user?: UserInterface , date?: Date} = {}
   ) {
+    if (user && date)
       return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
+    else
+      return `<i class="ri-lightbulb-flash-line"></i> Calculé `
   }
 
   /**
@@ -539,10 +542,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @param contentieux
    * @returns
    */
-  getTooltipBody(contentieux: ContentieuReferentielActivitiesInterface,) {
-    /*switch (contentieux) {
-    }*/
-    return ''
+  getTooltipBody() {
+    return "Cette valeur de stock a été recalculée automatiquement, car vous avez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou parce que vous avez A-JUSTé les entrées ou sorties du mois en cours."
   }
 
   /**
