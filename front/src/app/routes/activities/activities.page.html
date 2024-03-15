@@ -177,12 +177,12 @@
                       >
                         {{ itemGroup.in !== null ? itemGroup.in : ( itemGroup.originalIn !== null ? itemGroup.originalIn : '-' ) }}
                       </p>
-                      <!--itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date-->
-                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'entrees') && itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.value !== null && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
-                        <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.entrees.user, date: itemGroup.activityUpdated.entrees.date})">
-                        </aj-tooltips>
-                      </ng-template>
                     </div>
+                    <!--itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date-->
+                    <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'entrees') && itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.value !== null && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date">
+                      <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.entrees.user, date: itemGroup.activityUpdated.entrees.date})">
+                      </aj-tooltips>
+                    </ng-template>
                   </div>
                   <div class="column-item">
                     <div>
@@ -197,12 +197,12 @@
                       >
                         {{ itemGroup.out !== null ? itemGroup.out : ( itemGroup.originalOut !== null ? itemGroup.originalOut : '-' ) }}
                       </p>
-                      <!--itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date-->
-                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'sorties') && itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.value !== null && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
-                        <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.sorties.user, date: itemGroup.activityUpdated.sorties.date})">
-                        </aj-tooltips>
-                      </ng-template>
                     </div>
+                    <!--itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date-->
+                    <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'sorties') && itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.value !== null && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date">
+                      <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.sorties.user, date: itemGroup.activityUpdated.sorties.date})">
+                      </aj-tooltips>
+                    </ng-template>
                   </div>
                   <div class="column-item">
                     <div (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
@@ -217,11 +217,11 @@
                       >
                         {{ itemGroup.stock !== null ? itemGroup.stock : ( itemGroup.originalStock !== null ? itemGroup.originalStock : '-' ) }}
                       </p>
-                      <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.value !== null && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
-                        <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
-                        </aj-tooltips>
-                      </ng-template>
                     </div>
+                    <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.value !== null && itemGroup.activityUpdated.stock.user && itemGroup.activityUpdated.stock.date">
+                      <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
+                      </aj-tooltips>
+                    </ng-template>
                   </div>
                   <div 
                     class="column-item complete-btn cursor-pointer" 
