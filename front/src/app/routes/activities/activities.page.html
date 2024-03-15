@@ -222,6 +222,10 @@
                       <aj-tooltips class="medium" [title]="getTooltipTitle({user: itemGroup.activityUpdated.stock.user, date: itemGroup.activityUpdated.stock.date})">
                       </aj-tooltips>
                     </ng-template>
+                    <ng-template [ngIf]="checkIfBlueBottom(itemGroup, 'stock') && itemGroup.stock !== null && itemGroup.activityUpdated && (itemGroup.activityUpdated.stock === null || (itemGroup.activityUpdated.stock && itemGroup.activityUpdated.stock.value === null))">
+                      <aj-tooltips class="medium" [title]="getTooltipTitle()" [content]="getTooltipBody()">
+                      </aj-tooltips>
+                    </ng-template>
                   </div>
                   <div 
                     class="column-item complete-btn cursor-pointer" 
@@ -313,26 +317,7 @@
   </aj-tooltips>
 </ng-template>-->
 
-<ng-template
-  #tooltip
-  let-contentieux="contentieux"
->
-  <i
-    class="ri-lightbulb-flash-line cursor-pointer blue"
-    #light
-    (click)="$event.stopPropagation()"
-  ></i>
-  <aj-tooltips
-    [onOver]="false"
-    [onClick]="light"
-    [title]="getTooltipTitle( contentieux )"
-    [content]="getTooltipBody( contentieux )"
-    [footer]="getTooltipFooter( contentieux )"
-    class="medium"
-    [ngClass]=""
-  >
-  </aj-tooltips>
-</ng-template>
+
 
 
 <aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
