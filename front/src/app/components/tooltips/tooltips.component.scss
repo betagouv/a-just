@@ -11,7 +11,7 @@
     }
 
     .triangle {
-      right: 35px;
+      //right: 35px;
       left: inherit;
     }
   }
@@ -39,6 +39,12 @@
 
   &.large .tooltip-text {
     width: 700px;
+  }
+
+  &.no-bg .tooltip-text {
+    > div {
+      background-color: transparent !important;
+    }
   }
 
   &.black {
@@ -91,12 +97,14 @@
     }
 
     .triangle {
+      position: absolute;
       width: 0;
       height: 0;
       border-width: 0 3px 4px 3px;
       border-color: transparent transparent fColor(tooltipBgTitleColor)
         transparent;
       border-style: solid;
+      top: -4px;
       left: calc(50% - 2px);
     }
 
