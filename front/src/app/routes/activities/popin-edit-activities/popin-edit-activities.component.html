@@ -8,7 +8,7 @@
           <i
             *ngIf="referentiel && referentiel.helpUrl"
             class="ri-lightbulb-flash-line cursor-pointer blue"
-            (click)="onShowHelpPanel({label: referentiel.label, url: referentiel.helpUrl})"
+            (click)="onShowHelpPanel({url: referentiel.helpUrl})"
           ></i>
         </div>
       </div>
@@ -322,7 +322,7 @@
     {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"
     #light
     [id]="'tooltip-icon-' + contentieux.id +'-' + type "
-    (click)="$event.stopPropagation()"
+    (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
   ></i>
   <aj-tooltips
     [onOver]="false"
