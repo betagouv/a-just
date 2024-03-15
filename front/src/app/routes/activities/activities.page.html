@@ -88,7 +88,7 @@
                 </p>
               </div>
               <ng-template [ngIf]="checkIfBlueBottom(ref, 'entrees') && ref.in !== null && ref.activityUpdated && ref.activityUpdated.entrees && ref.activityUpdated.entrees.user && ref.activityUpdated.entrees.date">
-                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.entrees.user, date: ref.activityUpdated.entrees.date})">
+                <aj-tooltips class="medium no-bg" [title]="getTooltipTitle({user: ref.activityUpdated.entrees.user, date: ref.activityUpdated.entrees.date})">
                 </aj-tooltips>
               </ng-template>
             </div>
@@ -101,7 +101,7 @@
                 </p>
               </div>
               <ng-template [ngIf]="checkIfBlueBottom(ref, 'sorties') && ref.out !== null && ref.activityUpdated && ref.activityUpdated.sorties && ref.activityUpdated.sorties.user && ref.activityUpdated.sorties.date">
-                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.sorties.user, date: ref.activityUpdated.sorties.date})">
+                <aj-tooltips class="medium no-bg" [title]="getTooltipTitle({user: ref.activityUpdated.sorties.user, date: ref.activityUpdated.sorties.date})">
                 </aj-tooltips>
               </ng-template>
             </div>
@@ -114,7 +114,7 @@
                 </p>
               </div>
               <ng-template [ngIf]="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
-                <aj-tooltips class="medium" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
+                <aj-tooltips class="medium no-bg" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
                 </aj-tooltips>
               </ng-template>
             </div>
