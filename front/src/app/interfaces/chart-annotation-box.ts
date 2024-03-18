@@ -31,6 +31,14 @@ export interface ChartAnnotationBoxInterface {
    */
   projectedFon?: number | null
   /**
+   * Valeur simulée EAM
+   */
+  simulatedCont?: number | null
+  /**
+ * Valeur projetée EAM
+ */
+  projectedCont?: number | null
+  /**
    * Valeur simulée fonctionnaire
    */
   simulatedFon?: number | null

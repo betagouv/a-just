@@ -36,6 +36,12 @@
 
 :host {
 
+  aj-dtes-chart,
+  aj-etp-chart,
+  aj-in-out-chart {
+    margin: 16px 24px 0 24px;
+  }
+
   .intro-simulateur {
     .first-pan {
       padding: 36px 32px;
