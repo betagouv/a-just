@@ -44,6 +44,7 @@ export const getReferentielDetail = (label: string) => {
  * Liste des réferentiels devant être saisi pour les DDG
  */
 export const DDG_REFERENTIELS_MAG = [
+    "COUR D'ASSISES",
     "DÉPARTAGE PRUD'HOMAL",
     "CSM",
     "TUTELLES MINEURS",
