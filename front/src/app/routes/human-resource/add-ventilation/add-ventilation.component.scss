@@ -33,7 +33,7 @@
   background-color: white;
   border-radius: 8px;
 
-  > .header {
+  >.header {
     padding: 0 40px;
     height: 68px;
     display: flex;
@@ -65,14 +65,14 @@
     }
   }
 
-  > .administration {
+  >.administration {
     padding: 25px 40px 40px 40px;
     border-bottom: solid 1px fColor(cgrayDefault);
 
-    > div {
+    >div {
       display: flex;
 
-      > div {
+      >div {
         flex: 1;
 
         .label-aj {
@@ -81,14 +81,14 @@
       }
     }
 
-    > p {
+    >p {
       font-weight: bold;
       color: fColor(titleSelect);
       margin-bottom: 16px;
     }
   }
 
-  > .activities {
+  >.activities {
     padding: 16px 24px 24px 24px;
     border-bottom: solid 1px fColor(cgrayDefault);
 
@@ -96,8 +96,8 @@
       display: flex;
       align-items: center;
       margin-bottom: 16px;
-      
-      > p {
+
+      >p {
         font-weight: bold;
         color: fColor(cblack);
         margin-left: 16px;
@@ -105,7 +105,7 @@
 
       .download {
         padding: 0;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         border-bottom: 1px solid #000091;
         color: #000091;
@@ -113,7 +113,7 @@
     }
   }
 
-  > .date-start {
+  >.date-start {
     padding: 13px 40px;
     display: flex;
     align-items: center;
@@ -130,7 +130,7 @@
     }
   }
 
-  > .indisponibilities {
+  >.indisponibilities {
     padding: 16px 24px 24px 24px;
 
     .indispo-header {
@@ -154,7 +154,7 @@
     }
   }
 
-  > .actions {
+  >.actions {
     background-color: fColor(cgrayDefault);
     padding: 10px;
     display: flex;
@@ -163,7 +163,7 @@
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 
-    > button {
+    >button {
       margin: 0 8px;
     }
   }
