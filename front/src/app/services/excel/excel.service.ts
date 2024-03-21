@@ -279,6 +279,10 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       }
 
+      let juridictionCellToCheck = (report.worksheets[2].getCell('C' + (+index + 3)).value! as string) || ""
+      if (juridictionCellToCheck.includes('TPR ')) {
+        report.worksheets[2].getCell('C' + (+index + 3)).value = juridictionCellToCheck.replace('TPR ', 'TPRX ')
+      }
       const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
       if (fonctionCellToCheck.includes("PLACÉ")) {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation =
