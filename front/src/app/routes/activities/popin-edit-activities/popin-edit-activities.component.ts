@@ -684,43 +684,43 @@ export class PopinEditActivitiesComponent
           if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
             //updated
             console.log('Entree modifié')
-            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            url = level === 3 ? 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/entrees/total-des-entrees' : 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/entrees/entrees-a-justees' //Level 3 -> Total | Leval 4: sous-contentieux
           } else {
             //Not updated
             console.log('Entree non modifié')
-            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            url = level === 3 ? 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/entrees/total-des-entrees' : 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/entrees/entrees' //Level 3 -> Total | Leval 4: sous-contentieux
           }
           break;
         case 'sorties':
           if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
             //updated
             console.log('Sortie modifié')
-            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            url = level === 3 ? 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/sorties/total-des-sorties' : 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/sorties/sorties-a-justees' //Level 3 -> Total | Leval 4: sous-contentieux
           } else {
             //Not updated
             console.log('Sortie non modifié')
-            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            url = level === 3 ? 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/sorties/total-des-sorties' : 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/sorties/sorties' //Level 3 -> Total | Leval 4: sous-contentieux
           }
           break;
         case 'stock':
           if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
             //updated
             if (level === 3) //Level 3 -> Total | Leval 4: sous-contentieux
-              url = ''
+              url = 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/stocks/stock-total'
             else { // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
               console.log('this.updates[`${cont.id}-${node}`]:', this.updates[`${cont.id}-${node}`])
               if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null) || (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
                 console.log('Stock Ajusté')
-                url = ''
+                url = 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/stocks/stock-a-juste'
               }
               else {
                 console.log('Stock calculé')
-                url = ''              
+                url = 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/stocks/stock-calcule'              
               }
             }
           } else {
             //Not updated
-            url = level === 3 ? '' : '' //Level 3 -> Total | Leval 4: sous-contentieux
+            url = level === 3 ? 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/stocks/stock-total' : 'https://app.gitbook.com/o/ERPUa4pw8EhQDGz6MqrT/s/dxJSDfTKgVdu2DJ0b89k/stocks/stock' //Level 3 -> Total | Leval 4: sous-contentieux
             console.log('Stock jamais modififé')
           }
           break;

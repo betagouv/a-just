@@ -324,7 +324,7 @@
     [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
   ></i>
-  <aj-tooltips
+  <!-- <aj-tooltips
     [onOver]="false"
     [onClick]="light"
     [title]="getTooltipTitle(type, contentieux, value)"
@@ -339,5 +339,5 @@
       large: referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 4 ) && type === 'stock',
     }"
   >
-  </aj-tooltips>
+  </aj-tooltips> -->
 </ng-template>
