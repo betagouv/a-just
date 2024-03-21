@@ -77,10 +77,24 @@
       <div class="top">
         <p>Répartition du temps disponible: </p>
         <pre> </pre>
-        <a (click)="downloadCalculator()" class="download">
-          Télécharger la calculatrice de ventilations
-          <mat-icon>download</mat-icon>
-        </a>
+        <div>
+          <a (click)="downloadCalculator()" class="download">
+            Télécharger la calculatrice de ventilations
+            <mat-icon>download</mat-icon>
+          </a>&nbsp;<br>
+          <a (click)="downloadEtpTemplate('MAGISTRAT')" class="download">
+            Télécharger template Magistat
+            <mat-icon>download</mat-icon>
+          </a>&nbsp;
+          <a (click)="downloadEtpTemplate('GREFFE')" class="download">
+            Télécharger template Greffe
+            <mat-icon>download</mat-icon>
+          </a>
+        </div>
+        <div>
+          <label for="file" class="label-file">Importer un fichier</label>
+          <input id="file-picker" type="file" id="file" class="input-file" accept=".xlsx" (change)="getFile($event)" />
+        </div>
       </div>
       <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
         (referentielChange)="onNewReferentiel($event)" #panelActivities

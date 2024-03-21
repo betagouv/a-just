@@ -8,7 +8,7 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
-import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
+import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_GREFFE, IMPORT_ETP_MAG } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -24,6 +24,7 @@ import { ServerService } from 'src/app/services/http-server/server.service';
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
+import * as xlsx from 'xlsx';
 
 /**
  * Panneau pour ajouter / modifier une situation
@@ -190,7 +191,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           if (!validationPattern.test(str_value)) {
             value = this.parseFloat(str_value.substring(0, str_value.length - 1))
           }
-          this.form.get('etp')?.setValue(value, {emitEvent: false});
+          this.form.get('etp')?.setValue(value, { emitEvent: false });
         }
       })
     )
@@ -570,11 +571,103 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     window.open(CALCULATE_DOWNLOAD_URL)
   }
 
+  async downloadEtpTemplate(type: string) {
+    const link = type === "MAGISTRAT" ? IMPORT_ETP_MAG : IMPORT_ETP_GREFFE
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: link,
+        })
+      .then((r) => {
+        return r.data
+      })
+    window.open(link)
+  }
+
   /**
    * Récupère le nom d'une catégorie
    */
   getCategoryLabel() {
     const cat = this.categories.find((c) => this.form.get('categoryId')?.value == c.id) || null
     return cat
+  }
+
+  getFile(event: any) {
+    const file = event.target.files[0];
+
+    const classe = {
+      codeImport: null,
+      value: null
+    };
+
+    this.fileReader(file, classe, event);
+  }
+
+  private fileReader(file: any, line: any, event: any) {
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+      let arrayBuffer = fileReader.result;
+      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+      const arr = new Array();
+
+      for (let i = 0; i !== data.length; i++) {
+        arr[i] = String.fromCharCode(data[i]);
+      }
+
+      const bstr = arr.join('');
+      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true });
+      const first_sheet_name = workbook.SheetNames[0];
+      const second_sheet_name = workbook.SheetNames[1];
+
+      if (second_sheet_name !== "Fonction") {
+        alert('Le fichier que vous essayez d\'importer n\'est pas au bon format, veuillez réessayer !');
+        event.target.value = '';
+        return
+      }
+
+      const category = workbook.Sheets[second_sheet_name]['C2'].v === 1 ? 'MAGISTRAT' : 'GREFFE'
+
+      const worksheet = workbook.Sheets[first_sheet_name];
+      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { raw: true });
+
+      /**
+       * Call matching function
+       */
+      console.log({ category, ...this.matchingCell(firstWorksheet, line) })
+    };
+    fileReader.readAsArrayBuffer(file);
+
+
+
+  }
+
+  private matchingCell(worksheet: any, line: any) {
+    const monTab = { value: [] };
+    let fct = null
+    let mainEtp = null
+    let startDate = null
+
+    for (let i = 0; i < worksheet.length; i++) {
+      const worksheetLine = worksheet[i];
+      console.log(worksheetLine)
+      if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
+        console.log(worksheetLine)
+        const updatedLine = {
+          codeImport: worksheetLine['__EMPTY'],
+          value: worksheetLine['__EMPTY_4']
+        };
+        line = { ...line, ...updatedLine };
+        monTab.value.push(line as never);
+      }
+      else if (worksheetLine['__EMPTY_1'] === "Fonction") fct = worksheetLine['__EMPTY_2']
+      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") startDate = worksheetLine['__EMPTY_2']
+      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail') {
+        if (worksheetLine['__EMPTY_2'] === 'Temps plein') mainEtp = 1
+        else mainEtp = worksheetLine['__EMPTY_4'] as Number
+      }
+
+    }
+    return { fct, mainEtp, startDate, ventilation: monTab }
   }
 }

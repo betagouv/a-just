@@ -7,6 +7,15 @@ export const DOCUMENTATION_URL = 'https://docs.a-just.beta.gouv.fr/documentation
  */
 export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'
 /**
+ * Lien du template import Magistrat
+ */
+export const IMPORT_ETP_MAG = '/assets/MAGISTRATS-Répartition_actuelle_des_activités.xlsx'
+/**
+ * Lien du template import Greffe
+ */
+export const IMPORT_ETP_GREFFE = '/assets/MAGISTRATS-Répartition_actuelle_des_activités.xlsx'
+
+/**
  * Lien pour créer une nouvelle fiche
  */
 export const DOCUMENTATION_CREATE_NEW_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-une-nouvelle-fiche'
