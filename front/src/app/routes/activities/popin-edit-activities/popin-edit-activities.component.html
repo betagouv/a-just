@@ -269,7 +269,7 @@
       </ng-container>
       <p [ngClass]="{
         'blue': checkIfBlue(items, type, newValue)
-      }" >{{ newValue  || '-' }}</p>
+      }" >{{ newValue  || original !== null ? original : '-' }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container
