@@ -674,11 +674,7 @@ export class PopinEditActivitiesComponent
   }
 
   onShowHelpPanel({level, cont, node, url} : {level?: number, cont?: ContentieuReferentielInterface, node?: string, url?: string}) {
-    console.log('referentiels:', this.referentiel)
     if (cont && node) {
-      console.log('level:', level)
-      console.log('cont:', cont)
-      console.log('Node:', node)
       switch (node) {
         case 'entrees':
           if (level === 3) {
@@ -686,11 +682,9 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
             //updated
-            console.log('Entree modifié')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees'
           } else {
             //Not updated
-            console.log('Entree non modifié')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees'
           }
           break;
@@ -700,11 +694,9 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
             //updated
-            console.log('Sortie modifié')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees'
           } else {
             //Not updated
-            console.log('Sortie non modifié')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties'
           }
           break;
@@ -714,19 +706,15 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
              // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
-            console.log('this.updates[`${cont.id}-${node}`]:', this.updates[`${cont.id}-${node}`])
             if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null) || (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
-              console.log('Stock Ajusté')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             }
             else {
-              console.log('Stock calculé')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'              
             }
           } else {
             //Not updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock'
-            console.log('Stock jamais modififé')
           }
           break;
       }
