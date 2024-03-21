@@ -324,20 +324,4 @@
     [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
   ></i>
-  <!-- <aj-tooltips
-    [onOver]="false"
-    [onClick]="light"
-    [title]="getTooltipTitle(type, contentieux, value)"
-    [content]="getTooltipBody(type, contentieux, value, level)"
-    [footer]="getTooltipFooter(type, contentieux, value, level)"
-    class="medium"
-    [ngClass]="{
-      black: value === null, 
-      left: type === 'stock',
-      top:  referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 4 ),
-      bottom: referentiel && referentiel.childrens && referentiel.childrens.length > 4 && referentiel.childrens.indexOf(contentieux) <= referentiel.childrens.length - 4,
-      large: referentiel && referentiel.childrens && (referentiel.childrens.length <= 4 || referentiel.childrens.indexOf(contentieux) > referentiel.childrens.length - 4 ) && type === 'stock',
-    }"
-  >
-  </aj-tooltips> -->
 </ng-template>
