@@ -206,7 +206,10 @@ export class ExcelService extends MainClass {
     console.log(tpxlistExcel, viewModel, await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(','))
 
     if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
-      viewModel.tProximite = viewModel.tProximite.replaceAll("DOL", "D'OL")
+      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+        if (value.includes("DOLONNE")) return value.replaceAll("DOL", "D'OL")
+        return value
+      })
     }
 
     // ONGLET JURIDICTION
