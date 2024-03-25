@@ -203,6 +203,13 @@ export class ExcelService extends MainClass {
 
     report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
 
+    if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
+      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+        if (value.includes("DOLONNE")) return value.replaceAll("DOL", "D'OL")
+        return value
+      })
+    }
+
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
     viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
