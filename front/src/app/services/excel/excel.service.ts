@@ -199,11 +199,11 @@ export class ExcelService extends MainClass {
    * @returns 
    */
   async getReport(report: any, viewModel: any) {
-    const tpxlistExcel = ['"' + await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+    const tpxlistExcel = ['"' + await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(',').replaceAll("'", "\'").replaceAll("(", "").replaceAll(")", "") + '"']
 
     report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
 
-    console.log(tpxlistExcel, viewModel)
+    console.log(tpxlistExcel, viewModel, await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(','))
 
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
