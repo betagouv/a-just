@@ -270,7 +270,6 @@ export class ExcelService extends MainClass {
         result: "0"
       }
 
-      /**
       if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
         report.worksheets[2].getCell('C' + (+index + 3)).value = report.worksheets[2].getCell('C' + (+index + 3)).value.replace("D' ", "D'")
         viewModel.tProximite = viewModel.tProximite.map((value: string) => {
@@ -278,7 +277,6 @@ export class ExcelService extends MainClass {
           return value
         })
       }
-       */
 
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation =
       {
