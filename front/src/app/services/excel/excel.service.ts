@@ -268,6 +268,14 @@ export class ExcelService extends MainClass {
         result: "0"
       }
 
+      if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
+        report.worksheets[2].getCell('C' + (+index + 3)).value = report.worksheets[2].getCell('C' + (+index + 3)).value.replace("D' ", "D'")
+        viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+          if (value.includes("'")) return value.replace("'", "\'")
+          return value
+        })
+      }
+
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation =
       {
         type: 'list',
@@ -278,6 +286,7 @@ export class ExcelService extends MainClass {
         showErrorMessage: true,
         showInputMessage: true,
       }
+
 
       const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
       if (fonctionCellToCheck.includes("PLACÉ")) {
