@@ -203,6 +203,8 @@ export class ExcelService extends MainClass {
 
     report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
 
+    console.log(tpxlistExcel, viewModel)
+
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
     viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
@@ -268,6 +270,7 @@ export class ExcelService extends MainClass {
         result: "0"
       }
 
+      /**
       if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
         report.worksheets[2].getCell('C' + (+index + 3)).value = report.worksheets[2].getCell('C' + (+index + 3)).value.replace("D' ", "D'")
         viewModel.tProximite = viewModel.tProximite.map((value: string) => {
@@ -275,6 +278,7 @@ export class ExcelService extends MainClass {
           return value
         })
       }
+       */
 
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation =
       {
