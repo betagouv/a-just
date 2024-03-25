@@ -205,6 +205,13 @@ export class ExcelService extends MainClass {
 
     console.log(tpxlistExcel, viewModel, await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(','))
 
+    if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
+      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+        if (value.includes("DOLONNE")) return value.replace("DOL", "D'OL")
+        return value
+      })
+    }
+
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
     viewModel.tpxlist.map((value: any, index: any) => { report.worksheets[5].getCell('E' + (+index + 1)).value = value })
@@ -268,13 +275,6 @@ export class ExcelService extends MainClass {
       report.worksheets[2].getCell('EF' + (+index + 3)).value = {
         formula: '=IF(ISERROR(M' + indexCell + '+DE' + indexCell + '),"",M' + indexCell + '+DE' + indexCell + ')',
         result: "0"
-      }
-
-      if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
-        viewModel.tProximite = viewModel.tProximite.map((value: string) => {
-          if (value.includes("DOLONNE")) return value.replace("DOL", "D'OL")
-          return value
-        })
       }
 
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation =
