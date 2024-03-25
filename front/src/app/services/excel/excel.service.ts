@@ -271,7 +271,6 @@ export class ExcelService extends MainClass {
       }
 
       if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
-        report.worksheets[2].getCell('C' + (+index + 3)).value = report.worksheets[2].getCell('C' + (+index + 3)).value.replace("D' ", "D'")
         viewModel.tProximite = viewModel.tProximite.map((value: string) => {
           if (value.includes("DOLONNE")) return value.replace("DOL", "D'OL")
           return value
