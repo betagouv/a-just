@@ -725,7 +725,8 @@ export class PopinEditActivitiesComponent
         path: url,
         subTitle: '',
         printSubTitle: false,
-        bgColor: this.referentielMappingColorActivity(this.referentiel.label)
+        bgColor: this.referentielMappingColorActivity(this.referentiel.label),
+        closeColor: 'black',
       })
     }
   }

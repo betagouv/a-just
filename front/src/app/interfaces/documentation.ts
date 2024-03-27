@@ -22,4 +22,8 @@ export interface DocumentationInterface {
    * Couler du background 
    */
   bgColor?: string;
+  /**
+   * Couleur de la croix de fermeture
+   */
+  closeColor?: string;
 }
