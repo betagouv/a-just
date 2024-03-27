@@ -1,4 +1,5 @@
 import { posad } from '../constants/hr'
+import { juridictionLabelExceptions } from '../constants/juridiction-type'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
@@ -186,9 +187,9 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-        case 'Fonctionnaire':
-          statut = 'Greffe'
-          break
+          case 'Fonctionnaire':
+            statut = 'Greffe'
+            break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -206,46 +207,46 @@ export default (sequelizeInstance, Model) => {
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
-            case 'CONT A VIF JP':
-              code = 'CONT A JP'
-              break
-            case 'CONT B VIF JP':
-              code = 'CONT B JP'
-              break
-            case 'CONT C VIF JP':
-              code = 'CONT C JP'
-              break
-            default:
-              code = list[i].grade
-              break
+              case 'CONT A VIF JP':
+                code = 'CONT A JP'
+                break
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+                break
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
+                break
             }
           } else situation.category_id = findCategory.id
         }
 
         switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
-          break
-        case 'JA JP':
-          code = 'JA'
-          break
-        case 'CONT B IFPA':
-          code = 'CONT B'
-          break
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
-          case 'CONT A':
-          case 'CONT B':
-          case 'CONT C':
-          case 'CONT CB':
-          case 'CONT CJ':
-            code = list[i].grade
-            break
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
           }
         }
 
@@ -302,6 +303,9 @@ export default (sequelizeInstance, Model) => {
         if (dateUpdatedSplited.length === 3) {
           updatedAt = new Date(dateUpdatedSplited[2], +dateUpdatedSplited[1] - 1, dateUpdatedSplited[0])
         }
+
+        let juridiction = list[i].juridiction || ''
+        if (juridictionLabelExceptions.map(x => x["import"].includes(juridiction))) juridiction = juridictionLabelExceptions.filter((el) => { return el["import"] === juridiction })[0]['ielst']
 
         // prepare person
         const options = {
