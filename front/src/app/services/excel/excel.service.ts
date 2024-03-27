@@ -199,9 +199,18 @@ export class ExcelService extends MainClass {
    * @returns 
    */
   async getReport(report: any, viewModel: any) {
-    const tpxlistExcel = ['"' + await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+    const tpxlistExcel = ['"' + await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(',').replaceAll("'", "\'").replaceAll("(", "").replaceAll(")", "") + '"']
 
     report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o')
+
+    console.log(tpxlistExcel, viewModel, await [...viewModel.tpxlist, ...viewModel.isolatedCPH].join(','))
+
+    if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
+      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+        if (value.includes("DOLONNE")) return value.replaceAll("DOL", "D'OL")
+        return value
+      })
+    }
 
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => { report.worksheets[5].getCell('B' + (+index + 1)).value = value })
@@ -278,6 +287,7 @@ export class ExcelService extends MainClass {
         showErrorMessage: true,
         showInputMessage: true,
       }
+
 
       const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
       if (fonctionCellToCheck.includes("PLACÉ")) {
