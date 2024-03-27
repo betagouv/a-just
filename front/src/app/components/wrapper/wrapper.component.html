@@ -139,7 +139,7 @@
     <div  class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
       <div class="panel-header-closing-row">
         <h6>{{ documentationToShow?.title }}</h6>
-        <i class="ri-close-line" (click)="panelHelper = false"></i>
+        <i class="ri-close-line" [ngStyle]="{'color': documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white'}" (click)="panelHelper = false"></i>
       </div>
       <p *ngIf="documentationToShow?.printSubTitle">
         <i class="ri-lightbulb-flash-line"></i>
