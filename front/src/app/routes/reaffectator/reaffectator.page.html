@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"
-  class="dark-screen content-margin-null header-border-none">
+  class="content-margin-null header-border-none" backUrl="/ventilations" [isDarkScreen]="true">
   <div class="container" [ngClass]="{print: duringPrint}">
     <div class="title">
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
@@ -178,12 +178,6 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <a routerLink="/ventilations" class="reaffectator-page">
-    <button class="blue-light small light outline">
-      Retour aux ventilations
-    </button>
-  </a>
-
   <button class="blue-light light small" (click)="onExport()">
     <mat-icon>save</mat-icon>
     Exporter en PDF
