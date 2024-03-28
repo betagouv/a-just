@@ -8,4 +8,5 @@ import { Component, Input } from '@angular/core'
 export class BackButtonComponent {
   @Input() routerLink: any;
   @Input() fragment: any; 
+  @Input() text: string = 'Retour'
 }

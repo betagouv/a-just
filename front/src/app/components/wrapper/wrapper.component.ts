@@ -95,6 +95,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   @Input() titleTemplate: TemplateRef<any> | undefined
   /**
+   * Parmétrage au niveau des boutons d'actions en haut à gauche
+   */
+  @Input() actionsLeftTemplate: TemplateRef<any> | undefined  
+  /**
    * Titre de page
    */
   @Input() title: string = ''
