@@ -120,27 +120,34 @@
   <div class="contener" #contener title="">
     <div class="header">
       <div class="top-header" id="top">
-        <aj-back-button
-          *ngIf="backUrl"
-          [routerLink]="backUrl"
-          [fragment]="backAnchor"
-          class="back-url"
-          [ngClass]="{ 'is-dark-screen': isDarkScreen }"
-        />
-        <div>
-          <div class="title-with-doc">
-            <h3 [innerHTML]="title"></h3>
-            <aj-help-button
-              *ngIf="documentation"
-              (click)="onTogglePanelHelper()"
-              class="documentation"
-            ></aj-help-button>
-          </div>
-          <p class="subtitle">
+        <div class="top-header-back-title">
+          <aj-back-button
+            *ngIf="backUrl"
+            [routerLink]="backUrl"
+            [fragment]="backAnchor"
+            class="back-url"
+            [ngClass]="{ 'is-dark-screen': isDarkScreen }"
+          />
+          <ng-template [ngIf]="actionsLeftTemplate">
             <ng-container
-              *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"
+              *ngTemplateOutlet="actionsLeftTemplate"
             ></ng-container>
-          </p>
+          </ng-template>
+          <div>
+            <div class="title-with-doc">
+              <h3 [innerHTML]="title"></h3>
+              <aj-help-button
+                *ngIf="documentation"
+                (click)="onTogglePanelHelper()"
+                class="documentation"
+              ></aj-help-button>
+            </div>
+            <p class="subtitle">
+              <ng-container
+                *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"
+              ></ng-container>
+            </p>
+          </div>
         </div>
         <ng-template [ngIf]="dateSelector">
           <aj-date-select

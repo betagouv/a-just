@@ -435,6 +435,11 @@
     background-color: white;
     position: relative;
 
+    .top-header-back-title {
+      display: flex;
+      align-items: center;
+    }
+
     .back-url {
       margin-right: 16px;
     }

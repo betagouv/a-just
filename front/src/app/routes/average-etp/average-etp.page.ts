@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core'
-import { Title } from '@angular/platform-browser'
 import * as FileSaver from 'file-saver'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
@@ -11,9 +10,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
-//import { filterReferentiels } from 'src/app/utils/referentiel'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
-import * as xlsx from 'xlsx'
 import { Renderer } from 'xlsx-renderer'
 
 /**
@@ -85,6 +82,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Juridiction sélectionnée
    */
   backup: BackupInterface | undefined
+  /**
+   * Mémorisation s'il y a eu une modificiation avant sauvegarde
+   */
+  optionsIsModify: boolean = false
 
   /**
    * Constructeur
@@ -189,6 +190,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
             this.subTitleName = ''
           }
         }
+      )
+    )
+
+    this.watch(
+      this.contentieuxOptionsService.optionsIsModify.subscribe(
+        (b) => (this.optionsIsModify = b)
       )
     )
   }
@@ -524,6 +531,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     }
   }
 
+  /**
+   * Demande de réinitilisation des données de bases
+   */
+  onBackBackup() {
+    this.contentieuxOptionsService.setInitValue()
+  }
 }
 
 

@@ -148,7 +148,7 @@
     font-weight: bold;
     color: #161616;
     position: absolute;
-    left: 170px;
+    left: 256px;
     //top: 27px;
     max-width: 50%;
     line-height: 20px;
@@ -402,23 +402,7 @@
   }
 
   .back-button-menu {
-
-    cursor: pointer;
     margin-right: 8px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    height: 40px;
-    padding: 8px 24px;
-    background-color: #000091;
-
-    .title {
-      color: white !important;
-      font-size: 14px;
-    }
-
-    border: solid 1px #000091; // #ddd;
   }
 
   .reset-button {
