@@ -647,24 +647,23 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     let fct = null
     let mainEtp = null
     let startDate = null
-
+    let worksheetLine = null
     for (let i = 0; i < worksheet.length; i++) {
-      const worksheetLine = worksheet[i];
+      worksheetLine = worksheet[i];
       console.log(worksheetLine)
-      if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
-        console.log(worksheetLine)
+      if (worksheetLine['__EMPTY_1'] === "Fonction") fct = worksheetLine['__EMPTY_2']
+      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") startDate = worksheetLine['__EMPTY_2']
+      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail') {
+        if (worksheetLine['__EMPTY_2'] === 'Temps plein') mainEtp = 1
+        else mainEtp = worksheetLine['__EMPTY_4'] as Number
+      }
+      else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
         const updatedLine = {
           codeImport: worksheetLine['__EMPTY'],
           value: worksheetLine['__EMPTY_4']
         };
         line = { ...line, ...updatedLine };
         monTab.value.push(line as never);
-      }
-      else if (worksheetLine['__EMPTY_1'] === "Fonction") fct = worksheetLine['__EMPTY_2']
-      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") startDate = worksheetLine['__EMPTY_2']
-      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail') {
-        if (worksheetLine['__EMPTY_2'] === 'Temps plein') mainEtp = 1
-        else mainEtp = worksheetLine['__EMPTY_4'] as Number
       }
 
     }
