@@ -32,7 +32,7 @@
 
     <div class="menu-scrollable">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <ng-container *ngIf="item.label === 'Extracteurs'; else other">
+        <ng-container *ngIf="item.label === 'Extracteur'; else other">
           <div class="menu-item tools" (click)="openTools = !openTools">
             <a>Outils</a>
             <mat-icon class="arrow-list">{{
@@ -69,7 +69,7 @@
         <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
           Aide
         </a>
-        <a [routerLink]="['/contact']" [queryParams]="{ backUrl: true }">
+        <a class="contact-us" [routerLink]="['/contact']" [queryParams]="{ backUrl: true }">
           <p class="unselectable">Nous contacter</p>
         </a>
       </div>
@@ -101,8 +101,8 @@
           </p>
         </div>
         <ng-template [ngIf]="dateSelector">
-          <aj-date-select title={{dateSelector.title}} dateType={{dateSelector.dateType}} value={{dateSelector.value}}
-            (valueChange)=changeMonth($event) class="date-selector">
+          <aj-date-select title="{{ dateSelector.title }}" dateType="{{ dateSelector.dateType }}"
+            value="{{ dateSelector.value }}" (valueChange)="changeMonth($event)" class="date-selector">
           </aj-date-select>
         </ng-template>
         <ng-template [ngIf]="titleTemplate">
