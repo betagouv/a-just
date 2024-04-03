@@ -156,7 +156,7 @@ export default class App extends AppBase {
               "'sha256-9jsqNCkYsDU3te2WUjv9qXV1DKXI1vT9hz3g7nNens8='",
             ],
             'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
+            'style-src': ["'self'", 'cdnjs.cloudflare.com'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
