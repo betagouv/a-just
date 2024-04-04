@@ -93,6 +93,18 @@ export class PopinEditActivitiesComponent
    * Lien vers le data book
    */
   dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
+  /**
+   * 
+   */
+  totalUrl = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/'
+  /**
+   * 
+   */
+  logicielDataUrl = 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/donnees-dactivite-logiciel'
+  /**
+   * 
+   */
+  calculatedDataUrl = 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/donnees-dactivite-a-justees'
 
   /**
    *  Vérifie que le mois prochain comporte des données d'activité
@@ -353,24 +365,29 @@ export class PopinEditActivitiesComponent
   /**
    * Control to change
    */
-  controlBeforeChange() {
+  controlBeforeChange(close = false) {
     return new Promise((resolve) => {
       if (Object.values(this.updates).length === 0) {
         resolve(true)
       } else {
-        this.appService.alert.next({
-          classPopin: 'width-600',
-          title: 'Modifications non enregistrées',
-          text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
-          okText: 'Annuler les modifications',
-          callback: () => {
-            resolve(true)
-          },
-          secondaryText: 'Enregistrer les modifications',
-          callbackSecondary: () => {
-            this.onSave(false)
-          },
-        })
+        if (this.checkIfHasUpdates()) {
+          if (close) {
+            this.appService.alert.next({
+              classPopin: 'width-600',
+              title: 'Modifications non enregistrées',
+              text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
+              okText: 'Annuler les modifications',
+              callback: () => {
+                resolve(true)
+              },
+              secondaryText: 'Enregistrer les modifications',
+              callbackSecondary: () => {
+                this.onSave({force: false, exit: true})
+              },
+            })
+          } else
+            this.onSave({force: false, exit: false})
+        }
       }
     })
   }
@@ -379,7 +396,7 @@ export class PopinEditActivitiesComponent
    * Emit to close the popin
    */
   close() {
-    this.controlBeforeChange().then(() => {
+    this.controlBeforeChange(true).then(() => {
       this.onClose.emit(false)
     })
   }
@@ -552,7 +569,7 @@ export class PopinEditActivitiesComponent
   /**
    * On save
    */
-  async onSave(force = false) {
+  async onSave({force = false, exit = false}) {
     if (!force) {
       this.appService.alert.next({
         classPopin: 'width-600',
@@ -564,7 +581,7 @@ export class PopinEditActivitiesComponent
         },
         secondaryText: 'Enregistrer les modifications',
         callbackSecondary: () => {
-          this.onSave(true)
+          exit ? this.onSave({force: true, exit: true}) : null
         },
       })
     } else {
@@ -631,6 +648,7 @@ export class PopinEditActivitiesComponent
    * Change month selection
    */
   selectMonth(date: any) {
+    //this.onSave({force: false, exit: false}).then(() => {
     this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
         this.activityMonth = new Date(date)
