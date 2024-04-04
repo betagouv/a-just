@@ -47,26 +47,80 @@
   </div>
 
   <div class="contentieux-header" [ngStyle]="{'padding-right': getScrollbarWidth()}">
-    <div class="contentieux-title-header"><p>Contentieux</p></div>
+    <div class="contentieux-title-header">
+      <p>Contentieux</p> 
+      <i
+        class="ri-lightbulb-flash-line cursor-pointer"
+        (click)="onShowHelpPanel({url: totalUrl})"
+      ></i>
+    </div>
     <div class="contentieux-title-header-entrees">
       <p>Entrées</p>
       <div>
-        <p><span>Logiciel</span></p>
-        <p><span>A-JUSTées</span></p>
+        <p>
+          <span>
+            <i
+            class="ri-lightbulb-flash-line cursor-pointer"
+            (click)="onShowHelpPanel({url: logicielDataUrl})"
+            ></i>
+            Logiciel
+          </span>
+        </p>
+        <p>
+          <span>
+            <i
+              class="ri-lightbulb-flash-line cursor-pointer"
+              (click)="onShowHelpPanel({url: calculatedDataUrl})"
+            ></i>
+            A-JUSTées
+          </span>
+        </p>
       </div>
     </div>
     <div class="contentieux-title-header-sorties">
       <p>Sorties</p>
       <div>
-        <p><span>Logiciel</span></p>
-        <p><span>A-JUSTées</span></p>
+        <p>
+          <span>
+            <i
+              class="ri-lightbulb-flash-line cursor-pointer"
+              (click)="onShowHelpPanel({url: logicielDataUrl})"
+            ></i>
+            Logiciel
+          </span>
+        </p>
+        <p>
+          <span>
+            <i
+              class="ri-lightbulb-flash-line cursor-pointer"
+              (click)="onShowHelpPanel({url: calculatedDataUrl})"
+            ></i>
+            A-JUSTées
+          </span>
+        </p>
       </div>
     </div>
     <div class="contentieux-title-header-stock">
       <p>Stock</p>
       <div>
-        <p><span>Logiciel</span></p>
-        <p><span>A-JUSTées</span></p>
+        <p>
+          <span>
+            <i
+              class="ri-lightbulb-flash-line cursor-pointer"
+              (click)="onShowHelpPanel({url: logicielDataUrl})"
+            ></i>
+            Logiciel
+          </span>
+        </p>
+        <p>
+          <span>
+            <i
+            class="ri-lightbulb-flash-line cursor-pointer"
+            (click)="onShowHelpPanel({url: calculatedDataUrl})"
+            ></i>
+            A-JUSTées
+          </span>
+        </p>
       </div>
     </div>
   </div>
