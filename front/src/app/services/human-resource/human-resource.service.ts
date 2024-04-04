@@ -11,6 +11,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { getShortMonthString, today } from 'src/app/utils/dates'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
+import { importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
 
 /**
  * Service de récupération des fiches +
@@ -65,6 +66,12 @@ export class HumanResourceService {
    */
   componentIdsCanBeView: BehaviorSubject<number[]> = new BehaviorSubject<
     number[]
+  >([])
+  /**
+* Referentiel avec les activités importés sous excels
+*/
+  importedSituation: BehaviorSubject<importedVentillation[]> = new BehaviorSubject<
+    importedVentillation[]
   >([])
   /**
    * temp ids to can view
@@ -604,9 +611,9 @@ export class HumanResourceService {
     while (currentDate.getTime() <= maxDate.getTime()) {
       const findedIndispo = human
         ? this.findAllIndisponibilities(
-            { ...human, indisponibilities },
-            currentDate
-          )
+          { ...human, indisponibilities },
+          currentDate
+        )
         : []
 
       if (
@@ -629,18 +636,17 @@ export class HumanResourceService {
 
     return errorsList.length
       ? errorsList
-          .map(
-            (r) =>
-              `Le ${(r.date.getDate() + '').padStart(
-                2,
-                '0'
-              )} ${getShortMonthString(
-                r.date
-              )} ${r.date.getFullYear()} vous seriez à ${
-                r.percent
-              }% d'indisponibilité.`
-          )
-          .join(', ')
+        .map(
+          (r) =>
+            `Le ${(r.date.getDate() + '').padStart(
+              2,
+              '0'
+            )} ${getShortMonthString(
+              r.date
+            )} ${r.date.getFullYear()} vous seriez à ${r.percent
+            }% d'indisponibilité.`
+        )
+        .join(', ')
       : null
   }
 
@@ -726,7 +732,7 @@ export class HumanResourceService {
    * Calculate sub categories
    */
   calculateSubCategories(list: HumanResourceInterface[] = []) {
-    let subTotalEtp: { [key: string]: {etpt: number, total: number} } = {
+    let subTotalEtp: { [key: string]: { etpt: number, total: number } } = {
       titulaire: {
         etpt: 0,
         total: 0,
@@ -760,7 +766,7 @@ export class HumanResourceService {
           break
       }
     })
-    
+
     return subTotalEtp
   }
 }

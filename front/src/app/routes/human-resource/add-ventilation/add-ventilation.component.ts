@@ -26,6 +26,12 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
 import * as xlsx from 'xlsx';
 
+export interface importedVentillation {
+  referentiel: ContentieuReferentielInterface,
+  percent: number | undefined,
+  parentReferentiel: ContentieuReferentielInterface | null
+}
+
 /**
  * Panneau pour ajouter / modifier une situation
  * indispos, etp, category, fonction, date début
@@ -592,7 +598,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     return cat
   }
 
-  getFile(event: any) {
+  getFile(event: any, element: HTMLInputElement) {
     const file = event.target.files[0];
 
     const classe = {
@@ -601,11 +607,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     };
 
     this.fileReader(file, classe, event);
+    element.value = ''
+    console.log(element)
   }
 
   private fileReader(file: any, line: any, event: any) {
     let fileReader = new FileReader();
-
+    console.log(this.activities)
     fileReader.onload = (e) => {
       let arrayBuffer = fileReader.result;
       const data = new Uint8Array(arrayBuffer as ArrayBuffer);
@@ -629,16 +637,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       const category = workbook.Sheets[second_sheet_name]['C2'].v === 1 ? 'MAGISTRAT' : 'GREFFE'
 
       const worksheet = workbook.Sheets[first_sheet_name];
-      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { raw: true });
+      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { blankrows: false });
 
-      /**
-       * Call matching function
-       */
-      console.log({ category, ...this.matchingCell(firstWorksheet, line) })
+      // Formated data from the Excel file imported
+      const importedSituation = { category, ...this.matchingCell(firstWorksheet, line) }
+      this.humanResourceService.importedSituation.next(this.affectImportedSituation(importedSituation))
     };
     fileReader.readAsArrayBuffer(file);
-
-
 
   }
 
@@ -650,9 +655,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     let worksheetLine = null
     for (let i = 0; i < worksheet.length; i++) {
       worksheetLine = worksheet[i];
-      console.log(worksheetLine)
       if (worksheetLine['__EMPTY_1'] === "Fonction") fct = worksheetLine['__EMPTY_2']
-      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") startDate = worksheetLine['__EMPTY_2']
+      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") {
+        startDate = worksheetLine['__EMPTY_2']
+        if (startDate instanceof Date === false)
+          startDate = null
+      }
       else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail') {
         if (worksheetLine['__EMPTY_2'] === 'Temps plein') mainEtp = 1
         else mainEtp = worksheetLine['__EMPTY_4'] as Number
@@ -668,5 +676,48 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     }
     return { fct, mainEtp, startDate, ventilation: monTab }
+  }
+
+  affectImportedSituation(formatedData: any) {
+    let result: importedVentillation[] = []
+    formatedData.ventilation.value.map((ref: any) => {
+      let found = false
+
+      this.updatedReferentiels = this.updatedReferentiels.map(item => {
+        const re = new RegExp('[0-9]{1,2}[.]');
+        const startCode = ref.codeImport.split('.')[0] + '.'
+
+        if (re.exec(ref.codeImport) !== null && ref.codeImport == item.code_import) {
+          item.percent = ref.value;
+          found = true
+          result.push({
+            referentiel: item,
+            percent: item.percent,
+            parentReferentiel: null
+          })
+        }
+        else {
+
+          if (startCode === item.code_import && found === false) {
+
+            item.childrens = item.childrens?.map(child => {
+              if (child.code_import === ref.codeImport) {
+                child.percent = ref.value
+                found = true
+                result.push({
+                  referentiel: child,
+                  percent: child.percent,
+                  parentReferentiel: item
+                })
+              }
+              return child
+            })
+          }
+        }
+        return item
+      })
+
+    })
+    return result
   }
 }

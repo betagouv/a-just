@@ -12,6 +12,7 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
+import { importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
@@ -105,12 +106,21 @@ export class PanelActivitiesComponent
    */
   constructor(private humanResourceService: HumanResourceService) {
     super()
+
+    this.watch(
+      this.humanResourceService.importedSituation.subscribe(
+        (referentiel) => {
+          referentiel.map((elem: importedVentillation) => {
+            this.onChangePercent(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
+          })
+        })
+    )
   }
 
   /**
    * Détection d'un changement et génération des données du rendu
    */
-  ngOnChanges() {
+  ngOnChanges(change: any) {
     if (this.etp < 0) {
       this.etp = 0
     }
@@ -210,7 +220,7 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
-    console.log('percent', percent)
+    console.log('percent', percent, referentiel, parentReferentiel)
 
     // memorise list
     const activity = this.activities.find(
@@ -288,7 +298,7 @@ export class PanelActivitiesComponent
   countNbSubItem(referentiel: ContentieuReferentielInterface) {
     return (referentiel.childrens || []).filter((r) => r.percent).length
   }
-
+PROBLEME TOUTES LeS SItUATIONS SE METTENT A JOUR
   /**
    * Change l'état de mouseHovering lorsque la souris hover un sous référentiel du contentieux 'Autres Activités'
    */

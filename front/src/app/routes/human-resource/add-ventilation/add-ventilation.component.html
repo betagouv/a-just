@@ -25,7 +25,7 @@
       <pre></pre>
       <div>
         <label class="custom-file-upload">
-          <input id="file-picker" type="file" id="file" class="input-file" accept=".xlsx" (change)="getFile($event)" />
+          <input #file id="file-picker" type="file" class="input-file" accept=".xlsx" (change)="getFile($event,file)" />
           <mat-icon>download</mat-icon>
           Importer une situation
         </label>
@@ -109,7 +109,6 @@
         [forceToShowContentieuxDetail]="forceToShowContentieuxDetail">
       </panel-activities>
     </div>
-
     <div class="date-start">
       <p *ngIf="isEdit">Modification de la situation au :</p>
       <p *ngIf="!isEdit">3. Situation à prendre en compte :</p>
