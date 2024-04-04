@@ -191,7 +191,7 @@
       class="small outline blue"
       (click)="selectMonth(getMonth(activityMonth, -1))"
     >
-      Aller au mois précédent
+      {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
     </button>
     <button
       class="small outline"
@@ -202,7 +202,7 @@
       (click)="selectMonth(getMonth(activityMonth, 1))"
       [disabled]="!hasNextMonth"
     >
-      Aller au mois suivant
+      {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
     </button>
     <button 
       class="small"
@@ -211,7 +211,7 @@
         'outline': !checkIfHasUpdates(),
         'primary': checkIfHasUpdates(),
       }"
-      (click)="onSave()"
+      (click)="onSave({force: false, exit: true})"
       [disabled]="!checkIfHasUpdates()"
     >
       Enregistrer
