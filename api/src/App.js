@@ -15,6 +15,7 @@ import helmet from 'koa-helmet'
 import { CSP_URL_IGNORE_RULES } from './constants/csp'
 import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
+import ip from 'koa-ip'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -110,6 +111,12 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+      ip({
+        ...config.ipFilter,
+        handler: async (ctx) => {
+          ctx.status = 403
+        },
+      }),
       helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
