@@ -52,8 +52,7 @@
                 </div>
                 <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
                     [ngClass]="{'validated':callValidated}"> <img src="/assets/images/call-center.png" alt="a-just" />
-                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est
-                        bien prise en compte !'}}</p>
+                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est bien prise en compte !'}}</p>
                     <div *ngIf="popinCall===true" class="popin-call">
                         <div class="header">
                             <h3 class="title">Être recontacté ?</h3> <i
@@ -124,9 +123,11 @@
     </ng-container>
     <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
         <div class="suggestion-header">
-            <div class="back-title"> <label (click)="openSuggestionPanel=!openSuggestionPanel" class="back-button">
-                    <span>
-                        < </span> Retour</label>
+            
+            <div class="back-title"> 
+                <aj-back-button
+            (click)="openSuggestionPanel=!openSuggestionPanel"
+        />
                 <p>Aide</p>
             </div>
             <div class="panel-header">
