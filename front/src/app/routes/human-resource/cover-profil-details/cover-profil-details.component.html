@@ -2,8 +2,7 @@
   <div class="first-row" [style.background-color]="category ? getBgCategoryColor(category && category.label) : null"
     [style.border-bottom-color]="category ? getCategoryColor(category && category.label) : null">
     <div>
-      <a [routerLink]="backUrl" [fragment]="backAnchor" class="no-print">
-        < Retour</a>
+      <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" />
     </div>
 
     <button class="primary light small no-print" (click)="onExport()">

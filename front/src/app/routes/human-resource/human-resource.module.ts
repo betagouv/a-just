@@ -20,6 +20,7 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { TextEditorModule } from 'src/app/components/text-editor/text-editor.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { HelpButtonModule } from 'src/app/components/help-button/help-button.module'
+import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { HelpButtonModule } from 'src/app/components/help-button/help-button.mod
     WrapperModule,
     TextEditorModule,
     DateSelectModule,
-    HelpButtonModule
+    HelpButtonModule,
+    BackButtonModule
   ],
 })
 export class HumanResourceModule {}

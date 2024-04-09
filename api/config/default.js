@@ -177,4 +177,10 @@ module.exports = {
     secure: false /** (boolean) secure cookie*/,
     sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
+  // IP to block
+  ipFilter: {
+    blacklist: [
+      '107.150.63.5', // Appel important depuis les états unies qui serait peut être matomo mais j'ai un doute (FX)
+    ],
+  },
 }

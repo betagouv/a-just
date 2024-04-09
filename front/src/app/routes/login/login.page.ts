@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { AfterViewInit, Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
@@ -12,6 +12,8 @@ import { SSOService } from 'src/app/services/sso/sso.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { environment } from 'src/environments/environment'
 
+declare const introJs: any
+
 /**
  * Page de connexion
  */
@@ -20,7 +22,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage {
+export class LoginPage implements OnInit, AfterViewInit {
   /**
    * SSO is activate to this env
    */
@@ -102,6 +104,26 @@ export class LoginPage {
     })
   }
 
+  ngAfterViewInit(): void {
+    /*setTimeout(() => {
+      introJs().setOptions({
+        steps: [{
+          element: document.querySelector('.intro-step-1'),
+          title: 'Welcome',
+          intro: 'Hello World! 👋'
+        },
+        {
+          element: document.querySelector('.intro-step-2'),
+          intro: '<img src="https://i.giphy.com/media/ujUdrdpX7Ok5W/giphy.webp" onerror="this.onerror=null;this.src=\'https://i.giphy.com/ujUdrdpX7Ok5W.gif\';" alt="">'
+        },
+        {
+          element: document.querySelector('.intro-step-3'),
+          intro: '<iframe src="https://player.vimeo.com/video/788716513?h=fbc50474c2" width="600" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><p><a href="https://vimeo.com/788716513">2 - A-JUST : pr&eacute;sentation de l&#039;outil</a> from <a href="https://vimeo.com/user192349426">Aurelie Pretat</a> on <a href="https://vimeo.com">Vimeo</a>.</p>'
+        }]
+      }).start();
+  }, 2000)*/
+  }
+
   /**
    * Demande connexion
    */
@@ -116,7 +138,7 @@ export class LoginPage {
           returnLogin.data &&
           returnLogin.data.status === LOGIN_STATUS_GET_CODE
         ) {
-          this.needToGetCode = returnLogin.data.datas.code || ''
+          this.needToGetCode = returnLogin.data.datas.code || ''
         } else {
           this.router.navigate([
             this.userService.getUserPageUrl(returnLogin.user),
