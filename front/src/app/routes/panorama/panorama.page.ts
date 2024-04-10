@@ -149,60 +149,60 @@ export class PanoramaPage
    */
   introSteps: IntroJSStep[] = [
     {
-      element: '#wrapper-contener',
+      target: '#wrapper-contener',
       title: 'Panorama',
       intro:
         'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace du TJ.',
     },
     {
-      element: '.panorama-container',
+      target: '.panorama-container',
       title: "Les données d'effectifs",
       intro:
-        "récapitulent l'ensemble des ressources humaines à date, la situation des agents de la juridiction et les éventuels changements dans les 15 derniers et 15 prochains jours.",
+        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la juridiction et les éventuels changements dans les 15 derniers et 15 prochains jours.",
     },
     {
-      element: '.wordforce-composition',
+      target: '.wordforce-composition',
       title: 'La composition des effectifs',
       intro:
-        'à la date du jour. Vous pouvez aussi renseigner la CLE pour la comparer à votre situation actuelle.',
+        'À la date du jour. Vous pouvez aussi renseigner la CLE pour la comparer à votre situation actuelle.',
     },
     {
-      element: '.records-update',
+      target: '.records-update',
       title: 'Pourcentage et date de mise à jour',
       intro:
-        'Ici, visualisez et priorisez les tâches à effectuer, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la juridiction.',
+        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la juridiction.',
     },
     {
-      element: 'workforce-change',
+      target: 'workforce-change',
       title: 'Changements récents',
       intro:
-        "Cet espace rassemble les arrivées, départs ou indisponibilités enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
+        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
     },
     {
-      element: '#activites',
+      target: '#activites',
       title: "Données d'activité",
       intro: "Voici une vue d'ensemble de vos données présentes dans A-JUST.",
     },
     {
-      element: 'activities-last-disponibilities',
+      target: 'activities-last-disponibilities',
       title: 'Dernières données disponibles',
       intro:
         'Visualisez en un coup d’œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l’un ou l’autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l’outil.',
     },
     {
-      element: 'activities-to-complete',
+      target: 'activities-to-complete',
       title: 'Données à compléter',
       intro:
         'Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n’est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.',
     },
     {
-      element: 'activities-last-modifications',
+      target: 'activities-last-modifications',
       title: 'Dernières modifications',
       intro:
-        "effectuées sur vos données d’activité par les différents agents de la juridiction utilisateurs d'A-JUST.",
+        "Effectuées sur vos données d’activité par les différents agents de la juridiction utilisateurs d'A-JUST.",
     },
     {
-      element: '.contact-us',
+      target: '.contact-us',
       title: 'Je passe à la suite :',
       intro:
         'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !',
