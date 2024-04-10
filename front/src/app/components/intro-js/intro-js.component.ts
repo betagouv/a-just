@@ -32,6 +32,10 @@ export class IntroJSComponent implements AfterViewInit {
    * Etapes d'intros text dans l'alerte
    */
   @Input() steps: IntroJSStep[] = []
+  /**
+   * Identifiant unique
+   */
+  @Input() typeId: string | undefined;
 
   ngAfterViewInit(): void {
     if (this.steps) {
