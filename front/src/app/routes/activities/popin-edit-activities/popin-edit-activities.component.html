@@ -49,10 +49,6 @@
   <div class="contentieux-header" [ngStyle]="{'padding-right': getScrollbarWidth()}">
     <div class="contentieux-title-header">
       <p>Contentieux</p> 
-      <i
-        class="ri-lightbulb-flash-line cursor-pointer"
-        (click)="onShowHelpPanel({url: totalUrl})"
-      ></i>
     </div>
     <div class="contentieux-title-header-entrees">
       <p>Entrées</p>
@@ -128,6 +124,10 @@
   <div class="contentieux-title" [ngStyle]="{'padding-right': getScrollbarWidth()}" *ngIf="referentiel && hasValuesToShow">
     <div class="contentieux-title-label">
       <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
+      <i
+        class="ri-lightbulb-flash-line cursor-pointer"
+        (click)="onShowHelpPanel({url: totalUrl})"
+      ></i>
     </div>
     <div class="contentieux-title-label-entrees">
       <ng-container
@@ -368,6 +368,7 @@
   let-updated="updated"
 >
   <i
+    *ngIf='level === 4 || (level === 3 && updated && updated !== null)'
     class="{{
       ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value, true) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'

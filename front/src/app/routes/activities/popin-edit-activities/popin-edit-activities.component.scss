@@ -187,10 +187,19 @@
     align-items: center;
     color: fColor(cblack);
     font-weight: bold;
+    position: relative;
 
     p {
       padding: 0;
       font-size: 14px;
+    }
+
+    > i {
+      position: absolute;
+      top: 50%;
+      right: 7px;
+      transform: translateY(-50%);
+      color: fColor(cblack);
     }
   }
 
