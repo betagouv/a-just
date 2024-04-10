@@ -4,7 +4,7 @@ declare const introJs: any
 declare const window: any
 
 export interface IntroJSStep {
-  element: string
+  target: string
   title?: string
   intro?: string
   options?: object
@@ -59,7 +59,7 @@ export class IntroJSComponent implements AfterViewInit {
         const allStep = this.steps.map((s) => {
           return {
             ...s,
-            element: document.querySelector(s.element),
+            element: document.querySelector(s.target),
             intro: (s.intro || '') + formatActionsToHtml(s.actions),
             ...(s.options || {}),
           }
@@ -85,6 +85,10 @@ export class IntroJSComponent implements AfterViewInit {
           }
         })
         intro.onbeforechange(() => {
+          const currentStep = allStep[intro.currentStep()]
+          currentStep.element = document.querySelector(currentStep.target)
+          console.log('currentStep', currentStep)
+
           listFunctions.map((f) => {
             window[f] = null
           })
