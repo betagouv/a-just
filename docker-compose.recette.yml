@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  api:
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NODE_ENV=recette
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "0.5"
+
+  db:
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: "1.0"
