@@ -368,7 +368,7 @@
   let-updated="updated"
 >
   <i
-    *ngIf='level === 4 || (level === 3 && updated && updated !== null)'
+    *ngIf='level === 4 || (level === 3 && checkIfBlue(contentieux, type, value))'
     class="{{
       ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value, true) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'

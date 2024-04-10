@@ -408,13 +408,11 @@ export class PopinEditActivitiesComponent
     this.total.in = this.referentiel?.in
     this.total.out = this.referentiel?.out
     this.total.stock = this.referentiel?.stock
-
     const updates = Object.values(this.updates)
     if (updates.length) {
       this.total.in = this.referentiel?.in || this.referentiel?.originalIn
       this.total.out = this.referentiel?.out || this.referentiel?.originalOut
       this.total.stock = this.referentiel?.stock || this.referentiel?.originalStock
-      //console.log('Updates 01:', updates)
       updates.map((value: any) => {
         let nodeValue = null
         switch (value.node) {
@@ -586,9 +584,8 @@ export class PopinEditActivitiesComponent
       })
     } else {
       let updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
-      updates.map((elem : any) => delete elem.calculated)
-
-      let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
+      //updates.map((elem : any) => delete elem.calculated)
+      let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
         group.map((elem) => {
           const initialValues = {
@@ -823,6 +820,7 @@ export class PopinEditActivitiesComponent
   }
 
   checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any, isForBulb? : boolean) {
+
     let input = null
     if (inputValue !== null)
       input = +inputValue

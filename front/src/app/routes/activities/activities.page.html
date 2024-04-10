@@ -107,15 +107,27 @@
             </div>
             <div class="column-item">
               <div>
+                <!--
+                  <p 
+                    [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}" 
+                  >
+                -->
                 <p 
-                  [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
+                  [ngClass]="{'data-changed': checkIfBlueBottom(ref, 'stock') && ref.stock !== null}" 
                 >
                   {{ ref.stock !== null ? ref.stock : ( ref.originalStock !== null ? ref.originalStock : '-' ) }}
                 </p>
               </div>
-              <ng-template [ngIf]="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date">
+              <ng-container *ngIf="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date; else secondTemplate">
                 <aj-tooltips class="medium no-bg" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
                 </aj-tooltips>
+              </ng-container>
+              
+              <ng-template #secondTemplate>
+                <ng-container *ngIf="checkIfBlueBottom(ref, 'stock')">
+                  <aj-tooltips class="medium" [title]="getTooltipTitle()" [content]="getTooltipBody()"> 
+                  </aj-tooltips>
+                </ng-container>
               </ng-template>
             </div>
             <div class="column-item completion">
