@@ -163,7 +163,7 @@ export default class App extends AppBase {
               "'sha256-9jsqNCkYsDU3te2WUjv9qXV1DKXI1vT9hz3g7nNens8='",
             ],
             'worker-src': ['blob:'],
-            'style-src': [
+            /*'style-src': [
               "'self'",
               "'sha256-dtyHgX5YAK0JNwwLgd97DX4vtHAa9NAUlT1AvjcLDd8='",
               "'sha256-jT40G4YjR6RU/Kt/iujR3U7pbQvwVhlqiA8whmw8+w4='",
@@ -175,7 +175,7 @@ export default class App extends AppBase {
               "'sha256-gjw6KBXo8tLlv1hecm6Is6p0k/sbNVSXz0v+XkVmO/A='",
               "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
               'cdnjs.cloudflare.com',
-            ],
+            ],*/
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
