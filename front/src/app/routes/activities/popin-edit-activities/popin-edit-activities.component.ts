@@ -365,7 +365,7 @@ export class PopinEditActivitiesComponent
   /**
    * Control to change
    */
-  controlBeforeChange(close = false) {
+  async controlBeforeChange(close = false) {
     return new Promise((resolve) => {
       if (Object.values(this.updates).length === 0) {
         resolve(true)
@@ -385,8 +385,9 @@ export class PopinEditActivitiesComponent
                 this.onSave({force: false, exit: true})
               },
             })
-          } else
-            this.onSave({force: false, exit: false})
+          } else {
+            this.onSave({force: false, exit: false}).then(() => resolve(true))
+          }
         }
       }
     })
@@ -397,7 +398,8 @@ export class PopinEditActivitiesComponent
    */
   close() {
     this.controlBeforeChange(true).then(() => {
-      this.onClose.emit(false)
+      this.onClose.emit(true)
+      //this.onClose.emit(false)
     })
   }
 
@@ -569,18 +571,27 @@ export class PopinEditActivitiesComponent
    */
   async onSave({force = false, exit = false}) {
     if (!force) {
-      this.appService.alert.next({
-        classPopin: 'width-600',
-        title: 'Impact de vos modifications',
-        text: `Les valeurs A-JUSTées que vous allez enregistrer vont se substituer aux données logiciel dans l'écran de synthèse et seront prises en compte comme nouvelle base des calculs.<br/><br/>Vous conserverez, dans l'écran de saisie, les données "logiciels" et les A-JUSTements que vous avez réalisés afin de vous en servir comme donnée de référence si besoin.`,
-        okText: 'Annuler les modifications',
-        callback: () => {
-          this.onClose.emit(false)
-        },
-        secondaryText: 'Enregistrer les modifications',
-        callbackSecondary: () => {
-          exit ? this.onSave({force: true, exit: true}) : null
-        },
+      await new Promise((resolve, reject) => {
+        this.appService.alert.next({
+          classPopin: 'width-600',
+          title: 'Impact de vos modifications',
+          text: `Les valeurs A-JUSTées que vous allez enregistrer vont se substituer aux données logiciel dans l'écran de synthèse et seront prises en compte comme nouvelle base des calculs.<br/><br/>Vous conserverez, dans l'écran de saisie, les données "logiciels" et les A-JUSTements que vous avez réalisés afin de vous en servir comme donnée de référence si besoin.`,
+          okText: 'Annuler les modifications',
+          callback: () => {
+            this.updates = {} // clear datas
+            if (exit)
+              this.onClose.emit(false)
+            resolve(true)
+          },
+          secondaryText: 'Enregistrer les modifications',
+          callbackSecondary: async () => {
+            if (exit)
+              await this.onSave({force: true, exit: true})
+            else 
+              await this.onSave({force: true})
+            resolve(true)
+          },
+        })
       })
     } else {
       let updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
@@ -636,17 +647,17 @@ export class PopinEditActivitiesComponent
         )
       }
       this.updates = {} // clear datas
-
-      this.onClose.emit(updates.length ? true : false)
+      if (exit)
+        this.onClose.emit(updates.length ? true : false)
     }
   }
 
   /**
    * Change month selection
    */
-  selectMonth(date: any) {
+  async selectMonth(date: any) {
     //this.onSave({force: false, exit: false}).then(() => {
-    this.controlBeforeChange().then(() => {
+    await this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
         this.activityMonth = new Date(date)
         this.checkIfNextMonthHasValue()
