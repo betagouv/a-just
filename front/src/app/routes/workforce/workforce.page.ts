@@ -25,6 +25,7 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -291,13 +292,24 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         "Vous pouvez ajouter un agent s'il n'est pas dans les effectifs présents dans A-JUST. <br/><br/>Renseignez les informations demandées, une date d'arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à <b>vérifier que votre taux d'affectation est de 100%</b> à l’aide de la barre de remplissage située sous les contentieux.",
     },
     {
-      target: '.menu-item.tools',
+      target: '.menu .sub-tools > p:nth-child(2n)',
       title: 'La calculatrice :',
       intro:
         "vous permet de convertir en <b>pourcentage d'ETPT la part de temps de travail</b> qu'un agent consacre à une activité.",
+        beforeLoad: async (intro: any) => {
+          const subTools = document.querySelector('.menu .sub-tools')
+          if(!subTools) {
+            const itemToClick = document.querySelector('.menu-item.tools')
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }
     },
     {
-      target: '.menu-item.tools',
+      target: '.menu .sub-tools > p:nth-child(3n)',
       title: "L'extracteur d'ETPT :",
       intro:
         "Choisissez la <b>période</b> et la <b>catégorie d'agents souhaitées</b> et obtenez toutes ces informations dans un <b>fichier Excel</b> que vous pourrez utiliser pour simplifier l'exercice annuel des déclaratifs d'ETPT",
