@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, Input } from '@angular/core'
+import { HELP_START, HELP_STOP } from 'src/app/constants/log-codes'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { today } from 'src/app/utils/dates'
 
 declare const introJs: any
@@ -10,6 +12,7 @@ export interface IntroJSStep {
   intro?: string
   options?: object
   actions?: object
+  beforeLoad?: Function
 }
 
 /** sample step
@@ -42,6 +45,8 @@ export class IntroJSComponent implements AfterViewInit {
    */
   hasCompleteForm: boolean = false
 
+  constructor(private kpiService: KPIService) {}
+
   ngAfterViewInit(): void {
     if (this.steps) {
       let canStartPlayer = true
@@ -54,15 +59,19 @@ export class IntroJSComponent implements AfterViewInit {
       }
 
       if (canStartPlayer) {
-        this.startPlayer()
+        this.startPlayer(false)
       }
     }
   }
 
-  startPlayer() {
+  startPlayer(log = true) {
+    if (log) {
+      this.kpiService.register(HELP_START, '')
+    }
+
     setTimeout(() => {
       this.hasCompleteForm = false
-      
+
       let listFunctions: string[] = []
       const formatActionsToHtml = (actions: any) => {
         actions = actions || {}
@@ -73,6 +82,7 @@ export class IntroJSComponent implements AfterViewInit {
         if (allActions.length) {
           html += '<div class="intro-js-action">'
           allActions.map((key) => {
+            // ne fonctionne pas a cause du CSP
             html += `<button onclick="window.INTROJS_AJ_${key}()">${actions[key].label}</button>`
           })
 
@@ -110,9 +120,19 @@ export class IntroJSComponent implements AfterViewInit {
           })
         }
       })
-      intro.onbeforechange(() => {
+      intro.onbeforechange(async () => {
         const currentStep = allStep[intro.currentStep()]
         currentStep.element = document.querySelector(currentStep.target)
+
+        if (currentStep.beforeLoad) {
+          await currentStep.beforeLoad(intro)
+        }
+
+        const domElement = document.querySelector(currentStep.target)
+        if (domElement) {
+          intro._introItems[intro.currentStep()].element = domElement
+          intro.refresh() // NE MARCHE PAS !!!!
+        }
 
         listFunctions.map((f) => {
           window[f] = null
@@ -120,6 +140,10 @@ export class IntroJSComponent implements AfterViewInit {
         listFunctions = []
       })
       intro.onexit(() => {
+        if (log) {
+          this.kpiService.register(HELP_STOP, intro.currentStep() + 1)
+        }
+
         if (this.typeId) {
           localStorage.setItem(
             'INTRO_JS_' + this.typeId,

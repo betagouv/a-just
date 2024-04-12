@@ -18,6 +18,7 @@ import { autoFocus } from 'src/app/utils/dom-js'
 import { downloadFile } from 'src/app/utils/system'
 import { activityPercentColor } from 'src/app/utils/activity'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
 
 /**
  * Composant page activité
@@ -164,6 +165,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       title: 'Vérifier, compléter ou a-juster : que faire ?',
       intro:
         'Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d\'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la juridiction. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, les sorties et/ou le stock pour augmenter le pourcentage de complétude des données du contentieux.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si, au contraire, elle vous parait correcte. Vous pouvez également choisir de la laisser comme telle.</li>',
+        beforeLoad: async (intro: any) => {
+          const subTools = document.querySelector('.item-grouped .group')
+          if(subTools && subTools.getBoundingClientRect().height === 0) {
+            const itemToClick = document.querySelector('.item.selectable')
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }
     },
     {
       target: '.menu-item.tools',
@@ -172,10 +184,21 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         "Pour vous aider, retrouver :<ul><li>le <b>data-book</b> regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
     },
     {
-      target: '.menu-item.tools',
+      target: '.menu .sub-tools > p:nth-child(4n)',
       title: "L'extracteur de données d'activité",
       intro:
         "Choisissez la <b>période</b> et obtenez toutes les données d'activité dans un <b>fichier Excel</b>.",
+        beforeLoad: async (intro: any) => {
+          const subTools = document.querySelector('.menu .sub-tools')
+          if(!subTools) {
+            const itemToClick = document.querySelector('.menu-item.tools')
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }
     },
   ]
 

@@ -3,7 +3,8 @@
   min-width: 400px !important;
 }
 
-.introjs-tooltip-title {
+.introjs-tooltipReferenceLayer * {
+  font-family: "Marianne" !important;
 }
 
 .introjs-tooltipbuttons {
@@ -16,6 +17,25 @@
 
   > a {
     margin-right: 16px;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 40px !important;
+    padding: 0px 8px !important;
+    border-radius: 4px !important;
+    color: white !important;
+    background-color: fColor(cblue) !important;
+    text-shadow: none !important;
+    cursor: pointer;
+
+    &:focus {
+      outline: 0;
+      text-decoration: none;
+      background-color: none;
+      box-shadow: none;
+      border: none;
+      color: inherit;
+    }
 
     &:last-child {
       margin-right: 0;
@@ -29,17 +49,24 @@
   margin-top: 16px;
   align-items: flex-start;
 
-  > button {
+  > button, > a {
     margin-bottom: 8px;
     background-color: white;
-    border: 1px solid fColor(primary);
-    color: fColor(primary);
+    border: 1px solid fColor(cblue);
+    color: fColor(cblue);
     height: 32px;
     font-size: 16px;
     line-height: 32px;
+    text-decoration: none;
+    padding: 0 16px;
+    border-radius: 16px;
 
     &:last-child {
       margin-bottom: 0;
     }
   }
+}
+
+.introjs-bullets ul li a {
+  background-color: fColor(cblue) !important;
 }

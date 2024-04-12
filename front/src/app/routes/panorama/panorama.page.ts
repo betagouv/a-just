@@ -205,16 +205,7 @@ export class PanoramaPage
       target: '.contact-us',
       title: 'Je passe à la suite :',
       intro:
-        'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !',
-      actions: {
-        onClickToIntro: {
-          label: "J'accède au ventilateur",
-          enable: true,
-          call: () => {
-            this.router.navigate(['/ventilations'])
-          },
-        },
-      },
+        'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !<div class="intro-js-action"><a href="/ventilations">J\'accède au ventilateur</a></div>',
     },
   ]
 
