@@ -184,9 +184,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         "Pour vous aider, retrouver :<ul><li>le <b>data-book</b> regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
     },
     {
-      target: '.menu .sub-tools > p:nth-child(4n)',
+      target: '.menu-item.tools',
+      //target: '.menu .sub-tools > p:nth-child(4n)',
       title: "L'extracteur de données d'activité",
-      intro:
+      /*intro:
         "Choisissez la <b>période</b> et obtenez toutes les données d'activité dans un <b>fichier Excel</b>.",
         beforeLoad: async (intro: any) => {
           const subTools = document.querySelector('.menu .sub-tools')
@@ -198,7 +199,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               await sleep(200)
             }
           }
-        }
+        }*/
     },
   ]
 
