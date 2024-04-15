@@ -11,6 +11,7 @@ import { SpeedometerModule } from 'src/app/components/speedometer/speedometer.mo
 import { SelectModule } from 'src/app/components/select/select.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 
 @NgModule({
   declarations: [CalculatorPage, ReferentielCalculatorComponent],
@@ -25,7 +26,8 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
     SpeedometerModule,
     SelectModule,
     DateSelectModule,
-    WrapperModule
+    WrapperModule,
+    IntroJSModule,
   ],
 })
 export class CalculatorModule {}

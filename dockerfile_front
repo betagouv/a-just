@@ -1,0 +1,6 @@
+FROM node:16.15.1
+
+WORKDIR /home/front
+
+CMD npm install && \
+        npm run start; \

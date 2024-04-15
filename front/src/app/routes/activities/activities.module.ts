@@ -11,6 +11,7 @@ import { DateSelectModule } from 'src/app/components/date-select/date-select.mod
 import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component'
 import { PopupModule } from 'src/app/components/popup/popup.module'
 import { CompletionBarModule } from 'src/app/components/completion-bar/completion-bar.module'
+import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 
 @NgModule({
   declarations: [ActivitiesPage, PopinEditActivitiesComponent],
@@ -26,6 +27,7 @@ import { CompletionBarModule } from 'src/app/components/completion-bar/completio
     DateSelectModule,
     PopupModule,
     CompletionBarModule,
+    IntroJSModule,
   ],
 })
 export class ActivitiesModule {}
