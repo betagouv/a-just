@@ -8,7 +8,7 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
-import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_GREFFE, IMPORT_ETP_MAG } from 'src/app/constants/documentation'
+import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_TEMPLATE } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -137,7 +137,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Ouverture de la calculatrice
    */
   openCalculatricePopup: boolean = false
-
+  /**
+   * Affichage du menu déroulant
+   */
+  toggleDropDown: boolean = false
   /**
    * Constructeur
    * @param hrFonctionService
@@ -156,10 +159,22 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     super()
   }
 
+  onclick(e: MouseEvent) {
+    if (document.getElementById('drop-down')?.contains(e.target as Node)) {
+      // Clicked in box
+      console.log('click in')
+    } else {
+      // Clicked outside the box
+      console.log('click out')
+      this.toggleDropDown = false
+    }
+  }
   /**
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
+    window.addEventListener('click', this.onclick.bind(this))
+
     this.watch(
       this.hrFonctionService.getAll().then(() => this.loadCategories())
     )
@@ -577,17 +592,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     window.open(CALCULATE_DOWNLOAD_URL)
   }
 
-  async downloadEtpTemplate(type: string) {
-    const link = type === "MAGISTRAT" ? IMPORT_ETP_MAG : IMPORT_ETP_GREFFE
+  async downloadEtpTemplate() {
     await this.serverService
       .post('centre-d-aide/log-documentation-link',
         {
-          value: link,
+          value: IMPORT_ETP_TEMPLATE,
         })
       .then((r) => {
         return r.data
       })
-    window.open(link)
+    window.open(IMPORT_ETP_TEMPLATE)
   }
 
   /**
@@ -608,12 +622,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.fileReader(file, classe, event);
     element.value = ''
-    console.log(element)
   }
 
   private fileReader(file: any, line: any, event: any) {
     let fileReader = new FileReader();
-    console.log(this.activities)
     fileReader.onload = (e) => {
       let arrayBuffer = fileReader.result;
       const data = new Uint8Array(arrayBuffer as ArrayBuffer);
@@ -634,14 +646,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         return
       }
 
-      const category = workbook.Sheets[second_sheet_name]['C2'].v === 1 ? 'MAGISTRAT' : 'GREFFE'
 
       const worksheet = workbook.Sheets[first_sheet_name];
       let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { blankrows: false });
 
       // Formated data from the Excel file imported
-      const importedSituation = { category, ...this.matchingCell(firstWorksheet, line) }
+      const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
       this.humanResourceService.importedSituation.next(this.affectImportedSituation(importedSituation))
+      this.appService.notification(
+        `Votre fichier a bien été importé. Veuillez vérifier les informations puis enregistrer la situation afin de mettre à jour cette fiche.`
+      )
     };
     fileReader.readAsArrayBuffer(file);
 
@@ -650,20 +664,49 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   private matchingCell(worksheet: any, line: any) {
     const monTab = { value: [] };
     let fct = null
+    let category: any = null
     let mainEtp = null
     let startDate = null
     let worksheetLine = null
     for (let i = 0; i < worksheet.length; i++) {
       worksheetLine = worksheet[i];
-      if (worksheetLine['__EMPTY_1'] === "Fonction") fct = worksheetLine['__EMPTY_2']
+
+      if (worksheetLine['__EMPTY_1'] === "Fonction" && worksheetLine['__EMPTY_2']) {
+        const fctStr = worksheetLine['__EMPTY_2']
+
+        fct = this.humanResourceService.fonctions
+          .getValue()
+          .find(
+            (c: HRFonctionInterface) =>
+              c.label.toUpperCase() === fctStr?.toUpperCase()
+          ) || null
+
+      }
+      else if (worksheetLine['__EMPTY_1'] === "Catégorie" && worksheetLine['__EMPTY_2']) {
+        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll("_", " ")
+        category =
+          this.humanResourceService.categories
+            .getValue()
+            .find(
+              (c: HRCategoryInterface) =>
+                c.label.toUpperCase() === categoryStr?.toUpperCase()
+            ) || null
+      }
       else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") {
         startDate = worksheetLine['__EMPTY_2']
-        if (startDate instanceof Date === false)
+        if (['(saisir ici depuis quelle date)', '', undefined].includes(startDate))
           startDate = null
+        else {
+          startDate = new Date(startDate)
+          startDate.setHours(startDate.getHours() + 5)
+          this.form
+            .get('activitiesStartDate')
+            ?.setValue(startDate)
+        }
       }
-      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail') {
-        if (worksheetLine['__EMPTY_2'] === 'Temps plein') mainEtp = 1
-        else mainEtp = worksheetLine['__EMPTY_4'] as Number
+      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
+        mainEtp = worksheetLine['__EMPTY_4'] as number
+        mainEtp = fixDecimal(mainEtp)
       }
       else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
         const updatedLine = {
@@ -675,7 +718,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
 
     }
-    return { fct, mainEtp, startDate, ventilation: monTab }
+    console.log({ category, fct, mainEtp, startDate, ventilation: monTab })
+
+
+    category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
+    this.form.get('fonctionId')?.setValue(fct?.id || null)
+    this.form.get('etp')?.setValue(mainEtp)
+
+    return { category, fct, mainEtp, startDate, ventilation: monTab }
   }
 
   affectImportedSituation(formatedData: any) {
@@ -718,6 +768,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       })
 
     })
+
     return result
   }
 }
