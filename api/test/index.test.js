@@ -19,7 +19,7 @@ import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
-import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from './constants/admin'
+import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/admin'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
@@ -55,7 +55,7 @@ describe('Test server is ready', () => {
    * Connect Admin
    */
   it('Login - Login admin', async () => {
-    const email = USER_ADMIN_EMAIl
+    const email = USER_ADMIN_EMAIL
     const password = USER_ADMIN_PASSWORD
 
     // Connexion de l'admin

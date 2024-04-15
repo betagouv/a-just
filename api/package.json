@@ -40,6 +40,7 @@
     "koa-body": "^4.0.6",
     "koa-csp": "^1.2.1",
     "koa-helmet": "^7.0.2",
+    "koa-ip": "^2.1.3",
     "koa-logger-winston": "^0.0.2",
     "koa-session": "^6.4.0",
     "koa-smart": "^2.2.0",

@@ -29,6 +29,9 @@ export const EXECUTE_WHITE_SIMULATOR = 312
 export const EXECUTE_LAUNCH_WHITE_SIMULATOR = 313
 export const EXECUTE_SIMULATOR_PARAM = 315
 
+export const HELP_START = 400
+export const HELP_STOP = 401
+
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
   [USER_USER_FORGOT_PASSWORD]: '[UTILISATEUR] Mot de passe oublié utilisateur ${email}',

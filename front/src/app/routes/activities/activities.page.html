@@ -334,5 +334,6 @@
   </aj-tooltips>
 </ng-template>
 
-
 <aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId" (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
+
+<aj-intro-js *ngIf="referentiel && referentiel.length" [steps]="introSteps" typeId="activities"></aj-intro-js>
