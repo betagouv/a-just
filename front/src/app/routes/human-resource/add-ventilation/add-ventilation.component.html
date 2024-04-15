@@ -23,36 +23,35 @@
       </ng-template>
       <p *ngIf="!isEdit">Renseigner une nouvelle situation</p>
       <pre></pre>
-      <div>
-        <label class="custom-file-upload">
-          <input #file id="file-picker" type="file" class="input-file" accept=".xlsx" (change)="getFile($event,file)" />
-          <mat-icon>download</mat-icon>
-          Importer une situation
+      <div class="drop-down-container">
+        <label id="drop-down" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
+          (blur)="toggleDropDown=!toggleDropDown">
+          Feuille de temps
+          <mat-icon _ngcontent-ng-c640964094="" role="img"
+            class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
+            data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
         </label>
-      </div>
-      <div class="close-button" (click)="close.emit()"><label>Fermer</label> <mat-icon>close</mat-icon>
+        <div class="drop-down-content" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
+
+          <a (click)="downloadEtpTemplate()" class="download">
+            <img src="/assets/icons/download-line.svg" />
+            Télécharger un modèle vierge
+          </a>
+          <label class="custom-file-upload">
+            <input #file id="file-picker" type="file" class="input-file" accept=".xlsx"
+              (change)="getFile($event,file)" />
+            <img src="/assets/icons/upload-line.svg" />Importer une situation pré-renseignée
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="download-tools">
-      <mat-icon>information</mat-icon>
-      <p>Outils à télécharger :</p>
-      <a (click)="downloadCalculator()" class="download">
-        La calculatrice de ventilations
-        <img src="/assets/icons/download-line.svg" />
-      </a>&nbsp;<br>
-      <a (click)="downloadEtpTemplate('MAGISTRAT')" class="download">
-        Fiche Magistat
-        <img src="/assets/icons/download-line.svg" />
-      </a>&nbsp;
-      <a (click)="downloadEtpTemplate('GREFFE')" class="download">
-        Fiche Greffe
-        <img src="/assets/icons/download-line.svg" />
-      </a>
-    </div>
 
     <div class="administration">
-      <p>1. Situation administrative</p>
+      <div class="top">
+
+        <p>Situation administrative</p>
+      </div>
       <div class="grid-triple">
         <div>
           <div class="label-aj">Catégorie :</div>
@@ -102,67 +101,71 @@
 
     <div class="activities">
       <div class="top">
-        <p>2. Répartition du temps disponible: </p>
+        <p>Répartition du temps disponible</p> <a (click)="downloadCalculator()" class="download">
+          Télécharger la calculatrice de ventilations
+          <img src="/assets/icons/download-line-blue.svg" />
+        </a>
       </div>
       <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
         (referentielChange)="onNewReferentiel($event)" #panelActivities
-        [forceToShowContentieuxDetail]="forceToShowContentieuxDetail">
+        [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
       </panel-activities>
     </div>
-    <div class="date-start">
-      <p *ngIf="isEdit">Modification de la situation au :</p>
-      <p *ngIf="!isEdit">3. Situation à prendre en compte :</p>
-      <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
-        (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
-      </aj-date-select>
-      <div class="flex-1"></div>
-    </div>
-
-    <div class="indisponibilities">
-      <div class="indispo-header">
-        <p>4. Indisponibilités :</p>
-        <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
-          Ajouter une indisponibilité
-        </button>
-        <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
-          text="Qu'est-ce que c'est ?"></aj-help-button>
+    <div class="bottom-container">
+      <div class="date-start">
+        <p *ngIf="isEdit">Modification de<br /> la situation au :</p>
+        <p *ngIf="!isEdit">Situation à <br />prendre en compte :</p>
         <div class="flex-1"></div>
+        <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+          (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
+        </aj-date-select>
       </div>
-      <div class="indispo-content grid-triple" *ngIf="indisponibilities.length">
-        <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
-          <div class="icon">
-            <mat-icon>event_busy</mat-icon>
-          </div>
-          <div class="text">
-            <p>
-              {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
-              ({{ indisp.percent || 0 }}%)
-            </p>
-            <p>
-              <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date : 'dd' }}
-                {{ getShortMonthString(indisp.dateStart) }}
-                {{ getFullYear(indisp.dateStart) }}</ng-template>
-              <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
-                au
-              </ng-template>
-              <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
-                jusqu'au
-              </ng-template>
-              <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date : 'dd' }}
-                {{ getShortMonthString(indisp.dateStop) }}
-                {{ getFullYear(indisp.dateStop) }}</ng-template>
-            </p>
-          </div>
-          <div class="action">
-            <mat-icon>drive_file_rename_outline</mat-icon>
+
+      <div class="indisponibilities">
+        <div class="indispo-header">
+          <p>Indisponibilités :</p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
+            text="Qu'est-ce que c'est ?"></aj-help-button>
+          <label>(facultatif)</label>
+          <div class="flex-1"></div>
+          <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
+            + Ajouter
+          </button>
+        </div>
+        <div class="indispo-content" *ngIf="indisponibilities.length">
+          <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+            <div class="icon">
+              <mat-icon>event_busy</mat-icon>
+            </div>
+            <div class="text">
+              <p>
+                {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
+                ({{ indisp.percent || 0 }}%)
+              </p>
+              <p>
+                <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date : 'dd' }}
+                  {{ getShortMonthString(indisp.dateStart) }}
+                  {{ getFullYear(indisp.dateStart) }}</ng-template>
+                <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
+                  au
+                </ng-template>
+                <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
+                  jusqu'au
+                </ng-template>
+                <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date : 'dd' }}
+                  {{ getShortMonthString(indisp.dateStop) }}
+                  {{ getFullYear(indisp.dateStop) }}</ng-template>
+              </p>
+            </div>
+            <div class="action">
+              <mat-icon>drive_file_rename_outline</mat-icon>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="indispo-error" *ngIf="indisponibilityError">
-        {{ indisponibilityError }}
+        <div class="indispo-error" *ngIf="indisponibilityError">
+          {{ indisponibilityError }}
+        </div>
       </div>
     </div>
-
     <div class="actions" *ngIf="saveActions">
       <button class="outline blue strict-border" (click)="close.emit()">
         Annuler

@@ -67,6 +67,10 @@ export class PanelActivitiesComponent
  */
   @Input() category: HRCategoryInterface | null = null
   /**
+ * Permet de savoir si le panel est en cours d'édition
+ */
+  @Input() isEdited: boolean = false
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> =
@@ -110,9 +114,12 @@ export class PanelActivitiesComponent
     this.watch(
       this.humanResourceService.importedSituation.subscribe(
         (referentiel) => {
-          referentiel.map((elem: importedVentillation) => {
-            this.onChangePercent(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
-          })
+          this.activities = []
+          if (this.isEdited) {
+            referentiel.map((elem: importedVentillation) => {
+              this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
+            })
+          }
         })
     )
   }
@@ -220,8 +227,7 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
-    console.log('percent', percent, referentiel, parentReferentiel)
-
+    console.log("REF", referentiel.id)
     // memorise list
     const activity = this.activities.find(
       (a) => a.contentieux.id === referentiel.id
@@ -280,6 +286,42 @@ export class PanelActivitiesComponent
     this.onTotalAffected()
   }
 
+
+  /**
+ * Changement du pourcentage d'une activitié sans recalcul du total
+ * @param referentiel
+ * @param percent
+ * @param parentReferentiel
+ */
+  onChangePercentWithoutTotalComputation(
+    referentiel: ContentieuReferentielInterface,
+    percent: number,
+    parentReferentiel: ContentieuReferentielInterface | null = null
+  ) {
+    // memorise list
+    const activity = this.activities.find(
+      (a) => a.contentieux.id === referentiel.id
+    )
+    if (activity) {
+      activity.percent = percent
+    } else {
+      this.activities.push({
+        id: -1,
+        contentieux: {
+          id: referentiel.id,
+          label: '',
+          averageProcessingTime: 0,
+          averageProcessingTimeFonc: 0,
+        },
+        referentielId: referentiel.id,
+        percent,
+      })
+    }
+
+    this.onLoadReferentiel()
+    this.referentielChange.emit(this.referentiel)
+    this.onTotalAffected()
+  }
   /**
    * Accélaration du rendu de la liste
    * @param index
@@ -298,7 +340,6 @@ export class PanelActivitiesComponent
   countNbSubItem(referentiel: ContentieuReferentielInterface) {
     return (referentiel.childrens || []).filter((r) => r.percent).length
   }
-PROBLEME TOUTES LeS SItUATIONS SE METTENT A JOUR
   /**
    * Change l'état de mouseHovering lorsque la souris hover un sous référentiel du contentieux 'Autres Activités'
    */
