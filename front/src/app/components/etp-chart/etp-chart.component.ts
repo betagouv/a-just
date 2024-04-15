@@ -176,7 +176,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.data.projectedGref.values = new Array()
         this.data.projectedCont.values = new Array()
 
-        console.log(this.data.projectedCont, monthlyContValues, this.categorySelected)
         Object.keys(monthlyMagValues).forEach((x: any) => {
           this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
           this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
@@ -668,7 +667,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.tooltip.projectedFon = value.projectedFon
         this.tooltip.simulatedFon = value.simulatedFon
 
-        console.log(value)
         this.tooltip.projectedCont = value.projectedCont
         this.tooltip.simulatedCont = value.simulatedCont
 
