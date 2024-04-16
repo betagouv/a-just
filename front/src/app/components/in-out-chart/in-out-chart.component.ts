@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core'
+import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
@@ -79,7 +79,8 @@ export class InOutChartComponent implements OnDestroy {
    */
   constructor(
     element: ElementRef<HTMLElement>,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
@@ -390,6 +391,7 @@ export class InOutChartComponent implements OnDestroy {
               e.chart.scales.A.max
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
+                $this.myChart.update()
                 colorArray.push('#0a76f6')
               } else {
                 colorArray.push('rgb(109, 109, 109)')
@@ -425,7 +427,7 @@ export class InOutChartComponent implements OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -478,12 +480,13 @@ export class InOutChartComponent implements OnDestroy {
           autocolors: false,
           annotation: {
             click: function (e: any, items: any) {
+              console.log('CLICK')
               if (items.length == 0) return
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false
               e.chart.options.plugins.annotation.annotations.box1.content = ''
-              items.chart.update()
               $this.updateAnnotationBox(false, undefined, undefined, '')
+              items.chart.update()
             },
             annotations: {
               box1: {
@@ -540,10 +543,13 @@ export class InOutChartComponent implements OnDestroy {
       },
       plugins: [yScaleTextInOut],
     }
-    this.myChart = new Chart(
-      document.getElementById('in-out-chart') as ChartItem,
-      config
-    )
+
+    this.ngZone.runOutsideAngular(() => {
+      this.myChart = new Chart(
+        document.getElementById('in-out-chart') as ChartItem,
+        config
+      )
+    })
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -573,16 +579,31 @@ export class InOutChartComponent implements OnDestroy {
         const colorArray = []
 
         if (value.x) {
+          let higuerYPosition = value.y ? value.y : 0
+          let higuerXPosition = value.x ? value.x : 0
+
+          if (value.pointIndex !== null)
+          // xScale.top
+          {
+            higuerYPosition = Math.min(
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+            )
+            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+          }
+
           this.myChart.tooltip.active = false
           this.realSelectedMonth = value.selectedLabelValue as string
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
-          tooltipEl.style.top = value.y
+          tooltipEl.style.top = higuerYPosition - 130 + 'px'
           tooltipElTriangle.style.opacity = 1
           tooltipElTriangle.style.left =
-            Number(String(value.trianglex).replace('px', '')) + 4 + 'px'
+            Number(String(higuerXPosition).replace('px', '')) + 10 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(value.y).replace('px', '')) + 128 + 'px'
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 128 + 'px'
           this.tooltip.projectedIn =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
           this.tooltip.simulatedIn =
@@ -600,6 +621,10 @@ export class InOutChartComponent implements OnDestroy {
           }
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
+        this.myChart.update()
+        this.ngZone.run(() => {
+          this.myChart.update()
+        })
         if (value.display === false) {
           this.myChart.tooltip.active = true
           tooltipEl.style.opacity = 0
@@ -696,3 +721,4 @@ export class InOutChartComponent implements OnDestroy {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
+

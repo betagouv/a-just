@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   Input,
+  NgZone,
   OnDestroy,
 } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
@@ -107,7 +108,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       bgColor: '#fcd7d3',
     },
     simulatedCont: {
-      values: [],
+      values: [0],
       dotColor: '#fcd7d3',
       bgColor: '#eba89f',
     },
@@ -120,7 +121,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    */
   constructor(
     private element: ElementRef<HTMLElement>,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
@@ -152,16 +154,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           value?.etpFon as number,
           this.labels.length
         )
-
-        /** TO ADD WHEN INTEGRATE CONT AND FON
         this.data.simulatedCont.values = simulatorService.generateLinearData(
           value?.etpCont as number,
           value?.etpCont as number,
           this.labels.length
         )
 
- 
-        */
         let monthlyMagValues: any = undefined
         let monthlyContValues: any = undefined
         let monthlyFonValues: any = undefined
@@ -170,8 +168,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           .getValue()!
           .monthlyReport!.forEach((x) => {
             if (x.name === 'Magistrat') monthlyMagValues = x.values
-            if (x.name === 'Fonctionnaire') monthlyFonValues = x.values
-            if (x.name === 'Contractuel') monthlyContValues = x.values
+            if (x.name === 'Greffe') monthlyFonValues = x.values
+            if (x.name === 'Autour du magistrat') monthlyContValues = x.values
           })
 
         this.data.projectedMag.values = new Array()
@@ -219,7 +217,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           if (this.categorySelected === 'MAGISTRAT') {
             this.myChart.hide(3)
           }
-          if (this.categorySelected === 'FONCTIONNAIRE') {
+          if (this.categorySelected === 'GREFFE') {
             this.myChart.hide(1)
           }
 
@@ -236,7 +234,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             this.myChart.hide(5)
           }
 
-          this.myChart.hide(4)
+          //this.myChart.hide(4)
           this.myChart.hide(5)
           this.myChart.update()
         }
@@ -339,10 +337,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           sufix = 'magistrats (simulé)'
           break
         case 'projectedGref':
-          sufix = 'fonctionnaires (projeté)'
+          sufix = 'agents de greffe (projeté)'
           break
         case 'simulatedGref':
-          sufix = 'fonctionnaires (simulé)'
+          sufix = 'agents de greffe (simulé)'
           break
         case 'projectedCont':
           sufix = 'contractuels (projeté)'
@@ -395,7 +393,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               return x.label === 'simulatedMag'
             }
           )
-
           const projectedFon = e.chart.config._config.data.datasets.find(
             (x: any) => {
               return x.label === 'projectedFon'
@@ -404,6 +401,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           const simulatedFon = e.chart.config._config.data.datasets.find(
             (x: any) => {
               return x.label === 'simulatedFon'
+            }
+          )
+          const projectedCont = e.chart.config._config.data.datasets.find(
+            (x: any) => {
+              return x.label === 'projectedCont'
             }
           )
 
@@ -426,12 +428,15 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           tooltipEl.style.top = min - 162 + 'px'
 
           tooltipElTriangle.style.opacity = 1
-          tooltipElTriangle.style.left = items[0].element.x + 4 + 'px'
-          tooltipElTriangle.style.top = min + 32.5 + 'px'
+          tooltipElTriangle.style.left = items[0].element.x + 8 + 'px'
+          tooltipElTriangle.style.top = min + 'px'
 
           $this.affectTooltipValues({
             projectedMag: projectedMag.data[firstPoint],
             simulatedMag: simulatedMag.data[firstPoint],
+            //projectedFon: projectedFon.data[firstPoint],
+            //simulatedFon: simulatedFon.data[firstPoint],
+            projectedCont: projectedCont.data[firstPoint],
             x: (items[0].element.x > 175 ? items[0].element.x : 175) + 'px',
             y: min - 130 + 'px',
             trianglex: items[0].element.x + 4 + 'px',
@@ -484,6 +489,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
+                $this.realSelectedMonth = $this.labels![i]
+                $this.myChart.update()
                 colorArray.push('#0a76f6')
               } else {
                 colorArray.push('rgb(109, 109, 109)')
@@ -523,7 +530,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -580,8 +587,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false
               e.chart.options.plugins.annotation.annotations.box1.content = ''
-              items.chart.update()
               $this.updateAnnotationBox(false, undefined, undefined, '')
+              items.chart.update()
             },
             annotations: {
               box1: {
@@ -630,10 +637,14 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       },
       plugins: [yScaleTextStock],
     }
-    this.myChart = new Chart(
-      document.getElementById('etp-chart') as ChartItem,
-      config
-    )
+
+    this.ngZone.runOutsideAngular(() => {
+      this.myChart = new Chart(
+        document.getElementById('etp-chart') as ChartItem,
+        config
+      )
+    })
+
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -656,6 +667,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         this.tooltip.projectedFon = value.projectedFon
         this.tooltip.simulatedFon = value.simulatedFon
 
+        this.tooltip.projectedCont = value.projectedCont
+        this.tooltip.simulatedCont = value.simulatedCont
+
         const tooltipEl =
           $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
         const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector(
@@ -665,17 +679,31 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         const colorArray = []
 
         if (value.x) {
+          let higuerYPosition = value.y ? value.y : 0
+          let higuerXPosition = value.x ? value.x : 0
 
+          if (value.pointIndex !== null)
+          // xScale.top
+          {
+            higuerYPosition = Math.min(
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+            )
+            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+          }
+
+          this.myChart.tooltip.active = false
           this.realSelectedMonth = value.selectedLabelValue as string
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
-          tooltipEl.style.top =
-            Number(String(value.y).replace('px', '')) + 34 + 'px'
+          tooltipEl.style.top = higuerYPosition - 130 + 'px'
           tooltipElTriangle.style.opacity = 1
           tooltipElTriangle.style.left =
-            Number(String(value.trianglex).replace('px', '')) + 4 + 'px'
+            Number(String(higuerXPosition).replace('px', '')) + 10 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(value.y).replace('px', '')) + 162 + 'px'
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 160 + 'px'
 
           this.tooltip.projectedMag =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
@@ -686,6 +714,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             this.myChart.data.datasets[2].data[value.pointIndex as number]
           this.tooltip.simulatedFon =
             this.myChart.data.datasets[3].data[value.pointIndex as number]
+
+          this.tooltip.projectedCont =
+            this.myChart.data.datasets[4].data[value.pointIndex as number]
+
 
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             if ((value.pointIndex as number) === i) {
@@ -705,8 +737,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           }
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
-
         this.myChart.update()
+        this.ngZone.run(() => {
+          this.myChart.update()
+        })
       }
     })
   }
@@ -839,3 +873,4 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
+
