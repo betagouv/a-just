@@ -543,8 +543,7 @@
   </div>
 
   <!-- ALL SIMULATORS - TITRE Résultat de simulation + HEADER situation simulée -->
-  <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData)"
-    [ngClass]="{'display-none': chooseScreen}">
+  <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData) && !chooseScreen">
     <div class="header-simulation">
       <p class="simulation-title">Résultat de la simulation
 
@@ -803,12 +802,13 @@
         </div>
       </div>
     </div>
+
+    <aj-dtes-chart *ngIf="whiteSimulator===false"></aj-dtes-chart>
+    <aj-etp-chart *ngIf="whiteSimulator===false" [categorySelected]="categorySelected||'MAGISTRAT'"
+      [canViewMagistrat]="canViewMagistrat" [canViewGreffier]="canViewGreffier"
+      [canViewContractuel]="canViewContractuel"></aj-etp-chart>
+    <aj-in-out-chart *ngIf="whiteSimulator===false"></aj-in-out-chart>
     <!--
-    <aj-dtes-chart></aj-dtes-chart>
-
-
-    <aj-etp-chart *ngIf="categorySelected" [categorySelected]="categorySelected" [canViewMagistrat]="canViewMagistrat"
-      [canViewGreffier]="canViewGreffier" [canViewContractuel]="canViewContractuel"></aj-etp-chart>
 
     <aj-in-out-chart></aj-in-out-chart> -->
 
@@ -838,6 +838,12 @@
         <div id="comment-area-copy">{{commentaire}}</div>
       </div>
       <div class="space"></div>
+    </div>
+    <div class="button-row">
+      <div id=" export-button" class="export-button bottom" [class.enable]="toDisplaySimulation" (click)="print()">
+        <mat-icon class="shape">save</mat-icon>
+        <p class="title">Exporter cette simulation en PDF</p>
+      </div>
     </div>
   </div>
 

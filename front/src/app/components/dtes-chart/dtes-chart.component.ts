@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core'
+import { Component, ElementRef, NgZone } from '@angular/core'
 import { getLongMonthString, getRangeOfMonths } from 'src/app/utils/dates'
 import * as _ from 'lodash'
 import { Chart, ChartItem, registerables } from 'chart.js'
@@ -76,7 +76,8 @@ export class DtesChartComponent {
    */
   constructor(
     element: ElementRef<HTMLElement>,
-    private simulatorService: SimulatorService
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
       this.stopRealValue = findRealValue(value)
@@ -424,6 +425,7 @@ export class DtesChartComponent {
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
                 $this.realSelectedMonth = $this.labels![i]
+                $this.myChart.update()
                 colorArray.push('#0a76f6')
               } else {
                 colorArray.push('rgb(109, 109, 109)')
@@ -462,7 +464,7 @@ export class DtesChartComponent {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                  100
+                100
               )
               return '(' + percent + '%)'
             },
@@ -532,8 +534,8 @@ export class DtesChartComponent {
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false
               e.chart.options.plugins.annotation.annotations.box1.content = ''
-              items.chart.update()
               $this.updateAnnotationBox(false, undefined, undefined, '')
+              items.chart.update()
             },
             annotations: {
               box1: {
@@ -584,10 +586,12 @@ export class DtesChartComponent {
       plugins: [yScaleTextStock, yScaleTextDTES],
     }
 
-    this.myChart = new Chart(
-      document.getElementById('dtes-chart') as ChartItem,
-      config
-    )
+    this.ngZone.runOutsideAngular(() => {
+      this.myChart = new Chart(
+        document.getElementById('dtes-chart') as ChartItem,
+        config
+      )
+    })
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
@@ -615,15 +619,31 @@ export class DtesChartComponent {
         const colorArray = []
 
         if (value.x) {
+          let higuerYPosition = value.y ? value.y : 0
+          let higuerXPosition = value.x ? value.x : 0
+
+          if (value.pointIndex !== null)
+          // xScale.top
+          {
+            higuerYPosition = Math.min(
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+            )
+            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+          }
+
+          this.myChart.tooltip.active = false
           this.realSelectedMonth = value.selectedLabelValue as string
           tooltipEl.style.opacity = 1
           tooltipEl.style.left = value.x
-          tooltipEl.style.top = value.y
+          tooltipEl.style.top = higuerYPosition - 130 + 'px'
           tooltipElTriangle.style.opacity = 1
           tooltipElTriangle.style.left =
-            Number(String(value.trianglex).replace('px', '')) + 4 + 'px'
+            Number(String(higuerXPosition).replace('px', '')) + 4 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(value.y).replace('px', '')) + 128 + 'px' //68
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 128 + 'px' //68
 
           this.tooltip.projectedStock =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
@@ -643,6 +663,11 @@ export class DtesChartComponent {
           }
           this.myChart.config.options.scales.x.ticks.color = colorArray
         }
+
+        this.myChart.update()
+        this.ngZone.run(() => {
+          this.myChart.update()
+        })
         if (value.display === false) {
           tooltipEl.style.opacity = 0
           tooltipElTriangle.style.opacity = 0
@@ -654,8 +679,11 @@ export class DtesChartComponent {
         }
 
         this.myChart.update()
+
       }
     })
+
+
   }
 
   /**
@@ -740,3 +768,4 @@ export class DtesChartComponent {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
+
