@@ -28,10 +28,10 @@
             {{ getRounded(tooltip.projectedMag) || '' }}
           </p>
           <p class="hard-value first">
-            {{ getRounded(tooltip.simulatedMag) || '' }}
+            {{ this.categorySelected === 'MAGISTRAT' ? (getRounded(tooltip.simulatedMag) || ''):'' }}
           </p>
           <div class="white-value">
-            <div class="rounded-label">
+            <div class="rounded-label" *ngIf="this.categorySelected === 'MAGISTRAT'">
               <label>
                 {{
                 getDeltaInPercent(
@@ -53,10 +53,10 @@
             {{ getRounded(tooltip.projectedFon) || '' }}
           </p>
           <p class="hard-value">
-            {{ getRounded(tooltip.simulatedFon) || '' }}
+            {{ this.categorySelected === 'MAGISTRAT' ? '':(getRounded(tooltip.simulatedFon) || '') }}
           </p>
           <div class="white-value">
-            <div class="rounded-label">
+            <div class="rounded-label" *ngIf="this.categorySelected !== 'MAGISTRAT'">
               <label>
                 {{
                 getDeltaInPercent(
@@ -69,24 +69,21 @@
             </div>
           </div>
         </div>
-        <!--
+
         <div class="popin-raw" style="display: flex">
           <div class="popin-title">
-            <div
-              _ngcontent-vmx-c83=""
-              class="circle"
-              style="background-color: #f083a0"
-            ></div>
-            <b>Contractuels</b> &nbsp;
+            <div _ngcontent-vmx-c83="" class="circle" style="background-color: #f083a0"></div>
+            <b>Autour du magistrat</b> &nbsp;
           </div>
-          <p class="low-value"></p>
-          <p class="hard-value"></p>
+          <p class="low-value">
+            {{ getRounded(tooltip.projectedCont) || '' }}
+          </p>
+          <p class="hard-value">
+          </p>
           <div class="white-value">
-            <div class="rounded-label">
-              <label></label>
-            </div>
+
           </div>
-        </div> -->
+        </div>
       </div>
       <div id="chartjs-tooltip-triangle"></div>
     </div>
@@ -112,14 +109,14 @@
 
   <aj-legend-label [title]="'simulatedGref'" [label]="'Greffe (simulé)'" [dotColor]="'#ffcade'" [bgColor]="'#f083a0'"
     (value)="display($event)" [disabledEl]="
-      !canViewGreffier || categorySelected !== 'FONCTIONNAIRE' ? true : false
+      !canViewGreffier || categorySelected !== 'GREFFE' ? true : false
     " [ngClass]="{
-      'disabled-label': !canViewGreffier || categorySelected !== 'FONCTIONNAIRE'
+      'disabled-label': !canViewGreffier || categorySelected !== 'GREFFE'
     }"></aj-legend-label>
 
   <div class="space"></div>
   <aj-legend-label [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'" [bgColor]="'#fcd7d3'"
-    (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
+    (value)="display($event)"></aj-legend-label>
 
   <aj-legend-label [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'" [bgColor]="'#eba89f'"
     (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
