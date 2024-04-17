@@ -142,6 +142,7 @@
     width: 178px;
     border-left: solid 1px fColor(cgraylightv3);
     flex: 1;
+    
 
     > p {
       margin: 11px 16px 8px 16px;
@@ -163,6 +164,7 @@
           padding: 2px 8px;
           border-radius: 12px;
           background-color: fColor(cgrayDefault);
+          cursor: pointer;
         }
       }
     }
