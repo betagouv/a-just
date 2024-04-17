@@ -496,14 +496,18 @@ export class PopinEditActivitiesComponent
     }
   }
   
-  checkInput(event : KeyboardEvent) {
+  checkInput(event : KeyboardEvent, input: string) {
     // Laisse passer ces touches
-    if ((event.key >= '0' && event.key <= '9') || event.key === 'Backspace') {
-          return true
-    } else {
-      // Empêche l'action pour toutes les autres touches
-     return false
-    }
+    // console.log('event.key:', event.key)
+    // console.log('input:', input)
+    // console.log('input length:', input.length)
+    // if ((event.key >= '0' && event.key <= '9') || event.key === 'Backspace') {
+    //       return true
+    // } else {
+    //   // Empêche l'action pour toutes les autres touches
+    //  return false
+    // }
+    return true
   }
 
   /**
@@ -517,7 +521,7 @@ export class PopinEditActivitiesComponent
     let value: null | number = null
     let original: null | number = null
     let isToVerify: boolean = false
-    
+
     if (newValue !== '' && newValue.length > 0) {
       value = +newValue
     }
@@ -539,7 +543,7 @@ export class PopinEditActivitiesComponent
         break
     }
     
-    if ((newValue.length !== 0 && newValue === null) || (value === original && !isToVerify)) {
+    if ((newValue.length !== 0 && newValue === null) || (value && original && value === original && !isToVerify)) {
       delete this.updates[`${contentieux.id}-${nodeName}`]
     } else {
       if (newValue.length === 0) {

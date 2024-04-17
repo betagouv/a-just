@@ -352,7 +352,7 @@
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
         [id]="'contentieux-' + items.id +'-' + type " 
-        (keyup)="checkInput($event) && onUpdateValue(inputElement.value, type, items)"
+        (keyup)="checkInput($event, inputElement.value) && onUpdateValue(inputElement.value, type, items)"
       />
     </div>
   </div>
