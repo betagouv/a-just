@@ -859,14 +859,19 @@ export class PopinEditActivitiesComponent
             return true
         break;
       case 'stock':
-          if (!inputValue) 
-            input = item.stock
-          if (input !== null && input !== item.originalStock) {
-            if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
-              return false
-            }
+        if (!inputValue) 
+          input = item.stock
+        // Si c'est le stock Total du contentieux (item.children existe)
+        if (input !== null && item.childrens) {
+          if (this.total.stock !== null)
             return true
+        } // Sinon, si c'est un contentieux niveau 4 et que la valeur entrée par l'utilisateur et différent de la valeur logiciel (originalStock)
+        else if (input !== null && input !== item.originalStock) {
+          if (isForBulb && (this.checkIfCalculated(item, 'stock')) /*|| (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null*/ /*|| !item.activityUpdated.stock)))*/) {
+            return false
           }
+          return true
+        }
         break;
     }
     return false
