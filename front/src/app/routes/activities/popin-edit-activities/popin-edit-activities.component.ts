@@ -56,7 +56,7 @@ export class PopinEditActivitiesComponent
   /**
    * On Close event
    */
-  @Output() onClose: EventEmitter<boolean> = new EventEmitter()
+  @Output() onClose: EventEmitter<{reload: boolean, month?: Date | undefined}> = new EventEmitter()
   /**
    * Current updates
    */
@@ -398,7 +398,7 @@ export class PopinEditActivitiesComponent
    */
   close() {
     this.controlBeforeChange(true).then(() => {
-      this.onClose.emit(true)
+      this.onClose.emit({reload: true})
       //this.onClose.emit(false)
     })
   }
@@ -613,7 +613,7 @@ export class PopinEditActivitiesComponent
           callback: () => {
             this.updates = {} // clear datas
             if (exit)
-              this.onClose.emit(false)
+              this.onClose.emit({reload: false})
             resolve(true)
           },
           secondaryText: 'Enregistrer les modifications',
@@ -681,7 +681,7 @@ export class PopinEditActivitiesComponent
       }
       this.updates = {} // clear datas
       if (exit)
-        this.onClose.emit(updates.length ? true : false)
+        this.onClose.emit({reload: updates.length ? true : false, month: this.activityMonth})
     }
   }
 
@@ -861,7 +861,7 @@ export class PopinEditActivitiesComponent
       case 'stock':
           if (!inputValue) 
             input = item.stock
-          if ((input !== null && input !== item.originalStock)) {
+          if (input !== null && input !== item.originalStock) {
             if (isForBulb && (this.checkIfCalculated(item, 'stock') || (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
               return false
             }

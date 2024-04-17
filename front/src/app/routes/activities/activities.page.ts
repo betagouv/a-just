@@ -575,9 +575,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * On close contentieux updated
    */
-  onCloseEditedPopin(reload = false) {
+  onCloseEditedPopin({reload = false, month = null}: {reload: boolean, month?: Date | null}) {
     this.contentieuxToUpdate = null
-
+    if (month) {
+      this.activityMonth = new Date(month)
+      this.dateSelector.value = new Date(month)
+    }
     if(reload) {
       this.onLoadMonthActivities()
     }
