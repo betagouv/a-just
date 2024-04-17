@@ -143,6 +143,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       }
     })
     simulatorService.situationSimulated.subscribe((value) => {
+      console.log(this.labels, value)
       if (this.labels !== null) {
         this.data.simulatedMag.values = simulatorService.generateLinearData(
           value?.etpMag as number,
@@ -164,24 +165,56 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         let monthlyContValues: any = undefined
         let monthlyFonValues: any = undefined
 
-        simulatorService.situationProjected
+        console.log(simulatorService.situationProjected
+          .getValue())
+
+
+
+        if (simulatorService.situationProjected
           .getValue()!
-          .monthlyReport!.forEach((x) => {
-            if (x.name === 'Magistrat') monthlyMagValues = x.values
-            if (x.name === 'Greffe') monthlyFonValues = x.values
-            if (x.name === 'Autour du magistrat') monthlyContValues = x.values
+          .monthlyReport !== undefined) {
+          simulatorService.situationProjected
+            .getValue()!
+            .monthlyReport!.forEach((x) => {
+              if (x.name === 'Magistrat') monthlyMagValues = x.values
+              if (x.name === 'Greffe') monthlyFonValues = x.values
+              if (x.name === 'Autour du magistrat') monthlyContValues = x.values
+            })
+
+          this.data.projectedMag.values = new Array()
+          this.data.projectedGref.values = new Array()
+          this.data.projectedCont.values = new Array()
+
+          Object.keys(monthlyMagValues).forEach((x: any) => {
+            this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
+            this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+            this.data.projectedCont.values.push(monthlyContValues[x].etpt)
           })
 
-        this.data.projectedMag.values = new Array()
-        this.data.projectedGref.values = new Array()
-        this.data.projectedCont.values = new Array()
+        }
+        else {
 
-        Object.keys(monthlyMagValues).forEach((x: any) => {
-          this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
-          this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
-          this.data.projectedCont.values.push(monthlyContValues[x].etpt)
-        })
+          this.data.projectedMag.values = simulatorService.generateLinearData(
+            simulatorService.situationProjected
+              .getValue()?.etpMag as number,
+            simulatorService.situationProjected
+              .getValue()?.etpMag as number,
+            this.labels.length
+          )
+          this.data.projectedGref.values = simulatorService.generateLinearData(
+            simulatorService.situationProjected
+              .getValue()?.etpFon as number,
+            simulatorService.situationProjected
+              .getValue()?.etpFon as number,
+            this.labels.length
+          )
 
+
+        }
+
+
+
+        console.log(this.data.projectedMag)
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           if (this.canViewMagistrat) {
