@@ -398,8 +398,9 @@ export class PopinEditActivitiesComponent
    */
   close() {
     this.controlBeforeChange(true).then(() => {
+      if (this.wrapper)
+        this.wrapper?.onForcePanelHelperToShow(null, false)
       this.onClose.emit({reload: true})
-      //this.onClose.emit(false)
     })
   }
 
@@ -563,7 +564,16 @@ export class PopinEditActivitiesComponent
       }
     }
     const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-    if (nodeName !== 'stock' && (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && (contentieux.activityUpdated.stock.value === null || contentieux.activityUpdated.stock.value === contentieux.originalStock) || !contentieux.activityUpdated.stock))) && (contentieux.valueQualityStock !== this.VALUE_QUALITY_TO_VERIFY || value !== original)) {
+    if ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
+        (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`]) ||
+        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`])
+    ) {
+      setTimeout(() => {
+        delete this.updates[`${contentieux.id}-stock`];
+        stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '0'
+      }, 1000)
+    }
+    else if (nodeName !== 'stock' && (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && (contentieux.activityUpdated.stock.value === null || contentieux.activityUpdated.stock.value === contentieux.originalStock) || !contentieux.activityUpdated.stock))) && (contentieux.valueQualityStock !== this.VALUE_QUALITY_TO_VERIFY || value !== original)) {
       if (( this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated ) || !this.updates[`${contentieux.id}-stock`]) {
         const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
         const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
@@ -612,14 +622,20 @@ export class PopinEditActivitiesComponent
           okText: 'Annuler les modifications',
           callback: () => {
             this.updates = {} // clear datas
-            if (exit)
+            if (exit) {
+              if (this.wrapper)
+                this.wrapper?.onForcePanelHelperToShow(null, false)
               this.onClose.emit({reload: false})
+            }
             resolve(true)
           },
           secondaryText: 'Enregistrer les modifications',
           callbackSecondary: async () => {
-            if (exit)
+            if (exit) {
+              if (this.wrapper)
+                this.wrapper?.onForcePanelHelperToShow(null, false)
               await this.onSave({force: true, exit: true})
+            }
             else 
               await this.onSave({force: true})
             resolve(true)
@@ -652,13 +668,13 @@ export class PopinEditActivitiesComponent
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
-              options.entrees = elem.value
+              options.entrees = elem.value ? elem.value : elem.contentieux.originalIn
               break
             case 'sorties':
-              options.sorties = elem.value
+              options.sorties = elem.value ? elem.value : elem.contentieux.originalOut
               break
             case 'stock':
-              options.stock = elem.value
+              options.stock = elem.value ? elem.value : elem.contentieux.originalStock
               break
           }
           await this.activitiesService.updateDatasAt(
@@ -847,27 +863,30 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
           if (!inputValue) 
-            input = item.in
+            input = item.in //item.originalIn
           if (input !== null && input !== item.originalIn) {
             return true
           }
         break;
       case 'sorties':
           if (!inputValue) 
-            input = item.out
+            input = item.out//item.originalOut
           if (input !== null && input !== item.originalOut)
             return true
         break;
       case 'stock':
         if (!inputValue) 
-          input = item.stock
+          input = item.stock//item.originalStock
         // Si c'est le stock Total du contentieux (item.children existe)
         if (input !== null && item.childrens) {
           if (this.total.stock !== null)
             return true
         } // Sinon, si c'est un contentieux niveau 4 et que la valeur entrée par l'utilisateur et différent de la valeur logiciel (originalStock)
         else if (input !== null && input !== item.originalStock) {
-          if (isForBulb && (this.checkIfCalculated(item, 'stock')) /*|| (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null*/ /*|| !item.activityUpdated.stock)))*/) {
+          //Si c'est pour les ampoules -> Vérification que c'est bien une donnée calculé OU que dans l'objet du contentieux concerné, on est bien une valeur de stock mais pas d'élément enregistré dans la partir ActivityUpdated
+          // pour les stocks (cette partie étant renseigné seulement pour les données manuellement ajustées et non calculées)
+          if (isForBulb && (this.checkIfCalculated(item, 'stock') ||
+             (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
             return false
           }
           return true

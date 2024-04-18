@@ -474,9 +474,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Methode à disposition pour forcer l'ouverture du paneau, pratique pour un appel exterieur du composant
    * @param documentation
    */
-  onForcePanelHelperToShow(documentation: DocumentationInterface) {
-    this.documentationToShow = documentation
-    this.panelHelper = true
+  onForcePanelHelperToShow(documentation: DocumentationInterface | null, opened: boolean = true) {
+    if (documentation)
+      this.documentationToShow = documentation
+    this.panelHelper = opened
   }
 
   /**

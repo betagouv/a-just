@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { Op } from 'sequelize'
+import Sequelize, { Op } from 'sequelize'
 import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
 import { month } from '../utils/date'
 import { maxBy } from 'lodash'
@@ -316,8 +316,23 @@ export default (sequelizeInstance, Model) => {
       },
     })
     if (findActivity) {
-      console.log('edit', { [nodeUpdated]: values[nodeUpdated] })
-      await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
+      let original = null
+      switch (nodeUpdated) {
+        case 'entrees':
+          original = "original_entrees"
+          break;
+        case 'sorties':
+          original = "original_sorties"
+          break;
+        case 'stock':
+          original = "original_stock"
+          break;
+      }
+      if((findActivity.dataValues[original] === values[nodeUpdated]) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
+        await findActivity.update({ [nodeUpdated]: null });
+      }
+      else 
+        await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
     } else {
       console.log('create', {
         ...values,
@@ -793,6 +808,32 @@ export default (sequelizeInstance, Model) => {
 
         return !childrens.every((c) => c.lastDateWhithoutData === null)
       })
+  }
+
+  /**
+   * Obtenir un contentieux pour un mois donnée
+   * @param {*} HRBackupId
+   * @param {*} contentieuxId
+   * @param {*} date
+   * @returns
+   */
+  Model.getOneByMonth = async (HRBackupId, contentieuxId, date) => {
+
+    console.log('GetOneByMonth')
+    const year = new Date(date).getFullYear().toString()
+    const month = (new Date(date).getMonth() + 1).toString()
+    const periode = year + '-' + month
+    return await Model.findOne({
+      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
+      where: {
+        hr_backup_id: HRBackupId,
+        contentieux_id: contentieuxId,
+        periode: {
+          [Op.gte]: new Date(year, month - 1, 1), // Date de début du month
+          [Op.lt]: new Date(year, month, 1)
+        }
+      },
+    })
   }
 
   return Model
