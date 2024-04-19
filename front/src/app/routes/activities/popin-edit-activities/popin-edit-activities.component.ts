@@ -781,7 +781,7 @@ export class PopinEditActivitiesComponent
           }
           else if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
              // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
-            if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null) || (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
+            if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated !== true) || (!this.updates[`${cont.id}-${node}`] && cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             }
             else {
