@@ -282,7 +282,7 @@
         <p>{{ original == null ? '-' : original }}</p>
       </div>
       <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
-        <p class="confirm-btn" (click)="onUpdateValue(original.toString(), type, items)">Confirmer</p>
+        <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">Confirmer</p>
       </span> 
     </div>
     <div
