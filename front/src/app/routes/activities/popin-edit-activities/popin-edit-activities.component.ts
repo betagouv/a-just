@@ -755,7 +755,7 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/total-des-entrees'
           }
-          else if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null && this.updates[`${cont.id}-${node}`].value !== cont.originalIn)) {
+          else if ((cont.in !== null && (cont.valueQualityIn !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY && cont.in !== cont.originalIn))) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null && this.updates[`${cont.id}-${node}`].value !== cont.originalIn)) {
             //updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees'
           } else {
@@ -767,7 +767,7 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/total-des-sorties'
           }
-          else if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalOut)) {
+          else if ((cont.out !== null && (cont.valueQualityOut !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY && cont.out !== cont.originalOut))) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalOut)) {
             //updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees'
           } else {
@@ -779,7 +779,7 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-total'
           }
-          else if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalStock)) {
+          else if ((cont.stock!== null && (cont.valueQualityStock !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY && cont.stock !== cont.originalStock)) ) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalStock)) {
              // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
             if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated !== true) || (!this.updates[`${cont.id}-${node}`] && cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
