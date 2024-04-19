@@ -854,29 +854,34 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : string, isForBulb? : boolean) {
-
+  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : string | null, isForBulb? : boolean) {
     let input = null
-    if (inputValue !== null)
+    if (inputValue && inputValue.length > 0) {
       input = +inputValue
+    }
+    if (item.label === 'JE' && node == 'stock') {
+      console.log('inputValue:', inputValue)
+      console.log('Inputvalue type:', typeof inputValue)
+      console.log('total stock:', this.total.stock)
+    }
 
     switch (node) {
       case 'entrees':
-          if (!inputValue) 
-            input = item.in //item.originalIn
-          if (input !== null && input !== item.originalIn) {
-            return true
-          }
+        if (!inputValue) 
+          input = item.originalIn
+        if (input !== null && input !== item.originalIn) {
+          return true
+        }
         break;
       case 'sorties':
-          if (!inputValue) 
-            input = item.out//item.originalOut
-          if (input !== null && input !== item.originalOut)
-            return true
+        if (!inputValue) 
+          input = item.originalOut
+        if (input !== null && input !== item.originalOut)
+          return true
         break;
       case 'stock':
-        if (!inputValue) 
-          input = item.stock//item.originalStock
+        if (!inputValue)
+          input = item.originalStock
         // Si c'est le stock Total du contentieux (item.children existe)
         if (input !== null && item.childrens) {
           if (this.total.stock !== null)

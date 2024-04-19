@@ -304,7 +304,7 @@
       >
       </ng-container>
       <p [ngClass]="{
-        'blue': checkIfBlue(items, type, newValue)
+        'blue': checkIfBlue(items, type, newValue !== null ? newValue.toString() : null)
       }" >{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
@@ -350,13 +350,13 @@
   let-updated="updated"
 >
   <i
-    *ngIf='level === 4 || (level === 3 && checkIfBlue(contentieux, type, value))'
+    *ngIf='level === 4 || (level === 3 && checkIfBlue(contentieux, type, value !== null ? value.toString() : null ))'
     class="{{
-      ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value, true) ) ) ?
+      ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value !== null ? value.toString() : null, true) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }}
     cursor-pointer
-    {{  checkIfBlue(contentieux, type, value) ? 'blue' : 'grey' }}"
+    {{  checkIfBlue(contentieux, type, value !== null ? value.toString() : null) ? 'blue' : 'grey' }}"
     #light
     [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
