@@ -316,8 +316,6 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.updateRef = async (id, node, value) => {
-    console.log('[TableContentieuxReferentiels] node:', node)
-    console.log('[TableContentieuxReferentiels] value:', value)
     const ref = await Model.findOne({
       where: {
         id,
@@ -325,11 +323,19 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (ref) {
-      console.log('[TableContentieuxReferentiels] camel_to_snake(node):', [camel_to_snake(node)])
       ref.set({ [camel_to_snake(node)]: value })
       await ref.save()
       Model.cacheReferentielMap = null
     }
+  }
+
+  Model.getOneReferentiel = async (id) => {
+    const ref = await Model.findOne({
+      where: {
+        id,
+      },
+    })
+    return ref ? ref : null
   }
 
   return Model
