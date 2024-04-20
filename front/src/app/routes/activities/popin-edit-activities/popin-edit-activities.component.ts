@@ -785,11 +785,14 @@ export class PopinEditActivitiesComponent
   }
 
   isStockCalculated ({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
-    console.log('Node:', node)
-    console.log('cont:', cont)
-    console.log('Updates:', this.updates[`${cont.id}-${node}`])
-    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated === true) {
+    // console.log('Node:', node)
+    // console.log('cont:', cont)
+    // console.log('Updates:', this.updates[`${cont.id}-${node}`])
+    if (this.updates[`${cont.id}-${node}`]) {
+     if (this.updates[`${cont.id}-${node}`].calculated === true)
       return true
+     else
+      return false
     }
     else if (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null) {
       return true
