@@ -788,7 +788,7 @@ export class PopinEditActivitiesComponent
     if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated === true) {
       return true
     }
-    else if (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null) {
+    else if (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null) {
       return true
     }
     return false
@@ -799,36 +799,46 @@ export class PopinEditActivitiesComponent
       switch (node) {
         case 'entrees':
           if (level === 3) {
+            console.log('TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/total-des-entrees'
           }
           else if (this.isValueUpdated({cont, node})) {
+            console.log('AJUSTE')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees'
           } else {
+            console.log('NORMAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees'
           }
           break;
         case 'sorties':
           if (level === 3) {
+            console.log('TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/total-des-sorties'
           }
           else if (this.isValueUpdated({cont, node})) {
+            console.log('AJUSTE')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees'
           } else {
+            console.log('NORMAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties'
           }
           break;
         case 'stock':
           if (level === 3) {
+            console.log('TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-total'
           }
           else if (this.isValueUpdated({cont, node})) { 
             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
             if (!this.isStockCalculated({cont, node})) {
+              console.log('AJUSTE')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             } else {
+              console.log('CALCULE')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'
             }
           } else {
+            console.log('NORMAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock'
           }
           break; 
