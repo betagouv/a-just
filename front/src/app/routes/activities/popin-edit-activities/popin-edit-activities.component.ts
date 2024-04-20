@@ -824,7 +824,7 @@ export class PopinEditActivitiesComponent
           else if (this.isValueUpdated({cont, node})) { 
             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
             if (!this.isStockCalculated({cont, node})) {
-              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-justees'
+              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             } else {
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'
             }
