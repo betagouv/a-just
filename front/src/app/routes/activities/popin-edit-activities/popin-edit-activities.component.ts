@@ -748,6 +748,52 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  isValueUpdated({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
+    switch (node) {
+      case 'entrees':
+        if (this.updates[`${cont.id}-${node}`]) {
+          if (this.updates[`${cont.id}-${node}`].value === null)
+            return false
+          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalIn) {
+            return true
+          }
+        } else if (cont.in !== null && cont.in !== cont.originalIn)
+            return true
+        break;
+      case 'sorties':
+        if (this.updates[`${cont.id}-${node}`]) {
+          if (this.updates[`${cont.id}-${node}`].value === null)
+            return false
+          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalOut) {
+            return true
+          }
+        } else if (cont.out !== null && cont.out !== cont.originalOut)
+            return true
+        break;
+      case 'stock':
+        if (this.updates[`${cont.id}-${node}`]) {
+          if (this.updates[`${cont.id}-${node}`].value === null)
+            return false
+          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalStock) {
+            return true
+          }
+        } else if (cont.stock !== null && cont.stock !== cont.originalStock)
+            return true
+        break;
+    }
+    return false
+  }
+
+  isStockCalculated ({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
+    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated === true) {
+      return true
+    }
+    else if (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null) {
+      return true
+    }
+    return false
+  }
+
   onShowHelpPanel({level, cont, node, url} : {level?: number, cont?: ContentieuReferentielInterface, node?: string, url?: string}) {
     if (cont && node) {
       switch (node) {
@@ -755,11 +801,9 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/total-des-entrees'
           }
-          else if ((cont.in !== null && (cont.valueQualityIn !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY && cont.in !== cont.originalIn))) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null && this.updates[`${cont.id}-${node}`].value !== cont.originalIn)) {
-            //updated
+          else if (this.isValueUpdated({cont, node})) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees'
           } else {
-            //Not updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees'
           }
           break;
@@ -767,11 +811,9 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/total-des-sorties'
           }
-          else if ((cont.out !== null && (cont.valueQualityOut !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY && cont.out !== cont.originalOut))) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalOut)) {
-            //updated
+          else if (this.isValueUpdated({cont, node})) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees'
           } else {
-            //Not updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties'
           }
           break;
@@ -779,19 +821,17 @@ export class PopinEditActivitiesComponent
           if (level === 3) {
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-total'
           }
-          else if ((cont.stock!== null && (cont.valueQualityStock !== this.VALUE_QUALITY_TO_VERIFY || (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY && cont.stock !== cont.originalStock)) ) || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null  && this.updates[`${cont.id}-${node}`].value !== cont.originalStock)) {
-             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi
-            if ((this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].calculated !== true) || (!this.updates[`${cont.id}-${node}`] && cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value !== null )) {
-              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
-            }
-            else {
-              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'              
+          else if (this.isValueUpdated({cont, node})) { 
+            // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
+            if (!this.isStockCalculated({cont, node})) {
+              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-justees'
+            } else {
+              url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'
             }
           } else {
-            //Not updated
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock'
           }
-          break;
+          break; 
       }
     }
     if (this.wrapper && this.referentiel && url) {
