@@ -785,16 +785,10 @@ export class PopinEditActivitiesComponent
   }
 
   isStockCalculated ({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
-    // console.log('Node:', node)
-    // console.log('cont:', cont)
-    // console.log('Updates:', this.updates[`${cont.id}-${node}`])
     if (this.updates[`${cont.id}-${node}`]) {
-     if (this.updates[`${cont.id}-${node}`].calculated === true)
-      return true
-     else
-      return false
+      return this.updates[`${cont.id}-${node}`].calculated
     }
-    else if (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null) {
+    else if (cont.stock && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) {
       return true
     }
     return false
@@ -805,46 +799,46 @@ export class PopinEditActivitiesComponent
       switch (node) {
         case 'entrees':
           if (level === 3) {
-            console.log('TOTAL')
+            console.log('Entrées - TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/total-des-entrees'
           }
           else if (this.isValueUpdated({cont, node})) {
-            console.log('AJUSTE')
+            console.log('Entrées - AJUSTE')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees'
           } else {
-            console.log('NORMAL')
+            console.log('Entrées - NORMAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees'
           }
           break;
         case 'sorties':
           if (level === 3) {
-            console.log('TOTAL')
+            console.log('Sorties - TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/total-des-sorties'
           }
           else if (this.isValueUpdated({cont, node})) {
-            console.log('AJUSTE')
+            console.log('Sorties - AJUSTE')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees'
           } else {
-            console.log('NORMAL')
+            console.log('Sorties - NORMAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties'
           }
           break;
         case 'stock':
           if (level === 3) {
-            console.log('TOTAL')
+            console.log('Stock - TOTAL')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-total'
           }
           else if (this.isValueUpdated({cont, node})) { 
             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
             if (!this.isStockCalculated({cont, node})) {
-              console.log('AJUSTE')
+              console.log('Stock - AJUSTE')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             } else {
-              console.log('CALCULE')
+              console.log('Stock - CALCULE')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule'
             }
           } else {
-            console.log('NORMAL')
+            console.log('STOCK')
             url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock'
           }
           break; 
@@ -910,41 +904,24 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : string | null, isForBulb? : boolean) {
-    let input = null
-    if (inputValue && inputValue.length > 0) {
-      input = +inputValue
-    }
-
+  checkIfBlue({cont, node, level, isForBulbOrBottom} : {cont: ContentieuReferentielInterface, node: string, level: number, isForBulbOrBottom: boolean }) {
     switch (node) {
       case 'entrees':
-        if (!inputValue) 
-          input = item.originalIn
-        if (input !== null && input !== item.originalIn) {
+        if (this.isValueUpdated({cont, node}))
           return true
-        }
         break;
       case 'sorties':
-        if (!inputValue) 
-          input = item.originalOut
-        if (input !== null && input !== item.originalOut)
+        if (this.isValueUpdated({cont, node}))
           return true
         break;
       case 'stock':
-        if (!inputValue)
-          input = item.originalStock
-        // Si c'est le stock Total du contentieux (item.children existe)
-        if (input !== null && item.childrens) {
-          if (this.total.stock !== null)
+        if (level === 3) {
+          if (this.total.stock !== null && this.total.stock !== cont.originalStock)
             return true
-        } // Sinon, si c'est un contentieux niveau 4 et que la valeur entrée par l'utilisateur et différent de la valeur logiciel (originalStock)
-        else if (input !== null && input !== item.originalStock) {
-          //Si c'est pour les ampoules -> Vérification que c'est bien une donnée calculé OU que dans l'objet du contentieux concerné, on est bien une valeur de stock mais pas d'élément enregistré dans la partir ActivityUpdated
-          // pour les stocks (cette partie étant renseigné seulement pour les données manuellement ajustées et non calculées)
-          if (isForBulb && (this.checkIfCalculated(item, 'stock') ||
-             (item.stock !== null && item.activityUpdated && (item.activityUpdated.stock && item.activityUpdated.stock.value === null || !item.activityUpdated.stock)))) {
+        }
+        else if (this.isValueUpdated({cont, node})) {
+          if (isForBulbOrBottom && this.isStockCalculated({cont, node}))
             return false
-          }
           return true
         }
         break;
@@ -952,11 +929,6 @@ export class PopinEditActivitiesComponent
     return false
   }
 
-  checkIfCalculated(item : ContentieuReferentielInterface, node: string) {
-    if (this.updates[`${item.id}-${node}`] && this.updates[`${item.id}-${node}`].calculated === true)
-      return true
-    return false
-  }
 
   downloadAsset(type: string, download = false) {
     let url = null

@@ -304,7 +304,7 @@
       >
       </ng-container>
       <p [ngClass]="{
-        'blue': checkIfBlue(items, type, newValue !== null ? newValue.toString() : null)
+        'blue': checkIfBlue({level: 3, cont: items, node: type, isForBulbOrBottom: false})
       }" >{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
@@ -328,8 +328,8 @@
         [ngModel]="newValue"
         [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
-          'blue-bottom': checkIfBlue(items, type, inputElement.value, true) ,
-          'blue-txt': checkIfBlue(items, type, inputElement.value),
+          'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true}) ,
+          'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false}),
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
@@ -350,13 +350,13 @@
   let-updated="updated"
 >
   <i
-    *ngIf='level === 4 || (level === 3 && checkIfBlue(contentieux, type, value !== null ? value.toString() : null ))'
+    *ngIf='level === 4 || (level === 3 && checkIfBlue({level: 3, cont: contentieux, node: type, isForBulbOrBottom: false}))'
     class="{{
-      ( level === 4 && ( value === null || checkIfBlue(contentieux, type, value !== null ? value.toString() : null, true) ) ) ?
+      ( level === 4 && ( value === null || checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: true}) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }}
     cursor-pointer
-    {{  checkIfBlue(contentieux, type, value !== null ? value.toString() : null) ? 'blue' : 'grey' }}"
+    {{  checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: false}) ? 'blue' : 'grey' }}"
     #light
     [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
