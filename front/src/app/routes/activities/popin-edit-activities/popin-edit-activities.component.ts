@@ -445,19 +445,12 @@ export class PopinEditActivitiesComponent
           switch (elem.node) {
             case 'entrees':
                 this.total.in = (this.total.in || 0) + delta
-                if (this.referentiel && this.referentiel.originalIn === null && this.total.in == 0)
-                  this.total.in = null
-              
               break
             case 'sorties':
                 this.total.out = (this.total.out || 0) + delta
-                if (this.referentiel && this.referentiel.originalOut === null && this.total.out == 0)
-                  this.total.out = null
               break
             case 'stock':
                 this.total.stock = (this.total.stock || 0) + delta
-                if (this.referentiel && this.referentiel.originalStock === null && this.total.stock == 0)
-                  this.total.stock = null
               break
           }
         }
@@ -483,7 +476,7 @@ export class PopinEditActivitiesComponent
         this.total.in !== undefined &&
         this.total.in < 0
       ) {
-          this.total.in = 0
+        this.total.in = 0
       }
 
       if (
