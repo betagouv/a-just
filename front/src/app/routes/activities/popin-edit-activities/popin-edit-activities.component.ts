@@ -691,15 +691,16 @@ export class PopinEditActivitiesComponent
         }
 
         for (const elem of up) {
+          console.log('Elem:', elem)
           switch (elem.node) {
             case 'entrees':
-              options.entrees = elem.value ? elem.value : elem.contentieux.originalIn
+              options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
               break
             case 'sorties':
-              options.sorties = elem.value ? elem.value : elem.contentieux.originalOut
+              options.sorties = elem.value !== null ? elem.value : elem.contentieux.originalOut
               break
             case 'stock':
-              options.stock = elem.value ? elem.value : elem.contentieux.originalStock
+              options.stock = elem.value !== null? elem.value : elem.contentieux.originalStock
               break
           }
           await this.activitiesService.updateDatasAt(
