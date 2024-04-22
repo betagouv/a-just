@@ -691,7 +691,6 @@ export class PopinEditActivitiesComponent
         }
 
         for (const elem of up) {
-          console.log('Elem:', elem)
           switch (elem.node) {
             case 'entrees':
               options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
