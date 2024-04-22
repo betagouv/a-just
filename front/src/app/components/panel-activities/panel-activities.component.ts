@@ -63,6 +63,10 @@ export class PanelActivitiesComponent
    */
   @Input() showPlaceHolder: boolean = false
   /**
+ * Show to place holder whihout information
+ */
+  @Input() indexSituation: number | null = null
+  /**
  * Categorie courante
  */
   @Input() category: HRCategoryInterface | null = null
@@ -115,8 +119,8 @@ export class PanelActivitiesComponent
       this.humanResourceService.importedSituation.subscribe(
         (referentiel) => {
           this.activities = []
-          if (this.isEdited) {
-            referentiel.map((elem: importedVentillation) => {
+          if (referentiel?.index === this.indexSituation && referentiel?.index !== null) {
+            referentiel?.ventillation.map((elem: importedVentillation) => {
               this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
             })
           }

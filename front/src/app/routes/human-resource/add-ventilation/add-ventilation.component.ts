@@ -32,6 +32,11 @@ export interface importedVentillation {
   parentReferentiel: ContentieuReferentielInterface | null
 }
 
+export interface importedSituation {
+  index: number | null,
+  ventillation: importedVentillation[]
+}
+
 /**
  * Panneau pour ajouter / modifier une situation
  * indispos, etp, category, fonction, date début
@@ -84,6 +89,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Force to show sub contentieux
    */
   @Input() forceToShowContentieuxDetail: boolean = false
+  /**
+   * Indice de la situation édité
+   */
+  @Input() indexSituation: number | null = null
   /**
    * Event lors de la sauvegarde
    */
@@ -142,6 +151,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   toggleDropDown: boolean = false
   /**
+   * Fonction importée
+   */
+  importedFunction: number | null = null
+  /**
+   * Import de fichié effectué
+   */
+  displayImportLabels = false
+  /**
+   * Somme des valeurs importés
+   */
+  sumPercentImported = 0
+  /**
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
@@ -159,21 +180,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     super()
   }
 
-  onclick(e: MouseEvent) {
-    if (document.getElementById('drop-down')?.contains(e.target as Node)) {
-      // Clicked in box
-      console.log('click in')
-    } else {
-      // Clicked outside the box
-      console.log('click out')
-      this.toggleDropDown = false
-    }
-  }
   /**
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
     window.addEventListener('click', this.onclick.bind(this))
+    window.addEventListener('click', this.onclick2.bind(this))
 
     this.watch(
       this.hrFonctionService.getAll().then(() => this.loadCategories())
@@ -191,8 +203,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form.get('categoryId')?.valueChanges.subscribe(() => {
         this.loadCategories().then(() => {
-          let fct = this.fonctions[0]
-          this.form.get('fonctionId')?.setValue(fct.id || null)
+          let fct = null
+          if (this.displayImportLabels) {
+            fct = this.fonctions.find(c => c.id === this.importedFunction)
+          }
+          else {
+            fct = this.fonctions[0]
+          }
+          this.form.get('fonctionId')?.setValue(fct?.id || null)
           if (fct)
             this.calculatriceIsActive = fct.calculatrice_is_active || false
         })
@@ -612,6 +630,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     return cat
   }
 
+  /**
+   * Interprete le fichier Excel importé par l'utilisateur
+   * @param event 
+   * @param element 
+   */
   getFile(event: any, element: HTMLInputElement) {
     const file = event.target.files[0];
 
@@ -652,15 +675,24 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
       // Formated data from the Excel file imported
       const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
-      this.humanResourceService.importedSituation.next(this.affectImportedSituation(importedSituation))
+
+      this.displayImportLabels = true
+      let situation: importedSituation = { index: this.indexSituation, ventillation: this.affectImportedSituation(importedSituation) }
+      this.humanResourceService.importedSituation.next(situation)
       this.appService.notification(
-        `Votre fichier a bien été importé. Veuillez vérifier les informations puis enregistrer la situation afin de mettre à jour cette fiche.`
+        `L’import de vos données a bien été réalisé.`
       )
     };
     fileReader.readAsArrayBuffer(file);
 
   }
 
+  /**
+   * Matching des différents champs de text Excel avec fiche agent AJUST
+   * @param worksheet 
+   * @param line 
+   * @returns 
+   */
   private matchingCell(worksheet: any, line: any) {
     const monTab = { value: [] };
     let fct = null
@@ -699,10 +731,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         else {
           startDate = new Date(startDate)
           startDate.setHours(startDate.getHours() + 5)
-          this.form
-            .get('activitiesStartDate')
-            ?.setValue(startDate)
         }
+        this.form
+          .get('activitiesStartDate')
+          ?.setValue(startDate)
       }
       else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
         mainEtp = worksheetLine['__EMPTY_4'] as number
@@ -718,25 +750,27 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
 
     }
-    console.log({ category, fct, mainEtp, startDate, ventilation: monTab })
 
-
+    this.importedFunction = fct?.id || null
     category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
-    this.form.get('fonctionId')?.setValue(fct?.id || null)
     this.form.get('etp')?.setValue(mainEtp)
 
     return { category, fct, mainEtp, startDate, ventilation: monTab }
   }
 
+  /**
+   * Comptage ventillation importé sous Excel
+   * @param formatedData 
+   * @returns 
+   */
   affectImportedSituation(formatedData: any) {
     let result: importedVentillation[] = []
+    this.sumPercentImported = 0
     formatedData.ventilation.value.map((ref: any) => {
       let found = false
-
       this.updatedReferentiels = this.updatedReferentiels.map(item => {
         const re = new RegExp('[0-9]{1,2}[.]');
         const startCode = ref.codeImport.split('.')[0] + '.'
-
         if (re.exec(ref.codeImport) !== null && ref.codeImport == item.code_import) {
           item.percent = ref.value;
           found = true
@@ -745,6 +779,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             percent: item.percent,
             parentReferentiel: null
           })
+
+          this.sumPercentImported += item.percent || 0
+          let sumSubRef = 0
+          const allImported = result.map((r) => r.referentiel.code_import)
+          const childs = item.childrens?.map((r) => {
+            if (allImported.includes(r.code_import))
+              sumSubRef += r.percent || 0
+            return r.code_import
+          })
+
+          if (sumSubRef !== item.percent)
+            result = result.filter((r) => childs?.includes(r.referentiel.code_import) === false)
         }
         else {
 
@@ -770,5 +816,33 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     })
 
     return result
+  }
+
+  /**
+   * Event outfocus DropDown import de type 1
+   * @param e 
+   */
+  onclick(e: MouseEvent) {
+    if (document.getElementById('drop-down')?.contains(e.target as Node)) {
+      // Clicked in box
+    } else {
+      // Clicked outside the box
+      if (this.isEdit || this.saveActions)
+        this.toggleDropDown = false
+    }
+  }
+
+  /**
+ * Event outfocus DropDown import de type 2
+ * @param e 
+ */
+  onclick2(e: MouseEvent) {
+    if (document.getElementById('drop-down2')?.contains(e.target as Node)) {
+      // Clicked in box
+    } else {
+      // Clicked outside the box
+      if (!this.isEdit && !this.saveActions)
+        this.toggleDropDown = false
+    }
   }
 }
