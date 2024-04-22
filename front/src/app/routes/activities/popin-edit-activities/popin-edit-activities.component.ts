@@ -24,6 +24,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { copy } from 'src/app/utils'
 import { downloadFile } from 'src/app/utils/system'
 import { groupBy, mapValues, get, isNumber } from 'lodash';
+import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 
 /**
  * Composant page activité
@@ -564,33 +565,58 @@ export class PopinEditActivitiesComponent
       }
     }
     const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+
+    // Verification si l'entrée et/ou la sortie (déja mise à jours auparavent) a été mise à null (cad annulé)
+    // Dans ce cas on remet le stock à son état d'origine
     if ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
-        (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`]) ||
-        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`])
+        (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
+        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null)
     ) {
       setTimeout(() => {
-        delete this.updates[`${contentieux.id}-stock`];
+        //delete this.updates[`${contentieux.id}-stock`];
+        this.updates[`${contentieux.id}-stock`] = {
+          value: contentieux.originalStock,
+          node: 'stock',
+          contentieux,
+          calculated: false,
+        }
         stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '0'
       }, 1000)
     }
-    else if (nodeName !== 'stock' && (contentieux.stock === null || (contentieux.activityUpdated && (contentieux.activityUpdated.stock && (contentieux.activityUpdated.stock.value === null || contentieux.activityUpdated.stock.value === contentieux.originalStock) || !contentieux.activityUpdated.stock))) && (contentieux.valueQualityStock !== this.VALUE_QUALITY_TO_VERIFY || value !== original)) {
-      if (( this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].calculated ) || !this.updates[`${contentieux.id}-stock`]) {
-        const entree = document.getElementById(`contentieux-${contentieux.id}-entrees`) as HTMLInputElement
-        const sortie = document.getElementById(`contentieux-${contentieux.id}-sorties`) as HTMLInputElement
-        const entreeValue : number =  (entree.value !== null && entree.value.length > 0) ? Number(entree.value) : (contentieux.originalIn ? contentieux.originalIn : 0)
-        const sortieValue : number = (sortie.value !== null && sortie.value.length > 0) ? Number(sortie.value) : (contentieux.originalOut ? contentieux.originalOut : 0)
-
-        this.getLastMonthStock(contentieux.id).then(resp => {
-          const newStock = resp + entreeValue - sortieValue
-          this.updates[`${contentieux.id}-stock`] = {
-            value: newStock > 0 ? newStock : 0,
-            node: 'stock',
-            contentieux,
-            calculated: true,
-          }
-          stock.value =  newStock > 0 ? newStock.toString() : '0'
-        })
+    else if (nodeName !== 'stock'){
+      let entreeValue = 0
+      let sortieValue = 0
+    
+      if (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value !== null && contentieux.valueQualityIn !== VALUE_QUALITY_TO_VERIFY)
+        entreeValue = this.updates[`${contentieux.id}-entrees`].value
+      else  {
+        if ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null) || contentieux.in === null) {
+          entreeValue = contentieux.originalIn ? contentieux.originalIn : 0
+        }
+        else if (typeof contentieux.in !== 'undefined' && contentieux.in !== null )
+          entreeValue = contentieux.in
       }
+
+      if (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value !== null && contentieux.valueQualityOut !== VALUE_QUALITY_TO_VERIFY)
+        sortieValue = this.updates[`${contentieux.id}-sorties`].value
+      else  {
+        if ((this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || contentieux.out === null) {
+          sortieValue = contentieux.originalOut ? contentieux.originalOut : 0
+        }
+        else if (typeof contentieux.out !== 'undefined' && contentieux.out !== null)
+          sortieValue = contentieux.out
+      }
+
+      this.getLastMonthStock(contentieux.id).then(resp => {
+        const newStock = resp + entreeValue - sortieValue
+        this.updates[`${contentieux.id}-stock`] = {
+          value: newStock > 0 ? newStock : 0,
+          node: 'stock',
+          contentieux,
+          calculated: true,
+        }
+        stock.value =  newStock > 0 ? newStock.toString() : '0'
+      })
     }
     console.log('this.updates 00:', this.updates)
     setTimeout(() => this.updateTotal(), 1000)
@@ -656,7 +682,6 @@ export class PopinEditActivitiesComponent
           return { ...elem, ...initialValues };
         })
       )
-
       for (const cont of Object.keys(contentieux)) {
         const up: any = contentieux[cont]
         let options = {
@@ -920,9 +945,10 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-          if (isForBulbOrBottom && this.isStockCalculated({cont, node}))
+          if (isForBulbOrBottom && this.isStockCalculated({cont, node}) && cont.stock !== cont.originalStock)
             return false
-          return true
+          if (cont.stock !== cont.originalStock)
+            return true
         }
         break;
     }
