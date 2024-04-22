@@ -11,7 +11,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { getShortMonthString, today } from 'src/app/utils/dates'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
-import { importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
+import { importedSituation, importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
 
 /**
  * Service de récupération des fiches +
@@ -70,9 +70,7 @@ export class HumanResourceService {
   /**
 * Referentiel avec les activités importés sous excels
 */
-  importedSituation: BehaviorSubject<importedVentillation[]> = new BehaviorSubject<
-    importedVentillation[]
-  >([])
+  importedSituation: BehaviorSubject<importedSituation | null> = new BehaviorSubject<importedSituation | null>(null)
   /**
    * temp ids to can view
    */

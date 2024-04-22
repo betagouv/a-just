@@ -23,7 +23,7 @@
       </ng-template>
       <p *ngIf="!isEdit">Renseigner une nouvelle situation</p>
       <pre></pre>
-      <div class="drop-down-container">
+      <div class="drop-down-container" *ngIf="isEdit || saveActions">
         <label id="drop-down" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
           (blur)="toggleDropDown=!toggleDropDown">
           Feuille de temps
@@ -51,9 +51,39 @@
       <div class="top">
 
         <p>Situation administrative</p>
+        <div class="flex-1"></div>
+        <div class="drop-down-container" *ngIf="!isEdit && !saveActions">
+          <label id="drop-down2" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
+            (blur)="toggleDropDown=!toggleDropDown">
+            Feuille de temps
+            <mat-icon _ngcontent-ng-c640964094="" role="img"
+              class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
+              data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
+          </label>
+          <div class="drop-down-content" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
+
+            <a (click)="downloadEtpTemplate()" class="download">
+              <img src="/assets/icons/download-line.svg" />
+              Télécharger un modèle vierge
+            </a>
+            <label class="custom-file-upload">
+              <input #file id="file-picker" type="file" class="input-file" accept=".xlsx"
+                (change)="getFile($event,file)" />
+              <img src="/assets/icons/upload-line.svg" />Importer une situation pré-renseignée
+            </label>
+          </div>
+        </div>
+        <label class="import-confirmation" *ngIf="displayImportLabels"
+          [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#c3992a': '#18753c',
+            'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#feebd0':'#b8fec9'}"><i
+            class="ri-checkbox-circle-fill"></i>{{form.get('categoryId')?.value === null ||
+          form.get('fonctionId')?.value === null || form.get('etp')?.value === null?'à
+          compléter':'importé'}}</label>
+
       </div>
+
       <div class="grid-triple">
-        <div>
+        <div class="admin-element" [ngClass]="{'error': form.get('categoryId')?.value === null}">
           <div class="label-aj">Catégorie :</div>
           <select formControlName="categoryId">
             <option *ngFor="let cat of categories" [value]="cat.id">
@@ -61,7 +91,7 @@
             </option>
           </select>
         </div>
-        <div>
+        <div class="admin-element" [ngClass]="{'error': form.get('fonctionId')?.value === null}">
           <div class="label-aj">Fonction :</div>
           <select formControlName="fonctionId" (change)="setFonc($event.target)">
             <option *ngFor="let fonc of fonctions" [value]="fonc.id">
@@ -69,7 +99,7 @@
             </option>
           </select>
         </div>
-        <div>
+        <div class="admin-element" [ngClass]="{'error': form.get('etp')?.value === null}">
           <div class="label-aj">
             Temps de travail (en ETPT) :
           </div>
@@ -105,29 +135,44 @@
           Télécharger la calculatrice de ventilations
           <img src="/assets/icons/download-line-blue.svg" />
         </a>
+        <div class="flex-1"></div>
+
+        <label class="import-confirmation" *ngIf="displayImportLabels" [ngStyle]="{'color' : sumPercentImported !==100?'#c3992a': '#18753c',
+          'background-color' : sumPercentImported !==100?'#feebd0':'#b8fec9'}"><i
+            class="ri-checkbox-circle-fill"></i>{{sumPercentImported !==100?'à
+          compléter':'importé'}}</label>
+
       </div>
       <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
-        (referentielChange)="onNewReferentiel($event)" #panelActivities
+        [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
         [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
       </panel-activities>
     </div>
     <div class="bottom-container">
-      <div class="date-start">
-        <p *ngIf="isEdit">Modification de<br /> la situation au :</p>
-        <p *ngIf="!isEdit">Situation à <br />prendre en compte :</p>
-        <div class="flex-1"></div>
+      <div class="date-start" [ngStyle]="{'flex' : displayImportLabels===true?'1.3': '1'}">
+        <div class="header">
+          <p *ngIf="isEdit">Modification de la situation au :</p>
+          <p *ngIf="!isEdit">Situation à prendre en compte :</p>
+          <div class="flex-1"></div>
+          <label class="import-confirmation" *ngIf="displayImportLabels" [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
+            'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}"><i
+              class="ri-checkbox-circle-fill"></i>{{form.get('activitiesStartDate')?.value !== null ?'importé':'à
+            compléter'}}</label>
+        </div>
+
         <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
           (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
         </aj-date-select>
       </div>
 
-      <div class="indisponibilities">
+      <div class="indisponibilities" [ngStyle]="{'background-color' : displayImportLabels===true ? '#ededed':'#fff'}">
         <div class="indispo-header">
           <p>Indisponibilités :</p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
             text="Qu'est-ce que c'est ?"></aj-help-button>
-          <label>(facultatif)</label>
+          <label [ngStyle]="{'display' : displayImportLabels===true ? 'none':'initial'}">(facultatif)</label>
           <div class="flex-1"></div>
-          <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
+          <button class="outline blue small" (click)="addIndispiniblity.emit(null)"
+            [ngStyle]="{'display' : displayImportLabels===true ? 'none':'initial'}">
             + Ajouter
           </button>
         </div>
@@ -167,7 +212,7 @@
       </div>
     </div>
     <div class="actions" *ngIf="saveActions">
-      <button class="outline blue strict-border" (click)="close.emit()">
+      <button class="outline blue strict-border" (click)="close.emit();displayImportLabels=false;sumPercentImported=0">
         Annuler
       </button>
       <button class="primary strict-border" (click)="onSave()">
