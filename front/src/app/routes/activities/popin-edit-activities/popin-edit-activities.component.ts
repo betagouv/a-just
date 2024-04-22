@@ -442,16 +442,22 @@ export class PopinEditActivitiesComponent
           
         if (nodeValue !== updatedValue) {
           let delta = (updatedValue || 0) - (nodeValue || 0)
-
           switch (elem.node) {
             case 'entrees':
                 this.total.in = (this.total.in || 0) + delta
+                if (this.referentiel && this.referentiel.originalIn === null && this.total.in == 0)
+                  this.total.in = null
+              
               break
             case 'sorties':
                 this.total.out = (this.total.out || 0) + delta
+                if (this.referentiel && this.referentiel.originalOut === null && this.total.out == 0)
+                  this.total.out = null
               break
             case 'stock':
                 this.total.stock = (this.total.stock || 0) + delta
+                if (this.referentiel && this.referentiel.originalStock === null && this.total.stock == 0)
+                  this.total.stock = null
               break
           }
         }
@@ -477,7 +483,7 @@ export class PopinEditActivitiesComponent
         this.total.in !== undefined &&
         this.total.in < 0
       ) {
-        this.total.in = 0
+          this.total.in = 0
       }
 
       if (
@@ -554,6 +560,7 @@ export class PopinEditActivitiesComponent
           node: nodeName,
           contentieux,
           calculated: false,
+          sendBack: true,
         }
       } else {
         this.updates[`${contentieux.id}-${nodeName}`] = {
@@ -561,6 +568,7 @@ export class PopinEditActivitiesComponent
           node: nodeName,
           contentieux,
           calculated: false,
+          sendBack: true,
         }
       }
     }
@@ -579,11 +587,13 @@ export class PopinEditActivitiesComponent
           node: 'stock',
           contentieux,
           calculated: false,
+          sendBack: true,
         }
-        stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '0'
+        stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
       }, 1000)
-    }
-    else if (nodeName !== 'stock'){
+    } 
+    //Node différent de 'Stock' ou on supprime un valeur de stock ajusté ou calculé
+    else if (nodeName !== 'stock' || this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null) {
       let entreeValue = 0
       let sortieValue = 0
     
@@ -609,12 +619,13 @@ export class PopinEditActivitiesComponent
 
       this.getLastMonthStock(contentieux.id).then(resp => {
         const newStock = resp + entreeValue - sortieValue
-        this.updates[`${contentieux.id}-stock`] = {
-          value: newStock > 0 ? newStock : 0,
-          node: 'stock',
-          contentieux,
-          calculated: true,
-        }
+          this.updates[`${contentieux.id}-stock`] = {
+            value: newStock > 0 ? newStock : 0,
+            node: 'stock',
+            contentieux,
+            calculated: true,
+            sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
+          }
         stock.value =  newStock > 0 ? newStock.toString() : '0'
       })
     }
@@ -669,7 +680,12 @@ export class PopinEditActivitiesComponent
         })
       })
     } else {
-      let updates : any = Object.values(this.updates).filter((elem: any) => !elem.calculated)
+      let updates : any = Object.values(this.updates).filter((elem: any) => (elem.sendBack))
+      updates = updates.map((elem:any) => {
+        if (elem.calculated)
+          return {...elem, value: null}
+        return elem
+      })
       //updates.map((elem : any) => delete elem.calculated)
       let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
@@ -813,7 +829,7 @@ export class PopinEditActivitiesComponent
     if (this.updates[`${cont.id}-${node}`]) {
       return this.updates[`${cont.id}-${node}`].calculated
     }
-    else if (cont.stock && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) {
+    else if (cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) {
       return true
     }
     return false
@@ -932,11 +948,19 @@ export class PopinEditActivitiesComponent
   checkIfBlue({cont, node, level, isForBulbOrBottom} : {cont: ContentieuReferentielInterface, node: string, level: number, isForBulbOrBottom: boolean }) {
     switch (node) {
       case 'entrees':
-        if (this.isValueUpdated({cont, node}))
+        if (level === 3) {
+          if (this.total.in !== null && this.total.in !== cont.originalIn)
+            return true
+        }
+        else if (this.isValueUpdated({cont, node}))
           return true
         break;
       case 'sorties':
-        if (this.isValueUpdated({cont, node}))
+        if (level === 3) {
+          if (this.total.out !== null && this.total.out !== cont.originalOut)
+            return true
+        }
+        else if (this.isValueUpdated({cont, node}))
           return true
         break;
       case 'stock':
@@ -945,10 +969,13 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-          if (isForBulbOrBottom && this.isStockCalculated({cont, node}) && cont.stock !== cont.originalStock)
+          if (isForBulbOrBottom && this.isStockCalculated({cont, node})) {// && cont.stock !== cont.originalStock ) {
             return false
-          if (cont.stock !== cont.originalStock)
+          }
+          if (cont.stock !== cont.originalStock) {
             return true
+          }
+          return true
         }
         break;
     }
