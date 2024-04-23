@@ -306,6 +306,25 @@ export default (sequelizeInstance, Model) => {
 
     console.log(values)
 
+    let original = null
+    let verify = null
+    let referentiel = null
+
+    switch (nodeUpdated) {
+      case 'entrees':
+        original = "original_entrees"
+        verify = 'value_quality_in'
+        break;
+      case 'sorties':
+        original = "original_sorties"
+        verify = 'value_quality_out'
+        break;
+      case 'stock':
+        original = "original_stock"
+        verify = 'value_quality_stock'
+        break;
+    }
+
     let findActivity = await Model.findOne({
       where: {
         periode: {
@@ -315,26 +334,10 @@ export default (sequelizeInstance, Model) => {
         contentieux_id: contentieuxId,
       },
     })
+
     if (findActivity) {
-      let original = null
-      let verify = null
-      switch (nodeUpdated) {
-        case 'entrees':
-          original = "original_entrees"
-          verify = 'value_quality_in'
-          break;
-        case 'sorties':
-          original = "original_sorties"
-          verify = 'value_quality_out'
-          break;
-        case 'stock':
-          original = "original_stock"
-          verify = 'value_quality_stock'
-          break;
-      }
-      
-      const ref = await Model.models.ContentieuxReferentiels.getOneReferentiel( findActivity.dataValues.contentieux_id)
-      if(findActivity.dataValues[original] === values[nodeUpdated] && (ref[verify] !== 'to_verify' || (ref[verify] === 'to_verify' && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
+      referentiel = await Model.models.ContentieuxReferentiels.getOneReferentiel( findActivity.dataValues.contentieux_id)
+      if(findActivity.dataValues[original] === values[nodeUpdated] && (referentiel[verify] !== 'to_verify' || (referentiel[verify] === 'to_verify' && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
         await findActivity.update({ [nodeUpdated]: null });
       }
       else 
@@ -355,7 +358,10 @@ export default (sequelizeInstance, Model) => {
     }
 
     if (userId !== null) {
-      await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
+      if(referentiel && findActivity.dataValues[original] === values[nodeUpdated] && (referentiel[verify] !== 'to_verify' || (referentiel[verify] === 'to_verify' && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
+        await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, null)
+      else
+        await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
