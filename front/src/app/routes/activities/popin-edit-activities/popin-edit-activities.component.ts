@@ -593,7 +593,7 @@ export class PopinEditActivitiesComponent
       }, 1000)
     } 
     //Node différent de 'Stock' ou on supprime un valeur de stock ajusté ou calculé
-    else if (nodeName !== 'stock' && contentieux.stock === null || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
+    else if (nodeName !== 'stock' && this.isStockCalculated(contentieux) || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
       let entreeValue = 0
       let sortieValue = 0
     
@@ -832,9 +832,9 @@ export class PopinEditActivitiesComponent
     return false
   }
 
-  isStockCalculated ({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
-    if (this.updates[`${cont.id}-${node}`]) {
-      return this.updates[`${cont.id}-${node}`].calculated
+  isStockCalculated (cont : ContentieuReferentielInterface) {
+    if (this.updates[`${cont.id}-stock`]) {
+      return this.updates[`${cont.id}-stock`].calculated
     }
     else if (cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) {
       return true
@@ -878,7 +878,7 @@ export class PopinEditActivitiesComponent
           }
           else if (this.isValueUpdated({cont, node})) { 
             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
-            if (!this.isStockCalculated({cont, node})) {
+            if (!this.isStockCalculated(cont)) {
               console.log('Stock - AJUSTE')
               url = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste'
             } else {
@@ -976,7 +976,7 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-          if (isForBulbOrBottom && this.isStockCalculated({cont, node})) {// && cont.stock !== cont.originalStock ) {
+          if (isForBulbOrBottom && this.isStockCalculated(cont)) {// && cont.stock !== cont.originalStock ) {
             return false
           }
           if (cont.stock !== cont.originalStock) {
