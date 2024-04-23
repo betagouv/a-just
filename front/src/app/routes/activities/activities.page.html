@@ -118,7 +118,7 @@
                   {{ ref.stock !== null ? ref.stock : ( ref.originalStock !== null ? ref.originalStock : '-' ) }}
                 </p>
               </div>
-              <ng-container *ngIf="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date; else secondTemplate">
+              <ng-container *ngIf="checkIfBlueBottom(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date && ref.activityUpdated.stock.value !== null; else secondTemplate">
                 <aj-tooltips class="medium no-bg" [title]="getTooltipTitle({user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date})"> 
                 </aj-tooltips>
               </ng-container>

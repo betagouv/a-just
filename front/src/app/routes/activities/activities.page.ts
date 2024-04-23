@@ -536,7 +536,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     if (user && date)
       return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
     else
-      return `<i class="ri-lightbulb-flash-line"></i> Stock Calculé `
+      return `<i class="ri-lightbulb-flash-line"></i> Stock calculé `
   }
 
   /**
