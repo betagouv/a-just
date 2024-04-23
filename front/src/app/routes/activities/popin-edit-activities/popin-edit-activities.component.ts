@@ -593,7 +593,7 @@ export class PopinEditActivitiesComponent
       }, 1000)
     } 
     //Node différent de 'Stock' ou on supprime un valeur de stock ajusté ou calculé
-    else if (nodeName !== 'stock' || this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null) {
+    else if (nodeName !== 'stock') { //|| (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null)) {
       let entreeValue = 0
       let sortieValue = 0
     
@@ -619,7 +619,12 @@ export class PopinEditActivitiesComponent
 
       this.getLastMonthStock(contentieux.id).then(resp => {
         const newStock = resp + entreeValue - sortieValue
-          this.updates[`${contentieux.id}-stock`] = {
+        console.log('Resp:', resp)
+        console.log('entreeValue:', entreeValue)
+        console.log('sortieValue:', sortieValue)
+        console.log('NewStock:', newStock)
+
+        this.updates[`${contentieux.id}-stock`] = {
             value: newStock > 0 ? newStock : 0,
             node: 'stock',
             contentieux,
@@ -641,7 +646,7 @@ export class PopinEditActivitiesComponent
         if (elem.contentieux.id === contentieuxId)
           return elem
       })
-      const stock = tmp.stock | tmp.originalStock | 0
+      const stock = tmp.stock ?? tmp.originalStock ?? 0
       return stock
     })
   }
