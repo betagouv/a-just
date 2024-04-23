@@ -415,26 +415,26 @@ export class PopinEditActivitiesComponent
     const updates = Object.values(this.updates)
 
     if (updates.length) {
-      this.total.in = this.referentiel?.in || this.referentiel?.originalIn
-      this.total.out = this.referentiel?.out || this.referentiel?.originalOut
-      this.total.stock = this.referentiel?.stock || this.referentiel?.originalStock
+      this.total.in = this.total.in ?? this.referentiel?.in ?? this.referentiel?.originalIn
+      this.total.out = this.total.out ?? this.referentiel?.out ?? this.referentiel?.originalOut
+      this.total.stock = this.total.stock ?? this.referentiel?.stock ?? this.referentiel?.originalStock
 
       updates.map((elem: any) => {
         let nodeValue = null
         let updatedValue = elem.value
         switch (elem.node) {
           case 'entrees':
-            nodeValue = elem.contentieux.in || elem.contentieux.originalIn
+            nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
             if (elem.value === null)
               updatedValue = isNumber(elem.contentieux.originalIn) ? elem.contentieux.originalIn : null
             break
           case 'sorties':
-            nodeValue = elem.contentieux.out || elem.contentieux.originalOut
+            nodeValue = elem.contentieux.out ?? elem.contentieux.originalOut
             if (elem.value === null)
               updatedValue = isNumber(elem.contentieux.originalOut) ? elem.contentieux.originalOut : null
             break
           case 'stock':
-            nodeValue = elem.contentieux.stock || elem.contentieux.originalStock
+            nodeValue = elem.contentieux.stock ?? elem.contentieux.originalStock
             if (elem.value === null)
               updatedValue= isNumber(elem.contentieux.originalStock) ? elem.contentieux.originalStock : null
             break
@@ -442,15 +442,22 @@ export class PopinEditActivitiesComponent
           
         if (nodeValue !== updatedValue) {
           let delta = (updatedValue || 0) - (nodeValue || 0)
+
           switch (elem.node) {
             case 'entrees':
                 this.total.in = (this.total.in || 0) + delta
+                if (this.total.in === 0 && updatedValue === null && this.referentiel?.originalIn === null)
+                  this.total.in = null
               break
             case 'sorties':
                 this.total.out = (this.total.out || 0) + delta
+                if (this.total.out === 0  && updatedValue === null && this.referentiel?.originalOut === null)
+                    this.total.out = null
               break
             case 'stock':
                 this.total.stock = (this.total.stock || 0) + delta
+                if (this.total.stock === 0 && updatedValue === null && this.referentiel?.originalStock === null)
+                  this.total.stock = null
               break
           }
         }
