@@ -513,7 +513,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
                   nbToComplete += 1
                 if (child.label === 'Intérêts civils' || child.label === 'Référés civils')
-                  console.log('Calc + ' , child.label , ': ', (((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion)
                 child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
               }
             }

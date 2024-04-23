@@ -551,7 +551,7 @@ export class PopinEditActivitiesComponent
         break
     }
     
-    if ((newValue.length !== 0 && newValue === null) || (value && original && value === original && !isToVerify)) {
+    if ((newValue.length !== 0 && newValue === null) /*|| (value && original && value === original && !isToVerify)*/) {
       delete this.updates[`${contentieux.id}-${nodeName}`]
     } else {
       if (newValue.length === 0) {
@@ -593,7 +593,7 @@ export class PopinEditActivitiesComponent
       }, 1000)
     } 
     //Node différent de 'Stock' ou on supprime un valeur de stock ajusté ou calculé
-    else if (nodeName !== 'stock') { //|| (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null)) {
+    else if (nodeName !== 'stock' && contentieux.stock === null || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
       let entreeValue = 0
       let sortieValue = 0
     
@@ -685,7 +685,7 @@ export class PopinEditActivitiesComponent
         })
       })
     } else {
-      let updates : any = Object.values(this.updates).filter((elem: any) => (elem.sendBack))
+      let updates : any = Object.values(this.updates).filter((elem: any) => (!elem.calculated))
       updates = updates.map((elem:any) => {
         if (elem.calculated)
           return {...elem, value: null}
@@ -710,7 +710,6 @@ export class PopinEditActivitiesComponent
           sorties:  null,
           stock:  null,
         }
-
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
@@ -800,30 +799,33 @@ export class PopinEditActivitiesComponent
         if (this.updates[`${cont.id}-${node}`]) {
           if (this.updates[`${cont.id}-${node}`].value === null)
             return false
-          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalIn) {
-            return true
-          }
-        } else if (cont.in !== null && cont.in !== cont.originalIn)
+          // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalIn) {
+          //   return true
+          // }
+          return true
+        } else if (cont.in !== null)// && cont.in !== cont.originalIn)
             return true
         break;
       case 'sorties':
         if (this.updates[`${cont.id}-${node}`]) {
           if (this.updates[`${cont.id}-${node}`].value === null)
             return false
-          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalOut) {
-            return true
-          }
-        } else if (cont.out !== null && cont.out !== cont.originalOut)
+          // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalOut) {
+          //   return true
+          // }
+          return true
+        } else if (cont.out !== null)// && cont.out !== cont.originalOut)
             return true
         break;
       case 'stock':
         if (this.updates[`${cont.id}-${node}`]) {
           if (this.updates[`${cont.id}-${node}`].value === null)
             return false
-          else if (this.updates[`${cont.id}-${node}`].value !== cont.originalStock) {
-            return true
-          }
-        } else if (cont.stock !== null && cont.stock !== cont.originalStock)
+          // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalStock) {
+          //   return true
+          // }
+          return true
+        } else if (cont.stock !== null)// && cont.stock !== cont.originalStock)
             return true
         break;
     }
@@ -954,7 +956,7 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
         if (level === 3) {
-          if (this.total.in !== null && this.total.in !== cont.originalIn)
+          if (this.total.in !== null)// && this.total.in !== cont.originalIn)
             return true
         }
         else if (this.isValueUpdated({cont, node}))
@@ -962,7 +964,7 @@ export class PopinEditActivitiesComponent
         break;
       case 'sorties':
         if (level === 3) {
-          if (this.total.out !== null && this.total.out !== cont.originalOut)
+          if (this.total.out !== null)// && this.total.out !== cont.originalOut)
             return true
         }
         else if (this.isValueUpdated({cont, node}))
@@ -970,7 +972,7 @@ export class PopinEditActivitiesComponent
         break;
       case 'stock':
         if (level === 3) {
-          if (this.total.stock !== null && this.total.stock !== cont.originalStock)
+          if (this.total.stock !== null)// && this.total.stock !== cont.originalStock)
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
