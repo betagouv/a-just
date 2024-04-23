@@ -83,7 +83,8 @@
       </div>
 
       <div class="grid-triple">
-        <div class="admin-element" [ngClass]="{'error': form.get('categoryId')?.value === null}">
+        <div class="admin-element"
+          [ngClass]="{'error': form.get('categoryId')?.value === null && displayImportLabels === true}">
           <div class="label-aj">Catégorie :</div>
           <select formControlName="categoryId">
             <option *ngFor="let cat of categories" [value]="cat.id">
@@ -91,7 +92,8 @@
             </option>
           </select>
         </div>
-        <div class="admin-element" [ngClass]="{'error': form.get('fonctionId')?.value === null}">
+        <div class="admin-element"
+          [ngClass]="{'error': form.get('fonctionId')?.value === null && displayImportLabels === true}">
           <div class="label-aj">Fonction :</div>
           <select formControlName="fonctionId" (change)="setFonc($event.target)">
             <option *ngFor="let fonc of fonctions" [value]="fonc.id">
@@ -99,7 +101,8 @@
             </option>
           </select>
         </div>
-        <div class="admin-element" [ngClass]="{'error': form.get('etp')?.value === null}">
+        <div class="admin-element"
+          [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}">
           <div class="label-aj">
             Temps de travail (en ETPT) :
           </div>
