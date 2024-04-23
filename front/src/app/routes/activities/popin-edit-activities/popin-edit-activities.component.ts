@@ -592,8 +592,8 @@ export class PopinEditActivitiesComponent
         stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
       }, 1000)
     } 
-    //Node différent de 'Stock' ou on supprime un valeur de stock ajusté ou calculé
-    else if (nodeName !== 'stock' && this.isStockCalculated(contentieux) || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
+    //Node différent de 'Stock' et si une valeur de stock exist, elle doit être calculé. Et pas de valeur de stock saisi par l'utilisateur (auparavent). Ou alors on est dans le cas où l'utilisateur supprime un valeur de stock ajusté ou calculé
+    else if (nodeName !== 'stock' && (this.isStockCalculated(contentieux) || (contentieux.stock === null && (!this.updates[`${contentieux.id}-stock`] || this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value == null ))) || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
       let entreeValue = 0
       let sortieValue = 0
     
@@ -685,7 +685,7 @@ export class PopinEditActivitiesComponent
         })
       })
     } else {
-      let updates : any = Object.values(this.updates).filter((elem: any) => (!elem.calculated))
+      let updates : any = Object.values(this.updates).filter((elem: any) => (elem.sendBack))
       updates = updates.map((elem:any) => {
         if (elem.calculated)
           return {...elem, value: null}
