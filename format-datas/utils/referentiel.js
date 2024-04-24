@@ -1,5 +1,41 @@
 export function referentielMappingName(name) {
   switch (name) {
+    case "Contentieux Social":
+      return "Social";
+    case "Contentieux de la famille":
+      return "Famille";
+    case "Contentieux de la protection":
+      return "Protection";
+    case "Contentieux civil":
+      return "Civil Ns";
+    case "Contentieux de la protection":
+      return "Civil Ns";
+    case "Contentieux commercial":
+      return "Commercial";
+    case "Attributions du PP":
+      return "PP";
+    case "Contentieux civil JLD":
+      return "Jld Civil";
+    case "Contentieux des mineurs":
+      return "Mineurs";
+    case "Instruction et entraide":
+      return "Instruction / Entraide";
+    case "Correctionnel":
+      return "Correctionnel";
+    case "Contentieux criminel":
+      return "Crim.";
+    case "Application des peines":
+      return "Application des peines";
+    case "Autres activités":
+      return "Autres";
+  }
+
+  return name;
+}
+
+
+export function referentielCAMappingName(name) {
+  switch (name) {
     case "Autres activités":
       return "Autres activités";
     case "Indisponibilité":

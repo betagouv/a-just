@@ -55,7 +55,7 @@
         &.etp {
           flex: 1;
 
-          > p {
+          >p {
             color: fColor(headerNumberColor) !important;
           }
         }
@@ -80,7 +80,11 @@
   display: grid;
   grid-template-columns: repeat(11, 1fr);
 
-  > div {
+  &.ca {
+    grid-template-columns: repeat(13, 1fr) !important;
+  }
+
+  >div {
     progression-bar {
       width: 90%;
       cursor: pointer;
@@ -99,7 +103,7 @@
       color: fColor(cred);
     }
 
-    .progress-bar-line > div {
+    .progress-bar-line>div {
       background-color: fColor(cred);
     }
   }
@@ -109,7 +113,8 @@
       color: fColor(cplaceholder);
     }
 
-    .progress-bar-line, .progress-bar-line > div {
+    .progress-bar-line,
+    .progress-bar-line>div {
       background-color: fColor(cplaceholder);
     }
   }
@@ -127,7 +132,7 @@
     border-radius: 8px;
     margin-left: 8px;
 
-    > div {
+    >div {
       height: 100%;
       background-color: fColor(lineProgressBar);
       border-radius: 8px;
@@ -178,7 +183,7 @@
     display: grid;
     grid-template-columns: repeat(4, 25%);
 
-    > div.sub-item {
+    >div.sub-item {
       width: 100%;
       margin-bottom: 4px;
     }
@@ -201,7 +206,7 @@
       height: 62px;
     }
 
-    > p {
+    >p {
       text-align: center;
       font-size: 10px;
       font-weight: 500;
@@ -226,12 +231,14 @@
         -webkit-transform: rotate(-135deg);
         margin-bottom: -13px;
       }
+
       .title {
         background-color: #33569e;
         color: #fff;
         font-size: 16px;
         padding: 16px;
       }
+
       .texte {
         background-color: #f3f6fe;
         color: #29437c;

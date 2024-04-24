@@ -14,6 +14,7 @@ import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
 import { importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { UserService } from 'src/app/services/user/user.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
 //import { filterReferentiels } from 'src/app/utils/referentiel'
@@ -112,7 +113,8 @@ export class PanelActivitiesComponent
    * Constructeur
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService,
+    private userService: UserService) {
     super()
 
     this.watch(
@@ -367,5 +369,12 @@ export class PanelActivitiesComponent
     if (this.category?.label === "Autour du magistrat")
       return DDG_REFERENTIELS_EAM.includes(label.toUpperCase())
     return false
+  }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
   }
 }
