@@ -43,9 +43,10 @@ const parseFile = (filePath, tag) => {
       filePath = filePath.replace('/front', '/../dist/front')
     }
     const data = readFileSync(filePath, 'utf8')
-    const regexp = new RegExp(`<${tag}(.*?)>(.*?)</${tag}>`, 'gm')
-    const regexp2 = new RegExp(`<${tag}>(.*?)</${tag}>`, 'gm')
+    const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
+    const regexp2 = new RegExp(`<${tag}>(.*?)<\\/${tag}>`, 'gm')
     const tab = [...data.matchAll(regexp), ...data.matchAll(regexp2)]
+    //console.log('tab', filePath, tag, regexp2, tab)
 
     if (tab) {
       tab.map((l) => {
