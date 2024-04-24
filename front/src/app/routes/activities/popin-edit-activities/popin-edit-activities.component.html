@@ -118,10 +118,10 @@
           context: {
             $implicit: referentiel,
             original: referentiel.originalIn,
-            newValue: total.in,
+            newValue: total.in.value,
             valueQuality: referentiel.valueQualityIn,
             type: 'entrees',
-            updated: total.in !== null ? true : false,
+            updated: total.in.value !== null ? true : false,
           }
         "
       ></ng-container>
@@ -133,10 +133,10 @@
           context: {
             $implicit: referentiel,
             original: referentiel.originalOut,
-            newValue: total.out,
+            newValue: total.out.value,
             valueQuality: referentiel.valueQualityOut,
             type: 'sorties',
-            updated: total.out !== null ? true : false
+            updated: total.out.value !== null ? true : false
           }
         "
       ></ng-container>
@@ -148,10 +148,10 @@
           context: {
             $implicit: referentiel,
             original: referentiel.originalStock,
-            newValue: total.stock,
+            newValue: total.stock.value,
             valueQuality: referentiel.valueQualityStock,
             type: 'stock',
-            updated: total.stock !== null ? true : false,
+            updated: total.stock.value !== null ? true : false,
           }
         "
       ></ng-container>

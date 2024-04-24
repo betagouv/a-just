@@ -74,13 +74,13 @@ export class PopinEditActivitiesComponent
    * Total in, out, stock
    */
   total: {
-    in: null | number | undefined
-    out: null | number | undefined
-    stock: null | number | undefined
+    in: { value: null | number | undefined, updated: boolean },
+    out: { value: null | number | undefined, updated: boolean },
+    stock: { value: null | number | undefined, updated: boolean },
   } = {
-    in: null,
-    out: null,
-    stock: null,
+    in: { value: null, updated: false },
+    out: { value: null, updated: false },
+    stock:{ value: null, updated: false },
   }
   /**
    * have values to show
@@ -409,15 +409,15 @@ export class PopinEditActivitiesComponent
    * Mise à jour des totaux
    */
   updateTotal() {
-    this.total.in = this.referentiel?.in
-    this.total.out = this.referentiel?.out
-    this.total.stock = this.referentiel?.stock
+    this.total.in.value = this.referentiel?.in
+    this.total.out.value = this.referentiel?.out
+    this.total.stock.value = this.referentiel?.stock
     const updates = Object.values(this.updates)
 
     if (updates.length) {
-      this.total.in = this.total.in ?? this.referentiel?.in ?? this.referentiel?.originalIn
-      this.total.out = this.total.out ?? this.referentiel?.out ?? this.referentiel?.originalOut
-      this.total.stock = this.total.stock ?? this.referentiel?.stock ?? this.referentiel?.originalStock
+      this.total.in.value = this.total.in.value ?? this.referentiel?.in ?? this.referentiel?.originalIn
+      this.total.out.value = this.total.out.value ?? this.referentiel?.out ?? this.referentiel?.originalOut
+      this.total.stock.value = this.total.stock.value ?? this.referentiel?.stock ?? this.referentiel?.originalStock
 
       updates.map((elem: any) => {
         let nodeValue = null
@@ -440,27 +440,39 @@ export class PopinEditActivitiesComponent
             break
         }
           
-        if (nodeValue !== updatedValue) {
+        //if (nodeValue !== updatedValue) {
           let delta = (updatedValue || 0) - (nodeValue || 0)
 
           switch (elem.node) {
             case 'entrees':
-                this.total.in = (this.total.in || 0) + delta
-                if (this.total.in === 0 && updatedValue === null && this.referentiel?.originalIn === null)
-                  this.total.in = null
+                this.total.in.value = (this.total.in.value || 0) + delta
+                if (/*this.total.in.value === 0 &&*/ updatedValue === null && this.referentiel?.originalIn === null) {
+                  this.total.in.value = null
+                  this.total.in.updated = false
+                }
+                else
+                  this.total.in.updated = true
               break
             case 'sorties':
-                this.total.out = (this.total.out || 0) + delta
-                if (this.total.out === 0  && updatedValue === null && this.referentiel?.originalOut === null)
-                    this.total.out = null
+                this.total.out.value = (this.total.out.value || 0) + delta
+                if (/*this.total.out.value === 0  &&*/ updatedValue === null && this.referentiel?.originalOut === null) {
+                  this.total.out.value = null
+                  this.total.out.updated = false
+                }
+                else 
+                  this.total.out.updated = true
               break
             case 'stock':
-                this.total.stock = (this.total.stock || 0) + delta
-                if (this.total.stock === 0 && updatedValue === null && this.referentiel?.originalStock === null)
-                  this.total.stock = null
+                this.total.stock.value = (this.total.stock.value || 0) + delta
+                if (/*this.total.stock.value === 0 && */updatedValue === null && this.referentiel?.originalStock === null) {
+                  this.total.stock.value = null
+                  this.total.stock.updated = false
+                }
+                else
+                  this.total.stock.updated = true
               break
           }
-        }
+        //}
       })
       // let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
       // let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
@@ -479,27 +491,27 @@ export class PopinEditActivitiesComponent
       // }
 
       if (
-        this.total.in !== null &&
-        this.total.in !== undefined &&
-        this.total.in < 0
+        this.total.in.value !== null &&
+        this.total.in.value !== undefined &&
+        this.total.in.value < 0
       ) {
-        this.total.in = 0
+        this.total.in.value = 0
       }
 
       if (
-        this.total.out !== null &&
-        this.total.out !== undefined &&
-        this.total.out < 0
+        this.total.out.value !== null &&
+        this.total.out.value !== undefined &&
+        this.total.out.value < 0
       ) {
-        this.total.out = 0
+        this.total.out.value = 0
       }
 
       if (
-        this.total.stock !== null &&
-        this.total.stock !== undefined &&
-        this.total.stock < 0
+        this.total.stock.value !== null &&
+        this.total.stock.value !== undefined &&
+        this.total.stock.value < 0
       ) {
-        this.total.stock = 0
+        this.total.stock.value = 0
       }
     }
   }
@@ -527,29 +539,27 @@ export class PopinEditActivitiesComponent
     contentieux: ContentieuReferentielInterface
   ) {
     let value: null | number = null
-    let original: null | number = null
-    let isToVerify: boolean = false
 
     if (newValue !== '' && newValue.length > 0) {
       value = +newValue
     }
-    switch (nodeName) {
-      case 'entrees':
-        original = isNumber(contentieux.originalIn) ? contentieux.originalIn : null
-        if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY)
-          isToVerify = true
-        break
-      case 'sorties':
-        original = isNumber(contentieux.originalOut) ? contentieux.originalOut : null
-        if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY)
-          isToVerify = true
-        break
-      case 'stock':
-        original = isNumber(contentieux.originalStock) ? contentieux.originalStock : null
-        if (contentieux.valueQualityStock=== this.VALUE_QUALITY_TO_VERIFY)
-          isToVerify = true
-        break
-    }
+    // switch (nodeName) {
+    //   case 'entrees':
+    //     original = isNumber(contentieux.originalIn) ? contentieux.originalIn : null
+    //     if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY)
+    //       isToVerify = true
+    //     break
+    //   case 'sorties':
+    //     original = isNumber(contentieux.originalOut) ? contentieux.originalOut : null
+    //     if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY)
+    //       isToVerify = true
+    //     break
+    //   case 'stock':
+    //     original = isNumber(contentieux.originalStock) ? contentieux.originalStock : null
+    //     if (contentieux.valueQualityStock=== this.VALUE_QUALITY_TO_VERIFY)
+    //       isToVerify = true
+    //     break
+    // }
     
     if ((newValue.length !== 0 && newValue === null) /*|| (value && original && value === original && !isToVerify)*/) {
       delete this.updates[`${contentieux.id}-${nodeName}`]
@@ -592,8 +602,18 @@ export class PopinEditActivitiesComponent
         stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
       }, 1000)
     } 
-    //Node différent de 'Stock' et si une valeur de stock exist, elle doit être calculé. Et pas de valeur de stock saisi par l'utilisateur (auparavent). Ou alors on est dans le cas où l'utilisateur supprime un valeur de stock ajusté ou calculé
-    else if (nodeName !== 'stock' && (this.isStockCalculated(contentieux) || (contentieux.stock === null && (!this.updates[`${contentieux.id}-stock`] || this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value == null ))) || ((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null))) {
+    //Pas de recalcul de stock si un stock a été saisi manuellement et qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
+    else if (
+      (
+        (nodeName !== 'stock' && this.isStockCalculated(contentieux)) && 
+        !this.isValueToVerifySetted({value : this.updates[`${contentieux.id}-entrees`] ? this.updates[`${contentieux.id}-entrees`].value : null, contentieux: contentieux, node: "entrees"}) && 
+        !this.isValueToVerifySetted({value : this.updates[`${contentieux.id}-sorties`] ? this.updates[`${contentieux.id}-sorties`].value : null, contentieux: contentieux, node: "sorties"})
+      ) ||
+      (
+        this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null
+      )
+    ) {
+
       let entreeValue = 0
       let sortieValue = 0
     
@@ -618,20 +638,15 @@ export class PopinEditActivitiesComponent
       }
 
       this.getLastMonthStock(contentieux.id).then(resp => {
-        const newStock = resp + entreeValue - sortieValue
-        console.log('Resp:', resp)
-        console.log('entreeValue:', entreeValue)
-        console.log('sortieValue:', sortieValue)
-        console.log('NewStock:', newStock)
-
-        this.updates[`${contentieux.id}-stock`] = {
-            value: newStock > 0 ? newStock : 0,
-            node: 'stock',
-            contentieux,
-            calculated: true,
-            sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
-          }
-        stock.value =  newStock > 0 ? newStock.toString() : '0'
+          const newStock = (resp ?? 0) + entreeValue - sortieValue
+          this.updates[`${contentieux.id}-stock`] = {
+              value: newStock > 0 ? newStock : 0,
+              node: 'stock',
+              contentieux,
+              calculated: true,
+              sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
+            }
+          stock.value =  newStock > 0 ? newStock.toString() : '0'
       })
     }
     console.log('this.updates 00:', this.updates)
@@ -642,11 +657,13 @@ export class PopinEditActivitiesComponent
     let date : Date =  new Date(this.activityMonth)
     date.setMonth(this.activityMonth.getMonth() - 1)
     return this.activitiesService.loadMonthActivities(date).then(resp => {
+    let stock = 0
       const tmp = resp.list.find((elem: any) => {
         if (elem.contentieux.id === contentieuxId)
           return elem
       })
-      const stock = tmp.stock ?? tmp.originalStock ?? 0
+      if (tmp)
+        stock = tmp.stock ?? tmp.originalStock ?? 0
       return stock
     })
   }
@@ -713,13 +730,22 @@ export class PopinEditActivitiesComponent
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
-              options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
+              if (elem.contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY) 
+                options.entrees = elem.value
+              else 
+                options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
               break
             case 'sorties':
-              options.sorties = elem.value !== null ? elem.value : elem.contentieux.originalOut
+              if (elem.contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY) 
+                options.sorties = elem.value
+              else
+                options.sorties = elem.value !== null ? elem.value : elem.contentieux.originalOut
               break
             case 'stock':
-              options.stock = elem.value !== null? elem.value : elem.contentieux.originalStock
+              if (elem.contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY) 
+                options.stock = elem.value
+              else 
+                options.stock = elem.value !== null? elem.value : elem.contentieux.originalStock
               break
           }
           await this.activitiesService.updateDatasAt(
@@ -797,35 +823,47 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
         if (this.updates[`${cont.id}-${node}`]) {
-          if (this.updates[`${cont.id}-${node}`].value === null)
+          if (this.updates[`${cont.id}-${node}`].value === null || 
+            this.isValueToVerifySetted({value : this.updates[`${cont.id}-${node}`] ? this.updates[`${cont.id}-${node}`].value : null, contentieux: cont, node: node})
+          )
             return false
           // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalIn) {
           //   return true
           // }
           return true
-        } else if (cont.in !== null)// && cont.in !== cont.originalIn)
+        } else if (this.isValueToVerifySetted({value: cont.in ? cont.in : null, contentieux: cont, node: node}))
+          return false
+        else if (cont.in !== null)// && cont.in !== cont.originalIn)
             return true
         break;
       case 'sorties':
         if (this.updates[`${cont.id}-${node}`]) {
-          if (this.updates[`${cont.id}-${node}`].value === null)
+          if (this.updates[`${cont.id}-${node}`].value === null || 
+            this.isValueToVerifySetted({value : this.updates[`${cont.id}-${node}`] ? this.updates[`${cont.id}-${node}`].value : null, contentieux: cont, node: node})
+          )
             return false
           // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalOut) {
           //   return true
           // }
           return true
-        } else if (cont.out !== null)// && cont.out !== cont.originalOut)
+        } else if (this.isValueToVerifySetted({value: cont.out ? cont.out : null, contentieux: cont, node: node}))
+          return false
+        else if(cont.out !== null)// && cont.out !== cont.originalOut)
             return true
         break;
       case 'stock':
         if (this.updates[`${cont.id}-${node}`]) {
-          if (this.updates[`${cont.id}-${node}`].value === null)
+          if (this.updates[`${cont.id}-${node}`].value === null || 
+            this.isValueToVerifySetted({value : this.updates[`${cont.id}-${node}`] ? this.updates[`${cont.id}-${node}`].value : null, contentieux: cont, node: node})
+          )
             return false
-          // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalStock) {
+          // else if (this.updates[`${cont.id}-${node}`].value !== cont.originalStock) { 
           //   return true
           // }
           return true
-        } else if (cont.stock !== null)// && cont.stock !== cont.originalStock)
+        } else if (this.isValueToVerifySetted({value: cont.stock ? cont.stock : null, contentieux: cont, node: node}))
+          return false 
+        else if (cont.stock !== null)// && cont.stock !== cont.originalStock)
             return true
         break;
     }
@@ -836,10 +874,32 @@ export class PopinEditActivitiesComponent
     if (this.updates[`${cont.id}-stock`]) {
       return this.updates[`${cont.id}-stock`].calculated
     }
-    else if (cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) {
+    else if ((cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) || cont.stock === null) {
       return true
     }
     return false
+  }
+
+  isValueToVerifySetted({value, contentieux, node}: {value: number | null, contentieux: ContentieuReferentielInterface, node: string}) {
+    if (value !== null) {
+      switch (node) {
+        case 'entrees': 
+          if (value === contentieux.originalIn && contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case 'sorties':
+          if (value === contentieux.originalOut && contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case "stock":
+          if (value === contentieux.originalStock && contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        default:
+          return false
+      }
+    } 
+    return false   
   }
 
   onShowHelpPanel({level, cont, node, url} : {level?: number, cont?: ContentieuReferentielInterface, node?: string, url?: string}) {
@@ -956,15 +1016,16 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
         if (level === 3) {
-          if (this.total.in !== null)// && this.total.in !== cont.originalIn)
+          if (this.total.in.updated || this.isValueUpdated({cont, node}))// && this.total.in !== cont.originalIn)
             return true
+          return false
         }
         else if (this.isValueUpdated({cont, node}))
           return true
         break;
       case 'sorties':
         if (level === 3) {
-          if (this.total.out !== null)// && this.total.out !== cont.originalOut)
+          if (this.total.out.updated || this.isValueUpdated({cont, node}))// && this.total.out !== cont.originalOut)
             return true
         }
         else if (this.isValueUpdated({cont, node}))
@@ -972,16 +1033,16 @@ export class PopinEditActivitiesComponent
         break;
       case 'stock':
         if (level === 3) {
-          if (this.total.stock !== null)// && this.total.stock !== cont.originalStock)
+          if (this.total.stock.updated || this.isValueUpdated({cont, node}))// && this.isValueUpdated({cont, node}))// && this.total.stock !== cont.originalStock)
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-          if (isForBulbOrBottom && this.isStockCalculated(cont)) {// && cont.stock !== cont.originalStock ) {
+          if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock)
             return false
-          }
-          if (cont.stock !== cont.originalStock) {
+          if (isForBulbOrBottom && (this.isStockCalculated(cont)))// && cont.stock !== cont.originalStock ) {
+            return false
+          else if (cont.stock !== cont.originalStock)
             return true
-          }
           return true
         }
         break;
