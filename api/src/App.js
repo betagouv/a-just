@@ -16,6 +16,7 @@ import { CSP_URL_IGNORE_RULES } from './constants/csp'
 import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
 import ip from 'koa-ip'
+import { scriptSha1Generate, styleSha1Generate } from './utils/csp'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -161,21 +162,10 @@ export default class App extends AppBase {
               "'sha256-92TNq2Axm9gJIJETcB7r4qpDc3JjxqUYF1fKonG4mvg='",
               "'sha256-WXdHEUxHRTHqWKtUCBtUckcV5wN4y9jQwkZrGjfqr40='",
               "'sha256-9jsqNCkYsDU3te2WUjv9qXV1DKXI1vT9hz3g7nNens8='",
+              ...scriptSha1Generate([`${__dirname}/../front/index.html`]),
             ],
             'worker-src': ['blob:'],
-            /*'style-src': [
-              "'self'",
-              "'sha256-dtyHgX5YAK0JNwwLgd97DX4vtHAa9NAUlT1AvjcLDd8='",
-              "'sha256-jT40G4YjR6RU/Kt/iujR3U7pbQvwVhlqiA8whmw8+w4='",
-              "'sha256-H9KGFBskBdGGPxJJ6nQ65CNZqdCQlTsA3jHnPkcfG58='",
-              "'sha256-DkvnrWNXZXJfrrC1A/e+2dWNglnOi1oj0ZEZpxjs9Us='",
-              "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
-              "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-              "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
-              "'sha256-gjw6KBXo8tLlv1hecm6Is6p0k/sbNVSXz0v+XkVmO/A='",
-              "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
-              'cdnjs.cloudflare.com',
-            ],*/
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/../front/index.html`]), 'cdnjs.cloudflare.com'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
