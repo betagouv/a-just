@@ -1,17 +1,17 @@
 version: "3.3"
 services:
-  api:
-    restart: unless-stopped
-    expose:
-      - "8080"
-    networks:
-      mobiville_network:
-        ipv4_address: 173.0.0.20
-    depends_on:
-      - "db"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-    stdin_open: true
+  #api:
+  #  restart: unless-stopped
+  #  expose:
+  #    - "8080"
+  #  networks:
+  #    mobiville_network:
+  #      ipv4_address: 173.0.0.20
+  #  depends_on:
+  #    - "db"
+  #  environment:
+  #    - DATABASE_URL=${DATABASE_URL}
+  #  stdin_open: true
 
   db:
     image: postgres:10.4
@@ -102,10 +102,9 @@ services:
       - "max_parallel_workers_per_gather=2"
       - "-c"
       - "max_parallel_workers=4"
-
-networks:
-  mobiville_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 173.0.0.0/16
+#networks:
+#  mobiville_network:
+#    driver: bridge
+#    ipam:
+#      config:
+#        - subnet: 173.0.0.0/16
