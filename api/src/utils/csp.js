@@ -40,7 +40,7 @@ const parseFile = (filePath, tag) => {
   const list = []
   try {
     if (config.envName === 'DEV') {
-      filePath = filePath.replace('/front', '/dist/front')
+      filePath = filePath.replace('/front', '/../dist/front')
     }
     const data = readFileSync(filePath, 'utf8')
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)</${tag}>`, 'gm')
