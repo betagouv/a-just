@@ -9,6 +9,46 @@ import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
  */
 export function referentielMappingName(name: string): string {
   switch (name) {
+    case "Contentieux social":
+      return "Social";
+    case "Contentieux de la famille":
+      return "Famille";
+    case "Contentieux de la protection":
+      return "Protection";
+    case "Contentieux civil":
+      return "Civil Ns";
+    case "Contentieux de la protection":
+      return "Civil Ns";
+    case "Contentieux commercial":
+      return "Commercial";
+    case "Attributions du PP":
+      return "PP";
+    case "Contentieux civil JLD":
+      return "Jld Civil";
+    case "Contentieux des mineurs":
+      return "Mineurs";
+    case "Instruction et entraide":
+      return "Instruction / Entraide";
+    case "Correctionnel":
+      return "Correctionnel";
+    case "Contentieux criminel":
+      return "Crim.";
+    case "Application des peines":
+      return "Application des peines";
+    case "Autres activités":
+      return "Autres";
+  }
+
+  return name;
+}
+
+/**
+ * Conversion d'un nom de référentiel en version simplifiée
+ * @param name
+ * @returns
+ */
+export function referentielCAMappingName(name: string): string {
+  switch (name) {
     case 'Autres activités':
       return 'Autres activités'
     case 'Indisponibilité':
@@ -38,6 +78,49 @@ export function referentielMappingName(name: string): string {
  * @returns
  */
 export function referentielMappingColor(
+  name: string,
+  opacity: number = 1
+): string {
+  switch (name) {
+    case "Contentieux social":
+      return `rgba(66, 66, 66, ${opacity})`
+    case "Contentieux de la famille":
+      return `rgba(55, 71, 79, ${opacity})`
+    case "Contentieux de la protection":
+      return `rgba(198, 40, 40, ${opacity})`
+    case "Contentieux civil":
+      return `rgba(2, 119, 189, ${opacity})`
+    case "Contentieux de la protection":
+      return `rgba(0, 131, 143, ${opacity}`
+    case "Contentieux commercial":
+      return `rgba(21, 101, 192, ${opacity})`
+    case "Attributions du PP":
+      return `rgba(106, 27, 154, ${opacity})`
+    case "Contentieux civil JLD":
+      return `rgba(40, 53, 147, ${opacity})`
+    case "Contentieux des mineurs":
+      return `rgba(216, 67, 21, ${opacity})`
+    case "Instruction et entraide":
+      return `rgba(69, 39, 160, ${opacity})`
+    case "Correctionnel":
+      return `rgba(239, 108, 0, ${opacity})`
+    case "Contentieux criminel":
+      return `rgba(255, 143, 0, ${opacity})`
+    case "Application des peines":
+      return `rgba(69, 39, 160, ${opacity})`
+    case "Autres activités":
+      return `rgba(100, 100, 100, ${opacity})`
+  }
+
+  return ''
+}
+
+/**
+ * Récupération du code couleur des référentiels
+ * @param name
+ * @returns
+ */
+export function referentielCAMappingColor(
   name: string,
   opacity: number = 1
 ): string {
@@ -72,7 +155,6 @@ export function referentielMappingColor(
 
   return ''
 }
-
 /**
  * Récupération du code couleur des référentiels
  * @param name
