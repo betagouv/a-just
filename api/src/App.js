@@ -41,7 +41,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor () {
+  constructor() {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -50,7 +50,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start () {
+  async start() {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -91,7 +91,6 @@ export default class App extends AppBase {
       //sslify(),
       limiter,
       // we add the relevant middlewares to our API
-      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -213,6 +212,16 @@ export default class App extends AppBase {
       },
     ])
 
+    if (config.corsUrl) {
+      super.addMiddlewares([
+        cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      ])
+    } else {
+      super.addMiddlewares([
+        cors({ credentials: true }), // add cors headers to the requests
+      ])
+    }
+
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/') // adds a folder to scan for route files
@@ -221,9 +230,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady () {}
+  isReady() { }
 
-  done () {
+  done() {
     console.log('--- DONE ---')
     process.exit()
   }
