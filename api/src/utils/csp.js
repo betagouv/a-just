@@ -46,7 +46,8 @@ const parseFile = (filePath, tag) => {
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
     const regexp2 = new RegExp(`<${tag}>(.*?)<\\/${tag}>`, 'gm')
     const tab = [...data.matchAll(regexp), ...data.matchAll(regexp2)]
-    //console.log('tab', filePath, tag, regexp2, tab)
+    console.log('data', data)
+    console.log('tab', filePath, tag, regexp, regexp2, tab)
 
     if (tab) {
       tab.map((l) => {
