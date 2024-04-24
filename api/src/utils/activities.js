@@ -1,3 +1,5 @@
+import { VALUE_QUALITY_TO_VERIFY } from "../constants/activities"
+
 /**
  * Formalise les activités d'un contentieux en fonction de ses sous contentieux
  * @param {*} childs
@@ -61,4 +63,27 @@ export const preformatActivitiesArray = (list, index) => {
   })
 
   return total !== null && total < 0 ? 0 : total
+}
+
+
+export const isValueToVerifySetted = (value, contentieux, node, referentiel) => {
+  if (value !== null) {
+    switch (node) {
+      case 'entrees': 
+        if (value === contentieux.original_entrees && referentiel.value_quality_in === VALUE_QUALITY_TO_VERIFY)
+          return true
+        break;
+      case 'sorties':
+        if (value === contentieux.original_sorties && referentiel.value_quality_out === VALUE_QUALITY_TO_VERIFY)
+          return true
+        break;
+      case "stock":
+        if (value === contentieux.original_stock && referentiel.value_quality_stock === VALUE_QUALITY_TO_VERIFY)
+          return true
+        break;
+      default:
+        return false
+    }
+  } 
+  return false   
 }

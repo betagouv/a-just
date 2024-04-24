@@ -10,3 +10,8 @@ export const convertHumanNodeToActivitiesBDD = (node) => {
 
   return node
 }
+
+export const VALUE_QUALITY_OPTION = 'facultatif';
+export const VALUE_QUALITY_GOOD = 'good';
+export const VALUE_QUALITY_TO_COMPLETE = 'to_complete';
+export const VALUE_QUALITY_TO_VERIFY = 'to_verify';
