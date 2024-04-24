@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL || '*',
+  corsUrl: process.env.FRONT_URL || null,
   /**
    * Port utilisé pour démarrer le serveur
    */
