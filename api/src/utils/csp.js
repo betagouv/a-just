@@ -42,16 +42,20 @@ const parseFile = (filePath, tag) => {
     if (config.envName === 'DEV') {
       filePath = filePath.replace('/front', '/../dist/front')
     }
+    console.log('filePath', filePath)
     const data = readFileSync(filePath, 'utf8')
+    //console.log('data', data)
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
     const regexp2 = new RegExp(`<${tag}>(.*?)<\\/${tag}>`, 'gm')
     const tab = [...data.matchAll(regexp), ...data.matchAll(regexp2)]
-    console.log('data', data)
-    console.log('tab', filePath, tag, regexp, regexp2, tab)
+    //console.log('data', [...data.matchAll(regexp)])
+    //console.log('data2', [...data.matchAll(regexp2)])
+    //console.log('tab', filePath, tag, regexp, regexp2, tab)
 
     if (tab) {
       tab.map((l) => {
         if (l.length >= 2) {
+          console.log('find', l)
           const shasum = crypto.createHash('sha1')
           shasum.update(l[2])
           const generatedHash = shasum.digest('hex')
