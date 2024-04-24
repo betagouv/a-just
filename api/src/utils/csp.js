@@ -44,7 +44,8 @@ const parseFile = (filePath, tag) => {
     }
     const data = readFileSync(filePath, 'utf8')
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)</${tag}>`, 'gm')
-    const tab = [...data.matchAll(regexp)]
+    const regexp2 = new RegExp(`<${tag}>(.*?)</${tag}>`, 'gm')
+    const tab = [...data.matchAll(regexp), ...data.matchAll(regexp2)]
 
     if (tab) {
       tab.map((l) => {
