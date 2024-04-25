@@ -539,30 +539,35 @@ export class PopinEditActivitiesComponent
     contentieux: ContentieuReferentielInterface
   ) {
     let value: null | number = null
+    let originalValue : number | null = null
+    let isToVerify : boolean = false
+    let updateTotal : boolean = false
 
     if (newValue !== '' && newValue.length > 0) {
       value = +newValue
     }
-    // switch (nodeName) {
-    //   case 'entrees':
-    //     original = isNumber(contentieux.originalIn) ? contentieux.originalIn : null
-    //     if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY)
-    //       isToVerify = true
-    //     break
-    //   case 'sorties':
-    //     original = isNumber(contentieux.originalOut) ? contentieux.originalOut : null
-    //     if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY)
-    //       isToVerify = true
-    //     break
-    //   case 'stock':
-    //     original = isNumber(contentieux.originalStock) ? contentieux.originalStock : null
-    //     if (contentieux.valueQualityStock=== this.VALUE_QUALITY_TO_VERIFY)
-    //       isToVerify = true
-    //     break
-    // }
+
+    switch (nodeName) {
+      case 'entrees':
+        originalValue = isNumber(contentieux.originalIn) ? contentieux.originalIn : null
+        if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY)
+          isToVerify = true
+        break
+      case 'sorties':
+        originalValue = isNumber(contentieux.originalOut) ? contentieux.originalOut : null
+        if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY)
+          isToVerify = true
+        break
+      case 'stock':
+        originalValue = isNumber(contentieux.originalStock) ? contentieux.originalStock : null
+        if (contentieux.valueQualityStock=== this.VALUE_QUALITY_TO_VERIFY)
+          isToVerify = true
+        break
+    }
     
     if ((newValue.length !== 0 && newValue === null) /*|| (value && original && value === original && !isToVerify)*/) {
       delete this.updates[`${contentieux.id}-${nodeName}`]
+      updateTotal = true
     } else {
       if (newValue.length === 0) {
         this.updates[`${contentieux.id}-${nodeName}`] = {
@@ -581,15 +586,18 @@ export class PopinEditActivitiesComponent
           sendBack: true,
         }
       }
+      if (isToVerify && this.updates[`${contentieux.id}-${nodeName}`].value !== originalValue)
+        updateTotal = true
     }
     const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
 
     // Verification si l'entrée et/ou la sortie (déja mise à jours auparavent) a été mise à null (cad annulé)
     // Dans ce cas on remet le stock à son état d'origine
-    if ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
+    if (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
-        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null)
+        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null))
     ) {
+      updateTotal = true
       setTimeout(() => {
         //delete this.updates[`${contentieux.id}-stock`];
         this.updates[`${contentieux.id}-stock`] = {
@@ -607,13 +615,14 @@ export class PopinEditActivitiesComponent
       (
         (nodeName !== 'stock' && this.isStockCalculated(contentieux)) && 
         !this.isValueToVerifySetted({value : this.updates[`${contentieux.id}-entrees`] ? this.updates[`${contentieux.id}-entrees`].value : null, contentieux: contentieux, node: "entrees"}) && 
-        !this.isValueToVerifySetted({value : this.updates[`${contentieux.id}-sorties`] ? this.updates[`${contentieux.id}-sorties`].value : null, contentieux: contentieux, node: "sorties"})
+        !this.isValueToVerifySetted({value : this.updates[`${contentieux.id}-sorties`] ? this.updates[`${contentieux.id}-sorties`].value : null, contentieux: contentieux, node: "sorties"}) && 
+        contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       ) ||
       (
-        this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null
+        this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null /*&& contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY*/
       )
     ) {
-
+      updateTotal = true
       let entreeValue = 0
       let sortieValue = 0
     
@@ -650,7 +659,7 @@ export class PopinEditActivitiesComponent
       })
     }
     console.log('this.updates 00:', this.updates)
-    setTimeout(() => this.updateTotal(), 1000)
+    updateTotal && setTimeout(() => this.updateTotal(), 1000)
   }
 
   async getLastMonthStock(contentieuxId : number) {
@@ -730,22 +739,25 @@ export class PopinEditActivitiesComponent
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
-              if (elem.contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY) 
-                options.entrees = elem.value
-              else 
-                options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
+              options.entrees = elem.value
+              // if (elem.contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY) 
+              //   options.entrees = elem.value
+              // else
+              //   options.entrees = elem.value !== null ? elem.value : elem.contentieux.originalIn
               break
             case 'sorties':
-              if (elem.contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY) 
-                options.sorties = elem.value
-              else
-                options.sorties = elem.value !== null ? elem.value : elem.contentieux.originalOut
+              options.sorties = elem.value
+              // if (elem.contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY) 
+              //   options.sorties = elem.value
+              // else
+              //   options.sorties = elem.value !== null ? elem.value : elem.contentieux.originalOut
               break
             case 'stock':
-              if (elem.contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY) 
-                options.stock = elem.value
-              else 
-                options.stock = elem.value !== null? elem.value : elem.contentieux.originalStock
+              options.stock = elem.value
+              // if (elem.contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY) 
+              //   options.stock = elem.value
+              // else 
+              //   options.stock = elem.value !== null? elem.value : elem.contentieux.originalStock
               break
           }
           await this.activitiesService.updateDatasAt(

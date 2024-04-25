@@ -434,7 +434,8 @@ export default (sequelizeInstance, Model) => {
           if (
               (!getUserUpdateStock || getUserUpdateStock.value === null) &&
                !isValueToVerifySetted( findAllChild[i].entrees ? findAllChild[i].entrees : null, findAllChild[i], "entrees", contentieuxRef.dataValues) && 
-               !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues)
+               !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues) &&
+               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY
             ) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
 

@@ -20,6 +20,7 @@ import { autoFocus } from 'src/app/utils/dom-js'
 import { downloadFile } from 'src/app/utils/system'
 import { activityPercentColor } from 'src/app/utils/activity'
 import { referentielMappingName } from 'src/app/utils/referentiel'
+import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 
 /**
  * Composant page activité
@@ -648,41 +649,78 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  checkIfBlueBottom (item : ContentieuReferentielInterface, node: string) {
+  checkIfBlue({cont, node, isForBulbOrBottom} : {cont: ContentieuReferentielInterface, node: string, isForBulbOrBottom: boolean }) {
     switch (node) {
-      case 'entrees': 
-        if (item.valueQualityIn === 'to_verify') {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees && item.in !==  item.originalIn)
-            return true
-          else if (item.in === item.originalIn)
+      case 'entrees':
+        if (this.isValueUpdated({cont, node}))
+          return true
+        break;
+      case 'sorties':
+        if (this.isValueUpdated({cont, node}))
+          return true
+        break;
+      case 'stock':
+        if (this.isValueUpdated({cont, node})) {
+          if (isForBulbOrBottom && (this.isStockCalculated(cont)))
             return false
-        } else {
-          if (item.in !== null && item.in !== item.originalIn)
+          else if (cont.stock !== cont.originalStock)
             return true
+          return true
         }
         break;
-      case 'sorties': 
-        if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties && item.out !==  item.originalOut)
+    }
+    return false
+  }
+
+  isValueUpdated({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
+    switch (node) {
+      case 'entrees':
+        if (this.isValueToVerifySetted({value: cont.in ? cont.in : null, contentieux: cont, node: node}))
+          return false
+        else if (cont.in !== null)
             return true
-          else if (item.out === item.originalOut)
-            return false
-        } else {
-          if (item.out !== null && item.out !== item.originalOut)
-            return true
-        }
         break;
-      case 'stock': 
-        if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock && item.stock !==  item.originalStock)
+      case 'sorties':
+        if (this.isValueToVerifySetted({value: cont.out ? cont.out : null, contentieux: cont, node: node}))
+          return false
+        else if(cont.out !== null)
             return true
-          else if (item.stock === item.originalStock)
-            return false
-        } else {
-          if (item.stock !== null && (item.stock !== item.originalStock || (item.childrens && item.stock === item.originalStock)))
-            return true
-        }
         break;
+      case 'stock':
+        if (this.isValueToVerifySetted({value: cont.stock ? cont.stock : null, contentieux: cont, node: node}))
+          return false 
+        else if (cont.stock !== null)
+            return true
+        break;
+    }
+    return false
+  }
+
+  isValueToVerifySetted({value, contentieux, node}: {value: number | null, contentieux: ContentieuReferentielInterface, node: string}) {
+    if (value !== null) {
+      switch (node) {
+        case 'entrees': 
+          if (value === contentieux.originalIn && contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case 'sorties':
+          if (value === contentieux.originalOut && contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case "stock":
+          if (value === contentieux.originalStock && contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        default:
+          return false
+      }
+    } 
+    return false   
+  }
+
+  isStockCalculated (cont : ContentieuReferentielInterface) {
+    if ((cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) || cont.stock === null) {
+      return true
     }
     return false
   }
