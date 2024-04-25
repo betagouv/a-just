@@ -848,7 +848,7 @@ export class PopinEditActivitiesComponent
           //   return true
           // }
           return true
-        } else if (this.isValueToVerifySetted({value: cont.in ? cont.in : null, contentieux: cont, node: node}))
+        } else if (this.isValueToVerifySetted({value: cont.in ?? cont.in ?? null, contentieux: cont, node: node}))
           return false
         else if (cont.in !== null)// && cont.in !== cont.originalIn)
             return true
@@ -863,7 +863,7 @@ export class PopinEditActivitiesComponent
           //   return true
           // }
           return true
-        } else if (this.isValueToVerifySetted({value: cont.out ? cont.out : null, contentieux: cont, node: node}))
+        } else if (this.isValueToVerifySetted({value: cont.out ?? cont.out ?? null, contentieux: cont, node: node}))
           return false
         else if(cont.out !== null)// && cont.out !== cont.originalOut)
             return true
@@ -878,7 +878,7 @@ export class PopinEditActivitiesComponent
           //   return true
           // }
           return true
-        } else if (this.isValueToVerifySetted({value: cont.stock ? cont.stock : null, contentieux: cont, node: node}))
+        } else if (this.isValueToVerifySetted({value: cont.stock ?? cont.stock ?? null, contentieux: cont, node: node}))
           return false 
         else if (cont.stock !== null)// && cont.stock !== cont.originalStock)
             return true
@@ -898,7 +898,7 @@ export class PopinEditActivitiesComponent
   }
 
   isValueToVerifySetted({value, contentieux, node}: {value: number | null, contentieux: ContentieuReferentielInterface, node: string}) {
-    if (value !== null) {
+
       switch (node) {
         case 'entrees': 
           if (value === contentieux.originalIn && contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY)
@@ -915,7 +915,6 @@ export class PopinEditActivitiesComponent
         default:
           return false
       }
-    } 
     return false   
   }
 
