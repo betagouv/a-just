@@ -205,7 +205,7 @@ export default class App extends AppBase {
           `${ctx.response.header['content-security-policy']
             .split(';')
             .filter((s) => !s.startsWith('style-src'))
-            .join(';')}; style-src: 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(' ')} cdnjs.cloudflare.com`
+            .join(';')}; style-src 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(' ')} cdnjs.cloudflare.com`
         )
 
         await next()
