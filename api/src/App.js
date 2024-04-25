@@ -166,6 +166,7 @@ export default class App extends AppBase {
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
               ...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
@@ -199,14 +200,6 @@ export default class App extends AppBase {
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
-
-        ctx.set(
-          'content-security-policy',
-          `${ctx.response.header['content-security-policy']
-            .split(';')
-            .filter((s) => !s.startsWith('style-src'))
-            .join(';')}; style-src 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(' ')} cdnjs.cloudflare.com`
-        )
 
         await next()
       },
