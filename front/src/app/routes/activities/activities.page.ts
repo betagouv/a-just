@@ -675,19 +675,19 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   isValueUpdated({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
     switch (node) {
       case 'entrees':
-        if (this.isValueToVerifySetted({value: cont.in ? cont.in : null, contentieux: cont, node: node}))
+        if (this.isValueToVerifySetted({value: cont.in ?? cont.in ?? null, contentieux: cont, node: node}))
           return false
         else if (cont.in !== null)
             return true
         break;
       case 'sorties':
-        if (this.isValueToVerifySetted({value: cont.out ? cont.out : null, contentieux: cont, node: node}))
+        if (this.isValueToVerifySetted({value: cont.out ?? cont.out ?? null, contentieux: cont, node: node}))
           return false
         else if(cont.out !== null)
             return true
         break;
       case 'stock':
-        if (this.isValueToVerifySetted({value: cont.stock ? cont.stock : null, contentieux: cont, node: node}))
+        if (this.isValueToVerifySetted({value: cont.stock ?? cont.stock ?? null, contentieux: cont, node: node}))
           return false 
         else if (cont.stock !== null)
             return true
