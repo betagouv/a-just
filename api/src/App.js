@@ -202,20 +202,11 @@ export default class App extends AppBase {
 
         ctx.set(
           'content-security-policy',
-          `${ctx.response.header['content-security-policy']}; style-src: 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(
-            ' '
-          )} cdnjs.cloudflare.com`
+          `${ctx.response.header['content-security-policy']
+            .split(';')
+            .filter((s) => !s.startsWith('style-src'))
+            .join(';')}; style-src: 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(' ')} cdnjs.cloudflare.com`
         )
-        /*ctx.
-        'style-src': [
-          "'self'",
-          "'sha256-gjw6KBXo8tLlv1hecm6Is6p0k/sbNVSXz0v+XkVmO/A='",
-          "'sha256-H9KGFBskBdGGPxJJ6nQ65CNZqdCQlTsA3jHnPkcfG58='",
-          "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-          "'sha256-DkvnrWNXZXJfrrC1A/e+2dWNglnOi1oj0ZEZpxjs9Us='",
-          ...styleSha1Generate([`${__dirname}/front/index.html`]),
-          'cdnjs.cloudflare.com',
-        ],*/
 
         await next()
       },
