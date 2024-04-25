@@ -41,7 +41,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -50,7 +50,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -202,7 +202,7 @@ export default class App extends AppBase {
 
         ctx.set(
           'content-security-policy',
-          `${ctx.response.header['content-security-policy']}; style-src: 'self' ...${styleSha1Generate([`${__dirname}/front/index.html`]).join(
+          `${ctx.response.header['content-security-policy']}; style-src: 'self' ${styleSha1Generate([`${__dirname}/front/index.html`]).join(
             ' '
           )} cdnjs.cloudflare.com`
         )
@@ -239,9 +239,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }
