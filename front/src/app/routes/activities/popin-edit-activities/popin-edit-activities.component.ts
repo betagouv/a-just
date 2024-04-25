@@ -622,8 +622,6 @@ export class PopinEditActivitiesComponent
         this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       )
     ) {
-      console.log('HERE')
-
       updateTotal = true
       let entreeValue = 0
       let sortieValue = 0
@@ -647,18 +645,23 @@ export class PopinEditActivitiesComponent
           sortieValue = contentieux.out ?? 0
       }
 
-      stockValue = contentieux.stock ?? contentieux.originalStock ?? 0
+      if (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )
+        stockValue = contentieux.originalOut ?? 0
+      else 
+        stockValue = contentieux.stock ?? 0
 
       this.getLastMonthStock(contentieux.id).then(resp => {
-          const newStock = (resp ?? stockValue ?? 0) + entreeValue - sortieValue
+        let newStock : number | null = (resp ?? stockValue ?? 0) + entreeValue - sortieValue
+        if (newStock === null && contentieux.originalStock === null)
+          newStock = null
           this.updates[`${contentieux.id}-stock`] = {
-              value: newStock > 0 ? newStock : 0,
-              node: 'stock',
-              contentieux,
-              calculated: true,
-              sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
-            }
-          stock.value =  newStock > 0 ? newStock.toString() : '0'
+            value: newStock ? (newStock > 0 ? newStock : 0) : null,
+            node: 'stock',
+            contentieux,
+            calculated: true,
+            sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
+          }
+        stock.value = newStock ? (newStock > 0 ? newStock.toString() : '0') : '-'
       })
     }
     console.log('this.updates 00:', this.updates)
