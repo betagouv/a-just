@@ -1,6 +1,7 @@
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import config from 'config'
 import crypto from 'crypto'
+import { crypt } from './'
 
 /**
  * Parse les fichiers en fonction du style pour avoir les sha-256
@@ -43,7 +44,16 @@ const parseFile = (filePath, tag) => {
       filePath = filePath.replace('/front', '/../dist/front')
     }
     console.log('filePath', filePath)
-    const data = readFileSync(filePath, 'utf8')
+    let data = readFileSync(filePath, 'utf8')
+
+    if (data.indexOf('ngCspNonce="random_nonce_value"')) {
+      const key = crypt.generateRandomNumber(12)
+      const newNonce = 'dt' + key
+      data = data.replace('ngCspNonce="random_nonce_value"', 'ngCspNonce="' + newNonce + '"')
+      writeFileSync(filePath, data)
+      list.push(`'nonce-${newNonce}'`)
+    }
+
     //console.log('data', data)
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
     const regexp2 = new RegExp(`<${tag}>(.*?)<\\/${tag}>`, 'gm')
