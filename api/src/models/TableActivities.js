@@ -338,10 +338,15 @@ export default (sequelizeInstance, Model) => {
 
     if (findActivity) {
       referentiel = await Model.models.ContentieuxReferentiels.getOneReferentiel( findActivity.dataValues.contentieux_id)
-      if(/*findActivity.dataValues[original] === values[nodeUpdated] && */(/*referentiel.dataValues[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ (referentiel.dataValues[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
+      //if(/*findActivity.dataValues[original] === values[nodeUpdated] && */(/*referentiel.dataValues[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ /*(referentiel.dataValues[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || */(values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
+      
+      //En cas d'effacement d'une donnée ajusté.
+      if (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null) {
         await findActivity.update({ [nodeUpdated]: null });
-      else
+      }
+      else {
         await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
+      }
     } else {
       console.log('create', {
         ...values,
