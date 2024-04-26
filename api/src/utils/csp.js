@@ -46,13 +46,11 @@ const parseFile = (filePath, tag) => {
     console.log('filePath', filePath)
     let data = readFileSync(filePath, 'utf8')
 
-    if (data.indexOf('ngCspNonce="random_nonce_value"')) {
-      const key = crypt.generateRandomNumber(12)
-      const newNonce = 'dt' + key
-      data = data.replace('ngCspNonce="random_nonce_value"', 'ngCspNonce="' + newNonce + '"')
-      writeFileSync(filePath, data)
-      list.push(`'nonce-${newNonce}'`)
-    }
+    const key = crypt.generateRandomNumber(12)
+    const newNonce = 'dt' + key
+    data = data.replace(/random_nonce_value/gim, newNonce)
+    writeFileSync(filePath, data)
+    list.push('nonce-' + newNonce)
 
     //console.log('data', data)
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
@@ -65,7 +63,7 @@ const parseFile = (filePath, tag) => {
     if (tab) {
       tab.map((l) => {
         if (l.length >= 2) {
-          console.log('find', l)
+          //console.log('find', l)
           const shasum = crypto.createHash('sha1')
           shasum.update(l[2])
           const generatedHash = shasum.digest('hex')
