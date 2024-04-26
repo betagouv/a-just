@@ -488,14 +488,21 @@ export default (sequelizeInstance, Model) => {
             contentieux_id: ref.id,
           },
         })
+
+        let contentieuxRefChildren  = []
+        for (let elem of findAllChild) {
+          let ref = await Model.models.ContentieuxReferentiels.getOneReferentiel(elem.contentieux_id)
+          contentieuxRefChildren.push(ref.dataValues)
+        }
+
         if (findMain) {
-          await findMain.update(calculMainValuesFromChilds(findAllChild))
+            await findMain.update(calculMainValuesFromChilds(findAllChild, contentieuxRefChildren))
         } else {
           await Model.create({
             periode: date,
             hr_backup_id: hrBackupId,
             contentieux_id: ref.id,
-            ...calculMainValuesFromChilds(findAllChild),
+            ...calculMainValuesFromChilds(findAllChild, contentieuxRefChildren),
           })
         }
 
