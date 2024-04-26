@@ -164,7 +164,7 @@ export default class App extends AppBase {
               "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
               "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
-              ...scriptSha1Generate([`${__dirname}/front/index.html`]),
+              //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
             'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
