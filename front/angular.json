@@ -21,8 +21,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            },
             "allowedCommonJsDependencies": [
               "chart.js",
               "lodash",
