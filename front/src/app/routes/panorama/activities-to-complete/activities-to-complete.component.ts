@@ -157,4 +157,14 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
     else return this.referentielCAMappingColor(label, opacity)
   }
 
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
 }
