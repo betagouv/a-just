@@ -5,9 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration=${NODE_ENV}",
+    "build:stats": "ng build --configuration=production --stats-json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "compodoc": "npx compodoc -p tsconfig.doc.json -s -w --port 8181"
+    "compodoc": "npx compodoc -p tsconfig.doc.json -s -w --port 8181",
+    "analyse:build": "npm run build:stats && npx webpack-bundle-analyzer dist/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -56,6 +58,7 @@
     "zone.js": "^0.13.1"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^16.0.1",
     "@angular-devkit/build-angular": "^16.1.8",
     "@angular/cli": "^16.1.8",
     "@angular/compiler-cli": "^16.1.8",
@@ -71,6 +74,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "ttypescript": "^1.5.15",
-    "typescript": "~4.9.4"
+    "typescript": "~4.9.4",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
