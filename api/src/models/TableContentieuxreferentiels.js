@@ -1,8 +1,9 @@
 import { orderBy } from 'lodash'
 import { Op } from 'sequelize'
-import { referentielMappingIndex } from '../constants/referentiel'
+import { referentielCAMappingIndex, referentielMappingIndex } from '../constants/referentiel'
 import { extractCodeFromLabelImported } from '../utils/referentiel'
 import { camel_to_snake } from '../utils/utils'
+import config from 'config'
 
 /**
  * Scripts intermediaires des contentieux

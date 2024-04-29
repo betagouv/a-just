@@ -14,7 +14,7 @@ export const ABSENTEISME_LABELS = ['Congé maladie ordinaire', 'Congé maternit�
  * @param {*} name
  * @returns
  */
-export function referentielMappingIndex(name, rank) {
+export function referentielCAMappingIndex(name, rank) {
   switch (name) {
     case "Contentieux Social":
       return 1;
@@ -24,26 +24,26 @@ export function referentielMappingIndex(name, rank) {
       return 3;
     case "Contentieux civil":
       return 4;
-    case "Contentieux de la protection":
-      return 5;
     case "Contentieux commercial":
-      return 6;
+      return 5;
     case "Attributions du PP":
-      return 7;
+      return 6;
     case "Contentieux civil JLD":
-      return 8;
+      return 7;
     case "Contentieux des mineurs":
-      return 9;
+      return 8;
     case "Instruction et entraide":
-      return 10;
+      return 9;
     case "Correctionnel":
-      return 11;
+      return 10;
     case "Contentieux criminel":
-      return 12;
+      return 11;
     case "Application des peines":
-      return 13;
+      return 12;
     case "Autres activités":
-      return 14;
+      return 13;
+    case 'Indisponibilité':
+      return 14
   }
 
   return rank
@@ -54,34 +54,35 @@ export function referentielMappingIndex(name, rank) {
  * @param {*} name
  * @returns
  */
-export function referentielCAMappingIndex(name, rank) {
+export function referentielMappingIndex(name, rank) {
   switch (name) {
-    case 'Autres activités':
-      return 12
-    case 'Indisponibilité':
-      return 13
-    case 'Siège Pénal':
-      return 8
-    case 'Contentieux JAF':
-      return 2
     case 'Contentieux Social':
       return 1
+    case 'Contentieux JAF':
+      return 2
     case 'Contentieux de la Protection':
       return 3
-    case 'Juges des Enfants':
-      return 7
     case 'Civil Non Spécialisé':
       return 4
-    case "Juges d'Instruction":
-      return 9
+    case 'JLD civil':
+      return 5
     case 'JLD Civil':
       return 6
+    case 'Juges des Enfants':
+      return 7
+    case 'Siège Pénal':
+      return 8
+    case "Juges d'Instruction":
+      return 9
     case 'JAP':
       return 10
     case 'JLD pénal':
       return 11
-    case 'JLD civil':
-      return 5
+    case 'Autres activités':
+      return 12
+    case 'Indisponibilité':
+      return 13
+
   }
 
   return rank
@@ -157,7 +158,7 @@ export function referentielMappingName(name) {
  * @param {*} name
  * @returns
  */
-export function referentielCAMappingColor(name) {
+export function referentielMappingColor(name) {
   switch (name) {
     case 'Autres activités':
       return '#424242'
@@ -195,7 +196,7 @@ export function referentielCAMappingColor(name) {
  * @param {*} name
  * @returns
  */
-export function referentielMappingColor(name) {
+export function referentielCAMappingColor(name) {
   switch (name) {
     case "Contentieux Social":
       return '#424242'

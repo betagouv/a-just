@@ -25,7 +25,7 @@
           <div class="label head">
             <div
               class="color-border"
-              [style.backgroundColor]="ref.showOptionGroup ? null : referentielMappingColor(ref.label)"
+              [style.backgroundColor]="ref.showOptionGroup ? null : referentielMappingColorByInterface(ref.label)"
             ></div>
             <mat-icon *ngIf="(ref.childrens || []).length"
               >{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div
-            [style.backgroundColor]="!ref.showOptionGroup ? null : referentielMappingColor(ref.label)"
+            [style.backgroundColor]="!ref.showOptionGroup ? null : referentielMappingColorByInterface(ref.label)"
             style="
               position: absolute;
               left: 15px;
@@ -85,7 +85,7 @@
           <div
             class="group-item"
             *ngFor="let itemGroup of (ref.childrens || [])"
-            [style.borderColor]="referentielMappingColor(ref.label)"
+            [style.borderColor]="referentielMappingColorByInterface(ref.label)"
           >
             <div class="label head">
               <p>{{itemGroup.label}}</p>

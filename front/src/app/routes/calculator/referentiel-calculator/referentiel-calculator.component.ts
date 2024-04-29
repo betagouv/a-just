@@ -136,4 +136,23 @@ export class ReferentielCalculatorComponent extends MainClass {
   checkPastDate() {
     return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
   }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+ * Mapping des noms de contentieux selon l'interface
+ * @param label 
+ * @returns 
+ */
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
+
 }

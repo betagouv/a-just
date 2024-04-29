@@ -45,14 +45,14 @@
         >
           <div
             class="item"
-            [style.backgroundColor]="referentielMappingColorActivity(ref.label)"
+            [style.backgroundColor]="referentielMappingColorActivityByInterface(ref.label)"
             (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
             [class.selectable]="(ref.childrens || []).length"
           >
             <div class="label">
                 <div
                   class="color-border"
-                  [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColor(ref.label)"
+                  [style.backgroundColor]="ref.showActivityGroup ? null : referentielMappingColorByInterface(ref.label)"
                 ></div>
                 <mat-icon *ngIf="(ref.childrens || []).length"
                   >{{ ref.showActivityGroup ? 'expand_more' : 'chevron_right' }}
