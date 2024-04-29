@@ -19,6 +19,7 @@ import { downloadFile } from 'src/app/utils/system'
 import { activityPercentColor } from 'src/app/utils/activity'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Composant page activité
@@ -165,17 +166,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       title: 'Vérifier, compléter ou a-juster : que faire ?',
       intro:
         'Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d\'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la juridiction. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, les sorties et/ou le stock pour augmenter le pourcentage de complétude des données du contentieux.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si, au contraire, elle vous parait correcte. Vous pouvez également choisir de la laisser comme telle.</li>',
-        beforeLoad: async (intro: any) => {
-          const subTools = document.querySelector('.item-grouped .group')
-          if(subTools && subTools.getBoundingClientRect().height === 0) {
-            const itemToClick = document.querySelector('.item.selectable')
-            if(itemToClick) {
-              // @ts-ignore
-              itemToClick.click()
-              await sleep(200)
-            }
+      beforeLoad: async (intro: any) => {
+        const subTools = document.querySelector('.item-grouped .group')
+        if (subTools && subTools.getBoundingClientRect().height === 0) {
+          const itemToClick = document.querySelector('.item.selectable')
+          if (itemToClick) {
+            // @ts-ignore
+            itemToClick.click()
+            await sleep(200)
           }
         }
+      }
     },
     {
       target: '.menu-item.tools',
@@ -214,7 +215,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {
     super()
 
@@ -229,7 +231,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             if (
               month &&
               this.getMonth(month).getTime() <
-                this.getMonth(lastMonth).getTime()
+              this.getMonth(lastMonth).getTime()
             ) {
               lastMonth = this.getMonth(month)
             }
@@ -304,17 +306,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     ])
     referentiel.in =
       inValue === referentiel.originalIn &&
-      referentiel.childrens.every((c) => c.in === null)
+        referentiel.childrens.every((c) => c.in === null)
         ? null
         : inValue
     referentiel.out =
       outValue === referentiel.originalOut &&
-      referentiel.childrens.every((c) => c.out === null)
+        referentiel.childrens.every((c) => c.out === null)
         ? null
         : outValue
     referentiel.stock =
       outValue === referentiel.originalStock &&
-      referentiel.childrens.every((c) => c.stock === null)
+        referentiel.childrens.every((c) => c.stock === null)
         ? null
         : stockValue
 
@@ -645,11 +647,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @returns
    */
   getTooltipTitle({ user, date }: { user: UserInterface; date: Date }) {
-    return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${
-      user.firstName
-    } ${user.lastName} le ${this.getDate(date) || 'dd'} ${this.getMonthString(
-      date
-    )} ${this.getFullYear(date) || 'YYYY'}`
+    return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName
+      } ${user.lastName} le ${this.getDate(date) || 'dd'} ${this.getMonthString(
+        date
+      )} ${this.getFullYear(date) || 'YYYY'}`
   }
 
   /**
@@ -682,7 +683,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       path: url,
       subTitle: '',
       printSubTitle: false,
-      bgColor: this.referentielMappingColorActivity(label),
+      bgColor: this.referentielMappingColorActivityByInterface(label),
     })
   }
 
@@ -766,7 +767,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   setItemBgColor(label: string, elementId: number, remove: boolean = false) {
     const element = document.querySelector(`#item-${elementId}`) as HTMLElement
-    const tmpColor = this.referentielMappingColorActivity(label)
+    const tmpColor = this.referentielMappingColorActivityByInterface(label)
       .replace(/[^\d,]/g, '')
       .split(',')
     tmpColor.pop()
@@ -827,4 +828,35 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
     return false
   }
+
+  /**
+* Récuperer le type de l'app
+*/
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+
+  /**
+   * Mapping de la couleur du référentiel selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label)
+    else return this.referentielMappingColor(label)
+  }
+
+  /**
+   * Mapping de la couleur des activités selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
+  }
+
 }

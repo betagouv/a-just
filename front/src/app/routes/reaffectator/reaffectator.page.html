@@ -133,7 +133,7 @@
               <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
                 [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
                 <div class="label">
-                  <p>{{ referentielMappingName(ref.label) }}</p>
+                  <p>{{ referentielMappingNameByInterface(ref.label) }}</p>
                 </div>
                 <div class="etp"
                   [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">

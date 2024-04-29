@@ -22,6 +22,7 @@ import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { copy } from 'src/app/utils'
 import { groupBy, mapValues, get } from 'lodash';
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Composant page activité
@@ -33,8 +34,7 @@ import { groupBy, mapValues, get } from 'lodash';
 })
 export class PopinEditActivitiesComponent
   extends MainClass
-  implements OnChanges, AfterViewInit
-{
+  implements OnChanges, AfterViewInit {
   /**
    * Dom du wrapper
    */
@@ -75,10 +75,10 @@ export class PopinEditActivitiesComponent
     out: null | number | undefined
     stock: null | number | undefined
   } = {
-    in: null,
-    out: null,
-    stock: null,
-  }
+      in: null,
+      out: null,
+      stock: null,
+    }
   /**
    * have values to show
    */
@@ -93,7 +93,8 @@ export class PopinEditActivitiesComponent
   constructor(
     private appService: AppService,
     private referentielService: ReferentielService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private userService: UserService
   ) {
     super()
   }
@@ -108,7 +109,7 @@ export class PopinEditActivitiesComponent
         const containerTop = container.getBoundingClientRect().top
         const selectedElementTop = element.getBoundingClientRect().top
         let delta = containerTop
-        
+
         element.classList.add('grey-bg')
 
         for (let i = 0; i < referentielList.length; i++) {
@@ -126,11 +127,11 @@ export class PopinEditActivitiesComponent
         })
       }
     }
-    
+
     // Mettre la couleur du background du header selon le contentieux
-    if (this.referentiel){
-      const element = document.getElementById('header-popin') 
-      const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
+    if (this.referentiel) {
+      const element = document.getElementById('header-popin')
+      const bgColor = this.referentielMappingColorActivityByInterface(this.referentiel?.label, 1)
 
       if (element)
         element.style.backgroundColor = bgColor;
@@ -160,13 +161,12 @@ export class PopinEditActivitiesComponent
     const activityUpdated = contentieux.activityUpdated
     const modifyBy =
       activityUpdated && activityUpdated[type] ? activityUpdated[type] : null
-    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${
-      value !== null
-        ? modifyBy
-          ? 'ri-lightbulb-flash-fill'
-          : 'ri-lightbulb-flash-line'
-        : ''
-    }"></i><p class="color-white">`
+    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${value !== null
+      ? modifyBy
+        ? 'ri-lightbulb-flash-fill'
+        : 'ri-lightbulb-flash-line'
+      : ''
+      }"></i><p class="color-white">`
 
     switch (type) {
       case 'entrees':
@@ -197,13 +197,11 @@ export class PopinEditActivitiesComponent
 
     if (value !== null && modifyBy) {
       const date = new Date(modifyBy.date)
-      string += `<p class="color-white font-size-12">Modifié par <b>${
-        modifyBy.user?.firstName
-      } ${
-        modifyBy.user?.lastName
-      }</b> le ${date.getDate()} ${this.getShortMonthString(
-        date
-      )} ${date.getFullYear()}</p>`
+      string += `<p class="color-white font-size-12">Modifié par <b>${modifyBy.user?.firstName
+        } ${modifyBy.user?.lastName
+        }</b> le ${date.getDate()} ${this.getShortMonthString(
+          date
+        )} ${date.getFullYear()}</p>`
     }
 
     return string
@@ -234,27 +232,21 @@ export class PopinEditActivitiesComponent
       case 'sorties':
         if (level === 3) {
           if (value !== null) {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           } else {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           }
         } else {
           if (modifyBy) {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
+            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
+              } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
           } else {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
+            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
+              } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
           }
         }
       case 'stock': {
@@ -396,11 +388,11 @@ export class PopinEditActivitiesComponent
           }
         }
       })
-      let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
+      let deltaEntrees = (this.referentiel?.in || 0) + (this.total.in || 0)
       let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
 
-      if ((this.referentiel?.in || 0) > (this.total.in || 0)) 
-       deltaEntrees *= -1
+      if ((this.referentiel?.in || 0) > (this.total.in || 0))
+        deltaEntrees *= -1
       if ((this.referentiel?.out || 0) > (this.total.out || 0))
         deltaSorties *= -1
 
@@ -442,92 +434,92 @@ export class PopinEditActivitiesComponent
     nodeName: string,
     contentieux: ContentieuReferentielInterface
   ) {
-      let value: null | number = null
-      if (newValue !== '' && newValue.length > 0) {
-        value = +newValue
-      }
+    let value: null | number = null
+    if (newValue !== '' && newValue.length > 0) {
+      value = +newValue
+    }
 
-      if (newValue.length !== 0 && newValue === null) {
-        delete this.updates[`${contentieux.id}-${nodeName}`]
-      } else  {
-        this.updates[`${contentieux.id}-${nodeName}`] = {
-          value,
-          node: nodeName,
-          contentieux,
+    if (newValue.length !== 0 && newValue === null) {
+      delete this.updates[`${contentieux.id}-${nodeName}`]
+    } else {
+      this.updates[`${contentieux.id}-${nodeName}`] = {
+        value,
+        node: nodeName,
+        contentieux,
+      }
+    }
+
+    if (nodeName === 'stock') {
+      const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+      if (element) {
+        element.classList.add('blue-bottom')
+        const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
+        if (tooltip) {
+          tooltip.classList.replace('ri-lightbulb-flash-line', 'ri-lightbulb-flash-fill')
         }
       }
+    }
 
-      if (nodeName === 'stock') {
+    if (nodeName !== 'stock' && newValue !== '' && newValue.length > 0) {
+      let contentieuxIn = 0;
+      let contentieuxOut = 0;
+      let stock = contentieux.originalStock || 0
+
+      if (stock !== null && ((contentieux.activityUpdated && (!contentieux.activityUpdated.stock || contentieux.activityUpdated.stock.value !== null)) && this.updates[`${contentieux.id}-stock`]?.value !== null)) {
+        switch (nodeName) {
+          case 'entrees':
+            {
+              if (this.updates[`${contentieux.id}-entrees`].value >= 0) {
+                contentieuxIn = this.updates[`${contentieux.id}-entrees`].value
+              } else if (contentieux.originalIn && contentieux.originalIn >= 0)
+                contentieuxIn = contentieux.originalIn
+
+              if (this.updates[`${contentieux.id}-sorties`]?.value >= 0) {
+                contentieuxOut = this.updates[`${contentieux.id}-sorties`]?.value
+              } else {
+                if (contentieux.out && contentieux.out >= 0)
+                  contentieuxOut = contentieux.out
+                else if (contentieux.originalOut && contentieux.originalOut >= 0) {
+                  contentieuxOut = contentieux.originalOut
+                }
+              }
+            }
+            break
+          case 'sorties':
+            {
+              if (this.updates[`${contentieux.id}-sorties`].value >= 0) {
+                contentieuxOut = this.updates[`${contentieux.id}-sorties`].value
+              } else if (contentieux.originalOut && contentieux.originalOut >= 0)
+                contentieuxOut = contentieux.originalOut
+
+              if (this.updates[`${contentieux.id}-entrees`]?.value >= 0) {
+                contentieuxIn = this.updates[`${contentieux.id}-entrees`]?.value
+              } else {
+                if (contentieux.in && contentieux.in >= 0)
+                  contentieuxIn = contentieux.in
+                else if (contentieux.originalIn && contentieux.originalIn >= 0)
+                  contentieuxIn = contentieux.originalIn
+              }
+            }
+            break
+        }
+
+        const newStock = stock + contentieuxIn - contentieuxOut
+
         const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
         if (element) {
-          element.classList.add('blue-bottom')
+          newStock >= 0 ? element.value = newStock.toString() : element.value = '0'
+          element.classList.remove('blue-bottom')
           const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
+
           if (tooltip) {
-            tooltip.classList.replace('ri-lightbulb-flash-line' , 'ri-lightbulb-flash-fill')
+            tooltip.classList.replace('ri-lightbulb-flash-fill', 'ri-lightbulb-flash-line')
           }
         }
+
       }
-      
-      if(nodeName !== 'stock' && newValue !== '' && newValue.length > 0) {
-        let contentieuxIn = 0;
-        let contentieuxOut = 0;
-        let stock =  contentieux.originalStock || 0
-
-        if (stock !== null && ((contentieux.activityUpdated && (!contentieux.activityUpdated.stock || contentieux.activityUpdated.stock.value !== null )) &&  this.updates[`${contentieux.id}-stock`]?.value !== null)) {
-          switch (nodeName) {
-            case 'entrees':
-              {
-                if (this.updates[`${contentieux.id}-entrees`].value >= 0) {
-                  contentieuxIn = this.updates[`${contentieux.id}-entrees`].value
-                } else if (contentieux.originalIn && contentieux.originalIn >= 0)
-                  contentieuxIn = contentieux.originalIn
-
-                if (this.updates[`${contentieux.id}-sorties`]?.value >= 0) {
-                  contentieuxOut = this.updates[`${contentieux.id}-sorties`]?.value
-                } else {
-                  if (contentieux.out && contentieux.out >= 0)
-                    contentieuxOut = contentieux.out
-                  else if (contentieux.originalOut && contentieux.originalOut >= 0) {
-                    contentieuxOut = contentieux.originalOut
-                  }
-                }
-              }
-              break
-            case 'sorties':
-              {
-                if (this.updates[`${contentieux.id}-sorties`].value >= 0) {
-                  contentieuxOut= this.updates[`${contentieux.id}-sorties`].value
-                } else if (contentieux.originalOut && contentieux.originalOut >= 0)
-                  contentieuxOut = contentieux.originalOut 
-
-                if (this.updates[`${contentieux.id}-entrees`]?.value >= 0) {
-                  contentieuxIn = this.updates[`${contentieux.id}-entrees`]?.value
-                } else {
-                  if (contentieux.in && contentieux.in >= 0)
-                    contentieuxIn = contentieux.in
-                  else if (contentieux.originalIn && contentieux.originalIn >= 0)
-                    contentieuxIn = contentieux.originalIn
-                }
-              }
-              break
-          }
-        
-          const newStock = stock + contentieuxIn - contentieuxOut
-
-          const element = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
-          if (element) {
-            newStock >= 0 ? element.value = newStock.toString() : element.value = '0'
-            element.classList.remove('blue-bottom')
-            const tooltip = document.getElementById(`tooltip-icon-${contentieux.id}-stock`) as HTMLInputElement
-
-            if (tooltip) {
-              tooltip.classList.replace('ri-lightbulb-flash-fill', 'ri-lightbulb-flash-line')
-            }
-          }
-
-        }
-      }
-      this.updateTotal()
+    }
+    this.updateTotal()
 
   }
 
@@ -550,10 +542,10 @@ export class PopinEditActivitiesComponent
         },
       })
     } else {
-      const updates : any = Object.values(this.updates)
+      const updates: any = Object.values(this.updates)
 
-      let contentieux= groupBy(updates, (elem) => get(elem, 'contentieux.id'));
-      contentieux= mapValues(contentieux, (group) =>
+      let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'));
+      contentieux = mapValues(contentieux, (group) =>
         group.map((elem) => {
           const initialValues = {
             in: elem.contentieux.in !== null ? elem.contentieux.in : elem.contentieux.originalIn,
@@ -568,10 +560,10 @@ export class PopinEditActivitiesComponent
         const up: any = contentieux[cont]
         let options = {
           entrees: null,
-          sorties:  null,
-          stock:  null,
+          sorties: null,
+          stock: null,
         }
-        
+
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
@@ -592,10 +584,12 @@ export class PopinEditActivitiesComponent
           )
         }
       }
-        
+
       if (updates.length && this.referentiel) {
         this.appService.notification(
-          `Le contentieux <b>${this.referentielMappingName(
+          `Le contentieux <b>${this.getInterfaceType() === true ? this.referentielCAMappingName(
+            this.referentiel.label
+          ) : this.referentielMappingName(
             this.referentiel.label
           )}</b> a été ajusté avec succès pour ${this.getMonthString(
             this.activityMonth
@@ -644,8 +638,8 @@ export class PopinEditActivitiesComponent
             this.referentiel.childrens = (this.referentiel.childrens || []).map(
               (child) => ({ ...child, ...getValuesFromList(child.id) })
             )
-            
-            
+
+
             this.updateTotal()
           }
         }
@@ -656,7 +650,9 @@ export class PopinEditActivitiesComponent
   onShowHelpPanel() {
     if (this.wrapper && this.referentiel && this.referentiel.helpUrl) {
       this.wrapper?.onForcePanelHelperToShow({
-        title: `Données d'activité ${this.referentielMappingName(
+        title: `Données d'activité ${this.getInterfaceType() === true ? this.referentielCAMappingName(
+          this.referentiel.label
+        ) : this.referentielMappingName(
           this.referentiel.label
         )}`,
         path: this.referentiel.helpUrl,
@@ -666,26 +662,26 @@ export class PopinEditActivitiesComponent
   }
 
 
-  hasValueForToVerifyData (cont: ContentieuReferentielInterface, node: string) {
+  hasValueForToVerifyData(cont: ContentieuReferentielInterface, node: string) {
 
-    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) 
+    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null)
       return false
 
     switch (node) {
-      case 'entrees': 
+      case 'entrees':
         if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-      case 'sorties': 
+      case 'sorties':
         if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-      case 'stock': 
-        if (cont.stock!== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
+      case 'stock':
+        if (cont.stock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null))
           return true
         break;
-   }
-   return false
+    }
+    return false
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
@@ -739,14 +735,14 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
-  checkIfBlue (item : ContentieuReferentielInterface, node: string, inputValue : any) {   
+  checkIfBlue(item: ContentieuReferentielInterface, node: string, inputValue: any) {
     let input = null
     if (inputValue !== null)
       input = +inputValue
     switch (node) {
-      case 'entrees': 
+      case 'entrees':
         if (item.valueQualityIn === 'to_verify') {
-          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees !== null && input !== null && input !==  item.originalIn)
+          if (item.in !== null && item.activityUpdated && item.activityUpdated.entrees !== null && input !== null && input !== item.originalIn)
             return true
           else if (item.in === item.originalIn || input === item.originalIn)
             return false
@@ -757,9 +753,9 @@ export class PopinEditActivitiesComponent
             return true
         }
         break;
-      case 'sorties': 
+      case 'sorties':
         if (item.valueQualityOut === 'to_verify') {
-          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties !== null && input !== null && input !==  item.originalOut)
+          if (item.out !== null && item.activityUpdated && item.activityUpdated.sorties !== null && input !== null && input !== item.originalOut)
             return true
           else if (item.out === item.originalOut || input === item.originalOut)
             return false
@@ -770,20 +766,33 @@ export class PopinEditActivitiesComponent
             return true
         }
         break;
-      case 'stock': 
+      case 'stock':
         if (item.valueQualityStock === 'to_verify') {
-          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock !== null && input !== null && input !==  item.originalStock)
+          if (item.stock !== null && item.activityUpdated && item.activityUpdated.stock !== null && input !== null && input !== item.originalStock)
             return true
           else if (item.stock === item.originalStock || input === item.originalStock)
             return false
         } else {
           if (!inputValue)
             input = item.stock
-          if (input !== null && input !== item.originalStock) 
+          if (input !== null && input !== item.originalStock)
             return true
         }
         break;
     }
     return false
+  }
+
+  /**
+* Récuperer le type de l'app
+*/
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielMappingColorActivity(label, opacity)
+    else return this.referentielMappingColorCAActivity(label, opacity)
   }
 }

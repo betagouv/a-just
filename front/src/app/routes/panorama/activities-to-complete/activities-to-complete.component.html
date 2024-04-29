@@ -4,32 +4,25 @@
 </p>
 
 <div class="tags">
-  <span
-    *ngFor="let t of tags; let index = index"
-    [ngClass]="{ selected: t.selected }"
-    (click)="onSelectedTag(index)"
-    >{{ t.label }}</span
-  >
+  <span *ngFor="let t of tags; let index = index" [ngClass]="{ selected: t.selected }" (click)="onSelectedTag(index)">{{
+    t.label }}</span>
 </div>
 
 <div class="referentiel-row" *ngFor="let row of list">
   <div>
     <a routerLink="/donnees-d-activite" [queryParams]="{month: row.lastDateWhithoutData, cont: row.id}"><span
-      class="tag"
-      [ngStyle]="{
-        'background-color': referentielMappingColor(row.label)
-      }"
-      >{{ referentielMappingName(row.label) }}</span
-    ></a>
+        class="tag" [ngStyle]="{
+        'background-color': referentielMappingColorByInterface(row.label)
+      }">{{ referentielMappingNameByInterface(row.label)
+        }}</span></a>
   </div>
   <div>
-    <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite" [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span
-      class="tag"
-      [ngStyle]="{
-        color: referentielMappingColor(row.label),
-        'background-color': referentielMappingColor(row.label, 0.2)
-      }"
-      >{{ referentielMappingName(tag.label) }}</span
-    ></a>
+    <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite"
+      [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
+        [ngStyle]="{
+        color: referentielMappingColorByInterface(row.label),
+        'background-color': referentielMappingColorByInterface(row.label, 0.2)
+      }">{{ referentielMappingNameByInterface(tag.label)
+        }}</span></a>
   </div>
 </div>

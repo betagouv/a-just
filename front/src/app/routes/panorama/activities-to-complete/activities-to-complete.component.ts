@@ -4,6 +4,7 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { month } from 'src/app/utils/dates';
 
 interface TagInterface {
@@ -47,12 +48,12 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
     dateEnd: now,
     selected: true,
     label: 'Les 12 derniers mois disponible'
-  },{
+  }, {
     dateStart: lastTrimestre,
     dateEnd: now,
     selected: false,
     label: 'Dernier trimestre disponible'
-  },{
+  }, {
     dateStart: lastMonth,
     dateEnd: now,
     selected: false,
@@ -67,14 +68,14 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService, private activitiesService: ActivitiesService) {
+  constructor(private userService: UserService, private humanResourceService: HumanResourceService, private activitiesService: ActivitiesService) {
     super()
   }
 
-   /**
-   * Initialisation des datas au chargement de la page
-   */
-   ngOnInit() {
+  /**
+  * Initialisation des datas au chargement de la page
+  */
+  ngOnInit() {
     this.watch(
       this.humanResourceService.hrBackup.subscribe(
         (hrBackup: BackupInterface | null) => {
@@ -117,8 +118,8 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
    * @param tagIndex 
    */
   onSelectedTag(tagIndex: number) {
-    this.tags = this.tags.map((t, i) => ({...t, selected: tagIndex === i}))
-    
+    this.tags = this.tags.map((t, i) => ({ ...t, selected: tagIndex === i }))
+
     this.onLoad()
   }
 
@@ -128,7 +129,7 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
   onLoad() {
     const tagSelected = this.tags.filter(t => t.selected)
 
-    if(!tagSelected.length) {
+    if (!tagSelected.length) {
       return
     }
 
@@ -136,4 +137,24 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
       this.list = list
     })
   }
+
+
+  /**
+   * Récuperer le type de l'app
+   */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+   * Mapping couleurs référentiel
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielMappingColor(label, opacity)
+    else return this.referentielCAMappingColor(label, opacity)
+  }
+
 }

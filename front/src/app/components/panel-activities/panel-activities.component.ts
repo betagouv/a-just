@@ -377,4 +377,37 @@ export class PanelActivitiesComponent
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
+
+  /**
+   * Check quel contentieux est survolé
+   * @param label 
+   * @returns 
+   */
+  checkHoveredRef(label: string) {
+    const labelMapping = this.getInterfaceType() === true ? this.referentielCAMappingName(label) : this.referentielMappingName(label)
+    return this.hoveredReferentielLabel === labelMapping
+  }
+
+  /**
+   * Mapping color contentieux
+   * @param label 
+   * @param opacity 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
+  }
+
+    /**
+ * Mapping des noms de contentieux selon l'interface
+ * @param label 
+ * @returns 
+ */
+    referentielMappingNameByInterface(label: string) {
+      if (this.getInterfaceType() === true)
+        return this.referentielCAMappingName(label)
+      else return this.referentielMappingName(label)
+    }
 }

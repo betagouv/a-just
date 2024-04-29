@@ -335,7 +335,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private workforceService: WorkforceService,
     private userService: UserService,
-    private hrFonctionService: HRFonctionService
+    private hrFonctionService: HRFonctionService,
   ) {
     super()
   }
@@ -354,7 +354,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             .map((r) => ({ ...r, selected: true }))
           this.formReferentiel = this.referentiel.map((r) => ({
             id: r.id,
-            value: this.referentielMappingName(r.label),
+            value: this.referentielMappingNameByInterface(r.label),
           }))
 
           this.selectedReferentielIds =
@@ -950,7 +950,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         const focusFct = fonctions.filter(
           (f) =>
             f.position ===
-              position.charAt(0).toUpperCase() + position.slice(1) &&
+            position.charAt(0).toUpperCase() + position.slice(1) &&
             f.categoryId === category.id
         )
         let myArray = null
@@ -1035,5 +1035,34 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       sortFunction: null,
       sortName: null,
     }
+  }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+   * Mapping couleurs référentiel
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielMappingColor(label, opacity)
+    else return this.referentielCAMappingColor(label, opacity)
+  }
+
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
   }
 }

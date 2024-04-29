@@ -537,6 +537,20 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   onBackBackup() {
     this.contentieuxOptionsService.setInitValue()
   }
+
+  /**
+* Récuperer le type de l'app
+*/
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
+  }
 }
 
 
