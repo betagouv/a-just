@@ -41,7 +41,7 @@ setInterval(() => {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
-  constructor() {
+  constructor () {
     super({
       port: config.port,
       // routeParam is an object and it will be give as parametter to all routes
@@ -50,7 +50,7 @@ export default class App extends AppBase {
     })
   }
 
-  async start() {
+  async start () {
     db.migrations().then(() => {
       db.seeders().then(() => {
         startCrons(this) // start crons
@@ -164,18 +164,10 @@ export default class App extends AppBase {
               "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
               "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
-              ...scriptSha1Generate([`${__dirname}/front/index.html`]),
+              //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
-            'style-src': [
-              "'self'",
-              "'sha256-gjw6KBXo8tLlv1hecm6Is6p0k/sbNVSXz0v+XkVmO/A='",
-              "'sha256-H9KGFBskBdGGPxJJ6nQ65CNZqdCQlTsA3jHnPkcfG58='",
-              "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-              "'sha256-DkvnrWNXZXJfrrC1A/e+2dWNglnOi1oj0ZEZpxjs9Us='",
-              ...styleSha1Generate([`${__dirname}/front/index.html`]),
-              'cdnjs.cloudflare.com',
-            ],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
@@ -208,6 +200,7 @@ export default class App extends AppBase {
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
+
         await next()
       },
     ])
@@ -230,9 +223,9 @@ export default class App extends AppBase {
     return super.start()
   }
 
-  isReady() { }
+  isReady () {}
 
-  done() {
+  done () {
     console.log('--- DONE ---')
     process.exit()
   }

@@ -1,6 +1,7 @@
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import config from 'config'
 import crypto from 'crypto'
+import { crypt } from './'
 
 /**
  * Parse les fichiers en fonction du style pour avoir les sha-256
@@ -42,16 +43,27 @@ const parseFile = (filePath, tag) => {
     if (config.envName === 'DEV') {
       filePath = filePath.replace('/front', '/../dist/front')
     }
-    const data = readFileSync(filePath, 'utf8')
+    console.log('filePath', filePath)
+    let data = readFileSync(filePath, 'utf8')
+
+    const key = crypt.generateRandomNumber(12)
+    const newNonce = 'dt' + key
+    data = data.replace(/random_nonce_value/gim, newNonce)
+    writeFileSync(filePath, data)
+    list.push('nonce-' + newNonce)
+
+    //console.log('data', data)
     const regexp = new RegExp(`<${tag}(.*?)>(.*?)<\\/${tag}>`, 'gm')
     const regexp2 = new RegExp(`<${tag}>(.*?)<\\/${tag}>`, 'gm')
     const tab = [...data.matchAll(regexp), ...data.matchAll(regexp2)]
-    console.log('data', data)
-    console.log('tab', filePath, tag, regexp, regexp2, tab)
+    //console.log('data', [...data.matchAll(regexp)])
+    //console.log('data2', [...data.matchAll(regexp2)])
+    //console.log('tab', filePath, tag, regexp, regexp2, tab)
 
     if (tab) {
       tab.map((l) => {
         if (l.length >= 2) {
+          //console.log('find', l)
           const shasum = crypto.createHash('sha1')
           shasum.update(l[2])
           const generatedHash = shasum.digest('hex')
