@@ -6,6 +6,8 @@ import { ComponentsModule } from 'src/app/components/components.module'
 import { MaterialModule } from 'src/app/libs/material.module'
 import { CommonModule } from '@angular/common'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { ExtractorActivityModule } from './extractor-activity/extractor-activity.module'
+import { ExtractorVentilationModule } from './extractor-ventilation/extractor-ventilation.module'
 
 @NgModule({
   declarations: [DashboardPage],
@@ -15,7 +17,9 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
     ComponentsModule,
     MaterialModule,
     CommonModule,
-    WrapperModule
+    WrapperModule,
+    ExtractorActivityModule,
+    ExtractorVentilationModule
   ],
 })
-export class DashboardModule {}
+export class DashboardModule { }

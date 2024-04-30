@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core'
+import { Component, ElementRef, NgZone, OnDestroy } from '@angular/core'
 import { Chart, ChartItem, registerables } from 'chart.js'
 import { SimulatorService } from 'src/app/services/simulator/simulator.service'
 import annotationPlugin from 'chartjs-plugin-annotation'
