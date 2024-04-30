@@ -620,7 +620,7 @@ export class PopinEditActivitiesComponent
         contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       ) ||
       (
-        this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
+        this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null || this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       )
     ) {
       updateTotal = true
