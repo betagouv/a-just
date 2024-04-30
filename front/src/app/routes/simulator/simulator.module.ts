@@ -13,6 +13,9 @@ import { HeaderSelectorsComponent } from './header-selectors/header-selectors.co
 import { PeriodSelectorComponent } from './period-selector/period-selector.component';
 import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component';
 import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
+import { DtesChartModule } from './charts/dtes-chart/dtes-chart.module'
+import { InOutChartModule } from './charts/in-out-chart/in-out.module'
+import { EtpChartModule } from './charts/etp-chart/etp-chart.module'
 
 @NgModule({
   declarations: [SimulatorPage, HeaderSelectorsComponent, PeriodSelectorComponent, SituationDisplayerComponent],
@@ -26,7 +29,10 @@ import { BackButtonModule } from 'src/app/components/back-button/back-button.mod
     PopupModule,
     WrapperModule,
     SelectModule,
-    BackButtonModule
+    BackButtonModule,
+    DtesChartModule,
+    InOutChartModule,
+    EtpChartModule
   ],
 })
 export class SimulatorModule { }
