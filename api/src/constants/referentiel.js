@@ -14,64 +14,140 @@ export const ABSENTEISME_LABELS = ['Congé maladie ordinaire', 'Congé maternit�
  * @param {*} name
  * @returns
  */
-export function referentielMappingIndex (name, rank) {
+export function referentielCAMappingIndex(name, rank) {
   switch (name) {
-  case 'Autres activités':
-    return 12
-  case 'Indisponibilité':
-    return 13
-  case 'Siège Pénal':
-    return 8
-  case 'Contentieux JAF':
-    return 2
-  case 'Contentieux Social':
-    return 1
-  case 'Contentieux de la Protection':
-    return 3
-  case 'Juges des Enfants':
-    return 7
-  case 'Civil Non Spécialisé':
-    return 4
-  case "Juges d'Instruction":
-    return 9
-  case 'JLD Civil':
-    return 6
-  case 'JAP':
-    return 10
-  case 'JLD pénal':
-    return 11
-  case 'JLD civil':
-    return 5
+    case "Contentieux Social":
+      return 1;
+    case "Contentieux de la famille":
+      return 2;
+    case "Contentieux de la protection":
+      return 3;
+    case "Contentieux civil":
+      return 4;
+    case "Contentieux commercial":
+      return 5;
+    case "Attributions du PP":
+      return 6;
+    case "Contentieux civil JLD":
+      return 7;
+    case "Contentieux des mineurs":
+      return 8;
+    case "Instruction et entraide":
+      return 9;
+    case "Correctionnel":
+      return 10;
+    case "Contentieux criminel":
+      return 11;
+    case "Application des peines":
+      return 12;
+    case "Autres activités":
+      return 13;
+    case 'Indisponibilité':
+      return 14
   }
 
   return rank
 }
 
 /**
+ * Conversion d'un nom de référentiel en index de position
+ * @param {*} name
+ * @returns
+ */
+export function referentielMappingIndex(name, rank) {
+  switch (name) {
+    case 'Contentieux Social':
+      return 1
+    case 'Contentieux JAF':
+      return 2
+    case 'Contentieux de la Protection':
+      return 3
+    case 'Civil Non Spécialisé':
+      return 4
+    case 'JLD civil':
+      return 5
+    case 'JLD Civil':
+      return 6
+    case 'Juges des Enfants':
+      return 7
+    case 'Siège Pénal':
+      return 8
+    case "Juges d'Instruction":
+      return 9
+    case 'JAP':
+      return 10
+    case 'JLD pénal':
+      return 11
+    case 'Autres activités':
+      return 12
+    case 'Indisponibilité':
+      return 13
+
+  }
+
+  return rank
+}
+export function referentielCAMappingName(name) {
+  switch (name) {
+    case "Contentieux Social":
+      return "Social";
+    case "Contentieux de la famille":
+      return "Famille";
+    case "Contentieux de la protection":
+      return "Protection";
+    case "Contentieux civil":
+      return "Civil Ns";
+    case "Contentieux de la protection":
+      return "Civil Ns";
+    case "Contentieux commercial":
+      return "Commercial";
+    case "Attributions du PP":
+      return "PP";
+    case "Contentieux civil JLD":
+      return "Jld Civil";
+    case "Contentieux des mineurs":
+      return "Mineurs";
+    case "Instruction et entraide":
+      return "Instruction / Entraide";
+    case "Correctionnel":
+      return "Correctionnel";
+    case "Contentieux criminel":
+      return "Crim.";
+    case "Application des peines":
+      return "Application des peines";
+    case "Autres activités":
+      return "Autres";
+  }
+
+  return name;
+}
+
+
+/**
  * Conversion d'un nom de référentiel en raccourise
  * @param {*} name
  * @returns
  */
-export function referentielMappingName (name) {
+export function referentielMappingName(name) {
   switch (name) {
-  case 'Autres activités':
-    return 'Autres activités'
-  case 'Indisponibilité':
-    return 'Indisp.'
-  case 'Siège Pénal':
-    return 'Pénal'
-  case 'Contentieux JAF':
-    return 'JAF'
-  case 'Contentieux Social':
-    return 'Social'
-  case 'Contentieux de la Protection':
-    return 'JCP'
-  case 'Juges des Enfants':
-    return 'JE'
-  case 'Civil Non Spécialisé':
-    return 'Civil NS'
-  case "Juges d'Instruction":
-    return 'JI'
+    case 'Autres activités':
+      return 'Autres activités'
+    case 'Indisponibilité':
+      return 'Indisp.'
+    case 'Siège Pénal':
+      return 'Pénal'
+    case 'Contentieux JAF':
+      return 'JAF'
+    case 'Contentieux Social':
+      return 'Social'
+    case 'Contentieux de la Protection':
+      return 'JCP'
+    case 'Juges des Enfants':
+      return 'JE'
+    case 'Civil Non Spécialisé':
+      return 'Civil NS'
+    case "Juges d'Instruction":
+      return 'JI'
   }
 
   return name
@@ -82,34 +158,75 @@ export function referentielMappingName (name) {
  * @param {*} name
  * @returns
  */
-export function referentielMappingColor (name) {
+export function referentielMappingColor(name) {
   switch (name) {
-  case 'Autres activités':
-    return '#424242'
-  case 'Indisponibilité':
-    return '#37474f'
-  case 'Siège Pénal':
-    return '#c62828'
-  case 'Contentieux JAF':
-    return '#0277bd'
-  case 'Contentieux Social':
-    return '#00838f'
-  case 'Contentieux de la Protection':
-    return '#1565c0'
-  case 'Juges des Enfants':
-    return '#6a1b9a'
-  case 'Civil Non Spécialisé':
-    return '#283593'
-  case "Juges d'Instruction":
-    return '#d84315'
-  case 'JLD Civil':
-    return '#4527a0'
-  case 'JAP':
-    return '#ef6c00'
-  case 'JLD pénal':
-    return '#ff8f00'
-  case 'JLD civil':
-    return '#4527a0'
+    case 'Autres activités':
+      return '#424242'
+    case 'Indisponibilité':
+      return '#37474f'
+    case 'Siège Pénal':
+      return '#c62828'
+    case 'Contentieux JAF':
+      return '#0277bd'
+    case 'Contentieux Social':
+      return '#00838f'
+    case 'Contentieux de la Protection':
+      return '#1565c0'
+    case 'Juges des Enfants':
+      return '#6a1b9a'
+    case 'Civil Non Spécialisé':
+      return '#283593'
+    case "Juges d'Instruction":
+      return '#d84315'
+    case 'JLD Civil':
+      return '#4527a0'
+    case 'JAP':
+      return '#ef6c00'
+    case 'JLD pénal':
+      return '#ff8f00'
+    case 'JLD civil':
+      return '#4527a0'
+  }
+  return ''
+
+}
+
+/**
+ * Conversion d'un nom de référentiel en code couleur
+ * @param {*} name
+ * @returns
+ */
+export function referentielCAMappingColor(name) {
+  switch (name) {
+    case "Contentieux Social":
+      return '#424242'
+    case "Contentieux de la famille":
+      return '#37474f'
+    case "Contentieux de la protection":
+      return '#c62828'
+    case "Contentieux civil":
+      return '#0277bd'
+    case "Contentieux de la protection":
+      return '#00838f'
+    case "Contentieux commercial":
+      return '#1565c0'
+    case "Attributions du PP":
+      return '#6a1b9a'
+    case "Contentieux civil JLD":
+      return '#283593'
+    case "Contentieux des mineurs":
+      return '#d84315'
+    case "Instruction et entraide":
+      return '#4527a0'
+    case "Correctionnel":
+      return '#ef6c00'
+    case "Contentieux criminel":
+      return '#ff8f00'
+    case "Application des peines":
+      return '#4527a0'
+    case "Autres activités":
+      return '#fff'
+
   }
 
   return ''
@@ -120,18 +237,18 @@ export function referentielMappingColor (name) {
  * @param {*} value
  * @returns
  */
-export function etpLabel (value) {
+export function etpLabel(value) {
   switch (value) {
-  case 1:
-    return 'Temps plein'
-  case 0.8:
-    return '4/5'
-  case 0.5:
-    return 'Mi-temps'
-  case 0:
-    return 'Ne travaille pas'
-  case ETP_NEED_TO_BE_UPDATED:
-    return null
+    case 1:
+      return 'Temps plein'
+    case 0.8:
+      return '4/5'
+    case 0.5:
+      return 'Mi-temps'
+    case 0:
+      return 'Ne travaille pas'
+    case ETP_NEED_TO_BE_UPDATED:
+      return null
   }
 
   return `${fixDecimal(value * 100)}%`

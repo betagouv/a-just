@@ -5,7 +5,7 @@
     <div class="container-timeline-button">
       <aj-date-select-blue class="select-disabled {{mooveClass}} {{disabled}}" [value]="dateStart"
         [ngClass]="{'start-white-sim': whiteSimulator}" (valueChange)="updateDateSelected('dateStart', $event)"
-        [max]="dateStop" [min]="today">
+        [max]="dateStop" [min]="today" [side]="mooveClass==='future' ? 'right' : ''">
       </aj-date-select-blue>
       <div class="space"></div>
       <aj-date-select-blue class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"

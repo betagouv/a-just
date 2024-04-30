@@ -32,20 +32,6 @@
     }
   }
 
-  &.no-padding-bottom  {
-    .top-header {
-      padding-bottom: 0px !important;
-    }
-    div {
-      .contener {
-        #content {
-          padding-bottom: 0px !important;
-        }
-      }
-    }
-  }
-
-
   &.white-bg-help {
     .contener {
       position: relative;
@@ -96,7 +82,7 @@
     cursor: pointer;
   }
 
-  >div {
+  > div {
     display: flex;
     height: 100%;
   }
@@ -182,7 +168,7 @@
   &.title-margin-right-null {
     .header {
       padding-right: 0;
-      .top-header{
+      .top-header {
         .title-with-doc {
           margin-right: 34px;
         }
@@ -224,13 +210,14 @@
       z-index: 200;
 
       .menu-item {
-
-
-
         &.disconnect,
         a,
         p {
           color: white;
+        }
+
+        .contact-us p {
+          color: white !important;
         }
 
         &.selected {
@@ -249,6 +236,14 @@
 
       h3 {
         color: fColor(darkModeTitle);
+      }
+
+      .top-header {
+        background-color: fColor(darkModeBgHeader);
+
+        h3 {
+          color: fColor(darkModeTitle);
+        }
       }
     }
 
@@ -287,7 +282,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    >div {
+    > div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -371,7 +366,6 @@
     }
 
     &.selected {
-
       a,
       p {
         color: fColor(cbluedark);
@@ -448,8 +442,9 @@
     background-color: white;
     position: relative;
 
-    .left-panel {
+    .top-header-back-title {
       display: flex;
+      align-items: center;
     }
 
     .back-url {
@@ -480,10 +475,9 @@
 
     .documentation {
       margin-right: 8px;
-
     }
   }
-  
+
   .bottom-header {
     display: flex;
     flex-direction: row;
@@ -536,7 +530,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  >div.panel-header {
+  > div.panel-header {
     padding: 14px 0 90px 0;
 
     .over-title {
@@ -576,12 +570,11 @@
     }
   }
 
-  >div.panel-header:has(.over-title-small) {
+  > div.panel-header:has(.over-title-small) {
     padding: 0 !important;
   }
 
-
-  >iframe {
+  > iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
@@ -590,5 +583,4 @@
     border: none;
     height: calc(100% + 80px);
   }
-
 }

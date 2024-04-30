@@ -132,8 +132,13 @@ module.exports = function (datas) {
       const tmp_etp = response.data.data.situations[0].etp
       const tmp_fonction = response.data.data.situations[0].fonction
 
+      // Sort both arrays so that we can compare them
+      activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
+      tmp_activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
+      
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
+
       assert.strictEqual(response.status, 200)
       assert.deepEqual(activities, tmp_activities)
       assert.deepEqual(category, tmp_category)

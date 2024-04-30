@@ -15,6 +15,8 @@ import helmet from 'koa-helmet'
 import { CSP_URL_IGNORE_RULES } from './constants/csp'
 import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
+import ip from 'koa-ip'
+import { scriptSha1Generate, styleSha1Generate } from './utils/csp'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -89,7 +91,6 @@ export default class App extends AppBase {
       //sslify(),
       limiter,
       // we add the relevant middlewares to our API
-      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -110,6 +111,12 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+      ip({
+        ...config.ipFilter,
+        handler: async (ctx) => {
+          ctx.status = 403
+        },
+      }),
       helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
@@ -154,9 +161,13 @@ export default class App extends AppBase {
               "'sha256-92TNq2Axm9gJIJETcB7r4qpDc3JjxqUYF1fKonG4mvg='",
               "'sha256-WXdHEUxHRTHqWKtUCBtUckcV5wN4y9jQwkZrGjfqr40='",
               "'sha256-9jsqNCkYsDU3te2WUjv9qXV1DKXI1vT9hz3g7nNens8='",
+              "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
+              "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
+              "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
+              //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
@@ -189,9 +200,20 @@ export default class App extends AppBase {
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
+
         await next()
       },
     ])
+
+    if (config.corsUrl) {
+      super.addMiddlewares([
+        cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      ])
+    } else {
+      super.addMiddlewares([
+        cors({ credentials: true }), // add cors headers to the requests
+      ])
+    }
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files

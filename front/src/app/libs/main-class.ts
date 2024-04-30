@@ -1,8 +1,11 @@
 import { Subscription } from 'rxjs'
 import {
-  referentielMappingColor,
-  referentielMappingColorActivity,
   referentielMappingName,
+  referentielCAMappingName,
+  referentielMappingColor,
+  referentielCAMappingColor,
+  referentielMappingColorActivity,
+  referentielMappingColorCAActivity,
 } from '../utils/referentiel'
 import { categoryMappingName, categoryMappingColor } from '../utils/category'
 
@@ -95,15 +98,22 @@ export class MainClass {
     this.watcherList.map((w) => {
       try {
         w.unsubscribe()
-      } catch (err) {}
+      } catch (err) { }
     })
   }
 
   /**
-   * Methode de reprise des noms de référentiel
+   * Methode de reprise des noms de référentiel TJ
    */
   public referentielMappingName(name: string): string {
     return referentielMappingName(name)
+  }
+
+  /**
+ * Methode de reprise des noms de référentiel CA
+ */
+  public referentielCAMappingName(name: string): string {
+    return referentielCAMappingName(name)
   }
 
   /**
@@ -116,12 +126,30 @@ export class MainClass {
   }
 
   /**
+ * Methode de reprise des couleur des référentiel
+ * @param name
+ * @returns
+ */
+  public referentielCAMappingColor(name: string, opacity: number = 1): string {
+    return referentielCAMappingColor(name, opacity)
+  }
+
+  /**
    * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
    * @param name
    * @returns
    */
   public referentielMappingColorActivity(name: string, opacity: number = 1): string {
     return referentielMappingColorActivity(name, opacity)
+  }
+
+  /**
+  * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+  * @param name
+  * @returns
+  */
+  public referentielMappingColorCAActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorCAActivity(name, opacity)
   }
 
   /**
