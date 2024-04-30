@@ -29,6 +29,7 @@
             "allowedCommonJsDependencies": [
               "chart.js",
               "lodash",
+              "moment",
               "core-js/modules/es.array.index-of.js",
               "core-js/modules/es.array.iterator.js",
               "core-js/modules/es.array.reduce.js",
