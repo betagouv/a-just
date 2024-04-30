@@ -21,6 +21,7 @@ import { referentielMappingName } from 'src/app/utils/referentiel'
 import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Composant page activité
@@ -216,7 +217,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService,
   ) {
     super()
   
@@ -651,7 +653,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       path: url,
       subTitle: '',
       printSubTitle: false,
-      bgColor: this.referentielMappingColorActivity(label),
+      bgColor: this.referentielMappingColorActivityByInterface(label),
       closeColor: 'black',
     })
   }
@@ -718,7 +720,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   setItemBgColor(label : string, elementId: number, remove : boolean = false) {
     const element = document.querySelector(`#item-${elementId}`) as HTMLElement
-    const tmpColor = this.referentielMappingColorActivity(label).replace(/[^\d,]/g, '').split(',')
+    const tmpColor = this.referentielMappingColorActivityByInterface(label).replace(/[^\d,]/g, '').split(',')
     tmpColor.pop()
     tmpColor.push('0.4')
     const bgColor = `rgba(${tmpColor.join(',')})`
@@ -805,5 +807,35 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       return true
     }
     return false
+  }
+
+  /**
+* Récuperer le type de l'app
+*/
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+
+  /**
+   * Mapping de la couleur du référentiel selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label)
+    else return this.referentielMappingColor(label)
+  }
+
+  /**
+   * Mapping de la couleur des activités selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
   }
 }
