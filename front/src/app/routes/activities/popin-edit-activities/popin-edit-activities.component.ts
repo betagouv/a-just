@@ -463,6 +463,12 @@ export class PopinEditActivitiesComponent
                   this.total.out.updated = true
               break
             case 'stock':
+                console.log('this.total_00:', this.total);
+                console.log('updatedValue:', updatedValue);
+                console.log('Delta:', delta)
+                if (this.referentiel)
+                  console.log('this.referentiel?.originalStock:', this.referentiel?.originalStock);
+                  
                 this.total.stock.value = (this.total.stock.value || 0) + delta
                 if (/*this.total.stock.value === 0 && */updatedValue === null && this.referentiel?.originalStock === null) {
                   this.total.stock.value = null
@@ -514,7 +520,7 @@ export class PopinEditActivitiesComponent
         this.total.stock.value = 0
       }
     }
-    console.log('This.total.stock=', this.total.stock.value)
+    console.log('This.total_01 =', this.total)
   }
   
   checkInput(event : KeyboardEvent, input: string) {
