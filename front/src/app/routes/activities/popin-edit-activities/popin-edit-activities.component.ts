@@ -514,6 +514,7 @@ export class PopinEditActivitiesComponent
         this.total.stock.value = 0
       }
     }
+    console.log('This.total.stock=', this.total.stock.value)
   }
   
   checkInput(event : KeyboardEvent, input: string) {
