@@ -24,6 +24,8 @@ import { FILTER_LIMIT_ON_SEARCH } from 'src/app/constants/workforce'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -244,6 +246,79 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   listPoste = ['titulaire', 'placé', 'contractuel']
   /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'A quoi sert le ventilateur ?',
+      intro:
+        "En renseignant la situation de chacun des agents de votre juridiction dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents du TJ leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
+    },
+    {
+      target: '.header-list',
+      title: 'Liste des contentieux',
+      intro:
+        "Retrouvez ici la <b>liste des contentieux</b> traités par la juridiction et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
+    },
+    {
+      target: '.step-3 > .title',
+      title: "Le calendrier, le choix des contentieux et le nombre d'agents",
+      intro:
+        "En <b>modifiant la date dans le calendrier</b>, affichez <b>la liste des agents présents</b> et les <b>ETPT mobilisés sur les différents contentieux</b> à la date choisie. Vous pouvez aussi <b>choisir</b> de n'afficher que les données d'ETPT relatives à <b>certains contentieux</b>.",
+    },
+    {
+      target: '.header-list .filter-button',
+      title: 'Filtrer et trier',
+      intro:
+        "Vous avez la possibilité de <b>filtrer</b> cette liste d'agents par fonction, la <b>trier</b> par <b>nom</b>, <b>fonction</b>, <b>date de mise à jour ou taux d'affectation</b> et de <b>modifier l'affichage</b> des agents d'abord par nom ou par prénom.",
+    },
+    {
+      target: 'person-preview',
+      title: 'Ajuster une fiche en cliquant directement sur celle-ci',
+      intro:
+        "Vous pourrez ainsi modifier les <b>nom</b>, <b>prénom</b>, <b>matricule</b> et <b>date d'arrivée</b> ou de départ de la juridiction d'un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d'ajouter un commentaire et des indisponibilités.<br/><br/>Dans ces fiches agents, vous pourrez <b>renseigner ou modifier la répartition en pourcentage du temps de travail</b> de chaque agent sur les différents contentieux ou sous-contentieux qu'il traite.<br/><br/>Dès lors, plus besoin de faire de calculs d'ETPT en proportion du temps de travail ou de la <b>date d’arrivée</b> dans la juridiction : A-JUST s’en chargera pour vous !",
+    },
+    {
+      target: '.search-zone',
+      title: 'Rechercher un agent :',
+      intro:
+        "Le <b>champ dédié en haut à droite</b> de l'écran vous permet de <b>trouver rapidement la fiche d'un agent</b> (même s'il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.",
+    },
+    {
+      target: '.add-collaborator',
+      title: 'Ajouter un nouvel agent :',
+      intro:
+        "Vous pouvez ajouter un agent s'il n'est pas dans les effectifs présents dans A-JUST. <br/><br/>Renseignez les informations demandées, une date d'arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à <b>vérifier que votre taux d'affectation est de 100%</b> à l’aide de la barre de remplissage située sous les contentieux.",
+    },
+    {
+      target: '.menu-item.tools',
+      //target: '.menu .sub-tools > p:nth-child(2n)',
+      title: 'La calculatrice :',
+      /*intro:
+        "vous permet de convertir en <b>pourcentage d'ETPT la part de temps de travail</b> qu'un agent consacre à une activité.",
+        beforeLoad: async (intro: any) => {
+          const subTools = document.querySelector('.menu .sub-tools')
+          if(!subTools) {
+            const itemToClick = document.querySelector('.menu-item.tools')
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }*/
+    },
+    {
+      target: '.menu-item.tools',
+      //target: '.menu .sub-tools > p:nth-child(3n)',
+      title: "L'extracteur d'ETPT :",
+      intro:
+        "Choisissez la <b>période</b> et la <b>catégorie d'agents souhaitées</b> et obtenez toutes ces informations dans un <b>fichier Excel</b> que vous pourrez utiliser pour simplifier l'exercice annuel des déclaratifs d'ETPT",
+    },
+  ]
+
+  /**
    * Constructor
    * @param humanResourceService
    * @param referentielService
@@ -260,7 +335,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private workforceService: WorkforceService,
     private userService: UserService,
-    private hrFonctionService: HRFonctionService
+    private hrFonctionService: HRFonctionService,
   ) {
     super()
   }
@@ -279,7 +354,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             .map((r) => ({ ...r, selected: true }))
           this.formReferentiel = this.referentiel.map((r) => ({
             id: r.id,
-            value: this.referentielMappingName(r.label),
+            value: this.referentielMappingNameByInterface(r.label),
           }))
 
           this.selectedReferentielIds =
@@ -369,7 +444,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.onFilterList()
       }
     })
-
 
     const user = this.userService.user.getValue()
     this.canViewReaffectator =
@@ -552,7 +626,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }
       })
       this.filterParams!.filterValues = filterValues
-
     }
 
     this.categoriesFilterList.map((cat) => {
@@ -605,7 +678,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.route.snapshot.fragment) {
       this.onGoTo(+this.route.snapshot.fragment)
     }
-
   }
 
   /**
@@ -920,7 +992,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     })
 
-
     if (category.poste && category.poste.length) {
       category.selected = category.poste.some((p) => p.selected)
     }
@@ -966,6 +1037,32 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
 
+  /**
+   * Mapping couleurs référentiel
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielMappingColor(label, opacity)
+    else return this.referentielCAMappingColor(label, opacity)
+  }
 
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
 }

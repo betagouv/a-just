@@ -281,7 +281,7 @@ export class UserService {
       user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
     ) {
       menu.push({
-        label: 'Extracteur',
+        label: 'Extracteurs',
         path: 'dashboard',
       })
     }

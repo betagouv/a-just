@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
@@ -20,7 +20,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   /**
    * SSO is activate to this env
    */
@@ -116,7 +116,7 @@ export class LoginPage {
           returnLogin.data &&
           returnLogin.data.status === LOGIN_STATUS_GET_CODE
         ) {
-          this.needToGetCode = returnLogin.data.datas.code || ''
+          this.needToGetCode = returnLogin.data.datas.code || ''
         } else {
           this.router.navigate([
             this.userService.getUserPageUrl(returnLogin.user),

@@ -12,15 +12,11 @@
           ></i>
         </div>
       </div>
-      <aj-date-select
-        title="Voir les données de"
-        [value]="activityMonth"
-        dateType="month"
-        (valueChange)="selectMonth($event)"
-      >
+      <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
+        (valueChange)="selectMonth($event)">
       </aj-date-select>
     </div>
-    
+
     <div class="close-popin">
       <i class="ri-close-line" (click)="close()"></i>
     </div>
@@ -112,8 +108,7 @@
       ></i>
     </div>
     <div class="contentieux-title-label-entrees">
-      <ng-container
-        *ngTemplateOutlet="
+      <ng-container *ngTemplateOutlet="
           itemTemplate;
           context: {
             $implicit: referentiel,
@@ -123,12 +118,10 @@
             type: 'entrees',
             updated: total.in.value !== null ? true : false,
           }
-        "
-      ></ng-container>
+        "></ng-container>
     </div>
     <div class="contentieux-title-label-sorties">
-      <ng-container
-        *ngTemplateOutlet="
+      <ng-container *ngTemplateOutlet="
           itemTemplate;
           context: {
             $implicit: referentiel,
@@ -138,12 +131,10 @@
             type: 'sorties',
             updated: total.out.value !== null ? true : false
           }
-        "
-      ></ng-container>
+        "></ng-container>
     </div>
     <div class="contentieux-title-label-stock">
-      <ng-container
-        *ngTemplateOutlet="
+      <ng-container *ngTemplateOutlet="
           itemTemplate;
           context: {
             $implicit: referentiel,
@@ -153,24 +144,21 @@
             type: 'stock',
             updated: total.stock.value !== null ? true : false,
           }
-        "
-      ></ng-container>
+        "></ng-container>
     </div>
   </div>
 
   <div id="contentieux-list" [ngClass]="{
       'content-popin-scroll': referentiel && referentiel.childrens && referentiel.childrens.length > 4,
       'content-popin-no-scroll': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
-     }"
-    *ngIf="hasValuesToShow"
-  >
-    <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens" [id]="'contentieux-' + item.id">
+     }" *ngIf="hasValuesToShow">
+    <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens"
+      [id]="'contentieux-' + item.id">
       <div class="contentieux-item-label">
         <p>{{ item.label }}</p>
       </div>
       <div class="contentieux-item-label-entrees">
-        <ng-container
-          *ngTemplateOutlet="
+        <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: item,
@@ -180,12 +168,10 @@
               type: 'entrees',
               updated: item.activityUpdated?.entrees ? item.activityUpdated?.entrees : null,
             }
-          "
-        ></ng-container>
+          "></ng-container>
       </div>
       <div class="contentieux-item-label-sorties">
-        <ng-container
-          *ngTemplateOutlet="
+        <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: item,
@@ -195,12 +181,10 @@
               type: 'sorties',
               updated: item.activityUpdated?.sorties ? item.activityUpdated?.sorties : null,
             }
-          "
-        ></ng-container>
+          "></ng-container>
       </div>
       <div class="contentieux-item-label-stock">
-        <ng-container
-          *ngTemplateOutlet="
+        <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: item,
@@ -210,8 +194,7 @@
               type: 'stock',
               updated: item.activityUpdated?.stock ? item.activityUpdated?.stock : null,
             }
-          "
-        ></ng-container>
+          "></ng-container>
       </div>
     </div>
   </div>
@@ -255,19 +238,10 @@
   </div>
 </aj-popup>
 
-<ng-template
-  #itemTemplate
-  let-items
-  let-valueQuality="valueQuality"
-  let-original="original"
-  let-newValue="newValue"
-  let-type="type"
-  let-updated='updated'
->
+<ng-template #itemTemplate let-items let-valueQuality="valueQuality" let-original="original" let-newValue="newValue"
+  let-type="type" let-updated='updated'>
   <div class="item-template">
-    <div
-      class="item-template-original"
-      [ngClass]="{
+    <div class="item-template-original" [ngClass]="{
         'to-confirm':
           valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
         'grey-bg':
@@ -276,8 +250,7 @@
           valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         'is-not-setted-set':
           valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type),
-      }"
-    >
+      }">
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>
@@ -285,13 +258,9 @@
         <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">Confirmer</p>
       </span> 
     </div>
-    <div
-      class="item-template-new-total" 
-      [ngClass]="{
-      }" 
-      *ngIf="items.childrens">
-      <ng-container
-        *ngTemplateOutlet="
+    <div class="item-template-new-total" [ngClass]="{
+      }" *ngIf="items.childrens">
+      <ng-container *ngTemplateOutlet="
           tooltip;
           context: {
             type: type,
@@ -300,16 +269,14 @@
             level: 3,
             updated: updated,
           }
-        "
-      >
+        ">
       </ng-container>
       <p [ngClass]="{
         'blue': checkIfBlue({level: 3, cont: items, node: type, isForBulbOrBottom: false})
       }" >{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
-      <ng-container
-        *ngTemplateOutlet="
+      <ng-container *ngTemplateOutlet="
           tooltip;
           context: {
             type: type,
@@ -319,14 +286,9 @@
             valueQuality: valueQuality,
             updated: updated,
           }
-        "
-      >
+        ">
       </ng-container>
-      <input
-        #inputElement
-        type="number"
-        [ngModel]="newValue"
-        [placeholder]="original !== null ? original : '-' "
+      <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
           'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true}) ,
           'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false}),
