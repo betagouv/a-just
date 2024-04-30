@@ -9,7 +9,6 @@ import {
 } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import { MatDatepicker } from '@angular/material/datepicker'
-import { Moment } from 'moment'
 import { MainClass } from 'src/app/libs/main-class'
 
 /**
@@ -60,7 +59,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   /**
    * Date class du calendrier
    */
-  @Input() dateClass: MatCalendarCellClassFunction<Moment> = (cellDate, view) => {
+  @Input() dateClass: MatCalendarCellClassFunction<any> = (cellDate, view) => {
     return ''
   }
   /**
@@ -164,8 +163,8 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param datepicker
    */
   setMonthAndYear(
-    normalizedMonthAndYear: Moment,
-    datepicker: MatDatepicker<Moment>
+    normalizedMonthAndYear: any,
+    datepicker: MatDatepicker<any>
   ) {
     if (this.dateType === 'month') {
       const date = new Date(
