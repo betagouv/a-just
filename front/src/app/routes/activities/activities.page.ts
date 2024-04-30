@@ -835,7 +835,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
     if (this.getInterfaceType() === true)
-      return this.referentielCAMappingColor(label, opacity)
-    else return this.referentielMappingColor(label, opacity)
+      return this.referentielMappingColorCAActivity(label, opacity)
+    else {
+      return this.referentielMappingColorActivity(label, opacity)
+    }
   }
 }
