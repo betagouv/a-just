@@ -422,6 +422,7 @@ export class PopinEditActivitiesComponent
       updates.map((elem: any) => {
         let nodeValue = null
         let updatedValue = elem.value
+        console.log('\n\n\n\nElem:', elem)
         switch (elem.node) {
           case 'entrees':
             nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
@@ -478,23 +479,8 @@ export class PopinEditActivitiesComponent
                   this.total.stock.updated = true
               break
           }
-        //}
       })
-      // let deltaEntrees =  (this.referentiel?.in || 0) + (this.total.in || 0)
-      // let deltaSorties = (this.referentiel?.out || 0) + (this.total.out || 0)
 
-      // // if ((this.referentiel?.in || 0) > (this.total.in || 0))
-      // //   deltaEntrees *= -1
-      // // if ((this.referentiel?.out || 0) > (this.total.out || 0))
-      // //   deltaSorties *= -1
-
-      // console.log('DeltaEntrees:', deltaEntrees)
-      // console.log('DeltaSorties:', deltaSorties)
-      // console.log('total.stock_01:', this.total.stock)
-      // if (deltaEntrees || deltaSorties) {
-      //   this.total.stock = (this.total.stock || 0) + deltaEntrees - deltaSorties
-      //   console.log('this.total.stock_02:', this.total.stock)
-      // }
 
       if (
         this.total.in.value !== null &&
