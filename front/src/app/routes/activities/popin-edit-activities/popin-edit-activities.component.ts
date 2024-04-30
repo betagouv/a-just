@@ -405,6 +405,10 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  onBlur( newValue: string, nodeName: string, contentieux: ContentieuReferentielInterface) {
+    this.onUpdateValue(newValue, nodeName, contentieux)
+  }
+
   /**
    * Mise à jour des totaux
    */
