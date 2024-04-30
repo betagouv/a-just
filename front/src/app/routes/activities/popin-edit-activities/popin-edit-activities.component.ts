@@ -418,11 +418,14 @@ export class PopinEditActivitiesComponent
       this.total.in.value = this.total.in.value ?? this.referentiel?.in ?? this.referentiel?.originalIn
       this.total.out.value = this.total.out.value ?? this.referentiel?.out ?? this.referentiel?.originalOut
       this.total.stock.value = this.total.stock.value ?? this.referentiel?.stock ?? this.referentiel?.originalStock
+      
 
+      console.log('\n\n\n\n\n\n\nUPDATES:', updates);
+      
       updates.map((elem: any) => {
         let nodeValue = null
         let updatedValue = elem.value
-        console.log('\n\n\n\n\nElem:', elem)
+        console.log('\n\nElem:', elem)
         switch (elem.node) {
           case 'entrees':
             nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
