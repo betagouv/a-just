@@ -15,13 +15,7 @@ import { FiguresWidgetComponent } from './figures-widget/figures-widget.componen
 import { DialWidgetComponent } from './dial-widget/dial-widget.component'
 import { CoveragePreviewComponent } from './coverage-preview/coverage-preview.component'
 import { NgSelectModule } from '@ng-select/ng-select'
-import { DtesChartComponent } from './dtes-chart/dtes-chart.component'
 import { RadioButtonComponent } from './radio-button/radio-button.component'
-import { LegendLabelComponent } from './legend-label/legend-label.component'
-import { InOutChartComponent } from './in-out-chart/in-out-chart.component'
-import { EtpChartComponent } from './etp-chart/etp-chart.component'
-import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component';
-import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
 import { EditableSituationComponent } from './editable-situation/editable-situation.component'
 import { CalculatriceComponent } from './calculatrice/calculatrice.component';
 import { PopupModule } from './popup/popup.module'
@@ -44,13 +38,7 @@ const list = [
   FiguresWidgetComponent,
   DialWidgetComponent,
   CoveragePreviewComponent,
-  DtesChartComponent,
   RadioButtonComponent,
-  LegendLabelComponent,
-  InOutChartComponent,
-  EtpChartComponent,
-  ExtractorActivityComponent,
-  ExtractorVentilationComponent,
   EditableSituationComponent,
   CalculatriceComponent,
   DocCardComponent
