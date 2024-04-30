@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import { Router } from '@angular/router'
 import { orderBy } from 'lodash'
-import { Moment } from 'moment'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
@@ -494,7 +493,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param view 
    * @returns 
    */
-  dateClass: MatCalendarCellClassFunction<Moment> = (cellDate, view) => {
+  dateClass: MatCalendarCellClassFunction<any> = (cellDate, view) => {
     /*if (view === 'month') {
       return 'material-date-calendar-no-datas';
     }*/
