@@ -79,6 +79,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   @HostBinding('class.print') duringPrint: boolean = false
   /**
+   * Class css dit sur c'est le mode dark
+   */
+  @Input() @HostBinding('class.dark-screen') isDarkScreen = false
+  /**
    * Paramétrage d'un ng-template pour les boutons
    */
   @Input() actionTemplate: TemplateRef<any> | undefined
@@ -90,6 +94,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Parmétrage d'un ng-template pour le titre et remplace le titre normal
    */
   @Input() titleTemplate: TemplateRef<any> | undefined
+  /**
+   * Parmétrage au niveau des boutons d'actions en haut à gauche
+   */
+  @Input() actionsLeftTemplate: TemplateRef<any> | undefined  
   /**
    * Titre de page
    */

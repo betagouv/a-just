@@ -1,18 +1,19 @@
-@import "../../styles/utils.scss";
+@import '../../styles/utils.scss';
 
 :host {
   .logo {
-    height: 150px;
+    height: 7em;
 
-    >img {
+    > img {
       height: 90px;
       margin-right: 27px;
     }
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 1.5em;
     font-weight: bold;
+    margin-bottom: 1em;
   }
 
   select {
@@ -68,7 +69,6 @@
     font-weight: bold;
     color: #161616;
     margin-bottom: 12px;
-
   }
 
   .steps {
@@ -123,7 +123,7 @@
     }
   }
 
-  input {
+  input[type=text], input[type=email], input[type=password] {
     margin-bottom: 24px;
   }
 
@@ -154,7 +154,7 @@
   }
 
   .login {
-    margin-top: 40px;
+    margin-top: 2em;
     padding: 16px 24px;
     background-color: fColor(bgProgressBar);
 
@@ -170,7 +170,7 @@
     button {
       width: 100%;
       font-weight: bold;
-      font-size: 20px;
+      font-size: 1.125em;
       height: 48px;
       line-height: 48px;
 
@@ -180,8 +180,6 @@
       }
     }
   }
-
-
 }
 
 .checkbox-row {
@@ -189,7 +187,7 @@
   font-size: 16px;
 
   a {
-    color: #161616
+    color: #161616;
   }
 
   input.large {
@@ -200,7 +198,7 @@
     border: 1px solid #ccc;
   }
 
-  input[type=checkbox] {
+  input[type='checkbox'] {
     margin-right: 8px;
     margin-bottom: 0;
   }
@@ -208,4 +206,52 @@
 
 .asterisque {
   margin-bottom: 16px;
+}
+
+.sso-bt {
+  display: flex;
+  width: 100%;
+  margin-top: 1.5em;
+
+  &.disabled {
+    opacity: 0.75;
+    border-color: fColor(cblack);
+    color: fColor(cblack);
+  }
+
+  img {
+    align-self: stretch;
+    margin-right: 16px;
+  }
+}
+
+.or {
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: fColor(lightBorder);
+  }
+
+  p {
+    display: inline-block;
+    margin: 0;
+    padding: 8px;
+    background-color: white;
+    z-index: 1;
+  }
+}
+
+.box-signup {
+  padding: 1.5em;
+  border: solid 1px #ddd;
 }

@@ -3,6 +3,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceSelectedInterface } from '../../workforce/workforce.page'
 import { today } from 'src/app/utils/dates'
 import { sortBy } from 'lodash'
+import { UserService } from 'src/app/services/user/user.service'
 
 interface categoryButtonsInterface {
   label: string
@@ -29,8 +30,7 @@ interface listToPrintInterface {
 })
 export class WorkforceChangeComponent
   extends MainClass
-  implements OnChanges, OnDestroy
-{
+  implements OnChanges, OnDestroy {
   @Input() listArrivals: HumanResourceSelectedInterface[] = []
   @Input() listDepartures: HumanResourceSelectedInterface[] = []
   @Input() listUnavailabilities: HumanResourceSelectedInterface[] = []
@@ -96,7 +96,7 @@ export class WorkforceChangeComponent
   /**
    * Constructor
    */
-  constructor() {
+  constructor(private userService: UserService) {
     super()
   }
 
@@ -222,5 +222,35 @@ export class WorkforceChangeComponent
   /**
    * Destruction du composant
    */
-  ngOnDestroy() {}
+  ngOnDestroy() { }
+
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+   * Mapping couleurs référentiel
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielMappingColor(label, opacity)
+    else return this.referentielCAMappingColor(label, opacity)
+  }
+
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
 }

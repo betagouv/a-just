@@ -28,6 +28,10 @@ export interface ContentieuReferentielInterface {
    */
   completion?: number
   /**
+  *  Code import
+  */
+  code_import?: string
+  /**
    * Element à compter ou non dans le calcul de complétion des données
    */
   compter?: boolean
@@ -114,15 +118,15 @@ export interface ContentieuReferentielInterface {
   /**
    * Niveau de qualité de la donnée d'entrées
    */
-  valueQualityIn?: ValueQualityEnum | null;
+  valueQualityIn?: ValueQualityEnum | null;
   /**
    * Niveau de qualité de la donnée de sorties
    */
-  valueQualityOut?: ValueQualityEnum | null;
+  valueQualityOut?: ValueQualityEnum | null;
   /**
    * Niveau de qualité de la donnée de stock
    */
-  valueQualityStock?: ValueQualityEnum | null;
+  valueQualityStock?: ValueQualityEnum | null;
   /**
    * Url d'aide de la donnée
    */
@@ -130,7 +134,7 @@ export interface ContentieuReferentielInterface {
   /**
    * Possible gain sur le taux de complétion si complété par l'utilistateur
    */
-  possibleGainCompletion? : number
+  possibleGainCompletion?: number
   /**
    * Log de mise à jour de donnée d'activité
    */
@@ -146,8 +150,8 @@ export interface ContentieuReferentielActivitiesInterface
    * Contentieux niveau 4
    */
   childrens?:
-    | ContentieuReferentielActivitiesInterface[]
-    | ContentieuReferentielInterface[]
+  | ContentieuReferentielActivitiesInterface[]
+  | ContentieuReferentielInterface[]
   /**
    * Log de mise à jour de donnée d'activité
    */
@@ -159,5 +163,5 @@ export interface ContentieuReferentielActivitiesInterface
   /**
    * Possible gain sur le taux de complétion si complété par l'utilistateur
    */
-  possibleGainCompletion? : number
+  possibleGainCompletion?: number
 }

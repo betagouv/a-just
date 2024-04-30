@@ -784,7 +784,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           }
 
           // Verification that unavailability is not added while the agent has no ventilations provided.
-          const totalActivities = this.currentHR?.situations.map((elem : any) => elem.activities.length)
+          const totalActivities = this.currentHR?.situations.map((elem: any) => elem.activities.length)
           if (!sum(totalActivities)) {
             this.appService.alert.next({
               title: 'Attention',
@@ -793,7 +793,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             //this.updateIndisponiblity = null
             //return false;
           }
-      
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =

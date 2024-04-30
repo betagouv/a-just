@@ -3,7 +3,8 @@
         <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{
             showChildren ? 'arrow_drop_down' : 'arrow_right'
             }}</mat-icon>
-        <p>{{ referentielMappingName(calculator.contentieux.label) }}</p>
+        <p>{{ referentielMappingNameByInterface(calculator.contentieux.label)
+            }}</p>
     </div>
     <div class="item actual">
         <div [ngClass]="{ selected: sortBy === 'totalIn' }">

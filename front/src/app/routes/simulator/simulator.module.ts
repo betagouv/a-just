@@ -12,6 +12,7 @@ import { SelectModule } from 'src/app/components/select/select.module';
 import { HeaderSelectorsComponent } from './header-selectors/header-selectors.component';
 import { PeriodSelectorComponent } from './period-selector/period-selector.component';
 import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component';
+import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
 
 @NgModule({
   declarations: [SimulatorPage, HeaderSelectorsComponent, PeriodSelectorComponent, SituationDisplayerComponent],
@@ -25,6 +26,7 @@ import { SituationDisplayerComponent } from './situation-displayer/situation-dis
     PopupModule,
     WrapperModule,
     SelectModule,
+    BackButtonModule
   ],
 })
 export class SimulatorModule { }
