@@ -422,7 +422,7 @@ export class PopinEditActivitiesComponent
       updates.map((elem: any) => {
         let nodeValue = null
         let updatedValue = elem.value
-        console.log('\n\n\n\nElem:', elem)
+        console.log('\n\n\n\n\nElem:', elem)
         switch (elem.node) {
           case 'entrees':
             nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
