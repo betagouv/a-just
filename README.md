@@ -83,3 +83,8 @@ Az....0&
 http://recette.pagesblanches.intranet.justice.gouv.fr/
 
 Les admin doivent ajouter le role "USER" dans "ma fiche" / "Habilitations"
+
+# Kubernetis
+
+// Attention, la ligne ne fonctionnera pas du premier coup. Vérifier le nom des images dockers lors du premier test.
+npm run deploy:production

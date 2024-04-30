@@ -21,8 +21,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            },
             "allowedCommonJsDependencies": [
               "chart.js",
               "lodash",
@@ -62,13 +65,15 @@
               "node_modules/toastr/build/toastr.min.css",
               "src/app/styles/styles.scss",
               "node_modules/animate.css/animate.min.css",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
+              "node_modules/intro.js/minified/introjs.min.css"
             ],
             "scripts": [
               "node_modules/quill/dist/quill.min.js",
               "node_modules/mapbox-gl/dist/mapbox-gl.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/toastr/build/toastr.min.js"
+              "node_modules/toastr/build/toastr.min.js",
+              "node_modules/intro.js/minified/intro.min.js"
             ]
           },
           "configurations": {

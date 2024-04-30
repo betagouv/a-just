@@ -8,7 +8,7 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
-import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
+import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_TEMPLATE } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -24,6 +24,18 @@ import { ServerService } from 'src/app/services/http-server/server.service';
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
+import * as xlsx from 'xlsx';
+
+export interface importedVentillation {
+  referentiel: ContentieuReferentielInterface,
+  percent: number | undefined,
+  parentReferentiel: ContentieuReferentielInterface | null
+}
+
+export interface importedSituation {
+  index: number | null,
+  ventillation: importedVentillation[]
+}
 
 /**
  * Panneau pour ajouter / modifier une situation
@@ -78,6 +90,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() forceToShowContentieuxDetail: boolean = false
   /**
+   * Indice de la situation édité
+   */
+  @Input() indexSituation: number | null = null
+  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter()
@@ -130,7 +146,22 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Ouverture de la calculatrice
    */
   openCalculatricePopup: boolean = false
-
+  /**
+   * Affichage du menu déroulant
+   */
+  toggleDropDown: boolean = false
+  /**
+   * Fonction importée
+   */
+  importedFunction: number | null = null
+  /**
+   * Import de fichié effectué
+   */
+  displayImportLabels = false
+  /**
+   * Somme des valeurs importés
+   */
+  sumPercentImported = 0
   /**
    * Constructeur
    * @param hrFonctionService
@@ -153,6 +184,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
+    window.addEventListener('click', this.onclick.bind(this))
+    window.addEventListener('click', this.onclick2.bind(this))
+
     this.watch(
       this.hrFonctionService.getAll().then(() => this.loadCategories())
     )
@@ -169,8 +203,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form.get('categoryId')?.valueChanges.subscribe(() => {
         this.loadCategories().then(() => {
-          let fct = this.fonctions[0]
-          this.form.get('fonctionId')?.setValue(fct.id || null)
+          let fct = null
+          if (this.displayImportLabels) {
+            fct = this.fonctions.find(c => c.id === this.importedFunction)
+          }
+          else {
+            fct = this.fonctions[0]
+          }
+          this.form.get('fonctionId')?.setValue(fct?.id || null)
           if (fct)
             this.calculatriceIsActive = fct.calculatrice_is_active || false
         })
@@ -190,7 +230,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           if (!validationPattern.test(str_value)) {
             value = this.parseFloat(str_value.substring(0, str_value.length - 1))
           }
-          this.form.get('etp')?.setValue(value, {emitEvent: false});
+          this.form.get('etp')?.setValue(value, { emitEvent: false });
         }
       })
     )
@@ -570,11 +610,239 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     window.open(CALCULATE_DOWNLOAD_URL)
   }
 
+  async downloadEtpTemplate() {
+    await this.serverService
+      .post('centre-d-aide/log-documentation-link',
+        {
+          value: IMPORT_ETP_TEMPLATE,
+        })
+      .then((r) => {
+        return r.data
+      })
+    window.open(IMPORT_ETP_TEMPLATE)
+  }
+
   /**
    * Récupère le nom d'une catégorie
    */
   getCategoryLabel() {
     const cat = this.categories.find((c) => this.form.get('categoryId')?.value == c.id) || null
     return cat
+  }
+
+  /**
+   * Interprete le fichier Excel importé par l'utilisateur
+   * @param event 
+   * @param element 
+   */
+  getFile(event: any, element: HTMLInputElement) {
+    const file = event.target.files[0];
+
+    const classe = {
+      codeImport: null,
+      value: null
+    };
+
+    this.fileReader(file, classe, event);
+    element.value = ''
+  }
+
+  private fileReader(file: any, line: any, event: any) {
+    let fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      let arrayBuffer = fileReader.result;
+      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+      const arr = new Array();
+
+      for (let i = 0; i !== data.length; i++) {
+        arr[i] = String.fromCharCode(data[i]);
+      }
+
+      const bstr = arr.join('');
+      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true });
+      const first_sheet_name = workbook.SheetNames[0];
+      const second_sheet_name = workbook.SheetNames[1];
+
+      if (second_sheet_name !== "Fonction") {
+        alert('Le fichier que vous essayez d\'importer n\'est pas au bon format, veuillez réessayer !');
+        event.target.value = '';
+        return
+      }
+
+
+      const worksheet = workbook.Sheets[first_sheet_name];
+      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { blankrows: false });
+
+      // Formated data from the Excel file imported
+      const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
+
+      this.displayImportLabels = true
+      let situation: importedSituation = { index: this.indexSituation, ventillation: this.affectImportedSituation(importedSituation) }
+      this.humanResourceService.importedSituation.next(situation)
+      this.appService.notification(
+        `L’import de vos données a bien été réalisé.`
+      )
+    };
+    fileReader.readAsArrayBuffer(file);
+
+  }
+
+  /**
+   * Matching des différents champs de text Excel avec fiche agent AJUST
+   * @param worksheet 
+   * @param line 
+   * @returns 
+   */
+  private matchingCell(worksheet: any, line: any) {
+    const monTab = { value: [] };
+    let fct = null
+    let category: any = null
+    let mainEtp = null
+    let startDate = null
+    let worksheetLine = null
+    for (let i = 0; i < worksheet.length; i++) {
+      worksheetLine = worksheet[i];
+
+      if (worksheetLine['__EMPTY_1'] === "Fonction" && worksheetLine['__EMPTY_2']) {
+        const fctStr = worksheetLine['__EMPTY_2']
+
+        fct = this.humanResourceService.fonctions
+          .getValue()
+          .find(
+            (c: HRFonctionInterface) =>
+              c.label.toUpperCase() === fctStr?.toUpperCase()
+          ) || null
+
+      }
+      else if (worksheetLine['__EMPTY_1'] === "Catégorie" && worksheetLine['__EMPTY_2']) {
+        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll("_", " ")
+        category =
+          this.humanResourceService.categories
+            .getValue()
+            .find(
+              (c: HRCategoryInterface) =>
+                c.label.toUpperCase() === categoryStr?.toUpperCase()
+            ) || null
+      }
+      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") {
+        startDate = worksheetLine['__EMPTY_2']
+        if (['(saisir ici depuis quelle date)', '', undefined].includes(startDate))
+          startDate = null
+        else {
+          startDate = new Date(startDate)
+          startDate.setHours(startDate.getHours() + 5)
+        }
+        this.form
+          .get('activitiesStartDate')
+          ?.setValue(startDate)
+      }
+      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
+        mainEtp = worksheetLine['__EMPTY_4'] as number
+        mainEtp = fixDecimal(mainEtp)
+      }
+      else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
+        const updatedLine = {
+          codeImport: worksheetLine['__EMPTY'],
+          value: worksheetLine['__EMPTY_4']
+        };
+        line = { ...line, ...updatedLine };
+        monTab.value.push(line as never);
+      }
+
+    }
+
+    this.importedFunction = fct?.id || null
+    category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
+    this.form.get('etp')?.setValue(mainEtp)
+
+    return { category, fct, mainEtp, startDate, ventilation: monTab }
+  }
+
+  /**
+   * Comptage ventillation importé sous Excel
+   * @param formatedData 
+   * @returns 
+   */
+  affectImportedSituation(formatedData: any) {
+    let result: importedVentillation[] = []
+    this.sumPercentImported = 0
+    formatedData.ventilation.value.map((ref: any) => {
+      let found = false
+      this.updatedReferentiels = this.updatedReferentiels.map(item => {
+        const re = new RegExp('[0-9]{1,2}[.]');
+        const startCode = ref.codeImport.split('.')[0] + '.'
+        if (re.exec(ref.codeImport) !== null && ref.codeImport == item.code_import) {
+          item.percent = ref.value;
+          found = true
+          result.push({
+            referentiel: item,
+            percent: item.percent,
+            parentReferentiel: null
+          })
+
+          this.sumPercentImported += item.percent || 0
+          let sumSubRef = 0
+          const allImported = result.map((r) => r.referentiel.code_import)
+          const childs = item.childrens?.map((r) => {
+            if (allImported.includes(r.code_import))
+              sumSubRef += r.percent || 0
+            return r.code_import
+          })
+
+          if (sumSubRef !== item.percent)
+            result = result.filter((r) => childs?.includes(r.referentiel.code_import) === false)
+        }
+        else {
+
+          if (startCode === item.code_import && found === false) {
+
+            item.childrens = item.childrens?.map(child => {
+              if (child.code_import === ref.codeImport) {
+                child.percent = ref.value
+                found = true
+                result.push({
+                  referentiel: child,
+                  percent: child.percent,
+                  parentReferentiel: item
+                })
+              }
+              return child
+            })
+          }
+        }
+        return item
+      })
+
+    })
+
+    return result
+  }
+
+  /**
+   * Event outfocus DropDown import de type 1
+   * @param e 
+   */
+  onclick(e: MouseEvent) {
+    if (document.getElementById('drop-down')?.contains(e.target as Node)) {
+      // Clicked in box
+    } else {
+      // Clicked outside the box
+      if (this.isEdit || this.saveActions)
+        this.toggleDropDown = false
+    }
+  }
+
+  /**
+ * Event outfocus DropDown import de type 2
+ * @param e 
+ */
+  onclick2(e: MouseEvent) {
+    if (document.getElementById('drop-down2')?.contains(e.target as Node)) {
+      // Clicked in box
+    } else {
+      // Clicked outside the box
+      if (!this.isEdit && !this.saveActions)
+        this.toggleDropDown = false
+    }
   }
 }

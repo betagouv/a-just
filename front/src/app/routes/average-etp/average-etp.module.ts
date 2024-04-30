@@ -8,6 +8,7 @@ import { MaterialModule } from 'src/app/libs/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { SelectModule } from 'src/app/components/select/select.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
 
 @NgModule({
   declarations: [AverageEtpPage],
@@ -20,7 +21,8 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
     FormsModule,
     MaterialModule,
     SelectModule,
-    WrapperModule
+    WrapperModule,
+    BackButtonModule
   ],
 })
 export class AverageEtpModule {}

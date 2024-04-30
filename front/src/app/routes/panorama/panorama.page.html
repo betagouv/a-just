@@ -31,10 +31,12 @@
           <workforce-composition
             [backupId]="backupId"
             [categoriesFiltered]="categoriesFiltered"
+            class="wordforce-composition"
           ></workforce-composition>
           <records-update
             [listFormated]="listFormated"
             [categoriesFiltered]="categoriesFiltered"
+            class="records-update"
           ></records-update>
         </div>
         <div class="workforce-change">
@@ -98,3 +100,5 @@
     </div>
   </div>
 </ng-template>
+
+<aj-intro-js [steps]="introSteps" typeId="panorama"></aj-intro-js>

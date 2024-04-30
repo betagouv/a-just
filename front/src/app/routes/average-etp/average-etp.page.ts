@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core'
-import { Title } from '@angular/platform-browser'
 import * as FileSaver from 'file-saver'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
@@ -11,9 +10,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { UserService } from 'src/app/services/user/user.service'
 import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
-//import { filterReferentiels } from 'src/app/utils/referentiel'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
-import * as xlsx from 'xlsx'
 import { Renderer } from 'xlsx-renderer'
 
 /**
@@ -44,7 +41,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   /**
    * Label du referentiel selectionné
    */
-  refNameSelected: string |null= null
+  refNameSelected: string | null = null
   /**
    * Titre de la page
    */
@@ -85,6 +82,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Juridiction sélectionnée
    */
   backup: BackupInterface | undefined
+  /**
+   * Mémorisation s'il y a eu une modificiation avant sauvegarde
+   */
+  optionsIsModify: boolean = false
 
   /**
    * Constructeur
@@ -119,9 +120,14 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
+        if (this.contentieuxOptionsService.nbOfBackups.getValue() === 0) {
+          this.contentieuxOptionsService.createEmpy(true)
+          this.contentieuxOptionsService.setInitValue()
+        }
         this.formatDatas()
       })
     )
+
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(
         (b) => (this.selectedIds = [b])
@@ -184,6 +190,12 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
             this.subTitleName = ''
           }
         }
+      )
+    )
+
+    this.watch(
+      this.contentieuxOptionsService.optionsIsModify.subscribe(
+        (b) => (this.optionsIsModify = b)
       )
     )
   }
@@ -441,9 +453,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
 
     const viewModel = {
       referentiels: tmpList,
-      name: this.refNameSelected+' - MAGISTRATS',
+      name: this.refNameSelected + ' - MAGISTRATS',
       referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected+' - FONCTIONNAIRES',
+      nameFonc: this.refNameSelected + ' - FONCTIONNAIRES',
     }
 
     fetch('/assets/template2.xlsx')
@@ -468,11 +480,11 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
    * Fonction qui génère automatiquement le nom du fichier téléchargé
    * @returns String - Nom du fichier téléchargé
    */
-  getFileName(label:string|null) {
-    return `Extraction_Référentiel de temps moyen - `+ (label||'')
+  getFileName(label: string | null) {
+    return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
-  generateFlateList(){
+  generateFlateList() {
     const flatList = new Array()
     this.referentiel.map((x) => {
       if (x.childrens) {
@@ -494,29 +506,51 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     return flatList
   }
 
-  getFileValues(ref:any){
-    return {id:Number(ref.id),nbPerDay: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerDay',
-      'averageProcessingTime'
-    ),
-    nbPerMonth: this.getInputValue(
-      ref.averageProcessingTime,
-      'nbPerMonth',
-      'averageProcessingTime'
-    ),
-    nbPerDayFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerDay',
-      'averageProcessingTimeFonc'
-    ),
-    nbPerMonthFonc: this.getInputValue(
-      ref.averageProcessingTimeFonc,
-      'nbPerMonth',
-      'averageProcessingTimeFonc'
-    )}
+  getFileValues(ref: any) {
+    return {
+      id: Number(ref.id), nbPerDay: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerDay',
+        'averageProcessingTime'
+      ),
+      nbPerMonth: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerMonth',
+        'averageProcessingTime'
+      ),
+      nbPerDayFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerDay',
+        'averageProcessingTimeFonc'
+      ),
+      nbPerMonthFonc: this.getInputValue(
+        ref.averageProcessingTimeFonc,
+        'nbPerMonth',
+        'averageProcessingTimeFonc'
+      )
+    }
   }
 
+  /**
+   * Demande de réinitilisation des données de bases
+   */
+  onBackBackup() {
+    this.contentieuxOptionsService.setInitValue()
+  }
+
+  /**
+* Récuperer le type de l'app
+*/
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
+  }
 }
 
 

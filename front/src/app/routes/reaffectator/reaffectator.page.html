@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"
-  class="dark-screen content-margin-null header-border-none">
+  class="content-margin-null header-border-none" backUrl="/ventilations" [isDarkScreen]="true">
   <div class="container" [ngClass]="{print: duringPrint}">
     <div class="title">
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
@@ -133,7 +133,7 @@
               <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
                 [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
                 <div class="label">
-                  <p>{{ referentielMappingName(ref.label) }}</p>
+                  <p>{{ referentielMappingNameByInterface(ref.label) }}</p>
                 </div>
                 <div class="etp"
                   [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
@@ -178,12 +178,6 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <a routerLink="/ventilations" class="reaffectator-page">
-    <button class="blue-light small light outline">
-      Retour aux ventilations
-    </button>
-  </a>
-
   <button class="blue-light light small" (click)="onExport()">
     <mat-icon>save</mat-icon>
     Exporter en PDF

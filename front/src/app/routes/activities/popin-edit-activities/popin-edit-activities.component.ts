@@ -25,6 +25,7 @@ import { copy } from 'src/app/utils'
 import { downloadFile } from 'src/app/utils/system'
 import { groupBy, mapValues, get, isNumber } from 'lodash';
 import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Composant page activité
@@ -36,8 +37,7 @@ import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 })
 export class PopinEditActivitiesComponent
   extends MainClass
-  implements OnChanges, AfterViewInit
-{
+  implements OnChanges, AfterViewInit {
   /**
    * Dom du wrapper
    */
@@ -121,7 +121,8 @@ export class PopinEditActivitiesComponent
   constructor(
     private appService: AppService,
     private referentielService: ReferentielService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
+    private userService: UserService
   ) {
     super()
   }
@@ -176,6 +177,14 @@ export class PopinEditActivitiesComponent
     }
   }
 
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+
   checkIfNextMonthHasValue() {
     this.activitiesService.getLastMonthActivities().then((resp) => {
       const tmp = new Date(resp)
@@ -211,13 +220,12 @@ export class PopinEditActivitiesComponent
     const activityUpdated = contentieux.activityUpdated
     const modifyBy =
       activityUpdated && activityUpdated[type] ? activityUpdated[type] : null
-    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${
-      value !== null
-        ? modifyBy
-          ? 'ri-lightbulb-flash-fill'
-          : 'ri-lightbulb-flash-line'
-        : ''
-    }"></i><p class="color-white">`
+    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${value !== null
+      ? modifyBy
+        ? 'ri-lightbulb-flash-fill'
+        : 'ri-lightbulb-flash-line'
+      : ''
+      }"></i><p class="color-white">`
 
     switch (type) {
       case 'entrees':
@@ -248,13 +256,11 @@ export class PopinEditActivitiesComponent
 
     if (value !== null && modifyBy) {
       const date = new Date(modifyBy.date)
-      string += `<p class="color-white font-size-12">Modifié par <b>${
-        modifyBy.user?.firstName
-      } ${
-        modifyBy.user?.lastName
-      }</b> le ${date.getDate()} ${this.getShortMonthString(
-        date
-      )} ${date.getFullYear()}</p>`
+      string += `<p class="color-white font-size-12">Modifié par <b>${modifyBy.user?.firstName
+        } ${modifyBy.user?.lastName
+        }</b> le ${date.getDate()} ${this.getShortMonthString(
+          date
+        )} ${date.getFullYear()}</p>`
     }
 
     return string
@@ -285,27 +291,21 @@ export class PopinEditActivitiesComponent
       case 'sorties':
         if (level === 3) {
           if (value !== null) {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           } else {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
+            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
+              } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
           }
         } else {
           if (modifyBy) {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
+            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
+              } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
           } else {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
+            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
+              } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
           }
         }
       case 'stock': {
@@ -742,8 +742,8 @@ export class PopinEditActivitiesComponent
         const up: any = contentieux[cont]
         let options = {
           entrees: null,
-          sorties:  null,
-          stock:  null,
+          sorties: null,
+          stock: null,
         }
         for (const elem of up) {
           switch (elem.node) {
@@ -781,7 +781,9 @@ export class PopinEditActivitiesComponent
 
       if (updates.length && this.referentiel) {
         this.appService.notification(
-          `Le contentieux <b>${this.referentielMappingName(
+          `Le contentieux <b>${this.getInterfaceType() === true ? this.referentielCAMappingName(
+            this.referentiel.label
+          ) : this.referentielMappingName(
             this.referentiel.label
           )}</b> a été ajusté avec succès pour ${this.getMonthString(
             this.activityMonth
