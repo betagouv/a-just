@@ -681,8 +681,7 @@ export class PopinEditActivitiesComponent
     }
     console.log('this.updates 00:', this.updates)
     console.log('updateTotal:', updateTotal)
-    //updateTotal && setTimeout(() => this.updateTotal(), 1000)
-    updateTotal && this.updateTotal()
+    updateTotal && setTimeout(() => this.updateTotal(), 1000)
   }
 
   async getLastMonthStock(contentieuxId : number) {
