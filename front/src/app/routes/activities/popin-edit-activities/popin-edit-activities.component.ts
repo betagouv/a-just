@@ -593,7 +593,8 @@ export class PopinEditActivitiesComponent
 
     // Verification si l'entrée et/ou la sortie (déja mise à jours auparavent) a été mise à null (cad annulé)
     // Dans ce cas on remet le stock à son état d'origine
-    if (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
+    if (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && 
+      ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
         (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null))
     ) {
@@ -652,19 +653,20 @@ export class PopinEditActivitiesComponent
 
       this.getLastMonthStock(contentieux.id).then(resp => {
         let newStock : number | null = (resp ?? stockValue ?? 0) + entreeValue - sortieValue
-        if (newStock === null && contentieux.originalStock === null)
-          newStock = null
-          this.updates[`${contentieux.id}-stock`] = {
-            value: newStock ? (newStock > 0 ? newStock : 0) : null,
-            node: 'stock',
-            contentieux,
-            calculated: true,
-            sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
-          }
-        stock.value = newStock ? (newStock > 0 ? newStock.toString() : '0') : '-'
+        // if (newStock === null && contentieux.originalStock === null)
+        //   newStock = null
+        this.updates[`${contentieux.id}-stock`] = {
+          value: newStock !== null ? (newStock > 0 ? newStock : 0) : null,
+          node: 'stock',
+          contentieux,
+          calculated: true,
+          sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
+        }
+        stock.value = newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-'
       })
     }
     console.log('this.updates 00:', this.updates)
+    console.log('updateTotal:', updateTotal)
     updateTotal && setTimeout(() => this.updateTotal(), 1000)
   }
 
