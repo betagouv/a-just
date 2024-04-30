@@ -598,6 +598,7 @@ export class PopinEditActivitiesComponent
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
         (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null))
     ) {
+      console.log('HERE_00')
       updateTotal = true
       setTimeout(() => {
         //delete this.updates[`${contentieux.id}-stock`];
@@ -623,12 +624,14 @@ export class PopinEditActivitiesComponent
         this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null || this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       )
     ) {
+      console.log('HERE_01')
       updateTotal = true
       let entreeValue = 0
       let sortieValue = 0
       let stockValue = 0
     
-      if (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value !== null && contentieux.valueQualityIn !== VALUE_QUALITY_TO_VERIFY)
+      if (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value !== null && 
+      (contentieux.valueQualityIn !== VALUE_QUALITY_TO_VERIFY || (contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY && this.updates[`${contentieux.id}-entrees`].value !== contentieux.originalIn)))
         entreeValue = this.updates[`${contentieux.id}-entrees`].value
       else  {
         if ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null) || contentieux.in === null) {
@@ -637,7 +640,8 @@ export class PopinEditActivitiesComponent
           entreeValue = contentieux.in ?? 0
       }
 
-      if (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value !== null && contentieux.valueQualityOut !== VALUE_QUALITY_TO_VERIFY)
+      if (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value !== null && 
+      (contentieux.valueQualityOut !== VALUE_QUALITY_TO_VERIFY || (contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY && this.updates[`${contentieux.id}-sorties`].value !== contentieux.originalOut)))
         sortieValue = this.updates[`${contentieux.id}-sorties`].value
       else  {
         if ((this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || contentieux.out === null) {
@@ -651,8 +655,11 @@ export class PopinEditActivitiesComponent
       else 
         stockValue = contentieux.stock ?? 0
 
+      console.log('EntreeValue:', entreeValue)
+      console.log('sortieValue:', sortieValue)
       this.getLastMonthStock(contentieux.id).then(resp => {
         let newStock : number | null = (resp ?? stockValue ?? 0) + entreeValue - sortieValue
+        console.log('newStock:', newStock)
         // if (newStock === null && contentieux.originalStock === null)
         //   newStock = null
         this.updates[`${contentieux.id}-stock`] = {
