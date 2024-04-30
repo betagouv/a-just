@@ -600,7 +600,7 @@ export class PopinEditActivitiesComponent
     ) {
       console.log('HERE_00')
       updateTotal = true
-      setTimeout(() => {
+      //setTimeout(() => {
         //delete this.updates[`${contentieux.id}-stock`];
         this.updates[`${contentieux.id}-stock`] = {
           value: contentieux.originalStock,
@@ -610,7 +610,7 @@ export class PopinEditActivitiesComponent
           sendBack: true,
         }
         stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
-      }, 1000)
+      //}, 1000)
     } 
     //Pas de recalcul de stock si un stock a été saisi manuellement et qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
     else if (
