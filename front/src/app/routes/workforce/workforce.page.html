@@ -113,8 +113,7 @@
               [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="text">
                 <div class="label">
-                  <p><b>{{ getInterfaceType()===true ?
-                      referentielCAMappingName(ref.label):referentielMappingName(ref.label) }}</b></p>
+                  <p><b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b></p>
                 </div>
                 <div class="etp">
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
@@ -124,7 +123,8 @@
                     class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
                 </div>
               </div>
-              <div class="color" [ngStyle]="{'background-color': referentielMappingColorByInterface(ref.label)}"></div>
+              <div class="color"
+                [ngStyle]="{'background-color': userService.referentielMappingColorByInterface(ref.label)}"></div>
             </div>
           </div>
           <div class="actions"></div>

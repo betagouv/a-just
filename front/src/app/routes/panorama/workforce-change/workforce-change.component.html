@@ -130,11 +130,11 @@
           <div class="activities">
             <div *ngFor="let activity of workforce.currentActivities" class="activity">
               {{
-              referentielMappingNameByInterface(activity.contentieux.label).toUpperCase()
+              userService.referentielMappingNameByInterface(activity.contentieux.label).toUpperCase()
               }}
               <div class="percent-card" [ngStyle]="{
-                  color: referentielMappingColorByInterface(activity.contentieux.label),
-                  'background-color': referentielMappingColorByInterface(
+                  color: userService.referentielMappingColorByInterface(activity.contentieux.label),
+                  'background-color': userService.referentielMappingColorByInterface(
                     activity.contentieux.label,
                     0.2
                   )

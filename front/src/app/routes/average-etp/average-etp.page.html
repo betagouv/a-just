@@ -1,12 +1,5 @@
-<aj-wrapper
-  title="Temps moyens"
-  class="content-margin-null"
-  [subtitle]="subTitleDate"
-  [subtitleName]="subTitleName"
-  [actionTemplate]="actions"
-  [isLoading]="isLoading"
-  [actionsLeftTemplate]="actionsLeft"
->
+<aj-wrapper title="Temps moyens" class="content-margin-null" [subtitle]="subTitleDate" [subtitleName]="subTitleName"
+  [actionTemplate]="actions" [isLoading]="isLoading" [actionsLeftTemplate]="actionsLeft">
   <div class="container">
     <div class="header-list">
       <div class="label empty"></div>
@@ -16,61 +9,40 @@
     </div>
     <div class="content-list" *ngIf="categorySelected">
       <div *ngFor="let ref of referentiel" class="item-grouped">
-        <div
-          class="item"
-          (click)="ref.showOptionGroup = !ref.showOptionGroup"
-          [class.selectable]="(ref.childrens || []).length"
-          style="position: relative"
-        >
+        <div class="item" (click)="ref.showOptionGroup = !ref.showOptionGroup"
+          [class.selectable]="(ref.childrens || []).length" style="position: relative">
           <div class="label head">
-            <div
-              class="color-border"
-              [style.backgroundColor]="ref.showOptionGroup ? null : referentielMappingColorByInterface(ref.label)"
-            ></div>
-            <mat-icon *ngIf="(ref.childrens || []).length"
-              >{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
+            <div class="color-border"
+              [style.backgroundColor]="ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)">
+            </div>
+            <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
             </mat-icon>
             <p>{{ref.label}}</p>
           </div>
           <div class="column-item">
             <div class="label col">
-              <app-time-selector
-                [value]="getInputValue(ref[getCategoryStr()],'hour')"
-                (valueChange)="onUpdateOptions(ref, $event,'hour')"
-                [outsideChange]="ref[getCategoryModifStr()]"
-                [defaultValue]="ref.defaultValue"
-                [defaultValueFonc]="ref.defaultValueFonc"
-                [category]="categorySelected"
-                (click)="$event.stopPropagation();"
-              ></app-time-selector>
+              <app-time-selector [value]="getInputValue(ref[getCategoryStr()],'hour')"
+                (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref[getCategoryModifStr()]"
+                [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
+                [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
             </div>
             <div class="label col">
-              <input
-                type="number"
-                placeholder="Nb de dossiers"
+              <input type="number" placeholder="Nb de dossiers"
                 [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerDay'),100)"
-                (blur)="getField(ref,$event,'nbPerDay')"
-                (keydown.enter)="getField(ref,$event,'nbPerDay')"
-                (click)="$event.stopPropagation();"
-                min="0"
-              />
+                (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
+                (click)="$event.stopPropagation();" min="0" />
             </div>
             <div class="label col no-margin">
-              <input
-                type="number"
-                placeholder="Nb de dossiers"
+              <input type="number" placeholder="Nb de dossiers"
                 [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerMonth'))"
-                (blur)="getField(ref,$event,'nbPerMonth')"
-                (keydown.enter)="getField(ref,$event,'nbPerMonth')"
-                (click)="$event.stopPropagation();"
-                min="0"
-              />
+                (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
+                (click)="$event.stopPropagation();" min="0" />
             </div>
           </div>
           <div
-            [style.backgroundColor]="!ref.showOptionGroup ? null : referentielMappingColorByInterface(ref.label)"
+            [style.backgroundColor]="!ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)"
             style="
               position: absolute;
               left: 15px;
@@ -78,53 +50,36 @@
               border-radius: 3px;
               height: 100%;
               width: 3px;
-            "
-          ></div>
+            "></div>
         </div>
         <div class="group" [class.enable]="ref.showOptionGroup">
-          <div
-            class="group-item"
-            *ngFor="let itemGroup of (ref.childrens || [])"
-            [style.borderColor]="referentielMappingColorByInterface(ref.label)"
-          >
+          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
+            [style.borderColor]="userService.referentielMappingColorByInterface(ref.label)">
             <div class="label head">
               <p>{{itemGroup.label}}</p>
             </div>
             <div class="column-item">
               <div class="label col">
-                <app-time-selector
-                  [value]="getInputValue(itemGroup[getCategoryStr()],'hour')"
+                <app-time-selector [value]="getInputValue(itemGroup[getCategoryStr()],'hour')"
                   (valueChange)="onUpdateOptions(itemGroup, $event,'hour')"
-                  [outsideChange]="itemGroup[getCategoryModifStr()]"
-                  [defaultValue]="itemGroup.defaultValue"
-                  [defaultValueFonc]="itemGroup.defaultValueFonc"
-                  [category]="categorySelected"
-                  (click)="$event.stopPropagation();"
-                ></app-time-selector>
+                  [outsideChange]="itemGroup[getCategoryModifStr()]" [defaultValue]="itemGroup.defaultValue"
+                  [defaultValueFonc]="itemGroup.defaultValueFonc" [category]="categorySelected"
+                  (click)="$event.stopPropagation();"></app-time-selector>
               </div>
               <div class="label col">
-                <input
-                  type="number"
-                  placeholder="Nb de dossiers"
+                <input type="number" placeholder="Nb de dossiers"
                   [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerDay'))"
-                  (blur)="getField(itemGroup,$event,'nbPerDay')"
-                  (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
-                  (click)="$event.stopPropagation();"
-                  min="0"
-                />
+                  (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
+                  (click)="$event.stopPropagation();" min="0" />
               </div>
               <div class="label col no-margin">
-                <input
-                  type="number"
-                  placeholder="Nb de dossiers"
+                <input type="number" placeholder="Nb de dossiers"
                   [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerMonth'))"
                   (blur)="getField(itemGroup,$event,'nbPerMonth')"
-                  (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')"
-                  (click)="$event.stopPropagation();"
-                  min="0"
-                />
+                  (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
+                  min="0" />
               </div>
             </div>
           </div>
@@ -143,46 +98,29 @@
 </aj-wrapper>
 
 <ng-template #actionsLeft>
-  <aj-back-button
-    *ngIf="optionsIsModify"
-    (click)="onBackBackup()"
-    class="top-left-action"
-    text="Annuler les modifications"
-  />
+  <aj-back-button *ngIf="optionsIsModify" (click)="onBackBackup()" class="top-left-action"
+    text="Annuler les modifications" />
 </ng-template>
 
 <ng-template #actions>
   <div class="flex-1"></div>
 
   <div class="categories-switch">
-    <div
-      *ngIf="canViewMagistrat"
-      class="magistrats"
+    <div *ngIf="canViewMagistrat" class="magistrats"
       [ngClass]="{'selected': categorySelected === 'MAGISTRATS',  alone: !canViewGreffier}"
-      (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRATS')"
-    >
+      (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRATS')">
       <input type="radio" [checked]="categorySelected === 'MAGISTRATS'" />
       <p>Siège</p>
     </div>
-    <div
-      *ngIf="canViewGreffier"
-      class="fonctionnaires"
-      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRES',  alone: !canViewMagistrat}"
-      class="fonctionnaires"
-      (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRES')"
-    >
+    <div *ngIf="canViewGreffier" class="fonctionnaires"
+      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRES',  alone: !canViewMagistrat}" class="fonctionnaires"
+      (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRES')">
       <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRES'" />
       <p>Greffe</p>
     </div>
   </div>
-  <aj-select
-    title="Mes temps moyens de comparaison"
-    [value]="selectedIds"
-    [datas]="formDatas"
-    (valueChange)="onChangeBackup($event)"
-    [multiple]="false"
-    class="width-auto bg-white"
-  >
+  <aj-select title="Mes temps moyens de comparaison" [value]="selectedIds" [datas]="formDatas"
+    (valueChange)="onChangeBackup($event)" [multiple]="false" class="width-auto bg-white">
   </aj-select>
   <!-- 
   <div class="export-button" (click)="extractionExcel()">

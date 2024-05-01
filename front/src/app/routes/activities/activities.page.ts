@@ -218,15 +218,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
-    private userService: UserService,
+    public userService: UserService,
   ) {
     super()
-  
+
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
-            
+
             lastMonth = new Date(lastMonth)
             this.dateSelector.value = lastMonth
 
@@ -234,7 +234,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             if (
               month &&
               this.getMonth(month).getTime() <
-                this.getMonth(lastMonth).getTime()
+              this.getMonth(lastMonth).getTime()
             ) {
               lastMonth = this.getMonth(month)
             }
@@ -309,17 +309,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     ])
     referentiel.in =
       inValue === referentiel.originalIn &&
-      referentiel.childrens.every((c) => c.in === null)
+        referentiel.childrens.every((c) => c.in === null)
         ? null
         : inValue
     referentiel.out =
       outValue === referentiel.originalOut &&
-      referentiel.childrens.every((c) => c.out === null)
+        referentiel.childrens.every((c) => c.out === null)
         ? null
         : outValue
     referentiel.stock =
       outValue === referentiel.originalStock &&
-      referentiel.childrens.every((c) => c.stock === null)
+        referentiel.childrens.every((c) => c.stock === null)
         ? null
         : stockValue
 
@@ -362,10 +362,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  compareDateActivityUpdated({ firstAct, secondAct }: { firstAct: { user: UserInterface | null; date: Date } , secondAct: { user: UserInterface | null; date: Date } }) {
+  compareDateActivityUpdated({ firstAct, secondAct }: { firstAct: { user: UserInterface | null; date: Date }, secondAct: { user: UserInterface | null; date: Date } }) {
     const firstDate = new Date(firstAct.date);
     const secondDate = new Date(secondAct.date);
-  
+
     if (secondDate.getTime() > firstDate.getTime())
       return secondAct;
     return firstAct
@@ -456,13 +456,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 ? getChildrenActivity.originalEntrees
                 : null
               //c.activityUpdated.entrees = (c.in !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
-              
+
               c.out = getChildrenActivity ? getChildrenActivity.sorties : null
               c.originalOut = getChildrenActivity
                 ? getChildrenActivity.originalSorties
                 : null
               //c.activityUpdated.sorties = (c.out !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
-              
+
               c.stock = getChildrenActivity ? getChildrenActivity.stock : null
               c.originalStock = getChildrenActivity
                 ? getChildrenActivity.originalStock
@@ -483,30 +483,30 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 stock: null,
               };
             }
-            
+
             newRef.childrens.map(child => {
               if (child.activityUpdated && newRef.activityUpdated) {
                 if (child.activityUpdated.entrees) {
                   if (newRef.activityUpdated.entrees)
-                    newRef.activityUpdated.entrees = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.entrees, secondAct: child.activityUpdated.entrees})
+                    newRef.activityUpdated.entrees = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.entrees, secondAct: child.activityUpdated.entrees })
                   else
                     newRef.activityUpdated.entrees = child.activityUpdated.entrees
                 }
                 if (child.activityUpdated.sorties) {
                   if (newRef.activityUpdated.sorties)
-                    newRef.activityUpdated.sorties = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.sorties, secondAct: child.activityUpdated.sorties})
+                    newRef.activityUpdated.sorties = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.sorties, secondAct: child.activityUpdated.sorties })
                   else
                     newRef.activityUpdated.sorties = child.activityUpdated.sorties
                 }
                 if (child.activityUpdated.stock) {
                   if (newRef.activityUpdated.stock)
-                    newRef.activityUpdated.stock = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.stock, secondAct: child.activityUpdated.stock})
+                    newRef.activityUpdated.stock = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.stock, secondAct: child.activityUpdated.stock })
                   else
                     newRef.activityUpdated.stock = child.activityUpdated.stock
                 }
               }
             })
- 
+
             const oldReferentielFinded = oldReferentielSetted.find(
               (i) => i.id === newRef.id
             )
@@ -563,46 +563,46 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             }
           })
 
-          // Calcul du taux de completion
-          let totalNotEmpty = 0;
-          let totalContentieuxLevelFour = 0;
-          for (const elem of this.referentiel) {
-            let childNotEmpty = 0;
-            let childToCount = 0;
-            
-            if (elem.childrens) {
-              for (const child of elem.childrens) {
-                if (child.compter) {
-                  totalContentieuxLevelFour += 3
-                  childToCount += 3;
-                  if(child.in !== null || child.originalIn !== null) {
-                    totalNotEmpty += 1
-                    childNotEmpty += 1
-                  }
-                  if(child.out !== null || child.originalOut !== null) {
-                    totalNotEmpty += 1
-                    childNotEmpty += 1
-                  }
-                  if(child.stock !== null || child.originalStock !== null) {
-                    totalNotEmpty += 1
-                    childNotEmpty += 1
-                  }
+        // Calcul du taux de completion
+        let totalNotEmpty = 0;
+        let totalContentieuxLevelFour = 0;
+        for (const elem of this.referentiel) {
+          let childNotEmpty = 0;
+          let childToCount = 0;
+
+          if (elem.childrens) {
+            for (const child of elem.childrens) {
+              if (child.compter) {
+                totalContentieuxLevelFour += 3
+                childToCount += 3;
+                if (child.in !== null || child.originalIn !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
+                }
+                if (child.out !== null || child.originalOut !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
+                }
+                if (child.stock !== null || child.originalStock !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
                 }
               }
-              elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
-              for (const child of elem.childrens) {
-                let nbToComplete = 0
-                if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
-                  nbToComplete += 1
-                if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
-                  nbToComplete += 1
-                if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
-                  nbToComplete += 1
-                child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
-              }
+            }
+            elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
+            for (const child of elem.childrens) {
+              let nbToComplete = 0
+              if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
+                nbToComplete += 1
+              if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
+                nbToComplete += 1
+              if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
+                nbToComplete += 1
+              child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
             }
           }
-          this.totalCompletion = Math.round(parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2)))|| 0;
+        }
+        this.totalCompletion = Math.round(parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2))) || 0;
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
@@ -615,10 +615,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @returns
    */
   getTooltipTitle(
-    {user, date} : {user?: UserInterface , date?: Date} = {}
+    { user, date }: { user?: UserInterface, date?: Date } = {}
   ) {
     if (user && date)
-      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName } ${user.lastName } le ${this.getDate(date) || 'dd' } ${this.getMonthString(date) } ${this.getFullYear(date) || 'YYYY' }`
+      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName} ${user.lastName} le ${this.getDate(date) || 'dd'} ${this.getMonthString(date)} ${this.getFullYear(date) || 'YYYY'}`
     else
       return `<i class="ri-lightbulb-flash-line"></i> Stock calculé `
   }
@@ -647,13 +647,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Force l'ouverture du paneau d'aide
    * @param type
    */
-  onShowPanel({label, url} : {label: string, url: string}) {
+  onShowPanel({ label, url }: { label: string, url: string }) {
     this.wrapper?.onForcePanelHelperToShow({
       title: '',
       path: url,
       subTitle: '',
       printSubTitle: false,
-      bgColor: this.referentielMappingColorActivityByInterface(label),
+      bgColor: this.userService.referentielMappingColorActivityByInterface(label),
       closeColor: 'black',
     })
   }
@@ -661,13 +661,13 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * On close contentieux updated
    */
-  onCloseEditedPopin({reload = false, month = null}: {reload: boolean, month?: Date | null}) {
+  onCloseEditedPopin({ reload = false, month = null }: { reload: boolean, month?: Date | null }) {
     this.contentieuxToUpdate = null
     if (month) {
       this.activityMonth = new Date(month)
       this.dateSelector.value = new Date(month)
     }
-    if(reload) {
+    if (reload) {
       this.onLoadMonthActivities()
     }
   }
@@ -686,29 +686,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         downloadFile(url)
       } else {
         window.open(url)
-     }
+      }
     }
   }
 
-  getAcivityPercentColor(value : number) {
+  getAcivityPercentColor(value: number) {
     return activityPercentColor(value)
   }
 
-  getCompletionStatus( item : ContentieuReferentielInterface ) {
-    const quality = {in: { quality: item.valueQualityIn, value: item.in, original : item.originalIn } , out: { quality: item.valueQualityOut, value: item.out, original : item.originalOut } ,  stock: { quality: item.valueQualityStock, value: item.stock, original : item.originalStock }}
+  getCompletionStatus(item: ContentieuReferentielInterface) {
+    const quality = { in: { quality: item.valueQualityIn, value: item.in, original: item.originalIn }, out: { quality: item.valueQualityOut, value: item.out, original: item.originalOut }, stock: { quality: item.valueQualityStock, value: item.stock, original: item.originalStock } }
 
-    if (item){
+    if (item) {
       if (Object.values(quality).some(value => value.quality === 'facultatif'))
         return 'Compléter'
       else if (Object.values(quality).some(value => value.quality === 'to_complete')) {
-        const obj : any = Object.values(quality).filter(value => value.quality === 'to_complete')
+        const obj: any = Object.values(quality).filter(value => value.quality === 'to_complete')
         for (let elem of obj) {
           if (elem.value === null && elem.original === null)
             return 'A compléter'
         }
       }
       else if (Object.values(quality).some(value => value.quality === 'to_verify')) {
-        const obj : any = Object.values(quality).filter(value => value.quality === 'to_verify')
+        const obj: any = Object.values(quality).filter(value => value.quality === 'to_verify')
         for (let elem of obj) {
           if (elem.value === null)
             return 'A vérifier'
@@ -718,14 +718,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     return 'A-JUSTer'
   }
 
-  setItemBgColor(label : string, elementId: number, remove : boolean = false) {
+  setItemBgColor(label: string, elementId: number, remove: boolean = false) {
     const element = document.querySelector(`#item-${elementId}`) as HTMLElement
-    const tmpColor = this.referentielMappingColorActivityByInterface(label).replace(/[^\d,]/g, '').split(',')
+    const tmpColor = this.userService.referentielMappingColorActivityByInterface(label).replace(/[^\d,]/g, '').split(',')
     tmpColor.pop()
     tmpColor.push('0.4')
     const bgColor = `rgba(${tmpColor.join(',')})`
 
-    if (element){
+    if (element) {
       if (remove)
         element.style.backgroundColor = 'transparent';
       else
@@ -733,18 +733,18 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  checkIfBlue({cont, node, isForBulbOrBottom} : {cont: ContentieuReferentielInterface, node: string, isForBulbOrBottom: boolean }) {
+  checkIfBlue({ cont, node, isForBulbOrBottom }: { cont: ContentieuReferentielInterface, node: string, isForBulbOrBottom: boolean }) {
     switch (node) {
       case 'entrees':
-        if (this.isValueUpdated({cont, node}))
+        if (this.isValueUpdated({ cont, node }))
           return true
         break;
       case 'sorties':
-        if (this.isValueUpdated({cont, node}))
+        if (this.isValueUpdated({ cont, node }))
           return true
         break;
       case 'stock':
-        if (this.isValueUpdated({cont, node})) {
+        if (this.isValueUpdated({ cont, node })) {
           if (isForBulbOrBottom && (this.isStockCalculated(cont)))
             return false
           else if (cont.stock !== cont.originalStock)
@@ -756,34 +756,34 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     return false
   }
 
-  isValueUpdated({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
+  isValueUpdated({ cont, node }: { cont: ContentieuReferentielInterface, node: string }) {
     switch (node) {
       case 'entrees':
-        if (this.isValueToVerifySetted({value: cont.in ?? cont.in ?? null, contentieux: cont, node: node}))
+        if (this.isValueToVerifySetted({ value: cont.in ?? cont.in ?? null, contentieux: cont, node: node }))
           return false
         else if (cont.in !== null)
-            return true
+          return true
         break;
       case 'sorties':
-        if (this.isValueToVerifySetted({value: cont.out ?? cont.out ?? null, contentieux: cont, node: node}))
+        if (this.isValueToVerifySetted({ value: cont.out ?? cont.out ?? null, contentieux: cont, node: node }))
           return false
-        else if(cont.out !== null)
-            return true
+        else if (cont.out !== null)
+          return true
         break;
       case 'stock':
-        if (this.isValueToVerifySetted({value: cont.stock ?? cont.stock ?? null, contentieux: cont, node: node}))
-          return false 
+        if (this.isValueToVerifySetted({ value: cont.stock ?? cont.stock ?? null, contentieux: cont, node: node }))
+          return false
         else if (cont.stock !== null)
-            return true
+          return true
         break;
     }
     return false
   }
 
-  isValueToVerifySetted({value, contentieux, node}: {value: number | null, contentieux: ContentieuReferentielInterface, node: string}) {
+  isValueToVerifySetted({ value, contentieux, node }: { value: number | null, contentieux: ContentieuReferentielInterface, node: string }) {
     if (value !== null) {
       switch (node) {
-        case 'entrees': 
+        case 'entrees':
           if (value === contentieux.originalIn && contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY)
             return true
           break;
@@ -798,46 +798,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         default:
           return false
       }
-    } 
-    return false   
-  }
-
-  isStockCalculated (cont : ContentieuReferentielInterface) {
-    if ((cont.stock !== null && (!cont.activityUpdated ||  cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) || cont.stock === null) {
-      return true
     }
     return false
   }
 
-  /**
-* Récuperer le type de l'app
-*/
-  getInterfaceType() {
-    return this.userService.interfaceType === 1
-  }
-
-
-  /**
-   * Mapping de la couleur du référentiel selon l'interface
-   * @param label 
-   * @returns 
-   */
-  referentielMappingColorByInterface(label: string) {
-    if (this.getInterfaceType() === true)
-      return this.referentielCAMappingColor(label)
-    else return this.referentielMappingColor(label)
-  }
-
-  /**
-   * Mapping de la couleur des activités selon l'interface
-   * @param label 
-   * @returns 
-   */
-  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
-    if (this.getInterfaceType() === true)
-      return this.referentielMappingColorCAActivity(label, opacity)
-    else {
-      return this.referentielMappingColorActivity(label, opacity)
+  isStockCalculated(cont: ContentieuReferentielInterface) {
+    if ((cont.stock !== null && (!cont.activityUpdated || cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) || cont.stock === null) {
+      return true
     }
+    return false
   }
 }
