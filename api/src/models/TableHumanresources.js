@@ -165,7 +165,7 @@ export default (sequelizeInstance, Model) => {
 
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
-      const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
+      const backupId = await Model.models.HRBackups.findOrCreateLabel(Number(config.juridictionType) !== 1 ? list[i].arrdt : list[i].juridiction)
 
       list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
@@ -305,7 +305,8 @@ export default (sequelizeInstance, Model) => {
         }
 
         let juridiction = list[i].juridiction || ''
-        if (juridictionLabelExceptions.map(x => x["import"].includes(juridiction))) juridiction = juridictionLabelExceptions.filter((el) => { return el["import"] === juridiction })[0]['ielst']
+        if (Number(config.juridictionType) !== 1)
+          if (juridictionLabelExceptions.map(x => x["import"].includes(juridiction))) juridiction = juridictionLabelExceptions.filter((el) => { return el["import"] === juridiction })[0]['ielst']
 
         // prepare person
         const options = {
