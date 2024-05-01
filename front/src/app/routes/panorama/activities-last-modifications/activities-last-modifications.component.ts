@@ -34,7 +34,7 @@ export class ActivitiesLastModificationsComponent extends MainClass implements O
    */
   constructor(private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
-    private userService: UserService) {
+    public userService: UserService) {
     super()
   }
 
@@ -62,35 +62,5 @@ export class ActivitiesLastModificationsComponent extends MainClass implements O
    */
   ngOnDestroy() {
     this.watcherDestroy()
-  }
-
-  /**
-  * Récuperer le type de l'app
-  */
-  getInterfaceType() {
-    return this.userService.interfaceType === 1
-  }
-
-  /**
-   * Mapping couleurs référentiel
-   * @param label 
-   * @returns 
-   */
-  referentielMappingColorByInterface(label: string,opacity:number=1) {
-    if (this.getInterfaceType() === true)
-      return this.referentielMappingColor(label,opacity)
-    else return this.referentielCAMappingColor(label,opacity)
-  }
-
-
-  /**
- * Mapping des noms de contentieux selon l'interface
- * @param label 
- * @returns 
- */
-  referentielMappingNameByInterface(label: string) {
-    if (this.getInterfaceType() === true)
-      return this.referentielCAMappingName(label)
-    else return this.referentielMappingName(label)
   }
 }
