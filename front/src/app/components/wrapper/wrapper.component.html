@@ -100,7 +100,7 @@
               <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
             </p>
           </div>
-          <ng-template [ngIf]="dateSelector">
+          <!-- <ng-template [ngIf]="dateSelector">
             <aj-date-select
               title={{dateSelector.title}}
               dateType={{dateSelector.dateType}}
@@ -109,7 +109,7 @@
               class="date-selector"
             >
             </aj-date-select>
-          </ng-template>
+          </ng-template> -->
           <ng-template [ngIf]="titleTemplate">
             <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
           </ng-template>
