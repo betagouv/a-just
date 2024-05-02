@@ -5,9 +5,9 @@
   <div class="preview">
     <div>
       <span class="tag cont"
-        [ngStyle]="{'color': referentielMappingColorByInterface(item.contentieux.label), 'background-color': referentielMappingColorByInterface(item.contentieux.label, 0.2)}">{{
-        getInterfaceType()===true?
-        referentielCAMappingName(item.contentieux.label):referentielMappingName(item.contentieux.label) }}</span>
+        [ngStyle]="{'color': userService.referentielMappingColorByInterface(item.contentieux.label), 'background-color': userService.referentielMappingColorByInterface(item.contentieux.label, 0.2)}">{{
+        userService.referentielMappingNameByInterface(item.contentieux.label)
+        }}</span>
       <span class="tag month">{{ getShortMonthString(item.activity.periode) }} {{ getFullYear(item.activity.periode)
         }}</span>
     </div>

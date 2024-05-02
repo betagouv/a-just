@@ -16,6 +16,10 @@ import { BackButtonModule } from 'src/app/components/back-button/back-button.mod
 import { DtesChartModule } from './charts/dtes-chart/dtes-chart.module'
 import { InOutChartModule } from './charts/in-out-chart/in-out.module'
 import { EtpChartModule } from './charts/etp-chart/etp-chart.module'
+import { EditableSituationModule } from './editable-situation/editable-situation.module'
+import { DialWidgetModule } from './widgets/dial-widget/dial-widget.module'
+import { CoveragePreviewModule } from './widgets/coverage-preview/coverage-preview.module'
+import { LoadersWidgetModule } from './widgets/loaders-widget/loaders-widget.module'
 
 @NgModule({
   declarations: [SimulatorPage, HeaderSelectorsComponent, PeriodSelectorComponent, SituationDisplayerComponent],
@@ -32,7 +36,11 @@ import { EtpChartModule } from './charts/etp-chart/etp-chart.module'
     BackButtonModule,
     DtesChartModule,
     InOutChartModule,
-    EtpChartModule
+    EtpChartModule,
+    EditableSituationModule,
+    CoveragePreviewModule,
+    LoadersWidgetModule,
+    DialWidgetModule
   ],
 })
 export class SimulatorModule { }
