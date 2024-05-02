@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs'
-import cryptoM from 'crypto'
 import config from 'config'
 import jwt from 'jsonwebtoken'
 
@@ -58,7 +57,24 @@ export default class Crypto {
    * @returns token
    */
   generateToken () {
-    return cryptoM.randomBytes(128).toString('base64')
+    return this.random(128)
+  }
+
+  /**
+   * Génération d'un string random
+   * @param {*} n
+   * @returns
+   */
+  random (length) {
+    let result = ''
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const charactersLength = characters.length
+    let counter = 0
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      counter += 1
+    }
+    return result
   }
 
   /**
@@ -92,20 +108,12 @@ export default class Crypto {
   }
 
   /**
-   * Retourne objet uuidV4
-   * @returns
-   */
-  uuid () {
-    return uuidV4()
-  }
-
-  /**
    * Génération d'un chaine de caractère aléatoire
    * @param {*} nbChar
    * @returns chaine de caractère aléatoire cryptée
    */
   getRandomString (nbChar = 64) {
-    return cryptoM.randomBytes(nbChar).toString('hex').substring(0, nbChar)
+    return this.random(nbChar)
   }
 
   /**

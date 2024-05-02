@@ -334,7 +334,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private workforceService: WorkforceService,
-    private userService: UserService,
+    public userService: UserService,
     private hrFonctionService: HRFonctionService,
   ) {
     super()
@@ -354,7 +354,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             .map((r) => ({ ...r, selected: true }))
           this.formReferentiel = this.referentiel.map((r) => ({
             id: r.id,
-            value: this.referentielMappingNameByInterface(r.label),
+            value: this.userService.referentielMappingNameByInterface(r.label),
           }))
 
           this.selectedReferentielIds =
@@ -1035,34 +1035,5 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       sortFunction: null,
       sortName: null,
     }
-  }
-
-  /**
-  * Récuperer le type de l'app
-  */
-  getInterfaceType() {
-    return this.userService.interfaceType === 1
-  }
-
-  /**
-   * Mapping couleurs référentiel
-   * @param label 
-   * @returns 
-   */
-  referentielMappingColorByInterface(label: string, opacity: number = 1) {
-    if (this.getInterfaceType() === true)
-      return this.referentielMappingColor(label, opacity)
-    else return this.referentielCAMappingColor(label, opacity)
-  }
-
-  /**
-* Mapping des noms de contentieux selon l'interface
-* @param label 
-* @returns 
-*/
-  referentielMappingNameByInterface(label: string) {
-    if (this.getInterfaceType() === true)
-      return this.referentielCAMappingName(label)
-    else return this.referentielMappingName(label)
   }
 }

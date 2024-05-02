@@ -12,17 +12,17 @@
   <div>
     <a routerLink="/donnees-d-activite" [queryParams]="{month: row.lastDateWhithoutData, cont: row.id}"><span
         class="tag" [ngStyle]="{
-        'background-color': referentielMappingColorByInterface(row.label)
-      }">{{ referentielMappingNameByInterface(row.label)
+        'background-color': userService.referentielMappingColorByInterface(row.label)
+      }">{{ userService.referentielMappingNameByInterface(row.label)
         }}</span></a>
   </div>
   <div>
     <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite"
       [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
         [ngStyle]="{
-        color: referentielMappingColorByInterface(row.label),
-        'background-color': referentielMappingColorByInterface(row.label, 0.2)
-      }">{{ referentielMappingNameByInterface(tag.label)
+        color: userService.referentielMappingColorByInterface(row.label),
+        'background-color': userService.referentielMappingColorByInterface(row.label, 0.2)
+      }">{{ userService.referentielMappingNameByInterface(tag.label)
         }}</span></a>
   </div>
 </div>
