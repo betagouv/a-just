@@ -589,9 +589,9 @@ export class PopinEditActivitiesComponent
       contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && 
       (((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
-        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null) || 
-        (!this.updates[`${contentieux.id}-entrees`] && !this.updates[`${contentieux.id}-sorties`] && contentieux.in === null && contentieux.out === null)) && 
-      ((!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )) ))//&& contentieux.stock === null) */)
+        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null))/* || 
+        (!this.updates[`${contentieux.id}-entrees`] && !this.updates[`${contentieux.id}-sorties`] && contentieux.in === null && contentieux.out === null)) /*&& 
+      ((!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )) )*/)//&& contentieux.stock === null) */)
     ) {
       updateTotal = true
         //delete this.updates[`${contentieux.id}-stock`];
@@ -614,7 +614,7 @@ export class PopinEditActivitiesComponent
         contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       ) ||
       (
-        this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null /*|| this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock*/) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
+        nodeName !== 'stock' && this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null /*|| this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock*/) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       )
     ) {
       updateTotal = true
@@ -648,7 +648,7 @@ export class PopinEditActivitiesComponent
         stockValue = contentieux.stock ?? 0
 
       this.getLastMonthStock(contentieux.id).then(resp => {
-        let newStock : number | null = (resp ?? stockValue ?? 0) + entreeValue - sortieValue
+        let newStock : number | null = (resp ?? /*stockValue ??*/ 0) + entreeValue - sortieValue
         // if (newStock === null && contentieux.originalStock === null)
         //   newStock = null
         this.updates[`${contentieux.id}-stock`] = {

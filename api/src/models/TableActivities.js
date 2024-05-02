@@ -339,7 +339,7 @@ export default (sequelizeInstance, Model) => {
     if (findActivity) {
       referentiel = await Model.models.ContentieuxReferentiels.getOneReferentiel( findActivity.dataValues.contentieux_id)
       //if(/*findActivity.dataValues[original] === values[nodeUpdated] && */(/*referentiel.dataValues[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ /*(referentiel.dataValues[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || */(values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
-      
+
       //En cas d'effacement d'une donnée ajusté.
       if (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null) {
         await findActivity.update({ [nodeUpdated]: null });
@@ -363,7 +363,8 @@ export default (sequelizeInstance, Model) => {
     }
 
     if (userId !== null) {
-      if(referentiel && findActivity.dataValues[original] === values[nodeUpdated] && (referentiel[verify] !== VALUE_QUALITY_TO_VERIFY || (referentiel[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
+      // Ne pas ajouter à l'historique des activité mis a jours, les données 'A_verifier' qui ont été confirmer 
+      if(referentiel /*&& findActivity.dataValues[original] === values[nodeUpdated]*/ && ( /*referentiel[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ (referentiel[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
         await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, null)
       else
         await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
