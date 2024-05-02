@@ -19,7 +19,7 @@ export const checkTotalUpdates = (childs, referentiels, type, originalType, qual
     if (child[type] !== null) {
       if (child[type] === child[originalType]) {
         const ref = referentiels.find(elem => elem.id === child.contentieux_id)
-        if (ref[qualityType] === VALUE_QUALITY_TO_VERIFY) {
+        if (ref[qualityType] === VALUE_QUALITY_TO_VERIFY ) {//&& child[type] === child[originalType]) {
           setTotal = false
         } else {
           setTotal = true
@@ -65,9 +65,8 @@ export const calculMainValuesFromChilds = (childs, referentiels) => {
   if (!checkTotalUpdates(childs, referentiels, 'original_stock', 'original_stock', 'value_quality_stock'))
     returnObject.original_stock = null
 
-  if (!checkTotalUpdates(childs, referentiels, 'stock', 'stock', 'value_quality_stock'))
+  if (!checkTotalUpdates(childs, referentiels, 'stock', 'original_stock', 'value_quality_stock'))
     returnObject.stock = null
-
   return returnObject
 }
 
