@@ -565,6 +565,7 @@ export class PopinEditActivitiesComponent
           node: nodeName,
           contentieux,
           calculated: false,
+          setted: true,
           sendBack: true,
         }
       } else {
@@ -573,6 +574,7 @@ export class PopinEditActivitiesComponent
           node: nodeName,
           contentieux,
           calculated: false,
+          setted: true,
           sendBack: true,
         }
       }
@@ -592,17 +594,16 @@ export class PopinEditActivitiesComponent
       ((!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )) ))//&& contentieux.stock === null) */)
     ) {
       updateTotal = true
-      //setTimeout(() => {
         //delete this.updates[`${contentieux.id}-stock`];
-        this.updates[`${contentieux.id}-stock`] = {
-          value: contentieux.originalStock,
-          node: 'stock',
-          contentieux,
-          calculated: false,
-          sendBack: true,
-        }
-        stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
-      //}, 1000)
+      this.updates[`${contentieux.id}-stock`] = {
+        value: contentieux.originalStock,
+        node: 'stock',
+        contentieux,
+        calculated: false,
+        setted: false,
+        sendBack: true,
+      }
+      stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
     } 
     //Pas de recalcul de stock si un stock a été saisi manuellement et qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
     else if (
@@ -613,7 +614,7 @@ export class PopinEditActivitiesComponent
         contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       ) ||
       (
-        this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null || this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
+        this.updates[`${contentieux.id}-stock`] && (this.updates[`${contentieux.id}-stock`].value === null /*|| this.updates[`${contentieux.id}-stock`].value === contentieux.originalStock*/) && contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
       )
     ) {
       updateTotal = true
@@ -655,6 +656,7 @@ export class PopinEditActivitiesComponent
           node: 'stock',
           contentieux,
           calculated: true,
+          setted: false,
           sendBack: this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ? true : false,
         }
         stock.value = newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-'
@@ -1054,7 +1056,7 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-          if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock)
+          if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && !this.updates[`${cont.id}-stock`].setted )
             return false
           if (isForBulbOrBottom && (this.isStockCalculated(cont)))// && cont.stock !== cont.originalStock ) {
             return false
