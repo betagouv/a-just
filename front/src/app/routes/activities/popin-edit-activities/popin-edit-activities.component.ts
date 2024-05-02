@@ -583,10 +583,13 @@ export class PopinEditActivitiesComponent
 
     // Verification si l'entrée et/ou la sortie (déja mise à jours auparavent) a été mise à null (cad annulé)
     // Dans ce cas on remet le stock à son état d'origine
-    if (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && 
-      ((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
+    if (
+      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY && 
+      (((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
-        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null))
+        (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null) || 
+        (!this.updates[`${contentieux.id}-entrees`] && !this.updates[`${contentieux.id}-sorties`] && contentieux.in === null && contentieux.out === null)) && 
+      ((!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )) ))//&& contentieux.stock === null) */)
     ) {
       updateTotal = true
       //setTimeout(() => {
@@ -639,7 +642,7 @@ export class PopinEditActivitiesComponent
       }
 
       if (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null )
-        stockValue = contentieux.originalOut ?? 0
+        stockValue = contentieux.originalStock ?? 0
       else 
         stockValue = contentieux.stock ?? 0
 
