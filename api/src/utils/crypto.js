@@ -13,8 +13,6 @@ export default class Crypto {
   constructor () {
     this.lengthPassword = 10
     this.privateKey = 'aAc97e_hiF'
-
-    console.log('generateToken', this.generateToken())
   }
 
   /**
