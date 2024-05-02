@@ -423,13 +423,10 @@ export class PopinEditActivitiesComponent
       this.total.out.value = this.total.out.value ?? this.referentiel?.out ?? this.referentiel?.originalOut
       this.total.stock.value = this.total.stock.value ?? this.referentiel?.stock ?? this.referentiel?.originalStock
       
-
-      console.log('\n\n\n\n\n\n\nUPDATES:', updates);
-      
       updates.map((elem: any) => {
         let nodeValue = null
         let updatedValue = elem.value
-        console.log('\n\nElem:', elem)
+
         switch (elem.node) {
           case 'entrees':
             nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
@@ -471,12 +468,6 @@ export class PopinEditActivitiesComponent
                   this.total.out.updated = true
               break
             case 'stock':
-                console.log('this.total_00:', this.total);
-                console.log('updatedValue:', updatedValue);
-                console.log('Delta:', delta)
-                if (this.referentiel)
-                  console.log('this.referentiel?.originalStock:', this.referentiel?.originalStock);
-                  
                 this.total.stock.value = (this.total.stock.value || 0) + delta
                 if (/*this.total.stock.value === 0 && */updatedValue === null && this.referentiel?.originalStock === null) {
                   this.total.stock.value = null
@@ -513,7 +504,6 @@ export class PopinEditActivitiesComponent
         this.total.stock.value = 0
       }
     }
-    console.log('This.total_01 =', this.total)
   }
   
   checkInput(event : KeyboardEvent, input: string) {
@@ -586,7 +576,7 @@ export class PopinEditActivitiesComponent
           sendBack: true,
         }
       }
-      if (isToVerify && this.updates[`${contentieux.id}-${nodeName}`].value !== originalValue)
+      if ((isToVerify && this.updates[`${contentieux.id}-${nodeName}`].value !== originalValue) || !isToVerify)
         updateTotal = true
     }
     const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
