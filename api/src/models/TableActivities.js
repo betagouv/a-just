@@ -364,7 +364,7 @@ export default (sequelizeInstance, Model) => {
 
     if (userId !== null) {
       // Ne pas ajouter à l'historique des activité mis a jours, les données 'A_verifier' qui ont été confirmer 
-      if(referentiel /*&& findActivity.dataValues[original] === values[nodeUpdated]*/ && ( /*referentiel[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ (referentiel[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
+      if(referentiel /*&& findActivity.dataValues[original] === values[nodeUpdated]*/ /*&& ( referentiel[verify] !== VALUE_QUALITY_TO_VERIFY || (referentiel[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) ||*/ && (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
         await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, null)
       else
         await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
@@ -434,14 +434,14 @@ export default (sequelizeInstance, Model) => {
           const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
 
           const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
-          // do not updated if updated by user 
+          // do not update if updated by user 
           // or if 'entrees' and/or 'sorties' have updates and 
           // their values are equal to originals and their data qualities are 'to_verify'
           if (
-              (!getUserUpdateStock || getUserUpdateStock.value === null) &&
+              (!getUserUpdateStock || getUserUpdateStock.value === null) /*&&
                !isValueToVerifySetted( findAllChild[i].entrees ? findAllChild[i].entrees : null, findAllChild[i], "entrees", contentieuxRef.dataValues) && 
                !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues) &&
-               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY
+               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY*/
             ) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
 
@@ -502,13 +502,13 @@ export default (sequelizeInstance, Model) => {
         }
 
         if (findMain) {
-            await findMain.update(calculMainValuesFromChilds(findAllChild, contentieuxRefChildren))
+            await findMain.update(calculMainValuesFromChilds(findAllChild))
         } else {
           await Model.create({
             periode: date,
             hr_backup_id: hrBackupId,
             contentieux_id: ref.id,
-            ...calculMainValuesFromChilds(findAllChild, contentieuxRefChildren),
+            ...calculMainValuesFromChilds(findAllChild),
           })
         }
 
