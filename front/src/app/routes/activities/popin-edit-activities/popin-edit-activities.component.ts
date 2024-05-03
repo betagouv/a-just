@@ -1052,11 +1052,10 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
-
           // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un 
           // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
-          if ((this.isValueToVerifySetted({value : this.updates[`${cont.id}-entrees`] ? this.updates[`${cont.id}-entrees`].value : null, contentieux: cont, node: "entrees"}) || 
-              this.isValueToVerifySetted({value : this.updates[`${cont.id}-sorties`] ? this.updates[`${cont.id}-sorties`].value : null, contentieux: cont, node: "sorties"})) && 
+          if ((this.isValueToVerifySetted({value : this.updates[`${cont.id}-entrees`] ? this.updates[`${cont.id}-entrees`].value : cont.in, contentieux: cont, node: "entrees"}) || 
+              this.isValueToVerifySetted({value : this.updates[`${cont.id}-sorties`] ? this.updates[`${cont.id}-sorties`].value : cont.out, contentieux: cont, node: "sorties"})) && 
               this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && this.isStockCalculated(cont) && !isForBulbOrBottom)
               return true
           //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel), 
