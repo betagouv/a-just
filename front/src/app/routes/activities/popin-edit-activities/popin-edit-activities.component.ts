@@ -1052,12 +1052,18 @@ export class PopinEditActivitiesComponent
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
+
+          // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un 
+          // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
+          if ((this.isValueToVerifySetted({value : this.updates[`${cont.id}-entrees`] ? this.updates[`${cont.id}-entrees`].value : null, contentieux: cont, node: "entrees"}) || 
+              this.isValueToVerifySetted({value : this.updates[`${cont.id}-sorties`] ? this.updates[`${cont.id}-sorties`].value : null, contentieux: cont, node: "sorties"})) && 
+              this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && this.isStockCalculated(cont) && !isForBulbOrBottom)
+              return true
           //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel), 
-          // sauf pour les données de stock calculé (meme valeur mais calculé -> c'est le cas si une entrée et/ou une sortie a été confirmé et que suite à un recalcul de stock on obtient la meme valeur que la valeur logiciel)
           // Et que ce n'est pas une valeur de stock saisie (càd: je saisie une valeur de stock égale à la valeur logiciel. Dans ce cas on doit imprimer la valeur en bleu)
-          if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && !this.isStockCalculated(cont) && !this.updates[`${cont.id}-stock`].setted )
+          else if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && !this.updates[`${cont.id}-stock`].setted )
             return false
-          if (isForBulbOrBottom && (this.isStockCalculated(cont)))// && cont.stock !== cont.originalStock ) {
+          if (isForBulbOrBottom && this.isStockCalculated(cont))// && cont.stock !== cont.originalStock ) {
             return false
           else if (cont.stock !== cont.originalStock)
             return true
