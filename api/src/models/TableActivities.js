@@ -469,7 +469,10 @@ export default (sequelizeInstance, Model) => {
               }
             }
 
-            if (currentStock === findAllChild[i].original_stock) {
+            if (currentStock === findAllChild[i].original_stock && contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY && (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)) {
+              currentStock = currentStock
+            }
+            else if (currentStock === findAllChild[i].original_stock) {
               currentStock = null
             }
 
