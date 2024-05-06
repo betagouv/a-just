@@ -2,7 +2,7 @@ import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
-import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
+import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA } from '../constants/email'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate } from '../utils/date'
@@ -238,7 +238,8 @@ export default (sequelizeInstance, Model) => {
             {
               email: user.email,
             },
-            TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+            Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED
+            ,
             {
               user: `${user.first_name} ${user.last_name}`,
               juridictionsList: ventilationsList.map((v) => v.label).join(', '),
