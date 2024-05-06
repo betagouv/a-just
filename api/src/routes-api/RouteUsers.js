@@ -4,7 +4,7 @@ import { accessList } from '../constants/access'
 import { validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
-import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ONBOARDING } from '../constants/email'
+import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_FORGOT_PASSWORD_ID_CA, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_NEW_USER_SIGNIN_CA, TEMPLATE_USER_ONBOARDING } from '../constants/email'
 import config from 'config'
 import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
@@ -18,7 +18,7 @@ export default class RouteUsers extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -26,7 +26,7 @@ export default class RouteUsers extends Route {
    * Interface qui retourne l'utilisateur connecté
    */
   @Route.Get()
-  async me (ctx) {
+  async me(ctx) {
     if (ctx.state && ctx.state.user) {
       const user = await this.model.userPreview(ctx.state.user.id)
       this.sendOk(ctx, user)
@@ -39,7 +39,7 @@ export default class RouteUsers extends Route {
    * Interface qui retourne le process.env
    */
   @Route.Get()
-  async interfaceType (ctx) {
+  async interfaceType(ctx) {
     if (ctx.state && ctx.state.user) {
       this.sendOk(ctx, Number(process.env.TYPE_ID))
     } else {
@@ -66,7 +66,7 @@ export default class RouteUsers extends Route {
       fonction: Types.string(),
     }),
   })
-  async createAccount (ctx) {
+  async createAccount(ctx) {
     const { firstName, lastName, tj, fonction } = this.body(ctx)
     let { email } = this.body(ctx)
 
@@ -78,7 +78,8 @@ export default class RouteUsers extends Route {
         {
           email: config.supportEmail,
         },
-        TEMPLATE_NEW_USER_SIGNIN,
+        Number(config.juridictionType) === 1 ? TEMPLATE_NEW_USER_SIGNIN_CA : TEMPLATE_NEW_USER_SIGNIN
+        ,
         {
           email,
           serverUrl: config.frontUrl,
@@ -123,7 +124,7 @@ export default class RouteUsers extends Route {
     path: 'remove-account-test/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccountTest (ctx) {
+  async removeAccountTest(ctx) {
     const { id } = ctx.params
 
     const user = this.model.findOne({
@@ -153,7 +154,7 @@ export default class RouteUsers extends Route {
     path: 'remove-account/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccount (ctx) {
+  async removeAccount(ctx) {
     const { id } = ctx.params
     const user = this.model.findOne({
       where: { id: id },
@@ -181,7 +182,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     const list = await this.model.getAll()
 
     this.sendOk(ctx, {
@@ -205,7 +206,7 @@ export default class RouteUsers extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async updateAccount (ctx) {
+  async updateAccount(ctx) {
     const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
@@ -230,7 +231,7 @@ export default class RouteUsers extends Route {
       email: Types.string().required(),
     }),
   })
-  async forgotPassword (ctx) {
+  async forgotPassword(ctx) {
     let { email } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -245,7 +246,7 @@ export default class RouteUsers extends Route {
           {
             email,
           },
-          TEMPLATE_FORGOT_PASSWORD_ID,
+          Number(config.juridictionType) === 1 ? TEMPLATE_FORGOT_PASSWORD_ID_CA : TEMPLATE_FORGOT_PASSWORD_ID,
           {
             code: key,
             serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
@@ -279,7 +280,7 @@ export default class RouteUsers extends Route {
       password: Types.string().required(),
     }),
   })
-  async changePassword (ctx) {
+  async changePassword(ctx) {
     let { email, code, password } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -310,7 +311,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isLogin],
   })
-  async getUserDatas (ctx) {
+  async getUserDatas(ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
     for (let i = 0; i < backups.length; i++) {
       const isJirs = backups[i].jirs
