@@ -27,14 +27,14 @@
                 [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
             </div>
             <div class="label col">
-              <input type="number" placeholder="Nb de dossiers"
+              <input type="number" placeholder="Nbs de dossiers"
                 [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerDay'),100)"
                 (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
                 (click)="$event.stopPropagation();" min="0" />
             </div>
             <div class="label col no-margin">
-              <input type="number" placeholder="Nb de dossiers"
+              <input type="number" placeholder="Nbs de dossiers"
                 [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
                 [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerMonth'))"
                 (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
@@ -67,14 +67,14 @@
                   (click)="$event.stopPropagation();"></app-time-selector>
               </div>
               <div class="label col">
-                <input type="number" placeholder="Nb de dossiers"
+                <input type="number" placeholder="Nbs de dossiers"
                   [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerDay'))"
                   (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
                   (click)="$event.stopPropagation();" min="0" />
               </div>
               <div class="label col no-margin">
-                <input type="number" placeholder="Nb de dossiers"
+                <input type="number" placeholder="Nbs de dossiers"
                   [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerMonth'))"
                   (blur)="getField(itemGroup,$event,'nbPerMonth')"
