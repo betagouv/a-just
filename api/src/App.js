@@ -195,6 +195,7 @@ export default class App extends AppBase {
         //xXssProtection: 1, don't work
       }),
       async (ctx, next) => {
+        console.log('Client IP', ctx.request.ip)
         ctx.set('x-xss-protection', '1')
 
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
