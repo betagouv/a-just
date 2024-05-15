@@ -472,6 +472,11 @@
       &.blue-txt {
         color: fColor(dataCompletionTextColor) !important;
       }
+
+      &.to-confirm {
+        border: 1px solid fColor(dataToCompleteBorder) !important;
+        background-color: fColor(dataToCompleteBg);
+      }
     }
 
     ::placeholder {
