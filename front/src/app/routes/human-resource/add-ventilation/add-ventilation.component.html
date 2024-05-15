@@ -168,14 +168,13 @@
         </aj-date-select>
       </div>
 
-      <div class="indisponibilities" [ngStyle]="{'background-color' : displayImportLabels===true ? '#ededed':'#fff'}">
+      <div class="indisponibilities">
         <div class="indispo-header">
           <p>Indisponibilités :</p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
             text="Qu'est-ce que c'est ?"></aj-help-button>
           <label [ngStyle]="{'display' : displayImportLabels===true ? 'none':'initial'}">(facultatif)</label>
           <div class="flex-1"></div>
-          <button class="outline blue small" (click)="addIndispiniblity.emit(null)"
-            [ngStyle]="{'display' : displayImportLabels===true ? 'none':'initial'}">
+          <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
             + Ajouter
           </button>
         </div>
