@@ -16,7 +16,7 @@ import { CSP_URL_IGNORE_RULES } from './constants/csp'
 import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
 import ip from 'koa-ip'
-import { scriptSha1Generate, styleSha1Generate } from './utils/csp'
+import { styleSha1Generate } from './utils/csp'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -197,6 +197,11 @@ export default class App extends AppBase {
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
 
+        console.log(
+          'FX',
+          ctx.url,
+          CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))
+        )
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
