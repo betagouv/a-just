@@ -171,7 +171,6 @@ export class PopinEditActivitiesComponent
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('new ref', this.referentiel, changes)
-
     if (changes['referentiel']) {
       this.updateTotal()
     }
@@ -184,7 +183,10 @@ export class PopinEditActivitiesComponent
     return this.userService.interfaceType === 1
   }
 
-
+  /**
+   * Vérifie si le mois suivant à des données d'activité 
+   * pour activier le bouton "Aller au mois suivant" ou "Enregistrer puis mois suivant"
+   */
   checkIfNextMonthHasValue() {
     this.activitiesService.getLastMonthActivities().then((resp) => {
       const tmp = new Date(resp)
@@ -199,6 +201,10 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  /**
+   * Vérifie si il y a des données mise à jours
+   * @returns
+   */
   checkIfHasUpdates() {
     if (Object.keys(this.updates).length > 0)
       return true
@@ -206,165 +212,8 @@ export class PopinEditActivitiesComponent
   }
 
   /**
-   * Retour des titres des infos bulles
-   * @param type
-   * @param contentieux
-   * @param value
-   * @returns
-   */
-  getTooltipTitle(
-    type: 'entrees' | 'sorties' | 'stock',
-    contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null
-  ) {
-    const activityUpdated = contentieux.activityUpdated
-    const modifyBy =
-      activityUpdated && activityUpdated[type] ? activityUpdated[type] : null
-    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${value !== null
-      ? modifyBy
-        ? 'ri-lightbulb-flash-fill'
-        : 'ri-lightbulb-flash-line'
-      : ''
-      }"></i><p class="color-white">`
-
-    switch (type) {
-      case 'entrees':
-        string += 'Entrées A-JUSTées'
-        break
-      case 'sorties':
-        string += 'Sorties A-JUSTées'
-        break
-      case 'stock':
-        string += 'Stock A-JUSTé'
-
-        if (value !== null) {
-          const isMainActivity =
-            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !==
-            -1
-          const activityUpdated = contentieux.activityUpdated
-          const modifyBy =
-            activityUpdated && activityUpdated[type]
-              ? activityUpdated[type]
-              : null
-          if (isMainActivity || !modifyBy) {
-            string += ' - Calculé'
-          }
-        }
-        break
-    }
-    string += '</p></div>'
-
-    if (value !== null && modifyBy) {
-      const date = new Date(modifyBy.date)
-      string += `<p class="color-white font-size-12">Modifié par <b>${modifyBy.user?.firstName
-        } ${modifyBy.user?.lastName
-        }</b> le ${date.getDate()} ${this.getShortMonthString(
-          date
-        )} ${date.getFullYear()}</p>`
-    }
-
-    return string
-  }
-
-  /**
-   * Retour du contenu des tooltips
-   * @param type
-   * @param contentieux
-   * @param value
-   * @param level
-   * @returns
-   */
-  getTooltipBody(
-    type: 'entrees' | 'sorties' | 'stock',
-    contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null,
-    level: number
-  ) {
-    const activityUpdated = contentieux.activityUpdated
-    const modifyBy =
-      value !== null && activityUpdated && activityUpdated[type]
-        ? activityUpdated[type]
-        : null
-
-    switch (type) {
-      case 'entrees':
-      case 'sorties':
-        if (level === 3) {
-          if (value !== null) {
-            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
-              } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
-              } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
-          } else {
-            return `Dès lors que des ${type === 'entrees' ? 'entrées' : 'sorties'
-              } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${type === 'entrees' ? 'entrées' : 'sorties'
-              } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
-          }
-        } else {
-          if (modifyBy) {
-            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
-              } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
-          } else {
-            return `Dès lors que cette donnée ${type === 'entrees' ? "d'entrées" : 'de sorties'
-              } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
-          }
-        }
-      case 'stock': {
-        if (level === 3) {
-          if (value !== null) {
-            return "Dès lors que des données de stock ont été saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
-          } else {
-            return "Dès lors que des données de stock seront saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTera automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
-          }
-        } else {
-          if (modifyBy) {
-            return `Cette donnée a été saisie manuellement et sera prise en compte pour le calcul du stock des mois prochains.<br/>Si vous modifiez les entrées et/ou les sorties ou données de stock des mois antérieurs, cette valeur ne sera pas modifiée.`
-          } else if (value !== null) {
-            return `Cette valeur de stock a été recalculée automatiquement, car vous avez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou parce que vous avez A-JUSTé les entrées ou sorties du mois en cours. <br/>Les stocks des prochains mois seront également recalculés à partir de cette valeur.<br/>Vous pouvez modifier manuellement cette donnée. Le cas échéant, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.<br/>Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties du mois en cours ou des mois antérieurs.`
-          } else {
-            return `Cette valeur de stock sera recalculée automatiquement, dès lors que vous aurez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou si vous avez A-JUSTé les entrées ou sorties du mois en cours. Si vous modifiez manuellement cette donnée, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.<br/>Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties des mois antérieurs.`
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Retourne le pied des tooltips
-   * @param type
-   * @param contentieux
-   * @param value
-   * @param level
-   * @returns
-   */
-  getTooltipFooter(
-    type: string,
-    contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null,
-    level: number
-  ) {
-    if (type === 'stock' && level === 4) {
-      if (value !== null) {
-        const activityUpdated = contentieux.activityUpdated
-        const modifyBy =
-          activityUpdated && activityUpdated[type]
-            ? activityUpdated[type]
-            : null
-
-        if (modifyBy) {
-          return ''
-        }
-
-        return `Calcul :<br/>Stock A-JUSTé M = stock* mois M-1 + entrées* mois M - sorties* mois M<br/>* le stock A-JUSTé se recalcule dès lors qu'au moins l'une de ces 3 valeurs a été A-JUSTée`
-      }
-
-      return 'Calcul :<br/>Stock mois M = Stock mois M-1 + Entrées mois M - Sorties mois M'
-    }
-
-    return ''
-  }
-
-  /**
-   * Control to change
+   * Controle si des données ont été modifiés avant fermeture de la page de saisie
+   * Et si c'est le cas, on lance une alerte pour en informer l'utilisateur et l'inciter à enregistrer les modifications
    */
   async controlBeforeChange(close = false) {
     return new Promise((resolve) => {
@@ -395,7 +244,7 @@ export class PopinEditActivitiesComponent
   }
 
   /**
-   * Emit to close the popin
+   * Lancement d'alerte lors de la fermeture de la fenêtre d'édition et contrôle si il y a eu des données modifiés 
    */
   close() {
     this.controlBeforeChange(true).then(() => {
@@ -405,12 +254,19 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  /**
+   * Permet de permettre la modification d'une donnée au clique à l'extérieur de l'input concerné 
+   * ou lors de l'appuie sur la touche entrée
+   * @param newValue 
+   * @param nodeName 
+   * @param contentieux 
+   */
   onBlur( newValue: string, nodeName: string, contentieux: ContentieuReferentielInterface) {
     this.onUpdateValue(newValue, nodeName, contentieux)
   }
 
   /**
-   * Mise à jour des totaux
+   * Mise à jour des totaux du contentieux concerné suite à une modification de donnée
    */
   updateTotal() {
     this.total.in.value = this.referentiel?.in
@@ -477,8 +333,6 @@ export class PopinEditActivitiesComponent
               break
           }
       })
-
-
       if (
         this.total.in.value !== null &&
         this.total.in.value !== undefined &&
@@ -506,7 +360,10 @@ export class PopinEditActivitiesComponent
   }
   
   /**
-   * onUpdateValue event
+   * Mise à jours d'une donnée
+   * @param newValue 
+   * @param nodeName 
+   * @param contentieux 
    */
   onUpdateValue(
     newValue: string,
@@ -567,13 +424,14 @@ export class PopinEditActivitiesComponent
     }
     const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
 
-    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null 
+    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
     // Dans ce cas on remet le stock à son état d'origine
     if (
       (((this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null) || 
         (this.updates[`${contentieux.id}-entrees`] && this.updates[`${contentieux.id}-entrees`].value === null && !this.updates[`${contentieux.id}-sorties`] && contentieux.out === null) ||
         (this.updates[`${contentieux.id}-sorties`] && this.updates[`${contentieux.id}-sorties`].value === null && !this.updates[`${contentieux.id}-entrees`] && contentieux.in === null)) && 
-        (contentieux.stock === null && (!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ))))
+        ((contentieux.stock === null && (!this.updates[`${contentieux.id}-stock`] || (this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null ))) /*|| 
+        (contentieux.stock !== null && (!contentieux.activityUpdated || (contentieux.activityUpdated && (contentieux.activityUpdated.stock === null || contentieux.activityUpdated.stock.value === null ))))*/ ))
     ) {
       updateTotal = true
       this.updates[`${contentieux.id}-stock`] = {
@@ -582,7 +440,7 @@ export class PopinEditActivitiesComponent
         contentieux,
         calculated: false,
         setted: false,
-        sendBack: true,
+        sendBack: true, //false
       }
       stock.value = contentieux.originalStock ? contentieux.originalStock.toString() : '-'
     } 
@@ -643,6 +501,11 @@ export class PopinEditActivitiesComponent
     updateTotal && setTimeout(() => this.updateTotal(), 1000)
   }
 
+  /**
+   * Obtention du stock du mois N-1
+   * @param contentieuxId
+   * @returns 
+   */
   async getLastMonthStock(contentieuxId : number) {
     let date : Date =  new Date(this.activityMonth)
     date.setMonth(this.activityMonth.getMonth() - 1)
@@ -660,7 +523,9 @@ export class PopinEditActivitiesComponent
   }
 
   /**
-   * On save
+   * Sauvegarde dans la base de données des données modifiées et lancenement de l'alerte informant 
+   * l'utilisateur de l'impact de la modification des données
+   * @param param0 
    */
   async onSave({force = false, exit = false}) {
     if (!force) {
@@ -699,8 +564,6 @@ export class PopinEditActivitiesComponent
           return {...elem, value: null}
         return elem
       })
-      console.log('ELEM SENT:', updates)
-      //updates.map((elem : any) => delete elem.calculated)
       let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'));
       contentieux= mapValues(contentieux, (group) =>
         group.map((elem) => {
@@ -759,7 +622,8 @@ export class PopinEditActivitiesComponent
   }
 
   /**
-   * Change month selection
+   *Permet de changer le mois sur lequel on visualise les données
+   * @param date 
    */
   async selectMonth(date: any) {
     await this.controlBeforeChange().then(() => {
@@ -804,6 +668,12 @@ export class PopinEditActivitiesComponent
     })
   }
 
+  /**
+   * Vérifie si une donnée a été ajusté et non calculé
+   * @param cont
+   * @param node
+   * @returns 
+   */
   isValueUpdated({cont, node} : {cont: ContentieuReferentielInterface, node: string }) {
     switch (node) {
       case 'entrees':
@@ -837,6 +707,11 @@ export class PopinEditActivitiesComponent
     return false
   }
 
+  /**
+   * Vérifie si une donnée de stock a été calculé et non ajusté
+   * @param cont 
+   * @returns 
+   */
   isStockCalculated (cont : ContentieuReferentielInterface) {
     if (this.updates[`${cont.id}-stock`]) {
       return this.updates[`${cont.id}-stock`].calculated
@@ -847,6 +722,13 @@ export class PopinEditActivitiesComponent
     return false
   }
 
+  /**
+   * Vérifie si une valeur à "confirmer" a bien été confirmé ou non (ajusté ou ni ajusté, ni confirmé)
+   * @param value
+   * @param contentieux
+   * @param node
+   * @returns 
+   */
   isValueToVerifySetted({value, contentieux, node}: {value: number | null, contentieux: ContentieuReferentielInterface, node: string}) {
 
       switch (node) {
@@ -868,6 +750,14 @@ export class PopinEditActivitiesComponent
     return false   
   }
 
+  /**
+   * Permet de lancer l'ouverture du panel d'aide lors d'un clique sur une ampoule
+   * Dépend du niveau du contentieux (level 3 ou 4) et de si c'est une donnée d'éntrée, sortie ou stock
+   * @param level
+   * @param cont
+   * @param node
+   * @param url
+   */
   onShowHelpPanel({level, cont, node, url} : {level?: number, cont?: ContentieuReferentielInterface, node?: string, url?: string}) {
     if (cont && node) {
       switch (node) {
@@ -978,11 +868,23 @@ export class PopinEditActivitiesComponent
     return this.updates[`${cont.id}-${node}`]
   }
 
+  /**
+   * Vérifie si on doit afficher une donnée en bleue (donné, bordure du bas et ampoule)
+   * Régle: 
+   *  - Une donnée est en bleue si elle est modifié ou calculé (pour le stock)
+   *  - La bordure du bas est en bleu si et seulement si c'est une donne ajusté manuellement et non calculé
+   *  - Une ampoule est en bleue si une donnée est ajustée ou calculée
+   * @param cont
+   * @param node
+   * @param level
+   * @param isForBulbOrBottom
+   * @returns 
+   */
   checkIfBlue({cont, node, level, isForBulbOrBottom} : {cont: ContentieuReferentielInterface, node: string, level: number, isForBulbOrBottom: boolean }) {
     switch (node) {
       case 'entrees':
         if (level === 3) {
-          if (this.total.in.updated || this.isValueUpdated({cont, node}))// && this.total.in !== cont.originalIn)
+          if (this.total.in.updated || this.isValueUpdated({cont, node}))
             return true
           return false
         }
@@ -991,7 +893,7 @@ export class PopinEditActivitiesComponent
         break;
       case 'sorties':
         if (level === 3) {
-          if (this.total.out.updated || this.isValueUpdated({cont, node}))// && this.total.out !== cont.originalOut)
+          if (this.total.out.updated || this.isValueUpdated({cont, node}))
             return true
         }
         else if (this.isValueUpdated({cont, node}))
@@ -999,7 +901,7 @@ export class PopinEditActivitiesComponent
         break;
       case 'stock':
         if (level === 3) {
-          if (this.total.stock.updated || this.isValueUpdated({cont, node}))// && this.isValueUpdated({cont, node}))// && this.total.stock !== cont.originalStock)
+          if (this.total.stock.updated || this.isValueUpdated({cont, node}))
             return true
         }
         else if (this.isValueUpdated({cont, node})) {
@@ -1024,7 +926,11 @@ export class PopinEditActivitiesComponent
     return false
   }
 
-
+  /**
+   * Permet de lancer le téléchargement de la nomenclature et du databook
+   * @param type 
+   * @param download 
+   */
   downloadAsset(type: string, download = false) {
     let url = null
 
@@ -1042,6 +948,11 @@ export class PopinEditActivitiesComponent
     }
   }
 
+  /**
+   * Permet d'obtenir la largeur de la scrollbar pour permetrre d'adapter
+   * la marge à droite sur les parties non scrollable
+   * @returns
+   */
   getScrollbarWidth() {
     if (this.isNotIOS()) {
       const element = document.getElementById('contentieux-list')
