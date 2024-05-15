@@ -45,7 +45,9 @@ export default (sequelizeInstance, Model) => {
 
     if (cacheJuridictionPeoples[backupId] && index !== -1) {
       cacheJuridictionPeoples[backupId][index] = human
-    } else if (config.preloadHumanResourcesDatas) {
+    } else if (cacheJuridictionPeoples[backupId]) {
+      cacheJuridictionPeoples[backupId].push(human)
+    } else {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
     }
   }
