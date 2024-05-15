@@ -197,11 +197,6 @@ export default class App extends AppBase {
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
 
-        console.log(
-          'FX',
-          ctx.url,
-          CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))
-        )
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
